@@ -15,35 +15,7 @@ before_script:
   - export GRADLE_USER_HOME=`pwd`/.gradle
   - apt-get update &&  apt-get install -y git 
 
-.tests:
-  stage: test
-  script: ./de.prob2.kernel/gradlew -b de.prob2.kernel/build.gradle clean allTests --info --stacktrace --warning-mode=all
-  artifacts:
-    paths:
-      - "de.prob2.kernel/build/reports"
-      - "de.prob2.kernel/build/test-results"
 
-tests:jdk-8:
-  extends: .tests
-
-tests:jdk-11:
-  extends: .tests
-  image: openjdk:11-jdk-slim
-
-tests:macos:
-  extends: .tests
-  before_script:
-    - export GRADLE_USER_HOME=`pwd`/.gradle
-  tags:
-    - macos
-
-tests:windows64:
-  extends: .tests
-  before_script: []
-  script: de.prob2.kernel\gradlew.bat -b de.prob2.kernel\build.gradle clean allTests --info --stacktrace --warning-mode=all
-  tags:
-    - prob
-    - win64
 
 publish:
   stage: deploy
