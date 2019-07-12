@@ -8,7 +8,6 @@ apply plugin: 'groovy'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'maven'
-apply plugin: 'application'
 apply plugin: 'jacoco'
 
 project.group = 'de.hhu.stups'
@@ -53,9 +52,6 @@ if (project.version.endsWith("-SNAPSHOT")) {
 	parserVersion = '2.9.22'
 	cliDownloadURL = "https://www3.hhu.de/stups/downloads/prob/cli/releases/${cli_version}"
 }
-
-
-mainClassName = "de.prob.Main"
 
 
 repositories {
