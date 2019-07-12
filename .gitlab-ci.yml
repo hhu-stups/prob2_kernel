@@ -1,0 +1,70 @@
+image: openjdk:8-jdk-slim
+
+stages:
+  - test
+  - deploy
+
+cache:
+  paths:
+    - .gradle/wrapper
+    - .gradle/caches
+
+.tests:
+  stage: test
+  script: ./de.prob2.kernel/gradlew -b de.prob2.kernel/build.gradle clean allTests --info --stacktrace --warning-mode=all
+  before_script:
+    - export GRADLE_USER_HOME=`pwd`/.gradle
+  artifacts:
+    paths:
+      - "*/build/jacoco"
+      - "*/build/jacocoHtml"
+      - "*/build/reports"
+      - "*/build/test-results"
+
+.docker-tests:
+  extends: .tests
+  variables:
+    DEBIAN_FRONTEND: noninteractive
+    LANG: en_US.UTF-8
+  before_script:
+    - export GRADLE_USER_HOME=`pwd`/.gradle
+    - apt-get update &&  apt-get install -y git locales
+    - sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
+      dpkg-reconfigure --frontend=noninteractive locales && \
+      update-locale LANG=en_US.UTF-8
+
+
+tests:jdk-8:
+  extends: .docker-tests
+
+tests:jdk-11:
+  extends: .docker-tests
+  image: openjdk:11-jdk-slim
+
+tests:macos:
+  extends: .tests
+  tags:
+    - macos
+
+tests:windows64:
+  extends: .tests
+  before_script: []
+  script: de.prob2.kernel\gradlew.bat -b de.prob2.kernel\build.gradle clean allTests --info --stacktrace --warning-mode=all
+  tags:
+    - prob
+    - win64
+
+publish:
+  stage: deploy
+  before_script:
+    - export GRADLE_USER_HOME=`pwd`/.gradle
+    - apt-get update && apt-get install -y git 
+
+    - openssl aes-256-cbc -pass "env:ENCRYPTION_PASSWORD" -d -a -md md5 -in secring.gpg.enc       -out secring.gpg 
+    - openssl aes-256-cbc -pass "env:ENCRYPTION_PASSWORD" -d -a -md md5 -in pubring.gpg.enc       -out pubring.gpg
+    - openssl aes-256-cbc -pass "env:ENCRYPTION_PASSWORD" -d -a -md md5 -in gradle.properties.enc -out de.prob2.kernel/gradle.properties
+  script:
+    -  ./de.prob2.kernel/gradlew -b de.prob2.kernel/build.gradle uploadArchives --info --stacktrace --warning-mode=all
+  only: 
+    - master 
+    - develop
