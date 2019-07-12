@@ -24,7 +24,7 @@ publish:
     - apt-get update &&  apt-get install -y git 
     - openssl aes-256-cbc -pass "env:ENCRYPTION_PASSWORD" -d -a -md md5 -in secring.gpg.enc       -out secring.gpg 
     - openssl aes-256-cbc -pass "env:ENCRYPTION_PASSWORD" -d -a -md md5 -in pubring.gpg.enc       -out pubring.gpg
-    - openssl aes-256-cbc -pass "env:ENCRYPTION_PASSWORD" -d -a -md md5 -in gradle.properties.enc -out gradle.properties
+    - openssl aes-256-cbc -pass "env:ENCRYPTION_PASSWORD" -d -a -md md5 -in gradle.properties.enc -out de.prob2.kernel/gradle.properties
   script:
     -  ./de.prob2.kernel/gradlew -b de.prob2.kernel/build.gradle uploadArchives --info --stacktrace --warning-mode=all
   only: 
