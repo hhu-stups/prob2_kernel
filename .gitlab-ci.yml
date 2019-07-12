@@ -66,5 +66,5 @@ publish:
   script:
     -  ./de.prob2.kernel/gradlew -b de.prob2.kernel/build.gradle uploadArchives --info --stacktrace --warning-mode=all
   only: 
-    - master 
-    - develop
+    - master@stups/prob/prob2_kernel
+    - develop@stups/prob/prob2_kernel
