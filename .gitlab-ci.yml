@@ -29,9 +29,9 @@ cache:
   before_script:
     - export GRADLE_USER_HOME=`pwd`/.gradle
     - apt-get update &&  apt-get install -y git locales
-    - sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
-      dpkg-reconfigure --frontend=noninteractive locales && \
-      update-locale LANG=en_US.UTF-8
+    - sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen 
+    - dpkg-reconfigure --frontend=noninteractive locales
+    - update-locale LANG=en_US.UTF-8
 
 
 tests:jdk-8:
