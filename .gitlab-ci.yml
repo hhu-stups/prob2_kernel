@@ -1,0 +1,60 @@
+image: openjdk:8-jdk-slim
+stages:
+  - test
+  - deploy
+
+variables:
+  GRADLE_ARGS: --no-daemon --stacktrace --warning-mode=all
+  DEBIAN_FRONTEND: noninteractive
+
+cache:
+  paths:
+    - .gradle/wrapper
+    - .gradle/caches
+
+before_script:
+  - export GRADLE_USER_HOME=`pwd`/.gradle
+
+.tests:
+  stage: test
+  script: ./de.prob2.kernel/gradlew -b de.prob2.kernel/build.gradle clean allTests --info --stacktrace --warning-mode=all
+  artifacts:
+    paths:
+      - "*/build/reports"
+      - "*/build/test-results"
+
+tests:jdk-8:
+  extends: .tests
+
+tests:jdk-11:
+  extends: .tests
+  image: openjdk:11-jdk-slim
+
+tests:macos:
+  extends: .tests
+  before_script:
+    - export GRADLE_USER_HOME=`pwd`/.gradle
+  tags:
+    - macos
+
+tests:windows64:
+  extends: .tests
+  before_script: []
+  script: de.prob2.kernel\gradlew.bat -b de.prob2.kernel\build.gradle clean allTests --info --stacktrace --warning-mode=all
+  tags:
+    - prob
+    - win64
+
+publish:
+  stage: deploy
+  before_script:
+    - export GRADLE_USER_HOME=`pwd`/.gradle
+    - openssl aes-256-cbc -pass "env:ENCRYPTION_PASSWORD" -d -a -md md5 -in secring.gpg.enc       -out secring.gpg 
+    - openssl aes-256-cbc -pass "env:ENCRYPTION_PASSWORD" -d -a -md md5 -in pubring.gpg.enc       -out pubring.gpg
+    - openssl aes-256-cbc -pass "env:ENCRYPTION_PASSWORD" -d -a -md md5 -in gradle.properties.enc -out gradle.properties
+  script:
+    -  ./de.prob2.kernel/gradlew -b de.prob2.kernel/build.gradle uploadArchives --info --stacktrace --warning-mode=all
+  only: 
+    - master 
+    - develop
+
