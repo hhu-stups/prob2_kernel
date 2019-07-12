@@ -1,6 +1,5 @@
 image: openjdk:8-jdk-slim
 stages:
-  - test
   - deploy
 
 variables:
