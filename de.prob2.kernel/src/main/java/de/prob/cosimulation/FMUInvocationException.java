@@ -1,10 +1,17 @@
 package de.prob.cosimulation;
 
-@SuppressWarnings("serial")
 public class FMUInvocationException extends RuntimeException {
+	private static final long serialVersionUID = 4579969127760670024L;
 
-	public FMUInvocationException(String msg) {
-		super(msg);
+	public FMUInvocationException(final String message) {
+		super(message);
 	}
 
+	public FMUInvocationException(final String message, final Throwable cause) {
+		super(message, cause);
+	}
+
+	public FMUInvocationException(final Throwable cause) {
+		super(cause);
+	}
 }

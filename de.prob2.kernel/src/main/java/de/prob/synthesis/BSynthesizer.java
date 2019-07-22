@@ -1,11 +1,11 @@
 package de.prob.synthesis;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import de.prob.exception.ProBError;
 import de.prob.statespace.StateSpace;
 import de.prob.synthesis.library.BLibrary;
-
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Interface for the program synthesis backend to generate B predicates or operations from examples.
@@ -68,7 +68,7 @@ public class BSynthesizer {
       stateSpace.execute(synthesisCommand);
       return processResult(synthesisCommand);
     } catch (final ProBError proBError) {
-      throw new BSynthesisException(proBError.getOriginalMessage());
+      throw new BSynthesisException(proBError.getOriginalMessage(), proBError);
     }
   }
 
@@ -105,7 +105,7 @@ public class BSynthesizer {
       stateSpace.execute(synthesisCommand);
       return processResult(synthesisCommand);
     } catch (final ProBError proBError) {
-      throw new BSynthesisException(proBError.getOriginalMessage());
+      throw new BSynthesisException(proBError.getOriginalMessage(), proBError);
     }
   }
 
