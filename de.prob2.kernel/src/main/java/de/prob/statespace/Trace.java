@@ -281,8 +281,7 @@ public class Trace extends GroovyObjectSupport {
 			method = method.substring(1);
 		}
 
-		@SuppressWarnings("unchecked")
-		final List<String> paramsList = (List<String>)DefaultGroovyMethods.asType(params, List.class);
+		final List<String> paramsList = ((List<?>)DefaultGroovyMethods.asType(params, List.class)).stream().map(Object::toString).collect(Collectors.toList());
 		final Transition transition = getCurrentState().findTransition(method, paramsList);
 		if (transition == null) {
 			throw new IllegalArgumentException("Could not execute event with name " + method + " and parameters " + params);

@@ -74,8 +74,7 @@ public class State extends GroovyObjectSupport {
 			method = method.substring(1);
 		}
 
-		@SuppressWarnings("unchecked")
-		final List<? extends CharSequence> paramsList = (List<? extends CharSequence>)DefaultGroovyMethods.asType(params, List.class);
+		final List<String> paramsList = ((List<?>)DefaultGroovyMethods.asType(params, List.class)).stream().map(Object::toString).collect(Collectors.toList());
 		final String predicate = paramsList.isEmpty() ? "TRUE = TRUE" : String.join(" & ", paramsList);
 		final Transition op = stateSpace.transitionFromPredicate(this, method, predicate, 1).get(0);
 		transitions.add(op);
