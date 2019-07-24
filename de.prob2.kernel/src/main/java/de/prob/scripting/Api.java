@@ -307,6 +307,28 @@ public class Api {
 	}
 
 	/**
+	 * Load a Z model from the given file.
+	 *
+	 * @param file the path of the file to load
+	 * @param prefs the preferences to use
+	 * @return the {@link StateSpace} for the loaded model
+	 */
+	public StateSpace z_load(final String file, final Map<String, String> prefs) throws IOException, ModelTranslationError {
+		final ZFactory zFactory = modelFactoryProvider.getZFactory();
+		return zFactory.extract(file).load(prefs);
+	}
+
+	/**
+	 * Load a Z model from the given file.
+	 *
+	 * @param file the path of the file to load
+	 * @return the {@link StateSpace} for the loaded model
+	 */
+	public StateSpace z_load(final String file) throws IOException, ModelTranslationError {
+		return z_load(file, Collections.emptyMap());
+	}
+
+	/**
 	 * Load an Alloy model from the given file.
 	 *
 	 * @param file the path of the file to load
