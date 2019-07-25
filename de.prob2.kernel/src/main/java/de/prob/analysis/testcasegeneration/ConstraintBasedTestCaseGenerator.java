@@ -109,6 +109,7 @@ public class ConstraintBasedTestCaseGenerator {
                 for (Target t : filterTempTargets(getAllOperationNames(), tempTargets)) {
                     FindTestPathCommand cmd = findTestPath(trace, t);
                     if (cmd.isFeasible()) {
+                    	//TODO: Maybe remove t from targets?
                         testTraces.add(trace.createNewTrace(trace.getTransitionNames(), t,
                                 (finalOperations.contains(t.getOperation()) || t.isInfeasible())));
                         cmd = findTestPathWithTarget(trace, t);
