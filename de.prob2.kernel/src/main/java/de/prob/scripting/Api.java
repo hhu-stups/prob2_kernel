@@ -1,6 +1,5 @@
 package de.prob.scripting;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collections;
@@ -10,11 +9,7 @@ import java.util.Map;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-import de.be4.classicalb.core.parser.ParsingBehaviour;
-import de.be4.classicalb.core.parser.exceptions.BCompoundException;
 import de.be4.classicalb.core.parser.node.Start;
-import de.be4.classicalb.core.parser.rules.RulesProject;
-
 import de.prob.animator.IAnimator;
 import de.prob.animator.command.GetVersionCommand;
 import de.prob.cli.CliVersionNumber;
@@ -230,17 +225,7 @@ public class Api {
 	 */
 	public StateSpace brules_load(final String file, final Map<String, String> prefs) throws IOException {
 		final RulesModelFactory bRulesFactory = modelFactoryProvider.getBRulesFactory();
-		final RulesProject rulesProject = new RulesProject();
-		final ParsingBehaviour parsingBehaviour = new ParsingBehaviour();
-		parsingBehaviour.setAddLineNumbers(true);
-		rulesProject.setParsingBehaviour(parsingBehaviour);
-		rulesProject.parseProject(new File(file));
-		rulesProject.checkAndTranslateProject();
-		if (rulesProject.hasErrors()) {
-			throw new ProBError(new BCompoundException(rulesProject.getBExceptionList()));
-		}
-
-		return bRulesFactory.extract(new File(file), rulesProject).load(prefs);
+		return bRulesFactory.extract(file).load(prefs);
 	}
 
 	/**
