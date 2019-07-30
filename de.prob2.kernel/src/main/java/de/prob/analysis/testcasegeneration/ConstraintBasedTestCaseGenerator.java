@@ -38,19 +38,16 @@ public class ConstraintBasedTestCaseGenerator {
 
     private ClassicalBModel model;
     private StateSpace stateSpace;
-    private String criterion;
-    private int maxDepth;
+    private TestCaseGeneratorSettings settings;
     private List<String> finalOperations;
     private List<String> infeasibleOperations;
     private List<Target> targets;
     private List<Target> uncoveredTargets = new ArrayList<>();
 
-    public ConstraintBasedTestCaseGenerator(ClassicalBModel model, StateSpace stateSpace, String criterion,
-                                            int maxDepth, List<String> finalOperations) {
+    public ConstraintBasedTestCaseGenerator(ClassicalBModel model, StateSpace stateSpace, TestCaseGeneratorSettings settings, List<String> finalOperations) {
         this.model = model;
         this.stateSpace = stateSpace;
-        this.criterion = criterion;
-        this.maxDepth = maxDepth;
+        this.settings = settings;
         this.finalOperations = finalOperations;
     }
 
@@ -63,13 +60,14 @@ public class ConstraintBasedTestCaseGenerator {
         boolean interrupted = false;
         List<Trace> traces = new ArrayList<>();
         List<TestTrace> testTraces = new ArrayList<>();
+        int maxDepth = settings.getMaxDepth();
 
-        if (criterion.startsWith("MCDC")) {
-            targets = getMCDCTargets(Integer.valueOf(criterion.split(":")[1]));
+        if(settings instanceof TestCaseGeneratorMCDCSettings) {
+            targets = getMCDCTargets(((TestCaseGeneratorMCDCSettings) settings).getLevel());
             testTraces.add(new MCDCTestTrace(new ArrayList<>(), null, new ArrayList<>(), false,
                     true));
-        } else if (criterion.startsWith("OPERATION")) {
-            List<String> selectedOperations = Arrays.asList(criterion.split(":")[1].split(","));
+        } else if(settings instanceof TestCaseGeneratorOperationCoverageSettings) {
+            List<String> selectedOperations = new ArrayList<>(((TestCaseGeneratorOperationCoverageSettings) settings).getOperations());
             targets = getOperationCoverageTargets(selectedOperations);
             testTraces.add(new CoverageTestTrace(new ArrayList<>(), null, false));
         } else {
