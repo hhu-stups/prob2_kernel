@@ -106,18 +106,16 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 		ProBConnection connection = new ProBConnection(key, port);
 
 		try {
-			processCounter.incrementAndGet();
 			connection.connect();
-			ProBInstance cli = new ProBInstance(process, stream,
-					userInterruptReference, connection, home, osInfo,
-					processCounter);
-			processes.add(new WeakReference<>(cli));
-			return cli;
 		} catch (IOException e) {
-			processCounter.decrementAndGet();
 			throw new CliError("Error connecting to Prolog binary.", e);
 		}
-
+		processCounter.incrementAndGet();
+		ProBInstance cli = new ProBInstance(process, stream,
+				userInterruptReference, connection, home, osInfo,
+				processCounter);
+		processes.add(new WeakReference<>(cli));
+		return cli;
 	}
 
 	Map<Class<? extends AbstractCliPattern<?>>, AbstractCliPattern<?>> extractCliInformation(
