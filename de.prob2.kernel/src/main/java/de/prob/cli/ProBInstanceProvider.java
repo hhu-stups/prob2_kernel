@@ -46,10 +46,6 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 
 	@Override
 	public ProBInstance get() {
-		return create();
-	}
-
-	public ProBInstance create() {
 		return startProlog();
 	}
 
