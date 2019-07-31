@@ -2,10 +2,7 @@ package de.prob.animator;
 
 import java.util.List;
 
-import javax.annotation.Nullable;
-
 import com.google.common.base.MoreObjects;
-
 import com.google.inject.Inject;
 
 import de.prob.animator.command.AbstractCommand;
@@ -35,7 +32,7 @@ class AnimatorImpl implements IAnimator {
 	private boolean busy = false;
 
 	@Inject
-	public AnimatorImpl(@Nullable final ProBInstance cli, final CommandProcessor processor,
+	public AnimatorImpl(final ProBInstance cli, final CommandProcessor processor,
 			final GetErrorItemsCommand getErrorItems, final AnimationSelector animations) {
 		this.cli = cli;
 		this.processor = processor;
@@ -47,11 +44,6 @@ class AnimatorImpl implements IAnimator {
 	@SuppressWarnings("unused")
 	@Override
 	public synchronized void execute(final AbstractCommand command) {
-		if (cli == null) {
-			logger.error("Probcli is missing. Try \"upgrade\".");
-			throw new CliError("no cli found");
-		}
-
 		if (DEBUG && !command.getSubcommands().isEmpty()) {
 			List<AbstractCommand> cmds = command.getSubcommands();
 			for (AbstractCommand abstractCommand : cmds) {

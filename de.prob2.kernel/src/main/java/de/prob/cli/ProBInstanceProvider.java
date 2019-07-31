@@ -115,8 +115,7 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 			return cli;
 		} catch (IOException e) {
 			processCounter.decrementAndGet();
-			logger.error("Error connecting to Prolog binary.", e);
-			return null;
+			throw new CliError("Error connecting to Prolog binary.", e);
 		}
 
 	}
