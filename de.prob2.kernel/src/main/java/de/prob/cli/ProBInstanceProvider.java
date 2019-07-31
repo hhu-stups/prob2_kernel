@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -63,16 +64,16 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 	}
 	
 	/**
-	 * Return {@code process}'s exit code as an {@link Integer}, or {@code null} if it is still running.
+	 * Return {@code process}'s exit code as an {@link Integer}, or {@link Optional#empty()} if it is still running.
 	 * 
 	 * @param process the process whose exit code to get
-	 * @return {@code process}'s exit code, or {@code null} if it is still running
+	 * @return {@code process}'s exit code, or {@link Optional#empty()} if it is still running
 	 */
-	private static Integer getOptionalProcessExitCode(final Process process) {
+	private static Optional<Integer> getProcessExitCode(final Process process) {
 		try {
-			return process.exitValue();
+			return Optional.of(process.exitValue());
 		} catch (final IllegalThreadStateException ignored) {
-			return null;
+			return Optional.empty();
 		}
 	}
 
@@ -88,13 +89,13 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 			cliInformation = extractCliInformation(stream);
 		} catch (CliError e) {
 			// Check if the CLI exited while extracting the information.
-			final Integer exitCode = getOptionalProcessExitCode(process);
-			if (exitCode == null) {
+			final Optional<Integer> exitCode = getProcessExitCode(process);
+			if (exitCode.isPresent()) {
+				// CLI exited, report the exit code.
+				throw new CliError("CLI exited with status " + exitCode.get() + " while matching output patterns", e);
+			} else {
 				// CLI didn't exit, just rethrow the error.
 				throw e;
-			} else {
-				// CLI exited, report the exit code.
-				throw new CliError("CLI exited with status " + exitCode + " while matching output patterns", e);
 			}
 		}
 
