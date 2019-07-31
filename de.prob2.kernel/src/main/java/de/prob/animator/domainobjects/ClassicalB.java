@@ -138,7 +138,7 @@ public class ClassicalB extends AbstractEvalElement implements IBEvalElement {
 		if (!EvalElementType.EXPRESSION.equals(getKind())) {
 			throw new IllegalArgumentException();
 		}
-		TranslatingVisitor v = new TranslatingVisitor();
+		TranslatingVisitor<?> v = new TranslatingVisitor<>();
 		getAst().apply(v);
 		return v.getResult();
 	}
