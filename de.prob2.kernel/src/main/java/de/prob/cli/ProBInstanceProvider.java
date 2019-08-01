@@ -4,7 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -82,7 +82,7 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 		Process process = processTuple.getProcess();
 		String key = processTuple.getKey();
 		final BufferedReader stream = new BufferedReader(new InputStreamReader(
-				process.getInputStream(), Charset.forName("utf8")));
+				process.getInputStream(), StandardCharsets.UTF_8));
 
 		final Map<Class<? extends AbstractCliPattern<?>>, AbstractCliPattern<?>> cliInformation;
 		try {

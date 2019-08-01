@@ -3,9 +3,11 @@ package de.prob.cli;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 import com.google.common.base.MoreObjects;
 
@@ -18,7 +20,7 @@ public class ProBConnection {
 
 	private Socket socket;
 	private BufferedInputStream inputStream;
-	private PrintStream outputStream;
+	private PrintWriter outputStream;
 	private final Logger logger = LoggerFactory.getLogger(ProBConnection.class);
 	private volatile boolean shutingDown;
 	private volatile boolean busy;
@@ -41,7 +43,7 @@ public class ProBConnection {
 		socket = new Socket(InetAddress.getByName(null), port);
 		inputStream = new BufferedInputStream(socket.getInputStream());
 		OutputStream outstream = socket.getOutputStream();
-		outputStream = new PrintStream(outstream, false, "utf8");
+		outputStream = new PrintWriter(new OutputStreamWriter(outstream, StandardCharsets.UTF_8));
 		logger.debug("Connected");
 	}
 
@@ -109,7 +111,7 @@ public class ProBConnection {
 				// trim white spaces and append
 				// instead of removing the last byte trim is used, because on
 				// windows prob uses \r\n as new line.
-				String s = new String(buffer, 0, count, "utf8");
+				String s = new String(buffer, 0, count, StandardCharsets.UTF_8);
 				result.append(s.replace("\r", "").replace("\n", ""));
 			} else {
 				done = true;
