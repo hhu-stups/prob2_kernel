@@ -7,11 +7,11 @@ import de.hhu.stups.prob.translator.BValue;
 
 import groovy.lang.MissingPropertyException;
 
-public class TranslatedEvalResult extends AbstractEvalResult {
-	private final BValue value;
+public class TranslatedEvalResult<T extends BValue> extends AbstractEvalResult {
+	private final T value;
 	private final Map<String, BValue> solutions;
 
-	public TranslatedEvalResult(final BValue value, final Map<String, BValue> solutions) {
+	public TranslatedEvalResult(final T value, final Map<String, BValue> solutions) {
 		super();
 		this.value = value;
 		this.solutions = solutions;
@@ -49,7 +49,7 @@ public class TranslatedEvalResult extends AbstractEvalResult {
 		return value.toString();
 	}
 
-	public BValue getValue() {
+	public T getValue() {
 		return value;
 	}
 

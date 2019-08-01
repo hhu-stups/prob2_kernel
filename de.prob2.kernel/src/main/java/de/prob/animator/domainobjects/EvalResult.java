@@ -84,14 +84,14 @@ public class EvalResult extends AbstractEvalResult {
 		}
 	}
 
-	public TranslatedEvalResult translate() throws TranslationException {
-		BValue val = Translator.translate(value);
+	public <T extends BValue> TranslatedEvalResult<T> translate() throws TranslationException {
+		T val = Translator.translate(value);
 		Map<String, BValue> sols = new HashMap<>();
 		Set<Map.Entry<String, String>> entrySet = solutions.entrySet();
 		for (Map.Entry<String, String> entry : entrySet) {
 			sols.put(entry.getKey(), Translator.translate(entry.getValue()));
 		}
-		return new TranslatedEvalResult(val, sols);
+		return new TranslatedEvalResult<>(val, sols);
 	}
 
 	/**

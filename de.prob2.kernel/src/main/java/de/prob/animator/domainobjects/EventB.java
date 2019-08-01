@@ -9,6 +9,7 @@ import de.be4.classicalb.core.parser.analysis.prolog.ASTProlog;
 import de.be4.classicalb.core.parser.node.Node;
 import de.hhu.stups.prob.translator.BValue;
 import de.hhu.stups.prob.translator.TranslatingVisitor;
+import de.hhu.stups.prob.translator.Translator;
 import de.prob.animator.command.EvaluateFormulaCommand;
 import de.prob.animator.command.EvaluationCommand;
 import de.prob.formula.TranslationVisitor;
@@ -213,11 +214,11 @@ public class EventB extends AbstractEvalElement implements IBEvalElement {
 	}
 
 	@Override
-	public BValue translate() {
+	public <T extends BValue> T translate() {
 		if (!EvalElementType.EXPRESSION.equals(getKind())) {
 			throw new IllegalArgumentException("EventB translation is only supported for expressions, not " + this.getKind());
 		}
-		TranslatingVisitor<?> v = new TranslatingVisitor<>();
+		TranslatingVisitor<T> v = new TranslatingVisitor<>();
 		getAst().apply(v);
 		return v.getResult();
 	}

@@ -75,7 +75,7 @@ public class TLA extends AbstractEvalElement implements IBEvalElement {
 	}
 
 	@Override
-	public BValue translate() {
+	public <T extends BValue> T translate() {
 		return classicalB.translate();
 	}
 

@@ -134,11 +134,11 @@ public class ClassicalB extends AbstractEvalElement implements IBEvalElement {
 	}
 
 	@Override
-	public BValue translate() {
+	public <T extends BValue> T translate() {
 		if (!EvalElementType.EXPRESSION.equals(getKind())) {
 			throw new IllegalArgumentException();
 		}
-		TranslatingVisitor<?> v = new TranslatingVisitor<>();
+		TranslatingVisitor<T> v = new TranslatingVisitor<>();
 		getAst().apply(v);
 		return v.getResult();
 	}
