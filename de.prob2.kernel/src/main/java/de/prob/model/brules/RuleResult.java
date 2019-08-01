@@ -9,6 +9,7 @@ import de.hhu.stups.prob.translator.BNumber;
 import de.hhu.stups.prob.translator.BSet;
 import de.hhu.stups.prob.translator.BString;
 import de.hhu.stups.prob.translator.BTuple;
+import de.hhu.stups.prob.translator.BValue;
 import de.prob.animator.domainobjects.AbstractEvalResult;
 import de.prob.animator.domainobjects.EvalResult;
 import de.prob.animator.domainobjects.TranslatedEvalResult;
@@ -41,7 +42,7 @@ public class RuleResult {
 
 	private void transformCounterExamples(AbstractEvalResult abstractEvalResult) {
 		EvalResult evalCurrent = (EvalResult) abstractEvalResult;
-		TranslatedEvalResult translatedResult = null;
+		TranslatedEvalResult<BValue> translatedResult = null;
 		try {
 			translatedResult = evalCurrent.translate();
 		} catch (Exception e) {
