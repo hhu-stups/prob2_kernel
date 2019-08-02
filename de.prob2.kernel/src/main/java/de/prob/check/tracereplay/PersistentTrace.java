@@ -8,6 +8,7 @@ import de.prob.statespace.Transition;
 
 public class PersistentTrace {
 
+    private String description = "";
     private final List<PersistentTransition> transitionList = new ArrayList<>();
 
     public PersistentTrace(Trace trace, int count) {
@@ -27,5 +28,9 @@ public class PersistentTrace {
 
     public List<PersistentTransition> getTransitionList() {
         return this.transitionList;
+    }
+
+    public String getDescription() {
+        return description == null? "" : description;
     }
 }
