@@ -3,6 +3,7 @@ package de.prob.analysis.testcasegeneration.testtrace;
 import de.be4.classicalb.core.parser.util.PrettyPrinter;
 import de.prob.analysis.mcdc.ConcreteMCDCTestCase;
 import de.prob.analysis.testcasegeneration.Target;
+import de.prob.statespace.Trace;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,12 @@ public class MCDCTestTrace extends TestTrace {
         this.mcdcTargets = mcdcTargets;
     }
 
+    public MCDCTestTrace(List<String> priorTransitions, String newTransition, List<ConcreteMCDCTestCase> mcdcTargets,
+                         boolean isComplete, boolean lastTransitionIsFeasible, Trace trace) {
+        super(priorTransitions, newTransition, isComplete, lastTransitionIsFeasible, trace);
+        this.mcdcTargets = mcdcTargets;
+    }
+
     private List<ConcreteMCDCTestCase> getMcdcTargets() {
         return mcdcTargets;
     }
@@ -32,6 +39,12 @@ public class MCDCTestTrace extends TestTrace {
         List<ConcreteMCDCTestCase> newTestCaseList = new ArrayList<>(getMcdcTargets());
         newTestCaseList.add(new ConcreteMCDCTestCase(t.getGuard(), t.getFeasible()));
         return new MCDCTestTrace(priorTransitions, t.getOperation(), newTestCaseList, isComplete, t.getFeasible());
+    }
+
+    public MCDCTestTrace createNewTrace(List<String> priorTransitions, Target t, boolean isComplete, Trace trace) {
+        List<ConcreteMCDCTestCase> newTestCaseList = new ArrayList<>(getMcdcTargets());
+        newTestCaseList.add(new ConcreteMCDCTestCase(t.getGuard(), t.getFeasible()));
+        return new MCDCTestTrace(priorTransitions, t.getOperation(), newTestCaseList, isComplete, t.getFeasible(), trace);
     }
 
     public String toString() {

@@ -21,7 +21,6 @@ import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -58,7 +57,6 @@ public class ConstraintBasedTestCaseGenerator {
      */
     public TestCaseGeneratorResult generateTestCases() {
         boolean interrupted = false;
-        List<Trace> traces = new ArrayList<>();
         List<TestTrace> testTraces = new ArrayList<>();
         int maxDepth = settings.getMaxDepth();
 
@@ -71,7 +69,7 @@ public class ConstraintBasedTestCaseGenerator {
             targets = getOperationCoverageTargets(selectedOperations);
             testTraces.add(new CoverageTestTrace(new ArrayList<>(), null, false));
         } else {
-            return new TestCaseGeneratorResult(new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), interrupted);
+            return new TestCaseGeneratorResult(new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), interrupted);
         }
 
         infeasibleOperations = new FeasibilityAnalysis(model, stateSpace).analyseFeasibility();
@@ -87,12 +85,10 @@ public class ConstraintBasedTestCaseGenerator {
                     FindTestPathCommand cmd = findTestPath(trace, t);
                     if (cmd.isFeasible()) {
                         targets.remove(t);
-                        testTraces.add(trace.createNewTrace(trace.getTransitionNames(), t,
-                                (finalOperations.contains(t.getOperation()) || t.isInfeasible())));
                         cmd = findTestPathWithTarget(trace, t);
-                        if(cmd.getTrace() != null) {
-                            traces.add(cmd.getTrace());
-                        }
+                        TestTrace newTrace = trace.createNewTrace(trace.getTransitionNames(), t,
+                                (finalOperations.contains(t.getOperation()) || t.isInfeasible()), cmd.getTrace());
+                        testTraces.add(newTrace);
                     }
                 }
                 if(Thread.currentThread().isInterrupted()) {
@@ -108,12 +104,9 @@ public class ConstraintBasedTestCaseGenerator {
                     FindTestPathCommand cmd = findTestPath(trace, t);
                     if (cmd.isFeasible()) {
                     	//TODO: Maybe remove t from targets?
-                        testTraces.add(trace.createNewTrace(trace.getTransitionNames(), t,
-                                (finalOperations.contains(t.getOperation()) || t.isInfeasible())));
                         cmd = findTestPathWithTarget(trace, t);
-                        if(cmd.getTrace() != null) {
-                            traces.add(cmd.getTrace());
-                        }
+                        testTraces.add(trace.createNewTrace(trace.getTransitionNames(), t,
+                                (finalOperations.contains(t.getOperation()) || t.isInfeasible()), cmd.getTrace()));
                     }
                 }
                 if(Thread.currentThread().isInterrupted()) {
@@ -128,7 +121,7 @@ public class ConstraintBasedTestCaseGenerator {
             }
         }
         uncoveredTargets.addAll(targets);
-        return new TestCaseGeneratorResult(traces, testTraces, uncoveredTargets, infeasibleOperations, interrupted);
+        return new TestCaseGeneratorResult(testTraces, uncoveredTargets, infeasibleOperations, interrupted);
     }
 
     /**

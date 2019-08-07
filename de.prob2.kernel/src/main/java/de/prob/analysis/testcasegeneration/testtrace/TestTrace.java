@@ -1,6 +1,7 @@
 package de.prob.analysis.testcasegeneration.testtrace;
 
 import de.prob.analysis.testcasegeneration.Target;
+import de.prob.statespace.Trace;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,17 +15,29 @@ import java.util.List;
  */
 public abstract class TestTrace {
 
-    final List<String> transitionNames = new ArrayList<>();
+    protected final List<String> transitionNames = new ArrayList<>();
     private final boolean isComplete;
     private final boolean lastTransitionIsFeasible;
+    private final Trace trace;
 
-    TestTrace(List<String> priorTransitions, String newTransition, boolean isComplete, boolean lastTransitionIsFeasible) {
+    public TestTrace(List<String> priorTransitions, String newTransition, boolean isComplete, boolean lastTransitionIsFeasible) {
         transitionNames.addAll(priorTransitions);
         if (newTransition != null) {
             transitionNames.add(newTransition);
         }
         this.isComplete = isComplete;
         this.lastTransitionIsFeasible = lastTransitionIsFeasible;
+        this.trace = null;
+    }
+
+    public TestTrace(List<String> priorTransitions, String newTransition, boolean isComplete, boolean lastTransitionIsFeasible, Trace trace) {
+        transitionNames.addAll(priorTransitions);
+        if (newTransition != null) {
+            transitionNames.add(newTransition);
+        }
+        this.isComplete = isComplete;
+        this.lastTransitionIsFeasible = lastTransitionIsFeasible;
+        this.trace = trace;
     }
 
     public List<String> getTransitionNames() {
@@ -43,5 +56,9 @@ public abstract class TestTrace {
         return lastTransitionIsFeasible;
     }
 
-    public abstract TestTrace createNewTrace(List<String> transitions, Target t, boolean isComplete);
+    public Trace getTrace() {
+        return trace;
+    }
+
+    public abstract TestTrace createNewTrace(List<String> transitions, Target t, boolean isComplete, Trace trace);
 }
