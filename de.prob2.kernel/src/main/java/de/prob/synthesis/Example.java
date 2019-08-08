@@ -1,13 +1,14 @@
 package de.prob.synthesis;
 
-import de.prob.prolog.output.IPrologTermOutput;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import de.prob.prolog.output.IPrologTermOutput;
+
 public class Example extends HashSet<VariableExample> implements BSynthesisResult {
+  private static final long serialVersionUID = -8557489509446516006L;
 
   @Override
   public boolean add(final VariableExample variableExample) {

@@ -40,7 +40,7 @@ public class TLA extends AbstractEvalElement implements IBEvalElement {
 			start = Translator.translateTlaExpression(code);
 			return start;
 		} catch (ExpressionTranslationException e) {
-			throw new EvaluationException(e.getMessage());
+			throw new EvaluationException(e);
 		}
 	}
 
@@ -75,7 +75,7 @@ public class TLA extends AbstractEvalElement implements IBEvalElement {
 	}
 
 	@Override
-	public BValue translate() {
+	public <T extends BValue> T translate() {
 		return classicalB.translate();
 	}
 

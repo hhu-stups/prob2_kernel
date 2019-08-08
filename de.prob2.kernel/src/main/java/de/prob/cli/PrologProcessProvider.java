@@ -11,6 +11,7 @@ import com.google.inject.Provider;
 
 import de.prob.annotations.Home;
 import de.prob.cli.ModuleCli.DebuggingKey;
+import de.prob.exception.CliError;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,10 +66,7 @@ class PrologProcessProvider implements Provider<ProcessHandle> {
 			prologProcess = pb.start();
 			logger.debug("Cli started");
 		} catch (IOException e) {
-			String msg = "Problem while starting up ProB CLI. Tried to execute: "
-					+ executable;
-			logger.error(msg, e);
-			return null;
+			throw new CliError("Problem while starting up ProB CLI. Tried to execute: " + executable, e);
 		}
 
 		toDestroyOnShutdown.add(prologProcess);

@@ -4,13 +4,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -46,10 +47,6 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 
 	@Override
 	public ProBInstance get() {
-		return create();
-	}
-
-	public ProBInstance create() {
 		return startProlog();
 	}
 
@@ -67,16 +64,16 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 	}
 	
 	/**
-	 * Return {@code process}'s exit code as an {@link Integer}, or {@code null} if it is still running.
+	 * Return {@code process}'s exit code as an {@link Integer}, or {@link Optional#empty()} if it is still running.
 	 * 
 	 * @param process the process whose exit code to get
-	 * @return {@code process}'s exit code, or {@code null} if it is still running
+	 * @return {@code process}'s exit code, or {@link Optional#empty()} if it is still running
 	 */
-	private static Integer getOptionalProcessExitCode(final Process process) {
+	private static Optional<Integer> getProcessExitCode(final Process process) {
 		try {
-			return process.exitValue();
+			return Optional.of(process.exitValue());
 		} catch (final IllegalThreadStateException ignored) {
-			return null;
+			return Optional.empty();
 		}
 	}
 
@@ -85,20 +82,20 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 		Process process = processTuple.getProcess();
 		String key = processTuple.getKey();
 		final BufferedReader stream = new BufferedReader(new InputStreamReader(
-				process.getInputStream(), Charset.forName("utf8")));
+				process.getInputStream(), StandardCharsets.UTF_8));
 
 		final Map<Class<? extends AbstractCliPattern<?>>, AbstractCliPattern<?>> cliInformation;
 		try {
 			cliInformation = extractCliInformation(stream);
 		} catch (CliError e) {
 			// Check if the CLI exited while extracting the information.
-			final Integer exitCode = getOptionalProcessExitCode(process);
-			if (exitCode == null) {
+			final Optional<Integer> exitCode = getProcessExitCode(process);
+			if (exitCode.isPresent()) {
+				// CLI exited, report the exit code.
+				throw new CliError("CLI exited with status " + exitCode.get() + " while matching output patterns", e);
+			} else {
 				// CLI didn't exit, just rethrow the error.
 				throw e;
-			} else {
-				// CLI exited, report the exit code.
-				throw new CliError("CLI exited with status " + exitCode + " while matching output patterns", e);
 			}
 		}
 
@@ -110,19 +107,16 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 		ProBConnection connection = new ProBConnection(key, port);
 
 		try {
-			processCounter.incrementAndGet();
 			connection.connect();
-			ProBInstance cli = new ProBInstance(process, stream,
-					userInterruptReference, connection, home, osInfo,
-					processCounter);
-			processes.add(new WeakReference<>(cli));
-			return cli;
 		} catch (IOException e) {
-			processCounter.decrementAndGet();
-			logger.error("Error connecting to Prolog binary.", e);
-			return null;
+			throw new CliError("Error connecting to Prolog binary.", e);
 		}
-
+		processCounter.incrementAndGet();
+		ProBInstance cli = new ProBInstance(process, stream,
+				userInterruptReference, connection, home, osInfo,
+				processCounter);
+		processes.add(new WeakReference<>(cli));
+		return cli;
 	}
 
 	Map<Class<? extends AbstractCliPattern<?>>, AbstractCliPattern<?>> extractCliInformation(

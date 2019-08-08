@@ -1,14 +1,21 @@
 package de.prob.synthesis;
 
 public class BSynthesisException extends Exception {
+	private static final long serialVersionUID = 1L;
 
-  private final String msg;
+	public BSynthesisException(final String message) {
+		super(message);
+	}
 
-  public BSynthesisException(final String msg) {
-    this.msg = msg;
-  }
+	public BSynthesisException(final String message, final Throwable cause) {
+		super(message, cause);
+	}
 
-  public String getMsg() {
-    return msg;
-  }
+	public BSynthesisException(final Throwable cause) {
+		super(cause);
+	}
+
+	public String getMsg() {
+		return this.getMessage();
+	}
 }

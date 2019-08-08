@@ -4,7 +4,7 @@ import de.be4.classicalb.core.parser.node.Node;
 import de.hhu.stups.prob.translator.BValue;
 
 public interface IBEvalElement extends IEvalElement {
-	public Node getAst();
+	Node getAst();
 
-	public BValue translate();
+	<T extends BValue> T translate();
 }
