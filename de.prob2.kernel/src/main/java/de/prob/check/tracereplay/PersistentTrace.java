@@ -33,4 +33,8 @@ public class PersistentTrace {
     public String getDescription() {
         return description == null? "" : description;
     }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }
