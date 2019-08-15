@@ -21,9 +21,11 @@ import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -76,18 +78,20 @@ public class ConstraintBasedTestCaseGenerator {
 
         int depth = 0;
         List<Target> tempTargets;
+        Set<Target> visitedTargets = new HashSet<>();
         while (true) {
             tempTargets = new ArrayList<>(targets);
             List<TestTrace> tracesOfCurrentDepth = filterDepthAndFinal(testTraces, depth);
             for (TestTrace trace : tracesOfCurrentDepth) {
                 for (Target t : new ArrayList<>(targets)) {
                     FindTestPathCommand cmd = findTestPath(trace, t);
-                    if (cmd.isFeasible()) {
+                    if (cmd.isFeasible() && !visitedTargets.contains(t)) {
                         targets.remove(t);
                         cmd = findTestPathWithTarget(trace, t);
                         TestTrace newTrace = trace.createNewTrace(trace.getTransitionNames(), t,
                                 (finalOperations.contains(t.getOperation()) || t.isInfeasible()), cmd.getTrace());
                         testTraces.add(newTrace);
+                        visitedTargets.add(t);
                     }
                 }
                 if(Thread.currentThread().isInterrupted()) {
@@ -101,11 +105,11 @@ public class ConstraintBasedTestCaseGenerator {
             for (TestTrace trace : tracesOfCurrentDepth) {
                 for (Target t : filterTempTargets(getAllOperationNames(), tempTargets)) {
                     FindTestPathCommand cmd = findTestPath(trace, t);
-                    if (cmd.isFeasible()) {
-                    	//TODO: Maybe remove t from targets?
+                    if (cmd.isFeasible() && !visitedTargets.contains(t)) {
                         cmd = findTestPathWithTarget(trace, t);
                         testTraces.add(trace.createNewTrace(trace.getTransitionNames(), t,
                                 (finalOperations.contains(t.getOperation()) || t.isInfeasible()), cmd.getTrace()));
+                        visitedTargets.add(t);
                     }
                 }
                 if(Thread.currentThread().isInterrupted()) {

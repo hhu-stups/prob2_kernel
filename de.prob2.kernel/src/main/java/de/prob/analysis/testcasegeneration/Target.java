@@ -1,5 +1,7 @@
 package de.prob.analysis.testcasegeneration;
 
+import java.util.Objects;
+
 import de.be4.classicalb.core.parser.node.PPredicate;
 import de.be4.classicalb.core.parser.util.PrettyPrinter;
 import de.prob.analysis.mcdc.ConcreteMCDCTestCase;
@@ -54,6 +56,23 @@ public class Target {
     boolean isInfeasible() {
         return !feasible;
     }
+    
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (!(obj instanceof Target)) {
+			return false;
+		}
+		Target other = (Target) obj;
+		return other.operation.equals(this.operation) && other.feasible == this.feasible && other.getGuardString().equals(getGuardString());
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(operation, feasible, getGuardString());
+	}
 
     public String toString() {
         return operation + " (" + getGuardString() + "->" + feasible + ")";
