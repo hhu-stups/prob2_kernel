@@ -62,8 +62,7 @@ public class ConstraintBasedTestCaseGenerator {
 
         if(settings instanceof TestCaseGeneratorMCDCSettings) {
             targets = getMCDCTargets(((TestCaseGeneratorMCDCSettings) settings).getLevel());
-            testTraces.add(new MCDCTestTrace(new ArrayList<>(), null, new ArrayList<>(), false,
-                    true));
+            testTraces.add(new MCDCTestTrace(new ArrayList<>(), null, new ArrayList<>(), false));
         } else if(settings instanceof TestCaseGeneratorOperationCoverageSettings) {
             List<String> selectedOperations = new ArrayList<>(((TestCaseGeneratorOperationCoverageSettings) settings).getOperations());
             targets = getOperationCoverageTargets(selectedOperations);

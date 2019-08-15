@@ -40,6 +40,12 @@ public class Target {
     public PPredicate getGuard() {
         return guard;
     }
+    
+    public String getGuardString() {
+    	PrettyPrinter prettyPrinter = new PrettyPrinter();
+    	guard.apply(prettyPrinter);
+    	return prettyPrinter.getPrettyPrint();
+    }
 
     public boolean getFeasible() {
         return feasible;
@@ -50,8 +56,6 @@ public class Target {
     }
 
     public String toString() {
-        PrettyPrinter pp = new PrettyPrinter();
-        guard.apply(pp);
-        return operation + " (" + pp.getPrettyPrint() + "->" + feasible + ")";
+        return operation + " (" + getGuardString() + "->" + feasible + ")";
     }
 }

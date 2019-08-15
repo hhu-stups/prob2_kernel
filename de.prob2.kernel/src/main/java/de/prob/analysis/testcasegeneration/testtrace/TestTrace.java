@@ -16,12 +16,14 @@ import java.util.List;
 public abstract class TestTrace {
 
     protected final List<String> transitionNames = new ArrayList<>();
+    protected final Target target;
     private final boolean isComplete;
     private final boolean lastTransitionIsFeasible;
     private final Trace trace;
 
-    public TestTrace(List<String> priorTransitions, String newTransition, boolean isComplete, boolean lastTransitionIsFeasible) {
+    public TestTrace(List<String> priorTransitions, Target target, String newTransition, boolean isComplete, boolean lastTransitionIsFeasible) {
         transitionNames.addAll(priorTransitions);
+        this.target = target;
         if (newTransition != null) {
             transitionNames.add(newTransition);
         }
@@ -30,8 +32,9 @@ public abstract class TestTrace {
         this.trace = null;
     }
 
-    public TestTrace(List<String> priorTransitions, String newTransition, boolean isComplete, boolean lastTransitionIsFeasible, Trace trace) {
+    public TestTrace(List<String> priorTransitions, Target target, String newTransition, boolean isComplete, boolean lastTransitionIsFeasible, Trace trace) {
         transitionNames.addAll(priorTransitions);
+        this.target = target;
         if (newTransition != null) {
             transitionNames.add(newTransition);
         }
@@ -59,6 +62,10 @@ public abstract class TestTrace {
     public Trace getTrace() {
         return trace;
     }
+    
+    public Target getTarget() {
+		return target;
+	}
 
     public abstract TestTrace createNewTrace(List<String> transitions, Target t, boolean isComplete, Trace trace);
 }

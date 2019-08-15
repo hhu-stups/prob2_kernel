@@ -19,15 +19,15 @@ public class MCDCTestTrace extends TestTrace {
 
     private List<ConcreteMCDCTestCase> mcdcTargets;
 
-    public MCDCTestTrace(List<String> priorTransitions, String newTransition, List<ConcreteMCDCTestCase> mcdcTargets,
-                         boolean isComplete, boolean lastTransitionIsFeasible) {
-        super(priorTransitions, newTransition, isComplete, lastTransitionIsFeasible);
+    public MCDCTestTrace(List<String> priorTransitions, Target target, List<ConcreteMCDCTestCase> mcdcTargets,
+                         boolean isComplete) {
+        super(priorTransitions, target, target == null ? null : target.getOperation(), isComplete, target == null ? true : target.getFeasible());
         this.mcdcTargets = mcdcTargets;
     }
 
-    public MCDCTestTrace(List<String> priorTransitions, String newTransition, List<ConcreteMCDCTestCase> mcdcTargets,
-                         boolean isComplete, boolean lastTransitionIsFeasible, Trace trace) {
-        super(priorTransitions, newTransition, isComplete, lastTransitionIsFeasible, trace);
+    public MCDCTestTrace(List<String> priorTransitions, Target target, List<ConcreteMCDCTestCase> mcdcTargets,
+                         boolean isComplete, Trace trace) {
+        super(priorTransitions, target, target == null ? null : target.getOperation(), isComplete, target == null ? true : target.getFeasible(), trace);
         this.mcdcTargets = mcdcTargets;
     }
 
@@ -38,13 +38,13 @@ public class MCDCTestTrace extends TestTrace {
     public MCDCTestTrace createNewTrace(List<String> priorTransitions, Target t, boolean isComplete) {
         List<ConcreteMCDCTestCase> newTestCaseList = new ArrayList<>(getMcdcTargets());
         newTestCaseList.add(new ConcreteMCDCTestCase(t.getGuard(), t.getFeasible()));
-        return new MCDCTestTrace(priorTransitions, t.getOperation(), newTestCaseList, isComplete, t.getFeasible());
+        return new MCDCTestTrace(priorTransitions, t, newTestCaseList, isComplete);
     }
 
     public MCDCTestTrace createNewTrace(List<String> priorTransitions, Target t, boolean isComplete, Trace trace) {
         List<ConcreteMCDCTestCase> newTestCaseList = new ArrayList<>(getMcdcTargets());
         newTestCaseList.add(new ConcreteMCDCTestCase(t.getGuard(), t.getFeasible()));
-        return new MCDCTestTrace(priorTransitions, t.getOperation(), newTestCaseList, isComplete, t.getFeasible(), trace);
+        return new MCDCTestTrace(priorTransitions, t, newTestCaseList, isComplete, trace);
     }
 
     public String toString() {

@@ -11,20 +11,20 @@ import java.util.StringJoiner;
  */
 public class CoverageTestTrace extends TestTrace {
 
-    public CoverageTestTrace(List<String> priorTransitions, String newTransition, boolean isComplete) {
-        super(priorTransitions, newTransition, isComplete, true);
+    public CoverageTestTrace(List<String> priorTransitions, Target target, boolean isComplete) {
+        super(priorTransitions, target, target == null ? null : target.getOperation(), isComplete, true);
     }
 
-    public CoverageTestTrace(List<String> priorTransitions, String newTransition, boolean isComplete, Trace trace) {
-        super(priorTransitions, newTransition, isComplete, true, trace);
+    public CoverageTestTrace(List<String> priorTransitions, Target target, boolean isComplete, Trace trace) {
+        super(priorTransitions, target, target == null ? null : target.getOperation(), isComplete, true, trace);
     }
 
     public CoverageTestTrace createNewTrace(List<String> transitions, Target t, boolean isComplete) {
-        return new CoverageTestTrace(transitions, t.getOperation(), isComplete);
+        return new CoverageTestTrace(transitions, t, isComplete);
     }
 
     public CoverageTestTrace createNewTrace(List<String> transitions, Target t, boolean isComplete, Trace trace) {
-        return new CoverageTestTrace(transitions, t.getOperation(), isComplete, trace);
+        return new CoverageTestTrace(transitions, t, isComplete, trace);
     }
 
     public String toString() {
