@@ -30,7 +30,7 @@ public class FeasibilityAnalysis {
             if(iEvalElements.isEmpty()) {
             	predicate = new ClassicalB("1=1", FormulaExpand.EXPAND);
             } else {
-            	predicate = (ClassicalB) Join.conjunct(iEvalElements);
+            	predicate = (ClassicalB) Join.conjunct(model, iEvalElements);
             }
             CbcSolveCommand cmd = new CbcSolveCommand(predicate);
             stateSpace.execute(cmd);

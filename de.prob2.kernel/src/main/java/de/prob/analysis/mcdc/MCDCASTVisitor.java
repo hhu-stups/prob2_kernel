@@ -6,6 +6,7 @@ import de.prob.analysis.Conversion;
 import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.animator.domainobjects.Join;
+import de.prob.model.classicalb.ClassicalBModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,12 +23,14 @@ public class MCDCASTVisitor extends DepthFirstAdapter {
     private List<ConcreteMCDCTestCase> tempTestCases = new ArrayList<>();
     private int maxLevel;
     private int currentLevel;
+    private final ClassicalBModel model;
 
-    MCDCASTVisitor(int maxLevel) {
+    public MCDCASTVisitor(int maxLevel, final ClassicalBModel model) {
         this.maxLevel = maxLevel;
+        this.model = model;
     }
 
-    List<ConcreteMCDCTestCase> getMCDCTestCases(PPredicate node) {
+    public List<ConcreteMCDCTestCase> getMCDCTestCases(PPredicate node) {
         currentLevel = -1;
         node.apply(this);
         return tempTestCases;
@@ -176,14 +179,14 @@ public class MCDCASTVisitor extends DepthFirstAdapter {
                     // - truth value is 'true'? -> the not-case is true -> negation predicate
                     // While in the simple-condition-case the predicate is handled like all others, the
                     // negation-predicate-case requires special treatment.
-                    trueChildTests.add(Conversion.classicalBFromPredicate(predicate));
+                    trueChildTests.add(Conversion.classicalBFromPredicate(model, predicate));
                 } else {
                     List<PPredicate> subPredicates = getSubPredicates(predicate);
                     for (PPredicate subPredicate : subPredicates) {
                         if (subPredicate instanceof ANegationPredicate) {
-                            falseChildTests.add(Conversion.classicalBFromPredicate(subPredicate));
+                            falseChildTests.add(Conversion.classicalBFromPredicate(model, subPredicate));
                         } else {
-                            trueChildTests.add(Conversion.classicalBFromPredicate(subPredicate));
+                            trueChildTests.add(Conversion.classicalBFromPredicate(model, subPredicate));
                         }
                     }
                 }
@@ -218,10 +221,10 @@ public class MCDCASTVisitor extends DepthFirstAdapter {
 
     private AForallPredicate createForAll(List<PExpression> identifiers, PPredicate leftImplicationPart, List<IEvalElement> elements) {
         if (!elements.isEmpty()) {
-            IEvalElement forAll = Join.conjunct(elements);
+            IEvalElement forAll = Join.conjunct(model, elements);
             AForallPredicate aForallPredicate = new AForallPredicate(identifiers,
                     new AImplicationPredicate(leftImplicationPart, Conversion.predicateFromClassicalB((ClassicalB) forAll)));
-            return (AForallPredicate) Conversion.predicateFromPredicate(aForallPredicate);
+            return (AForallPredicate) Conversion.predicateFromPredicate(model, aForallPredicate);
         } else {
             return null;
         }
@@ -229,10 +232,10 @@ public class MCDCASTVisitor extends DepthFirstAdapter {
 
     private AExistsPredicate createExists(List<PExpression> identifiers, PPredicate leftImplicationPart, List<IEvalElement> elements) {
         if (!elements.isEmpty()) {
-            IEvalElement exists = Join.conjunct(elements);
+            IEvalElement exists = Join.conjunct(model, elements);
             AExistsPredicate aExistsPredicate = new AExistsPredicate(identifiers,
                     new AConjunctPredicate(leftImplicationPart, Conversion.predicateFromClassicalB((ClassicalB) exists)));
-            return (AExistsPredicate) Conversion.predicateFromPredicate(aExistsPredicate);
+            return (AExistsPredicate) Conversion.predicateFromPredicate(model, aExistsPredicate);
         } else {
             return null;
         }

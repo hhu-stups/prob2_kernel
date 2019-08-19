@@ -18,7 +18,6 @@ import de.prob.model.classicalb.ClassicalBModel;
 import de.prob.model.classicalb.Operation;
 import de.prob.model.representation.Extraction;
 import de.prob.statespace.StateSpace;
-import de.prob.statespace.Trace;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -215,7 +214,7 @@ public class ConstraintBasedTestCaseGenerator {
         if(guards.isEmpty()) {
         	predicate = new ClassicalB("1=1", FormulaExpand.EXPAND);
         } else {
-        	predicate = (ClassicalB) Join.conjunct(guards);
+        	predicate = (ClassicalB) Join.conjunct(model, guards);
         }
         Start ast = predicate.getAst();
         return ((APredicateParseUnit) ast.getPParseUnit()).getPredicate();

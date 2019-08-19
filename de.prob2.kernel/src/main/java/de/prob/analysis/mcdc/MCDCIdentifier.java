@@ -43,7 +43,7 @@ public class MCDCIdentifier {
             if(guards.isEmpty()) {
             	predicate = new ClassicalB("1=1", FormulaExpand.EXPAND);
             } else {
-            	predicate = (ClassicalB) Join.conjunct(guards);
+            	predicate = (ClassicalB) Join.conjunct(model, guards);
             }
             Start ast = predicate.getAst();
             PPredicate startNode = ((APredicateParseUnit) ast.getPParseUnit()).getPredicate();
@@ -53,14 +53,14 @@ public class MCDCIdentifier {
     }
 
     private List<ConcreteMCDCTestCase> getMCDCTestCases(PPredicate node) {
-        List<ConcreteMCDCTestCase> testCases = new MCDCASTVisitor(maxLevel).getMCDCTestCases(node);
+        List<ConcreteMCDCTestCase> testCases = new MCDCASTVisitor(maxLevel, model).getMCDCTestCases(node);
         return filterFeasible(testCases);
     }
 
     private List<ConcreteMCDCTestCase> filterFeasible(List<ConcreteMCDCTestCase> testCases) {
         List<ConcreteMCDCTestCase> feasibleTestCases = new ArrayList<>();
         for (ConcreteMCDCTestCase t : testCases) {
-            CbcSolveCommand cmd = new CbcSolveCommand(Conversion.classicalBFromPredicate(t.getPredicate()));
+            CbcSolveCommand cmd = new CbcSolveCommand(Conversion.classicalBFromPredicate(model, t.getPredicate()));
             stateSpace.execute(cmd);
             if (cmd.getValue() == EvalResult.FALSE) {
                 log.info("Infeasible: " + t.toString());

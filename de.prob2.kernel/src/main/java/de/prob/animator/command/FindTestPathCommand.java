@@ -43,7 +43,7 @@ public class FindTestPathCommand extends AbstractCommand implements IStateSpaceM
         this.stateSpace = stateSpace;
         PrettyPrinter prettyPrinter = new PrettyPrinter();
         endPredicate.apply(prettyPrinter);
-        this.endPredicate = new ClassicalB(prettyPrinter.getPrettyPrint(), FormulaExpand.EXPAND);
+        this.endPredicate = stateSpace.getModel().parseFormula(prettyPrinter.getPrettyPrint(), FormulaExpand.EXPAND);
     }
 
     public FindTestPathCommand(final List<String> givenTransitions, final StateSpace stateSpace) {
