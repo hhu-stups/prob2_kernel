@@ -45,6 +45,10 @@ public class ClassicalBMachine extends Machine {
 		return getChildrenAndCast(Constant.class, ClassicalBConstant.class);
 	}
 
+	public ModelElementList<Property> getProperties() {
+		return getChildrenOfType(Property.class);
+	}
+
 	public ModelElementList<ClassicalBVariable> getVariables() {
 		return getChildrenAndCast(Variable.class, ClassicalBVariable.class);
 	}
