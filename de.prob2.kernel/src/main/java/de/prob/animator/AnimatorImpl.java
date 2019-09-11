@@ -41,7 +41,6 @@ class AnimatorImpl implements IAnimator {
 		processor.configure(cli);
 	}
 
-	@SuppressWarnings("unused")
 	@Override
 	public synchronized void execute(final AbstractCommand command) {
 		if (DEBUG && !command.getSubcommands().isEmpty()) {
