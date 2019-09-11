@@ -57,10 +57,16 @@ class AnimatorImpl implements IAnimator {
 		logger.trace("Starting execution of {}", command);
 		do {
 			IPrologResult result = processor.sendCommand(command);
-			final List<ErrorItem> errorItems = getErrorItems();
+			final GetErrorItemsCommand errorItemsCommand = getErrorItems();
 
-			if (result instanceof YesResult && errorItems.isEmpty()) {
+			if (result instanceof YesResult && errorItemsCommand.onlyWarningsOccurred()) {
 				logger.trace("Execution successful, processing result");
+				if (!errorItemsCommand.getErrors().isEmpty()) {
+					logger.warn("ProB reported warnings:");
+					for (final ErrorItem error : errorItemsCommand.getErrors()) {
+						logger.warn("{}", error);
+					}
+				}
 				try {
 					command.processResult(((YesResult) result).getBindings());
 				} catch (RuntimeException e) {
@@ -69,7 +75,7 @@ class AnimatorImpl implements IAnimator {
 				}
 			} else {
 				logger.trace("Execution unsuccessful, processing error");
-				command.processErrorResult(result, errorItems);
+				command.processErrorResult(result, errorItemsCommand.getErrors());
 			}
 			logger.trace("Executed {} (completed: {}, interrupted: {})", command, command.isCompleted(), command.isInterrupted());
 			
@@ -85,22 +91,13 @@ class AnimatorImpl implements IAnimator {
 		}
 	}
 
-	private synchronized List<ErrorItem> getErrorItems() {
-		final IPrologResult errorresult = processor.sendCommand(getErrorItems);
-		if (errorresult instanceof NoResult || errorresult instanceof InterruptedResult) {
-			throw new ProBError("Error getter command failed: " + errorresult);
-		} else if (errorresult instanceof YesResult) {
-			getErrorItems.processResult(((YesResult) errorresult).getBindings());
-			final List<ErrorItem> errors = getErrorItems.getErrors();
-			if (!errors.isEmpty()) {
-				logger.error("ProB raised exception(s):");
-				for (final ErrorItem error : errors) {
-					logger.error("{}", error);
-				}
-			}
-			return errors;
+	private synchronized GetErrorItemsCommand getErrorItems() {
+		final IPrologResult errorResult = processor.sendCommand(getErrorItems);
+		if (errorResult instanceof YesResult) {
+			getErrorItems.processResult(((YesResult) errorResult).getBindings());
+			return getErrorItems;
 		} else {
-			throw new ProBError("Unknown result type: " + errorresult.getClass());
+			throw new ProBError("Error getter command must return yes, not " + errorResult.getClass());
 		}
 	}
 
