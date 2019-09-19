@@ -59,7 +59,7 @@ class AnimatorImpl implements IAnimator {
 			IPrologResult result = processor.sendCommand(command);
 			final GetErrorItemsCommand errorItemsCommand = getErrorItems();
 
-			if (result instanceof YesResult && errorItemsCommand.onlyWarningsOccurred()) {
+			if (result instanceof YesResult && (errorItemsCommand.getErrors().isEmpty() || errorItemsCommand.onlyWarningsOccurred())) {
 				logger.trace("Execution successful, processing result");
 				if (!errorItemsCommand.getErrors().isEmpty()) {
 					logger.warn("ProB reported warnings:");
