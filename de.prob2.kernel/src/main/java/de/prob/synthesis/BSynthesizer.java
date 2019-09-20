@@ -126,6 +126,8 @@ public class BSynthesizer {
 
   /**
    * The timeout used for the ProB constraint solver in milliseconds.
+   *
+   * @param solverTimeOut The timeout of the ProB constraint solver.
    */
   public void setSolverTimeOut(long solverTimeOut) {
     this.solverTimeOut = solverTimeOut;
@@ -141,6 +143,8 @@ public class BSynthesizer {
    * In the latter case, synthesis searches for further solutions possibly providing a
    * non-equivalent program resulting in a distinguishing example which can be validated by the
    * user. The uniqueness depends on the selected solver timeout and is not complete in practice.
+   *
+   * @param synthesisMode The current {@link SynthesisMode synthesis mode}.
    */
   public void setSynthesisMode(SynthesisMode synthesisMode) {
     this.synthesisMode = synthesisMode;

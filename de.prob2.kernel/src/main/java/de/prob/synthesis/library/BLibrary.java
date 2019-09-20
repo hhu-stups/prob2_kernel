@@ -121,6 +121,8 @@ public class BLibrary {
 
   /**
    * Remove a {@link LibraryComponent} completely from the library.
+   *
+   * @param libraryComponentName Name of the library component.
    */
   public void removeLibraryComponent(final LibraryComponentName libraryComponentName) {
     final LibraryComponent libraryComponent = new LibraryComponent(libraryComponentName, 0);
@@ -133,6 +135,8 @@ public class BLibrary {
    * Add a {@link LibraryComponent} to the library. If it already exists in the library, its amount
    * is increased. Note, a single component has a unique output within a program. For instance,
    * it is necessary to use two addition components to achieve a behavior like "a + b + 1".
+   *
+   * @param libraryComponentName Name of the library component.
    */
   public void addLibraryComponent(final LibraryComponentName libraryComponentName) {
     final LibraryComponent libraryComponent = new LibraryComponent(libraryComponentName, 1);
@@ -158,6 +162,8 @@ public class BLibrary {
 
   /**
    * Set the index of the (internally) predefined library configuration to be used.
+   *
+   * @param libraryExpansion Level of library expansion.
    */
   public void setLibraryExpansion(final int libraryExpansion) {
     defaultLibraryExpansion = libraryExpansion;
@@ -166,6 +172,8 @@ public class BLibrary {
   /**
    * Use the next predefined library configuration. Return true if a predefined configuration is
    * left, otherwise false.
+   *
+   * @return True if another level of library expansion is available.
    */
   public boolean expandDefaultLibrary() {
     final int libraryExpansion = defaultLibraryExpansion;
@@ -180,6 +188,8 @@ public class BLibrary {
   /**
    * Set true to use a set of predefined library configurations. If is true, possibly manually
    * selected components are ignored (but not deleted).
+   *
+   * @param useDefaultLibrary True if the default library configuration should be used.
    */
   public void setUseDefaultLibrary(final boolean useDefaultLibrary) {
     this.useDefaultLibrary = useDefaultLibrary;
@@ -188,6 +198,8 @@ public class BLibrary {
   /**
    * Set true to consider constants that are enumerated by the constraint solver. Otherwise, only
    * machine constants are used.
+   *
+   * @param enumerateConstants True if constants should be used that are enumerated by ProB.
    */
   public void setEnumerateConstants(final boolean enumerateConstants) {
     this.enumerateConstants = enumerateConstants;
@@ -197,6 +209,8 @@ public class BLibrary {
    * Print the selected library components to a {@link IPrologTermOutput prolog term} or, for
    * instance, default:1 for a default library configuration at level 1 of its predefined
    * expansions.
+   *
+   * @param pto A Prolog term to print to.
    */
   public void printToPrologTerm(final IPrologTermOutput pto) {
     if (useDefaultLibrary) {
@@ -231,6 +245,8 @@ public class BLibrary {
   /**
    * Return true if there are no selected library components and the default predefined libraries
    * should not be used.
+   *
+   * @return True if the library configuration is empty.
    */
   public boolean isEmpty() {
     return !useDefaultLibrary
