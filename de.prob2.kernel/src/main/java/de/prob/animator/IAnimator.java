@@ -68,4 +68,6 @@ public interface IAnimator {
 
 	long getTotalNumberOfErrors();
 
+	void addWarningListener(final IWarningListener listener);
+	void removeWarningListener(final IWarningListener listener);
 }

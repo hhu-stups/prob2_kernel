@@ -18,6 +18,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import de.prob.animator.IAnimator;
+import de.prob.animator.IWarningListener;
 import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.command.CheckIfStateIdValidCommand;
 import de.prob.animator.command.ComposedCommand;
@@ -840,4 +841,13 @@ public class StateSpace implements IAnimator {
 		return animator.getTotalNumberOfErrors();
 	}
 
+	@Override
+	public void addWarningListener(final IWarningListener listener) {
+		animator.addWarningListener(listener);
+	}
+
+	@Override
+	public void removeWarningListener(final IWarningListener listener) {
+		animator.removeWarningListener(listener);
+	}
 }

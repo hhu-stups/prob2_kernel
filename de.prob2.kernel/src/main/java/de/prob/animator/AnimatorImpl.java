@@ -1,5 +1,7 @@
 package de.prob.animator;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.google.common.base.MoreObjects;
@@ -30,6 +32,7 @@ class AnimatorImpl implements IAnimator {
 	public static final boolean DEBUG = false;
 	private final AnimationSelector animations;
 	private boolean busy = false;
+	private final Collection<IWarningListener> warningListeners = new ArrayList<>();
 
 	@Inject
 	public AnimatorImpl(final ProBInstance cli, final CommandProcessor processor,
@@ -64,8 +67,10 @@ class AnimatorImpl implements IAnimator {
 				if (!errorItemsCommand.getErrors().isEmpty()) {
 					logger.warn("ProB reported warnings:");
 					for (final ErrorItem error : errorItemsCommand.getErrors()) {
+						assert error.getType() == ErrorItem.Type.WARNING;
 						logger.warn("{}", error);
 					}
+					this.warningListeners.forEach(listener -> listener.warningsOccurred(errorItemsCommand.getErrors()));
 				}
 				try {
 					command.processResult(((YesResult) result).getBindings());
@@ -151,4 +156,13 @@ class AnimatorImpl implements IAnimator {
 		return command.getTotalNumberOfErrors().longValue();
 	}
 
+	@Override
+	public void addWarningListener(final IWarningListener listener) {
+		this.warningListeners.add(listener);
+	}
+
+	@Override
+	public void removeWarningListener(final IWarningListener listener) {
+		this.warningListeners.remove(listener);
+	}
 }
