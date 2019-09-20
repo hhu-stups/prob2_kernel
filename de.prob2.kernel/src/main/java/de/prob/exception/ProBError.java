@@ -84,7 +84,8 @@ public class ProBError extends RuntimeException {
 	private static List<ErrorItem> convertAlloyExceptionToErrorItems(Alloy2BParserErr e) {
 		return Collections.singletonList(
 			new ErrorItem(e.getMessage(), ErrorItem.Type.ERROR, Collections.singletonList(
-				new ErrorItem.Location(e.getFilename(), e.getY(), e.getX(), e.getY2(), e.getX2())
+				new ErrorItem.Location(e.getFilename(), e.getRowStart(), e.getColStart(),
+						e.getRowEnd(), e.getColEnd())
 			))
 		);
 	}
