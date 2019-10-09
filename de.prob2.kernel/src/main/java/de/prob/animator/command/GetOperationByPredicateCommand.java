@@ -52,7 +52,7 @@ public final class GetOperationByPredicateCommand extends AbstractCommand
 		this.name = name;
 		this.nrOfSolutions = nrOfSolutions;
 		evalElement = predicate;
-		if (!EvalElementType.PREDICATE.equals(evalElement.getKind())) {
+		if (!EvalElementType.PREDICATE.equals(evalElement.getKind()) && !EvalElementType.NONE.equals(evalElement.getKind())) {
 			throw new IllegalArgumentException("Formula must be a predicate: "
 					+ predicate);
 		}

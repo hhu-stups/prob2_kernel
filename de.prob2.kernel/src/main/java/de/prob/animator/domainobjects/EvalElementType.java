@@ -10,6 +10,7 @@ public enum EvalElementType {
 	PREDICATE("#PREDICATE"),
 	EXPRESSION("#EXPRESSION"),
 	ASSIGNMENT("#ASSIGNMENT"),
+	NONE("none"),
 	CSP("csp"),
 	;
 	

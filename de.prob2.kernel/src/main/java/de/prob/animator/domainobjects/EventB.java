@@ -9,7 +9,6 @@ import de.be4.classicalb.core.parser.analysis.prolog.ASTProlog;
 import de.be4.classicalb.core.parser.node.Node;
 import de.hhu.stups.prob.translator.BValue;
 import de.hhu.stups.prob.translator.TranslatingVisitor;
-import de.hhu.stups.prob.translator.Translator;
 import de.prob.animator.command.EvaluateFormulaCommand;
 import de.prob.animator.command.EvaluationCommand;
 import de.prob.formula.TranslationVisitor;
@@ -69,42 +68,69 @@ public class EventB extends AbstractEvalElement implements IBEvalElement {
 
 		this.types = types;
 	}
-
-	public void ensureParsed() {
+	
+	public IParseResult ensurePredicateParsed() {
 		final String unicode = UnicodeTranslator.toUnicode(this.getCode());
 		kind = EvalElementType.PREDICATE;
 		IParseResult parseResult = FormulaFactory.getInstance(types)
 				.parsePredicate(unicode, null);
-		List<String> errors = new ArrayList<>();
-
-		if (!parseResult.hasProblem()) {
+		if(!parseResult.hasProblem()) {
 			ast = preparePredicateAst(parseResult);
-		} else {
+		}
+		return parseResult;
+	}
+	
+	public IParseResult ensureExpressionParsed() {
+		final String unicode = UnicodeTranslator.toUnicode(this.getCode());
+		kind = EvalElementType.EXPRESSION;
+		IParseResult parseResult = FormulaFactory.getInstance(types)
+				.parseExpression(unicode, null);
+		if(!parseResult.hasProblem()) {
+			ast = prepareExpressionAst(parseResult);
+		}
+		return parseResult;
+	}
+	
+	public IParseResult ensureAssignmentParsed() {
+		final String unicode = UnicodeTranslator.toUnicode(this.getCode());
+		kind = EvalElementType.ASSIGNMENT;
+		IParseResult parseResult = FormulaFactory.getInstance(types)
+				.parseAssignment(unicode, null);
+		if(!parseResult.hasProblem()) {
+			ast = prepareAssignmentAst(parseResult);
+		}
+		return parseResult;
+	}
+
+	public void ensureParsed() {
+		IParseResult parseResult = ensurePredicateParsed();
+		List<String> errors = new ArrayList<>();
+		if(parseResult.hasProblem()) {
 			errors.add("Parsing predicate failed because: " + parseResult);
-			kind = EvalElementType.EXPRESSION;
-			parseResult = FormulaFactory.getInstance(types).parseExpression(
-					unicode, null);
-			if (!parseResult.hasProblem()) {
-				ast = prepareExpressionAst(parseResult);
-			} else {
+			addProblems(parseResult, errors);
+			parseResult = ensureExpressionParsed();
+			if(parseResult.hasProblem()) {
 				errors.add("Parsing expression failed because: " + parseResult);
-				kind = EvalElementType.ASSIGNMENT;
-				parseResult = FormulaFactory.getInstance(types)
-						.parseAssignment(unicode, null);
-				if (!parseResult.hasProblem()) {
-					ast = prepareAssignmentAst(parseResult);
-				} else {
-					errors.add("Parsing assignment failed because: " + parseResult);
+				addProblems(parseResult, errors);
+				parseResult = ensureAssignmentParsed();
+				if(parseResult.hasProblem()) {
+					errors.add("Parsing substitution failed because: " + parseResult);
+					addProblems(parseResult, errors);
+					kind = EvalElementType.NONE;
 				}
 			}
 		}
-		if (parseResult.hasProblem()) {
-			for (final ASTProblem problem : parseResult.getProblems()) {
-				errors.add(problem.toString());
-			}
+		
+		if(parseResult.hasProblem()) {
 			errors.add("Code: " + this.getCode());
-			errors.add("Unicode translation: " + unicode);
+			errors.add("Unicode translation: " + UnicodeTranslator.toUnicode(this.getCode()));
 			throw new EvaluationException("Could not parse formula:\n" + String.join("\n", errors));
+		}
+	}
+	
+	private void addProblems(final IParseResult parseResult, List<String> errors) {
+		for (final ASTProblem problem : parseResult.getProblems()) {
+			errors.add(problem.toString());
 		}
 	}
 
@@ -159,7 +185,22 @@ public class EventB extends AbstractEvalElement implements IBEvalElement {
 	@Override
 	public EvalElementType getKind() {
 		if (kind == null) {
-			ensureParsed();
+			IParseResult parseResult = ensurePredicateParsed();
+			if(!parseResult.hasProblem()) {
+				return kind;
+			} else {
+				parseResult = ensureExpressionParsed();
+				if(!parseResult.hasProblem()) {
+					return kind;
+				} else {
+					parseResult = ensureAssignmentParsed();
+					if(!parseResult.hasProblem()) {
+						return kind;
+					} else {
+						return EvalElementType.NONE;
+					}
+				}
+			}
 		}
 		return kind;
 	}
