@@ -159,9 +159,9 @@ public class Api {
 	public StateSpace eventb_load(final String file, final Map<String, String> prefs) throws IOException, ModelTranslationError {
 		final ModelFactory<EventBModel> factory;
 		if (file.endsWith(".eventb")) {
-			factory = modelFactoryProvider.getEventBFactory();
-		} else {
 			factory = modelFactoryProvider.getEventBPackageFactory();
+		} else {
+			factory = modelFactoryProvider.getEventBFactory();
 		}
 		return factory.extract(file).load(prefs);
 	}
