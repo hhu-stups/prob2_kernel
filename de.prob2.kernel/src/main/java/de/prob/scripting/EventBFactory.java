@@ -12,35 +12,32 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-import de.prob.animator.command.LoadEventBFileCommand;
 import de.prob.model.eventb.EventBModel;
 import de.prob.model.eventb.translate.EventBDatabaseTranslator;
-import de.prob.model.representation.AbstractElement;
-import de.prob.model.representation.Named;
 import de.prob.statespace.StateSpace;
 
 import org.codehaus.groovy.runtime.ResourceGroovyMethods;
 
 public class EventBFactory implements ModelFactory<EventBModel> {
-	private final StateSpaceProvider ssProvider;
 	private final Provider<EventBModel> modelCreator;
+	private final EventBPackageFactory eventBPackageFactory;
 
 	@Inject
-	public EventBFactory(final Provider<EventBModel> modelCreator, final StateSpaceProvider ssProvider) {
-		this.ssProvider = ssProvider;
+	public EventBFactory(final Provider<EventBModel> modelCreator, final EventBPackageFactory eventBPackageFactory) {
 		this.modelCreator = modelCreator;
+		this.eventBPackageFactory = eventBPackageFactory;
 	}
 
 	@Override
 	public ExtractedModel<EventBModel> extract(String modelPath) throws IOException, ModelTranslationError {
+		if (modelPath.endsWith(".eventb")) {
+			throw new IllegalArgumentException("This is an EventB package file, it must be loaded using EventBPackageFactory instead of EventBFactory.\nPath: " + modelPath);
+		}
 		final EventBModel model = modelCreator.get();
 		final String validFileName = getValidFileName(modelPath);
 		final EventBDatabaseTranslator translator = new EventBDatabaseTranslator(model, validFileName);
@@ -60,30 +57,12 @@ public class EventBFactory implements ModelFactory<EventBModel> {
 		return fileName;
 	}
 
+	/**
+	 * @deprecated Use {@link EventBPackageFactory} instead: {@code factory.extract(fileName).load(prefs)}
+	 */
+	@Deprecated
 	public StateSpace loadModelFromEventBFile(final String fileName, final Map<String, String> prefs) throws IOException {
-		final EventBModel model = modelCreator.get();
-		final Pattern pattern = Pattern.compile("^package\\((.*?)\\)\\.");
-		final File file = new File(fileName);
-		final List<String> lines = readFile(file);
-		String loadcmd = null;
-		for (final String string : lines) {
-			final Matcher m1 = pattern.matcher(string);
-			if (m1.find()) {
-				loadcmd = m1.group(1);
-			}
-		}
-		if (loadcmd == null) {
-			throw new IllegalArgumentException(fileName + " contained no valid Event-B Load command");
-		}
-
-		final String componentName = file.getName().replaceAll("\\.eventb$", "");
-		return ssProvider.loadFromCommand(model, new DummyElement(componentName), prefs, new LoadEventBFileCommand(loadcmd));
-	}
-
-	public final List<String> readFile(final File machine) throws IOException {
-		try (final Stream<String> lines = Files.lines(machine.toPath())) {
-			return lines.collect(Collectors.toList());
-		}
+		return this.eventBPackageFactory.extract(fileName).load(prefs);
 	}
 
 	public EventBModel extractModelFromZip(final String zipfile) throws IOException {
@@ -129,27 +108,5 @@ public class EventBFactory implements ModelFactory<EventBModel> {
 			}
 		});
 		return tempdir;
-	}
-
-	private static class DummyElement extends AbstractElement implements Named {
-		private String name;
-
-		private DummyElement(final String name) {
-			this.name = name;
-		}
-
-		@Override
-		public String toString() {
-			return name;
-		}
-
-		@Override
-		public String getName() {
-			return name;
-		}
-
-		public void setName(final String name) {
-			this.name = name;
-		}
 	}
 }

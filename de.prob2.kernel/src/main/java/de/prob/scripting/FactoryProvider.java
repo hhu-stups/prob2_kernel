@@ -17,6 +17,7 @@ public class FactoryProvider {
 	private final ClassicalBFactory classicalBFactory;
 	private final CSPFactory cspFactory;
 	private final EventBFactory eventBFactory;
+	private final EventBPackageFactory eventBPackageFactory;
 	private final TLAFactory tlaFactory;
 	private final RulesModelFactory bRulesFactory;
 	private final XTLFactory xtlFactory;
@@ -28,6 +29,7 @@ public class FactoryProvider {
 		final ClassicalBFactory bfactory,
 		final CSPFactory cspFactory,
 		final EventBFactory eventBFactory,
+		final EventBPackageFactory eventBPackageFactory,
 		final TLAFactory tlaFactory,
 		final RulesModelFactory bRulesFactory,
 		final XTLFactory xtlFactory,
@@ -37,6 +39,7 @@ public class FactoryProvider {
 		this.classicalBFactory = bfactory;
 		this.cspFactory = cspFactory;
 		this.eventBFactory = eventBFactory;
+		this.eventBPackageFactory = eventBPackageFactory;
 		this.tlaFactory = tlaFactory;
 		this.bRulesFactory = bRulesFactory;
 		this.xtlFactory = xtlFactory;
@@ -50,6 +53,10 @@ public class FactoryProvider {
 
 	public EventBFactory getEventBFactory() {
 		return eventBFactory;
+	}
+
+	public EventBPackageFactory getEventBPackageFactory() {
+		return eventBPackageFactory;
 	}
 
 	public CSPFactory getCspFactory() {

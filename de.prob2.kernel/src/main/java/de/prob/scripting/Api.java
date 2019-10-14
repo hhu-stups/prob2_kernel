@@ -157,12 +157,13 @@ public class Api {
 	 * @return the {@link StateSpace} for the loaded machine
 	 */
 	public StateSpace eventb_load(final String file, final Map<String, String> prefs) throws IOException, ModelTranslationError {
-		final EventBFactory factory = modelFactoryProvider.getEventBFactory();
+		final ModelFactory<EventBModel> factory;
 		if (file.endsWith(".eventb")) {
-			return factory.loadModelFromEventBFile(file, prefs);
+			factory = modelFactoryProvider.getEventBFactory();
 		} else {
-			return factory.extract(file).load(prefs);
+			factory = modelFactoryProvider.getEventBPackageFactory();
 		}
+		return factory.extract(file).load(prefs);
 	}
 
 	/**
