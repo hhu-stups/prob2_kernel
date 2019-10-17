@@ -17,20 +17,6 @@ targetCompatibility = 1.8
 final SOURCE_ENCODING = "UTF-8"
 
 
-if (System.env.TRAVIS == 'true') {
-	allprojects {
-		tasks.withType(GroovyCompile) {
-			groovyOptions.fork = false
-		}
-		tasks.withType(Test) {
-			// containers (currently) have 2 dedicated cores and 4GB of memory
-			maxParallelForks = 2
-			minHeapSize = '128m'
-		}
-	}
-}
-
-
 // IMPORTANT !!!
 project.version = '4.0.0-SNAPSHOT'
 // Remember to release the cli
