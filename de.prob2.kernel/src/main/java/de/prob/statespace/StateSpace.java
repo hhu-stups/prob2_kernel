@@ -273,7 +273,7 @@ public class StateSpace implements IAnimator {
 				pred, nrOfSolutions);
 		execute(command);
 		if (command.hasErrors()) {
-			throw new ProBError("Executing operation " + opName + " with predicate " + predicate
+			throw new IllegalArgumentException("Executing operation " + opName + " with predicate " + predicate
 					+ " produced errors: " + String.join(", ", command.getErrors()));
 		}
 		return command.getNewTransitions();
