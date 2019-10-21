@@ -40,6 +40,7 @@ import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.animator.domainobjects.TypeCheckResult;
 import de.prob.annotations.MaxCacheSize;
+import de.prob.exception.ProBError;
 import de.prob.model.classicalb.ClassicalBModel;
 import de.prob.model.eventb.EventBModel;
 import de.prob.model.representation.AbstractElement;
@@ -272,7 +273,7 @@ public class StateSpace implements IAnimator {
 				pred, nrOfSolutions);
 		execute(command);
 		if (command.hasErrors()) {
-			throw new IllegalArgumentException("Executing operation " + opName + " with predicate " + predicate
+			throw new ProBError("Executing operation " + opName + " with predicate " + predicate
 					+ " produced errors: " + String.join(", ", command.getErrors()));
 		}
 		return command.getNewTransitions();
