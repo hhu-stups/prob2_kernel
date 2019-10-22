@@ -131,6 +131,12 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 		return pattern;
 	}
 
+    // prob_socketserver.pl prints the following:
+	// format(Stdout,'Port: ~w~n', [Port]),
+	// format(Stdout,'probcli revision: ~w~n',[Revision]),
+	// format(Stdout,'user interrupt reference id: ~w~n',[Ref]),
+	// format(Stdout,'-- starting command loop --~n', []),
+	// The patterns match some of the lines and collect info
 	private static void analyseStdout(final BufferedReader input, final Collection<? extends AbstractCliPattern<?>> patterns) {
 		final List<AbstractCliPattern<?>> patternsList = new ArrayList<>(patterns);
 		try {
@@ -149,6 +155,8 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 			logger.debug(message, e);
 			throw new CliError(message, e);
 		}
+		// if p is not empty we have failed to find some patterns:
+		// todoL also provide actual input (line) above in error message
 		for (AbstractCliPattern<?> p : patternsList) {
 			p.notifyNotFound();
 			if (p.notFoundIsFatal()) {
