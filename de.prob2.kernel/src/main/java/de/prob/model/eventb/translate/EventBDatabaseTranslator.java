@@ -69,7 +69,7 @@ public class EventBDatabaseTranslator {
 				this.model = xmlHandler.getModel();
 			}
 		} catch (FileNotFoundException e) {
-			throw e;
+			throw e; // TO DO: probably tell the user to clean the project, when the bum or buc files exist
 		} catch (IOException | ParserConfigurationException | SAXException e) {
 			logger.error("Error during EventB translation", e);
 		}
