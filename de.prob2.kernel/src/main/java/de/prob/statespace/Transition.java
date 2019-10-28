@@ -24,9 +24,6 @@ import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.IntegerPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * <p>
  * Stores the information for a given Operation. This includes operation id
@@ -63,8 +60,6 @@ public class Transition {
 	private FormulaExpand formulaExpansion;
 	private final FormalismType formalismType;
 	private String predicateString;
-
-	Logger logger = LoggerFactory.getLogger(Transition.class);
 
 	private Transition(final StateSpace stateSpace, final String id, final String name, final State src,
 			final State dest) {
