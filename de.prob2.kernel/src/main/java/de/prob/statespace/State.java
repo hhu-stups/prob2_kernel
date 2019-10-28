@@ -38,7 +38,7 @@ import org.codehaus.groovy.runtime.DefaultGroovyMethods;
  * @author joy
  */
 public class State extends GroovyObjectSupport {
-	protected String id;
+	private String id;
 	private StateSpace stateSpace;
 	private boolean explored;
 	private List<Transition> transitions;
