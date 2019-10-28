@@ -8,8 +8,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import de.be4.classicalb.core.parser.exceptions.BCompoundException;
 import de.hhu.stups.prob.translator.BValue;
+import de.hhu.stups.prob.translator.Translator;
 import de.hhu.stups.prob.translator.exceptions.TranslationException;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.formula.PredicateBuilder;
@@ -23,7 +23,6 @@ import de.prob.parser.BindingGenerator;
 import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.IntegerPrologTerm;
 import de.prob.prolog.term.PrologTerm;
-import de.hhu.stups.prob.translator.Translator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +44,10 @@ import org.slf4j.LoggerFactory;
  * @author joy
  */
 public class Transition {
+	/**
+	 * @deprecated Use {@link #getStateSpace()} instead.
+	 */
+	@Deprecated
 	public final StateSpace stateSpace;
 
 	private final String id;
