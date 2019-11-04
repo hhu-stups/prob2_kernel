@@ -11,7 +11,9 @@ import java.util.List;
  * test cases) created by the test case generator.
  *
  * It consists of a list of transitions and an identifier whether the trace is complete.
- * A complete trace cannot be extended.
+ * A complete trace cannot be extended, either because it has been statically proven to be infeasible (containing an infeasible
+ *   operation or an infeasible combination of operations) or because it contains a final operation (as last operation)
+ *  Note: final operations were introduced for JavaCard mutation testing and were mutants of correctly implemented Java bytecodes; they should only every be used as last operation in a test trace.
  */
 public abstract class TestTrace {
 

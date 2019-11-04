@@ -88,7 +88,8 @@ public class ConstraintBasedTestCaseGenerator {
                         targets.remove(t);
                         cmd = findTestPathWithTarget(trace, t);
                         TestTrace newTrace = trace.createNewTrace(trace.getTransitionNames(), t,
-                                (finalOperations.contains(t.getOperation()) || t.isInfeasible()), cmd.getTrace());
+                                (finalOperations.contains(t.getOperation()) || t.isInfeasible()), // a trace is complete, i.e., should not be extended further if it contains a final operation or is statically proven to be infeasible
+									cmd.getTrace());
                         testTraces.add(newTrace);
                         visitedTargets.add(t);
                     }
@@ -107,7 +108,8 @@ public class ConstraintBasedTestCaseGenerator {
                     if (cmd.isFeasible() && !visitedTargets.contains(t)) {
                         cmd = findTestPathWithTarget(trace, t);
                         testTraces.add(trace.createNewTrace(trace.getTransitionNames(), t,
-                                (finalOperations.contains(t.getOperation()) || t.isInfeasible()), cmd.getTrace()));
+                                (finalOperations.contains(t.getOperation()) || t.isInfeasible()), // a trace is complete, i.e., should not be extended further if it contains a final operation or is statically proven to be infeasible
+								cmd.getTrace()));
                         visitedTargets.add(t);
                     }
                 }
