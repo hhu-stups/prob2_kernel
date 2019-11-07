@@ -14,15 +14,24 @@ public class ExpandedFormula {
 	private final String name;
 	private final Object value;
 	private final String id;
-	private List<ExpandedFormula> children;
+	private final List<ExpandedFormula> children;
 
-	public ExpandedFormula(final CompoundPrologTerm cpt) {
-		name = cpt.getArgument(1).getFunctor();
-		value = getValue(cpt.getArgument(2));
-		id = cpt.getArgument(3).getFunctor();
-		children = BindingGenerator.getList(cpt.getArgument(4)).stream()
-			.map(pt -> new ExpandedFormula(BindingGenerator.getCompoundTerm(pt, 4)))
+	public ExpandedFormula(final String name, final Object value, final String id, final List<ExpandedFormula> children) {
+		this.name = name;
+		this.value = value;
+		this.id = id;
+		this.children = children;
+	}
+
+	public static ExpandedFormula fromPrologTerm(final CompoundPrologTerm cpt) {
+		BindingGenerator.getCompoundTerm(cpt, "formula", 4);
+		final String name = cpt.getArgument(1).getFunctor();
+		final Object value = getValue(cpt.getArgument(2));
+		final String id = cpt.getArgument(3).getFunctor();
+		final List<ExpandedFormula> children = BindingGenerator.getList(cpt.getArgument(4)).stream()
+			.map(pt -> ExpandedFormula.fromPrologTerm(BindingGenerator.getCompoundTerm(pt, "formula", 4)))
 			.collect(Collectors.toList());
+		return new ExpandedFormula(name, value, id, children);
 	}
 
 	private static Object getValue(final PrologTerm v) {
