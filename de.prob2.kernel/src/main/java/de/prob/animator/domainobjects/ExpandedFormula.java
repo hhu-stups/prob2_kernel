@@ -5,18 +5,18 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.MoreObjects;
 
+import de.prob.exception.ProBError;
 import de.prob.parser.BindingGenerator;
 import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.PrologTerm;
-import de.prob.unicode.UnicodeTranslator;
 
 public class ExpandedFormula {
 	private final String name;
-	private final Object value;
+	private final BVisual2Value value;
 	private final String id;
 	private final List<ExpandedFormula> children;
 
-	public ExpandedFormula(final String name, final Object value, final String id, final List<ExpandedFormula> children) {
+	public ExpandedFormula(final String name, final BVisual2Value value, final String id, final List<ExpandedFormula> children) {
 		this.name = name;
 		this.value = value;
 		this.id = id;
@@ -26,27 +26,45 @@ public class ExpandedFormula {
 	public static ExpandedFormula fromPrologTerm(final CompoundPrologTerm cpt) {
 		BindingGenerator.getCompoundTerm(cpt, "formula", 4);
 		final String name = cpt.getArgument(1).getFunctor();
-		final Object value = getValue(cpt.getArgument(2));
+		final BVisual2Value result = getValue(name, cpt.getArgument(2));
 		final String id = cpt.getArgument(3).getFunctor();
 		final List<ExpandedFormula> children = BindingGenerator.getList(cpt.getArgument(4)).stream()
 			.map(pt -> ExpandedFormula.fromPrologTerm(BindingGenerator.getCompoundTerm(pt, "formula", 4)))
 			.collect(Collectors.toList());
-		return new ExpandedFormula(name, value, id, children);
+		return new ExpandedFormula(name, result, id, children);
 	}
 
-	private static Object getValue(final PrologTerm v) {
-		String functor = v.getFunctor();
-		CompoundPrologTerm cpt = BindingGenerator.getCompoundTerm(v, 1);
+	private static BVisual2Value getValue(final String name, final PrologTerm term) {
+		final String functor = term.getFunctor();
 		switch (functor) {
 			case "p":
-				return "true".equals(cpt.getArgument(1).getFunctor());
+				BindingGenerator.getCompoundTerm(term, "p", 1);
+				final String value = PrologTerm.atomicString(term.getArgument(1));
+				switch (value) {
+					case "false":
+						return BVisual2Value.PredicateValue.FALSE;
+					
+					case "true":
+						return BVisual2Value.PredicateValue.TRUE;
+					
+					default:
+						throw new ProBError("Invalid value in predicate result: " + value);
+				}
+			
 			case "v":
-				return UnicodeTranslator.toUnicode(cpt.getArgument(1).getFunctor());
+				BindingGenerator.getCompoundTerm(term, "v", 1);
+				return new BVisual2Value.ExpressionValue(PrologTerm.atomicString(term.getArgument(1)));
+			
 			case "e":
-				return cpt.getArgument(1).getFunctor();
+				BindingGenerator.getCompoundTerm(term, "e", 1);
+				return new BVisual2Value.Error(PrologTerm.atomicString(term.getArgument(1)));
+			
+			case "i":
+				BindingGenerator.getCompoundTerm(term, "i", 0);
+				return BVisual2Value.Inactive.INSTANCE;
+			
 			default:
-				throw new IllegalArgumentException("Received unexpected result from Prolog. "
-						+ "Expected is either p, v or e as a functor, but Prolog returned " + functor);
+				throw new ProBError("Unhandled expanded formula value type: " + term);
 		}
 	}
 
@@ -54,7 +72,7 @@ public class ExpandedFormula {
 		return name;
 	}
 
-	public Object getValue() {
+	public BVisual2Value getValue() {
 		return value;
 	}
 
