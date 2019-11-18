@@ -16,6 +16,10 @@ import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.State;
 
+/**
+ * @deprecated Use BVisual2 ({@link ExpandedFormula}) instead
+ */
+@Deprecated
 public class ProBEvalElement extends AbstractEvalElement {
 
 	private final FormulaUUID uuid = new FormulaUUID();
