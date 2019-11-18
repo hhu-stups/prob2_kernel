@@ -7,9 +7,15 @@ import java.util.Objects;
 
 import com.google.common.base.MoreObjects;
 
+import de.prob.animator.command.GetTopLevelFormulasCommand;
+import de.prob.model.representation.AbstractElement;
+
 /**
  * PrologASTNode used to simplify the structure given by prolog
+ * 
+ * @deprecated Use BVisual2 ({@link GetTopLevelFormulasCommand}) or the Java machine structure ({@link AbstractElement}) instead.
  */
+@Deprecated
 public abstract class PrologASTNode {
 	private final List<PrologASTNode> subnodes;
 

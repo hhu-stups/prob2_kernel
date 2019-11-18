@@ -7,10 +7,16 @@ import java.util.Objects;
 
 import com.google.common.base.MoreObjects;
 
+import de.prob.animator.command.GetTopLevelFormulasCommand;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.ProBEvalElement;
+import de.prob.model.representation.AbstractElement;
 import de.prob.prolog.term.PrologTerm;
 
+/**
+ * @deprecated Use BVisual2 ({@link GetTopLevelFormulasCommand}) or the Java machine structure ({@link AbstractElement}) instead.
+ */
+@Deprecated
 public final class ASTFormula extends PrologASTNode{
 	private final PrologTerm term;
 	private final String prettyPrint;

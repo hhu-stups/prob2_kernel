@@ -5,6 +5,13 @@ import java.util.Objects;
 
 import com.google.common.base.MoreObjects;
 
+import de.prob.animator.command.GetTopLevelFormulasCommand;
+import de.prob.model.representation.AbstractElement;
+
+/**
+ * @deprecated Use BVisual2 ({@link GetTopLevelFormulasCommand}) or the Java machine structure ({@link AbstractElement}) instead.
+ */
+@Deprecated
 public final class ASTCategory extends PrologASTNode{
 	private final String name;
 	private final boolean expanded;

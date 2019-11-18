@@ -7,12 +7,17 @@ import java.util.stream.Collectors;
 import de.prob.animator.prologast.ASTCategory;
 import de.prob.animator.prologast.ASTFormula;
 import de.prob.animator.prologast.PrologASTNode;
+import de.prob.model.representation.AbstractElement;
 import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 
+/**
+ * @deprecated Use BVisual2 ({@link GetTopLevelFormulasCommand}) or the Java machine structure ({@link AbstractElement}) instead.
+ */
+@Deprecated
 public class GetMachineStructureCommand extends AbstractCommand {
 	private static final String PROLOG_COMMAND_NAME = "get_machine_formulas";
 	private static final String FORMULAS = "Formulas";
