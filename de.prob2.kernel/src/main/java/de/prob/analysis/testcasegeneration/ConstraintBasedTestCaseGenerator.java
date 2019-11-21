@@ -18,6 +18,7 @@ import de.prob.model.classicalb.ClassicalBModel;
 import de.prob.model.classicalb.Operation;
 import de.prob.model.representation.Extraction;
 import de.prob.statespace.StateSpace;
+import de.prob.statespace.Trace;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -86,10 +87,11 @@ public class ConstraintBasedTestCaseGenerator {
                     FindTestPathCommand cmd = findTestPath(trace, t);
                     if (cmd.isFeasible() && !visitedTargets.contains(t)) {
                         targets.remove(t);
+                        Trace previousTrace = cmd.getTrace();
                         cmd = findTestPathWithTarget(trace, t);
-                        TestTrace newTrace = trace.createNewTrace(trace.getTransitionNames(), t,
-                                (finalOperations.contains(t.getOperation()) || t.isInfeasible()), // a trace is complete, i.e., should not be extended further if it contains a final operation or is statically proven to be infeasible
-									cmd.getTrace());
+                        Trace currentTrace = cmd.getTrace();
+                        TestTrace newTrace = trace.createNewTrace(trace.getTransitionNames(), t, // a trace is complete, i.e., should not be extended further if it contains a final operation or is statically proven to be infeasible
+                                (finalOperations.contains(t.getOperation()) || t.isInfeasible()), t.isInfeasible() ? previousTrace : currentTrace);
                         testTraces.add(newTrace);
                         visitedTargets.add(t);
                     }
@@ -106,10 +108,12 @@ public class ConstraintBasedTestCaseGenerator {
                 for (Target t : filterTempTargets(getAllOperationNames(), tempTargets)) {
                     FindTestPathCommand cmd = findTestPath(trace, t);
                     if (cmd.isFeasible() && !visitedTargets.contains(t)) {
+                    	Trace previousTrace = cmd.getTrace();
                         cmd = findTestPathWithTarget(trace, t);
-                        testTraces.add(trace.createNewTrace(trace.getTransitionNames(), t,
-                                (finalOperations.contains(t.getOperation()) || t.isInfeasible()), // a trace is complete, i.e., should not be extended further if it contains a final operation or is statically proven to be infeasible
-								cmd.getTrace()));
+                        Trace currentTrace = cmd.getTrace();
+                        TestTrace newTrace = trace.createNewTrace(trace.getTransitionNames(), t, // a trace is complete, i.e., should not be extended further if it contains a final operation or is statically proven to be infeasible
+                                (finalOperations.contains(t.getOperation()) || t.isInfeasible()), t.isInfeasible() ? previousTrace : currentTrace);
+                        testTraces.add(newTrace);
                         visitedTargets.add(t);
                     }
                 }
