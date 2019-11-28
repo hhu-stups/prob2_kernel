@@ -12,6 +12,9 @@ public class PersistentTrace {
     private final List<PersistentTransition> transitionList = new ArrayList<>();
 
     public PersistentTrace(Trace trace, int count) {
+    	if(count < 1) {
+    		return;
+    	}
         List<Transition> list = trace.getTransitionList();
         transitionList.add(new PersistentTransition(list.get(count-1), true,
                 null));
