@@ -3,10 +3,12 @@ package de.prob;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 
+import com.google.common.base.Stopwatch;
 import com.google.inject.Inject;
 
 import de.prob.cli.ProBInstanceProvider;
@@ -29,14 +31,15 @@ class Shell {
 
 	public void runScript(final File script, final boolean silent) throws IOException, ScriptException {
 		if (script.isDirectory()) {
-			long time = System.currentTimeMillis();
 			final File[] files = script.listFiles((dir, name) -> name.endsWith(".groovy"));
 			if (files != null) {
+				final Stopwatch stopwatch = Stopwatch.createStarted();
 				for (File file : files) {
 					runScript(file, silent);
 				}
+				stopwatch.stop();
 				if (!silent) {
-					final double seconds = (System.currentTimeMillis() - time) / 1000.0;
+					final double seconds = stopwatch.elapsed(TimeUnit.MILLISECONDS) / 1000.0;
 					System.out.printf("TOTAL TIME: %.4g s%n", seconds);
 				}
 			}
@@ -46,7 +49,7 @@ class Shell {
 	}
 
 	private void runSingleScript(final String dir, final File scriptFile, final boolean silent) throws IOException, ScriptException {
-		long time = System.currentTimeMillis();
+		final Stopwatch stopwatch = Stopwatch.createStarted();
 		logger.debug("Running script: {}", scriptFile.getAbsolutePath());
 		ScriptEngine executor = sep.get();
 		executor.put("dir", dir);
@@ -68,8 +71,9 @@ class Shell {
 			throw e;
 		}
 		proBs.shutdownAll();
+		stopwatch.stop();
 		if (!silent) {
-			final double seconds = (System.currentTimeMillis() - time) / 1000.0;
+			final double seconds = stopwatch.elapsed(TimeUnit.MILLISECONDS) / 1000.0;
 			System.out.printf(" - %s (%.4g s)%n", res, seconds);
 		}
 	}
