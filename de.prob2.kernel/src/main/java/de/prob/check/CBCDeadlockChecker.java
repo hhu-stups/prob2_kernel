@@ -1,5 +1,9 @@
 package de.prob.check;
 
+import java.util.concurrent.TimeUnit;
+
+import com.google.common.base.Stopwatch;
+
 import de.prob.animator.command.ConstraintBasedDeadlockCheckCommand;
 import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.FormulaExpand;
@@ -70,14 +74,15 @@ public class CBCDeadlockChecker implements IModelCheckJob {
 
 	@Override
 	public IModelCheckingResult call() throws Exception {
-		long time = System.currentTimeMillis();
+		final Stopwatch stopwatch = Stopwatch.createStarted();
 		if (ui != null) {
 			ui.updateStats(jobId, 0, new NotYetFinished(
 					"Deadlock check started", 0), null);
 		}
 		s.execute(job);
+		stopwatch.stop();
 		if (ui != null) {
-			ui.isFinished(jobId, System.currentTimeMillis() - time,
+			ui.isFinished(jobId, stopwatch.elapsed(TimeUnit.MILLISECONDS),
 					job.getResult(), null);
 		}
 		return job.getResult();

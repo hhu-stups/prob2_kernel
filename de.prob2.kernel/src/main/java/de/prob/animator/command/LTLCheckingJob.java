@@ -1,5 +1,9 @@
 package de.prob.animator.command;
 
+import java.util.concurrent.TimeUnit;
+
+import com.google.common.base.Stopwatch;
+
 import de.prob.animator.domainobjects.LTL;
 import de.prob.check.CheckInterrupted;
 import de.prob.check.IModelCheckListener;
@@ -21,7 +25,7 @@ public class LTLCheckingJob extends AbstractCommand {
 
 	private IModelCheckingResult res;
 	private LtlCheckingCommand cmd;
-	private long time = -1;
+	private final Stopwatch stopwatch;
 
 	public LTLCheckingJob(final StateSpace s, final LTL formula,
 			final String jobId, final IModelCheckListener ui) {
@@ -30,12 +34,13 @@ public class LTLCheckingJob extends AbstractCommand {
 		this.jobId = jobId;
 		this.ui = ui;
 		cmd = new LtlCheckingCommand(s, formula, MAX);
+		this.stopwatch = Stopwatch.createUnstarted();
 	}
 
 	@Override
 	public void writeCommand(final IPrologTermOutput pto) {
-		if (time == -1) {
-			time = System.currentTimeMillis();
+		if (!stopwatch.isRunning()) {
+			this.stopwatch.start();
 		}
 		cmd.writeCommand(pto);
 	}
@@ -46,7 +51,7 @@ public class LTLCheckingJob extends AbstractCommand {
 		cmd.processResult(bindings);
 		res = cmd.getResult();
 		if (ui != null) {
-			ui.updateStats(jobId, System.currentTimeMillis() - time, res, null);
+			ui.updateStats(jobId, this.stopwatch.elapsed(TimeUnit.MILLISECONDS), res, null);
 		}
 		completed = !(res instanceof LTLNotYetFinished);
 		interrupted = interrupted || cmd.isInterrupted();

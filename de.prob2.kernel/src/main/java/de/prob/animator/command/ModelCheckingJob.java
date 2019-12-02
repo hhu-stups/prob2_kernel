@@ -1,5 +1,9 @@
 package de.prob.animator.command;
 
+import java.util.concurrent.TimeUnit;
+
+import com.google.common.base.Stopwatch;
+
 import de.prob.check.CheckInterrupted;
 import de.prob.check.IModelCheckListener;
 import de.prob.check.IModelCheckingResult;
@@ -20,7 +24,7 @@ public class ModelCheckingJob extends AbstractCommand {
 	private StateSpaceStats stats;
 	private final IModelCheckListener ui;
 
-	private long time = -1;
+	private final Stopwatch stopwatch;
 
 	public ModelCheckingJob(final ModelCheckingOptions options,
 			final String jobId, final IModelCheckListener ui) {
@@ -29,12 +33,13 @@ public class ModelCheckingJob extends AbstractCommand {
 		this.ui = ui;
 		this.completed = false;
 		cmd = new ModelCheckingStepCommand(TIMEOUT_MS, options);
+		this.stopwatch = Stopwatch.createUnstarted();
 	}
 
 	@Override
 	public void writeCommand(final IPrologTermOutput pto) {
-		if (time == -1) {
-			time = System.currentTimeMillis();
+		if (!this.stopwatch.isRunning()) {
+			this.stopwatch.start();
 		}
 		cmd.writeCommand(pto);
 	}
@@ -46,7 +51,7 @@ public class ModelCheckingJob extends AbstractCommand {
 		res = cmd.getResult();
 		stats = cmd.getStats();
 		if (ui != null && res != null && stats != null) {
-			ui.updateStats(jobId, System.currentTimeMillis() - time, res, stats);
+			ui.updateStats(jobId, this.stopwatch.elapsed(TimeUnit.MILLISECONDS), res, stats);
 		}
 		completed = !(res instanceof NotYetFinished);
 		interrupted = interrupted || cmd.isInterrupted();

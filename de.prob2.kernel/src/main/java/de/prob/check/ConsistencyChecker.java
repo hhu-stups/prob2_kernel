@@ -1,5 +1,9 @@
 package de.prob.check;
 
+import java.util.concurrent.TimeUnit;
+
+import com.google.common.base.Stopwatch;
+
 import de.prob.animator.command.ModelCheckingJob;
 import de.prob.animator.command.SetBGoalCommand;
 import de.prob.animator.domainobjects.IEvalElement;
@@ -76,7 +80,7 @@ public class ConsistencyChecker implements IModelCheckJob {
 
 	@Override
 	public IModelCheckingResult call() throws Exception {
-		long time = System.currentTimeMillis();
+		final Stopwatch stopwatch = Stopwatch.createStarted();
 
 		if (goal != null) {
 			try {
@@ -89,9 +93,10 @@ public class ConsistencyChecker implements IModelCheckJob {
 		// When goal is undefined, isFinished will be executed anyways
 
 		s.execute(job);
+		stopwatch.stop();
 		IModelCheckingResult result = job.getResult();
 		if (ui != null) {
-			ui.isFinished(jobId, System.currentTimeMillis() - time, result, job.getStats());
+			ui.isFinished(jobId, stopwatch.elapsed(TimeUnit.MILLISECONDS), result, job.getStats());
 		}
 		return result;
 	}

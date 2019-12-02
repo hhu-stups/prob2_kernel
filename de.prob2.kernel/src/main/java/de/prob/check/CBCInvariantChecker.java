@@ -1,6 +1,9 @@
 package de.prob.check;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import com.google.common.base.Stopwatch;
 
 import de.prob.animator.command.ConstraintBasedInvariantCheckCommand;
 import de.prob.statespace.StateSpace;
@@ -70,14 +73,15 @@ public class CBCInvariantChecker implements IModelCheckJob {
 
 	@Override
 	public IModelCheckingResult call() throws Exception {
-		long time = System.currentTimeMillis();
+		final Stopwatch stopwatch = Stopwatch.createStarted();
 		if (ui != null) {
 			ui.updateStats(jobId, 0, new NotYetFinished(
 					"Deadlock check started", 0), null);
 		}
 		s.execute(command);
+		stopwatch.stop();
 		if (ui != null) {
-			ui.isFinished(jobId, System.currentTimeMillis() - time,
+			ui.isFinished(jobId, stopwatch.elapsed(TimeUnit.MILLISECONDS),
 					command.getResult(), null);
 		}
 		return command.getResult();

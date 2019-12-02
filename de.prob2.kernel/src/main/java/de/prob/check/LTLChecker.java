@@ -1,5 +1,9 @@
 package de.prob.check;
 
+import java.util.concurrent.TimeUnit;
+
+import com.google.common.base.Stopwatch;
+
 import de.be4.ltl.core.parser.LtlParseException;
 import de.prob.animator.command.LTLCheckingJob;
 import de.prob.animator.domainobjects.LTL;
@@ -37,11 +41,12 @@ public class LTLChecker implements IModelCheckJob {
 
 	@Override
 	public IModelCheckingResult call() throws Exception {
-		long time = System.currentTimeMillis();
+		final Stopwatch stopwatch = Stopwatch.createStarted();
 		s.execute(job);
+		stopwatch.stop();
 		IModelCheckingResult result = job.getResult();
 		if (ui != null) {
-			ui.isFinished(jobId, System.currentTimeMillis() - time, result,
+			ui.isFinished(jobId, stopwatch.elapsed(TimeUnit.MILLISECONDS), result,
 					null);
 		}
 		return result;
