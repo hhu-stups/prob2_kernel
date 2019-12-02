@@ -1,9 +1,5 @@
 package de.prob.check;
 
-import java.util.concurrent.TimeUnit;
-
-import com.google.common.base.Stopwatch;
-
 import de.prob.animator.command.ConstraintBasedDeadlockCheckCommand;
 import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.FormulaExpand;
@@ -21,12 +17,8 @@ import de.prob.statespace.StateSpace;
  * @author joy
  * 
  */
-public class CBCDeadlockChecker implements IModelCheckJob {
-
-	private final StateSpace s;
-	private final IModelCheckListener ui;
+public class CBCDeadlockChecker extends CheckerBase {
 	private final ConstraintBasedDeadlockCheckCommand job;
-	String jobId;
 
 	/**
 	 * Calls {@link #CBCDeadlockChecker(StateSpace, IEvalElement)} with
@@ -66,44 +58,14 @@ public class CBCDeadlockChecker implements IModelCheckJob {
 	 */
 	public CBCDeadlockChecker(final StateSpace s,
 			final IEvalElement constraint, final IModelCheckListener ui) {
-		this.s = s;
+		super(s, ui);
+
 		job = new ConstraintBasedDeadlockCheckCommand(s, constraint);
-		this.ui = ui;
-		jobId = ModelChecker.generateJobId();
 	}
 
 	@Override
-	public IModelCheckingResult call() throws Exception {
-		final Stopwatch stopwatch = Stopwatch.createStarted();
-		if (ui != null) {
-			ui.updateStats(jobId, 0, new NotYetFinished(
-					"Deadlock check started", 0), null);
-		}
-		s.execute(job);
-		stopwatch.stop();
-		if (ui != null) {
-			ui.isFinished(jobId, stopwatch.elapsed(TimeUnit.MILLISECONDS),
-					job.getResult(), null);
-		}
+	protected IModelCheckingResult execute() {
+		this.getStateSpace().execute(job);
 		return job.getResult();
 	}
-
-	@Override
-	public IModelCheckingResult getResult() {
-		if (job.getResult() == null) {
-			return new NotYetFinished("No result was calculated", -1);
-		}
-		return job.getResult();
-	}
-
-	@Override
-	public String getJobId() {
-		return jobId;
-	}
-
-	@Override
-	public StateSpace getStateSpace() {
-		return s;
-	}
-
 }

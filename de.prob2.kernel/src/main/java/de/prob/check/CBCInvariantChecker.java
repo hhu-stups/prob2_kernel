@@ -1,9 +1,6 @@
 package de.prob.check;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import com.google.common.base.Stopwatch;
 
 import de.prob.animator.command.ConstraintBasedInvariantCheckCommand;
 import de.prob.statespace.StateSpace;
@@ -18,12 +15,8 @@ import de.prob.statespace.StateSpace;
  * @author joy
  * 
  */
-public class CBCInvariantChecker implements IModelCheckJob {
-
+public class CBCInvariantChecker extends CheckerBase {
 	private final ConstraintBasedInvariantCheckCommand command;
-	private final StateSpace s;
-	private final IModelCheckListener ui;
-	private final String jobId;
 
 	/**
 	 * Calls {@link #CBCInvariantChecker(StateSpace, List)} with null as the
@@ -65,44 +58,14 @@ public class CBCInvariantChecker implements IModelCheckJob {
 	 */
 	public CBCInvariantChecker(final StateSpace s,
 			final List<String> eventNames, final IModelCheckListener ui) {
-		this.s = s;
-		this.ui = ui;
-		jobId = ModelChecker.generateJobId();
+		super(s, ui);
+
 		command = new ConstraintBasedInvariantCheckCommand(s, eventNames);
 	}
 
 	@Override
-	public IModelCheckingResult call() throws Exception {
-		final Stopwatch stopwatch = Stopwatch.createStarted();
-		if (ui != null) {
-			ui.updateStats(jobId, 0, new NotYetFinished(
-					"Deadlock check started", 0), null);
-		}
-		s.execute(command);
-		stopwatch.stop();
-		if (ui != null) {
-			ui.isFinished(jobId, stopwatch.elapsed(TimeUnit.MILLISECONDS),
-					command.getResult(), null);
-		}
+	protected IModelCheckingResult execute() {
+		this.getStateSpace().execute(command);
 		return command.getResult();
 	}
-
-	@Override
-	public IModelCheckingResult getResult() {
-		if (command.getResult() == null) {
-			return new NotYetFinished("No result was calculated", -1);
-		}
-		return command.getResult();
-	}
-
-	@Override
-	public String getJobId() {
-		return jobId;
-	}
-
-	@Override
-	public StateSpace getStateSpace() {
-		return s;
-	}
-
 }

@@ -1,9 +1,5 @@
 package de.prob.check;
 
-import java.util.concurrent.TimeUnit;
-
-import com.google.common.base.Stopwatch;
-
 import de.prob.animator.command.ModelCheckingJob;
 import de.prob.animator.command.SetBGoalCommand;
 import de.prob.animator.domainobjects.IEvalElement;
@@ -21,11 +17,7 @@ import de.prob.statespace.StateSpace;
  * @author joy
  * 
  */
-public class ConsistencyChecker implements IModelCheckJob {
-
-	private final StateSpace s;
-	private final String jobId;
-	private final IModelCheckListener ui;
+public class ConsistencyChecker extends CheckerBase {
 	private final ModelCheckingJob job;
 	private final IEvalElement goal;
 
@@ -71,52 +63,25 @@ public class ConsistencyChecker implements IModelCheckJob {
 	 */
 	public ConsistencyChecker(final StateSpace s, final ModelCheckingOptions options, final IEvalElement goal,
 			final IModelCheckListener ui) {
-		this.s = s;
+		super(s, ui);
+
 		this.goal = goal;
-		this.ui = ui;
-		jobId = ModelChecker.generateJobId();
-		job = new ModelCheckingJob(options, jobId, ui);
+		job = new ModelCheckingJob(options, this.getJobId(), ui);
 	}
 
 	@Override
-	public IModelCheckingResult call() throws Exception {
-		final Stopwatch stopwatch = Stopwatch.createStarted();
-
+	protected IModelCheckingResult execute() {
 		if (goal != null) {
 			try {
 				SetBGoalCommand cmd = new SetBGoalCommand(goal);
-				s.execute(cmd);
+				this.getStateSpace().execute(cmd);
 			} catch (ProBError e) {
 				return new CheckError("Type error in specified goal.");
 			}
 		}
-		// When goal is undefined, isFinished will be executed anyways
 
-		s.execute(job);
-		stopwatch.stop();
-		IModelCheckingResult result = job.getResult();
-		if (ui != null) {
-			ui.isFinished(jobId, stopwatch.elapsed(TimeUnit.MILLISECONDS), result, job.getStats());
-		}
-		return result;
-	}
-
-	@Override
-	public IModelCheckingResult getResult() {
-		if (job.getResult() == null) {
-			return new NotYetFinished("No result was calculated", -1);
-		}
+		this.getStateSpace().execute(job);
 		return job.getResult();
-	}
-
-	@Override
-	public String getJobId() {
-		return jobId;
-	}
-
-	@Override
-	public StateSpace getStateSpace() {
-		return s;
 	}
 
 	/**
