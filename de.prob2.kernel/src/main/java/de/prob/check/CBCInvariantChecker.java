@@ -64,8 +64,8 @@ public class CBCInvariantChecker extends CheckerBase {
 	}
 
 	@Override
-	protected IModelCheckingResult execute() {
+	protected void execute() {
 		this.getStateSpace().execute(command);
-		return command.getResult();
+		this.isFinished(command.getResult(), null);
 	}
 }

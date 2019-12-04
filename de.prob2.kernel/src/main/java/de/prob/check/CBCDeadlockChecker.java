@@ -64,8 +64,8 @@ public class CBCDeadlockChecker extends CheckerBase {
 	}
 
 	@Override
-	protected IModelCheckingResult execute() {
+	protected void execute() {
 		this.getStateSpace().execute(job);
-		return job.getResult();
+		this.isFinished(job.getResult(), null);
 	}
 }

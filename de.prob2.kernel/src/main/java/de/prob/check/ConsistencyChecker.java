@@ -70,18 +70,19 @@ public class ConsistencyChecker extends CheckerBase {
 	}
 
 	@Override
-	protected IModelCheckingResult execute() {
+	protected void execute() {
 		if (goal != null) {
 			try {
 				SetBGoalCommand cmd = new SetBGoalCommand(goal);
 				this.getStateSpace().execute(cmd);
 			} catch (ProBError e) {
-				return new CheckError("Type error in specified goal.");
+				this.isFinished(new CheckError("Type error in specified goal."), null);
+				return;
 			}
 		}
 
 		this.getStateSpace().execute(job);
-		return job.getResult();
+		this.isFinished(job.getResult(), job.getStats());
 	}
 
 	/**
