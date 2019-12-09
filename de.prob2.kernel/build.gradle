@@ -263,7 +263,6 @@ project.jacoco.applyTo(groovyIntegrationTests)
 
 
 task cliIntegrationTests(type: Test, dependsOn: ['downloadCLIs','test']) {
-	scanForTestClasses = true
 	include('de/prob/cli/integration/**/*')
 	jacoco {
 		destinationFile = file("$buildDir/jacoco/jacocoCliIntegrationTests.exec")
