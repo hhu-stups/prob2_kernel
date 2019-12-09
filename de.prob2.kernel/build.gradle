@@ -291,11 +291,6 @@ eclipse {
 }
 tasks.eclipse.dependsOn createBuildConstants
 
-task deploy(type: Copy, dependsOn: build) {
-	into "$buildDir/libs"
-	from configurations.runtime
-}
-
 javadoc {
 	failOnError = false
 }
