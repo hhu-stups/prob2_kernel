@@ -231,10 +231,6 @@ if (!project.hasProperty("probHome")) {
 	processResources.dependsOn(downloadCLIs, downloadCSPMFrontend)
 }
 
-test.doFirst {
-	systemProperties['integrationtest'] = 'true'
-}
-
 test {
 	exclude('de/prob/cli/integration')
 	testLogging {
