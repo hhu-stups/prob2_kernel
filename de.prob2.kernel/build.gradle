@@ -250,10 +250,8 @@ wrapper {
 	distributionType = Wrapper.DistributionType.ALL
 }
 
-// run integration tests after downloading fresh CLI from Nightly Build
-task allTests(dependsOn: ['downloadCLIs', 'test', 'groovyIntegrationTests', 'cliIntegrationTests'])
+task allTests(dependsOn: ['test', 'groovyIntegrationTests', 'cliIntegrationTests'])
 
-// run groovy integration tests WITHOUT downloading fresh CLI from Nightly Build
 task groovyIntegrationTests(type: JavaExec, dependsOn: ['classes']) {
 	main = 'de.prob.Main'
 	classpath = sourceSets.main.runtimeClasspath
@@ -262,7 +260,7 @@ task groovyIntegrationTests(type: JavaExec, dependsOn: ['classes']) {
 project.jacoco.applyTo(groovyIntegrationTests)
 
 
-task cliIntegrationTests(type: Test, dependsOn: ['downloadCLIs','test']) {
+task cliIntegrationTests(type: Test, dependsOn: ['test']) {
 	include('de/prob/cli/integration/**/*')
 	jacoco {
 		destinationFile = file("$buildDir/jacoco/jacocoCliIntegrationTests.exec")
