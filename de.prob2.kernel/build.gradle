@@ -210,21 +210,11 @@ def readCurrentGitCommit() {
 	return proc.in.readLines()[0]
 }
 
-final BUILD_PROPERTIES = file("src/main/resources/de/prob/build.properties")
-
-task createBuildConstants {
-	doFirst {
-		BUILD_PROPERTIES.delete()
-		BUILD_PROPERTIES << "version=${project.version}\n"
-		BUILD_PROPERTIES << "git=${readCurrentGitCommit()}\n"
+processResources {
+	filesMatching("de/prob/build.properties") {
+		expand(version: project.version, git: readCurrentGitCommit())
 	}
 }
-processResources.dependsOn(createBuildConstants)
-
-task cleanBuildConstants(type: Delete) {
-	delete(BUILD_PROPERTIES)
-}
-clean.dependsOn(cleanBuildConstants)
 
 if (!project.hasProperty("probHome")) {
 	// Automatically download probcli/cspmf, unless a custom PROB_HOME is set
@@ -289,7 +279,6 @@ eclipse {
 		name = 'de.prob2.kernel'
 	}
 }
-tasks.eclipse.dependsOn createBuildConstants
 
 javadoc {
 	failOnError = false
