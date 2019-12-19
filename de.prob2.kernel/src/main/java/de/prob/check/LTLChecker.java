@@ -1,13 +1,15 @@
 package de.prob.check;
 
 import de.be4.ltl.core.parser.LtlParseException;
-import de.prob.animator.command.LTLCheckingJob;
+import de.prob.animator.command.LtlCheckingCommand;
 import de.prob.animator.domainobjects.LTL;
 import de.prob.model.eventb.EventBModel;
 import de.prob.statespace.StateSpace;
 
 public class LTLChecker extends CheckerBase {
-	private final LTLCheckingJob job;
+	private static final int MAX = 500;
+
+	private final LTL formula;
 
 	public LTLChecker(final StateSpace s, final String formula)
 			throws LtlParseException {
@@ -28,12 +30,21 @@ public class LTLChecker extends CheckerBase {
 					"Cannot perform LTL checking without a correctly parsed LTL Formula");
 		}
 
-		job = new LTLCheckingJob(s, formula, this.getJobId(), ui);
+		this.formula = formula;
 	}
 
 	@Override
 	protected void execute() {
-		this.getStateSpace().execute(job);
-		this.isFinished(job.getResult(), null);
+		final LtlCheckingCommand cmd = new LtlCheckingCommand(this.getStateSpace(), formula, MAX);
+		try {
+			this.getStateSpace().startTransaction();
+			do {
+				this.getStateSpace().execute(cmd);
+				this.updateStats(cmd.getResult(), null);
+			} while (cmd.getResult() instanceof LTLNotYetFinished);
+		} finally {
+			this.getStateSpace().endTransaction();
+		}
+		this.isFinished(cmd.getResult(), null);
 	}
 }

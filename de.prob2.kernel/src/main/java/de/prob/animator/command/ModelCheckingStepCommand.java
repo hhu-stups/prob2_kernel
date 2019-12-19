@@ -6,6 +6,7 @@
 
 package de.prob.animator.command;
 
+import de.prob.check.CheckInterrupted;
 import de.prob.check.IModelCheckingResult;
 import de.prob.check.ModelCheckErrorUncovered;
 import de.prob.check.ModelCheckOk;
@@ -58,7 +59,7 @@ public class ModelCheckingStepCommand extends AbstractCommand {
 	}
 
 	public IModelCheckingResult getResult() {
-		return result;
+		return result == null && interrupted ? new CheckInterrupted() : result;
 	}
 
 	@Override

@@ -1,6 +1,6 @@
 package de.prob.check;
 
-import de.prob.animator.command.ModelCheckingJob;
+import de.prob.animator.command.ModelCheckingStepCommand;
 import de.prob.animator.command.SetBGoalCommand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.exception.ProBError;
@@ -12,13 +12,15 @@ import de.prob.statespace.StateSpace;
  * specified by the user or by the default options. This class should be used
  * with the {@link ModelChecker} wrapper class in order to perform model
  * checking. Communications with the ProB kernel take place via the
- * {@link ModelCheckingJob} command.
+ * {@link ModelCheckingStepCommand}.
  * 
  * @author joy
  * 
  */
 public class ConsistencyChecker extends CheckerBase {
-	private final ModelCheckingJob job;
+	private static final int TIMEOUT_MS = 500;
+
+	private final ModelCheckingOptions options;
 	private final IEvalElement goal;
 
 	/**
@@ -65,8 +67,8 @@ public class ConsistencyChecker extends CheckerBase {
 			final IModelCheckListener ui) {
 		super(s, ui);
 
+		this.options = options;
 		this.goal = goal;
-		job = new ModelCheckingJob(options, this.getJobId(), ui);
 	}
 
 	@Override
@@ -81,8 +83,20 @@ public class ConsistencyChecker extends CheckerBase {
 			}
 		}
 
-		this.getStateSpace().execute(job);
-		this.isFinished(job.getResult(), job.getStats());
+		ModelCheckingStepCommand cmd;
+		try {
+			this.getStateSpace().startTransaction();
+			boolean firstIteration = true;
+			do {
+				cmd = new ModelCheckingStepCommand(TIMEOUT_MS, this.options.recheckExisting(firstIteration));
+				this.getStateSpace().execute(cmd);
+				this.updateStats(cmd.getResult(), cmd.getStats());
+				firstIteration = false;
+			} while (cmd.getResult() instanceof NotYetFinished);
+		} finally {
+			this.getStateSpace().endTransaction();
+		}
+		this.isFinished(cmd.getResult(), cmd.getStats());
 	}
 
 	/**

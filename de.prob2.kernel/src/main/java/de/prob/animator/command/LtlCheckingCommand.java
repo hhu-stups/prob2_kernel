@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import de.prob.animator.domainobjects.LTL;
+import de.prob.check.CheckInterrupted;
 import de.prob.check.IModelCheckingResult;
 import de.prob.check.LTLCounterExample;
 import de.prob.check.LTLError;
@@ -49,7 +50,7 @@ public final class LtlCheckingCommand extends EvaluationCommand implements
 	}
 
 	public IModelCheckingResult getResult() {
-		return result;
+		return result == null && interrupted ? new CheckInterrupted() : result;
 	}
 
 	@Override
