@@ -15,6 +15,7 @@ import de.prob.statespace.Trace;
 import de.prob.statespace.Transition;
 
 /**
+ * TODO: Wrong comment text
  * This command makes ProB search for a deadlock with an optional predicate to
  * limit the search space.
  * 
@@ -23,12 +24,19 @@ import de.prob.statespace.Transition;
 public class ConstraintBasedAssertionCheckCommand extends AbstractCommand
 		implements IStateSpaceModifier, ITraceDescription {
 
+	public enum CheckingType {
+		STATIC, DYNAMIC
+	}
+
 	public enum ResultType {
 		INTERRUPTED, COUNTER_EXAMPLE, NO_COUNTER_EXAMPLE_FOUND, NO_COUNTER_EXAMPLE_EXISTS
 	}
 
-	private static final String COMMAND_NAME = "cbc_static_assertion_violation_checking";
+	private static final String COMMAND_NAME_STATIC = "cbc_static_assertion_violation_checking";
+	private static final String COMMAND_NAME_DYNAMIC = "cbc_dynamic_assertion_violation_checking";
 	private static final String RESULT_VARIABLE = "R";
+
+	private CheckingType checkingType;
 
 	private ResultType result;
 	private Transition counterExampleOperation;
@@ -36,7 +44,8 @@ public class ConstraintBasedAssertionCheckCommand extends AbstractCommand
 	private final StateSpace s;
 	private final List<Transition> newOps = new ArrayList<>();
 
-	public ConstraintBasedAssertionCheckCommand(final StateSpace s) {
+	public ConstraintBasedAssertionCheckCommand(final CheckingType checkingType, final StateSpace s) {
+		this.checkingType = checkingType;
 		this.s = s;
 	}
 
@@ -54,7 +63,11 @@ public class ConstraintBasedAssertionCheckCommand extends AbstractCommand
 
 	@Override
 	public void writeCommand(final IPrologTermOutput pto) {
-		pto.openTerm(COMMAND_NAME);
+		if(checkingType == CheckingType.STATIC) {
+			pto.openTerm(COMMAND_NAME_STATIC);
+		} else {
+			pto.openTerm(COMMAND_NAME_DYNAMIC);
+		}
 		pto.printVariable(RESULT_VARIABLE);
 		pto.closeTerm();
 	}
@@ -78,7 +91,7 @@ public class ConstraintBasedAssertionCheckCommand extends AbstractCommand
 			newOps.add(counterExampleOperation);
 			counterExampleStateID = counterExampleTerm.getArgument(2).toString();
 		} else {
-			throw new ProBError("unexpected result from deadlock check: " + resultTerm);
+			throw new ProBError("unexpected result from assertion check: " + resultTerm);
 		}
 	}
 
