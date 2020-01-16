@@ -2,10 +2,13 @@ package de.prob.statespace;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import de.prob.animator.command.GetMachineIdentifiersCommand;
@@ -32,12 +35,21 @@ public class LoadedMachine {
 		this.setEvalElements = new EnumMap<>(FormulaExpand.class);
 	}
 
+	private static <T, K, U> Collector<T, ?, Map<K, U>> toOrderedMap(
+		Function<? super T, ? extends K> keyMapper,
+		Function<? super T, ? extends U> valueMapper
+	) {
+		return Collectors.toMap(keyMapper, valueMapper, (left, right) -> {
+			throw new IllegalStateException("Duplicate key: " + left);
+		}, LinkedHashMap::new);
+	}
+
 	public boolean containsOperations(String name) {
 		return getOperations().containsKey(name);
 	}
 
 	public Set<String> getOperationNames() {
-		return new HashSet<>(getOperations().keySet());
+		return new LinkedHashSet<>(getOperations().keySet());
 	}
 
 	public OperationInfo getMachineOperationInfo(String operationName) {
@@ -49,7 +61,7 @@ public class LoadedMachine {
 			GetMachineOperationInfos command = new GetMachineOperationInfos();
 			this.stateSpace.execute(command);
 			this.machineOperationInfos = command.getOperationInfos().stream()
-					.collect(Collectors.toMap(OperationInfo::getOperationName, i -> i));
+					.collect(toOrderedMap(OperationInfo::getOperationName, i -> i));
 		}
 		return this.machineOperationInfos;
 	}
