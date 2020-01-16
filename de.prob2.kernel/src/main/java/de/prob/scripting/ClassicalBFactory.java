@@ -117,6 +117,7 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 		try {
 			ParsingBehaviour parsingBehaviour = new ParsingBehaviour();
 			parsingBehaviour.setAddLineNumbers(true);
+			parsingBehaviour.setMachineNameMustMatchFileName(true);
 			final RecursiveMachineLoader rml = new RecursiveMachineLoader(directory, contentProvider, parsingBehaviour);
 
 			rml.loadAllMachines(f, ast, bparser.getDefinitions());
