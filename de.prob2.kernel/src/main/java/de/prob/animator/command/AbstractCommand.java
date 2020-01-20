@@ -3,6 +3,7 @@ package de.prob.animator.command;
 import java.util.Collections;
 import java.util.List;
 
+import de.prob.animator.CommandInterruptedException;
 import de.prob.animator.IPrologResult;
 import de.prob.animator.InterruptedResult;
 import de.prob.animator.NoResult;
@@ -25,8 +26,6 @@ import de.prob.prolog.term.PrologTerm;
  * 
  */
 public abstract class AbstractCommand {
-
-	protected boolean interrupted = false;
 	protected boolean completed = true;
 	
 	
@@ -90,7 +89,7 @@ public abstract class AbstractCommand {
 	}
 
 	public boolean isCompleted() {
-		return interrupted || completed;
+		return completed;
 	}
 
 	/**
@@ -103,10 +102,6 @@ public abstract class AbstractCommand {
 	 */
 	public boolean blockAnimator() {
 		return false;
-	}
-
-	public boolean isInterrupted() {
-		return interrupted;
 	}
 
 	/**
@@ -131,7 +126,7 @@ public abstract class AbstractCommand {
 		if (result instanceof NoResult) {
 			throw new ProBError("Prolog said no.", errors);
 		} else if (result instanceof InterruptedResult) {
-			interrupted = true;
+			throw new CommandInterruptedException("ProB was interrupted", errors);
 		} else if (result instanceof YesResult) {
 			processResult(((YesResult) result).getBindings());
 			throw new ProBError("ProB reported Errors", errors);

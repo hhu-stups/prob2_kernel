@@ -5,6 +5,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import de.prob.animator.IPrologResult;
+import de.prob.animator.InterruptedResult;
+import de.prob.animator.domainobjects.ErrorItem;
 import de.prob.check.CBCInvariantViolationFound;
 import de.prob.check.CheckInterrupted;
 import de.prob.check.IModelCheckingResult;
@@ -104,6 +107,15 @@ public class ConstraintBasedInvariantCheckCommand extends AbstractCommand
 		}
 	}
 
+	@Override
+	public void processErrorResult(final IPrologResult result, final List<ErrorItem> errors) {
+		if (result instanceof InterruptedResult) {
+			this.result = new CheckInterrupted();
+		} else {
+			super.processErrorResult(result, errors);
+		}
+	}
+
 	private List<InvariantCheckCounterExample> extractExamples(
 			final ListPrologTerm ceTerm) {
 		List<InvariantCheckCounterExample> examples = new ArrayList<>();
@@ -124,7 +136,7 @@ public class ConstraintBasedInvariantCheckCommand extends AbstractCommand
 	}
 
 	public IModelCheckingResult getResult() {
-		return result == null && interrupted ? new CheckInterrupted() : result;
+		return result;
 	}
 
 	@Override

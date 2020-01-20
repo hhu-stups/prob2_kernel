@@ -36,7 +36,7 @@ class StateSpaceAsAnimatorTest extends Specification {
 		s.execute(cmd)
 
 		then:
-		!cmd.interrupted
+		noExceptionThrown()
 	}
 
 	def "it is possible to execute a single command"() {
