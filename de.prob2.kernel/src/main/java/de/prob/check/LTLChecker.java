@@ -6,7 +6,11 @@ import de.prob.animator.domainobjects.LTL;
 import de.prob.model.eventb.EventBModel;
 import de.prob.statespace.StateSpace;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class LTLChecker extends CheckerBase {
+	private static final Logger LOGGER = LoggerFactory.getLogger(LTLChecker.class);
 	private static final int MAX = 500;
 
 	private final LTL formula;
@@ -40,6 +44,11 @@ public class LTLChecker extends CheckerBase {
 			this.getStateSpace().startTransaction();
 			do {
 				this.getStateSpace().execute(cmd);
+				if (Thread.interrupted()) {
+					LOGGER.info("LTL checker received a Java thread interrupt");
+					this.isFinished(new CheckInterrupted(), null);
+					return;
+				}
 				this.updateStats(cmd.getResult(), null);
 			} while (cmd.getResult() instanceof LTLNotYetFinished);
 		} finally {

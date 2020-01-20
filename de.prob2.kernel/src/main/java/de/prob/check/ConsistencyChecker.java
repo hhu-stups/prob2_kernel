@@ -6,6 +6,9 @@ import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.exception.ProBError;
 import de.prob.statespace.StateSpace;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * This {@link IModelCheckJob} performs consistency checking on a given
  * {@link StateSpace} based on the specified {@link ModelCheckingOptions}
@@ -18,6 +21,7 @@ import de.prob.statespace.StateSpace;
  * 
  */
 public class ConsistencyChecker extends CheckerBase {
+	private static final Logger LOGGER = LoggerFactory.getLogger(ConsistencyChecker.class);
 	private static final int TIMEOUT_MS = 500;
 
 	private final ModelCheckingOptions options;
@@ -90,6 +94,11 @@ public class ConsistencyChecker extends CheckerBase {
 			do {
 				cmd = new ModelCheckingStepCommand(TIMEOUT_MS, this.options.recheckExisting(firstIteration));
 				this.getStateSpace().execute(cmd);
+				if (Thread.interrupted()) {
+					LOGGER.info("Consistency checker received a Java thread interrupt");
+					this.isFinished(new CheckInterrupted(), cmd.getStats());
+					return;
+				}
 				this.updateStats(cmd.getResult(), cmd.getStats());
 				firstIteration = false;
 			} while (cmd.getResult() instanceof NotYetFinished);
