@@ -10,9 +10,9 @@ import de.prob.statespace.StateSpace;
  * <p>Internal base class of all checker classes. This class implements almost all parts of the {@link IModelCheckJob} interface and takes care of generating a job ID, measuring execution time, and correctly calling the {@link IModelCheckListener}. Subclasses only need to implement the {@link #execute()} method to perform the actual checking and return the final {@link IModelCheckingResult} object.</p>
  */
 abstract class CheckerBase implements IModelCheckJob {
-	private static final String JOBPREFIX = "mc";
+	private static final String JOB_ID_PREFIX = "mc";
 	private static final NotYetFinished UNSET_RESULT = new NotYetFinished("No result was calculated", -1);
-	private static int counter = 0;
+	private static int jobIdCounter = 0;
 	
 	private final String jobId;
 	private final StateSpace stateSpace;
@@ -33,7 +33,7 @@ abstract class CheckerBase implements IModelCheckJob {
 	}
 	
 	protected static String generateJobId() {
-		return JOBPREFIX + counter++;
+		return JOB_ID_PREFIX + jobIdCounter++;
 	}
 	
 	@Override
