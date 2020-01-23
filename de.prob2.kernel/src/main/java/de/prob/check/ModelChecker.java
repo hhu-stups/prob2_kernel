@@ -23,13 +23,6 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class ModelChecker {
-
-	private static int counter = 0;
-	private static final String JOBPREFIX = "mc";
-
-	public static String generateJobId() {
-		return JOBPREFIX + counter++;
-	}
 	private Logger logger = LoggerFactory.getLogger(ModelChecker.class);
 
 	private final ExecutorService executor;

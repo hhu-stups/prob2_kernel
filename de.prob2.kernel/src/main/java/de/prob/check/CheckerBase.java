@@ -10,7 +10,9 @@ import de.prob.statespace.StateSpace;
  * <p>Internal base class of all checker classes. This class implements almost all parts of the {@link IModelCheckJob} interface and takes care of generating a job ID, measuring execution time, and correctly calling the {@link IModelCheckListener}. Subclasses only need to implement the {@link #execute()} method to perform the actual checking and return the final {@link IModelCheckingResult} object.</p>
  */
 abstract class CheckerBase implements IModelCheckJob {
+	private static final String JOBPREFIX = "mc";
 	private static final NotYetFinished UNSET_RESULT = new NotYetFinished("No result was calculated", -1);
+	private static int counter = 0;
 	
 	private final String jobId;
 	private final StateSpace stateSpace;
@@ -23,11 +25,15 @@ abstract class CheckerBase implements IModelCheckJob {
 	 * @param listener a listener to notify about checking progress (may be {@code null} if no progress updates are needed)
 	 */
 	protected CheckerBase(final StateSpace stateSpace, final IModelCheckListener listener) {
-		this.jobId = ModelChecker.generateJobId();
+		this.jobId = generateJobId();
 		this.stateSpace = stateSpace;
 		this.listener = listener;
 		this.stopwatch = Stopwatch.createUnstarted();
 		this.result = UNSET_RESULT;
+	}
+	
+	protected static String generateJobId() {
+		return JOBPREFIX + counter++;
 	}
 	
 	@Override

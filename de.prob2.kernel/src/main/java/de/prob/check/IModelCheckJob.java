@@ -35,7 +35,7 @@ public interface IModelCheckJob extends Callable<IModelCheckingResult> {
 
 	/**
 	 * The job id here should be unique. In implementations, a unique job id can
-	 * be generated via the static method {@link ModelChecker#generateJobId()}.
+	 * be generated via the static method {@link CheckerBase#generateJobId()}.
 	 * 
 	 * @return job id associated with this job.
 	 */
