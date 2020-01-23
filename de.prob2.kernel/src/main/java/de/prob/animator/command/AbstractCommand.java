@@ -108,7 +108,10 @@ public abstract class AbstractCommand {
 	 * 
 	 * @return true, if an the animator status should be broadcast as blocked.
 	 *         false, otherwise.
+	 * 
+	 * @deprecated This method is no longer necessary, as commands are non automatically executed more than once anymore. To execute a command in a transaction (which blocks the animator), surround the {@link IAnimator#execute(AbstractCommand)} call with {@link IAnimator#withTransaction(Runnable)}.
 	 */
+	@Deprecated
 	public boolean blockAnimator() {
 		return false;
 	}

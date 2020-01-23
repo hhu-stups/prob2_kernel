@@ -143,9 +143,4 @@ public class ConstraintBasedInvariantCheckCommand extends AbstractCommand
 	public List<Transition> getNewTransitions() {
 		return newTransitions;
 	}
-
-	@Override
-	public boolean blockAnimator() {
-		return true;
-	}
 }

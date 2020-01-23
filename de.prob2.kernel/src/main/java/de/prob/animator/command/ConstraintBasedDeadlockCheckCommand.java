@@ -126,9 +126,4 @@ public class ConstraintBasedDeadlockCheckCommand extends AbstractCommand
 	public List<Transition> getNewTransitions() {
 		return newOps;
 	}
-
-	@Override
-	public boolean blockAnimator() {
-		return true;
-	}
 }

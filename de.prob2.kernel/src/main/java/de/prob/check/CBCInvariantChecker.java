@@ -64,7 +64,7 @@ public class CBCInvariantChecker extends CheckerBase {
 
 	@Override
 	protected void execute() {
-		this.getStateSpace().execute(command);
+		this.getStateSpace().withTransaction(() -> this.getStateSpace().execute(command));
 		this.isFinished(command.getResult(), null);
 	}
 }
