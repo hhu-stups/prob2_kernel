@@ -1,6 +1,7 @@
 package de.prob.check;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 import com.google.common.base.Stopwatch;
 
@@ -12,7 +13,7 @@ import de.prob.statespace.StateSpace;
 abstract class CheckerBase implements IModelCheckJob {
 	private static final String JOB_ID_PREFIX = "mc";
 	private static final NotYetFinished UNSET_RESULT = new NotYetFinished("No result was calculated", -1);
-	private static int jobIdCounter = 0;
+	private static final AtomicLong jobIdCounter = new AtomicLong();
 	
 	private final String jobId;
 	private final StateSpace stateSpace;
@@ -33,7 +34,7 @@ abstract class CheckerBase implements IModelCheckJob {
 	}
 	
 	protected static String generateJobId() {
-		return JOB_ID_PREFIX + jobIdCounter++;
+		return JOB_ID_PREFIX + jobIdCounter.getAndIncrement();
 	}
 	
 	@Override
