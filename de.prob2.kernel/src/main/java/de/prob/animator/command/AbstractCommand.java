@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import de.prob.animator.CommandInterruptedException;
+import de.prob.animator.IAnimator;
 import de.prob.animator.IPrologResult;
 import de.prob.animator.InterruptedResult;
 import de.prob.animator.NoResult;
@@ -26,6 +27,10 @@ import de.prob.prolog.term.PrologTerm;
  * 
  */
 public abstract class AbstractCommand {
+	/**
+	 * @deprecated This field should no longer be used directly. If you need to execute a command more than once, call {@link IAnimator#execute(AbstractCommand)} in a loop.
+	 */
+	@Deprecated
 	protected boolean completed = true;
 	
 	
@@ -88,6 +93,10 @@ public abstract class AbstractCommand {
 		return Collections.emptyList();
 	}
 
+	/**
+	 * @deprecated The corresponding {@link #completed} field is no longer used. In practice, this method always returns {@code true}, regardless of whether the command has actually completed execution.
+	 */
+	@Deprecated
 	public boolean isCompleted() {
 		return completed;
 	}
