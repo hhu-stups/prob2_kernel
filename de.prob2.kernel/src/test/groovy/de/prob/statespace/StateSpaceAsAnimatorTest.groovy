@@ -70,6 +70,10 @@ class StateSpaceAsAnimatorTest extends Specification {
 		s.busy
 		s.endTransaction()
 		!s.busy
+		s.withTransaction {
+			assert s.busy
+		}
+		!s.busy
 	}
 
 	def "it is possible to notify animation listeners that the animator is busy"() {

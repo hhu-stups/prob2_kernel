@@ -85,9 +85,8 @@ public class ConsistencyChecker extends CheckerBase {
 			}
 		}
 
-		ModelCheckingStepCommand cmd;
-		try {
-			this.getStateSpace().startTransaction();
+		final ModelCheckingStepCommand lastCommand = this.getStateSpace().withTransaction(() -> {
+			ModelCheckingStepCommand cmd;
 			boolean firstIteration = true;
 			do {
 				cmd = new ModelCheckingStepCommand(TIMEOUT_MS, this.options.recheckExisting(firstIteration));
@@ -95,15 +94,14 @@ public class ConsistencyChecker extends CheckerBase {
 				if (Thread.interrupted()) {
 					LOGGER.info("Consistency checker received a Java thread interrupt");
 					this.isFinished(new CheckInterrupted(), cmd.getStats());
-					return;
+					return cmd;
 				}
 				this.updateStats(cmd.getResult(), cmd.getStats());
 				firstIteration = false;
 			} while (cmd.getResult() instanceof NotYetFinished);
-		} finally {
-			this.getStateSpace().endTransaction();
-		}
-		this.isFinished(cmd.getResult(), cmd.getStats());
+			return cmd;
+		});
+		this.isFinished(lastCommand.getResult(), lastCommand.getStats());
 	}
 
 	/**

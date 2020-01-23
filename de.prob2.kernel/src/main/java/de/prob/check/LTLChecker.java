@@ -40,8 +40,7 @@ public class LTLChecker extends CheckerBase {
 	@Override
 	protected void execute() {
 		final LtlCheckingCommand cmd = new LtlCheckingCommand(this.getStateSpace(), formula, MAX);
-		try {
-			this.getStateSpace().startTransaction();
+		this.getStateSpace().withTransaction(() -> {
 			do {
 				this.getStateSpace().execute(cmd);
 				if (Thread.interrupted()) {
@@ -51,9 +50,7 @@ public class LTLChecker extends CheckerBase {
 				}
 				this.updateStats(cmd.getResult(), null);
 			} while (cmd.getResult() instanceof LTLNotYetFinished);
-		} finally {
-			this.getStateSpace().endTransaction();
-		}
+		});
 		this.isFinished(cmd.getResult(), null);
 	}
 }

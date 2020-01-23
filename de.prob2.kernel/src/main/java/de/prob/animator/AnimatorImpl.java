@@ -54,47 +54,41 @@ class AnimatorImpl implements IAnimator {
 			}
 		}
 
-		if (command.blockAnimator()) {
-			logger.trace("Blocking animator");
-			startTransaction();
-		}
-		logger.trace("Starting execution of {}", command);
-		do {
-			IPrologResult result = processor.sendCommand(command);
-			final GetErrorItemsCommand errorItemsCommand = getErrorItems();
-
-			if (result instanceof YesResult && (errorItemsCommand.getErrors().isEmpty() || errorItemsCommand.onlyWarningsOccurred())) {
-				logger.trace("Execution successful, processing result");
-				if (!errorItemsCommand.getErrors().isEmpty()) {
-					logger.warn("ProB reported warnings:");
-					for (final ErrorItem error : errorItemsCommand.getErrors()) {
-						assert error.getType() == ErrorItem.Type.WARNING;
-						logger.warn("{}", error);
+		this.withTransaction(() -> {
+			logger.trace("Starting execution of {}", command);
+			do {
+				IPrologResult result = processor.sendCommand(command);
+				final GetErrorItemsCommand errorItemsCommand = getErrorItems();
+				
+				if (result instanceof YesResult && (errorItemsCommand.getErrors().isEmpty() || errorItemsCommand.onlyWarningsOccurred())) {
+					logger.trace("Execution successful, processing result");
+					if (!errorItemsCommand.getErrors().isEmpty()) {
+						logger.warn("ProB reported warnings:");
+						for (final ErrorItem error : errorItemsCommand.getErrors()) {
+							assert error.getType() == ErrorItem.Type.WARNING;
+							logger.warn("{}", error);
+						}
+						this.warningListeners.forEach(listener -> listener.warningsOccurred(errorItemsCommand.getErrors()));
 					}
-					this.warningListeners.forEach(listener -> listener.warningsOccurred(errorItemsCommand.getErrors()));
+					try {
+						command.processResult(((YesResult) result).getBindings());
+					} catch (RuntimeException e) {
+						this.kill();
+						throw new CliError("Exception while processing command result", e);
+					}
+				} else {
+					logger.trace("Execution unsuccessful, processing error");
+					command.processErrorResult(result, errorItemsCommand.getErrors());
 				}
-				try {
-					command.processResult(((YesResult) result).getBindings());
-				} catch (RuntimeException e) {
-					this.kill();
-					throw new CliError("Exception while processing command result", e);
+				logger.trace("Executed {} (completed: {})", command, command.isCompleted());
+				
+				if (!command.isCompleted() && Thread.currentThread().isInterrupted()) {
+					logger.info("Stopping execution of {} because this thread was interrupted", command);
+					throw new CommandInterruptedException("Thread was interrupted during command execution", Collections.emptyList());
 				}
-			} else {
-				logger.trace("Execution unsuccessful, processing error");
-				command.processErrorResult(result, errorItemsCommand.getErrors());
-			}
-			logger.trace("Executed {} (completed: {})", command, command.isCompleted());
-			
-			if (!command.isCompleted() && Thread.currentThread().isInterrupted()) {
-				logger.info("Stopping execution of {} because this thread was interrupted", command);
-				throw new CommandInterruptedException("Thread was interrupted during command execution", Collections.emptyList());
-			}
-		} while (!command.isCompleted());
-		logger.trace("Done executing {}", command);
-		if (command.blockAnimator()) {
-			endTransaction();
-			logger.trace("Unblocked animator");
-		}
+			} while (!command.isCompleted());
+			logger.trace("Done executing {}", command);
+		});
 	}
 
 	private synchronized GetErrorItemsCommand getErrorItems() {
