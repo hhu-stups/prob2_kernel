@@ -12,10 +12,8 @@ import org.slf4j.LoggerFactory;
 /**
  * This {@link IModelCheckJob} performs consistency checking on a given
  * {@link StateSpace} based on the specified {@link ModelCheckingOptions}
- * specified by the user or by the default options. This class should be used
- * with the {@link ModelChecker} wrapper class in order to perform model
- * checking. Communications with the ProB kernel take place via the
- * {@link ModelCheckingStepCommand}.
+ * specified by the user or by the default options. Communications with
+ * the ProB kernel take place via the {@link ModelCheckingStepCommand}.
  * 
  * @author joy
  * 
@@ -117,7 +115,10 @@ public class ConsistencyChecker extends CheckerBase {
 	 *            {@link StateSpace} for which the consistency checking should
 	 *            take place
 	 * @return {@link ModelChecker} with consistency checking capabilities.
+	 * 
+	 * @deprecated Use {@link #ConsistencyChecker(StateSpace)} directly. See the {@link ModelChecker} deprecation notice for details.
 	 */
+	@Deprecated
 	public static ModelChecker create(final StateSpace s) {
 		return new ModelChecker(new ConsistencyChecker(s));
 	}
@@ -133,7 +134,10 @@ public class ConsistencyChecker extends CheckerBase {
 	 * @param options
 	 *            {@link ModelCheckingOptions} specified by the user
 	 * @return {@link ModelChecker} with consistency checking capabilities
+	 *
+	 * @deprecated Use {@link #ConsistencyChecker(StateSpace, ModelCheckingOptions)} directly. See the {@link ModelChecker} deprecation notice for details.
 	 */
+	@Deprecated
 	public static ModelChecker create(final StateSpace s, final ModelCheckingOptions options) {
 		return new ModelChecker(new ConsistencyChecker(s, options));
 	}

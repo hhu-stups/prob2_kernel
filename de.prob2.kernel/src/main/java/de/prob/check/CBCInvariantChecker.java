@@ -7,9 +7,8 @@ import de.prob.statespace.StateSpace;
 
 /**
  * This {@link IModelCheckJob} performs constraint based invariant checking on a
- * {@link StateSpace} given an (optional) list of events to check. This class
- * should be used with the {@link ModelChecker} wrapper class to perform model
- * checking. Communications with the ProB kernel take place via the
+ * {@link StateSpace} given an (optional) list of events to check.
+ * Communications with the ProB kernel take place via the
  * {@link ConstraintBasedInvariantCheckCommand}.
  * 
  * @author joy
