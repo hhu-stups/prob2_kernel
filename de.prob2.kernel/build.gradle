@@ -61,17 +61,16 @@ sourceSets.main.java.srcDirs = [] // i.e. there's no stand-alone java source
 
 dependencies {
 	// ProB parser dependencies (Eclipse Public License 1.0)
-	// These are marked as changing, because parserVersion may be a snapshot version.
-	compile group: "de.hhu.stups", name: "answerparser", version: parserVersion, changing: true
-	compile group: "de.hhu.stups", name: "bparser", version: parserVersion, changing: true
-	compile group: "de.hhu.stups", name: "cliparser", version: parserVersion, changing: true
-	compile group: "de.hhu.stups", name: "eventbalg", version: parserVersion, changing: true
-	compile group: "de.hhu.stups", name: "ltlparser", version: parserVersion, changing: true
-	compile group: "de.hhu.stups", name: "parserbase", version: parserVersion, changing: true
-	compile group: "de.hhu.stups", name: "prologlib", version: parserVersion, changing: true
-	compile group: "de.hhu.stups", name: "unicode", version: parserVersion, changing: true
-	compile group: "de.hhu.stups", name: "theorymapping", version: parserVersion, changing: true
-	compile group: "de.hhu.stups", name: "value-translator", version: "0.0.2", changing: true
+	compile group: "de.hhu.stups", name: "answerparser", version: parserVersion
+	compile group: "de.hhu.stups", name: "bparser", version: parserVersion
+	compile group: "de.hhu.stups", name: "cliparser", version: parserVersion
+	compile group: "de.hhu.stups", name: "eventbalg", version: parserVersion
+	compile group: "de.hhu.stups", name: "ltlparser", version: parserVersion
+	compile group: "de.hhu.stups", name: "parserbase", version: parserVersion
+	compile group: "de.hhu.stups", name: "prologlib", version: parserVersion
+	compile group: "de.hhu.stups", name: "unicode", version: parserVersion
+	compile group: "de.hhu.stups", name: "theorymapping", version: parserVersion
+	compile group: "de.hhu.stups", name: "value-translator", version: "0.0.2"
 
 	// Groovy (Apache License 2.0)
 	final groovyVersion = "2.5.6"
@@ -91,8 +90,8 @@ dependencies {
 	compile group: "com.google.guava", name: "guava", version: "28.0-jre" // Apache License 2.0
 	compile group: "com.google.inject", name: "guice", version: "4.2.2" // Apache License 2.0
 	compile group: "commons-cli", name: "commons-cli", version: "1.4" // Apache License 2.0
-	compile group: "de.hhu.stups", name: "alloy2b", version: "1.1", changing: true
-	compile group: "de.hhu.stups", name: "ltl-dsl", version: "0.1.2-SNAPSHOT", changing: true // Eclipse Public License 1.0
+	compile group: "de.hhu.stups", name: "alloy2b", version: "1.1"
+	compile group: "de.hhu.stups", name: "ltl-dsl", version: "0.1.2-SNAPSHOT" // Eclipse Public License 1.0
 	compile group: "de.hhu.stups", name: "rodin-eventb-ast", version: "3.2.0" // Eclipse Public License 1.0
 	compile group: "de.hhu.stups", name: "tla2bAST", version: "1.1.0" // Eclipse Public License 1.0
 
