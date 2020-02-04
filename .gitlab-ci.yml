@@ -52,7 +52,7 @@ tests:macos:
 tests:windows64:
   extends: .tests
   before_script: []
-  script: de.prob2.kernel\gradlew.bat ${GRADLE_OPTIONS} -b de.prob2.kernel\build.gradle clean allTests
+  script: de.prob2.kernel\gradlew.bat %GRADLE_OPTIONS% -b de.prob2.kernel\build.gradle clean allTests
   tags:
     - prob
     - win64
