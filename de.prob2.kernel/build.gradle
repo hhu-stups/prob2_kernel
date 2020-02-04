@@ -73,7 +73,7 @@ dependencies {
 	api group: "de.hhu.stups", name: "value-translator", version: "0.0.2"
 
 	// Groovy (Apache License 2.0)
-	final groovyVersion = "2.5.6"
+	final groovyVersion = "2.5.9"
 	api group: "org.codehaus.groovy", name: "groovy", version: groovyVersion
 	api group: "org.codehaus.groovy", name: "groovy-jsr223", version: groovyVersion
 	api group: "org.codehaus.groovy", name: "groovy-nio", version: groovyVersion
@@ -85,14 +85,14 @@ dependencies {
 	// TODO Can/should this be fixed? Should ProB 2's CLI be pulled out into a separate subproject, so that library and application dependencies can be separated?
 	api group: "ch.qos.logback", name: "logback-core", version: "1.2.3" // Eclipse Public License 1.0
 	api group: "ch.qos.logback", name: "logback-classic", version: "1.2.3" // Eclipse Public License 1.0
-	api group: "org.slf4j", name: "slf4j-api", version: "1.7.25" // MIT License
+	api group: "org.slf4j", name: "slf4j-api", version: "1.7.30" // MIT License
 
 	// Misc dependencies
 	// The following dependency needs to be api because the constructor of de.prob.model.representation.AbstractElement (and some subclasses) takes a com.github.krukow.clj_lang.PersistentHashMap.
 	// TODO Should we assume that external users do not call these constructors, and change this to an implementation dependency?
 	api group: "com.github.krukow", name: "clj-ds", version: "0.0.4" // Eclipse Public License 1.0
-	implementation group: "com.google.code.gson", name: "gson", version: "2.8.5" // Apache License 2.0
-	implementation group: "com.google.guava", name: "guava", version: "28.0-jre" // Apache License 2.0
+	implementation group: "com.google.code.gson", name: "gson", version: "2.8.6" // Apache License 2.0
+	implementation group: "com.google.guava", name: "guava", version: "28.2-jre" // Apache License 2.0
 	api group: "com.google.inject", name: "guice", version: "4.2.2" // Apache License 2.0
 	implementation group: "commons-cli", name: "commons-cli", version: "1.4" // Apache License 2.0
 	implementation group: "de.hhu.stups", name: "alloy2b", version: "1.1"
@@ -104,17 +104,17 @@ dependencies {
 	api group: "de.hhu.stups", name: "ptolemy-jfmi", version: "1.1.0" // Non-standard license (MIT/BSD-ish)
 	// The following dependency needs to be api because of de.prob.cosimulation.FMU.getFunction (which returns a com.sun.jna.Function).
 	// TODO Should that method be made private and this changed to an implementation dependency?
-	api group: "net.java.dev.jna", name: "jna", version: "5.2.0" // GNU LGPL 2.1
+	api group: "net.java.dev.jna", name: "jna", version: "5.5.0" // GNU LGPL 2.1
 
 	// Annotations
 	api group: "com.google.code.findbugs", name: "jsr305", version: "3.0.2" // Apache License 2.0
 
 	// Test dependencies
-	testImplementation group: "junit", name: "junit", version: "4.12" // Eclipse Public License 1.0
-	testImplementation group: "org.spockframework", name: "spock-core", version: "1.2-groovy-2.5" // Apache License 2.0
+	testImplementation group: "junit", name: "junit", version: "4.13" // Eclipse Public License 1.0
+	testImplementation group: "org.spockframework", name: "spock-core", version: "1.3-groovy-2.5" // Apache License 2.0
 	// Byte Buddy and Objenesis are needed by Spock to mock classes
-	testRuntimeOnly group: "net.bytebuddy", name: "byte-buddy", version: "1.9.10" // Apache License 2.0
-	testRuntimeOnly group: "org.objenesis", name: "objenesis", version: "3.0.1" // Apache License 2.0
+	testRuntimeOnly group: "net.bytebuddy", name: "byte-buddy", version: "1.10.7" // Apache License 2.0
+	testRuntimeOnly group: "org.objenesis", name: "objenesis", version: "3.1" // Apache License 2.0
 }
 
 if (project.hasProperty("probHome")) {
