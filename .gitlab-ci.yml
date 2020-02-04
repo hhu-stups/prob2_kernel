@@ -9,9 +9,12 @@ cache:
     - .gradle/wrapper
     - .gradle/caches
 
+variables:
+  GRADLE_OPTIONS: --info --stacktrace --warning-mode=all
+
 .tests:
   stage: test
-  script: ./de.prob2.kernel/gradlew -b de.prob2.kernel/build.gradle clean allTests --info --stacktrace --warning-mode=all
+  script: ./de.prob2.kernel/gradlew ${GRADLE_OPTIONS} -b de.prob2.kernel/build.gradle clean allTests
   before_script:
     - export GRADLE_USER_HOME=`pwd`/.gradle
   artifacts:
@@ -49,7 +52,7 @@ tests:macos:
 tests:windows64:
   extends: .tests
   before_script: []
-  script: de.prob2.kernel\gradlew.bat -b de.prob2.kernel\build.gradle clean allTests --info --stacktrace --warning-mode=all
+  script: de.prob2.kernel\gradlew.bat ${GRADLE_OPTIONS} -b de.prob2.kernel\build.gradle clean allTests
   tags:
     - prob
     - win64
@@ -64,7 +67,7 @@ publish:
     - openssl aes-256-cbc -pass "env:ENCRYPTION_PASSWORD" -d -a -md md5 -in pubring.gpg.enc       -out pubring.gpg
     - openssl aes-256-cbc -pass "env:ENCRYPTION_PASSWORD" -d -a -md md5 -in gradle.properties.enc -out de.prob2.kernel/gradle.properties
   script:
-    -  ./de.prob2.kernel/gradlew -b de.prob2.kernel/build.gradle uploadArchives --info --stacktrace --warning-mode=all
+    - ./de.prob2.kernel/gradlew ${GRADLE_OPTIONS} -b de.prob2.kernel/build.gradle uploadArchives
   only: 
     - master@stups/prob/prob2_kernel
     - develop@stups/prob/prob2_kernel
