@@ -10,7 +10,7 @@ cache:
     - .gradle/caches
 
 variables:
-  GRADLE_OPTIONS: --info --stacktrace --warning-mode=all
+  GRADLE_OPTIONS: --no-daemon --info --stacktrace --warning-mode=all
 
 .tests:
   stage: test
