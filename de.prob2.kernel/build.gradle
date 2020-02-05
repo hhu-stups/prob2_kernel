@@ -27,10 +27,11 @@ ext {
 }
 // IMPORTANT !!!
 
+final isSnapshot = project.version.endsWith("-SNAPSHOT")
 
 def parserVersion
 def cliDownloadURL
-if (project.version.endsWith("-SNAPSHOT")) {
+if (isSnapshot) {
 	parserVersion = '2.9.23-SNAPSHOT'
 	cliDownloadURL = "https://www3.hhu.de/stups/downloads/prob/cli/nightly"
 } else {
@@ -327,7 +328,7 @@ publishing {
 		maven {
 			final releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
 			final snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots"
-			url version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+			url isSnapshot ? snapshotsRepoUrl : releasesRepoUrl
 			if (project.hasProperty('ossrhUsername') && project.hasProperty('ossrhPassword')) {
 				credentials {
 					username project.ossrhUsername
@@ -339,5 +340,9 @@ publishing {
 }
 
 signing {
+	// Gradle 6.x does not want to sign snapshots.
+	// This will likely be fixed in Gradle 6.2, see:
+	// https://github.com/gradle/gradle/issues/12070
+	required {!isSnapshot}
 	sign publishing.publications.mavenJava
 }
