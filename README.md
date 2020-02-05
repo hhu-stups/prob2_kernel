@@ -1,7 +1,5 @@
 # ProB 2.0
 
-[![SonarCloud Tech Debt](https://sonarcloud.io/api/project_badges/measure?project=prob2kernel&metric=sqale_index)](https://sonarcloud.io/dashboard?id=prob2kernel)
-
 **IMPORTANT:** The layout of the repository has changed! The Eclipse/Rodin plugin was moved to a separate repository: http://github.com/bendisposto/prob2-plugin. This repository only contains the Kernel of ProB 2.0.
 
 The last version before the restructuring is tagged as preRestructure.
