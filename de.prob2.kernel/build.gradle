@@ -270,6 +270,12 @@ eclipse {
 	}
 }
 
+// Workaround for https://github.com/gradle/gradle/issues/5630
+// See https://stackoverflow.com/a/52797107
+javadoc {
+	options.addStringOption("sourcepath", "")
+}
+
 if (project.hasProperty('ossrhUsername') && project.hasProperty('ossrhPassword')) {
 
 	println "Configuring deployment for ${ project.name }"
