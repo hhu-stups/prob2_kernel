@@ -270,11 +270,6 @@ eclipse {
 	}
 }
 
-javadoc {
-	failOnError = false
-}
-
-
 if (project.hasProperty('ossrhUsername') && project.hasProperty('ossrhPassword')) {
 
 	println "Configuring deployment for ${ project.name }"
