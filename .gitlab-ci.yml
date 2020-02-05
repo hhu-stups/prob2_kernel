@@ -67,7 +67,7 @@ publish:
     - openssl aes-256-cbc -pass "env:ENCRYPTION_PASSWORD" -d -a -md md5 -in pubring.gpg.enc       -out pubring.gpg
     - openssl aes-256-cbc -pass "env:ENCRYPTION_PASSWORD" -d -a -md md5 -in gradle.properties.enc -out de.prob2.kernel/gradle.properties
   script:
-    - ./de.prob2.kernel/gradlew ${GRADLE_OPTIONS} -b de.prob2.kernel/build.gradle uploadArchives
+    - ./de.prob2.kernel/gradlew ${GRADLE_OPTIONS} -b de.prob2.kernel/build.gradle publish
   only: 
     - master@stups/prob/prob2_kernel
     - develop@stups/prob/prob2_kernel
