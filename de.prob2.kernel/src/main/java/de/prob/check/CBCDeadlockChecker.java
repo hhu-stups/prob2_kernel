@@ -9,9 +9,7 @@ import de.prob.statespace.StateSpace;
 /**
  * This {@link IModelCheckJob} performs constraint based deadlock checking on
  * the given {@link StateSpace} using an optional {@link IEvalElement}
- * constraint. This class should be used in conjunction with the
- * {@link ModelChecker} wrapper class in order to perform model checking.
- * Communication with the ProB kernel takes place via the
+ * constraint. Communication with the ProB kernel takes place via the
  * {@link ConstraintBasedDeadlockCheckCommand} command.
  * 
  * @author joy
@@ -65,7 +63,7 @@ public class CBCDeadlockChecker extends CheckerBase {
 
 	@Override
 	protected void execute() {
-		this.getStateSpace().execute(job);
+		this.getStateSpace().withTransaction(() -> this.getStateSpace().execute(job));
 		this.isFinished(job.getResult(), null);
 	}
 }

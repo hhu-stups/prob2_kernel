@@ -2,6 +2,7 @@ package de.prob.animator;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.base.MoreObjects;
@@ -82,11 +83,11 @@ class AnimatorImpl implements IAnimator {
 				logger.trace("Execution unsuccessful, processing error");
 				command.processErrorResult(result, errorItemsCommand.getErrors());
 			}
-			logger.trace("Executed {} (completed: {}, interrupted: {})", command, command.isCompleted(), command.isInterrupted());
+			logger.trace("Executed {} (completed: {})", command, command.isCompleted());
 			
 			if (!command.isCompleted() && Thread.currentThread().isInterrupted()) {
 				logger.info("Stopping execution of {} because this thread was interrupted", command);
-				break;
+				throw new CommandInterruptedException("Thread was interrupted during command execution", Collections.emptyList());
 			}
 		} while (!command.isCompleted());
 		logger.trace("Done executing {}", command);

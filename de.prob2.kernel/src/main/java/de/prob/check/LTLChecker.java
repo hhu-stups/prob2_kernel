@@ -1,13 +1,19 @@
 package de.prob.check;
 
 import de.be4.ltl.core.parser.LtlParseException;
-import de.prob.animator.command.LTLCheckingJob;
+import de.prob.animator.command.LtlCheckingCommand;
 import de.prob.animator.domainobjects.LTL;
 import de.prob.model.eventb.EventBModel;
 import de.prob.statespace.StateSpace;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class LTLChecker extends CheckerBase {
-	private final LTLCheckingJob job;
+	private static final Logger LOGGER = LoggerFactory.getLogger(LTLChecker.class);
+	private static final int MAX = 500;
+
+	private final LTL formula;
 
 	public LTLChecker(final StateSpace s, final String formula)
 			throws LtlParseException {
@@ -28,12 +34,26 @@ public class LTLChecker extends CheckerBase {
 					"Cannot perform LTL checking without a correctly parsed LTL Formula");
 		}
 
-		job = new LTLCheckingJob(s, formula, this.getJobId(), ui);
+		this.formula = formula;
 	}
 
 	@Override
 	protected void execute() {
-		this.getStateSpace().execute(job);
-		this.isFinished(job.getResult(), null);
+		final LtlCheckingCommand cmd = new LtlCheckingCommand(this.getStateSpace(), formula, MAX);
+		try {
+			this.getStateSpace().startTransaction();
+			do {
+				this.getStateSpace().execute(cmd);
+				if (Thread.interrupted()) {
+					LOGGER.info("LTL checker received a Java thread interrupt");
+					this.isFinished(new CheckInterrupted(), null);
+					return;
+				}
+				this.updateStats(cmd.getResult(), null);
+			} while (cmd.getResult() instanceof LTLNotYetFinished);
+		} finally {
+			this.getStateSpace().endTransaction();
+		}
+		this.isFinished(cmd.getResult(), null);
 	}
 }

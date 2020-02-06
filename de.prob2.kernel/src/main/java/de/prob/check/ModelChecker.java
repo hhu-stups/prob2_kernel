@@ -21,15 +21,10 @@ import org.slf4j.LoggerFactory;
  *
  * @author joy
  *
+ * @deprecated To run an {@link IModelCheckJob} synchronously, use {@link IModelCheckJob#call()} directly. To perform checking in a background thread, create a background executor (for example using {@link Executors#newSingleThreadExecutor()}) and submit the {@link IModelCheckJob} to the executor.
  */
+@Deprecated
 public class ModelChecker {
-
-	private static int counter = 0;
-	private static final String JOBPREFIX = "mc";
-
-	public static String generateJobId() {
-		return JOBPREFIX + counter++;
-	}
 	private Logger logger = LoggerFactory.getLogger(ModelChecker.class);
 
 	private final ExecutorService executor;

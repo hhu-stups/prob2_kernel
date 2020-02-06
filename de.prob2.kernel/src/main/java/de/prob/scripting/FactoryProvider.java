@@ -1,14 +1,13 @@
 package de.prob.scripting;
 
+import com.google.inject.Inject;
+import de.prob.model.brules.RulesModelFactory;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.google.inject.Inject;
-
-import de.prob.model.brules.RulesModelFactory;
 
 /**
  * Provides the user with access to the {@link ClassicalBFactory},
@@ -42,6 +41,8 @@ public class FactoryProvider {
 		);
 		EXTENSION_TO_FACTORY_MAP = Collections.unmodifiableMap(map);
 	}
+
+	public static final List<String> EXTENSION_PATTERNS_ORDERED = Arrays.asList("*.mch", "*.ref", "*.imp", "*.sys", "*.bum", "*.buc", "*.eventb", "*.csp", "*.cspm", "*.tla", "*.rmch", "*.P", "*.pl", "*.zed", "*.tex", "*.als");
 
 	private final ClassicalBFactory classicalBFactory;
 	private final CSPFactory cspFactory;

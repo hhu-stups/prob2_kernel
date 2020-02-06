@@ -10,7 +10,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import de.prob.animator.IPrologResult;
+import de.prob.animator.InterruptedResult;
+import de.prob.animator.domainobjects.ErrorItem;
 import de.prob.animator.domainobjects.LTL;
+import de.prob.check.CheckInterrupted;
 import de.prob.check.IModelCheckingResult;
 import de.prob.check.LTLCounterExample;
 import de.prob.check.LTLError;
@@ -114,6 +118,15 @@ public final class LtlCheckingCommand extends EvaluationCommand implements
 			value = res;
 		} else {
 			throw new UnknownLtlResult("Unknown result from LTL checking: " + term);
+		}
+	}
+
+	@Override
+	public void processErrorResult(final IPrologResult result, final List<ErrorItem> errors) {
+		if (result instanceof InterruptedResult) {
+			this.result = new CheckInterrupted();
+		} else {
+			super.processErrorResult(result, errors);
 		}
 	}
 

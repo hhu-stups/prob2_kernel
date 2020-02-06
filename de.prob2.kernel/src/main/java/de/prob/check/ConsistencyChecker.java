@@ -1,24 +1,28 @@
 package de.prob.check;
 
-import de.prob.animator.command.ModelCheckingJob;
+import de.prob.animator.command.ModelCheckingStepCommand;
 import de.prob.animator.command.SetBGoalCommand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.exception.ProBError;
 import de.prob.statespace.StateSpace;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * This {@link IModelCheckJob} performs consistency checking on a given
  * {@link StateSpace} based on the specified {@link ModelCheckingOptions}
- * specified by the user or by the default options. This class should be used
- * with the {@link ModelChecker} wrapper class in order to perform model
- * checking. Communications with the ProB kernel take place via the
- * {@link ModelCheckingJob} command.
+ * specified by the user or by the default options. Communications with
+ * the ProB kernel take place via the {@link ModelCheckingStepCommand}.
  * 
  * @author joy
  * 
  */
 public class ConsistencyChecker extends CheckerBase {
-	private final ModelCheckingJob job;
+	private static final Logger LOGGER = LoggerFactory.getLogger(ConsistencyChecker.class);
+	private static final int TIMEOUT_MS = 500;
+
+	private final ModelCheckingOptions options;
 	private final IEvalElement goal;
 
 	/**
@@ -65,8 +69,8 @@ public class ConsistencyChecker extends CheckerBase {
 			final IModelCheckListener ui) {
 		super(s, ui);
 
+		this.options = options;
 		this.goal = goal;
-		job = new ModelCheckingJob(options, this.getJobId(), ui);
 	}
 
 	@Override
@@ -81,8 +85,25 @@ public class ConsistencyChecker extends CheckerBase {
 			}
 		}
 
-		this.getStateSpace().execute(job);
-		this.isFinished(job.getResult(), job.getStats());
+		ModelCheckingStepCommand cmd;
+		try {
+			this.getStateSpace().startTransaction();
+			boolean firstIteration = true;
+			do {
+				cmd = new ModelCheckingStepCommand(TIMEOUT_MS, this.options.recheckExisting(firstIteration));
+				this.getStateSpace().execute(cmd);
+				if (Thread.interrupted()) {
+					LOGGER.info("Consistency checker received a Java thread interrupt");
+					this.isFinished(new CheckInterrupted(), cmd.getStats());
+					return;
+				}
+				this.updateStats(cmd.getResult(), cmd.getStats());
+				firstIteration = false;
+			} while (cmd.getResult() instanceof NotYetFinished);
+		} finally {
+			this.getStateSpace().endTransaction();
+		}
+		this.isFinished(cmd.getResult(), cmd.getStats());
 	}
 
 	/**
@@ -94,7 +115,10 @@ public class ConsistencyChecker extends CheckerBase {
 	 *            {@link StateSpace} for which the consistency checking should
 	 *            take place
 	 * @return {@link ModelChecker} with consistency checking capabilities.
+	 * 
+	 * @deprecated Use {@link #ConsistencyChecker(StateSpace)} directly. See the {@link ModelChecker} deprecation notice for details.
 	 */
+	@Deprecated
 	public static ModelChecker create(final StateSpace s) {
 		return new ModelChecker(new ConsistencyChecker(s));
 	}
@@ -110,7 +134,10 @@ public class ConsistencyChecker extends CheckerBase {
 	 * @param options
 	 *            {@link ModelCheckingOptions} specified by the user
 	 * @return {@link ModelChecker} with consistency checking capabilities
+	 *
+	 * @deprecated Use {@link #ConsistencyChecker(StateSpace, ModelCheckingOptions)} directly. See the {@link ModelChecker} deprecation notice for details.
 	 */
+	@Deprecated
 	public static ModelChecker create(final StateSpace s, final ModelCheckingOptions options) {
 		return new ModelChecker(new ConsistencyChecker(s, options));
 	}

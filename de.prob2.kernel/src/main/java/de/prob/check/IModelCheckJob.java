@@ -17,7 +17,7 @@ import de.prob.statespace.StateSpace;
  * result (likely a {@link NotYetFinished} result). The user should still be
  * able to get the result from the {@link IModelCheckJob} object, so the
  * additional method {@link IModelCheckJob#getResult()} is provided to allow the
- * {@link ModelChecker} to access the result even in the case of cancellation.
+ * access to the result even in the case of cancellation.
  * 
  * @author joy
  * 
@@ -35,7 +35,7 @@ public interface IModelCheckJob extends Callable<IModelCheckingResult> {
 
 	/**
 	 * The job id here should be unique. In implementations, a unique job id can
-	 * be generated via the static method {@link ModelChecker#generateJobId()}.
+	 * be generated via the static method {@link CheckerBase#generateJobId()}.
 	 * 
 	 * @return job id associated with this job.
 	 */
@@ -44,8 +44,8 @@ public interface IModelCheckJob extends Callable<IModelCheckingResult> {
 	/**
 	 * In the creation of an {@link IModelCheckJob}, the corresponding
 	 * {@link StateSpace} for the job should be specified. This method allows
-	 * the {@link ModelChecker} to access the correct {@link StateSpace} so that
-	 * an interrupt can be sent in the case of a cancellation.
+	 * sending an interrupt to the correct {@link StateSpace} to cancel the
+	 * checking job.
 	 * 
 	 * @return the {@link StateSpace} associated with this job.
 	 */
