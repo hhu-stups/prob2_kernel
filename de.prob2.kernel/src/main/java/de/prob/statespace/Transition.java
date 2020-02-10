@@ -116,9 +116,7 @@ public class Transition {
 	}
 
 	public List<String> getParameterValues() {
-		if (!evaluated) {
-			evaluate(FormulaExpand.EXPAND);
-		}
+		evaluate(FormulaExpand.EXPAND);
 		return params;
 	}
 
@@ -131,7 +129,7 @@ public class Transition {
 	}
 
 	private void translateParamsAndRetVals() throws TranslationException {
-		if (!evaluated || formulaExpansion != FormulaExpand.EXPAND) {
+		if (formulaExpansion != FormulaExpand.EXPAND) {
 			evaluate(FormulaExpand.EXPAND);
 		}
 		translatedParams = new ArrayList<>();
@@ -152,9 +150,7 @@ public class Transition {
 	 * @return list of return values of the operation represented as strings.
 	 */
 	public List<String> getReturnValues() {
-		if (!evaluated) {
-			evaluate(FormulaExpand.EXPAND);
-		}
+		evaluate(FormulaExpand.EXPAND);
 		return returnValues;
 	}
 
