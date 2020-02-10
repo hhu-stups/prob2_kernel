@@ -129,9 +129,7 @@ public class Transition {
 	}
 
 	private void translateParamsAndRetVals() throws TranslationException {
-		if (formulaExpansion != FormulaExpand.EXPAND) {
-			evaluate(FormulaExpand.EXPAND);
-		}
+		evaluate(FormulaExpand.EXPAND);
 		translatedParams = new ArrayList<>();
 		for (String str : params) {
 			translatedParams.add(Translator.translate(str));
