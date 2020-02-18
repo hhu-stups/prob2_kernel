@@ -131,7 +131,7 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 		return pattern;
 	}
 
-    // prob_socketserver.pl prints the following:
+	// prob_socketserver.pl prints the following:
 	// format(Stdout,'Port: ~w~n', [Port]),
 	// format(Stdout,'probcli revision: ~w~n',[Revision]),
 	// format(Stdout,'user interrupt reference id: ~w~n',[Ref]),

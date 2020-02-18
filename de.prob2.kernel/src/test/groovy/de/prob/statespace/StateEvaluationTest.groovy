@@ -40,16 +40,16 @@ class StateEvaluationTest extends Specification {
 	}
 
 	def "it is possible to evaluate multiple IEvalElements"() {
-	    final res = secondState.eval(
-			        new ClassicalB("waiting", FormulaExpand.EXPAND),
-			        new ClassicalB("ready", FormulaExpand.EXPAND),
-		         ).collect {it.value}
+		final res = secondState.eval(
+			new ClassicalB("waiting", FormulaExpand.EXPAND),
+			new ClassicalB("ready", FormulaExpand.EXPAND),
+		).collect {it.value}
 		expect:
 		res == ["{PID1}", "{}"] || res == ["{PID1}", "\u2205"] // u2205 is Unicode emptyset
 	}
 
 	def "it is possible to evaluate a list of IEvalElements"() {
-	    final res = secondState.eval([
+		final res = secondState.eval([
 			new ClassicalB("waiting", FormulaExpand.EXPAND),
 			new ClassicalB("ready", FormulaExpand.EXPAND),
 		]).collect {it.value}

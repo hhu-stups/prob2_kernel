@@ -247,7 +247,7 @@ public class Transition {
 
 	public boolean isArtificialTransition() {
 		return name.equals("$initialise_machine") || name.equals("$setup_constants")
-		        || name.equals("$partial_setup_constants") ;
+			|| name.equals("$partial_setup_constants");
 	}
 
 	@Override

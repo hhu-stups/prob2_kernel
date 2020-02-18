@@ -22,52 +22,52 @@ import de.prob.statespace.StateSpace;
  */
 public class MCDCIdentifier {
 
-    private final static Logger log = Logger.getLogger(MCDCIdentifier.class.getName());
+	private final static Logger log = Logger.getLogger(MCDCIdentifier.class.getName());
 
-    private ClassicalBModel model;
-    private StateSpace stateSpace;
-    private int maxLevel;
+	private ClassicalBModel model;
+	private StateSpace stateSpace;
+	private int maxLevel;
 
-    public MCDCIdentifier(ClassicalBModel model, StateSpace stateSpace, int maxLevel) {
-        this.model = model;
-        this.stateSpace = stateSpace;
-        this.maxLevel = maxLevel;
-    }
+	public MCDCIdentifier(ClassicalBModel model, StateSpace stateSpace, int maxLevel) {
+		this.model = model;
+		this.stateSpace = stateSpace;
+		this.maxLevel = maxLevel;
+	}
 
-    public Map<Operation, List<ConcreteMCDCTestCase>> identifyMCDC() {
-        Map<Operation, List<ConcreteMCDCTestCase>> testCases = new HashMap<>();
-        ModelElementList<Operation> operations = model.getMainMachine().getEvents();
-        for (Operation operation : operations) {
-        	List<IEvalElement> guards = Extraction.getGuardPredicates(model, operation.getName());
-            ClassicalB predicate = null;
-            if(guards.isEmpty()) {
-            	predicate = new ClassicalB("1=1", FormulaExpand.EXPAND);
-            } else {
-            	predicate = (ClassicalB) Join.conjunct(model, guards);
-            }
-            Start ast = predicate.getAst();
-            PPredicate startNode = ((APredicateParseUnit) ast.getPParseUnit()).getPredicate();
-            testCases.put(operation, getMCDCTestCases(startNode));
-        }
-        return testCases;
-    }
+	public Map<Operation, List<ConcreteMCDCTestCase>> identifyMCDC() {
+		Map<Operation, List<ConcreteMCDCTestCase>> testCases = new HashMap<>();
+		ModelElementList<Operation> operations = model.getMainMachine().getEvents();
+		for (Operation operation : operations) {
+			List<IEvalElement> guards = Extraction.getGuardPredicates(model, operation.getName());
+			ClassicalB predicate = null;
+			if(guards.isEmpty()) {
+				predicate = new ClassicalB("1=1", FormulaExpand.EXPAND);
+			} else {
+				predicate = (ClassicalB) Join.conjunct(model, guards);
+			}
+			Start ast = predicate.getAst();
+			PPredicate startNode = ((APredicateParseUnit) ast.getPParseUnit()).getPredicate();
+			testCases.put(operation, getMCDCTestCases(startNode));
+		}
+		return testCases;
+	}
 
-    private List<ConcreteMCDCTestCase> getMCDCTestCases(PPredicate node) {
-        List<ConcreteMCDCTestCase> testCases = new MCDCASTVisitor(maxLevel, model).getMCDCTestCases(node);
-        return filterFeasible(testCases);
-    }
+	private List<ConcreteMCDCTestCase> getMCDCTestCases(PPredicate node) {
+		List<ConcreteMCDCTestCase> testCases = new MCDCASTVisitor(maxLevel, model).getMCDCTestCases(node);
+		return filterFeasible(testCases);
+	}
 
-    private List<ConcreteMCDCTestCase> filterFeasible(List<ConcreteMCDCTestCase> testCases) {
-        List<ConcreteMCDCTestCase> feasibleTestCases = new ArrayList<>();
-        for (ConcreteMCDCTestCase t : testCases) {
-            CbcSolveCommand cmd = new CbcSolveCommand(Conversion.classicalBFromPredicate(model, t.getPredicate()));
-            stateSpace.execute(cmd);
-            if (cmd.getValue() == EvalResult.FALSE) {
-                log.info("Infeasible: " + t.toString());
-            } else {
-                feasibleTestCases.add(t);
-            }
-        }
-        return feasibleTestCases;
-    }
+	private List<ConcreteMCDCTestCase> filterFeasible(List<ConcreteMCDCTestCase> testCases) {
+		List<ConcreteMCDCTestCase> feasibleTestCases = new ArrayList<>();
+		for (ConcreteMCDCTestCase t : testCases) {
+			CbcSolveCommand cmd = new CbcSolveCommand(Conversion.classicalBFromPredicate(model, t.getPredicate()));
+			stateSpace.execute(cmd);
+			if (cmd.getValue() == EvalResult.FALSE) {
+				log.info("Infeasible: " + t.toString());
+			} else {
+				feasibleTestCases.add(t);
+			}
+		}
+		return feasibleTestCases;
+	}
 }

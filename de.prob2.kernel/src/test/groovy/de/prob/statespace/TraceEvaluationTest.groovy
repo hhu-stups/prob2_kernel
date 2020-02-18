@@ -66,10 +66,10 @@ class TraceEvaluationTest extends Specification {
 		x instanceof ComputationNotCompletedResult
 	}
 
-    private boolean isEmptySet(x) {
-      return (x=="{}" || x=="\u2205") // u2205 is Unicode emptyset
-    }
-    
+	private boolean isEmptySet(x) {
+		return (x=="{}" || x=="\u2205") // u2205 is Unicode emptyset
+	}
+
 	def "It is possible to evaluate (correct) formulas in the current state (if initialised)"() {
 		given:
 		final t = t.$initialise_machine()

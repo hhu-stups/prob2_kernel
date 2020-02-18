@@ -33,16 +33,15 @@ class StateSpaceEvaluationTest extends Specification {
 		s.formulaRegistry.clear()
 	}
 
-    private boolean isEmptySet(x) {
-      return (x=="{}" || x=="\u2205") // u2205 is Unicode emptyset
-    }
+	private boolean isEmptySet(x) {
+		return (x=="{}" || x=="\u2205") // u2205 is Unicode emptyset
+	}
 
 	def "it is possible to evaluate formulas in a state"() {
-	    final res = 
-		s.eval(firstState, [
+		final res = s.eval(firstState, [
 			new ClassicalB("waiting"),
 			new ClassicalB("ready")
-		]).collect { it.getValue() } 
+		]).collect { it.getValue() }
 		expect:
 		 res == ["{}", "{}"] || res == ["\u2205", "\u2205"]
 	}
@@ -250,7 +249,7 @@ class StateSpaceEvaluationTest extends Specification {
 		before
 		!s.getSubscribedFormulas().contains(formula)
 	}
-    
+
 	def "it is possible to evaluate multiple formulas in multiple states"() {
 		when:
 		def waiting = new ClassicalB("waiting")

@@ -4,14 +4,14 @@ import java.util.List;
 
 public class TestCaseGeneratorOperationCoverageSettings extends TestCaseGeneratorSettings {
 
-    private List<String> operations;
+	private List<String> operations;
 
-    public TestCaseGeneratorOperationCoverageSettings(int maxDepth, List<String> operations) {
-        super(maxDepth);
-        this.operations = operations;
-    }
+	public TestCaseGeneratorOperationCoverageSettings(int maxDepth, List<String> operations) {
+		super(maxDepth);
+		this.operations = operations;
+	}
 
-    public List<String> getOperations() {
-        return operations;
-    }
+	public List<String> getOperations() {
+		return operations;
+	}
 }
