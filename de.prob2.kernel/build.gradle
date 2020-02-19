@@ -100,12 +100,6 @@ dependencies {
 	api group: "de.hhu.stups", name: "rodin-eventb-ast", version: "3.2.0" // Eclipse Public License 1.0
 	implementation group: "de.hhu.stups", name: "tla2bAST", version: "1.1.0" // Eclipse Public License 1.0
 
-	// The following dependencies are needed for FMI
-	api group: "de.hhu.stups", name: "ptolemy-jfmi", version: "1.1.0" // Non-standard license (MIT/BSD-ish)
-	// The following dependency needs to be api because of de.prob.cosimulation.FMU.getFunction (which returns a com.sun.jna.Function).
-	// TODO Should that method be made private and this changed to an implementation dependency?
-	api group: "net.java.dev.jna", name: "jna", version: "5.5.0" // GNU LGPL 2.1
-
 	// Annotations
 	api group: "com.google.code.findbugs", name: "jsr305", version: "3.0.2" // Apache License 2.0
 
