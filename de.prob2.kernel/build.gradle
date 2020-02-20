@@ -336,10 +336,3 @@ publishing {
 signing {
 	sign publishing.publications.mavenJava
 }
-
-// Gradle 6.x does not want to sign snapshots.
-// This will likely be fixed in Gradle 6.2, see:
-// https://github.com/gradle/gradle/issues/12070
-tasks.withType(Sign).configureEach {
-	onlyIf {!isSnapshot}
-}
