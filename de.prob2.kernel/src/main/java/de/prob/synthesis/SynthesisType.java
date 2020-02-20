@@ -1,21 +1,21 @@
 package de.prob.synthesis;
 
 enum SynthesisType {
-  OPERATION, PREDICATE;
+	OPERATION, PREDICATE;
 
-  @Override
-  public String toString() {
-    switch (this) {
-      case OPERATION:
-        return "action";
-      case PREDICATE:
-        return "guard";
-      default:
-        return "";
-    }
-  }
+	@Override
+	public String toString() {
+		switch (this) {
+			case OPERATION:
+				return "action";
+			case PREDICATE:
+				return "guard";
+			default:
+				return "";
+		}
+	}
 
-  public boolean isPredicate() {
-    return this.equals(PREDICATE);
-  }
+	public boolean isPredicate() {
+		return this.equals(PREDICATE);
+	}
 }

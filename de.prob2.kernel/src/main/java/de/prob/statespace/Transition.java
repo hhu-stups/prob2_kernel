@@ -116,9 +116,7 @@ public class Transition {
 	}
 
 	public List<String> getParameterValues() {
-		if (!evaluated) {
-			evaluate(FormulaExpand.EXPAND);
-		}
+		evaluate(FormulaExpand.EXPAND);
 		return params;
 	}
 
@@ -131,9 +129,7 @@ public class Transition {
 	}
 
 	private void translateParamsAndRetVals() throws TranslationException {
-		if (!evaluated || formulaExpansion != FormulaExpand.EXPAND) {
-			evaluate(FormulaExpand.EXPAND);
-		}
+		evaluate(FormulaExpand.EXPAND);
 		translatedParams = new ArrayList<>();
 		for (String str : params) {
 			translatedParams.add(Translator.translate(str));
@@ -152,9 +148,7 @@ public class Transition {
 	 * @return list of return values of the operation represented as strings.
 	 */
 	public List<String> getReturnValues() {
-		if (!evaluated) {
-			evaluate(FormulaExpand.EXPAND);
-		}
+		evaluate(FormulaExpand.EXPAND);
 		return returnValues;
 	}
 
@@ -253,7 +247,7 @@ public class Transition {
 
 	public boolean isArtificialTransition() {
 		return name.equals("$initialise_machine") || name.equals("$setup_constants")
-		        || name.equals("$partial_setup_constants") ;
+			|| name.equals("$partial_setup_constants");
 	}
 
 	@Override

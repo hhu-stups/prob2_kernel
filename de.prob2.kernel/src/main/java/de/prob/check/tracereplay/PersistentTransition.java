@@ -61,13 +61,13 @@ public class PersistentTransition {
 		}
 		for (Map.Entry<IEvalElement, AbstractEvalResult> entry : map.entrySet()) {
 			if (entry.getValue() instanceof EvalResult) {
-			    String name = entry.getKey().getCode();
+				String name = entry.getKey().getCode();
 				String value = ((EvalResult) entry.getValue()).getValue();
 				destState.put(name, value);
 				if(transitionAfter != null && value.equals(transitionAfter.destState.get(name))) {
-				    transitionAfter.destState.remove(name);
-				    transitionAfter.destStateNotChanged.add(name);
-                }
+					transitionAfter.destState.remove(name);
+					transitionAfter.destStateNotChanged.add(name);
+				}
 			}
 		}
 	}
