@@ -17,13 +17,12 @@ final SOURCE_ENCODING = "UTF-8"
 
 
 // IMPORTANT !!!
+// project.version = '3.10.0'
 project.version = '4.0.0-SNAPSHOT'
+
 // Remember to release the cli
-//  - create a tag in the prob_prolog repository
-//  - enter this tag into the jenkins job "http://alfred.cs.uni-duesseldorf.de/view/All/job/cli_release/"
-//  - enter the same tag into the jenkins job "http://alfred.cs.uni-duesseldorf.de/view/All/job/crosscompile_release/"
 ext {
-	cli_version = '1.9.0'
+	cli_version = '1.9.3'
 }
 // IMPORTANT !!!
 
@@ -35,7 +34,7 @@ if (isSnapshot) {
 	parserVersion = '2.9.24-SNAPSHOT'
 	cliDownloadURL = "https://www3.hhu.de/stups/downloads/prob/cli/nightly"
 } else {
-	parserVersion = '2.9.22'
+	parserVersion = '2.9.23'
 	cliDownloadURL = "https://www3.hhu.de/stups/downloads/prob/cli/releases/${cli_version}"
 }
 
