@@ -8,9 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.google.common.base.Stopwatch;
 
 import de.be4.classicalb.core.parser.ParsingBehaviour;
 import de.be4.classicalb.core.parser.exceptions.BException;
@@ -18,11 +18,11 @@ import de.be4.classicalb.core.parser.rules.RulesProject;
 import de.prob.animator.command.GetTotalNumberOfErrorsCommand;
 import de.prob.animator.domainobjects.StateError;
 import de.prob.exception.ProBError;
-import de.prob.model.brules.RulesMachineRun.ERROR_TYPES;
-import de.prob.model.brules.RulesMachineRun.Error;
 import de.prob.statespace.State;
 import de.prob.statespace.StateSpace;
-import de.prob.util.StopWatch;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RulesMachineRun {
 
@@ -45,12 +45,6 @@ public class RulesMachineRun {
 	private int maxNumberOfReportedCounterExamples = 50;
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
-
-	enum Timer {
-		PARSING, EXECUTE_RUN, EXTRACT_RESULTS
-	}
-
-	private final StopWatch<Timer> stopWatch = new StopWatch<>();
 
 	private BigInteger totalNumberOfProBCliErrors;
 
@@ -89,9 +83,10 @@ public class RulesMachineRun {
 
 	public void start() {
 		logger.info("Starting rules machine run: {}", this.runnerFile.getAbsolutePath());
-		stopWatch.start(Timer.PARSING);
+		final Stopwatch parsingStopwatch = Stopwatch.createStarted();
 		boolean hasParseErrors = parseAndTranslateRulesProject();
-		logger.info("Time to parse rules project: {} ms", stopWatch.stop(Timer.PARSING));
+		parsingStopwatch.stop();
+		logger.info("Time to parse rules project: {} ms", parsingStopwatch.elapsed(TimeUnit.MILLISECONDS));
 		if (hasParseErrors) {
 			logger.error("RULES_MACHINE has errors!");
 			return;
@@ -99,10 +94,11 @@ public class RulesMachineRun {
 		this.executeRun = rulesMachineRunner.createRulesMachineExecuteRun(this.rulesProject, runnerFile,
 				this.proBCorePreferences, continueAfterErrors, this.getStateSpace());
 		try {
-			stopWatch.start(Timer.EXECUTE_RUN);
 			logger.info("Start execute ...");
+			final Stopwatch executeStopwatch = Stopwatch.createStarted();
 			this.executeRun.start();
-			logger.info("Execute run finished. Time: {} ms", stopWatch.stop(Timer.EXECUTE_RUN));
+			executeStopwatch.stop();
+			logger.info("Execute run finished. Time: {} ms", executeStopwatch.elapsed(TimeUnit.MILLISECONDS));
 		} catch (ProBError e) {
 			logger.error("ProBError: {}", e.getMessage());
 			this.errors.add(new Error(ERROR_TYPES.PROB_ERROR, e.getMessage(), e));
@@ -139,10 +135,11 @@ public class RulesMachineRun {
 		}
 
 		this.stateSpace = this.executeRun.getUsedStateSpace();
-		stopWatch.start(Timer.EXTRACT_RESULTS);
+		final Stopwatch extractResultsStopwatch = Stopwatch.createStarted();
 		this.ruleResults = new RuleResults(this.rulesProject, executeRun.getExecuteModelCommand().getFinalState(),
 				maxNumberOfReportedCounterExamples);
-		logger.info("Time to extract results from final state: {}", stopWatch.stop(Timer.EXTRACT_RESULTS));
+		extractResultsStopwatch.stop();
+		logger.info("Time to extract results from final state: {}", extractResultsStopwatch.elapsed(TimeUnit.MILLISECONDS));
 
 	}
 

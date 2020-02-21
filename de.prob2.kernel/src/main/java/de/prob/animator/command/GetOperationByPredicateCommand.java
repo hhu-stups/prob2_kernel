@@ -52,7 +52,7 @@ public final class GetOperationByPredicateCommand extends AbstractCommand
 		this.name = name;
 		this.nrOfSolutions = nrOfSolutions;
 		evalElement = predicate;
-		if (!EvalElementType.PREDICATE.equals(evalElement.getKind())) {
+		if (!EvalElementType.PREDICATE.equals(evalElement.getKind()) && !EvalElementType.NONE.equals(evalElement.getKind())) {
 			throw new IllegalArgumentException("Formula must be a predicate: "
 					+ predicate);
 		}
@@ -97,7 +97,14 @@ public final class GetOperationByPredicateCommand extends AbstractCommand
 		}
 
 		for (PrologTerm prologTerm : BindingGenerator.getList(bindings.get(ERRORS_VARIABLE))) {
-			this.errors.add(prologTerm.getFunctor());
+			if(prologTerm.getArity() > 0) {
+				ListPrologTerm errorList = (ListPrologTerm) prologTerm.getArgument(1);
+				for(PrologTerm errorTerm : errorList) {
+					this.errors.add(errorTerm.getArgument(1).getFunctor());
+				}
+			} else {
+				this.errors.add(prologTerm.getFunctor());
+			}
 		}
 	}
 

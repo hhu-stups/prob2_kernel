@@ -1,6 +1,9 @@
 package de.prob.model.brules;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import com.google.common.base.Stopwatch;
 
 import de.prob.animator.command.ExecuteModelCommand;
 import de.prob.model.representation.AbstractModel;
@@ -9,7 +12,6 @@ import de.prob.scripting.StateSpaceProvider;
 import de.prob.statespace.State;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
-import de.prob.util.StopWatch;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,12 +41,6 @@ public class ExecuteRun {
 	private ExecuteModelCommand executeModelCommand;
 	private State rootState;
 
-	enum Timer {
-		LOAD_MODEL, EXECUTE_MODEL, EXECUTE
-	}
-
-	private final StopWatch<Timer> stopWatch = new StopWatch<>();
-
 	public ExecuteRun(final ExtractedModel<? extends AbstractModel> extractedModel, Map<String, String> prefs,
 			boolean continueAfterErrors, StateSpace stateSpace) {
 		this.extractedModel = extractedModel;
@@ -55,13 +51,15 @@ public class ExecuteRun {
 
 	public void start() {
 		final Logger logger = LoggerFactory.getLogger(getClass());
-		stopWatch.start(Timer.LOAD_MODEL);
+		final Stopwatch loadStopwatch = Stopwatch.createStarted();
 		getOrCreateStateSpace();
-		logger.info("Time to load model: {} ms", stopWatch.stop(Timer.LOAD_MODEL));
+		loadStopwatch.stop();
+		logger.info("Time to load model: {} ms", loadStopwatch.elapsed(TimeUnit.MILLISECONDS));
 
-		stopWatch.start(Timer.EXECUTE_MODEL);
+		final Stopwatch executeStopwatch = Stopwatch.createStarted();
 		executeModel(this.stateSpace);
-		logger.info("Time to run execute command: {} ms", stopWatch.stop(Timer.EXECUTE_MODEL));
+		executeStopwatch.stop();
+		logger.info("Time to run execute command: {} ms", executeStopwatch.elapsed(TimeUnit.MILLISECONDS));
 	}
 
 	private void getOrCreateStateSpace() {

@@ -17,7 +17,7 @@ public class UnsatMinimalCoreCommand extends UnsatCoreBaseCommand {
 	private static final String PROLOG_COMMAND_NAME = "get_minimum_unsat_core_with_fixed_conjuncts";
 	private IBEvalElement pred;
 	private List<IBEvalElement> fixedPreds;
-	private static final String RESULT_VARIABLE = "UnsatCore";
+	private static final String RESULT_VARIABLE = "CoreOut";
 
 	public UnsatMinimalCoreCommand(IBEvalElement pred,
 			List<IBEvalElement> fixedPreds) {

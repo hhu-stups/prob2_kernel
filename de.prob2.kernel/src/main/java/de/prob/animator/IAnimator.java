@@ -1,5 +1,7 @@
 package de.prob.animator;
 
+import java.util.function.Supplier;
+
 import de.prob.animator.command.AbstractCommand;
 
 /**
@@ -40,17 +42,49 @@ public interface IAnimator {
 	void kill();
 
 	/**
-	 * Signals the {@link IAnimator} that a transaction is beginning. The
+	 * <p>Signals the {@link IAnimator} that a transaction is beginning. The
 	 * {@link IAnimator} can then set a flag indicating that it is busy because
-	 * the {@link IAnimator} is likely to be blocked for a long period of time.
+	 * the {@link IAnimator} is likely to be blocked for a long period of time.</p>
+	 * 
+	 * <p>Note: In most cases you should use {@link #withTransaction(Runnable)} instead of this method, to ensure that the transaction is properly ended when an exception is thrown by the code inside the transaction.</p>
 	 */
 	void startTransaction();
 
 	/**
-	 * Signals the {@link IAnimator} that a transaction has ended. The
-	 * {@link IAnimator} can then reset the flag indicating that it is busy.
+	 * <p>Signals the {@link IAnimator} that a transaction has ended. The
+	 * {@link IAnimator} can then reset the flag indicating that it is busy.</p>
+	 * 
+	 * <p>Note: In most cases you should use {@link #withTransaction(Runnable)} instead of this method, to ensure that the transaction is properly ended when an exception is thrown by the code inside the transaction.</p>
 	 */
 	void endTransaction();
+
+	/**
+	 * Execute the given code as part of a transaction. This is a convenience method that calls {@link #startTransaction()} before calling {@code c}, and {@link #endTransaction()} when {@code c} returns or throws an exception.
+	 * 
+	 * @param c the code to execute
+	 * @param <R> the return type of {@code c}
+	 * @return the value returned by {@code c}
+	 */
+	default <R> R withTransaction(final Supplier<R> c) {
+		this.startTransaction();
+		try {
+			return c.get();
+		} finally {
+			this.endTransaction();
+		}
+	}
+
+	/**
+	 * Execute the given code as part of a transaction. This is a convenience method that calls {@link #startTransaction()} before calling {@code r}, and {@link #endTransaction()} when {@code r} returns or throws an exception.
+	 * 
+	 * @param r the code to execute
+	 */
+	default void withTransaction(final Runnable r) {
+		this.withTransaction(() -> {
+			r.run();
+			return null;
+		});
+	}
 
 	/**
 	 * @return <code>true</code> if the animator is busy and <code>false</code>
@@ -68,4 +102,6 @@ public interface IAnimator {
 
 	long getTotalNumberOfErrors();
 
+	void addWarningListener(final IWarningListener listener);
+	void removeWarningListener(final IWarningListener listener);
 }

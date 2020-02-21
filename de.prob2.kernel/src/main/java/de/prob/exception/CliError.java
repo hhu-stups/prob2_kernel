@@ -1,14 +1,17 @@
 package de.prob.exception;
 
-@SuppressWarnings("serial")
 public class CliError extends RuntimeException {
+	private static final long serialVersionUID = -2546117910718258435L;
 
-	public CliError(String msg) {
-		super(msg);
+	public CliError(final String message) {
+		super(message);
 	}
 
-	public CliError(String message, Exception e) {
-		super(message, e);
+	public CliError(final String message, final Throwable cause) {
+		super(message, cause);
 	}
 
+	public CliError(final Throwable cause) {
+		super(cause);
+	}
 }

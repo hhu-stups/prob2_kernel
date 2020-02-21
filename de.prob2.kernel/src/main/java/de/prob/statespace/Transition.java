@@ -8,7 +8,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import de.be4.classicalb.core.parser.exceptions.BCompoundException;
+import de.hhu.stups.prob.translator.BValue;
+import de.hhu.stups.prob.translator.Translator;
+import de.hhu.stups.prob.translator.exceptions.TranslationException;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.formula.PredicateBuilder;
 import de.prob.model.classicalb.ClassicalBMachine;
@@ -21,11 +23,6 @@ import de.prob.parser.BindingGenerator;
 import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.IntegerPrologTerm;
 import de.prob.prolog.term.PrologTerm;
-import de.prob.translator.Translator;
-import de.prob.translator.types.BObject;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -44,6 +41,10 @@ import org.slf4j.LoggerFactory;
  * @author joy
  */
 public class Transition {
+	/**
+	 * @deprecated Use {@link #getStateSpace()} instead.
+	 */
+	@Deprecated
 	public final StateSpace stateSpace;
 
 	private final String id;
@@ -52,15 +53,13 @@ public class Transition {
 	private final State dest;
 	private List<String> params;
 	private List<String> returnValues;
-	private List<BObject> translatedParams;
-	private List<BObject> translatedRetV;
+	private List<BValue> translatedParams;
+	private List<BValue> translatedRetV;
 	private String rep;
 	private boolean evaluated;
 	private FormulaExpand formulaExpansion;
 	private final FormalismType formalismType;
 	private String predicateString;
-
-	Logger logger = LoggerFactory.getLogger(Transition.class);
 
 	private Transition(final StateSpace stateSpace, final String id, final String name, final State src,
 			final State dest) {
@@ -117,13 +116,11 @@ public class Transition {
 	}
 
 	public List<String> getParameterValues() {
-		if (!evaluated) {
-			evaluate(FormulaExpand.EXPAND);
-		}
+		evaluate(FormulaExpand.EXPAND);
 		return params;
 	}
 
-	public List<BObject> getTranslatedParams() throws BCompoundException {
+	public List<BValue> getTranslatedParams() throws TranslationException {
 		if (translatedParams != null) {
 			return translatedParams;
 		}
@@ -131,10 +128,8 @@ public class Transition {
 		return translatedParams;
 	}
 
-	private void translateParamsAndRetVals() throws BCompoundException {
-		if (!evaluated || formulaExpansion != FormulaExpand.EXPAND) {
-			evaluate(FormulaExpand.EXPAND);
-		}
+	private void translateParamsAndRetVals() throws TranslationException {
+		evaluate(FormulaExpand.EXPAND);
 		translatedParams = new ArrayList<>();
 		for (String str : params) {
 			translatedParams.add(Translator.translate(str));
@@ -153,9 +148,7 @@ public class Transition {
 	 * @return list of return values of the operation represented as strings.
 	 */
 	public List<String> getReturnValues() {
-		if (!evaluated) {
-			evaluate(FormulaExpand.EXPAND);
-		}
+		evaluate(FormulaExpand.EXPAND);
 		return returnValues;
 	}
 
@@ -163,7 +156,7 @@ public class Transition {
 		return this.stateSpace;
 	}
 
-	public List<BObject> getTranslatedReturnValues() throws BCompoundException {
+	public List<BValue> getTranslatedReturnValues() throws TranslationException {
 		if (translatedRetV != null) {
 			return translatedRetV;
 		}
@@ -254,7 +247,7 @@ public class Transition {
 
 	public boolean isArtificialTransition() {
 		return name.equals("$initialise_machine") || name.equals("$setup_constants")
-		        || name.equals("$partial_setup_constants") ;
+			|| name.equals("$partial_setup_constants");
 	}
 
 	@Override

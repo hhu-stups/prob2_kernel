@@ -10,4 +10,12 @@ public class IllegalModificationException extends RuntimeException {
 	public IllegalModificationException(final String message) {
 		super(message);
 	}
+	
+	public IllegalModificationException(final String message, final Throwable cause) {
+		super(message, cause);
+	}
+	
+	public IllegalModificationException(final Throwable cause) {
+		super(cause);
+	}
 }

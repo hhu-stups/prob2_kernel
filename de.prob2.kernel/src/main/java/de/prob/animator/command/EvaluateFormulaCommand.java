@@ -2,7 +2,6 @@ package de.prob.animator.command;
 
 import de.prob.animator.domainobjects.EvalResult;
 import de.prob.animator.domainobjects.IEvalElement;
-import de.prob.animator.domainobjects.ProBEvalElement;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;
@@ -43,17 +42,11 @@ public class EvaluateFormulaCommand extends EvaluationCommand {
 		pout.openTerm(PROLOG_COMMAND_NAME);
 		pout.printAtomOrNumber(stateId);
 
-		if (this.evalElement instanceof ProBEvalElement) {
-			pout.openTerm("eval_typed");
-			evalElement.printProlog(pout);
-			pout.printAtom(evalElement.expansion().getPrologName());
-		} else {
-			pout.openTerm("eval");
-			evalElement.printProlog(pout);
-			pout.printAtom(evalElement.getKind().getPrologName());
-			pout.printAtom(evalElement.getCode());
-			pout.printAtom(evalElement.expansion().getPrologName());
-		}
+		pout.openTerm("eval");
+		evalElement.printProlog(pout);
+		pout.printAtom(evalElement.getKind().getPrologName());
+		pout.printAtom(evalElement.getCode());
+		pout.printAtom(evalElement.expansion().getPrologName());
 		pout.closeTerm();
 
 		pout.printVariable(EVALUATE_RESULT_VARIABLE);

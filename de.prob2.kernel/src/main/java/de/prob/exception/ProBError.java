@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import de.be4.classicalb.core.parser.exceptions.BCompoundException;
-
-import de.hhu.stups.alloy2b.translation.Alloy2BParserErr;
 import de.prob.animator.domainobjects.ErrorItem;
 
 public class ProBError extends RuntimeException {
@@ -71,22 +69,10 @@ public class ProBError extends RuntimeException {
 		this(null, convertParserExceptionToErrorItems(e), e);
 	}
 
-	public ProBError(Alloy2BParserErr e) {
-		this(null, convertAlloyExceptionToErrorItems(e), e);
-	}
-
 	private static List<ErrorItem> convertParserExceptionToErrorItems(BCompoundException e) {
 		return e.getBExceptions().stream()
 			.map(ErrorItem::fromParserException)
 			.collect(Collectors.toList());
-	}
-
-	private static List<ErrorItem> convertAlloyExceptionToErrorItems(Alloy2BParserErr e) {
-		return Collections.singletonList(
-			new ErrorItem(e.getMessage(), ErrorItem.Type.ERROR, Collections.singletonList(
-				new ErrorItem.Location(e.getFilename(), e.getY(), e.getX(), e.getY2(), e.getX2())
-			))
-		);
 	}
 
 	public String getOriginalMessage() {

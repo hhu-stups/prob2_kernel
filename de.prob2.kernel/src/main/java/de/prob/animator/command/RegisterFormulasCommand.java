@@ -3,7 +3,6 @@ package de.prob.animator.command;
 import java.util.List;
 
 import de.prob.animator.domainobjects.IEvalElement;
-import de.prob.animator.domainobjects.ProBEvalElement;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;
@@ -27,16 +26,10 @@ public class RegisterFormulasCommand extends AbstractCommand {
 		pto.closeList();
 		pto.openList();
 		for (final IEvalElement formula : this.formulas) {
-			if (formula instanceof ProBEvalElement) {
-				pto.openTerm("eval_typed");
-				formula.printProlog(pto);
-				pto.printAtom(formula.expansion().getPrologName());
-			} else {
-				pto.openTerm("eval");
-				formula.printProlog(pto);
-				pto.printAtom(formula.getKind().getPrologName());
-				pto.printAtom(formula.expansion().getPrologName());
-			}
+			pto.openTerm("eval");
+			formula.printProlog(pto);
+			pto.printAtom(formula.getKind().getPrologName());
+			pto.printAtom(formula.expansion().getPrologName());
 			pto.closeTerm();
 		}
 		pto.closeList();

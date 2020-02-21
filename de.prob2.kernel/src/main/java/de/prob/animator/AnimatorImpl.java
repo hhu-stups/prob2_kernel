@@ -1,11 +1,11 @@
 package de.prob.animator;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
-import javax.annotation.Nullable;
-
 import com.google.common.base.MoreObjects;
-
 import com.google.inject.Inject;
 
 import de.prob.animator.command.AbstractCommand;
@@ -33,9 +33,10 @@ class AnimatorImpl implements IAnimator {
 	public static final boolean DEBUG = false;
 	private final AnimationSelector animations;
 	private boolean busy = false;
+	private final Collection<IWarningListener> warningListeners = new ArrayList<>();
 
 	@Inject
-	public AnimatorImpl(@Nullable final ProBInstance cli, final CommandProcessor processor,
+	public AnimatorImpl(final ProBInstance cli, final CommandProcessor processor,
 			final GetErrorItemsCommand getErrorItems, final AnimationSelector animations) {
 		this.cli = cli;
 		this.processor = processor;
@@ -44,14 +45,8 @@ class AnimatorImpl implements IAnimator {
 		processor.configure(cli);
 	}
 
-	@SuppressWarnings("unused")
 	@Override
 	public synchronized void execute(final AbstractCommand command) {
-		if (cli == null) {
-			logger.error("Probcli is missing. Try \"upgrade\".");
-			throw new CliError("no cli found");
-		}
-
 		if (DEBUG && !command.getSubcommands().isEmpty()) {
 			List<AbstractCommand> cmds = command.getSubcommands();
 			for (AbstractCommand abstractCommand : cmds) {
@@ -66,10 +61,18 @@ class AnimatorImpl implements IAnimator {
 		logger.trace("Starting execution of {}", command);
 		do {
 			IPrologResult result = processor.sendCommand(command);
-			final List<ErrorItem> errorItems = getErrorItems();
+			final GetErrorItemsCommand errorItemsCommand = getErrorItems();
 
-			if (result instanceof YesResult && errorItems.isEmpty()) {
+			if (result instanceof YesResult && (errorItemsCommand.getErrors().isEmpty() || errorItemsCommand.onlyWarningsOccurred())) {
 				logger.trace("Execution successful, processing result");
+				if (!errorItemsCommand.getErrors().isEmpty()) {
+					logger.warn("ProB reported warnings:");
+					for (final ErrorItem error : errorItemsCommand.getErrors()) {
+						assert error.getType() == ErrorItem.Type.WARNING;
+						logger.warn("{}", error);
+					}
+					this.warningListeners.forEach(listener -> listener.warningsOccurred(errorItemsCommand.getErrors()));
+				}
 				try {
 					command.processResult(((YesResult) result).getBindings());
 				} catch (RuntimeException e) {
@@ -78,13 +81,13 @@ class AnimatorImpl implements IAnimator {
 				}
 			} else {
 				logger.trace("Execution unsuccessful, processing error");
-				command.processErrorResult(result, errorItems);
+				command.processErrorResult(result, errorItemsCommand.getErrors());
 			}
-			logger.trace("Executed {} (completed: {}, interrupted: {})", command, command.isCompleted(), command.isInterrupted());
+			logger.trace("Executed {} (completed: {})", command, command.isCompleted());
 			
 			if (!command.isCompleted() && Thread.currentThread().isInterrupted()) {
 				logger.info("Stopping execution of {} because this thread was interrupted", command);
-				break;
+				throw new CommandInterruptedException("Thread was interrupted during command execution", Collections.emptyList());
 			}
 		} while (!command.isCompleted());
 		logger.trace("Done executing {}", command);
@@ -94,22 +97,13 @@ class AnimatorImpl implements IAnimator {
 		}
 	}
 
-	private synchronized List<ErrorItem> getErrorItems() {
-		final IPrologResult errorresult = processor.sendCommand(getErrorItems);
-		if (errorresult instanceof NoResult || errorresult instanceof InterruptedResult) {
-			throw new ProBError("Error getter command failed: " + errorresult);
-		} else if (errorresult instanceof YesResult) {
-			getErrorItems.processResult(((YesResult) errorresult).getBindings());
-			final List<ErrorItem> errors = getErrorItems.getErrors();
-			if (!errors.isEmpty()) {
-				logger.error("ProB raised exception(s):");
-				for (final ErrorItem error : errors) {
-					logger.error("{}", error);
-				}
-			}
-			return errors;
+	private synchronized GetErrorItemsCommand getErrorItems() {
+		final IPrologResult errorResult = processor.sendCommand(getErrorItems);
+		if (errorResult instanceof YesResult) {
+			getErrorItems.processResult(((YesResult) errorResult).getBindings());
+			return getErrorItems;
 		} else {
-			throw new ProBError("Unknown result type: " + errorresult.getClass());
+			throw new ProBError("Error getter command must return yes, not " + errorResult.getClass());
 		}
 	}
 
@@ -163,4 +157,13 @@ class AnimatorImpl implements IAnimator {
 		return command.getTotalNumberOfErrors().longValue();
 	}
 
+	@Override
+	public void addWarningListener(final IWarningListener listener) {
+		this.warningListeners.add(listener);
+	}
+
+	@Override
+	public void removeWarningListener(final IWarningListener listener) {
+		this.warningListeners.remove(listener);
+	}
 }

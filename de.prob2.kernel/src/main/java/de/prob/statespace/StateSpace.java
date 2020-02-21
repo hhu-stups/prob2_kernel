@@ -18,6 +18,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import de.prob.animator.IAnimator;
+import de.prob.animator.IWarningListener;
 import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.command.CheckIfStateIdValidCommand;
 import de.prob.animator.command.ComposedCommand;
@@ -39,6 +40,7 @@ import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.animator.domainobjects.TypeCheckResult;
 import de.prob.annotations.MaxCacheSize;
+import de.prob.exception.ProBError;
 import de.prob.model.classicalb.ClassicalBModel;
 import de.prob.model.eventb.EventBModel;
 import de.prob.model.representation.AbstractElement;
@@ -840,4 +842,13 @@ public class StateSpace implements IAnimator {
 		return animator.getTotalNumberOfErrors();
 	}
 
+	@Override
+	public void addWarningListener(final IWarningListener listener) {
+		animator.addWarningListener(listener);
+	}
+
+	@Override
+	public void removeWarningListener(final IWarningListener listener) {
+		animator.removeWarningListener(listener);
+	}
 }

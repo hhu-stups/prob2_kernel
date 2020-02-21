@@ -2,12 +2,16 @@ package de.prob.scripting;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import de.hhu.stups.alloy2b.translation.Alloy2BParser;
 import de.hhu.stups.alloy2b.translation.Alloy2BParserErr;
+import de.hhu.stups.alloy2b.translation.ParserResult;
+import de.prob.animator.domainobjects.ErrorItem;
 import de.prob.exception.ProBError;
 import de.prob.model.representation.AlloyModel;
 
@@ -19,15 +23,25 @@ public class AlloyFactory implements ModelFactory<AlloyModel> {
 		this.modelCreator = modelCreator;
 	}
 
+	private static List<ErrorItem> convertAlloyExceptionToErrorItems(Alloy2BParserErr e) {
+		return Collections.singletonList(
+			new ErrorItem(e.getMessage(), ErrorItem.Type.ERROR, Collections.singletonList(
+				new ErrorItem.Location(e.getFilename(), e.getRowStart(), e.getColStart(),
+						e.getRowEnd(), e.getColEnd())
+			))
+		);
+	}
+
 	@Override
 	public ExtractedModel<AlloyModel> extract(final String modelPath) throws IOException, ModelTranslationError {
 		final File f = new File(modelPath);
 		final AlloyModel alloyModel;
 		try {
-			alloyModel = modelCreator.get().create(f, new Alloy2BParser().alloyToPrologTerm(f.getAbsolutePath()));
+			final ParserResult parserResult = new Alloy2BParser().parseFromFile(f.getAbsolutePath());
+			alloyModel = modelCreator.get().create(f, parserResult.getPrologTerm());
 			return new ExtractedModel<>(alloyModel, null);
 		} catch (final Alloy2BParserErr e) {
-			throw new ProBError(e);
+			throw new ProBError(null, convertAlloyExceptionToErrorItems(e), e);
 		}
 	}
 }

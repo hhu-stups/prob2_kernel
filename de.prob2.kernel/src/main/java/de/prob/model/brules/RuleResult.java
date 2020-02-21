@@ -5,11 +5,14 @@ import java.util.List;
 import java.util.Set;
 
 import de.be4.classicalb.core.parser.rules.*;
+import de.hhu.stups.prob.translator.BNumber;
+import de.hhu.stups.prob.translator.BSet;
+import de.hhu.stups.prob.translator.BString;
+import de.hhu.stups.prob.translator.BTuple;
+import de.hhu.stups.prob.translator.BValue;
 import de.prob.animator.domainobjects.AbstractEvalResult;
 import de.prob.animator.domainobjects.EvalResult;
 import de.prob.animator.domainobjects.TranslatedEvalResult;
-import de.prob.translator.types.BObject;
-import de.prob.translator.types.Tuple;
 
 public class RuleResult {
 	private final RuleOperation ruleOperation;
@@ -39,7 +42,7 @@ public class RuleResult {
 
 	private void transformCounterExamples(AbstractEvalResult abstractEvalResult) {
 		EvalResult evalCurrent = (EvalResult) abstractEvalResult;
-		TranslatedEvalResult translatedResult = null;
+		TranslatedEvalResult<BValue> translatedResult = null;
 		try {
 			translatedResult = evalCurrent.translate();
 		} catch (Exception e) {
@@ -51,28 +54,12 @@ public class RuleResult {
 			counterExamples.add(new CounterExample(1, message));
 			return;
 		}
-		if (translatedResult.getValue() instanceof de.prob.translator.types.Set) {
-			de.prob.translator.types.Set set = (de.prob.translator.types.Set) translatedResult.getValue();
-			for (final BObject object : set) {
-				if (object instanceof Tuple) {
-					final Tuple tuple = (Tuple) object;
-					de.prob.translator.types.Number first = (de.prob.translator.types.Number) tuple.getFirst();
-					int errorType = first.intValue();
-					de.prob.translator.types.String second = (de.prob.translator.types.String) tuple.getSecond();
-					String message = second.getValue();
-					counterExamples.add(new CounterExample(errorType, message));
-				} else {
-					throw new AssertionError();
-				}
-			}
-		} else if (translatedResult.getValue() instanceof de.prob.translator.types.Sequence) {
-			de.prob.translator.types.Sequence sequence = (de.prob.translator.types.Sequence) translatedResult
-					.getValue();
-			for (int i = 1; i <= sequence.size(); i++) {
-				de.prob.translator.types.String value = (de.prob.translator.types.String) sequence.get(i);
-				String message = value.getValue();
-				counterExamples.add(new CounterExample(i, message));
-			}
+		if (translatedResult.getValue() instanceof BSet<?>) {
+			@SuppressWarnings("unchecked")
+			BSet<BTuple<BNumber, BString>> set = (BSet<BTuple<BNumber, BString>>) translatedResult.getValue();
+			set.stream()
+					.map(tuple -> new CounterExample(tuple.getFirst().intValue(), tuple.getSecond().stringValue()))
+					.forEach(counterExamples::add);
 		} else {
 			// fall back: should not happen
 			counterExamples.add(new CounterExample(1, evalCurrent.getValue()));

@@ -1,15 +1,13 @@
 # ProB 2.0
 
-[![Build Status](https://travis-ci.org/bendisposto/prob2.svg?branch=develop)](https://travis-ci.org/bendisposto/prob2)
-[![SonarCloud Tech Debt](https://sonarcloud.io/api/project_badges/measure?project=prob2kernel&metric=sqale_index)](https://sonarcloud.io/dashboard?id=prob2kernel)
-
 **IMPORTANT:** The layout of the repository has changed! The Eclipse/Rodin plugin was moved to a separate repository: http://github.com/bendisposto/prob2-plugin. This repository only contains the Kernel of ProB 2.0.
 
 The last version before the restructuring is tagged as preRestructure.
 
 The project is intended for internal usage, do not rely on any of the features or interfaces in this project.
 
-The source code of the current ProB release is located at http://github.com/bendisposto/prob
+The sourcecode of the current ProB2 Java API release is located at https://gitlab.cs.uni-duesseldorf.de/stups/prob/prob2_kernel
+and mirrored to https://github.com/hhu-stups/prob2_kernel
 
 ## Documentation
 
@@ -45,4 +43,4 @@ using it or for whether it serves any particular purpose or works at all. No
 warranty is made about the software or its performance.
 
 
-(c) 2012-2018 Jens Bendisposto et.al., all rights reserved
+(c) 2012-2020 Jens Bendisposto et.al., all rights reserved

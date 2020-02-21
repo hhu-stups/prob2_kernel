@@ -1,5 +1,5 @@
 package de.prob.statespace;
 
 public enum FormalismType {
-	B, CSP, XTL
+	B, CSP, XTL, Z
 }

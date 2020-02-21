@@ -1,6 +1,5 @@
 package de.prob.scripting;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collections;
@@ -10,11 +9,7 @@ import java.util.Map;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-import de.be4.classicalb.core.parser.ParsingBehaviour;
-import de.be4.classicalb.core.parser.exceptions.BCompoundException;
 import de.be4.classicalb.core.parser.node.Start;
-import de.be4.classicalb.core.parser.rules.RulesProject;
-
 import de.prob.animator.IAnimator;
 import de.prob.animator.command.GetVersionCommand;
 import de.prob.cli.CliVersionNumber;
@@ -162,12 +157,13 @@ public class Api {
 	 * @return the {@link StateSpace} for the loaded machine
 	 */
 	public StateSpace eventb_load(final String file, final Map<String, String> prefs) throws IOException, ModelTranslationError {
-		final EventBFactory factory = modelFactoryProvider.getEventBFactory();
+		final ModelFactory<EventBModel> factory;
 		if (file.endsWith(".eventb")) {
-			return factory.loadModelFromEventBFile(file, prefs);
+			factory = modelFactoryProvider.getEventBPackageFactory();
 		} else {
-			return factory.extract(file).load(prefs);
+			factory = modelFactoryProvider.getEventBFactory();
 		}
+		return factory.extract(file).load(prefs);
 	}
 
 	/**
@@ -230,17 +226,7 @@ public class Api {
 	 */
 	public StateSpace brules_load(final String file, final Map<String, String> prefs) throws IOException {
 		final RulesModelFactory bRulesFactory = modelFactoryProvider.getBRulesFactory();
-		final RulesProject rulesProject = new RulesProject();
-		final ParsingBehaviour parsingBehaviour = new ParsingBehaviour();
-		parsingBehaviour.setAddLineNumbers(true);
-		rulesProject.setParsingBehaviour(parsingBehaviour);
-		rulesProject.parseProject(new File(file));
-		rulesProject.checkAndTranslateProject();
-		if (rulesProject.hasErrors()) {
-			throw new ProBError(new BCompoundException(rulesProject.getBExceptionList()));
-		}
-
-		return bRulesFactory.extract(new File(file), rulesProject).load(prefs);
+		return bRulesFactory.extract(file).load(prefs);
 	}
 
 	/**
@@ -304,6 +290,28 @@ public class Api {
 	 */
 	public StateSpace xtl_load(final String file) throws IOException, ModelTranslationError {
 		return xtl_load(file, Collections.emptyMap());
+	}
+
+	/**
+	 * Load a Z model from the given file.
+	 *
+	 * @param file the path of the file to load
+	 * @param prefs the preferences to use
+	 * @return the {@link StateSpace} for the loaded model
+	 */
+	public StateSpace z_load(final String file, final Map<String, String> prefs) throws IOException, ModelTranslationError {
+		final ZFactory zFactory = modelFactoryProvider.getZFactory();
+		return zFactory.extract(file).load(prefs);
+	}
+
+	/**
+	 * Load a Z model from the given file.
+	 *
+	 * @param file the path of the file to load
+	 * @return the {@link StateSpace} for the loaded model
+	 */
+	public StateSpace z_load(final String file) throws IOException, ModelTranslationError {
+		return z_load(file, Collections.emptyMap());
 	}
 
 	/**

@@ -1,17 +1,19 @@
 package de.prob.check;
 
 import de.be4.ltl.core.parser.LtlParseException;
-import de.prob.animator.command.LTLCheckingJob;
+import de.prob.animator.command.LtlCheckingCommand;
 import de.prob.animator.domainobjects.LTL;
 import de.prob.model.eventb.EventBModel;
 import de.prob.statespace.StateSpace;
 
-public class LTLChecker implements IModelCheckJob {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-	private final StateSpace s;
-	private final IModelCheckListener ui;
-	private final String jobId;
-	private final LTLCheckingJob job;
+public class LTLChecker extends CheckerBase {
+	private static final Logger LOGGER = LoggerFactory.getLogger(LTLChecker.class);
+	private static final int MAX = 500;
+
+	private final LTL formula;
 
 	public LTLChecker(final StateSpace s, final String formula)
 			throws LtlParseException {
@@ -25,44 +27,33 @@ public class LTLChecker implements IModelCheckJob {
 
 	public LTLChecker(final StateSpace s, final LTL formula,
 			final IModelCheckListener ui) {
+		super(s, ui);
+
 		if (formula == null) {
 			throw new IllegalArgumentException(
 					"Cannot perform LTL checking without a correctly parsed LTL Formula");
 		}
-		this.s = s;
-		this.ui = ui;
-		this.jobId = ModelChecker.generateJobId();
-		job = new LTLCheckingJob(s, formula, jobId, ui);
+
+		this.formula = formula;
 	}
 
 	@Override
-	public IModelCheckingResult call() throws Exception {
-		long time = System.currentTimeMillis();
-		s.execute(job);
-		IModelCheckingResult result = job.getResult();
-		if (ui != null) {
-			ui.isFinished(jobId, System.currentTimeMillis() - time, result,
-					null);
+	protected void execute() {
+		final LtlCheckingCommand cmd = new LtlCheckingCommand(this.getStateSpace(), formula, MAX);
+		try {
+			this.getStateSpace().startTransaction();
+			do {
+				this.getStateSpace().execute(cmd);
+				if (Thread.interrupted()) {
+					LOGGER.info("LTL checker received a Java thread interrupt");
+					this.isFinished(new CheckInterrupted(), null);
+					return;
+				}
+				this.updateStats(cmd.getResult(), null);
+			} while (cmd.getResult() instanceof LTLNotYetFinished);
+		} finally {
+			this.getStateSpace().endTransaction();
 		}
-		return result;
+		this.isFinished(cmd.getResult(), null);
 	}
-
-	@Override
-	public IModelCheckingResult getResult() {
-		if (job.getResult() == null) {
-			return new NotYetFinished("No result was calculated", -1);
-		}
-		return job.getResult();
-	}
-
-	@Override
-	public String getJobId() {
-		return jobId;
-	}
-
-	@Override
-	public StateSpace getStateSpace() {
-		return s;
-	}
-
 }

@@ -21,8 +21,7 @@ public class ClassicalBMachine extends Machine {
 	}
 
 	public ClassicalBMachine addTo(final AbstractElement element) {
-		@SuppressWarnings("unchecked")
-		final ModelElementList<AbstractElement> childrenList = (ModelElementList<AbstractElement>)getChildren().get(AbstractElement.class);
+		final ModelElementList<AbstractElement> childrenList = getChildrenOfType(AbstractElement.class);
 		return new ClassicalBMachine(getName(), assoc(AbstractElement.class, childrenList.addElement(element)));
 	}
 
@@ -44,6 +43,10 @@ public class ClassicalBMachine extends Machine {
 
 	public ModelElementList<ClassicalBConstant> getConstants() {
 		return getChildrenAndCast(Constant.class, ClassicalBConstant.class);
+	}
+
+	public ModelElementList<Property> getProperties() {
+		return getChildrenOfType(Property.class);
 	}
 
 	public ModelElementList<ClassicalBVariable> getVariables() {

@@ -3,7 +3,10 @@ package de.prob.animator.command;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.prob.animator.IPrologResult;
+import de.prob.animator.InterruptedResult;
 import de.prob.animator.domainobjects.ClassicalB;
+import de.prob.animator.domainobjects.ErrorItem;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.check.CBCDeadlockFound;
@@ -55,7 +58,7 @@ public class ConstraintBasedDeadlockCheckCommand extends AbstractCommand
 	}
 
 	public IModelCheckingResult getResult() {
-		return result == null && interrupted ? new CheckInterrupted() : result;
+		return result;
 	}
 
 	public String getDeadlockStateId() {
@@ -111,12 +114,16 @@ public class ConstraintBasedDeadlockCheckCommand extends AbstractCommand
 	}
 
 	@Override
-	public List<Transition> getNewTransitions() {
-		return newOps;
+	public void processErrorResult(final IPrologResult result, final List<ErrorItem> errors) {
+		if (result instanceof InterruptedResult) {
+			this.result = new CheckInterrupted();
+		} else {
+			super.processErrorResult(result, errors);
+		}
 	}
 
 	@Override
-	public boolean blockAnimator() {
-		return true;
+	public List<Transition> getNewTransitions() {
+		return newOps;
 	}
 }

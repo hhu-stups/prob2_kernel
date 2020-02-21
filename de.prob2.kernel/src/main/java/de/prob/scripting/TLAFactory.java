@@ -43,20 +43,20 @@ public class TLAFactory implements ModelFactory<ClassicalBModel> {
 			translator = new Translator(f.getAbsolutePath());
 			ast = translator.translate();
 		} catch (TLA2BException e) {
-			throw new ModelTranslationError("Translation Error: " + e.getMessage(), e);
+			throw new ModelTranslationError(e);
 		}
 
 		BParser bparser = new BParser(fileName);
 		try {
 			bparser.getDefinitions().addDefinitions(translator.getBDefinitions());
 		} catch (PreParseException e) {
-			throw new ModelTranslationError(e.getMessage(), e);
+			throw new ModelTranslationError(e);
 		}
 		try {
 			final RecursiveMachineLoader rml = parseAllMachines(ast, f, bparser);
 			classicalBModel = classicalBModel.create(ast, rml, f, bparser);
 		} catch (BCompoundException e) {
-			throw new ModelTranslationError(e.getMessage(), e);
+			throw new ModelTranslationError(e);
 		}
 		return new ExtractedModel<>(classicalBModel, classicalBModel.getMainMachine());
 	}

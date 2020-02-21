@@ -27,8 +27,8 @@ public class Operation extends BEvent {
 
 	public <T extends AbstractElement> Operation addTo(T element) {
 		@SuppressWarnings("unchecked")
-		ModelElementList<T> kids = (ModelElementList<T>) getChildren().get(element.getClass());
-		return new Operation(getName(), parameters, output, ((AbstractElement) getChildren()).assoc(element.getClass(), kids.addElement(element)));
+		ModelElementList<T> kids = (ModelElementList<T>) getChildrenOfType(element.getClass());
+		return new Operation(getName(), parameters, output, assoc(element.getClass(), kids.addElement(element)));
 	}
 
 	public Operation set(Class<? extends AbstractElement> clazz, ModelElementList<? extends AbstractElement> elements) {

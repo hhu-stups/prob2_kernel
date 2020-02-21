@@ -9,20 +9,14 @@ import de.prob.statespace.StateSpace;
 /**
  * This {@link IModelCheckJob} performs constraint based deadlock checking on
  * the given {@link StateSpace} using an optional {@link IEvalElement}
- * constraint. This class should be used in conjunction with the
- * {@link ModelChecker} wrapper class in order to perform model checking.
- * Communication with the ProB kernel takes place via the
+ * constraint. Communication with the ProB kernel takes place via the
  * {@link ConstraintBasedDeadlockCheckCommand} command.
  * 
  * @author joy
  * 
  */
-public class CBCDeadlockChecker implements IModelCheckJob {
-
-	private final StateSpace s;
-	private final IModelCheckListener ui;
+public class CBCDeadlockChecker extends CheckerBase {
 	private final ConstraintBasedDeadlockCheckCommand job;
-	String jobId;
 
 	/**
 	 * Calls {@link #CBCDeadlockChecker(StateSpace, IEvalElement)} with
@@ -62,43 +56,14 @@ public class CBCDeadlockChecker implements IModelCheckJob {
 	 */
 	public CBCDeadlockChecker(final StateSpace s,
 			final IEvalElement constraint, final IModelCheckListener ui) {
-		this.s = s;
+		super(s, ui);
+
 		job = new ConstraintBasedDeadlockCheckCommand(s, constraint);
-		this.ui = ui;
-		jobId = ModelChecker.generateJobId();
 	}
 
 	@Override
-	public IModelCheckingResult call() throws Exception {
-		long time = System.currentTimeMillis();
-		if (ui != null) {
-			ui.updateStats(jobId, 0, new NotYetFinished(
-					"Deadlock check started", 0), null);
-		}
-		s.execute(job);
-		if (ui != null) {
-			ui.isFinished(jobId, System.currentTimeMillis() - time,
-					job.getResult(), null);
-		}
-		return job.getResult();
+	protected void execute() {
+		this.getStateSpace().withTransaction(() -> this.getStateSpace().execute(job));
+		this.isFinished(job.getResult(), null);
 	}
-
-	@Override
-	public IModelCheckingResult getResult() {
-		if (job.getResult() == null) {
-			return new NotYetFinished("No result was calculated", -1);
-		}
-		return job.getResult();
-	}
-
-	@Override
-	public String getJobId() {
-		return jobId;
-	}
-
-	@Override
-	public StateSpace getStateSpace() {
-		return s;
-	}
-
 }
