@@ -63,7 +63,6 @@ dependencies {
 	api group: "de.hhu.stups", name: "answerparser", version: parserVersion
 	api group: "de.hhu.stups", name: "bparser", version: parserVersion
 	api group: "de.hhu.stups", name: "cliparser", version: parserVersion
-	api group: "de.hhu.stups", name: "eventbalg", version: parserVersion
 	api group: "de.hhu.stups", name: "ltlparser", version: parserVersion
 	api group: "de.hhu.stups", name: "parserbase", version: parserVersion
 	api group: "de.hhu.stups", name: "prologlib", version: parserVersion
