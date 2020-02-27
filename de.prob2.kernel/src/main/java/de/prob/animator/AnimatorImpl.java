@@ -13,8 +13,8 @@ import de.prob.animator.command.ComposedCommand;
 import de.prob.animator.command.GetErrorItemsCommand;
 import de.prob.animator.command.GetTotalNumberOfErrorsCommand;
 import de.prob.animator.domainobjects.ErrorItem;
-import de.prob.clistarter.client.CliClient;
-import de.prob.clistarter.exception.CliError;
+import de.prob.cli.ProBInstance;
+import de.prob.exception.CliError;
 import de.prob.exception.ProBError;
 import de.prob.statespace.AnimationSelector;
 
@@ -26,7 +26,7 @@ class AnimatorImpl implements IAnimator {
 	private static int counter = 0;
 	private final String id = "animator" + counter++;
 
-	private final CliClient cliClient;
+	private final ProBInstance cli;
 	private final Logger logger = LoggerFactory.getLogger(AnimatorImpl.class);
 	private final CommandProcessor processor;
 	private final GetErrorItemsCommand getErrorItems;
@@ -36,13 +36,13 @@ class AnimatorImpl implements IAnimator {
 	private final Collection<IWarningListener> warningListeners = new ArrayList<>();
 
 	@Inject
-	public AnimatorImpl(final CliClient cliClient, final CommandProcessor processor,
+	public AnimatorImpl(final ProBInstance cli, final CommandProcessor processor,
 			final GetErrorItemsCommand getErrorItems, final AnimationSelector animations) {
-		this.cliClient = cliClient;
+		this.cli = cli;
 		this.processor = processor;
 		this.getErrorItems = getErrorItems;
 		this.animations = animations;
-		processor.configure(cliClient);
+		processor.configure(cli);
 	}
 
 	@Override
@@ -109,7 +109,7 @@ class AnimatorImpl implements IAnimator {
 
 	@Override
 	public String toString() {
-		return MoreObjects.toStringHelper(AnimatorImpl.class).addValue(cliClient).toString();
+		return MoreObjects.toStringHelper(AnimatorImpl.class).addValue(cli).toString();
 	}
 
 	@Override
@@ -120,7 +120,7 @@ class AnimatorImpl implements IAnimator {
 	@Override
 	public void sendInterrupt() {
 		logger.info("Sending an interrupt to the CLI");
-		cliClient.interruptCLI();
+		cli.sendInterrupt();
 	}
 
 	@Override
@@ -147,7 +147,7 @@ class AnimatorImpl implements IAnimator {
 
 	@Override
 	public void kill() {
-		cliClient.shutdownCLI();
+		cli.shutdown();
 	}
 
 	@Override
