@@ -8,17 +8,17 @@ package de.prob.synthesis.library;
  *           if-statements in a single machine operation)
  */
 public enum ConsiderIfType {
-  NONE, EXPLICIT, IMPLICIT;
+	NONE, EXPLICIT, IMPLICIT;
 
-  public boolean isNone() {
-    return this.equals(NONE);
-  }
+	public boolean isNone() {
+		return this.equals(NONE);
+	}
 
-  public boolean isExplicit() {
-    return this.equals(EXPLICIT);
-  }
+	public boolean isExplicit() {
+		return this.equals(EXPLICIT);
+	}
 
-  public boolean isImplicit() {
-    return this.equals(IMPLICIT);
-  }
+	public boolean isImplicit() {
+		return this.equals(IMPLICIT);
+	}
 }

@@ -1,9 +1,9 @@
 package de.prob.synthesis;
 
 public enum SynthesisMode {
-  INTERACTIVE, FIRST_SOLUTION;
+	INTERACTIVE, FIRST_SOLUTION;
 
-  public boolean isInteractive() {
-    return this.equals(INTERACTIVE);
-  }
+	public boolean isInteractive() {
+		return this.equals(INTERACTIVE);
+	}
 }
