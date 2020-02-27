@@ -15,7 +15,7 @@ import com.google.gson.Gson;
 import de.prob.Main;
 import de.prob.animator.command.EvaluateFormulaCommand;
 import de.prob.animator.command.EvaluationCommand;
-import de.prob.cli.OsSpecificInfo;
+import de.prob.clistarter.OsSpecificInfo;
 import de.prob.model.representation.CSPModel;
 import de.prob.model.representation.FormulaUUID;
 import de.prob.model.representation.IFormulaUUID;

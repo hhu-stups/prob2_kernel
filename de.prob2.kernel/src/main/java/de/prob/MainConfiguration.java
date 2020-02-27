@@ -3,7 +3,6 @@ package de.prob;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
-import de.prob.annotations.Home;
 import de.prob.annotations.Version;
 
 import org.apache.commons.cli.CommandLineParser;
@@ -29,7 +28,6 @@ public class MainConfiguration extends AbstractModule {
 	 * @return the absolute path to ProB directory.
 	 */
 	@Provides
-	@Home
 	private static String getProBDirectory() {
 		return Main.getProBDirectory();
 	}

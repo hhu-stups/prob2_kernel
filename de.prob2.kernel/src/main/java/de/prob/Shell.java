@@ -11,7 +11,7 @@ import javax.script.ScriptException;
 import com.google.common.base.Stopwatch;
 import com.google.inject.Inject;
 
-import de.prob.cli.ProBInstanceProvider;
+import de.prob.clistarter.ProBInstanceProvider;
 import de.prob.scripting.ScriptEngineProvider;
 
 import org.slf4j.Logger;

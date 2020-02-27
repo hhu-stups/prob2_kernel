@@ -7,7 +7,7 @@ import com.google.inject.Inject;
 
 import de.be4.classicalb.core.parser.rules.RulesProject;
 import de.prob.Main;
-import de.prob.cli.CliVersionNumber;
+import de.prob.clistarter.CliVersionNumber;
 import de.prob.scripting.Api;
 import de.prob.scripting.ExtractedModel;
 import de.prob.statespace.StateSpace;

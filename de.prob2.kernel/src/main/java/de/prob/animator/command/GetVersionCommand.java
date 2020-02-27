@@ -1,6 +1,6 @@
 package de.prob.animator.command;
 
-import de.prob.cli.CliVersionNumber;
+import de.prob.clistarter.CliVersionNumber;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;

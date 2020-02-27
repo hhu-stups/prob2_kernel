@@ -4,7 +4,7 @@ import java.util.Map;
 
 import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.command.IRawCommand;
-import de.prob.cli.ProBInstance;
+import de.prob.clistarter.client.CliClient;
 import de.prob.core.sablecc.node.AExceptionResult;
 import de.prob.core.sablecc.node.AInterruptedResult;
 import de.prob.core.sablecc.node.ANoResult;
@@ -21,8 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class CommandProcessor {
-
-	private ProBInstance cli;
+	
+	private CliClient cliClient;
 
 	private final Logger logger = LoggerFactory.getLogger(CommandProcessor.class);
 
@@ -50,7 +50,7 @@ class CommandProcessor {
 // 		if (logger.isDebugEnabled()) {
 // 			logger.debug(shorten(query));
 // 		}
-		String result = cli.send(query);
+		String result = cliClient.sendMessage(query);
 
 		final Start ast = parseResult(result);
 		IPrologResult extractResult = extractResult(ast);
@@ -82,8 +82,10 @@ class CommandProcessor {
 		return ProBResultParser.parse(input);
 	}
 
-	public void configure(final ProBInstance cli) {
-		this.cli = cli;
+	public void configure(final CliClient cliClient) {
+		this.cliClient = cliClient;
+		this.cliClient.connect("localhost", 11312);
+		//this.cliClient.connect("192.168.4.149", 11312);
 	}
 
 }

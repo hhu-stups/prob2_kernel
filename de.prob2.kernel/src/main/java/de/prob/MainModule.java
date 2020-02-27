@@ -3,7 +3,7 @@ package de.prob;
 import com.google.inject.AbstractModule;
 
 import de.prob.animator.AnimatorModule;
-import de.prob.cli.ModuleCli;
+import de.prob.clistarter.ModuleCli;
 import de.prob.scripting.ScriptingModule;
 import de.prob.statespace.ModelModule;
 

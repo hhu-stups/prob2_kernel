@@ -18,10 +18,10 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Stage;
 
-import de.prob.annotations.Home;
-import de.prob.cli.ProBInstanceProvider;
+import de.prob.clistarter.annotations.Home;
+import de.prob.clistarter.ProBInstanceProvider;
 import de.prob.scripting.Api;
-import de.prob.cli.Installer;
+import de.prob.clistarter.Installer;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
