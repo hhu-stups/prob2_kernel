@@ -1,13 +1,14 @@
 package de.prob.scripting;
 
-import com.google.inject.Inject;
-import de.prob.model.brules.RulesModelFactory;
-
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.google.inject.Inject;
+
+import de.prob.model.brules.RulesModelFactory;
 
 /**
  * Provides the user with access to the {@link ClassicalBFactory},
@@ -20,7 +21,7 @@ import java.util.Map;
 public class FactoryProvider {
 	public static final Map<Class<? extends ModelFactory<?>>, List<String>> FACTORY_TO_EXTENSIONS_MAP;
 	static {
-		final Map<Class<? extends ModelFactory<?>>, List<String>> map = new HashMap<>();
+		final Map<Class<? extends ModelFactory<?>>, List<String>> map = new LinkedHashMap<>();
 		map.put(ClassicalBFactory.class, Arrays.asList("mch", "ref", "imp", "sys"));
 		map.put(EventBFactory.class, Arrays.asList("bum", "buc"));
 		map.put(EventBPackageFactory.class, Collections.singletonList("eventb"));
@@ -35,13 +36,17 @@ public class FactoryProvider {
 
 	public static final Map<String, Class<? extends ModelFactory<?>>> EXTENSION_TO_FACTORY_MAP;
 	static {
-		final Map<String, Class<? extends ModelFactory<?>>> map = new HashMap<>();
+		final Map<String, Class<? extends ModelFactory<?>>> map = new LinkedHashMap<>();
 		FACTORY_TO_EXTENSIONS_MAP.forEach((factory, extensions) ->
 			extensions.forEach(extension -> map.put(extension, factory))
 		);
 		EXTENSION_TO_FACTORY_MAP = Collections.unmodifiableMap(map);
 	}
 
+	/**
+	 * @deprecated Use the values of {@link #FACTORY_TO_EXTENSIONS_MAP} instead
+	 */
+	@Deprecated
 	public static final List<String> EXTENSION_PATTERNS_ORDERED = Arrays.asList("*.mch", "*.ref", "*.imp", "*.sys", "*.bum", "*.buc", "*.eventb", "*.csp", "*.cspm", "*.tla", "*.rmch", "*.P", "*.pl", "*.zed", "*.tex", "*.als");
 
 	private final ClassicalBFactory classicalBFactory;
