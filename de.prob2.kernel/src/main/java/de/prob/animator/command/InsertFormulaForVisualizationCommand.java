@@ -29,7 +29,7 @@ public class InsertFormulaForVisualizationCommand extends AbstractCommand {
 
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
-		this.id = PrologTerm.atomicString(bindings.get(ID));
+		this.id = bindings.get(ID).getFunctor();
 	}
 
 	public String getId() {
