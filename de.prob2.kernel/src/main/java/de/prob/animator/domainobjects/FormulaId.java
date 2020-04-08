@@ -1,5 +1,9 @@
 package de.prob.animator.domainobjects;
 
+/**
+ * @deprecated Use {@link BVisual2Formula} instead.
+ */
+@Deprecated
 public class FormulaId {
 
 	private final String id;

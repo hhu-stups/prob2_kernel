@@ -1,17 +1,19 @@
 package de.prob.animator.command;
 
+import de.prob.animator.domainobjects.BVisual2Formula;
 import de.prob.animator.domainobjects.FormulaId;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;
+import de.prob.statespace.StateSpace;
 
 public class InsertFormulaForVisualizationCommand extends AbstractCommand { 
 	private static final String PROLOG_COMMAND_NAME = "insert_formula_for_expansion";
 	private static final String ID = "Id";
 
 	private final IEvalElement formula;
-	private FormulaId formulaId;
+	private String id;
 
 	public InsertFormulaForVisualizationCommand(final IEvalElement formula) {
 		this.formula = formula;
@@ -27,10 +29,18 @@ public class InsertFormulaForVisualizationCommand extends AbstractCommand {
 
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
-		formulaId = new FormulaId(bindings.get(ID).getFunctor(), formula);
+		this.id = PrologTerm.atomicString(bindings.get(ID));
 	}
 
+	public String getId() {
+		return this.id;
+	}
+	
+	/**
+	 * @deprecated Use {@link #getId()}, or use {@link BVisual2Formula#fromFormula(StateSpace, IEvalElement)} instead of this command.
+	 */
+	@Deprecated
 	public FormulaId getFormulaId() {
-		return formulaId;
+		return new FormulaId(this.getId(), this.formula);
 	}
 }
