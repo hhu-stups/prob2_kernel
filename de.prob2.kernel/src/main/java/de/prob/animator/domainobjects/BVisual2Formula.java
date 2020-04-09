@@ -106,7 +106,7 @@ public final class BVisual2Formula {
 	 * @param state the state in which to expand and evaluate the formulas
 	 * @return the expanded and evaluated formulas
 	 * 
-	 * @see #expand(State) 
+	 * @see #expand(State)
 	 */
 	public static List<ExpandedFormula> expandMultiple(final List<BVisual2Formula> formulas, final State state) {
 		Objects.requireNonNull(formulas, "formulas");
@@ -137,7 +137,7 @@ public final class BVisual2Formula {
 	 * @param state the state in which to expand and evaluate the formula
 	 * @return the expanded and evaluated formula
 	 * 
-	 * @see #expandMultiple(List, State) 
+	 * @see #expandMultiple(List, State)
 	 */
 	public ExpandedFormula expand(final State state) {
 		return expandMultiple(Collections.singletonList(this), state).get(0);
