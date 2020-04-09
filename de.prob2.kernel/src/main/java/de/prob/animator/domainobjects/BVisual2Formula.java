@@ -9,6 +9,7 @@ import com.google.common.base.MoreObjects;
 
 import de.prob.animator.command.ComposedCommand;
 import de.prob.animator.command.ExpandFormulaCommand;
+import de.prob.animator.command.ExpandFormulaNonrecursiveCommand;
 import de.prob.animator.command.GetTopLevelFormulasCommand;
 import de.prob.animator.command.InsertFormulaForVisualizationCommand;
 import de.prob.statespace.State;
@@ -100,7 +101,53 @@ public final class BVisual2Formula {
 	}
 	
 	/**
-	 * Expand and evaluate multiple formulas in the given state. All formulas must belong to the same state space as the state.
+	 * <p>Expand and evaluate multiple formulas non-recursively in the given state. All formulas must belong to the same state space as the state.</p>
+	 * <p>To fully expand a formula recursively, {@link #expandMultiple(List, State)} should be used.</p>
+	 * 
+	 * @param formulas the formulas to expand and evaluate
+	 * @param state the state in which to expand and evaluate the formulas
+	 * @return the expanded and evaluated formulas
+	 * 
+	 * @see #expandNonrecursive(State)
+	 */
+	public static List<ExpandedFormula> expandNonrecursiveMultiple(final List<BVisual2Formula> formulas, final State state) {
+		Objects.requireNonNull(formulas, "formulas");
+		Objects.requireNonNull(state, "state");
+		
+		final List<ExpandFormulaNonrecursiveCommand> expandCommands = formulas.stream()
+			.peek(Objects::requireNonNull)
+			.peek(formula -> {
+				if (!formula.getStateSpace().equals(state.getStateSpace())) {
+					throw new IllegalArgumentException(String.format("Formula %s does not belong to the state space of the given state: %s", formula, state.getStateSpace()));
+				}
+			})
+			.map(BVisual2Formula::getId)
+			.map(id -> new ExpandFormulaNonrecursiveCommand(id, state))
+			.collect(Collectors.toList());
+		
+		state.getStateSpace().execute(new ComposedCommand(expandCommands));
+		
+		return expandCommands.stream()
+			.map(ExpandFormulaNonrecursiveCommand::getResult)
+			.collect(Collectors.toList());
+	}
+	
+	/**
+	 * <p>Expand and evaluate this formula non-recursively in the given state. This formula must belong to the same state space as the state.</p>
+	 * <p>To expand many formulas in the same state, {@link #expandNonrecursiveMultiple(List, State)} should be used for better performance. To fully expand a formula recursively, {@link #expand(State)} should be used.</p>
+	 * 
+	 * @param state the state in which to expand and evaluate the formula
+	 * @return the expanded and evaluated formula
+	 * 
+	 * @see #expandNonrecursiveMultiple(List, State)
+	 */
+	public ExpandedFormula expandNonrecursive(final State state) {
+		return expandNonrecursiveMultiple(Collections.singletonList(this), state).get(0);
+	}
+	
+	/**
+	 * <p>Expand and evaluate multiple formulas recursively in the given state. All formulas must belong to the same state space as the state.</p>
+	 * <p>If the formulas' children are not used (or only partially), {@link #expandNonrecursiveMultiple(List, State)} should be used to avoid recursively evaluating all children when not needed.</p>
 	 * 
 	 * @param formulas the formulas to expand and evaluate
 	 * @param state the state in which to expand and evaluate the formulas
@@ -131,8 +178,8 @@ public final class BVisual2Formula {
 	}
 	
 	/**
-	 * <p>Expand and evaluate this formula in the given state. This formula must belong to the same state space as the state.</p>
-	 * <p>To expand many formulas in the same state, {@link #expandMultiple(List, State)} should be used for better performance.</p>
+	 * <p>Expand and evaluate this formula recursively in the given state. This formula must belong to the same state space as the state.</p>
+	 * <p>To expand many formulas in the same state, {@link #expandMultiple(List, State)} should be used for better performance. If the formula's children are not used (or only partially), {@link #expandNonrecursive(State)} should be used to avoid recursively evaluating all children when not needed.</p>
 	 * 
 	 * @param state the state in which to expand and evaluate the formula
 	 * @return the expanded and evaluated formula
