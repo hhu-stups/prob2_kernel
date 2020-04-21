@@ -114,6 +114,10 @@ public final class BVisual2Formula {
 		Objects.requireNonNull(formulas, "formulas");
 		Objects.requireNonNull(state, "state");
 		
+		if (formulas.isEmpty()) {
+			return Collections.emptyList();
+		}
+		
 		final List<ExpandFormulaNonrecursiveCommand> expandCommands = formulas.stream()
 			.peek(Objects::requireNonNull)
 			.peek(formula -> {
@@ -158,6 +162,10 @@ public final class BVisual2Formula {
 	public static List<ExpandedFormula> expandMultiple(final List<BVisual2Formula> formulas, final State state) {
 		Objects.requireNonNull(formulas, "formulas");
 		Objects.requireNonNull(state, "state");
+		
+		if (formulas.isEmpty()) {
+			return Collections.emptyList();
+		}
 		
 		final List<ExpandFormulaCommand> expandCommands = formulas.stream()
 			.peek(Objects::requireNonNull)
