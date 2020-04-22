@@ -44,6 +44,10 @@ tests:jdk-11:
   extends: .docker-tests
   image: openjdk:11-jdk-slim
 
+tests:jdk-14:
+  extends: .docker-tests
+  image: openjdk:14-jdk-slim
+
 tests:macos:
   extends: .tests
   tags:
