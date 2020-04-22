@@ -241,7 +241,7 @@ task cliIntegrationTests(type: Test, dependsOn: ['test']) {
 }
 
 jacoco {
-	toolVersion = "0.8.2"
+	toolVersion = "0.8.5"
 }
 task codeCoverageReport(type: JacocoReport, dependsOn: ['allTests']) {
 	sourceDirectories.from([])
