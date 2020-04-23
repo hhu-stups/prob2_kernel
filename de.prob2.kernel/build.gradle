@@ -269,22 +269,15 @@ javadoc {
 	options.addStringOption("sourcepath", "")
 }
 
-task javadocJar(type: Jar) {
-	from javadoc
-	archiveClassifier = 'javadoc'
-}
-
-task sourcesJar(type: Jar) {
-	from sourceSets.main.allSource
-	archiveClassifier = 'sources'
+java {
+	withSourcesJar()
+	withJavadocJar()
 }
 
 publishing {
 	publications {
 		mavenJava(MavenPublication) {
 			from components.java
-			artifact sourcesJar
-			artifact javadocJar
 			
 			pom {
 				name = "prob2-kernel"
