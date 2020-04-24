@@ -70,7 +70,7 @@ dependencies {
 	api group: "de.hhu.stups", name: "value-translator", version: "0.0.2"
 
 	// Groovy (Apache License 2.0)
-	final groovyVersion = "2.5.9"
+	final groovyVersion = "3.0.3"
 	api group: "org.codehaus.groovy", name: "groovy", version: groovyVersion
 	api group: "org.codehaus.groovy", name: "groovy-jsr223", version: groovyVersion
 	api group: "org.codehaus.groovy", name: "groovy-nio", version: groovyVersion
@@ -219,7 +219,7 @@ groovydoc {
 }
 
 wrapper {
-	gradleVersion = "6.2.1"
+	gradleVersion = "6.3"
 	distributionType = Wrapper.DistributionType.ALL
 }
 
