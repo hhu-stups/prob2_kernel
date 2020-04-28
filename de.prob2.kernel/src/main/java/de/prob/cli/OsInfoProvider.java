@@ -1,13 +1,12 @@
 package de.prob.cli;
 
-import java.io.File;
-
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
-
 import de.prob.cli.ModuleCli.OsArch;
 import de.prob.cli.ModuleCli.OsName;
+
+import java.io.File;
 
 /**
  * Creates {@link OsSpecificInfo} for each instance of the ProB 2.0 software.
@@ -36,9 +35,9 @@ public class OsInfoProvider implements Provider<OsSpecificInfo> {
 		final String os = osString.toLowerCase();
 		if (os.contains("win")) {
 			final String dirName;
-			if ("amd64".equals(osArch)) {
+			if ("amd64".equals(osArch) || "x64".equals(osArch)) {
 				dirName = "win64";
-			} else if ("i386".equals(osArch)) {
+			} else if ("i386".equals(osArch) || "x86".equals(osArch)) {
 				dirName = "win32";
 			} else {
 				throw new UnsupportedOperationException("Unsupported architecture for Windows: " + osArch);
