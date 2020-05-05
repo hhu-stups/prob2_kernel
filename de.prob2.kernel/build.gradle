@@ -41,9 +41,11 @@ if (isSnapshot) {
 
 repositories {
 	mavenCentral()
-	maven {
-		name "sonatype snapshots"
-		url "https://oss.sonatype.org/content/repositories/snapshots"
+	if (isSnapshot) {
+		maven {
+			name "sonatype snapshots"
+			url "https://oss.sonatype.org/content/repositories/snapshots"
+		}
 	}
 }
 
