@@ -31,10 +31,10 @@ final isSnapshot = project.version.endsWith("-SNAPSHOT")
 def parserVersion
 def cliDownloadURL
 if (isSnapshot) {
-	parserVersion = '2.9.24-SNAPSHOT'
+	parserVersion = '2.9.26-SNAPSHOT'
 	cliDownloadURL = "https://www3.hhu.de/stups/downloads/prob/cli/nightly"
 } else {
-	parserVersion = '2.9.23'
+	parserVersion = '2.9.25'
 	cliDownloadURL = "https://www3.hhu.de/stups/downloads/prob/cli/releases/${cli_version}"
 }
 
