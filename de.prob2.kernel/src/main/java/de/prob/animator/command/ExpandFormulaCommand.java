@@ -1,5 +1,6 @@
 package de.prob.animator.command;
 
+import de.prob.animator.domainobjects.BVisual2Formula;
 import de.prob.animator.domainobjects.ExpandedFormula;
 import de.prob.animator.domainobjects.FormulaId;
 import de.prob.parser.BindingGenerator;
@@ -13,18 +14,27 @@ public class ExpandFormulaCommand extends AbstractCommand {
 	private static final String TREE = "TREE";
 
 	private final State stateId;
-	private final FormulaId id;
+	private final String id;
 	private ExpandedFormula result;
 
-	public ExpandFormulaCommand(final FormulaId id, final State stateId) {
+	public ExpandFormulaCommand(final String id, final State stateId) {
 		this.id = id;
+		this.stateId = stateId;
+	}
+	
+	/**
+	 * @deprecated Use {@link ExpandFormulaCommand#ExpandFormulaCommand(String, State)}, or use {@link BVisual2Formula#expand(State)} instead of this command.
+	 */
+	@Deprecated
+	public ExpandFormulaCommand(final FormulaId id, final State stateId) {
+		this.id = id.getId();
 		this.stateId = stateId;
 	}
 
 	@Override
 	public void writeCommand(final IPrologTermOutput pto) {
 		pto.openTerm(PROLOG_COMMAND_NAME);
-		pto.printAtomOrNumber(id.getId());
+		pto.printAtomOrNumber(id);
 		pto.printAtomOrNumber(stateId.getId());
 		pto.printVariable(TREE);
 		pto.closeTerm();
@@ -32,7 +42,7 @@ public class ExpandFormulaCommand extends AbstractCommand {
 
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
-		result = ExpandedFormula.fromPrologTerm(BindingGenerator.getCompoundTerm(bindings.get(TREE), "formula", 4));
+		result = ExpandedFormula.fromPrologTerm(this.stateId.getStateSpace(), BindingGenerator.getCompoundTerm(bindings.get(TREE), "formula", 4));
 	}
 
 	public ExpandedFormula getResult() {

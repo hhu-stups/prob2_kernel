@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.List;
 
 import de.prob.animator.CommandInterruptedException;
-import de.prob.animator.IAnimator;
 import de.prob.animator.IPrologResult;
 import de.prob.animator.InterruptedResult;
 import de.prob.animator.NoResult;
@@ -27,15 +26,6 @@ import de.prob.prolog.term.PrologTerm;
  * 
  */
 public abstract class AbstractCommand {
-	/**
-	 * @deprecated This field should no longer be used directly. If you need to execute a command more than once, call {@link IAnimator#execute(AbstractCommand)} in a loop.
-	 */
-	@Deprecated
-	protected boolean completed = true;
-	
-	
-
-
 	/**
 	 * Creates the prolog term that is sent to the core. It gets the term output
 	 * object from the animator. The animator will automatically take care of
@@ -91,29 +81,6 @@ public abstract class AbstractCommand {
 	 */
 	public List<AbstractCommand> getSubcommands() {
 		return Collections.emptyList();
-	}
-
-	/**
-	 * @deprecated The corresponding {@link #completed} field is no longer used. In practice, this method always returns {@code true}, regardless of whether the command has actually completed execution.
-	 */
-	@Deprecated
-	public boolean isCompleted() {
-		return completed;
-	}
-
-	/**
-	 * This method determines if the animator should be blocked during the
-	 * execution of the command. This is the case when dealing with a command
-	 * that executes multiple times (i.e a model checking command).
-	 * 
-	 * @return true, if an the animator status should be broadcast as blocked.
-	 *         false, otherwise.
-	 * 
-	 * @deprecated This method is no longer necessary, as commands are non automatically executed more than once anymore. To execute a command in a transaction (which blocks the animator), surround the {@link IAnimator#execute(AbstractCommand)} call with {@link IAnimator#withTransaction(Runnable)}.
-	 */
-	@Deprecated
-	public boolean blockAnimator() {
-		return false;
 	}
 
 	/**
