@@ -17,12 +17,12 @@ final SOURCE_ENCODING = "UTF-8"
 
 
 // IMPORTANT !!!
-//project.version = '3.10.0'
-project.version = '4.0.0-SNAPSHOT'
+project.version = '3.11.0'
+// project.version = '4.0.0-SNAPSHOT'
 
 // Remember to release the cli
 ext {
-	cli_version = '1.9.3'
+	cli_version = '1.10.0-beta1'
 }
 // IMPORTANT !!!
 
