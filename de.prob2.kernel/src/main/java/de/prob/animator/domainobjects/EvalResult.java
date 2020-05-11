@@ -28,10 +28,6 @@ public class EvalResult extends AbstractEvalResult {
 	private final String value;
 	private final Map<String, String> solutions;
 
-	// These fields are saved in this class to be able to later produce
-	// a TranslatedEvalResult from this class. However, they are otherwise
-	// not of use to the user.
-
 	public EvalResult(final String value, final Map<String, String> solutions) {
 		super();
 		this.value = value;
