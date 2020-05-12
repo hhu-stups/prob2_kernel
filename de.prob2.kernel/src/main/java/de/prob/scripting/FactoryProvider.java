@@ -43,12 +43,6 @@ public class FactoryProvider {
 		EXTENSION_TO_FACTORY_MAP = Collections.unmodifiableMap(map);
 	}
 
-	/**
-	 * @deprecated Use the values of {@link #FACTORY_TO_EXTENSIONS_MAP} instead
-	 */
-	@Deprecated
-	public static final List<String> EXTENSION_PATTERNS_ORDERED = Arrays.asList("*.mch", "*.ref", "*.imp", "*.sys", "*.bum", "*.buc", "*.eventb", "*.csp", "*.cspm", "*.tla", "*.rmch", "*.P", "*.pl", "*.zed", "*.tex", "*.als");
-
 	private final ClassicalBFactory classicalBFactory;
 	private final CSPFactory cspFactory;
 	private final EventBFactory eventBFactory;
