@@ -42,9 +42,9 @@ public class OsInfoProvider implements Provider<OsSpecificInfo> {
 			} else {
 				throw new UnsupportedOperationException("Unsupported architecture for Windows: " + osArch);
 			}
-			return new OsSpecificInfo("probcli.exe", null, "lib" + File.separator + "send_user_interrupt.exe", "Windows", dirName, "lib\\cspmf.exe");
+			return new OsSpecificInfo("probcli.exe", "lib" + File.separator + "send_user_interrupt.exe", "Windows", dirName, "lib\\cspmf.exe");
 		} else if (os.contains("mac")) {
-			return new OsSpecificInfo("probcli.sh", null, "send_user_interrupt", "MacOs", "leopard64", "lib/cspmf");
+			return new OsSpecificInfo("probcli.sh", "send_user_interrupt", "MacOs", "leopard64", "lib/cspmf");
 		} else if (os.contains("linux")) {
 			final String dirName;
 			if ("i386".equals(osArch)) {
@@ -54,7 +54,7 @@ public class OsInfoProvider implements Provider<OsSpecificInfo> {
 			} else {
 				throw new UnsupportedOperationException("Unsupported architecture for Linux: " + osArch);
 			}
-			return new OsSpecificInfo("probcli.sh", null, "send_user_interrupt", "Linux", dirName, "lib/cspmf");
+			return new OsSpecificInfo("probcli.sh", "send_user_interrupt", "Linux", dirName, "lib/cspmf");
 		} else {
 			throw new UnsupportedOperationException("Unsupported operating system: " + osString);
 		}

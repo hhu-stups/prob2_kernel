@@ -9,7 +9,6 @@ package de.prob.cli;
  */
 public class OsSpecificInfo {
 	private final String cliName;
-	private final String helperCmd;
 	private final String userInterruptCmd;
 	private final String name;
 	private final String dirName;
@@ -17,14 +16,12 @@ public class OsSpecificInfo {
 
 	public OsSpecificInfo(
 		final String cliName,
-		final String helperCmd,
 		final String userInterruptCmd,
 		final String name,
 		final String dirName,
 		final String cspmfName
 	) {
 		this.cliName = cliName;
-		this.helperCmd = helperCmd;
 		this.userInterruptCmd = userInterruptCmd;
 		this.name = name;
 		this.dirName = dirName;
@@ -36,13 +33,6 @@ public class OsSpecificInfo {
 	 */
 	public String getCliName() {
 		return cliName;
-	}
-
-	/**
-	 * @return helperCmd - Windows: null, Mac and Linux: "sh"
-	 */
-	public String getHelperCmd() {
-		return helperCmd;
 	}
 
 	/**
