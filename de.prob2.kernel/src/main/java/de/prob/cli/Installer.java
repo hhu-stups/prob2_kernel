@@ -77,6 +77,7 @@ public final class Installer {
 		try (final InputStream is = this.getClass().getResourceAsStream(CLI_BINARIES_RESOURCE_PREFIX + "probcli_" + osInfo.getDirName() + ".zip")) {
 			FileHandler.extractZip(is, DEFAULT_HOME);
 		}
+		setExecutable(DEFAULT_HOME.resolve(this.osInfo.getCliName()), true);
 		logger.trace("Installed probcli");
 	}
 
