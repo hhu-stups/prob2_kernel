@@ -24,7 +24,7 @@ public class GetMachineOperationInfos extends AbstractCommand {
 
 	private static List<String> convertAtomicStringList(final PrologTerm list) {
 		if (list instanceof ListPrologTerm) {
-			return ((ListPrologTerm)list).stream().map(PrologTerm::atomicString).collect(Collectors.toList());
+			return PrologTerm.atomicStrings((ListPrologTerm)list);
 		} else if ("unknown".equals(PrologTerm.atomicString(list))) {
 			return Collections.emptyList();
 		} else {
