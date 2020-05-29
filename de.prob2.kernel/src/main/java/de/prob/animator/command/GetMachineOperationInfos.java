@@ -38,10 +38,12 @@ public class GetMachineOperationInfos extends AbstractCommand {
 		final String opName = PrologTerm.atomicString(cpt.getArgument(1));
 		final List<String> outputParameterNames = PrologTerm.atomicStrings(BindingGenerator.getList(cpt.getArgument(2)));
 		final List<String> parameterNames = PrologTerm.atomicStrings(BindingGenerator.getList(cpt.getArgument(3)));
+		final boolean topLevel = Boolean.parseBoolean(PrologTerm.atomicString(cpt.getArgument(4)));
+		final OperationInfo.Type type = OperationInfo.Type.fromProlog(PrologTerm.atomicString(cpt.getArgument(5)));
 		final List<String> readVariables = convertPossiblyUnknownAtomicStringList(cpt.getArgument(6));
 		final List<String> writtenVariables = convertPossiblyUnknownAtomicStringList(cpt.getArgument(7));
 		final List<String> nonDetWrittenVariables = convertPossiblyUnknownAtomicStringList(cpt.getArgument(8));
-		return new OperationInfo(opName, parameterNames, outputParameterNames, readVariables, writtenVariables, nonDetWrittenVariables);
+		return new OperationInfo(opName, parameterNames, outputParameterNames, topLevel, type, readVariables, writtenVariables, nonDetWrittenVariables);
 	}
 
 	@Override
