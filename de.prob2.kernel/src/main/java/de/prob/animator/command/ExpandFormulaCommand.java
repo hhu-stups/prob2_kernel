@@ -1,8 +1,6 @@
 package de.prob.animator.command;
 
-import de.prob.animator.domainobjects.BVisual2Formula;
 import de.prob.animator.domainobjects.ExpandedFormula;
-import de.prob.animator.domainobjects.FormulaId;
 import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
@@ -19,15 +17,6 @@ public class ExpandFormulaCommand extends AbstractCommand {
 
 	public ExpandFormulaCommand(final String id, final State stateId) {
 		this.id = id;
-		this.stateId = stateId;
-	}
-	
-	/**
-	 * @deprecated Use {@link ExpandFormulaCommand#ExpandFormulaCommand(String, State)}, or use {@link BVisual2Formula#expand(State)} instead of this command.
-	 */
-	@Deprecated
-	public ExpandFormulaCommand(final FormulaId id, final State stateId) {
-		this.id = id.getId();
 		this.stateId = stateId;
 	}
 

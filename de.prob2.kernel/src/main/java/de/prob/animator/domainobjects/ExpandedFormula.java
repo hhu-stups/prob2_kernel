@@ -25,20 +25,6 @@ public class ExpandedFormula {
 		this.subformulas = subformulas;
 		this.children = children;
 	}
-	
-	/**
-	 * @deprecated Use {@link #withExpandedChildren(BVisual2Formula, String, BVisual2Value, List)} instead.
-	 */
-	@Deprecated
-	public ExpandedFormula(final String label, final BVisual2Value value, final BVisual2Formula formula, final List<ExpandedFormula> children) {
-		this.label = label;
-		this.value = value;
-		this.formula = formula;
-		this.subformulas = children.stream()
-			.map(ExpandedFormula::getFormula)
-			.collect(Collectors.toList());
-		this.children = children;
-	}
 
 	public static ExpandedFormula withUnexpandedChildren(final BVisual2Formula formula, final String label, final BVisual2Value value, final List<BVisual2Formula> subformulas) {
 		return new ExpandedFormula(formula, label, value, subformulas, null);
@@ -94,14 +80,6 @@ public class ExpandedFormula {
 
 	public BVisual2Formula getFormula() {
 		return this.formula;
-	}
-	
-	/**
-	 * @deprecated Use {@link #getFormula()} instead.
-	 */
-	@Deprecated
-	public String getId() {
-		return this.getFormula().getId();
 	}
 
 	@Override
