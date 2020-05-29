@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
+import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.OperationInfo;
@@ -33,12 +34,13 @@ public class GetMachineOperationInfos extends AbstractCommand {
 	}
 
 	private static OperationInfo operationInfoFromPrologTerm(final PrologTerm prologTerm) {
-		final String opName = prologTerm.getArgument(1).getFunctor();
-		final List<String> outputParameterNames = PrologTerm.atomicStrings(BindingGenerator.getList(prologTerm.getArgument(2)));
-		final List<String> parameterNames = PrologTerm.atomicStrings(BindingGenerator.getList(prologTerm.getArgument(3)));
-		final List<String> readVariables = convertPossiblyUnknownAtomicStringList(prologTerm.getArgument(6));
-		final List<String> writtenVariables = convertPossiblyUnknownAtomicStringList(prologTerm.getArgument(7));
-		final List<String> nonDetWrittenVariables = convertPossiblyUnknownAtomicStringList(prologTerm.getArgument(8));
+		final CompoundPrologTerm cpt = BindingGenerator.getCompoundTerm(prologTerm, "operation_info", 8);
+		final String opName = PrologTerm.atomicString(cpt.getArgument(1));
+		final List<String> outputParameterNames = PrologTerm.atomicStrings(BindingGenerator.getList(cpt.getArgument(2)));
+		final List<String> parameterNames = PrologTerm.atomicStrings(BindingGenerator.getList(cpt.getArgument(3)));
+		final List<String> readVariables = convertPossiblyUnknownAtomicStringList(cpt.getArgument(6));
+		final List<String> writtenVariables = convertPossiblyUnknownAtomicStringList(cpt.getArgument(7));
+		final List<String> nonDetWrittenVariables = convertPossiblyUnknownAtomicStringList(cpt.getArgument(8));
 		return new OperationInfo(opName, parameterNames, outputParameterNames, readVariables, writtenVariables, nonDetWrittenVariables);
 	}
 
