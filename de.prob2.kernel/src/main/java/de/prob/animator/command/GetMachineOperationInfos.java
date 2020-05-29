@@ -3,7 +3,6 @@ package de.prob.animator.command;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
@@ -22,7 +21,7 @@ public class GetMachineOperationInfos extends AbstractCommand {
 		super();
 	}
 
-	private static List<String> convertAtomicStringList(final PrologTerm list) {
+	private static List<String> convertPossiblyUnknownAtomicStringList(final PrologTerm list) {
 		if (list instanceof ListPrologTerm) {
 			return PrologTerm.atomicStrings((ListPrologTerm)list);
 		} else if ("unknown".equals(PrologTerm.atomicString(list))) {
@@ -36,11 +35,11 @@ public class GetMachineOperationInfos extends AbstractCommand {
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
 		for (PrologTerm prologTerm : BindingGenerator.getList(bindings, RESULT_VARIABLE)) {
 			final String opName = prologTerm.getArgument(1).getFunctor();
-			final List<String> outputParameterNames = convertAtomicStringList(prologTerm.getArgument(2));
-			final List<String> parameterNames = convertAtomicStringList(prologTerm.getArgument(3));
-			final List<String> readVariables = convertAtomicStringList(prologTerm.getArgument(6));
-			final List<String> writtenVariables = convertAtomicStringList(prologTerm.getArgument(7));
-			final List<String> nonDetWrittenVariables = convertAtomicStringList(prologTerm.getArgument(8));
+			final List<String> outputParameterNames = PrologTerm.atomicStrings(BindingGenerator.getList(prologTerm.getArgument(2)));
+			final List<String> parameterNames = PrologTerm.atomicStrings(BindingGenerator.getList(prologTerm.getArgument(3)));
+			final List<String> readVariables = convertPossiblyUnknownAtomicStringList(prologTerm.getArgument(6));
+			final List<String> writtenVariables = convertPossiblyUnknownAtomicStringList(prologTerm.getArgument(7));
+			final List<String> nonDetWrittenVariables = convertPossiblyUnknownAtomicStringList(prologTerm.getArgument(8));
 			operationInfos.add(new OperationInfo(opName, parameterNames, outputParameterNames, readVariables, writtenVariables, nonDetWrittenVariables));
 		}
 	}
