@@ -3,6 +3,7 @@ package de.prob.animator.command;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
@@ -31,17 +32,21 @@ public class GetMachineOperationInfos extends AbstractCommand {
 		}
 	}
 
+	private static OperationInfo operationInfoFromPrologTerm(final PrologTerm prologTerm) {
+		final String opName = prologTerm.getArgument(1).getFunctor();
+		final List<String> outputParameterNames = PrologTerm.atomicStrings(BindingGenerator.getList(prologTerm.getArgument(2)));
+		final List<String> parameterNames = PrologTerm.atomicStrings(BindingGenerator.getList(prologTerm.getArgument(3)));
+		final List<String> readVariables = convertPossiblyUnknownAtomicStringList(prologTerm.getArgument(6));
+		final List<String> writtenVariables = convertPossiblyUnknownAtomicStringList(prologTerm.getArgument(7));
+		final List<String> nonDetWrittenVariables = convertPossiblyUnknownAtomicStringList(prologTerm.getArgument(8));
+		return new OperationInfo(opName, parameterNames, outputParameterNames, readVariables, writtenVariables, nonDetWrittenVariables);
+	}
+
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
-		for (PrologTerm prologTerm : BindingGenerator.getList(bindings, RESULT_VARIABLE)) {
-			final String opName = prologTerm.getArgument(1).getFunctor();
-			final List<String> outputParameterNames = PrologTerm.atomicStrings(BindingGenerator.getList(prologTerm.getArgument(2)));
-			final List<String> parameterNames = PrologTerm.atomicStrings(BindingGenerator.getList(prologTerm.getArgument(3)));
-			final List<String> readVariables = convertPossiblyUnknownAtomicStringList(prologTerm.getArgument(6));
-			final List<String> writtenVariables = convertPossiblyUnknownAtomicStringList(prologTerm.getArgument(7));
-			final List<String> nonDetWrittenVariables = convertPossiblyUnknownAtomicStringList(prologTerm.getArgument(8));
-			operationInfos.add(new OperationInfo(opName, parameterNames, outputParameterNames, readVariables, writtenVariables, nonDetWrittenVariables));
-		}
+		BindingGenerator.getList(bindings, RESULT_VARIABLE).stream()
+			.map(GetMachineOperationInfos::operationInfoFromPrologTerm)
+			.collect(Collectors.toCollection(() -> this.operationInfos));
 	}
 
 	public List<OperationInfo> getOperationInfos() {
