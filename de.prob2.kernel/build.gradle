@@ -208,6 +208,7 @@ if (!project.hasProperty("probHome")) {
 
 test {
 	exclude('de/prob/cli/integration')
+	systemProperty("logback.configurationFile", "de/prob/logging/production.xml")
 	testLogging {
 		exceptionFormat = 'full'
 	}
@@ -237,6 +238,7 @@ project.jacoco.applyTo(groovyIntegrationTests)
 
 task cliIntegrationTests(type: Test, dependsOn: ['test']) {
 	include('de/prob/cli/integration/**/*')
+	systemProperty("logback.configurationFile", "de/prob/logging/production.xml")
 	jacoco {
 		destinationFile = file("$buildDir/jacoco/jacocoCliIntegrationTests.exec")
 	}
