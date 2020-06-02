@@ -23,7 +23,9 @@ variables:
       - "*/build/jacocoHtml"
       - "*/build/reports"
       - "*/build/test-results"
+      - "**/prob_log.txt"
       - "**/prob_test_log.txt"
+      - "**/ProB.log.*.log"
       - "**/ProB.test.log.*.log"
     when: always
 
