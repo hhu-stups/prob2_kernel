@@ -31,7 +31,7 @@ public class ExpandFormulaCommand extends AbstractCommand {
 
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
-		result = ExpandedFormula.fromPrologTerm(this.stateId.getStateSpace(), BindingGenerator.getCompoundTerm(bindings.get(TREE), "formula", 4));
+		result = ExpandedFormula.fromPrologTerm(this.stateId.getStateSpace(), BindingGenerator.getCompoundTerm(bindings.get(TREE), "formula", 5));
 	}
 
 	public ExpandedFormula getResult() {
