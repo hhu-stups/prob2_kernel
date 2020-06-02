@@ -8,7 +8,7 @@ import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.State;
 
 public class ExpandFormulaCommand extends AbstractCommand {
-	private static final String PROLOG_COMMAND_NAME = "expand_formula";
+	private static final String PROLOG_COMMAND_NAME = "expand_formula_with_descriptions";
 	private static final String TREE = "TREE";
 
 	private final State stateId;
