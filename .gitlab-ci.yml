@@ -23,6 +23,9 @@ variables:
       - "*/build/jacocoHtml"
       - "*/build/reports"
       - "*/build/test-results"
+      - "**/prob_test_log.txt"
+      - "**/ProB.test.log.*.log"
+    when: always
 
 .docker-tests:
   extends: .tests
