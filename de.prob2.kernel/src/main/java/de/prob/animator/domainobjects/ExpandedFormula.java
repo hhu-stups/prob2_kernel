@@ -68,7 +68,7 @@ public class ExpandedFormula {
 	}
 
 	public static ExpandedFormula fromPrologTerm(final StateSpace stateSpace, final CompoundPrologTerm cpt) {
-		BindingGenerator.getCompoundTerm(cpt, "formula", 4);
+		BindingGenerator.getCompoundTerm(cpt, "formula", 5);
 		final String label = cpt.getArgument(1).getFunctor();
 		final String description = cpt.getArgument(2).getFunctor();
 		final BVisual2Value result = BVisual2Value.fromPrologTerm(cpt.getArgument(3));
