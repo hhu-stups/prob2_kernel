@@ -1,16 +1,11 @@
 package de.prob.scripting;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import de.prob.animator.command.AbstractCommand;
-import de.prob.animator.command.ComposedCommand;
-import de.prob.animator.command.SetPreferenceCommand;
 import de.prob.animator.command.StartAnimationCommand;
 import de.prob.model.representation.AbstractElement;
 import de.prob.model.representation.AbstractModel;
@@ -29,14 +24,9 @@ public class StateSpaceProvider {
 			final Map<String, String> preferences, final AbstractCommand loadCmd) {
 		StateSpace s = ssProvider.get();
 		s.setModel(model, mainComponent);
-		List<AbstractCommand> cmds = new ArrayList<>();
-
-		for (Entry<String, String> pref : preferences.entrySet()) {
-			cmds.add(new SetPreferenceCommand(pref.getKey(), pref.getValue()));
-		}
 
 		try {
-			s.execute(new ComposedCommand(cmds));
+			s.changePreferences(preferences);
 			s.execute(loadCmd);
 			s.execute(new StartAnimationCommand());
 		} catch (RuntimeException e) {

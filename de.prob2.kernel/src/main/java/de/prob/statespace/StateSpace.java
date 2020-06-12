@@ -27,20 +27,23 @@ import de.prob.animator.command.FindStateCommand;
 import de.prob.animator.command.FindTraceBetweenNodesCommand;
 import de.prob.animator.command.FormulaTypecheckCommand;
 import de.prob.animator.command.GetCurrentPreferencesCommand;
+import de.prob.animator.command.GetDefaultPreferencesCommand;
 import de.prob.animator.command.GetOperationByPredicateCommand;
 import de.prob.animator.command.GetOpsFromIds;
+import de.prob.animator.command.GetPreferenceCommand;
 import de.prob.animator.command.GetShortestTraceCommand;
 import de.prob.animator.command.GetStatesFromPredicate;
 import de.prob.animator.command.RegisterFormulasCommand;
+import de.prob.animator.command.SetPreferenceCommand;
 import de.prob.animator.command.UnregisterFormulaCommand;
 import de.prob.animator.domainobjects.AbstractEvalResult;
 import de.prob.animator.domainobjects.CSP;
 import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
+import de.prob.animator.domainobjects.ProBPreference;
 import de.prob.animator.domainobjects.TypeCheckResult;
 import de.prob.annotations.MaxCacheSize;
-import de.prob.exception.ProBError;
 import de.prob.model.classicalb.ClassicalBModel;
 import de.prob.model.eventb.EventBModel;
 import de.prob.model.representation.AbstractElement;
@@ -526,12 +529,57 @@ public class StateSpace implements IAnimator {
 	}
 
 	/**
-	 * @return a {@link Map} of the preferences in the current animation
+	 * Get information about the available ProB preferences in the animator.
+	 * This only includes information that does not change during the execution of the animator,
+	 * such as the preferences' type, default value, and description.
+	 * In particular,
+	 * the preferences' actual values are not included here and must be queried separately using {@link #getCurrentPreferences()}.
+	 * 
+	 * @return information about the available preferences in the animator
+	 */
+	public List<ProBPreference> getPreferenceInformation() {
+		final GetDefaultPreferencesCommand cmd = new GetDefaultPreferencesCommand();
+		this.execute(cmd);
+		return cmd.getPreferences();
+	}
+	
+	/**
+	 * Get the current value of a single ProB preference.
+	 * To get the current values of all preferences at once,
+	 * use {@link #getCurrentPreferences()}
+	 * 
+	 * @param name the name of the preference whose value to get
+	 * @return the current value of the preference
+	 */
+	public String getCurrentPreference(final String name) {
+		final GetPreferenceCommand cmd = new GetPreferenceCommand(name);
+		this.execute(cmd);
+		return cmd.getValue();
+	}
+
+	/**
+	 * Get the current values of all ProB preferences in the animator.
+	 * 
+	 * @return the current values of all ProB preferences in the animator
 	 */
 	public Map<String, String> getCurrentPreferences() {
 		GetCurrentPreferencesCommand cmd = new GetCurrentPreferencesCommand();
 		execute(cmd);
 		return cmd.getPreferences();
+	}
+
+	/**
+	 * Change the values of the given ProB preferences in the animator.
+	 * Any preferences not listed in the map remain unchanged.
+	 * 
+	 * @param preferences the preference name/value pairs to change
+	 */
+	public void changePreferences(final Map<String, String> preferences) {
+		final List<AbstractCommand> commands = new ArrayList<>();
+		preferences.forEach((key, value) ->
+			commands.add(new SetPreferenceCommand(key, value))
+		);
+		this.execute(new ComposedCommand(commands));
 	}
 
 	// ANIMATOR
