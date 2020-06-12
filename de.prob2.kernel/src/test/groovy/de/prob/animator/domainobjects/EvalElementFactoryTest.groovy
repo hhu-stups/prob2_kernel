@@ -36,6 +36,4 @@ class EvalElementFactoryTest extends Specification {
 		expect:
 		factory.deserialize(classicalBSerialized).code == classicalB.code
 	}
-
-	//TODO: create integration test to test serialization and deserialization of CSP
 }

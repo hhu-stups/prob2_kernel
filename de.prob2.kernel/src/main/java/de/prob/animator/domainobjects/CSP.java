@@ -10,8 +10,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.google.gson.Gson;
-
 import de.prob.Main;
 import de.prob.animator.command.EvaluateFormulaCommand;
 import de.prob.animator.command.EvaluationCommand;
@@ -105,7 +103,7 @@ public class CSP extends AbstractEvalElement {
 
 	@Override
 	public String serialized() {
-		return "#CSP:" + new Gson().toJson(this);
+		throw new UnsupportedOperationException("CSP formulas cannot be serialized");
 	}
 
 	@Override
