@@ -50,6 +50,7 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 		return startProlog();
 	}
 
+	@Deprecated
 	public int numberOfCLIs() {
 		return processCounter.get();
 	}
