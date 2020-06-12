@@ -39,7 +39,7 @@ public class StateSpaceProvider {
 			s.execute(new ComposedCommand(cmds));
 			s.execute(loadCmd);
 			s.execute(new StartAnimationCommand());
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			s.kill();
 			throw e;
 		}
