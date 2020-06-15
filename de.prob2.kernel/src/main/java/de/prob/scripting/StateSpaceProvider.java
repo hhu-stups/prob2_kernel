@@ -32,6 +32,10 @@ public class StateSpaceProvider {
 		s.execute(new StartAnimationCommand());
 	}
 
+	public StateSpace getStateSpace() {
+		return this.ssProvider.get();
+	}
+
 	public StateSpace loadFromCommand(final AbstractModel model,
 			final AbstractElement mainComponent,
 			final Map<String, String> preferences, final AbstractCommand loadCmd) {
