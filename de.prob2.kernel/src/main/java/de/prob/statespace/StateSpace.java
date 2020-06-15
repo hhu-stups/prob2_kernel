@@ -765,10 +765,31 @@ public class StateSpace implements IAnimator {
 	 *            the new model
 	 * @param mainComponent
 	 *            the new main component
+	 * @deprecated Use {@link #initModel(AbstractModel, AbstractElement)} instead
 	 */
+	@Deprecated
 	public void setModel(final AbstractModel model, final AbstractElement mainComponent) {
 		this.model = model;
 		this.mainComponent = mainComponent;
+	}
+
+	/**
+	 * Set the model that is being animated. This should be set at the
+	 * beginning of an animation and can only be set once per StateSpace.
+	 * A StateSpace object always corresponds to exactly one model.
+	 *
+	 * @param model the new model
+	 * @param mainComponent the new main component
+	 * @throws IllegalStateException if the model or main component has already been set
+	 */
+	public void initModel(final AbstractModel model, final AbstractElement mainComponent) {
+		if (this.getModel() != null) {
+			throw new IllegalStateException("model has already been set");
+		}
+		if (this.getMainComponent() != null) {
+			throw new IllegalStateException("mainComponent has already been set");
+		}
+		this.setModel(model, mainComponent);
 	}
 
 	/**

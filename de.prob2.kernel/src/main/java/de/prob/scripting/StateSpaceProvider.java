@@ -23,7 +23,7 @@ public class StateSpaceProvider {
 			final AbstractElement mainComponent,
 			final Map<String, String> preferences, final AbstractCommand loadCmd) {
 		StateSpace s = ssProvider.get();
-		s.setModel(model, mainComponent);
+		s.initModel(model, mainComponent);
 
 		try {
 			s.changePreferences(preferences);
