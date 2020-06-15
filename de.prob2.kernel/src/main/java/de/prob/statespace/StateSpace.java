@@ -10,10 +10,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.concurrent.ExecutionException;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -127,8 +129,8 @@ public class StateSpace implements IAnimator {
 	public State getState(final String id) {
 		try {
 			return states.get(id);
-		} catch (Exception e) {
-			throw new IllegalArgumentException(e.getMessage());
+		} catch (ExecutionException | UncheckedExecutionException e) {
+			throw new IllegalArgumentException(e);
 		}
 	}
 
