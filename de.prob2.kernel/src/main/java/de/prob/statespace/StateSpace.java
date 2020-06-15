@@ -84,39 +84,6 @@ public class StateSpace implements IAnimator {
 
 	private final LoadingCache<String, State> states;
 
-	/**
-	 * An implementation of a {@link CacheLoader} that tries to load a state
-	 * with the specified id into the {@link StateSpace#states} cache.
-	 *
-	 * ProB prolog is queried to see if the specified state exists in the state
-	 * space on the prolog side, and if so, the state is loaded into the states
-	 * cache.
-	 *
-	 * Otherwise, an {@link IllegalArgumentException} is thrown.
-	 *
-	 * @author joy
-	 *
-	 */
-	private class StateCacheLoader extends CacheLoader<String, State> {
-
-		private final StateSpace stateSpace;
-
-		public StateCacheLoader(final StateSpace stateSpace) {
-			this.stateSpace = stateSpace;
-		}
-
-		@Override
-		public State load(final String key) throws Exception {
-			CheckIfStateIdValidCommand cmd = new CheckIfStateIdValidCommand(key);
-			stateSpace.execute(cmd);
-			if (cmd.isValidState()) {
-				return new State(key, stateSpace);
-			}
-			throw new IllegalArgumentException(key + " does not represent a valid state in the StateSpace");
-		}
-
-	}
-
 	private AbstractModel model;
 	private AbstractElement mainComponent;
 	private volatile boolean killed;
@@ -124,7 +91,17 @@ public class StateSpace implements IAnimator {
 	@Inject
 	public StateSpace(final Provider<IAnimator> panimator, @MaxCacheSize final int maxSize) {
 		animator = panimator.get();
-		states = CacheBuilder.newBuilder().maximumSize(maxSize).build(new StateCacheLoader(this));
+		states = CacheBuilder.newBuilder().maximumSize(maxSize).build(new CacheLoader<String, State>() {
+			@Override
+			public State load(final String key) {
+				CheckIfStateIdValidCommand cmd = new CheckIfStateIdValidCommand(key);
+				execute(cmd);
+				if (cmd.isValidState()) {
+					return new State(key, StateSpace.this);
+				}
+				throw new IllegalArgumentException(key + " does not represent a valid state in the StateSpace");
+			}
+		});
 	}
 
 	/**
@@ -143,7 +120,7 @@ public class StateSpace implements IAnimator {
 	 * @param id
 	 *            of the state to be retrieved
 	 * @return the state object associated with the given id. This is added to
-	 *         the cache via the loading mechanism in {@link StateCacheLoader}
+	 *         an internal cache.
 	 * @throws IllegalArgumentException
 	 *             if a state with the specified id doesn't exist
 	 */
