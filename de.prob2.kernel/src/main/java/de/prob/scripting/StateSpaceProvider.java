@@ -19,20 +19,30 @@ public class StateSpaceProvider {
 		this.ssProvider = ssProvider;
 	}
 
+	public static void loadFromCommandIntoStateSpace(
+		final StateSpace s,
+		final AbstractModel model,
+		final AbstractElement mainComponent,
+		final Map<String, String> preferences,
+		final AbstractCommand loadCmd
+	) {
+		s.initModel(model, mainComponent);
+		s.changePreferences(preferences);
+		s.execute(loadCmd);
+		s.execute(new StartAnimationCommand());
+	}
+
 	public StateSpace loadFromCommand(final AbstractModel model,
 			final AbstractElement mainComponent,
 			final Map<String, String> preferences, final AbstractCommand loadCmd) {
 		StateSpace s = ssProvider.get();
-		s.initModel(model, mainComponent);
 
 		try {
-			s.changePreferences(preferences);
-			s.execute(loadCmd);
-			s.execute(new StartAnimationCommand());
+			loadFromCommandIntoStateSpace(s, model, mainComponent, preferences, loadCmd);
+			return s;
 		} catch (RuntimeException e) {
 			s.kill();
 			throw e;
 		}
-		return s;
 	}
 }
