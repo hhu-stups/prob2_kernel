@@ -70,7 +70,8 @@ public class ExecuteRun {
 			 */
 			this.stateSpace = this.extractedModel.load(this.prefs);
 		} else {
-			this.extractedModel.loadIntoStateSpace(this.stateSpace, this.prefs);
+			this.stateSpace.changePreferences(this.prefs);
+			this.extractedModel.loadIntoStateSpace(this.stateSpace);
 		}
 	}
 

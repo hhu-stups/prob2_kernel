@@ -133,8 +133,8 @@ public abstract class AbstractModel extends AbstractElement {
 
 	public abstract AbstractCommand getLoadCommand(final AbstractElement mainComponent);
 
-	public void loadIntoStateSpace(final StateSpace stateSpace, final AbstractElement mainComponent, final Map<String, String> preferences) {
-		StateSpaceProvider.loadFromCommandIntoStateSpace(stateSpace, this, mainComponent, preferences, this.getLoadCommand(mainComponent));
+	public void loadIntoStateSpace(final StateSpace stateSpace, final AbstractElement mainComponent) {
+		StateSpaceProvider.loadFromCommandIntoStateSpace(stateSpace, this, mainComponent, this.getLoadCommand(mainComponent));
 	}
 
 	public StateSpace load(AbstractElement mainComponent) {
@@ -144,7 +144,8 @@ public abstract class AbstractModel extends AbstractElement {
 	public StateSpace load(final AbstractElement mainComponent, final Map<String, String> preferences) {
 		final StateSpace stateSpace = getStateSpaceProvider().getStateSpace();
 		try {
-			this.loadIntoStateSpace(stateSpace, mainComponent, preferences);
+			stateSpace.changePreferences(preferences);
+			this.loadIntoStateSpace(stateSpace, mainComponent);
 			return stateSpace;
 		} catch (RuntimeException e) {
 			stateSpace.kill();

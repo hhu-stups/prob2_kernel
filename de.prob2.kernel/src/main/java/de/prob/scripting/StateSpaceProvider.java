@@ -23,11 +23,9 @@ public class StateSpaceProvider {
 		final StateSpace s,
 		final AbstractModel model,
 		final AbstractElement mainComponent,
-		final Map<String, String> preferences,
 		final AbstractCommand loadCmd
 	) {
 		s.initModel(model, mainComponent);
-		s.changePreferences(preferences);
 		s.execute(loadCmd);
 		s.execute(new StartAnimationCommand());
 	}
@@ -42,7 +40,8 @@ public class StateSpaceProvider {
 		StateSpace s = ssProvider.get();
 
 		try {
-			loadFromCommandIntoStateSpace(s, model, mainComponent, preferences, loadCmd);
+			s.changePreferences(preferences);
+			loadFromCommandIntoStateSpace(s, model, mainComponent, loadCmd);
 			return s;
 		} catch (RuntimeException e) {
 			s.kill();
