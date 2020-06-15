@@ -3,11 +3,9 @@ package de.prob.model.classicalb;
 import java.io.File;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.Set;
 
 import com.github.krukow.clj_lang.PersistentHashMap;
-
 import com.google.inject.Inject;
 
 import de.be4.classicalb.core.parser.BParser;
@@ -16,7 +14,7 @@ import de.be4.classicalb.core.parser.exceptions.BCompoundException;
 import de.be4.classicalb.core.parser.exceptions.BParseException;
 import de.be4.classicalb.core.parser.node.Start;
 import de.be4.classicalb.core.parser.node.TIdentifierLiteral;
-
+import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.command.LoadBProjectCommand;
 import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.EvaluationException;
@@ -29,7 +27,6 @@ import de.prob.model.representation.Machine;
 import de.prob.model.representation.ModelElementList;
 import de.prob.scripting.StateSpaceProvider;
 import de.prob.statespace.FormalismType;
-import de.prob.statespace.StateSpace;
 
 public class ClassicalBModel extends AbstractModel {
 	private final ClassicalBMachine mainMachine;
@@ -129,8 +126,8 @@ public class ClassicalBModel extends AbstractModel {
 	}
 
 	@Override
-	public StateSpace load(final AbstractElement mainComponent, final Map<String, String> preferences) {
-		return getStateSpaceProvider().loadFromCommand(this, mainComponent, preferences, new LoadBProjectCommand(rml, getModelFile()));
+	public AbstractCommand getLoadCommand(final AbstractElement mainComponent) {
+		return new LoadBProjectCommand(rml, getModelFile());
 	}
 
 	@Override

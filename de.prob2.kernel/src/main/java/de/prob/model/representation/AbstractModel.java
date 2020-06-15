@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.github.krukow.clj_lang.PersistentHashMap;
 
+import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.model.representation.DependencyGraph.ERefType;
@@ -122,9 +123,13 @@ public abstract class AbstractModel extends AbstractElement {
 		return (AbstractElement) Eval.x(this, "x." + String.join(".", path));
 	}
 
+	public abstract AbstractCommand getLoadCommand(final AbstractElement mainComponent);
+
 	public StateSpace load(AbstractElement mainComponent) {
 		return load(mainComponent, new HashMap<>());
 	}
 
-	public abstract StateSpace load(AbstractElement mainComponent, Map<String, String> preferences);
+	public StateSpace load(final AbstractElement mainComponent, final Map<String, String> preferences) {
+		return getStateSpaceProvider().loadFromCommand(this, mainComponent, preferences, this.getLoadCommand(mainComponent));
+	}
 }

@@ -72,7 +72,7 @@ public class ExecuteRun {
 		} else {
 			StateSpaceProvider ssProvider = new StateSpaceProvider(() -> stateSpace);
 			RulesModel model = (RulesModel) extractedModel.getModel();
-			ssProvider.loadFromCommand(model, null, prefs, model.getLoadCommand());
+			ssProvider.loadFromCommand(model, null, prefs, model.getLoadCommand(null));
 		}
 	}
 

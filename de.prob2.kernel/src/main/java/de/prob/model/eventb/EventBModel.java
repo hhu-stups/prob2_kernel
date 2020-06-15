@@ -3,12 +3,11 @@ package de.prob.model.eventb;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import com.github.krukow.clj_lang.PersistentHashMap;
-
 import com.google.inject.Inject;
 
+import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.command.LoadEventBProjectCommand;
 import de.prob.animator.domainobjects.EvaluationException;
 import de.prob.animator.domainobjects.EventB;
@@ -22,7 +21,6 @@ import de.prob.model.representation.Machine;
 import de.prob.model.representation.ModelElementList;
 import de.prob.scripting.StateSpaceProvider;
 import de.prob.statespace.FormalismType;
-import de.prob.statespace.StateSpace;
 
 public class EventBModel extends AbstractModel {
 	@Inject
@@ -131,8 +129,8 @@ public class EventBModel extends AbstractModel {
 	}
 
 	@Override
-	public StateSpace load(final AbstractElement mainComponent, final Map<String, String> preferences) {
-		return getStateSpaceProvider().loadFromCommand(this, mainComponent, preferences, new LoadEventBProjectCommand(new EventBModelTranslator(this, mainComponent)));
+	public AbstractCommand getLoadCommand(final AbstractElement mainComponent) {
+		return new LoadEventBProjectCommand(new EventBModelTranslator(this, mainComponent));
 	}
 
 	@Override

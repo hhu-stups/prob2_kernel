@@ -1,13 +1,11 @@
 package de.prob.model.eventb;
 
-import java.util.Map;
-
 import com.google.inject.Inject;
 
+import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.command.LoadEventBFileCommand;
 import de.prob.model.representation.AbstractElement;
 import de.prob.scripting.StateSpaceProvider;
-import de.prob.statespace.StateSpace;
 
 public final class EventBPackageModel extends EventBModel {
 	private final String loadCommandPrologCode;
@@ -32,11 +30,11 @@ public final class EventBPackageModel extends EventBModel {
 	}
 	
 	@Override
-	public StateSpace load(final AbstractElement mainComponent, final Map<String, String> preferences) {
+	public AbstractCommand getLoadCommand(final AbstractElement mainComponent) {
 		if (this.getLoadCommandPrologCode() == null) {
 			throw new IllegalStateException("loadCommandPrologCode must be set before loading an EventBPackageModel");
 		}
 		
-		return getStateSpaceProvider().loadFromCommand(this, mainComponent, preferences, new LoadEventBFileCommand(this.getLoadCommandPrologCode()));
+		return new LoadEventBFileCommand(this.getLoadCommandPrologCode());
 	}
 }
