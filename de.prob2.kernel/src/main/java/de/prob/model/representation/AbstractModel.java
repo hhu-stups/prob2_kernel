@@ -8,6 +8,7 @@ import java.util.Map;
 import com.github.krukow.clj_lang.PersistentHashMap;
 
 import de.prob.animator.command.AbstractCommand;
+import de.prob.animator.domainobjects.EvaluationException;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.model.representation.DependencyGraph.ERefType;
@@ -87,7 +88,14 @@ public abstract class AbstractModel extends AbstractElement {
 	 * @return whether or not the formula in question has valid syntax in the
 	 *         scope of this model
 	 */
-	public abstract boolean checkSyntax(String formula);
+	public boolean checkSyntax(final String formula) {
+		try {
+			parseFormula(formula, FormulaExpand.TRUNCATE);
+			return true;
+		} catch (EvaluationException ignored) {
+			return false;
+		}
+	}
 
 	public abstract FormalismType getFormalismType();
 

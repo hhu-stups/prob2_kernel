@@ -39,16 +39,6 @@ public class ZModel extends AbstractModel {
 	}
 
 	@Override
-	public boolean checkSyntax(final String formula) {
-		try {
-			this.parseFormula(formula, FormulaExpand.TRUNCATE);
-			return true;
-		} catch (EvaluationException ignored) {
-			return false;
-		}
-	}
-
-	@Override
 	public AbstractCommand getLoadCommand(final AbstractElement mainComponent) {
 		return new LoadZCommand(this.getModelFile().getAbsolutePath());
 	}

@@ -116,16 +116,6 @@ public class ClassicalBModel extends AbstractModel {
 	}
 
 	@Override
-	public boolean checkSyntax(final String formula) {
-		try {
-			parseFormula(formula, FormulaExpand.TRUNCATE);
-			return true;
-		} catch (EvaluationException e) {
-			return false;
-		}
-	}
-
-	@Override
 	public AbstractCommand getLoadCommand(final AbstractElement mainComponent) {
 		return new LoadBProjectCommand(rml, getModelFile());
 	}

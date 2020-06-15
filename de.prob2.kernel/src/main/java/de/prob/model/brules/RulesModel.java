@@ -64,16 +64,6 @@ public class RulesModel extends AbstractModel {
 	}
 
 	@Override
-	public boolean checkSyntax(String formula) {
-		try {
-			parseFormula(formula, FormulaExpand.TRUNCATE);
-			return true;
-		} catch (EvaluationException e) {
-			return false;
-		}
-	}
-
-	@Override
 	public <T extends AbstractElement> ModelElementList<T> getChildrenOfType(final Class<T> c) {
 		return new ModelElementList<>();
 	}
