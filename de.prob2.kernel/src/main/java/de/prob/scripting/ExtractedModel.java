@@ -16,6 +16,10 @@ public class ExtractedModel<T extends AbstractModel> {
 		this.mainComponent = mainComponent;
 	}
 
+	public void loadIntoStateSpace(final StateSpace stateSpace, final Map<String, String> preferences) {
+		model.loadIntoStateSpace(stateSpace, mainComponent, preferences);
+	}
+
 	public StateSpace load() {
 		return load(Collections.<String, String> emptyMap());
 	}

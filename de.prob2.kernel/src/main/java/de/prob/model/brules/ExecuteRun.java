@@ -70,9 +70,7 @@ public class ExecuteRun {
 			 */
 			this.stateSpace = this.extractedModel.load(this.prefs);
 		} else {
-			StateSpaceProvider ssProvider = new StateSpaceProvider(() -> stateSpace);
-			RulesModel model = (RulesModel) extractedModel.getModel();
-			ssProvider.loadFromCommand(model, null, prefs, model.getLoadCommand(null));
+			this.extractedModel.loadIntoStateSpace(this.stateSpace, this.prefs);
 		}
 	}
 
