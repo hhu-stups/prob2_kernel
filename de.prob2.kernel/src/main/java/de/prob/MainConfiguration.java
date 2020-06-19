@@ -19,19 +19,7 @@ public class MainConfiguration extends AbstractModule {
 	protected void configure() {
 		bind(CommandLineParser.class).to(DefaultParser.class);
 		bind(String.class).annotatedWith(Version.class).toInstance(Main.getVersion());
-	}
-
-	/**
-	 * Calls {@link Main#getProBDirectory()} to find the absolute path
-	 * associated with the ProB directory. Binds this path to the {@link Home}
-	 * annotation in order to be able to inject it.
-	 *
-	 * @return the absolute path to ProB directory.
-	 */
-	@Provides
-	@Home
-	private static String getProBDirectory() {
-		return Main.getProBDirectory();
+		bind(String.class).annotatedWith(Home.class).toInstance(Main.getProBDirectory());
 	}
 
 	/**

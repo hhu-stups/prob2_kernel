@@ -20,18 +20,8 @@ public class ModuleCli extends AbstractModule {
 		bind(ProBInstance.class).toProvider(ProBInstanceProvider.class);
 		bind(OsSpecificInfo.class).toProvider(OsInfoProvider.class)
 				.asEagerSingleton();
-	}
-
-	@Provides
-	@OsName
-	private static String getOsName() {
-		return System.getProperty("os.name");
-	}
-
-	@Provides
-	@OsArch
-	private static String getOsArch() {
-		return System.getProperty("os.arch");
+		bind(String.class).annotatedWith(OsName.class).toInstance(System.getProperty("os.name"));
+		bind(String.class).annotatedWith(OsArch.class).toInstance(System.getProperty("os.arch"));
 	}
 
 	@Provides
