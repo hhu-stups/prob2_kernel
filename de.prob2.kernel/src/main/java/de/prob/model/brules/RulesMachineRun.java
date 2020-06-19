@@ -15,6 +15,7 @@ import com.google.common.base.Stopwatch;
 import de.be4.classicalb.core.parser.ParsingBehaviour;
 import de.be4.classicalb.core.parser.exceptions.BException;
 import de.be4.classicalb.core.parser.rules.RulesProject;
+import de.prob.Main;
 import de.prob.animator.ReusableAnimator;
 import de.prob.animator.command.GetTotalNumberOfErrorsCommand;
 import de.prob.animator.domainobjects.StateError;
@@ -30,7 +31,8 @@ public class RulesMachineRun {
 		PARSE_ERROR, PROB_ERROR, UNEXPECTED_ERROR
 	}
 
-	private final RulesMachineRunner rulesMachineRunner = RulesMachineRunner.getInstance();
+	// FIXME This should be set via a constructor parameter or setter instead of always being taken from the main injector.
+	private final RulesMachineRunner rulesMachineRunner = Main.getInjector().getInstance(RulesMachineRunner.class);
 
 	private RulesProject rulesProject;
 	private ExecuteRun executeRun;

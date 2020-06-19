@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.Singleton;
 
 import de.be4.classicalb.core.parser.rules.RulesProject;
 import de.prob.Main;
@@ -13,8 +14,10 @@ import de.prob.cli.CliVersionNumber;
 import de.prob.scripting.Api;
 import de.prob.scripting.ExtractedModel;
 
+@Singleton
 public class RulesMachineRunner {
 
+	@Deprecated
 	private static RulesMachineRunner rulesMachineRunner; // singleton
 	private final CliVersionNumber cliVersion;
 	private final Provider<ReusableAnimator> animatorProvider;
@@ -27,6 +30,10 @@ public class RulesMachineRunner {
 		this.rulesFactory = rulesFactory;
 	}
 
+	/**
+	 * @deprecated Use dependency injection to get a {@link RulesMachineRunner} instance.
+	 */
+	@Deprecated
 	public static RulesMachineRunner getInstance() {
 		if (rulesMachineRunner == null) {
 			rulesMachineRunner = Main.getInjector().getInstance(RulesMachineRunner.class);
