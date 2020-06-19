@@ -61,9 +61,9 @@ public final class ErrorItem {
 			return new ErrorItem.Location(
 				location.getFilename() == null ? "(unknown file)" : location.getFilename(),
 				location.getStartLine(),
-				location.getStartColumn(),
+				location.getStartColumn() - 1,
 				location.getEndLine(),
-				location.getEndColumn()
+				location.getEndColumn() - 1
 			);
 		}
 		
