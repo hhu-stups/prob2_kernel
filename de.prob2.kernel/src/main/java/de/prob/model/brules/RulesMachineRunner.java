@@ -21,10 +21,10 @@ public class RulesMachineRunner {
 	private final RulesModelFactory rulesFactory;
 
 	@Inject
-	public RulesMachineRunner(Api api, Provider<ReusableAnimator> animatorProvider) {
+	public RulesMachineRunner(Api api, Provider<ReusableAnimator> animatorProvider, RulesModelFactory rulesFactory) {
 		this.cliVersion = api.getVersion();
 		this.animatorProvider = animatorProvider;
-		this.rulesFactory = Main.getInjector().getInstance(RulesModelFactory.class);
+		this.rulesFactory = rulesFactory;
 	}
 
 	public static RulesMachineRunner getInstance() {
