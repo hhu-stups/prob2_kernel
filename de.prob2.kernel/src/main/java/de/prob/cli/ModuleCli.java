@@ -27,13 +27,7 @@ public class ModuleCli extends AbstractModule {
 	@Provides
 	@DebuggingKey
 	private static String createDebuggingKey() {
-		Random random;
-		try {
-			random = SecureRandom.getInstance("SHA1PRNG");
-		} catch (NoSuchAlgorithmException e) {
-			random = new Random();
-		}
-		return Long.toHexString(random.nextLong());
+		return Long.toHexString(new SecureRandom().nextLong());
 	}
 
 	@Retention(RUNTIME)
