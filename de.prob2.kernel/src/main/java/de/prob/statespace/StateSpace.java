@@ -759,13 +759,14 @@ public class StateSpace implements IAnimator {
 	 *
 	 * @param model the new model
 	 * @param mainComponent the new main component
+	 * @throws IllegalStateException if the model or main component has already been set
 	 */
 	public void initModel(final AbstractModel model, final AbstractElement mainComponent) {
 		if (this.getModel() != null) {
-			logger.warn("initModel called on state space {} which already has its model set", this);
+			throw new IllegalStateException("model has already been set");
 		}
 		if (this.getMainComponent() != null) {
-			logger.warn("initModel called on state space {} which already has its mainComponent set", this);
+			throw new IllegalStateException("mainComponent has already been set");
 		}
 		this.setModel(model, mainComponent);
 	}
