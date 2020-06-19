@@ -7,6 +7,8 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 import javax.script.ScriptException;
@@ -18,10 +20,10 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Stage;
 
+import de.prob.animator.IAnimator;
 import de.prob.annotations.Home;
-import de.prob.cli.ProBInstanceProvider;
-import de.prob.scripting.Api;
 import de.prob.cli.Installer;
+import de.prob.cli.ProBInstanceProvider;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -128,20 +130,43 @@ public class Main {
 	}
 
 	/**
-	 * Returns the directory in which the binary files and libraries for ProB
-	 * are stored.
+	 * <p>
+	 * Returns the path to the ProB home directory,
+	 * in which the binary files and libraries for the ProB Prolog core (probcli) are stored.
+	 * Note that the files might not actually be installed into this directory until an instance of probcli is started
+	 * (by loading a model or by directly injecting an {@link IAnimator} instance).
+	 * </p>
+	 * <p>
+	 * By default, the ProB home directory is located somewhere in the .prob directory in the user's home directory.
+	 * Before an instance of probcli is started for the first time,
+	 * ProB 2 installs probcli and other related files into the ProB home directory.
+	 * </p>
+	 * <p>
+	 * If the system property {@code prob.home} is set,
+	 * the ProB home directory is changed to the value of the property.
+	 * In this case, the directory must already contain a valid installation of probcli -
+	 * if {@code prob.home} is set, ProB 2 will <em>not</em> install probcli automatically.
+	 * </p>
 	 *
-	 * @return if System Property "prob.home" is defined, the path to this
-	 *         directory is returned. Otherwise, the directory specified by
-	 *         System Property "user.home" is chosen, and the directory ".prob"
-	 *         is appended to it.
+	 * @return the directory in which the binary files and libraries for ProB are stored
+	 */
+	public static Path getProBHomePath() {
+		final String homePathOverride = System.getProperty("prob.home");
+		if (homePathOverride != null) {
+			return Paths.get(homePathOverride);
+		} else {
+			return Installer.DEFAULT_HOME;
+		}
+	}
+
+	/**
+	 * Returns the path of the ProB home directory as a string.
+	 * Consider using {@link #getProBHomePath()} instead, which returns a {@link Path} object instead of a string.
+	 *
+	 * @return the return value of {@link #getProBHomePath()}, converted to a string, with {@link File#separator} appended
 	 */
 	public static String getProBDirectory() {
-		String homedir = System.getProperty("prob.home");
-		if (homedir != null) {
-			return homedir + File.separator;
-		}
-		return Installer.DEFAULT_HOME + File.separator;
+		return getProBHomePath() + File.separator;
 	}
 
 	public static String getVersion() {

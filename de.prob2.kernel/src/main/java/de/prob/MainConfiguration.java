@@ -1,5 +1,7 @@
 package de.prob;
 
+import java.nio.file.Path;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
@@ -20,6 +22,7 @@ public class MainConfiguration extends AbstractModule {
 		bind(CommandLineParser.class).to(DefaultParser.class);
 		bind(String.class).annotatedWith(Version.class).toInstance(Main.getVersion());
 		bind(String.class).annotatedWith(Home.class).toInstance(Main.getProBDirectory());
+		bind(Path.class).annotatedWith(Home.class).toInstance(Main.getProBHomePath());
 	}
 
 	/**
