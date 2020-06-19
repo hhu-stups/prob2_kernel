@@ -170,9 +170,6 @@ public class Main {
 		logger = LoggerFactory.getLogger(Main.class);
 		try {
 			Main main = getInjector().getInstance(Main.class);
-			Api api = getInjector().getInstance(Api.class);
-			logger.info("probcli version: {}", api.getVersion());
-
 			main.run(args);
 		} catch (Exception e) {
 			logger.error("Unhandled exception", e);
