@@ -41,6 +41,10 @@ public class RulesMachineRunner {
 		return rulesMachineRunner;
 	}
 
+	/**
+	 * @deprecated Inject an instance of {@link Api} and use {@link Api#getVersion()} instead.
+	 */
+	@Deprecated
 	public CliVersionNumber getVersion() {
 		return this.cliVersion;
 	}
