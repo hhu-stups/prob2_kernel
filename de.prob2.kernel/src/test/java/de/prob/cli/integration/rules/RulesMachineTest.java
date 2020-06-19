@@ -89,7 +89,7 @@ public class RulesMachineTest {
 
 		RulesMachineRun rulesMachineRun2 = new RulesMachineRun(
 				RulesTestUtil.createRulesMachineFileContainingOperations(ruleWithWDError).getAbsoluteFile());
-		rulesMachineRun2.setStateSpace(rulesMachineRun.getStateSpace());
+		rulesMachineRun2.setAnimator(rulesMachineRun.getAnimator());
 		rulesMachineRun2.start();
 		BigInteger numberAfterSecondRun = rulesMachineRun2.getTotalNumberOfProBCliErrors();
 

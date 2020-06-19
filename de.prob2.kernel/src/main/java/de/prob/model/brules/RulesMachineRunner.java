@@ -4,23 +4,26 @@ import java.io.File;
 import java.util.Map;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 import de.be4.classicalb.core.parser.rules.RulesProject;
 import de.prob.Main;
+import de.prob.animator.ReusableAnimator;
 import de.prob.cli.CliVersionNumber;
 import de.prob.scripting.Api;
 import de.prob.scripting.ExtractedModel;
-import de.prob.statespace.StateSpace;
 
 public class RulesMachineRunner {
 
 	private static RulesMachineRunner rulesMachineRunner; // singleton
 	private final CliVersionNumber cliVersion;
+	private final Provider<ReusableAnimator> animatorProvider;
 	private final RulesModelFactory rulesFactory;
 
 	@Inject
-	public RulesMachineRunner(Api api) {
+	public RulesMachineRunner(Api api, Provider<ReusableAnimator> animatorProvider) {
 		this.cliVersion = api.getVersion();
+		this.animatorProvider = animatorProvider;
 		this.rulesFactory = Main.getInjector().getInstance(RulesModelFactory.class);
 	}
 
@@ -36,9 +39,9 @@ public class RulesMachineRunner {
 	}
 
 	public ExecuteRun createRulesMachineExecuteRun(RulesProject rulesProject, File mainMachineFile,
-			Map<String, String> proBCorePreferences, boolean continueAfterErrors, StateSpace stateSpace) {
+			Map<String, String> proBCorePreferences, boolean continueAfterErrors, ReusableAnimator animator) {
 		ExtractedModel<RulesModel> extract = this.rulesFactory.extract(mainMachineFile, rulesProject);
-		return new ExecuteRun(extract, proBCorePreferences, continueAfterErrors, stateSpace);
+		return new ExecuteRun(extract, proBCorePreferences, continueAfterErrors, animator != null ? animator : this.animatorProvider.get());
 	}
 
 }
