@@ -8,6 +8,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Maps;
+
 import de.hhu.stups.prob.translator.BValue;
 import de.hhu.stups.prob.translator.Translator;
 import de.hhu.stups.prob.translator.exceptions.TranslationException;
@@ -41,6 +45,20 @@ import de.prob.prolog.term.PrologTerm;
  * @author joy
  */
 public class Transition {
+	public static final String PARTIAL_SETUP_CONSTANTS_NAME = "$partial_setup_constants";
+	public static final String SETUP_CONSTANTS_NAME = "$setup_constants";
+	public static final String INITIALISE_MACHINE_NAME = "$initialise_machine";
+	
+	private static final BiMap<String, String> PRETTY_NAME_MAP;
+	
+	static {
+		final BiMap<String, String> prettyNameMap = HashBiMap.create();
+		prettyNameMap.put(PARTIAL_SETUP_CONSTANTS_NAME, "PARTIAL_SETUP_CONSTANTS");
+		prettyNameMap.put(SETUP_CONSTANTS_NAME, "SETUP_CONSTANTS");
+		prettyNameMap.put(INITIALISE_MACHINE_NAME, "INITIALISATION");
+		PRETTY_NAME_MAP = Maps.unmodifiableBiMap(prettyNameMap);
+	}
+
 	private final StateSpace stateSpace;
 	private final String id;
 	private final String name;
@@ -51,6 +69,7 @@ public class Transition {
 	private List<BValue> translatedParams;
 	private List<BValue> translatedRetV;
 	private String rep;
+	private String prettyRep;
 	private boolean evaluated;
 	private FormulaExpand formulaExpansion;
 	private final FormalismType formalismType;
@@ -68,6 +87,14 @@ public class Transition {
 		formalismType = stateSpace.getModel().getFormalismType();
 	}
 
+	public static String prettifyName(final String name) {
+		return PRETTY_NAME_MAP.getOrDefault(name, name);
+	}
+
+	public static String unprettifyName(final String name) {
+		return PRETTY_NAME_MAP.inverse().getOrDefault(name, name);
+	}
+
 	/**
 	 * @return String identifier associated with this Operation
 	 */
@@ -80,6 +107,10 @@ public class Transition {
 	 */
 	public String getName() {
 		return name;
+	}
+
+	public String getPrettyName() {
+		return prettifyName(this.getName());
 	}
 
 	/**
@@ -229,15 +260,7 @@ public class Transition {
 	}
 
 	public String getPrettyRep() {
-		String rep = getRep();
-		if (name.equals("$initialise_machine")) {
-			rep = rep.replaceAll("\\$initialise_machine", "INITIALISATION");
-		} else if (name.equals("$setup_constants")) {
-			rep = rep.replaceAll("\\$setup_constants", "SETUP_CONSTANTS");
-		} else if (name.equals("$partial_setup_constants")) {
-			rep = rep.replaceAll("\\$partial_setup_constants", "PARTIAL_SETUP_CONSTANTS");
-		}
-		return rep;
+		return this.prettyRep;
 	}
 
 	public boolean isArtificialTransition() {
@@ -347,6 +370,7 @@ public class Transition {
 		this.params = params;
 		this.returnValues = returnValues;
 		this.rep = createRep(name, params, returnValues);
+		this.prettyRep = createRep(this.getPrettyName(), params, returnValues);
 		evaluated = true;
 	}
 
