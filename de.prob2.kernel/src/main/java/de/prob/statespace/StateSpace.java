@@ -847,20 +847,17 @@ public class StateSpace implements IAnimator {
 		List<EvaluationCommand> cmds = new ArrayList<>();
 
 		for (State stateId : states) {
-			if (stateId.isInitialised()) {
-				Map<IEvalElement, AbstractEvalResult> res = new HashMap<>();
-				result.put(stateId, res);
+			Map<IEvalElement, AbstractEvalResult> res = new HashMap<>();
+			result.put(stateId, res);
 
-				// Check for cached values
-				Map<IEvalElement, AbstractEvalResult> map = stateId.getValues();
-				for (IEvalElement f : formulas) {
-					if (map.containsKey(f)) {
-						res.put(f, map.get(f));
-					} else {
-						cmds.add(f.getCommand(stateId));
-					}
+			// Check for cached values
+			Map<IEvalElement, AbstractEvalResult> map = stateId.getValues();
+			for (IEvalElement f : formulas) {
+				if (map.containsKey(f)) {
+					res.put(f, map.get(f));
+				} else {
+					cmds.add(f.getCommand(stateId));
 				}
-
 			}
 		}
 
