@@ -24,7 +24,7 @@ import de.prob.animator.IWarningListener;
 import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.command.CheckIfStateIdValidCommand;
 import de.prob.animator.command.ComposedCommand;
-import de.prob.animator.command.EvaluationCommand;
+import de.prob.animator.command.EvaluateFormulasCommand;
 import de.prob.animator.command.FindStateCommand;
 import de.prob.animator.command.FindTraceBetweenNodesCommand;
 import de.prob.animator.command.FormulaTypecheckCommand;
@@ -844,7 +844,7 @@ public class StateSpace implements IAnimator {
 	public Map<State, Map<IEvalElement, AbstractEvalResult>> evaluateForGivenStates(final Collection<State> states,
 			final List<IEvalElement> formulas) {
 		Map<State, Map<IEvalElement, AbstractEvalResult>> result = new HashMap<>();
-		List<EvaluationCommand> cmds = new ArrayList<>();
+		Map<State, EvaluateFormulasCommand> evalCommandsByState = new HashMap<>();
 
 		for (State stateId : states) {
 			Map<IEvalElement, AbstractEvalResult> res = new HashMap<>();
@@ -852,23 +852,22 @@ public class StateSpace implements IAnimator {
 
 			// Check for cached values
 			Map<IEvalElement, AbstractEvalResult> map = stateId.getValues();
+			final List<IEvalElement> toEvaluateInState = new ArrayList<>();
 			for (IEvalElement f : formulas) {
 				if (map.containsKey(f)) {
 					res.put(f, map.get(f));
 				} else {
-					cmds.add(f.getCommand(stateId));
+					toEvaluateInState.add(f);
 				}
 			}
+			evalCommandsByState.put(stateId, new EvaluateFormulasCommand(toEvaluateInState, stateId.getId()));
 		}
 
-		execute(new ComposedCommand(cmds));
+		execute(new ComposedCommand(new ArrayList<>(evalCommandsByState.values())));
 
-		for (EvaluationCommand efCmd : cmds) {
-			IEvalElement formula = efCmd.getEvalElement();
-			AbstractEvalResult value = efCmd.getValue();
-			State id = addState(efCmd.getStateId());
-			result.get(id).put(formula, value);
-		}
+		evalCommandsByState.forEach((state, evalCommand) ->
+			result.get(state).putAll(evalCommand.getResultMap())
+		);
 		return result;
 	}
 
