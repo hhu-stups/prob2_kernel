@@ -4,9 +4,12 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -58,6 +61,10 @@ public class Transition {
 		prettyNameMap.put(INITIALISE_MACHINE_NAME, "INITIALISATION");
 		PRETTY_NAME_MAP = Maps.unmodifiableBiMap(prettyNameMap);
 	}
+	
+	private static final Set<String> ARTIFICIAL_NAMES = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
+		PARTIAL_SETUP_CONSTANTS_NAME, SETUP_CONSTANTS_NAME, INITIALISE_MACHINE_NAME
+	)));
 
 	private final StateSpace stateSpace;
 	private final String id;
@@ -93,6 +100,10 @@ public class Transition {
 
 	public static String unprettifyName(final String name) {
 		return PRETTY_NAME_MAP.inverse().getOrDefault(name, name);
+	}
+
+	public static boolean isArtificialTransitionName(final String name) {
+		return ARTIFICIAL_NAMES.contains(name);
 	}
 
 	/**
@@ -264,8 +275,7 @@ public class Transition {
 	}
 
 	public boolean isArtificialTransition() {
-		return name.equals("$initialise_machine") || name.equals("$setup_constants")
-			|| name.equals("$partial_setup_constants");
+		return isArtificialTransitionName(this.getName());
 	}
 
 	@Override
