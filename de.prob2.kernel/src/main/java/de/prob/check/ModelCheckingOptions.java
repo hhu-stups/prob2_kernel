@@ -17,6 +17,7 @@ public class ModelCheckingOptions {
 		FIND_DEADLOCKS("find_deadlocks", "deadlock check"),
 		FIND_INVARIANT_VIOLATIONS("find_invariant_violations", "invariant check"),
 		FIND_ASSERTION_VIOLATIONS("find_assertion_violations", "assertion check"),
+		FIND_OTHER_ERRORS("ignore_state_errors", "find other errors"),
 		INSPECT_EXISTING_NODES("inspect_existing_nodes", "recheck existing states"),
 		STOP_AT_FULL_COVERAGE("stop_at_full_coverage", "stop at full coverage"),
 		PARTIAL_ORDER_REDUCTION("partial_order_reduction", "partial order reduction"),
@@ -67,6 +68,11 @@ public class ModelCheckingOptions {
 
 	public ModelCheckingOptions checkAssertions(final boolean value) {
 		return changeOption(value, Options.FIND_ASSERTION_VIOLATIONS);
+	}
+
+	public ModelCheckingOptions checkOtherErrors(final boolean value) {
+		//Prolog predicate asks to ignore state errors
+		return changeOption(!value, Options.FIND_OTHER_ERRORS);
 	}
 
 	public ModelCheckingOptions recheckExisting(final boolean value) {

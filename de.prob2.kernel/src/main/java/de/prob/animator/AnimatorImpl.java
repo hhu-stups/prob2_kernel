@@ -2,7 +2,6 @@ package de.prob.animator;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import com.google.common.base.MoreObjects;
@@ -54,47 +53,31 @@ class AnimatorImpl implements IAnimator {
 			}
 		}
 
-		if (command.blockAnimator()) {
-			logger.trace("Blocking animator");
-			startTransaction();
-		}
 		logger.trace("Starting execution of {}", command);
-		do {
-			IPrologResult result = processor.sendCommand(command);
-			final GetErrorItemsCommand errorItemsCommand = getErrorItems();
+		IPrologResult result = processor.sendCommand(command);
+		final GetErrorItemsCommand errorItemsCommand = getErrorItems();
 
-			if (result instanceof YesResult && (errorItemsCommand.getErrors().isEmpty() || errorItemsCommand.onlyWarningsOccurred())) {
-				logger.trace("Execution successful, processing result");
-				if (!errorItemsCommand.getErrors().isEmpty()) {
-					logger.warn("ProB reported warnings:");
-					for (final ErrorItem error : errorItemsCommand.getErrors()) {
-						assert error.getType() == ErrorItem.Type.WARNING;
-						logger.warn("{}", error);
-					}
-					this.warningListeners.forEach(listener -> listener.warningsOccurred(errorItemsCommand.getErrors()));
+		if (result instanceof YesResult && (errorItemsCommand.getErrors().isEmpty() || errorItemsCommand.onlyWarningsOccurred())) {
+			logger.trace("Execution successful, processing result");
+			if (!errorItemsCommand.getErrors().isEmpty()) {
+				logger.warn("ProB reported warnings:");
+				for (final ErrorItem error : errorItemsCommand.getErrors()) {
+					assert error.getType() == ErrorItem.Type.WARNING;
+					logger.warn("{}", error);
 				}
-				try {
-					command.processResult(((YesResult) result).getBindings());
-				} catch (RuntimeException e) {
-					this.kill();
-					throw new CliError("Exception while processing command result", e);
-				}
-			} else {
-				logger.trace("Execution unsuccessful, processing error");
-				command.processErrorResult(result, errorItemsCommand.getErrors());
+				this.warningListeners.forEach(listener -> listener.warningsOccurred(errorItemsCommand.getErrors()));
 			}
-			logger.trace("Executed {} (completed: {})", command, command.isCompleted());
-			
-			if (!command.isCompleted() && Thread.currentThread().isInterrupted()) {
-				logger.info("Stopping execution of {} because this thread was interrupted", command);
-				throw new CommandInterruptedException("Thread was interrupted during command execution", Collections.emptyList());
+			try {
+				command.processResult(((YesResult) result).getBindings());
+			} catch (RuntimeException e) {
+				this.kill();
+				throw new CliError("Exception while processing command result", e);
 			}
-		} while (!command.isCompleted());
-		logger.trace("Done executing {}", command);
-		if (command.blockAnimator()) {
-			endTransaction();
-			logger.trace("Unblocked animator");
+		} else {
+			logger.trace("Execution unsuccessful, processing error");
+			command.processErrorResult(result, errorItemsCommand.getErrors());
 		}
+		logger.trace("Done executing {}", command);
 	}
 
 	private synchronized GetErrorItemsCommand getErrorItems() {

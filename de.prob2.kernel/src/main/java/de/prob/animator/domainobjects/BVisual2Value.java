@@ -2,6 +2,10 @@ package de.prob.animator.domainobjects;
 
 import java.util.Objects;
 
+import de.prob.exception.ProBError;
+import de.prob.parser.BindingGenerator;
+import de.prob.prolog.term.PrologTerm;
+
 public interface BVisual2Value {
 	enum PredicateValue implements BVisual2Value {
 		FALSE(false),
@@ -98,6 +102,40 @@ public interface BVisual2Value {
 		@Override
 		public String toString() {
 			return "(inactive)";
+		}
+	}
+	
+	public static BVisual2Value fromPrologTerm(final PrologTerm term) {
+		final String functor = term.getFunctor();
+		switch (functor) {
+			case "p":
+				BindingGenerator.getCompoundTerm(term, "p", 1);
+				final String value = PrologTerm.atomicString(term.getArgument(1));
+				switch (value) {
+					case "false":
+						return BVisual2Value.PredicateValue.FALSE;
+					
+					case "true":
+						return BVisual2Value.PredicateValue.TRUE;
+					
+					default:
+						throw new ProBError("Invalid value in predicate result: " + value);
+				}
+			
+			case "v":
+				BindingGenerator.getCompoundTerm(term, "v", 1);
+				return new BVisual2Value.ExpressionValue(PrologTerm.atomicString(term.getArgument(1)));
+			
+			case "e":
+				BindingGenerator.getCompoundTerm(term, "e", 1);
+				return new BVisual2Value.Error(PrologTerm.atomicString(term.getArgument(1)));
+			
+			case "i":
+				BindingGenerator.getCompoundTerm(term, "i", 0);
+				return BVisual2Value.Inactive.INSTANCE;
+			
+			default:
+				throw new ProBError("Unhandled expanded formula value type: " + term);
 		}
 	}
 	

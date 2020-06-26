@@ -1,7 +1,6 @@
 import java.nio.file.Paths
 
-import de.prob.animator.command.ExpandFormulaCommand
-import de.prob.animator.command.InsertFormulaForVisualizationCommand
+import de.prob.animator.domainobjects.BVisual2Formula
 import de.prob.animator.domainobjects.BVisual2Value
 import de.prob.animator.domainobjects.ClassicalB
 import de.prob.animator.domainobjects.ExpandedFormula
@@ -14,14 +13,11 @@ def t = new Trace(s)
 t = t.$initialise_machine()
 
 final f = "(ready /\\ waiting) = {} & card(active) <= 1" as ClassicalB
-final cmd1 = new InsertFormulaForVisualizationCommand(f)
-s.execute(cmd1)
-assert cmd1.formulaId != null
+final inserted = BVisual2Formula.fromFormula(s, f)
+assert inserted != null
 
-final cmd2 = new ExpandFormulaCommand(cmd1.formulaId, t.currentState)
-s.execute(cmd2)
-assert cmd2.result instanceof ExpandedFormula
-final formula = cmd2.result
+final formula = inserted.expand(t.currentState)
+assert formula instanceof ExpandedFormula
 assert formula.label == "ready \u2229 waiting = \u2205 \u2227 card(active) \u2264 1"
 assert formula.value == BVisual2Value.PredicateValue.TRUE
 assert formula.children.size() == 2

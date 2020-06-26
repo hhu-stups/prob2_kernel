@@ -41,12 +41,7 @@ import de.prob.prolog.term.PrologTerm;
  * @author joy
  */
 public class Transition {
-	/**
-	 * @deprecated Use {@link #getStateSpace()} instead.
-	 */
-	@Deprecated
-	public final StateSpace stateSpace;
-
+	private final StateSpace stateSpace;
 	private final String id;
 	private final String name;
 	private final State src;
