@@ -1,9 +1,14 @@
 package de.prob.model.classicalb;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import com.github.krukow.clj_lang.PersistentHashMap;
 import com.google.inject.Inject;
@@ -93,6 +98,18 @@ public class ClassicalBModel extends AbstractModel {
 
 	public ClassicalBMachine getMainMachine() {
 		return mainMachine;
+	}
+
+	public List<Path> getLoadedMachineFiles() {
+		return this.rml.getMachineFilesLoaded().stream()
+			.map(File::toPath)
+			.collect(Collectors.toList());
+	}
+
+	public Map<String, Path> getMachineFilesByName() {
+		final Map<String, Path> machineFilePaths = new TreeMap<>();
+		this.rml.getParsedFiles().forEach((name, file) -> machineFilePaths.put(name, file.toPath()));
+		return machineFilePaths;
 	}
 
 	@Override
