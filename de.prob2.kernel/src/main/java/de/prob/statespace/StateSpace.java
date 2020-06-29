@@ -25,6 +25,7 @@ import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.command.CheckIfStateIdValidCommand;
 import de.prob.animator.command.ComposedCommand;
 import de.prob.animator.command.EvaluateFormulasCommand;
+import de.prob.animator.command.ExtendedStaticCheckCommand;
 import de.prob.animator.command.FindStateCommand;
 import de.prob.animator.command.FindTraceBetweenNodesCommand;
 import de.prob.animator.command.FormulaTypecheckCommand;
@@ -41,6 +42,7 @@ import de.prob.animator.command.UnregisterFormulaCommand;
 import de.prob.animator.domainobjects.AbstractEvalResult;
 import de.prob.animator.domainobjects.CSP;
 import de.prob.animator.domainobjects.ClassicalB;
+import de.prob.animator.domainobjects.ErrorItem;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.animator.domainobjects.ProBPreference;
@@ -869,6 +871,17 @@ public class StateSpace implements IAnimator {
 			result.get(state).putAll(evalCommand.getResultMap())
 		);
 		return result;
+	}
+
+	/**
+	 * Run extended static checks on the loaded machine.
+	 * 
+	 * @return a list of all problems found by the extended static check
+	 */
+	public List<ErrorItem> performExtendedStaticChecks() {
+		final ExtendedStaticCheckCommand cmd = new ExtendedStaticCheckCommand();
+		this.execute(cmd);
+		return cmd.getProblems();
 	}
 
 	@Override
