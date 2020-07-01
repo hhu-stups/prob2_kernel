@@ -2,9 +2,7 @@ package de.prob;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-
 import de.prob.annotations.Version;
-
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
@@ -18,18 +16,6 @@ public class MainConfiguration extends AbstractModule {
 	protected void configure() {
 		bind(CommandLineParser.class).to(DefaultParser.class);
 		bind(String.class).annotatedWith(Version.class).toInstance(Main.getVersion());
-	}
-
-	/**
-	 * Calls {@link Main#getProBDirectory()} to find the absolute path
-	 * associated with the ProB directory. Binds this path to the {@link Home}
-	 * annotation in order to be able to inject it.
-	 *
-	 * @return the absolute path to ProB directory.
-	 */
-	@Provides
-	private static String getProBDirectory() {
-		return Main.getProBDirectory();
 	}
 
 	/**

@@ -1,11 +1,11 @@
 package de.prob.model.representation;
 
 import java.io.File;
-import java.util.Map;
 
 import com.github.krukow.clj_lang.PersistentHashMap;
 import com.google.inject.Inject;
 
+import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.command.LoadXTLCommand;
 import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.EvaluationException;
@@ -13,7 +13,6 @@ import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.scripting.StateSpaceProvider;
 import de.prob.statespace.FormalismType;
-import de.prob.statespace.StateSpace;
 
 public class XTLModel extends AbstractModel {
 	@Inject
@@ -40,18 +39,8 @@ public class XTLModel extends AbstractModel {
 	}
 
 	@Override
-	public boolean checkSyntax(final String formula) {
-		try {
-			this.parseFormula(formula, FormulaExpand.TRUNCATE);
-			return true;
-		} catch (EvaluationException ignored) {
-			return false;
-		}
-	}
-
-	@Override
-	public StateSpace load(final AbstractElement mainComponent, final Map<String, String> preferences) {
-		return getStateSpaceProvider().loadFromCommand(this, mainComponent, preferences, new LoadXTLCommand(this.getModelFile().getAbsolutePath()));
+	public AbstractCommand getLoadCommand(final AbstractElement mainComponent) {
+		return new LoadXTLCommand(this.getModelFile().getAbsolutePath());
 	}
 
 	@Override

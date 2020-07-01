@@ -1,6 +1,5 @@
 package de.prob.animator.domainobjects;
 
-import com.google.gson.Gson;
 import com.google.inject.Singleton;
 
 @Singleton
@@ -13,9 +12,6 @@ public class EvalElementFactory {
 		if (content.startsWith("#EventB:")) {
 			return toEventB(content);
 		}
-		if (content.startsWith("#CSP:")) {
-			return toCSP(content);
-		}
 
 		throw new IllegalArgumentException("String with format " + content
 				+ " cannot be deserialized to an IEvalElement");
@@ -27,10 +23,5 @@ public class EvalElementFactory {
 
 	private ClassicalB toClassicalB(final String content) {
 		return new ClassicalB(content.substring(content.indexOf(':') + 1), FormulaExpand.EXPAND);
-	}
-
-	private CSP toCSP(final String content) {
-		String objects = content.substring(content.indexOf(':') + 1);
-		return new Gson().fromJson(objects, CSP.class);
 	}
 }

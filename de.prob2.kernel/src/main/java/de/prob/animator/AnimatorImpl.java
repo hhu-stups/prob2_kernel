@@ -1,5 +1,6 @@
 package de.prob.animator;
 
+
 import com.google.common.base.MoreObjects;
 import com.google.inject.Inject;
 import de.prob.CliConfiguration;

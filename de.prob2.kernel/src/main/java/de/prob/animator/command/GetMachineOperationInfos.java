@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
+import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.OperationInfo;
@@ -22,9 +23,9 @@ public class GetMachineOperationInfos extends AbstractCommand {
 		super();
 	}
 
-	private static List<String> convertAtomicStringList(final PrologTerm list) {
+	private static List<String> convertPossiblyUnknownAtomicStringList(final PrologTerm list) {
 		if (list instanceof ListPrologTerm) {
-			return ((ListPrologTerm)list).stream().map(PrologTerm::atomicString).collect(Collectors.toList());
+			return PrologTerm.atomicStrings((ListPrologTerm)list);
 		} else if ("unknown".equals(PrologTerm.atomicString(list))) {
 			return Collections.emptyList();
 		} else {
@@ -32,17 +33,24 @@ public class GetMachineOperationInfos extends AbstractCommand {
 		}
 	}
 
+	private static OperationInfo operationInfoFromPrologTerm(final PrologTerm prologTerm) {
+		final CompoundPrologTerm cpt = BindingGenerator.getCompoundTerm(prologTerm, "operation_info", 8);
+		final String opName = PrologTerm.atomicString(cpt.getArgument(1));
+		final List<String> outputParameterNames = PrologTerm.atomicStrings(BindingGenerator.getList(cpt.getArgument(2)));
+		final List<String> parameterNames = PrologTerm.atomicStrings(BindingGenerator.getList(cpt.getArgument(3)));
+		final boolean topLevel = Boolean.parseBoolean(PrologTerm.atomicString(cpt.getArgument(4)));
+		final OperationInfo.Type type = OperationInfo.Type.fromProlog(PrologTerm.atomicString(cpt.getArgument(5)));
+		final List<String> readVariables = convertPossiblyUnknownAtomicStringList(cpt.getArgument(6));
+		final List<String> writtenVariables = convertPossiblyUnknownAtomicStringList(cpt.getArgument(7));
+		final List<String> nonDetWrittenVariables = convertPossiblyUnknownAtomicStringList(cpt.getArgument(8));
+		return new OperationInfo(opName, parameterNames, outputParameterNames, topLevel, type, readVariables, writtenVariables, nonDetWrittenVariables);
+	}
+
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
-		for (PrologTerm prologTerm : BindingGenerator.getList(bindings, RESULT_VARIABLE)) {
-			final String opName = prologTerm.getArgument(1).getFunctor();
-			final List<String> outputParameterNames = convertAtomicStringList(prologTerm.getArgument(2));
-			final List<String> parameterNames = convertAtomicStringList(prologTerm.getArgument(3));
-			final List<String> readVariables = convertAtomicStringList(prologTerm.getArgument(6));
-			final List<String> writtenVariables = convertAtomicStringList(prologTerm.getArgument(7));
-			final List<String> nonDetWrittenVariables = convertAtomicStringList(prologTerm.getArgument(8));
-			operationInfos.add(new OperationInfo(opName, parameterNames, outputParameterNames, readVariables, writtenVariables, nonDetWrittenVariables));
-		}
+		BindingGenerator.getList(bindings, RESULT_VARIABLE).stream()
+			.map(GetMachineOperationInfos::operationInfoFromPrologTerm)
+			.collect(Collectors.toCollection(() -> this.operationInfos));
 	}
 
 	public List<OperationInfo> getOperationInfos() {

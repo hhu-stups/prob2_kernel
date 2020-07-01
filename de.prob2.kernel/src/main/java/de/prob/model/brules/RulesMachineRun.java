@@ -15,11 +15,12 @@ import com.google.common.base.Stopwatch;
 import de.be4.classicalb.core.parser.ParsingBehaviour;
 import de.be4.classicalb.core.parser.exceptions.BException;
 import de.be4.classicalb.core.parser.rules.RulesProject;
+import de.prob.Main;
+import de.prob.animator.ReusableAnimator;
 import de.prob.animator.command.GetTotalNumberOfErrorsCommand;
 import de.prob.animator.domainobjects.StateError;
 import de.prob.exception.ProBError;
 import de.prob.statespace.State;
-import de.prob.statespace.StateSpace;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +31,8 @@ public class RulesMachineRun {
 		PARSE_ERROR, PROB_ERROR, UNEXPECTED_ERROR
 	}
 
-	private final RulesMachineRunner rulesMachineRunner = RulesMachineRunner.getInstance();
+	// FIXME This should be set via a constructor parameter or setter instead of always being taken from the main injector.
+	private final RulesMachineRunner rulesMachineRunner = Main.getInjector().getInstance(RulesMachineRunner.class);
 
 	private RulesProject rulesProject;
 	private ExecuteRun executeRun;
@@ -50,7 +52,7 @@ public class RulesMachineRun {
 
 	private boolean continueAfterErrors = false;
 
-	private StateSpace stateSpace;
+	private ReusableAnimator animator;
 
 	public RulesMachineRun(File runner) {
 		this(runner, new HashMap<String, String>(), new HashMap<String, String>());
@@ -92,7 +94,7 @@ public class RulesMachineRun {
 			return;
 		}
 		this.executeRun = rulesMachineRunner.createRulesMachineExecuteRun(this.rulesProject, runnerFile,
-				this.proBCorePreferences, continueAfterErrors, this.getStateSpace());
+				this.proBCorePreferences, continueAfterErrors, this.getAnimator());
 		try {
 			logger.info("Start execute ...");
 			final Stopwatch executeStopwatch = Stopwatch.createStarted();
@@ -127,14 +129,12 @@ public class RulesMachineRun {
 			this.errors.add(new Error(ERROR_TYPES.PROB_ERROR, e.getMessage(), e));
 			return;
 		} finally {
-			if (executeRun.getUsedStateSpace() != null) {
-				GetTotalNumberOfErrorsCommand totalNumberOfErrorsCommand = new GetTotalNumberOfErrorsCommand();
-				executeRun.getUsedStateSpace().execute(totalNumberOfErrorsCommand);
-				totalNumberOfProBCliErrors = totalNumberOfErrorsCommand.getTotalNumberOfErrors();
-			}
+			GetTotalNumberOfErrorsCommand totalNumberOfErrorsCommand = new GetTotalNumberOfErrorsCommand();
+			executeRun.getUsedAnimator().execute(totalNumberOfErrorsCommand);
+			totalNumberOfProBCliErrors = totalNumberOfErrorsCommand.getTotalNumberOfErrors();
 		}
 
-		this.stateSpace = this.executeRun.getUsedStateSpace();
+		this.animator = this.executeRun.getUsedAnimator();
 		final Stopwatch extractResultsStopwatch = Stopwatch.createStarted();
 		this.ruleResults = new RuleResults(this.rulesProject, executeRun.getExecuteModelCommand().getFinalState(),
 				maxNumberOfReportedCounterExamples);
@@ -219,12 +219,12 @@ public class RulesMachineRun {
 		return this.totalNumberOfProBCliErrors;
 	}
 
-	public StateSpace getStateSpace() {
-		return stateSpace;
+	public ReusableAnimator getAnimator() {
+		return this.animator;
 	}
 
-	public void setStateSpace(StateSpace stateSpace) {
-		this.stateSpace = stateSpace;
+	public void setAnimator(final ReusableAnimator animator) {
+		this.animator = animator;
 	}
 
 	public class Error {

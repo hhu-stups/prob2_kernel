@@ -1,12 +1,11 @@
 package de.prob.model.representation;
 
 import java.io.File;
-import java.util.Map;
 
 import com.github.krukow.clj_lang.PersistentHashMap;
-
 import com.google.inject.Inject;
 
+import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.command.LoadCSPCommand;
 import de.prob.animator.domainobjects.CSP;
 import de.prob.animator.domainobjects.EvaluationException;
@@ -15,7 +14,6 @@ import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.prolog.output.PrologTermStringOutput;
 import de.prob.scripting.StateSpaceProvider;
 import de.prob.statespace.FormalismType;
-import de.prob.statespace.StateSpace;
 
 public class CSPModel extends AbstractModel {
 	private final String content;
@@ -64,8 +62,8 @@ public class CSPModel extends AbstractModel {
 	}
 
 	@Override
-	public StateSpace load(final AbstractElement mainComponent, final Map<String, String> preferences) {
-		return getStateSpaceProvider().loadFromCommand(this, mainComponent, preferences, new LoadCSPCommand(getModelFile().getAbsolutePath()));
+	public AbstractCommand getLoadCommand(final AbstractElement mainComponent) {
+		return new LoadCSPCommand(getModelFile().getAbsolutePath());
 	}
 
 	@Override

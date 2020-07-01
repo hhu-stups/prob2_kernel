@@ -5,10 +5,10 @@ import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Stopwatch;
 
+import de.prob.animator.ReusableAnimator;
 import de.prob.animator.command.ExecuteModelCommand;
 import de.prob.model.representation.AbstractModel;
 import de.prob.scripting.ExtractedModel;
-import de.prob.scripting.StateSpaceProvider;
 import de.prob.statespace.State;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  **/
 public class ExecuteRun {
 
-	private StateSpace stateSpace;
+	private ReusableAnimator animator;
 	private int maxNumberOfStatesToBeExecuted = Integer.MAX_VALUE;
 	private Integer timeout = null;
 	private final boolean continueAfterErrors;
@@ -42,38 +42,30 @@ public class ExecuteRun {
 	private State rootState;
 
 	public ExecuteRun(final ExtractedModel<? extends AbstractModel> extractedModel, Map<String, String> prefs,
-			boolean continueAfterErrors, StateSpace stateSpace) {
+			boolean continueAfterErrors, ReusableAnimator animator) {
 		this.extractedModel = extractedModel;
 		this.continueAfterErrors = continueAfterErrors;
 		this.prefs = prefs;
-		this.stateSpace = stateSpace;
+		this.animator = animator;
 	}
 
 	public void start() {
 		final Logger logger = LoggerFactory.getLogger(getClass());
 		final Stopwatch loadStopwatch = Stopwatch.createStarted();
-		getOrCreateStateSpace();
 		loadStopwatch.stop();
 		logger.info("Time to load model: {} ms", loadStopwatch.elapsed(TimeUnit.MILLISECONDS));
 
 		final Stopwatch executeStopwatch = Stopwatch.createStarted();
-		executeModel(this.stateSpace);
+		final StateSpace oldStateSpace = this.animator.getCurrentStateSpace();
+		if (oldStateSpace != null) {
+			oldStateSpace.kill();
+		}
+		final StateSpace stateSpace = this.animator.createStateSpace();
+		stateSpace.changePreferences(this.prefs);
+		this.extractedModel.loadIntoStateSpace(stateSpace);
+		executeModel(stateSpace);
 		executeStopwatch.stop();
 		logger.info("Time to run execute command: {} ms", executeStopwatch.elapsed(TimeUnit.MILLISECONDS));
-	}
-
-	private void getOrCreateStateSpace() {
-		if (stateSpace == null || stateSpace.isKilled()) {
-			/*
-			 * create a new state space if there is no previous one or if the
-			 * previous state space has been killed due to a ProBError
-			 */
-			this.stateSpace = this.extractedModel.load(this.prefs);
-		} else {
-			StateSpaceProvider ssProvider = new StateSpaceProvider(() -> stateSpace);
-			RulesModel model = (RulesModel) extractedModel.getModel();
-			ssProvider.loadFromCommand(model, null, prefs, model.getLoadCommand());
-		}
 	}
 
 	private void executeModel(final StateSpace stateSpace) {
@@ -92,8 +84,8 @@ public class ExecuteRun {
 		return this.rootState;
 	}
 
-	public StateSpace getUsedStateSpace() {
-		return this.stateSpace;
+	public ReusableAnimator getUsedAnimator() {
+		return this.animator;
 	}
 
 }

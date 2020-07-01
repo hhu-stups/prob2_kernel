@@ -1,17 +1,5 @@
 package de.prob.animator.domainobjects;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import com.google.gson.Gson;
-
 import de.prob.Main;
 import de.prob.animator.command.EvaluateFormulaCommand;
 import de.prob.animator.command.EvaluationCommand;
@@ -21,9 +9,18 @@ import de.prob.model.representation.FormulaUUID;
 import de.prob.model.representation.IFormulaUUID;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.statespace.State;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A Formula representation for CSP
@@ -105,7 +102,7 @@ public class CSP extends AbstractEvalElement {
 
 	@Override
 	public String serialized() {
-		return "#CSP:" + new Gson().toJson(this);
+		throw new UnsupportedOperationException("CSP formulas cannot be serialized");
 	}
 
 	@Override

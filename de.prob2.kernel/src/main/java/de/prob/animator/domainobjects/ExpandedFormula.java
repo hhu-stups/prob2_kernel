@@ -13,61 +13,78 @@ import de.prob.statespace.StateSpace;
 
 public class ExpandedFormula {
 	private final String label;
+	private final String description;
 	private final BVisual2Value value;
 	private final BVisual2Formula formula;
 	private final List<BVisual2Formula> subformulas;
 	private final List<ExpandedFormula> children;
 
-	private ExpandedFormula(final BVisual2Formula formula, final String label, final BVisual2Value value, final List<BVisual2Formula> subformulas, final List<ExpandedFormula> children) {
+	private ExpandedFormula(final BVisual2Formula formula, final String label, final String description, final BVisual2Value value, final List<BVisual2Formula> subformulas, final List<ExpandedFormula> children) {
 		this.label = label;
+		this.description = description;
 		this.value = value;
 		this.formula = formula;
 		this.subformulas = subformulas;
 		this.children = children;
 	}
-	
+
+	public static ExpandedFormula withUnexpandedChildren(final BVisual2Formula formula, final String label, final String description, final BVisual2Value value, final List<BVisual2Formula> subformulas) {
+		return new ExpandedFormula(formula, label, description, value, subformulas, null);
+	}
+
 	/**
-	 * @deprecated Use {@link #withExpandedChildren(BVisual2Formula, String, BVisual2Value, List)} instead.
+	 * @deprecated Use {@link #withUnexpandedChildren(BVisual2Formula, String, String, BVisual2Value, List)} (with an added description parameter) instead.
 	 */
 	@Deprecated
-	public ExpandedFormula(final String label, final BVisual2Value value, final BVisual2Formula formula, final List<ExpandedFormula> children) {
-		this.label = label;
-		this.value = value;
-		this.formula = formula;
-		this.subformulas = children.stream()
-			.map(ExpandedFormula::getFormula)
-			.collect(Collectors.toList());
-		this.children = children;
-	}
-
 	public static ExpandedFormula withUnexpandedChildren(final BVisual2Formula formula, final String label, final BVisual2Value value, final List<BVisual2Formula> subformulas) {
-		return new ExpandedFormula(formula, label, value, subformulas, null);
+		return withUnexpandedChildren(formula, label, "", value, subformulas);
 	}
 
-	public static ExpandedFormula withExpandedChildren(final BVisual2Formula formula, final String label, final BVisual2Value value, final List<ExpandedFormula> children) {
+	public static ExpandedFormula withExpandedChildren(final BVisual2Formula formula, final String label, final String description, final BVisual2Value value, final List<ExpandedFormula> children) {
 		final List<BVisual2Formula> subformulas = children.stream()
 			.map(ExpandedFormula::getFormula)
 			.collect(Collectors.toList());
-		return new ExpandedFormula(formula, label, value, subformulas, children);
+		return new ExpandedFormula(formula, label, description, value, subformulas, children);
 	}
 
+	/**
+	 * @deprecated Use {@link #withExpandedChildren(BVisual2Formula, String, String, BVisual2Value, List)} (with an added description parameter) instead.
+	 */
+	@Deprecated
+	public static ExpandedFormula withExpandedChildren(final BVisual2Formula formula, final String label, final BVisual2Value value, final List<ExpandedFormula> children) {
+		return withExpandedChildren(formula, label, "", value, children);
+	}
+
+	public static ExpandedFormula withoutChildren(final BVisual2Formula formula, final String label, final String description, final BVisual2Value value) {
+		return withExpandedChildren(formula, label, description, value, Collections.emptyList());
+	}
+
+	/**
+	 * @deprecated Use {@link #withoutChildren(BVisual2Formula, String, String, BVisual2Value)} (with an added description parameter) instead.
+	 */
+	@Deprecated
 	public static ExpandedFormula withoutChildren(final BVisual2Formula formula, final String label, final BVisual2Value value) {
-		return withExpandedChildren(formula, label, value, Collections.emptyList());
+		return withoutChildren(formula, label, "", value);
 	}
 
 	public static ExpandedFormula fromPrologTerm(final StateSpace stateSpace, final CompoundPrologTerm cpt) {
-		BindingGenerator.getCompoundTerm(cpt, "formula", 4);
+		BindingGenerator.getCompoundTerm(cpt, "formula", 5);
 		final String label = cpt.getArgument(1).getFunctor();
-		final BVisual2Value result = BVisual2Value.fromPrologTerm(cpt.getArgument(2));
-		final BVisual2Formula formula = BVisual2Formula.fromFormulaId(stateSpace, cpt.getArgument(3).getFunctor());
-		final List<ExpandedFormula> children = BindingGenerator.getList(cpt.getArgument(4)).stream()
-			.map(pt -> ExpandedFormula.fromPrologTerm(stateSpace, BindingGenerator.getCompoundTerm(pt, "formula", 4)))
+		final String description = cpt.getArgument(2).getFunctor();
+		final BVisual2Value result = BVisual2Value.fromPrologTerm(cpt.getArgument(3));
+		final BVisual2Formula formula = BVisual2Formula.fromFormulaId(stateSpace, cpt.getArgument(4).getFunctor());
+		final List<ExpandedFormula> children = BindingGenerator.getList(cpt.getArgument(5)).stream()
+			.map(pt -> ExpandedFormula.fromPrologTerm(stateSpace, BindingGenerator.getCompoundTerm(pt, "formula", 5)))
 			.collect(Collectors.toList());
-		return ExpandedFormula.withExpandedChildren(formula, label, result, children);
+		return ExpandedFormula.withExpandedChildren(formula, label, description, result, children);
 	}
 
 	public String getLabel() {
 		return label;
+	}
+
+	public String getDescription() {
+		return description;
 	}
 
 	public BVisual2Value getValue() {
@@ -84,7 +101,7 @@ public class ExpandedFormula {
 	}
 	
 	/**
-	 * Get the expanded values of this formula's subformulas. {@code null} is returned if the subformulas have not been expanded, for example when this expanded formula was returned from {@link #withUnexpandedChildren(BVisual2Formula, String, BVisual2Value, List)} or {@link BVisual2Formula#expandNonrecursive(State)}.
+	 * Get the expanded values of this formula's subformulas. {@code null} is returned if the subformulas have not been expanded, for example when this expanded formula was returned from {@link #withUnexpandedChildren(BVisual2Formula, String, String, BVisual2Value, List)} or {@link BVisual2Formula#expandNonrecursive(State)}.
 	 * 
 	 * @return the expanded values of this formula's subformulas, or {@code null} if the subformulas have not been expanded
 	 */
@@ -95,19 +112,12 @@ public class ExpandedFormula {
 	public BVisual2Formula getFormula() {
 		return this.formula;
 	}
-	
-	/**
-	 * @deprecated Use {@link #getFormula()} instead.
-	 */
-	@Deprecated
-	public String getId() {
-		return this.getFormula().getId();
-	}
 
 	@Override
 	public String toString() {
 		return MoreObjects.toStringHelper(this)
 			.add("label", this.getLabel())
+			.add("description", this.getDescription())
 			.add("value", this.getValue())
 			.add("formula", this.getFormula())
 			.add("subformulas", this.getSubformulas())

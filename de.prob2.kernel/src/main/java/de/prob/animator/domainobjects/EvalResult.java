@@ -19,18 +19,12 @@ import de.prob.unicode.UnicodeTranslator;
 import groovy.lang.MissingPropertyException;
 
 public class EvalResult extends AbstractEvalResult {
-
-	private static final  Map<String, String> EMPTY_MAP = Collections.emptyMap();
-	public static final  EvalResult TRUE = new EvalResult("TRUE", EMPTY_MAP);
-	public static final  EvalResult FALSE = new EvalResult("FALSE", EMPTY_MAP);
+	public static final  EvalResult TRUE = new EvalResult("TRUE", Collections.emptyMap());
+	public static final  EvalResult FALSE = new EvalResult("FALSE", Collections.emptyMap());
 	private static final  HashMap<String, EvalResult> formulaCache = new HashMap<>();
 
 	private final String value;
 	private final Map<String, String> solutions;
-
-	// These fields are saved in this class to be able to later produce
-	// a TranslatedEvalResult from this class. However, they are otherwise
-	// not of use to the user.
 
 	public EvalResult(final String value, final Map<String, String> solutions) {
 		super();
@@ -156,7 +150,7 @@ public class EvalResult extends AbstractEvalResult {
 				value = cpt.getArgument(1).getFunctor();
 			}
 
-			Map<String, String> solutions = solutionList.isEmpty() ? EMPTY_MAP : new HashMap<>();
+			Map<String, String> solutions = solutionList.isEmpty() ? Collections.emptyMap() : new HashMap<>();
 
 			for (PrologTerm t : solutionList) {
 				CompoundPrologTerm cpt = BindingGenerator.getCompoundTerm(t, 2);

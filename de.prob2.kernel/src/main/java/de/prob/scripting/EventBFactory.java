@@ -21,8 +21,6 @@ import de.prob.model.eventb.EventBModel;
 import de.prob.model.eventb.translate.EventBDatabaseTranslator;
 import de.prob.statespace.StateSpace;
 
-import de.prob.clistarter.FileHandler;
-
 import org.codehaus.groovy.runtime.ResourceGroovyMethods;
 
 public class EventBFactory implements ModelFactory<EventBModel> {

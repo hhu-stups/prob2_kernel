@@ -25,7 +25,7 @@ public class RegexTest {
 
 	@Test
 	public void testRegex() throws IOException, ModelTranslationError {
-		StateSpace s = api.b_load(Paths.get("src", "test", "resources", "b", "external_functions", "Regex.mch").toString());
+		StateSpace s = api.b_load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "external_functions", "Regex.mch").toString());
 		assertNotNull(s);
 		Trace t = new Trace(s);
 		assertEquals(1, t.getNextTransitions().size());

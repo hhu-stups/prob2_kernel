@@ -45,11 +45,11 @@ class CommandProcessor {
 			pto.printAtom("true");
 			query = pto.fullstop().toString();
 		}
-// comment out: 
-// de.prob.cli.ProBConnection.send(ProBConnection.java:55) already logs
-// 		if (logger.isDebugEnabled()) {
-// 			logger.debug(shorten(query));
-// 		}
+		// comment out:
+		// de.prob.cli.ProBConnection.send(ProBConnection.java:55) already logs
+		// 		if (logger.isDebugEnabled()) {
+		// 			logger.debug(shorten(query));
+		// 		}
 		String result = cliClient.sendMessage(query);
 
 		final Start ast = parseResult(result);

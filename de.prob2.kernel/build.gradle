@@ -17,8 +17,8 @@ final SOURCE_ENCODING = "UTF-8"
 
 
 // IMPORTANT !!!
-project.version = '3.11.0'
-// project.version = '4.0.0-SNAPSHOT'
+//project.version = '3.11.0'
+project.version = '4.0.0-SNAPSHOT'
 
 // Remember to release the cli
 ext {
@@ -90,7 +90,6 @@ dependencies {
 	// The following dependency needs to be api because the constructor of de.prob.model.representation.AbstractElement (and some subclasses) takes a com.github.krukow.clj_lang.PersistentHashMap.
 	// TODO Should we assume that external users do not call these constructors, and change this to an implementation dependency?
 	api group: "com.github.krukow", name: "clj-ds", version: "0.0.4" // Eclipse Public License 1.0
-	implementation group: "com.google.code.gson", name: "gson", version: "2.8.6" // Apache License 2.0
 	implementation group: "com.google.guava", name: "guava", version: "28.2-jre" // Apache License 2.0
 	api group: "com.google.inject", name: "guice", version: "4.2.2" // Apache License 2.0
 	implementation group: "commons-cli", name: "commons-cli", version: "1.4" // Apache License 2.0
@@ -98,9 +97,6 @@ dependencies {
 	api group: "de.hhu.stups", name: "ltl-dsl", version: "0.1.3" // Eclipse Public License 1.0
 	api group: "de.hhu.stups", name: "rodin-eventb-ast", version: "3.2.0" // Eclipse Public License 1.0
 	implementation group: "de.hhu.stups", name: "tla2bAST", version: "1.1.3" // Eclipse Public License 1.0
-
-	// Annotations
-	api group: "com.google.code.findbugs", name: "jsr305", version: "3.0.2" // Apache License 2.0
 
 	// Test dependencies
 	testImplementation group: "junit", name: "junit", version: "4.13" // Eclipse Public License 1.0
@@ -138,9 +134,9 @@ final CLI_DOWNLOAD_DIR = file("src/main/resources/de/prob/cli/binaries")
 task downloadCLIs(type: Download) {
 	final files = []
 	[
-		'leopard64',
-		'linux64',
-		'win64',
+			'leopard64',
+			'linux64',
+			'win64',
 	].each {platform ->
 		files << "probcli_${platform}.zip"
 	}
@@ -154,9 +150,9 @@ task downloadCLIs(type: Download) {
 task downloadCSPMFrontend {
 	final cspmfDownloadURL = "https://www3.hhu.de/stups/downloads/cspmf"
 	final files = [
-		'darwin-64': 'leopard64',
-		'linux-64': 'linux64',
-		'windows': 'windows',
+			'darwin-64': 'leopard64',
+			'linux-64': 'linux64',
+			'windows': 'windows',
 	].collectEntries {cspmfPlatform, probPlatform ->
 		def libName
 		if (cspmfPlatform == "windows") {
@@ -208,6 +204,7 @@ if (!project.hasProperty("probHome")) {
 
 test {
 	exclude('de/prob/cli/integration')
+	systemProperty("logback.configurationFile", "de/prob/logging/production.xml")
 	testLogging {
 		exceptionFormat = 'full'
 	}
@@ -237,6 +234,7 @@ project.jacoco.applyTo(groovyIntegrationTests)
 
 task cliIntegrationTests(type: Test, dependsOn: ['test']) {
 	include('de/prob/cli/integration/**/*')
+	systemProperty("logback.configurationFile", "de/prob/logging/production.xml")
 	jacoco {
 		destinationFile = file("$buildDir/jacoco/jacocoCliIntegrationTests.exec")
 	}
@@ -280,25 +278,25 @@ publishing {
 	publications {
 		mavenJava(MavenPublication) {
 			from components.java
-			
+
 			pom {
 				name = "prob2-kernel"
 				description = 'The ProB 2.0 Kernel'
 				url = 'http://www.prob2.de'
-				
+
 				licenses {
 					license {
 						name = 'Eclipse Public License, Version 1.0'
 						url = 'http://www.eclipse.org/org/documents/epl-v10.html'
 					}
 				}
-				
+
 				scm {
 					connection = 'scm:git:git://github.com/bendisposto/prob2.git'
 					developerConnection = 'scm:git:git@github.com:bendisposto/prob2.git'
 					url = 'https://github.com/bendisposto/prob2'
 				}
-				
+
 				developers {
 					developer {
 						id = 'bendisposto'
@@ -309,7 +307,7 @@ publishing {
 			}
 		}
 	}
-	
+
 	repositories {
 		maven {
 			final releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"

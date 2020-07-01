@@ -1,21 +1,18 @@
 package de.prob;
 
+import com.google.common.base.Stopwatch;
+import com.google.inject.Inject;
+import de.prob.clistarter.ProBInstanceProvider;
+import de.prob.scripting.ScriptEngineProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptException;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
-
-import javax.script.ScriptEngine;
-import javax.script.ScriptException;
-
-import com.google.common.base.Stopwatch;
-import com.google.inject.Inject;
-
-import de.prob.clistarter.ProBInstanceProvider;
-import de.prob.scripting.ScriptEngineProvider;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 class Shell {
 
