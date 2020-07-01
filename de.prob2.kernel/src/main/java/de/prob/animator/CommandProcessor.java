@@ -1,7 +1,6 @@
 package de.prob.animator;
 
-import java.util.Map;
-
+import de.prob.CliConfiguration;
 import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.command.IRawCommand;
 import de.prob.clistarter.client.CliClient;
@@ -16,9 +15,10 @@ import de.prob.parser.BindingGenerator;
 import de.prob.parser.ProBResultParser;
 import de.prob.prolog.output.PrologTermStringOutput;
 import de.prob.prolog.term.PrologTerm;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
 
 class CommandProcessor {
 	
@@ -82,10 +82,9 @@ class CommandProcessor {
 		return ProBResultParser.parse(input);
 	}
 
-	public void configure(final CliClient cliClient) {
+	public void configure(final CliClient cliClient, final CliConfiguration configuration) {
 		this.cliClient = cliClient;
-		this.cliClient.connect("localhost", 11312);
-		//this.cliClient.connect("192.168.4.149", 11312);
+		this.cliClient.connect(configuration.getServerName(), configuration.getServerPort());
 	}
 
 }

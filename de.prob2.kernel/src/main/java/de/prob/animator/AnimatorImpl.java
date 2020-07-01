@@ -1,12 +1,8 @@
 package de.prob.animator;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import com.google.common.base.MoreObjects;
 import com.google.inject.Inject;
-
+import de.prob.CliConfiguration;
 import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.command.ComposedCommand;
 import de.prob.animator.command.GetErrorItemsCommand;
@@ -16,9 +12,12 @@ import de.prob.clistarter.client.CliClient;
 import de.prob.clistarter.exception.CliError;
 import de.prob.exception.ProBError;
 import de.prob.statespace.AnimationSelector;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 class AnimatorImpl implements IAnimator {
 
@@ -35,13 +34,13 @@ class AnimatorImpl implements IAnimator {
 	private final Collection<IWarningListener> warningListeners = new ArrayList<>();
 
 	@Inject
-	public AnimatorImpl(final CliClient cliClient, final CommandProcessor processor,
-			final GetErrorItemsCommand getErrorItems, final AnimationSelector animations) {
+	public AnimatorImpl(final CliClient cliClient, final CliConfiguration configuration, final CommandProcessor processor,
+						final GetErrorItemsCommand getErrorItems, final AnimationSelector animations) {
 		this.cliClient = cliClient;
 		this.processor = processor;
 		this.getErrorItems = getErrorItems;
 		this.animations = animations;
-		processor.configure(cliClient);
+		processor.configure(cliClient, configuration);
 	}
 
 	@Override
