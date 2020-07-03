@@ -1,1 +1,3 @@
 rootProject.name = "de.prob2.kernel"
+
+includeBuild "../../probcli-starter"
