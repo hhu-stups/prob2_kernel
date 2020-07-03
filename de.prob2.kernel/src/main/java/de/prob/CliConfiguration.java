@@ -5,19 +5,12 @@ import com.google.inject.Singleton;
 @Singleton
 public class CliConfiguration {
 
-    private String serverName = "localhost";
-    private int serverPort = 11312;
+    public static String serverName = "localhost";
+    public static int serverPort = 11312;
 
-    public void setConfiguration(String serverName, int serverPort) {
-        this.serverName = serverName;
-        this.serverPort = serverPort;
+    public static void setConfiguration(String sName, int sPort) {
+        serverName = sName;
+        serverPort = sPort;
     }
 
-    public String getServerName() {
-        return serverName;
-    }
-
-    public int getServerPort() {
-        return serverPort;
-    }
 }

@@ -84,7 +84,7 @@ class CommandProcessor {
 
 	public void configure(final CliClient cliClient, final CliConfiguration configuration) {
 		this.cliClient = cliClient;
-		this.cliClient.connect(configuration.getServerName(), configuration.getServerPort());
+		this.cliClient.connect(CliConfiguration.serverName, CliConfiguration.serverPort);
 	}
 
 }
