@@ -30,6 +30,7 @@ public class FactoryProvider {
 		map.put(RulesModelFactory.class, Collections.singletonList("rmch"));
 		map.put(XTLFactory.class, Arrays.asList("P", "pl"));
 		map.put(ZFactory.class, Arrays.asList("zed", "tex"));
+		map.put(ZFuzzFactory.class, Collections.singletonList("fuzz"));
 		map.put(AlloyFactory.class, Collections.singletonList("als"));
 		FACTORY_TO_EXTENSIONS_MAP = Collections.unmodifiableMap(map);
 	}
@@ -51,6 +52,7 @@ public class FactoryProvider {
 	private final RulesModelFactory bRulesFactory;
 	private final XTLFactory xtlFactory;
 	private final ZFactory zFactory;
+	private final ZFuzzFactory zFuzzFactory;
 	private final AlloyFactory alloyFactory;
 
 	@Inject
@@ -63,6 +65,7 @@ public class FactoryProvider {
 		final RulesModelFactory bRulesFactory,
 		final XTLFactory xtlFactory,
 		final ZFactory zFactory,
+		final ZFuzzFactory zFuzzFactory,
 		final AlloyFactory alloyFactory
 	) {
 		this.classicalBFactory = bfactory;
@@ -73,6 +76,7 @@ public class FactoryProvider {
 		this.bRulesFactory = bRulesFactory;
 		this.xtlFactory = xtlFactory;
 		this.zFactory = zFactory;
+		this.zFuzzFactory = zFuzzFactory;
 		this.alloyFactory = alloyFactory;
 	}
 	
