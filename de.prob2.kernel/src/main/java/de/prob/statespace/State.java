@@ -42,6 +42,7 @@ public class State extends GroovyObjectSupport {
 	private StateSpace stateSpace;
 	private boolean explored;
 	private List<Transition> transitions;
+	private boolean constantsSetUp;
 	private boolean initialised;
 	private boolean invariantOk;
 	private boolean timeoutOccurred;
@@ -303,6 +304,13 @@ public class State extends GroovyObjectSupport {
 		return transitions;
 	}
 
+	public boolean isConstantsSetUp() {
+		if (!explored) {
+			explore();
+		}
+		return constantsSetUp;
+	}
+
 	public boolean isInitialised() {
 		if (!explored) {
 			explore();
@@ -386,6 +394,7 @@ public class State extends GroovyObjectSupport {
 		stateSpace.execute(cmd);
 		transitions = cmd.getNewTransitions();
 		values.putAll(cmd.getFormulaResults());
+		constantsSetUp = cmd.isConstantsSetUp();
 		initialised = cmd.isInitialised();
 		invariantOk = cmd.isInvariantOk();
 		timeoutOccurred = cmd.isTimeoutOccured();
