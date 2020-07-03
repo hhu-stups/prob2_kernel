@@ -1,7 +1,3 @@
-plugins {
-	id "de.undercouch.download" version "4.0.4"
-}
-
 apply plugin: 'java-library'
 apply plugin: 'groovy'
 apply plugin: 'eclipse'
@@ -61,6 +57,7 @@ sourceSets.main.java.srcDirs = [] // i.e. there's no stand-alone java source
 
 
 dependencies {
+	api group: "de.hhu.stups", name: "de.prob.clistarter", version: "4.0.0-SNAPSHOT"
 	// ProB parser dependencies (Eclipse Public License 1.0)
 	api group: "de.hhu.stups", name: "answerparser", version: parserVersion
 	api group: "de.hhu.stups", name: "bparser", version: parserVersion
@@ -129,58 +126,6 @@ tasks.withType(Javadoc) {
 // The Groovydoc encoding can't be set via the task, it depends on the file.encoding system property of the Gradle JVM.
 // FIXME This needs to be set in the gradle.properties, but the file is encrypted.
 
-final CLI_DOWNLOAD_DIR = file("src/main/resources/de/prob/cli/binaries")
-
-task downloadCLIs(type: Download) {
-	final files = []
-	[
-			'leopard64',
-			'linux64',
-			'win64',
-	].each {platform ->
-		files << "probcli_${platform}.zip"
-	}
-	files << "windowslib64.zip"
-
-	src(files.collect {"${cliDownloadURL}/${it}"})
-	dest(CLI_DOWNLOAD_DIR)
-	onlyIfModified(true)
-}
-
-task downloadCSPMFrontend {
-	final cspmfDownloadURL = "https://www3.hhu.de/stups/downloads/cspmf"
-	final files = [
-			'darwin-64': 'leopard64',
-			'linux-64': 'linux64',
-			'windows': 'windows',
-	].collectEntries {cspmfPlatform, probPlatform ->
-		def libName
-		if (cspmfPlatform == "windows") {
-			libName = "cspmf.exe"
-		} else {
-			libName = "cspmf"
-		}
-		// Note: toString is used here to eagerly evaluate the GString (which is not hashed properly otherwise)
-		[("${cspmfDownloadURL}/${cspmfPlatform}/${libName}".toString()): new File(CLI_DOWNLOAD_DIR, "${probPlatform}-${libName}")]
-	}
-
-	doLast {
-		CLI_DOWNLOAD_DIR.mkdirs()
-		files.each {url, target ->
-			download {
-				src(url)
-				dest(target)
-				onlyIfModified(true)
-			}
-			target.executable = true
-		}
-	}
-}
-
-task cleanDownloads(type: Delete) {
-	delete(CLI_DOWNLOAD_DIR)
-}
-clean.dependsOn(cleanDownloads)
 
 def readCurrentGitCommit() {
 	def proc = ["git", "rev-parse", "HEAD"].execute(null, project.projectDir)
@@ -195,11 +140,6 @@ processResources {
 	filesMatching("de/prob/build.properties") {
 		expand(version: project.version, git: readCurrentGitCommit())
 	}
-}
-
-if (!project.hasProperty("probHome")) {
-	// Automatically download probcli/cspmf, unless a custom PROB_HOME is set
-	processResources.dependsOn(downloadCLIs, downloadCSPMFrontend)
 }
 
 test {
@@ -256,12 +196,6 @@ task codeCoverageReport(type: JacocoReport, dependsOn: ['allTests']) {
 }
 
 check.dependsOn codeCoverageReport
-
-eclipse {
-	project {
-		name = 'de.prob2.kernel'
-	}
-}
 
 // Workaround for https://github.com/gradle/gradle/issues/5630
 // See https://stackoverflow.com/a/52797107
