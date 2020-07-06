@@ -40,6 +40,7 @@ public final class ExploreStateCommand extends AbstractCommand implements
 	private final String stateId;
 	private final GetEnabledOperationsCommand getOpsCmd;
 	private final EvaluateRegisteredFormulasCommand evalFormulasCmd;
+	private final CheckBooleanPropertyCommand checkConstantsSetUpCmd;
 	private final CheckBooleanPropertyCommand checkInitialisedCmd;
 	private final CheckInvariantStatusCommand checkInvCmd;
 	private final CheckBooleanPropertyCommand checkMaxOpCmd;
@@ -54,13 +55,14 @@ public final class ExploreStateCommand extends AbstractCommand implements
 		getOpsCmd = new GetEnabledOperationsCommand(s, stateId);
 		evalFormulasCmd = new EvaluateRegisteredFormulasCommand(stateID,
 				formulas);
+		checkConstantsSetUpCmd = new CheckConstantsSetUpStatusCommand(stateId);
 		checkInitialisedCmd = new CheckInitialisationStatusCommand(stateId);
 		checkInvCmd = new CheckInvariantStatusCommand(stateId);
 		checkMaxOpCmd = new CheckMaxOperationReachedStatusCommand(stateId);
 		checkTimeoutCmd = new CheckTimeoutStatusCommand(stateId);
 		checkTimeoutOpsCmd = new GetOperationsWithTimeout(stateId);
 		getStateErrCmd = new GetStateBasedErrorsCommand(stateId);
-		allCommands = new ComposedCommand(getOpsCmd, evalFormulasCmd,
+		allCommands = new ComposedCommand(getOpsCmd, evalFormulasCmd, checkConstantsSetUpCmd,
 				checkInitialisedCmd, checkInvCmd, checkMaxOpCmd,
 				checkTimeoutCmd, checkTimeoutOpsCmd, getStateErrCmd);
 
@@ -89,6 +91,10 @@ public final class ExploreStateCommand extends AbstractCommand implements
 	@Override
 	public void writeCommand(final IPrologTermOutput pto) {
 		allCommands.writeCommand(pto);
+	}
+
+	public boolean isConstantsSetUp() {
+		return checkConstantsSetUpCmd.getResult();
 	}
 
 	public boolean isInitialised() {
