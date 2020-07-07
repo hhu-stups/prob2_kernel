@@ -129,7 +129,7 @@ public final class JsonManager<T> {
     }
 
     /**
-     * Create a builder for a {@link JsonMetadata} object with default settings. The builder may be customized by overriding {@link JsonManager.Context#getDefaultMetadataBuilder(Provider, Provider)} in the context.
+     * Create a builder for a {@link JsonMetadata} object with default settings. The builder may be customized by overriding {@link JsonManager.Context#getDefaultMetadataBuilder(String, String, String)} in the context.
      *
      * @return a builder for a {@link JsonMetadata} object with default settings
      */
@@ -194,7 +194,7 @@ public final class JsonManager<T> {
     }
 
     /**
-     * Write an object as JSON to the writer, along with default metadata built using {@link #defaultMetadataBuilder()}.
+     * Write an object as JSON to the writer, along with default metadata built using {@link #defaultMetadataBuilder(String, String, String)}.
      *
      * @param writer the {@link Writer} to which to write the JSON data
      * @param src the object to write
@@ -217,7 +217,7 @@ public final class JsonManager<T> {
     }
 
     /**
-     * Write an object to a JSON file, along with default metadata built using {@link #defaultMetadataBuilder()}.
+     * Write an object to a JSON file, along with default metadata built using {@link #defaultMetadataBuilder(String, String, String)}.
      *
      * @param path the path of the JSON file to write
      * @param src the object to write
