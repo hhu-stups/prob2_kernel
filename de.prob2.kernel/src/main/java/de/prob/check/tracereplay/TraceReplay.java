@@ -18,6 +18,10 @@ import java.util.Map;
 
 public class TraceReplay {
 
+    public enum TraceReplayError {
+        COMMAND, NO_OPERATION_POSSIBLE, TRACE_REPLAY, MISMATCH_OUTPUT;
+    }
+
     public static Trace replayTrace(PersistentTrace persistentTrace, StateSpace stateSpace, final boolean setCurrentAnimation, Map<String, Object> replayInformation,
                                     ITraceChecker traceChecker) {
         Trace trace = new Trace(stateSpace);
@@ -61,12 +65,12 @@ public class TraceReplay {
         replayInformation.put("predicateBuilder", predicateBuilder);
         replayInformation.put("command", command);
         if (command.hasErrors()) {
-            traceChecker.showCommandErrors(replayInformation);
+            traceChecker.showError(TraceReplayError.COMMAND, replayInformation);
             return null;
         }
         List<Transition> possibleTransitions = command.getNewTransitions();
         if (possibleTransitions.isEmpty()) {
-            traceChecker.showNoOperationPossible(replayInformation);
+            traceChecker.showError(TraceReplayError.NO_OPERATION_POSSIBLE, replayInformation);
             return null;
         }
         Transition trans = possibleTransitions.get(0);
@@ -100,7 +104,7 @@ public class TraceReplay {
                                 replayInformation.put("outputParamName", outputParamName);
                                 replayInformation.put("bValue", bValue.toString());
                                 replayInformation.put("paramValue", paramValueFromTransition.toString());
-                                traceChecker.showMismatchOutputParameters(replayInformation);
+                                traceChecker.showError(TraceReplayError.MISMATCH_OUTPUT, replayInformation);
                             }
                             return false;
                         }
@@ -108,7 +112,8 @@ public class TraceReplay {
 
                 }
             } catch (TranslationException e) {
-                traceChecker.showTraceReplayError(e);
+                replayInformation.put("error", e);
+                traceChecker.showError(TraceReplayError.TRACE_REPLAY, replayInformation);
                 return false;
             }
         }
