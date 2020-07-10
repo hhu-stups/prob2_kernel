@@ -13,6 +13,7 @@ import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
 import de.prob.statespace.Transition;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +21,10 @@ public class TraceReplay {
 
     public enum TraceReplayError {
         COMMAND, NO_OPERATION_POSSIBLE, TRACE_REPLAY, MISMATCH_OUTPUT;
+    }
+
+    public static Trace replayTrace(PersistentTrace persistentTrace, StateSpace stateSpace) {
+        return replayTrace(persistentTrace, stateSpace, true, new HashMap<>(), new DefaultTraceChecker());
     }
 
     public static Trace replayTrace(PersistentTrace persistentTrace, StateSpace stateSpace, final boolean setCurrentAnimation, Map<String, Object> replayInformation,
@@ -40,7 +45,7 @@ public class TraceReplay {
             }
 
             if (Thread.currentThread().isInterrupted()) {
-                traceChecker.interrupt();
+                traceChecker.afterInterrupt();
                 return trace;
             }
 
