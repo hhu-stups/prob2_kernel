@@ -49,6 +49,10 @@ public class TraceLoaderSaver {
         }
     }
 
+    public PersistentTrace load(Path path) {
+        return this.load(path, new DefaultTraceReplayFileHandler());
+    }
+
     public void save(PersistentTrace trace, Path location, ITraceReplayFileHandler fileHandler, String proB2KernelVersion, String proBCliVersion, String modelName) {
         try {
             this.jsonManager.writeToFile(location, trace, proB2KernelVersion, proBCliVersion, modelName);
