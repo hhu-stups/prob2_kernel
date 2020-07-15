@@ -124,6 +124,10 @@ public class FactoryProvider {
 		return this.zFactory;
 	}
 	
+	public ZFuzzFactory getZFuzzFactory() {
+		return this.zFuzzFactory;
+	}
+	
 	public AlloyFactory getAlloyFactory() {
 		return this.alloyFactory;
 	}
