@@ -10,47 +10,47 @@ import java.util.Objects;
  * @param <T> the type of the contained main object
  */
 public final class ObjectWithMetadata<T> {
-    private final T object;
-    private final JsonMetadata metadata;
+	private final T object;
+	private final JsonMetadata metadata;
 
-    public ObjectWithMetadata(final T object, final JsonMetadata metadata) {
-        super();
+	public ObjectWithMetadata(final T object, final JsonMetadata metadata) {
+		super();
 
-        this.object = Objects.requireNonNull(object);
-        this.metadata = Objects.requireNonNull(metadata);
-    }
+		this.object = Objects.requireNonNull(object);
+		this.metadata = Objects.requireNonNull(metadata);
+	}
 
-    public T getObject() {
-        return this.object;
-    }
+	public T getObject() {
+		return this.object;
+	}
 
-    public JsonMetadata getMetadata() {
-        return this.metadata;
-    }
+	public JsonMetadata getMetadata() {
+		return this.metadata;
+	}
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null || this.getClass() != obj.getClass()) {
-            return false;
-        }
-        final ObjectWithMetadata<?> other = (ObjectWithMetadata<?>)obj;
-        return Objects.equals(this.getObject(), other.getObject())
-                && Objects.equals(this.getMetadata(), other.getMetadata());
-    }
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null || this.getClass() != obj.getClass()) {
+			return false;
+		}
+		final ObjectWithMetadata<?> other = (ObjectWithMetadata<?>)obj;
+		return Objects.equals(this.getObject(), other.getObject())
+				&& Objects.equals(this.getMetadata(), other.getMetadata());
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getObject(), getMetadata());
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash(getObject(), getMetadata());
+	}
 
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("object", this.getObject())
-                .add("metadata", this.getMetadata())
-                .toString();
-    }
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this)
+				.add("object", this.getObject())
+				.add("metadata", this.getMetadata())
+				.toString();
+	}
 }
