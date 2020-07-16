@@ -33,7 +33,7 @@ public class Trace extends GroovyObjectSupport {
 	private final TraceElement head;
 	private final StateSpace stateSpace;
 	private final UUID uuid;
-	private final List<Transition> transitionList;
+	private final PersistentVector<Transition> transitionList;
 
 	public Trace(final StateSpace s) {
 		this(s.getRoot());
@@ -43,11 +43,11 @@ public class Trace extends GroovyObjectSupport {
 		this(startState.getStateSpace(), new TraceElement(startState), PersistentVector.emptyVector(), UUID.randomUUID());
 	}
 
-	public Trace(final StateSpace s, final TraceElement head, List<Transition> transitionList, UUID uuid) {
+	public Trace(final StateSpace s, final TraceElement head, PersistentVector<Transition> transitionList, UUID uuid) {
 		this(s, head, head, transitionList, uuid);
 	}
 
-	private Trace(final StateSpace s, final TraceElement head, final TraceElement current, List<Transition> transitionList, UUID uuid) {
+	private Trace(final StateSpace s, final TraceElement head, final TraceElement current, PersistentVector<Transition> transitionList, UUID uuid) {
 		this.stateSpace = s;
 		this.head = head;
 		this.current = current;
@@ -127,7 +127,7 @@ public class Trace extends GroovyObjectSupport {
 	public Trace add(final Transition op) {
 		// TODO: Should we check to ensure that current.getCurrentState() == op.getSrcId()
 		final TraceElement newHE = new TraceElement(op, current);
-		final List<Transition> transitionList = branchTransitionListIfNecessary(op);
+		final PersistentVector<Transition> transitionList = branchTransitionListIfNecessary(op);
 		final Trace newTrace = new Trace(stateSpace, newHE, transitionList, this.uuid);
 		newTrace.setExploreStateByDefault(this.exploreStateByDefault);
 		if (exploreStateByDefault && !op.getDestination().isExplored()) {
@@ -215,7 +215,7 @@ public class Trace extends GroovyObjectSupport {
 
 	private PersistentVector<Transition> branchTransitionListIfNecessary(Transition newOp) {
 		if (head.equals(current)) {
-			return ((PersistentVector<Transition>)transitionList).assocN(transitionList.size(), newOp);
+			return transitionList.assocN(transitionList.size(), newOp);
 		} else {
 			final PersistentVector<Transition> tList = PersistentVector.create(transitionList.subList(0, current.getIndex() + 1));
 			return tList.assocN(tList.size(), newOp);
@@ -241,7 +241,7 @@ public class Trace extends GroovyObjectSupport {
 
 		State currentState = this.current.getCurrentState();
 		TraceElement current = this.current;
-		PersistentVector<Transition> transitionList = (PersistentVector<Transition>)this.transitionList;
+		PersistentVector<Transition> transitionList = this.transitionList;
 		for (int i = 0; i < numOfSteps; i++) {
 			final List<Transition> ops = currentState.getOutTransitions();
 			if (ops.isEmpty()) {
