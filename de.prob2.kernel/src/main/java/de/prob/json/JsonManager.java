@@ -6,7 +6,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +34,12 @@ public final class JsonManager<T> {
 
         public JsonMetadataBuilder getDefaultMetadataBuilder(String proB2KernelVersion, String proBCliVersion, String modelName) {
             return new JsonMetadataBuilder(this.fileType, this.currentFormatVersion, proB2KernelVersion, proBCliVersion, modelName)
+                    .withCurrentInfo()
+                    .withUserCreator();
+        }
+
+        public JsonMetadataBuilder getDefaultMetadataBuilder(String proB2KernelVersion) {
+            return new JsonMetadataBuilder(this.fileType, this.currentFormatVersion, proB2KernelVersion, null, null)
                     .withCurrentInfo()
                     .withUserCreator();
         }
@@ -133,6 +138,10 @@ public final class JsonManager<T> {
      *
      * @return a builder for a {@link JsonMetadata} object with default settings
      */
+    public JsonMetadataBuilder defaultMetadataBuilder(String proB2KernelVersion) {
+        return this.getContext().getDefaultMetadataBuilder(proB2KernelVersion);
+    }
+
     public JsonMetadataBuilder defaultMetadataBuilder(String proB2KernelVersion, String proBCliVersion, String modelName) {
         return this.getContext().getDefaultMetadataBuilder(proB2KernelVersion, proBCliVersion, modelName);
     }
@@ -222,6 +231,10 @@ public final class JsonManager<T> {
      * @param path the path of the JSON file to write
      * @param src the object to write
      */
+    public void writeToFile(final Path path, final T src, String proB2KernelVersion) throws IOException {
+        this.writeToFile(path, src, this.defaultMetadataBuilder(proB2KernelVersion).build());
+    }
+
     public void writeToFile(final Path path, final T src, String proB2KernelVersion, String proBCliVersion, String modelName) throws IOException {
         this.writeToFile(path, src, this.defaultMetadataBuilder(proB2KernelVersion, proBCliVersion, modelName).build());
     }

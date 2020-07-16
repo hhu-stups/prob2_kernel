@@ -21,6 +21,12 @@ public final class JsonMetadataBuilder {
         this.modelName = modelName;
     }
 
+    public JsonMetadataBuilder(final String fileType, final int formatVersion, final String proB2KernelVersion) {
+        this.fileType = fileType;
+        this.formatVersion = formatVersion;
+        this.proB2KernelVersion = proB2KernelVersion;
+    }
+
     public JsonMetadataBuilder(final JsonMetadata metadata) {
         this.fileType = metadata.getFileType();
         this.formatVersion = metadata.getFormatVersion();
