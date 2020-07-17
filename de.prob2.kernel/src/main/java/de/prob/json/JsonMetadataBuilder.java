@@ -14,21 +14,6 @@ public final class JsonMetadataBuilder {
 	private String proBCliVersion = null;
 	private String modelName = null;
 
-	public JsonMetadataBuilder(final String fileType, final int formatVersion, final String proB2KernelVersion,
-							   final String proBCliVersion, final String modelName) {
-		this.fileType = fileType;
-		this.formatVersion = formatVersion;
-		this.proB2KernelVersion = proB2KernelVersion;
-		this.proBCliVersion = proBCliVersion;
-		this.modelName = modelName;
-	}
-
-	public JsonMetadataBuilder(final String fileType, final int formatVersion, final String proB2KernelVersion) {
-		this.fileType = fileType;
-		this.formatVersion = formatVersion;
-		this.proB2KernelVersion = proB2KernelVersion;
-	}
-
 	public JsonMetadataBuilder(final String fileType, final int formatVersion) {
 		this.fileType = fileType;
 		this.formatVersion = formatVersion;

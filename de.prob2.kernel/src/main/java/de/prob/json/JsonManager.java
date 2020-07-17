@@ -34,15 +34,14 @@ public final class JsonManager<T> {
 		}
 
 		public JsonMetadataBuilder getDefaultMetadataBuilder(String proB2KernelVersion, String proBCliVersion, String modelName) {
-			return new JsonMetadataBuilder(this.fileType, this.currentFormatVersion, proB2KernelVersion, proBCliVersion, modelName)
-					.withSavedNow()
-					.withUserCreator();
+			return this.getDefaultMetadataBuilder(proB2KernelVersion)
+				.withProBCliVersion(proBCliVersion)
+				.withModelName(modelName);
 		}
 
 		public JsonMetadataBuilder getDefaultMetadataBuilder(String proB2KernelVersion) {
-			return new JsonMetadataBuilder(this.fileType, this.currentFormatVersion, proB2KernelVersion, null, null)
-					.withSavedNow()
-					.withUserCreator();
+			return this.getDefaultMetadataBuilder()
+					.withProB2KernelVersion(proB2KernelVersion);
 		}
 
 		public JsonMetadataBuilder getDefaultMetadataBuilder() {
@@ -127,15 +126,6 @@ public final class JsonManager<T> {
 	 */
 	public JsonMetadataBuilder metadataBuilder() {
 		return new JsonMetadataBuilder(this.getContext().fileType, this.getContext().currentFormatVersion);
-	}
-
-	/**
-	 * Create a builder for a new {@link JsonMetadata} object. The file type and version are initialized based on the settings in the context.
-	 *
-	 * @return a builder for a new {@link JsonMetadata object}
-	 */
-	public JsonMetadataBuilder metadataBuilder(String proB2KernelVersion, String proBCliVersion, String modelName) {
-		return new JsonMetadataBuilder(this.getContext().fileType, this.getContext().currentFormatVersion, proB2KernelVersion, proBCliVersion, modelName);
 	}
 
 	/**
