@@ -99,44 +99,6 @@ public final class JsonMetadataBuilder {
 	}
 
 	/**
-	 * Shorthand for setting the built metadata's {@code proB2KernelVersion} to the version currently in use.
-	 *
-	 * @return {@code this}
-	 * 
-	 * @deprecated This is a no-op.
-	 */
-	@Deprecated
-	public JsonMetadataBuilder withCurrentProB2KernelVersion() {
-		return this.withProB2KernelVersion(this.proB2KernelVersion);
-	}
-
-	/**
-	 * Shorthand for setting the built metadata's {@code proBCliVersion} to the version currently in use.
-	 *
-	 * @return {@code this}
-	 * 
-	 * @deprecated This is a no-op.
-	 */
-	@Deprecated
-	public JsonMetadataBuilder withCurrentProBCliVersion() {
-		return this.withProBCliVersion(this.proBCliVersion);
-	}
-
-	/**
-	 * Shorthand for setting the built metadata's {@code savedAt} to the current time, and {@code proB2KernelVersion} and {@code proBCliVersion} to the versions currently in use.
-	 *
-	 * @return {@code this}
-	 * 
-	 * @deprecated Use {@link #withSavedNow()} directly instead.
-	 */
-	@Deprecated
-	public JsonMetadataBuilder withCurrentInfo() {
-		return this.withSavedNow()
-				.withCurrentProB2KernelVersion()
-				.withCurrentProBCliVersion();
-	}
-
-	/**
 	 * Shorthand for setting the built metadata's {@code modelName} to the name of the currently loaded machine.
 	 *
 	 * @return {@code this}
