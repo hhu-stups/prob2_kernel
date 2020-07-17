@@ -125,6 +125,15 @@ public final class JsonManager<T> {
 	 *
 	 * @return a builder for a new {@link JsonMetadata object}
 	 */
+	public JsonMetadataBuilder metadataBuilder() {
+		return new JsonMetadataBuilder(this.getContext().fileType, this.getContext().currentFormatVersion);
+	}
+
+	/**
+	 * Create a builder for a new {@link JsonMetadata} object. The file type and version are initialized based on the settings in the context.
+	 *
+	 * @return a builder for a new {@link JsonMetadata object}
+	 */
 	public JsonMetadataBuilder metadataBuilder(String proB2KernelVersion, String proBCliVersion, String modelName) {
 		return new JsonMetadataBuilder(this.getContext().fileType, this.getContext().currentFormatVersion, proB2KernelVersion, proBCliVersion, modelName);
 	}
