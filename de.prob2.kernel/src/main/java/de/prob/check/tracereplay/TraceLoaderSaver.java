@@ -47,31 +47,6 @@ public class TraceLoaderSaver {
 		return this.load(path, new DefaultTraceReplayFileHandler());
 	}
 
-	/**
-	 * @deprecated Use {@link #save(PersistentTrace, Path, ITraceReplayFileHandler, String, String)} instead (the {@code proB2KernelVersion} parameter is set automatically).
-	 */
-	@Deprecated
-	public void save(PersistentTrace trace, Path location, ITraceReplayFileHandler fileHandler, String proB2KernelVersion, String proBCliVersion, String modelName) {
-		try {
-			final JsonMetadata metadata = this.jsonManager.defaultMetadataBuilder()
-				.withProB2KernelVersion(proB2KernelVersion)
-				.withProBCliVersion(proBCliVersion)
-				.withModelName(modelName)
-				.build();
-			this.jsonManager.writeToFile(location, trace, metadata);
-		} catch (IOException e) {
-			fileHandler.showSaveError(e);
-		}
-	}
-
-	/**
-	 * @deprecated Use {@link #save(PersistentTrace, Path, String, String)} instead (the {@code proB2KernelVersion} parameter is set automatically).
-	 */
-	@Deprecated
-	public void save(PersistentTrace trace, Path location, String proB2KernelVersion, String proBCliVersion, String modelName) {
-		this.save(trace, location, defaultFileHandler, proB2KernelVersion, proBCliVersion, modelName);
-	}
-
 	public void save(PersistentTrace trace, Path location, ITraceReplayFileHandler fileHandler, String proBCliVersion, String modelName) {
 		try {
 			final JsonMetadata metadata = this.jsonManager.defaultMetadataBuilder()
