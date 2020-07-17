@@ -14,7 +14,6 @@ import de.prob.json.ObjectWithMetadata;
 public class TraceLoaderSaver {
 
 	private final JsonManager<PersistentTrace> jsonManager;
-	private final DefaultTraceReplayFileHandler defaultFileHandler;
 
 	@Inject
 	public TraceLoaderSaver(JsonManager<PersistentTrace> jsonManager) {
@@ -31,9 +30,12 @@ public class TraceLoaderSaver {
 				return new ObjectWithMetadata<>(oldObject, oldMetadata);
 			}
 		});
-		this.defaultFileHandler = new DefaultTraceReplayFileHandler();
 	}
 
+	/**
+	 * @deprecated Use {@link #load(Path)} instead. Errors are reported as exceptions.
+	 */
+	@Deprecated
 	public PersistentTrace load(Path path, ITraceReplayFileHandler fileHandler) {
 		try {
 			return this.jsonManager.readFromFile(path).getObject();
@@ -43,36 +45,44 @@ public class TraceLoaderSaver {
 		}
 	}
 
-	public PersistentTrace load(Path path) {
-		return this.load(path, new DefaultTraceReplayFileHandler());
+	public PersistentTrace load(Path path) throws IOException {
+		return this.jsonManager.readFromFile(path).getObject();
 	}
 
+	/**
+	 * @deprecated Use {@link #save(PersistentTrace, Path, String, String)} instead. Errors are reported as exceptions.
+	 */
+	@Deprecated
 	public void save(PersistentTrace trace, Path location, ITraceReplayFileHandler fileHandler, String proBCliVersion, String modelName) {
 		try {
-			final JsonMetadata metadata = this.jsonManager.defaultMetadataBuilder()
-				.withProBCliVersion(proBCliVersion)
-				.withModelName(modelName)
-				.build();
-			this.jsonManager.writeToFile(location, trace, metadata);
+			this.save(trace, location, proBCliVersion, modelName);
 		} catch (IOException e) {
 			fileHandler.showSaveError(e);
 		}
 	}
 
-	public void save(PersistentTrace trace, Path location, String proBCliVersion, String modelName) {
-		this.save(trace, location, defaultFileHandler, proBCliVersion, modelName);
+	public void save(PersistentTrace trace, Path location, String proBCliVersion, String modelName) throws IOException {
+		final JsonMetadata metadata = this.jsonManager.defaultMetadataBuilder()
+			.withProBCliVersion(proBCliVersion)
+			.withModelName(modelName)
+			.build();
+		this.jsonManager.writeToFile(location, trace, metadata);
 	}
 
+	/**
+	 * @deprecated Use {@link #save(PersistentTrace, Path)} instead. Errors are reported as exceptions.
+	 */
+	@Deprecated
 	public void save(PersistentTrace trace, Path location, ITraceReplayFileHandler fileHandler) {
 		try {
-			this.jsonManager.writeToFile(location, trace);
+			this.save(trace, location);
 		} catch (IOException e) {
 			fileHandler.showSaveError(e);
 		}
 	}
 
-	public void save(PersistentTrace trace, Path location) {
-		this.save(trace, location, defaultFileHandler);
+	public void save(PersistentTrace trace, Path location) throws IOException {
+		this.jsonManager.writeToFile(location, trace);
 	}
 
 	public JsonManager<PersistentTrace> getJsonManager() {
