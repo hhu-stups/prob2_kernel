@@ -45,6 +45,12 @@ public final class JsonManager<T> {
 					.withUserCreator();
 		}
 
+		public JsonMetadataBuilder getDefaultMetadataBuilder() {
+			return new JsonMetadataBuilder(this.fileType, this.currentFormatVersion)
+					.withCurrentInfo()
+					.withUserCreator();
+		}
+
 		/**
 		 * <p>Convert data from an older format version to the current version.</p>
 		 * <p>This method must be overridden to support loading data that uses an older format version. The default implementation of this method always throws a {@link JsonParseException}.</p>
@@ -139,6 +145,10 @@ public final class JsonManager<T> {
 	 *
 	 * @return a builder for a {@link JsonMetadata} object with default settings
 	 */
+	public JsonMetadataBuilder defaultMetadataBuilder() {
+		return this.getContext().getDefaultMetadataBuilder();
+	}
+	
 	public JsonMetadataBuilder defaultMetadataBuilder(String proB2KernelVersion) {
 		return this.getContext().getDefaultMetadataBuilder(proB2KernelVersion);
 	}

@@ -2,13 +2,15 @@ package de.prob.json;
 
 import java.time.Instant;
 
+import de.prob.Main;
+
 public final class JsonMetadataBuilder {
 
 	private String fileType;
 	private int formatVersion;
 	private Instant savedAt = null;
 	private String creator = null;
-	private String proB2KernelVersion = null;
+	private String proB2KernelVersion;
 	private String proBCliVersion = null;
 	private String modelName = null;
 
@@ -25,6 +27,12 @@ public final class JsonMetadataBuilder {
 		this.fileType = fileType;
 		this.formatVersion = formatVersion;
 		this.proB2KernelVersion = proB2KernelVersion;
+	}
+
+	public JsonMetadataBuilder(final String fileType, final int formatVersion) {
+		this.fileType = fileType;
+		this.formatVersion = formatVersion;
+		this.proB2KernelVersion = Main.getVersion();
 	}
 
 	public JsonMetadataBuilder(final JsonMetadata metadata) {
