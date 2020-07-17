@@ -137,11 +137,19 @@ public final class JsonManager<T> {
 		return this.getContext().getDefaultMetadataBuilder();
 	}
 	
+	/**
+	 * @deprecated Use {@link #defaultMetadataBuilder()} and the returned builder's methods instead.
+	 */
+	@Deprecated
 	public JsonMetadataBuilder defaultMetadataBuilder(String proB2KernelVersion) {
 		return this.defaultMetadataBuilder()
 			.withProB2KernelVersion(proB2KernelVersion);
 	}
 
+	/**
+	 * @deprecated Use {@link #defaultMetadataBuilder()} and the returned builder's methods instead.
+	 */
+	@Deprecated
 	public JsonMetadataBuilder defaultMetadataBuilder(String proB2KernelVersion, String proBCliVersion, String modelName) {
 		return this.defaultMetadataBuilder(proB2KernelVersion)
 			.withProBCliVersion(proBCliVersion)
@@ -215,7 +223,10 @@ public final class JsonManager<T> {
 	 *
 	 * @param writer the {@link Writer} to which to write the JSON data
 	 * @param src the object to write
+	 * 
+	 * @deprecated Use {@link #write(Writer, Object, JsonMetadata)} with a custom metadata object instead.
 	 */
+	@Deprecated
 	public void write(final Writer writer, final T src, String proB2KernelVersion, String proBCliVersion, String modelName) {
 		this.write(writer, src, this.defaultMetadataBuilder(proB2KernelVersion, proBCliVersion, modelName).build());
 	}
@@ -238,11 +249,18 @@ public final class JsonManager<T> {
 	 *
 	 * @param path the path of the JSON file to write
 	 * @param src the object to write
+	 * 
+	 * @deprecated Use {@link #writeToFile(Path, Object, JsonMetadata)} with a custom metadata object instead.
 	 */
+	@Deprecated
 	public void writeToFile(final Path path, final T src, String proB2KernelVersion) throws IOException {
 		this.writeToFile(path, src, this.defaultMetadataBuilder(proB2KernelVersion).build());
 	}
 
+	/**
+	 * @deprecated Use {@link #writeToFile(Path, Object, JsonMetadata)} with a custom metadata object instead.
+	 */
+	@Deprecated
 	public void writeToFile(final Path path, final T src, String proB2KernelVersion, String proBCliVersion, String modelName) throws IOException {
 		this.writeToFile(path, src, this.defaultMetadataBuilder(proB2KernelVersion, proBCliVersion, modelName).build());
 	}
