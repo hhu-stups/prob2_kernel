@@ -35,19 +35,19 @@ public final class JsonManager<T> {
 
 		public JsonMetadataBuilder getDefaultMetadataBuilder(String proB2KernelVersion, String proBCliVersion, String modelName) {
 			return new JsonMetadataBuilder(this.fileType, this.currentFormatVersion, proB2KernelVersion, proBCliVersion, modelName)
-					.withCurrentInfo()
+					.withSavedNow()
 					.withUserCreator();
 		}
 
 		public JsonMetadataBuilder getDefaultMetadataBuilder(String proB2KernelVersion) {
 			return new JsonMetadataBuilder(this.fileType, this.currentFormatVersion, proB2KernelVersion, null, null)
-					.withCurrentInfo()
+					.withSavedNow()
 					.withUserCreator();
 		}
 
 		public JsonMetadataBuilder getDefaultMetadataBuilder() {
 			return new JsonMetadataBuilder(this.fileType, this.currentFormatVersion)
-					.withCurrentInfo()
+					.withSavedNow()
 					.withUserCreator();
 		}
 
