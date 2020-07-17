@@ -22,11 +22,6 @@ public class TraceLoaderSaver {
 		this.jsonManager = jsonManager;
 		jsonManager.initContext(new JsonManager.Context<PersistentTrace>(PersistentTrace.class, "Trace", 1) {
 			@Override
-			public JsonMetadataBuilder getDefaultMetadataBuilder(String proB2KernelVersion, String proBCliVersion, String modelName) {
-				return super.getDefaultMetadataBuilder(proB2KernelVersion, proBCliVersion, modelName).withCurrentModelName();
-			}
-
-			@Override
 			public ObjectWithMetadata<JsonObject> convertOldData(final JsonObject oldObject, final JsonMetadata oldMetadata) {
 				if (oldMetadata.getFileType() == null) {
 					assert oldMetadata.getFormatVersion() == 0;

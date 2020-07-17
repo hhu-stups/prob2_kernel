@@ -83,15 +83,6 @@ public final class JsonMetadataBuilder {
 		return this.withSavedAt(Instant.now());
 	}
 
-	/**
-	 * Shorthand for setting the built metadata's {@code modelName} to the name of the currently loaded machine.
-	 *
-	 * @return {@code this}
-	 */
-	public JsonMetadataBuilder withCurrentModelName() {
-		return this.withModelName(this.modelName);
-	}
-
 	public JsonMetadata build() {
 		return new JsonMetadata(
 				this.fileType,
