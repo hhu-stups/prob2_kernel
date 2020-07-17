@@ -10,6 +10,7 @@ public class CliVersionNumber implements Comparable<CliVersionNumber> {
 	public final String service;
 	public final String qualifier;
 	public final String revision;
+	private final String shortVersionString;
 	private final String version;
 
 	public CliVersionNumber(String major, String minor, String service, String qualifier, String revision) {
@@ -18,7 +19,12 @@ public class CliVersionNumber implements Comparable<CliVersionNumber> {
 		this.service = service;
 		this.qualifier = qualifier;
 		this.revision = revision;
-		this.version = String.format("%s.%s.%s-%s%s", major, minor, service, qualifier, revision.isEmpty() ? "" : " (" + revision + ")");
+		this.shortVersionString = String.format("%s.%s.%s-%s", major, minor, service, qualifier);
+		this.version = this.shortVersionString + (revision.isEmpty() ? "" : " (" + revision + ")");
+	}
+
+	public String getShortVersionString() {
+		return shortVersionString;
 	}
 
 	@Override
