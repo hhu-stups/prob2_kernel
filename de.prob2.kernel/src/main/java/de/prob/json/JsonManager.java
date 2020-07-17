@@ -209,8 +209,14 @@ public final class JsonManager<T> {
 		this.jsonManager.writeRaw(writer, this.gson.toJsonTree(src).getAsJsonObject(), metadata);
 	}
 
+	/**
+	 * Write an object as JSON to the writer, along with default metadata built using {@link #defaultMetadataBuilder()}.
+	 *
+	 * @param writer the {@link Writer} to which to write the JSON data
+	 * @param src the object to write
+	 */
 	public void write(final Writer writer, final T src) {
-		this.jsonManager.writeRaw(writer, this.gson.toJsonTree(src).getAsJsonObject());
+		this.jsonManager.writeRaw(writer, this.gson.toJsonTree(src).getAsJsonObject(), this.defaultMetadataBuilder().build());
 	}
 
 	/**
@@ -250,9 +256,15 @@ public final class JsonManager<T> {
 		this.writeToFile(path, src, this.defaultMetadataBuilder(proB2KernelVersion, proBCliVersion, modelName).build());
 	}
 
+	/**
+	 * Write an object to a JSON file, along with default metadata built using {@link #defaultMetadataBuilder()}.
+	 *
+	 * @param path the path of the JSON file to write
+	 * @param src the object to write
+	 */
 	public void writeToFile(final Path path, final T src) throws IOException {
 		try (final Writer writer = Files.newBufferedWriter(path)) {
-			this.write(writer, src);
+			this.write(writer, src, this.defaultMetadataBuilder().build());
 		}
 	}
 

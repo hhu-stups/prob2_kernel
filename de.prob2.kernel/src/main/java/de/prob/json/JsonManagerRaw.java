@@ -107,12 +107,4 @@ final class JsonManagerRaw {
 		src.add(METADATA_PROPERTY, this.gson.toJsonTree(metadata));
 		this.gson.toJson(src, jsonWriter);
 	}
-
-	public void writeRaw(final Writer writer, final JsonObject src) {
-		final JsonWriter jsonWriter = new JsonWriter(writer);
-		jsonWriter.setHtmlSafe(false);
-		jsonWriter.setIndent("  ");
-		this.gson.toJson(src, jsonWriter);
-	}
-
 }
