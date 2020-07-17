@@ -32,33 +32,8 @@ public class TraceLoaderSaver {
 		});
 	}
 
-	/**
-	 * @deprecated Use {@link #load(Path)} instead. Errors are reported as exceptions.
-	 */
-	@Deprecated
-	public PersistentTrace load(Path path, ITraceReplayFileHandler fileHandler) {
-		try {
-			return this.jsonManager.readFromFile(path).getObject();
-		} catch (JsonParseException | IOException e) {
-			fileHandler.showLoadError(path, e);
-			return null;
-		}
-	}
-
 	public PersistentTrace load(Path path) throws IOException {
 		return this.jsonManager.readFromFile(path).getObject();
-	}
-
-	/**
-	 * @deprecated Use {@link #save(PersistentTrace, Path, String, String)} instead. Errors are reported as exceptions.
-	 */
-	@Deprecated
-	public void save(PersistentTrace trace, Path location, ITraceReplayFileHandler fileHandler, String proBCliVersion, String modelName) {
-		try {
-			this.save(trace, location, proBCliVersion, modelName);
-		} catch (IOException e) {
-			fileHandler.showSaveError(e);
-		}
 	}
 
 	public void save(PersistentTrace trace, Path location, String proBCliVersion, String modelName) throws IOException {
@@ -67,18 +42,6 @@ public class TraceLoaderSaver {
 			.withModelName(modelName)
 			.build();
 		this.jsonManager.writeToFile(location, trace, metadata);
-	}
-
-	/**
-	 * @deprecated Use {@link #save(PersistentTrace, Path)} instead. Errors are reported as exceptions.
-	 */
-	@Deprecated
-	public void save(PersistentTrace trace, Path location, ITraceReplayFileHandler fileHandler) {
-		try {
-			this.save(trace, location);
-		} catch (IOException e) {
-			fileHandler.showSaveError(e);
-		}
 	}
 
 	public void save(PersistentTrace trace, Path location) throws IOException {
