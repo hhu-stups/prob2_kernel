@@ -1,16 +1,15 @@
 package de.prob.check.tracereplay;
 
+import java.io.IOException;
+import java.nio.file.Path;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.inject.Inject;
 
 import de.prob.json.JsonManager;
 import de.prob.json.JsonMetadata;
-import de.prob.json.JsonMetadataBuilder;
 import de.prob.json.ObjectWithMetadata;
-
-import java.io.IOException;
-import java.nio.file.Path;
 
 public class TraceLoaderSaver {
 
@@ -50,7 +49,12 @@ public class TraceLoaderSaver {
 
 	public void save(PersistentTrace trace, Path location, ITraceReplayFileHandler fileHandler, String proB2KernelVersion, String proBCliVersion, String modelName) {
 		try {
-			this.jsonManager.writeToFile(location, trace, proB2KernelVersion, proBCliVersion, modelName);
+			final JsonMetadata metadata = this.jsonManager.defaultMetadataBuilder()
+				.withProB2KernelVersion(proB2KernelVersion)
+				.withProBCliVersion(proBCliVersion)
+				.withModelName(modelName)
+				.build();
+			this.jsonManager.writeToFile(location, trace, metadata);
 		} catch (IOException e) {
 			fileHandler.showSaveError(e);
 		}
