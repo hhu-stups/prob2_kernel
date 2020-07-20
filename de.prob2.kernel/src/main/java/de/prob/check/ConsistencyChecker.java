@@ -22,6 +22,7 @@ public class ConsistencyChecker extends CheckerBase {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConsistencyChecker.class);
 	private static final int TIMEOUT_MS = 500;
 
+	private final int nodesLimit;
 	private final ModelCheckingOptions options;
 	private final IEvalElement goal;
 
@@ -52,7 +53,11 @@ public class ConsistencyChecker extends CheckerBase {
 	}
 
 	public ConsistencyChecker(final StateSpace s, final ModelCheckingOptions options, final IEvalElement goal) {
-		this(s, options, goal, null);
+		this(s, -1, options, goal, null);
+	}
+
+	public ConsistencyChecker(final StateSpace s, final int nodesLimit, final ModelCheckingOptions options, final IEvalElement goal) {
+		this(s, nodesLimit, options, goal, null);
 	}
 
 	/**
@@ -65,10 +70,14 @@ public class ConsistencyChecker extends CheckerBase {
 	 *            {@link IModelCheckListener} if the UI should be informed of
 	 *            updates. Otherwise, null.
 	 */
-	public ConsistencyChecker(final StateSpace s, final ModelCheckingOptions options, final IEvalElement goal,
+	public ConsistencyChecker(final StateSpace s, final ModelCheckingOptions options, final IEvalElement goal, final IModelCheckListener ui) {
+		this(s, -1, options, goal, null);
+	}
+
+	public ConsistencyChecker(final StateSpace s, final int nodesLimit, final ModelCheckingOptions options, final IEvalElement goal,
 			final IModelCheckListener ui) {
 		super(s, ui);
-
+		this.nodesLimit = nodesLimit;
 		this.options = options;
 		this.goal = goal;
 	}
@@ -86,9 +95,11 @@ public class ConsistencyChecker extends CheckerBase {
 		}
 
 		ModelCheckingStepCommand cmd;
+		StateSpaceStats stats = null;
 		try {
 			this.getStateSpace().startTransaction();
 			boolean firstIteration = true;
+			boolean finished;
 			do {
 				cmd = new ModelCheckingStepCommand(TIMEOUT_MS, this.options.recheckExisting(firstIteration));
 				this.getStateSpace().execute(cmd);
@@ -97,13 +108,18 @@ public class ConsistencyChecker extends CheckerBase {
 					this.isFinished(new CheckInterrupted(), cmd.getStats());
 					return;
 				}
-				this.updateStats(cmd.getResult(), cmd.getStats());
+				int nodes = cmd.getStats().getNrProcessedNodes();
+				finished = !(nodesLimit == -1 || nodesLimit > nodes);
+				if (!finished) {
+					stats = cmd.getStats();
+					this.updateStats(cmd.getResult(), stats);
+				}
 				firstIteration = false;
-			} while (cmd.getResult() instanceof NotYetFinished);
+			} while (cmd.getResult() instanceof NotYetFinished && !finished);
 		} finally {
 			this.getStateSpace().endTransaction();
 		}
-		this.isFinished(cmd.getResult(), cmd.getStats());
+		this.isFinished(cmd.getResult(), stats);
 	}
 
 	/**
