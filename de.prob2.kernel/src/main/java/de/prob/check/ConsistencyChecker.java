@@ -103,15 +103,15 @@ public class ConsistencyChecker extends CheckerBase {
 			do {
 				cmd = new ModelCheckingStepCommand(TIMEOUT_MS, this.options.recheckExisting(firstIteration));
 				this.getStateSpace().execute(cmd);
+				stats = cmd.getStats();
 				if (Thread.interrupted()) {
 					LOGGER.info("Consistency checker received a Java thread interrupt");
-					this.isFinished(new CheckInterrupted(), cmd.getStats());
+					this.isFinished(new CheckInterrupted(), stats);
 					return;
 				}
 				int nodes = cmd.getStats().getNrProcessedNodes();
 				finished = !(nodesLimit == -1 || nodesLimit > nodes);
 				if (!finished) {
-					stats = cmd.getStats();
 					this.updateStats(cmd.getResult(), stats);
 				}
 				firstIteration = false;
