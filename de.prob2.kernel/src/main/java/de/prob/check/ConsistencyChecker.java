@@ -22,7 +22,7 @@ public class ConsistencyChecker extends CheckerBase {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConsistencyChecker.class);
 	private static final int TIMEOUT_MS = 500;
 
-	private final int nodesLimit;
+	private int nodesLimit;
 	private final ModelCheckingOptions options;
 	private final IEvalElement goal;
 
@@ -53,11 +53,7 @@ public class ConsistencyChecker extends CheckerBase {
 	}
 
 	public ConsistencyChecker(final StateSpace s, final ModelCheckingOptions options, final IEvalElement goal) {
-		this(s, -1, options, goal, null);
-	}
-
-	public ConsistencyChecker(final StateSpace s, final int nodesLimit, final ModelCheckingOptions options, final IEvalElement goal) {
-		this(s, nodesLimit, options, goal, null);
+		this(s, options, goal, null);
 	}
 
 	/**
@@ -71,15 +67,14 @@ public class ConsistencyChecker extends CheckerBase {
 	 *            updates. Otherwise, null.
 	 */
 	public ConsistencyChecker(final StateSpace s, final ModelCheckingOptions options, final IEvalElement goal, final IModelCheckListener ui) {
-		this(s, -1, options, goal, ui);
-	}
-
-	public ConsistencyChecker(final StateSpace s, final int nodesLimit, final ModelCheckingOptions options, final IEvalElement goal,
-			final IModelCheckListener ui) {
 		super(s, ui);
-		this.nodesLimit = nodesLimit;
+		this.nodesLimit = -1;
 		this.options = options;
 		this.goal = goal;
+	}
+
+	public void setNodesLimit(int nodesLimit) {
+		this.nodesLimit = nodesLimit;
 	}
 
 	@Override
