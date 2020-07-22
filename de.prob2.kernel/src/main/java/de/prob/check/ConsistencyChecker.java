@@ -71,7 +71,7 @@ public class ConsistencyChecker extends CheckerBase {
 	 *            updates. Otherwise, null.
 	 */
 	public ConsistencyChecker(final StateSpace s, final ModelCheckingOptions options, final IEvalElement goal, final IModelCheckListener ui) {
-		this(s, -1, options, goal, null);
+		this(s, -1, options, goal, ui);
 	}
 
 	public ConsistencyChecker(final StateSpace s, final int nodesLimit, final ModelCheckingOptions options, final IEvalElement goal,
