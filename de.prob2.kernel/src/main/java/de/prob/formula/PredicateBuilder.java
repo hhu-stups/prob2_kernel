@@ -12,13 +12,23 @@ public class PredicateBuilder {
 		//
 	}
 
+	public PredicateBuilder add(final String predicate) {
+		this.predicates.add(predicate);
+		return this;
+	}
+
 	public PredicateBuilder addList(List<String> predicates) {
 		this.predicates.addAll(predicates);
 		return this;
 	}
 
+	public PredicateBuilder add(final String name, final String value) {
+		this.add(name + "=" + value);
+		return this;
+	}
+
 	public PredicateBuilder addMap(Map<String, String> map) {
-		map.forEach((k, v) -> predicates.add(k + '=' + v));
+		map.forEach(this::add);
 		return this;
 	}
 
