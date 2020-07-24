@@ -28,7 +28,7 @@ public class PersistentTransition {
 		this.name = transition.getName();
 		final LoadedMachine loadedMachine = transition.getStateSpace().getLoadedMachine();
 		final State destinationState = transition.getDestination();
-		if ("$setup_constants".equals(name)) {
+		if (Transition.SETUP_CONSTANTS_NAME.equals(name)) {
 			if (storeDestinationState) {
 				addValuesToDestState(destinationState.getConstantValues(FormulaExpand.EXPAND), null);
 			}
@@ -38,7 +38,7 @@ public class PersistentTransition {
 				);
 			}
 
-			if (!"$initialise_machine".equals(name)) {
+			if (!Transition.INITIALISE_MACHINE_NAME.equals(name)) {
 				// for each operation
 				OperationInfo machineOperationInfo = loadedMachine.getMachineOperationInfo(name);
 				params = new HashMap<>();

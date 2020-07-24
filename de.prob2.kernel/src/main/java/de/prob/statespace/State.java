@@ -71,7 +71,7 @@ public class State extends GroovyObjectSupport {
 	@Deprecated
 	@Override
 	public State invokeMethod(String method, Object params) {
-		if (method.startsWith("$") && !"$setup_constants".equals(method) && !"$initialise_machine".equals(method)) {
+		if (method.startsWith("$") && !Transition.SETUP_CONSTANTS_NAME.equals(method) && !Transition.INITIALISE_MACHINE_NAME.equals(method)) {
 			method = method.substring(1);
 		}
 

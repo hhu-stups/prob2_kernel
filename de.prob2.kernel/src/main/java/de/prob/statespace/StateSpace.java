@@ -268,7 +268,7 @@ public class StateSpace implements IAnimator {
 	public List<Transition> getTransitionsBasedOnParameterValues(final State stateId, final String opName,
 			final List<String> parameterValues, final int nrOfSolutions) {
 		String predicate = "1 = 1";// default value
-		if (!opName.equals("$initialise_machine") && !opName.equals("$setup_constants")) {
+		if (!Transition.SETUP_CONSTANTS_NAME.equals(opName) && !Transition.INITIALISE_MACHINE_NAME.equals(opName)) {
 			if (!getLoadedMachine().containsOperations(opName)) {
 				throw new IllegalArgumentException("Unknown operation '" + opName + "'");
 			}
