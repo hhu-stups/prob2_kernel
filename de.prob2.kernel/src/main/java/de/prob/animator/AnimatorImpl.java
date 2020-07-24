@@ -96,11 +96,6 @@ class AnimatorImpl implements IAnimator {
 	}
 
 	@Override
-	public void execute(final AbstractCommand... commands) {
-		execute(new ComposedCommand(commands));
-	}
-
-	@Override
 	public void sendInterrupt() {
 		logger.info("Sending an interrupt to the CLI");
 		cli.sendInterrupt();

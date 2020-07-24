@@ -575,11 +575,6 @@ public class StateSpace implements IAnimator {
 	}
 
 	@Override
-	public void execute(final AbstractCommand... commands) {
-		animator.execute(commands);
-	}
-
-	@Override
 	public void startTransaction() {
 		animator.startTransaction();
 	}

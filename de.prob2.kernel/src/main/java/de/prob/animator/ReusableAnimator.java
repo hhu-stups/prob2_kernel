@@ -44,12 +44,6 @@ public final class ReusableAnimator implements IAnimator {
 		}
 		
 		@Override
-		public void execute(final AbstractCommand... commands) {
-			this.checkAlive();
-			ReusableAnimator.this.execute(commands);
-		}
-		
-		@Override
 		public void sendInterrupt() {
 			if (!this.isKilled.get()) {
 				ReusableAnimator.this.sendInterrupt();
@@ -158,11 +152,6 @@ public final class ReusableAnimator implements IAnimator {
 	@Override
 	public void execute(final AbstractCommand command) {
 		this.animator.execute(command);
-	}
-	
-	@Override
-	public void execute(final AbstractCommand... commands) {
-		this.animator.execute(commands);
 	}
 	
 	@Override
