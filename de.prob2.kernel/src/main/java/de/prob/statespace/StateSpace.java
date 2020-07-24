@@ -36,6 +36,7 @@ import de.prob.animator.command.GetOpsFromIds;
 import de.prob.animator.command.GetPreferenceCommand;
 import de.prob.animator.command.GetShortestTraceCommand;
 import de.prob.animator.command.GetStatesFromPredicate;
+import de.prob.animator.command.IStateSpaceModifier;
 import de.prob.animator.command.RegisterFormulasCommand;
 import de.prob.animator.command.SetPreferenceCommand;
 import de.prob.animator.command.UnregisterFormulaCommand;
@@ -91,6 +92,7 @@ public class StateSpace implements IAnimator {
 	private AbstractModel model;
 	private AbstractElement mainComponent;
 	private volatile boolean killed;
+	private final Collection<IStatesCalculatedListener> statesCalculatedListeners = new ArrayList<>();
 
 	@Inject
 	public StateSpace(final Provider<IAnimator> panimator, @MaxCacheSize final int maxSize) {
@@ -569,9 +571,24 @@ public class StateSpace implements IAnimator {
 		animator.sendInterrupt();
 	}
 
+	public void addStatesCalculatedListener(final IStatesCalculatedListener listener) {
+		this.statesCalculatedListeners.add(listener);
+	}
+
+	public void removeStatesCalculatedListener(final IStatesCalculatedListener listener) {
+		this.statesCalculatedListeners.remove(listener);
+	}
+
+	private void statesCalculated(final List<Transition> newTransitions) {
+		this.statesCalculatedListeners.forEach(listener -> listener.newTransitions(newTransitions));
+	}
+
 	@Override
 	public void execute(final AbstractCommand command) {
 		animator.execute(command);
+		if (command instanceof IStateSpaceModifier) {
+			this.statesCalculated(((IStateSpaceModifier)command).getNewTransitions());
+		}
 	}
 
 	@Override
