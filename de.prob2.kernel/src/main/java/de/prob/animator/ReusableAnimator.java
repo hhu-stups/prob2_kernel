@@ -82,7 +82,7 @@ public final class ReusableAnimator implements IAnimator {
 		
 		@Override
 		public String getId() {
-			return "wrapping " + ReusableAnimator.this.getId();
+			return ReusableAnimator.this.getId();
 		}
 		
 		@Override
