@@ -60,8 +60,13 @@ public class TraceReplay {
 
 	private static Transition replayPersistentTransition(Trace t, PersistentTransition persistentTransition, boolean setCurrentAnimation, Map<String, Object> replayInformation, ITraceChecker traceChecker) {
 		StateSpace stateSpace = t.getStateSpace();
-		PredicateBuilder predicateBuilder = new PredicateBuilder().addMap(persistentTransition.getParameters());
-		predicateBuilder.addMap(persistentTransition.getDestinationStateVariables());
+		PredicateBuilder predicateBuilder = new PredicateBuilder();
+		if (persistentTransition.getParameters() != null) {
+			predicateBuilder.addMap(persistentTransition.getParameters());
+		}
+		if (persistentTransition.getDestinationStateVariables() != null) {
+			predicateBuilder.addMap(persistentTransition.getDestinationStateVariables());
+		}
 		final IEvalElement pred = stateSpace.getModel().parseFormula(predicateBuilder.toString(), FormulaExpand.EXPAND);
 		final GetOperationByPredicateCommand command = new GetOperationByPredicateCommand(stateSpace,
 				t.getCurrentState().getId(), persistentTransition.getOperationName(), pred, 1);
