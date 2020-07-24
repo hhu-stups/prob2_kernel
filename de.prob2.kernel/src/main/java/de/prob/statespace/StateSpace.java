@@ -49,6 +49,7 @@ import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.animator.domainobjects.ProBPreference;
 import de.prob.animator.domainobjects.TypeCheckResult;
 import de.prob.annotations.MaxCacheSize;
+import de.prob.formula.PredicateBuilder;
 import de.prob.model.classicalb.ClassicalBModel;
 import de.prob.model.eventb.EventBModel;
 import de.prob.model.representation.AbstractElement;
@@ -271,13 +272,12 @@ public class StateSpace implements IAnimator {
 			throw new IllegalArgumentException(opName + " is a special operation and does not take positional arguments. Use transitionFromPredicate instead and specify the argument/variable/constant values as a predicate.");
 		}
 
-		String predicate = "1 = 1";// default value
 		if (!getLoadedMachine().containsOperations(opName)) {
 			throw new IllegalArgumentException("Unknown operation '" + opName + "'");
 		}
 		OperationInfo machineOperationInfo = getLoadedMachine().getMachineOperationInfo(opName);
 		List<String> parameterNames = machineOperationInfo.getParameterNames();
-		StringBuilder sb = new StringBuilder();
+		final PredicateBuilder pb = new PredicateBuilder();
 		if (!parameterNames.isEmpty()) {
 			if (parameterNames.size() != parameterValues.size()) {
 				throw new IllegalArgumentException("Cannot execute operation " + opName
@@ -285,15 +285,11 @@ public class StateSpace implements IAnimator {
 						+ parameterNames.size() + " vs " + parameterValues.size());
 			}
 			for (int i = 0; i < parameterNames.size(); i++) {
-				sb.append(parameterNames.get(i)).append(" = ").append(parameterValues.get(i));
-				if (i < parameterNames.size() - 1) {
-					sb.append(" & ");
-				}
+				pb.add(parameterNames.get(i), parameterValues.get(i));
 			}
-			predicate = sb.toString();
 		}
 
-		return this.transitionFromPredicate(stateId, opName, predicate, nrOfSolutions);
+		return this.transitionFromPredicate(stateId, opName, pb.toString(), nrOfSolutions);
 	}
 
 	/**
