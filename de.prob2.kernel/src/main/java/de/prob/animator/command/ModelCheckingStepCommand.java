@@ -6,6 +6,7 @@
 
 package de.prob.animator.command;
 
+import java.util.Collections;
 import java.util.List;
 
 import de.prob.animator.IPrologResult;
@@ -23,11 +24,12 @@ import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.PrologTerm;
+import de.prob.statespace.Transition;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ModelCheckingStepCommand extends AbstractCommand {
+public class ModelCheckingStepCommand extends AbstractCommand implements IStateSpaceModifier {
 	private static final Logger logger = LoggerFactory.getLogger(ModelCheckingStepCommand.class);
 
 	private static final String PROLOG_COMMAND_NAME = "do_modelchecking";
@@ -164,5 +166,13 @@ public class ModelCheckingStepCommand extends AbstractCommand {
 
 	public StateSpaceStats getStats() {
 		return stats;
+	}
+
+	@Override
+	public List<Transition> getNewTransitions() {
+		// This method has to be implemented to indicate that the state space may have expanded by executing this command.
+		// However, we don't know which transitions have been added exactly, so we can only return an empty list here.
+		// TODO Is there a better way to handle this than just returning an empty list?
+		return Collections.emptyList();
 	}
 }
