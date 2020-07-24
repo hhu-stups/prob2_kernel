@@ -267,28 +267,30 @@ public class StateSpace implements IAnimator {
 
 	public List<Transition> getTransitionsBasedOnParameterValues(final State stateId, final String opName,
 			final List<String> parameterValues, final int nrOfSolutions) {
+		if (Transition.isArtificialTransitionName(opName)) {
+			throw new IllegalArgumentException(opName + " is a special operation and does not take positional arguments. Use transitionFromPredicate instead and specify the argument/variable/constant values as a predicate.");
+		}
+
 		String predicate = "1 = 1";// default value
-		if (!Transition.SETUP_CONSTANTS_NAME.equals(opName) && !Transition.INITIALISE_MACHINE_NAME.equals(opName)) {
-			if (!getLoadedMachine().containsOperations(opName)) {
-				throw new IllegalArgumentException("Unknown operation '" + opName + "'");
+		if (!getLoadedMachine().containsOperations(opName)) {
+			throw new IllegalArgumentException("Unknown operation '" + opName + "'");
+		}
+		OperationInfo machineOperationInfo = getLoadedMachine().getMachineOperationInfo(opName);
+		List<String> parameterNames = machineOperationInfo.getParameterNames();
+		StringBuilder sb = new StringBuilder();
+		if (!parameterNames.isEmpty()) {
+			if (parameterNames.size() != parameterValues.size()) {
+				throw new IllegalArgumentException("Cannot execute operation " + opName
+						+ " because the number of parameters does not match the number of provied values: "
+						+ parameterNames.size() + " vs " + parameterValues.size());
 			}
-			OperationInfo machineOperationInfo = getLoadedMachine().getMachineOperationInfo(opName);
-			List<String> parameterNames = machineOperationInfo.getParameterNames();
-			StringBuilder sb = new StringBuilder();
-			if (!parameterNames.isEmpty()) {
-				if (parameterNames.size() != parameterValues.size()) {
-					throw new IllegalArgumentException("Cannot execute operation " + opName
-							+ " because the number of parameters does not match the number of provied values: "
-							+ parameterNames.size() + " vs " + parameterValues.size());
+			for (int i = 0; i < parameterNames.size(); i++) {
+				sb.append(parameterNames.get(i)).append(" = ").append(parameterValues.get(i));
+				if (i < parameterNames.size() - 1) {
+					sb.append(" & ");
 				}
-				for (int i = 0; i < parameterNames.size(); i++) {
-					sb.append(parameterNames.get(i)).append(" = ").append(parameterValues.get(i));
-					if (i < parameterNames.size() - 1) {
-						sb.append(" & ");
-					}
-				}
-				predicate = sb.toString();
 			}
+			predicate = sb.toString();
 		}
 
 		return this.transitionFromPredicate(stateId, opName, predicate, nrOfSolutions);
