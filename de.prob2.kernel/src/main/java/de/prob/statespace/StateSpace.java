@@ -291,15 +291,7 @@ public class StateSpace implements IAnimator {
 			}
 		}
 
-		final IEvalElement pred = model.parseFormula(predicate, FormulaExpand.EXPAND);
-		final GetOperationByPredicateCommand command = new GetOperationByPredicateCommand(this, stateId.getId(), opName,
-				pred, nrOfSolutions);
-		execute(command);
-		if (command.hasErrors()) {
-			throw new IllegalArgumentException("Executing operation " + opName + " with predicate " + predicate
-					+ " produced errors: " + String.join(", ", command.getErrors()));
-		}
-		return command.getNewTransitions();
+		return this.transitionFromPredicate(stateId, opName, predicate, nrOfSolutions);
 	}
 
 	/**
