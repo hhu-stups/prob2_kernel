@@ -1,5 +1,6 @@
 package de.prob.animator;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 import de.prob.animator.command.AbstractCommand;
@@ -31,6 +32,16 @@ public interface IAnimator {
 	 *            multiple {@link AbstractCommand}s to execute
 	 */
 	default void execute(AbstractCommand... commands) {
+		this.execute(new ComposedCommand(commands));
+	}
+
+	/**
+	 * Takes multiple commands and executes them.
+	 * 
+	 * @param commands
+	 *            multiple {@link AbstractCommand}s to execute
+	 */
+	default void execute(List<? extends AbstractCommand> commands) {
 		this.execute(new ComposedCommand(commands));
 	}
 
