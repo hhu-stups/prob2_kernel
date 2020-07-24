@@ -135,13 +135,6 @@ public class ComposedCommand extends AbstractCommand {
 
 	}
 
-	public AbstractCommand[] runInDebugMode(final IAnimator animator) {
-		for (AbstractCommand cmd : cmds) {
-			animator.execute(cmd);
-		}
-		return cmds;
-	}
-
 	@Override
 	public List<AbstractCommand> getSubcommands() {
 		return new ArrayList<>(Arrays.asList(cmds));
