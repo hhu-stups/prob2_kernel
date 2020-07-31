@@ -19,6 +19,7 @@ import com.google.inject.Provider;
 
 import de.prob.model.eventb.EventBModel;
 import de.prob.model.eventb.translate.EventBDatabaseTranslator;
+import de.prob.model.eventb.translate.EventBFileNotFoundException;
 import de.prob.statespace.StateSpace;
 
 import org.codehaus.groovy.runtime.ResourceGroovyMethods;
@@ -37,6 +38,10 @@ public class EventBFactory implements ModelFactory<EventBModel> {
 	public ExtractedModel<EventBModel> extract(String modelPath) throws IOException, ModelTranslationError {
 		if (modelPath.endsWith(".eventb")) {
 			throw new IllegalArgumentException("This is an EventB package file, it must be loaded using EventBPackageFactory instead of EventBFactory.\nPath: " + modelPath);
+		}
+		File file = new File(modelPath);
+		if(!file.exists()) {
+			throw new EventBFileNotFoundException(file.getAbsolutePath(), "", false);
 		}
 		final EventBModel model = modelCreator.get();
 		final String validFileName = getValidFileName(modelPath);
