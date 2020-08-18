@@ -1,11 +1,10 @@
 package de.prob.check;
 
+import com.google.common.base.Stopwatch;
+import de.prob.statespace.StateSpace;
+
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
-
-import com.google.common.base.Stopwatch;
-
-import de.prob.statespace.StateSpace;
 
 /**
  * <p>Internal base class of all checker classes. This class implements almost all parts of the {@link IModelCheckJob} interface and takes care of generating a job ID, measuring execution time, and correctly calling the {@link IModelCheckListener}. Subclasses only need to implement the {@link #execute()} method to perform the actual checking and return the final {@link IModelCheckingResult} object.</p>
@@ -18,7 +17,7 @@ abstract class CheckerBase implements IModelCheckJob {
 	private final String jobId;
 	private final StateSpace stateSpace;
 	private final IModelCheckListener listener;
-	private final Stopwatch stopwatch;
+	protected final Stopwatch stopwatch;
 	private IModelCheckingResult result;
 	
 	/**

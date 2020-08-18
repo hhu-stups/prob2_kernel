@@ -1,5 +1,6 @@
 package de.prob.check;
 
+import de.prob.animator.command.ComputeStateSpaceStatsCommand;
 import de.prob.animator.command.ModelCheckingStepCommand;
 import de.prob.animator.command.SetBGoalCommand;
 import de.prob.animator.domainobjects.IEvalElement;
@@ -23,6 +24,7 @@ public class ConsistencyChecker extends CheckerBase {
 	private static final int TIMEOUT_MS = 500;
 
 	private int nodesLimit;
+	private int timeLimit;
 	private final ModelCheckingOptions options;
 	private final IEvalElement goal;
 
@@ -69,12 +71,17 @@ public class ConsistencyChecker extends CheckerBase {
 	public ConsistencyChecker(final StateSpace s, final ModelCheckingOptions options, final IEvalElement goal, final IModelCheckListener ui) {
 		super(s, ui);
 		this.nodesLimit = -1;
+		this.timeLimit = -1;
 		this.options = options;
 		this.goal = goal;
 	}
 
 	public void setNodesLimit(int nodesLimit) {
 		this.nodesLimit = nodesLimit;
+	}
+
+	public void setTimeLimit(int timeLimit) {
+		this.timeLimit = timeLimit;
 	}
 
 	@Override
@@ -89,26 +96,41 @@ public class ConsistencyChecker extends CheckerBase {
 			}
 		}
 
-		ModelCheckingStepCommand cmd;
+		ModelCheckingStepCommand cmd = null;
 		StateSpaceStats stats = null;
 		try {
 			this.getStateSpace().startTransaction();
 			boolean firstIteration = true;
-			boolean finished;
+			boolean finished = false;
+			int deltaNodeProcessed = 0;
+			int maximumNodesLeft = nodesLimit;
+			final ComputeStateSpaceStatsCommand stateSpaceStatsCmd = new ComputeStateSpaceStatsCommand();
+			this.getStateSpace().execute(stateSpaceStatsCmd);
+			int oldNodesProcessed = stateSpaceStatsCmd.getResult().getNrProcessedNodes();
 			do {
-				cmd = new ModelCheckingStepCommand(TIMEOUT_MS, this.options.recheckExisting(firstIteration));
+				int timeout = TIMEOUT_MS;
+				if(timeLimit > 0) {
+					long timeoutInMs = timeLimit * 1000 - stopwatch.elapsed().toMillis();
+					timeout = Math.min(TIMEOUT_MS, Math.max(0, (int) timeoutInMs));
+					finished = timeoutInMs < 0;
+				}
+				if(nodesLimit > 0) {
+					maximumNodesLeft = maximumNodesLeft - deltaNodeProcessed;
+					cmd = new ModelCheckingStepCommand(maximumNodesLeft, timeout, this.options.recheckExisting(firstIteration));
+					finished = finished || maximumNodesLeft <= 0;
+				} else {
+					cmd = new ModelCheckingStepCommand(timeout, this.options.recheckExisting(firstIteration));
+				}
 				this.getStateSpace().execute(cmd);
 				stats = cmd.getStats();
+				deltaNodeProcessed = stats.getNrProcessedNodes() - oldNodesProcessed;
+				oldNodesProcessed = stats.getNrProcessedNodes();
 				if (Thread.interrupted()) {
 					LOGGER.info("Consistency checker received a Java thread interrupt");
 					this.isFinished(new CheckInterrupted(), stats);
 					return;
 				}
-				int nodes = cmd.getStats().getNrProcessedNodes();
-				finished = !(nodesLimit == -1 || nodesLimit > nodes);
-				if (!finished) {
-					this.updateStats(cmd.getResult(), stats);
-				}
+				this.updateStats(cmd.getResult(), stats);
 				firstIteration = false;
 			} while (cmd.getResult() instanceof NotYetFinished && !finished);
 		} finally {

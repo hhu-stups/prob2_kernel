@@ -50,7 +50,9 @@ public class ModelCheckingStepCommand extends AbstractCommand implements IStateS
 	 * </ol>
 	 */
 	private static final int STATS_ARITY = 3;
+	private static final int DEFAULT_MAX_NUMBER_OF_STATES = 100000;
 
+	private final int maxNumberOfStates;
 	private final int time;
 	private final ModelCheckingOptions options;
 	private IModelCheckingResult result;
@@ -59,10 +61,16 @@ public class ModelCheckingStepCommand extends AbstractCommand implements IStateS
 
 	private StateSpaceStats stats;
 
-	public ModelCheckingStepCommand(final int time,
-			final ModelCheckingOptions options) {
+	public ModelCheckingStepCommand(final int maxNumberOfStates, final int time,
+									final ModelCheckingOptions options) {
 		this.time = time;
 		this.options = options;
+		this.maxNumberOfStates = maxNumberOfStates;
+	}
+
+	public ModelCheckingStepCommand(final int time,
+			final ModelCheckingOptions options) {
+		this(DEFAULT_MAX_NUMBER_OF_STATES, time, options);
 	}
 
 	public IModelCheckingResult getResult() {
@@ -157,7 +165,8 @@ public class ModelCheckingStepCommand extends AbstractCommand implements IStateS
 
 	@Override
 	public void writeCommand(final IPrologTermOutput pto) {
-		pto.openTerm(PROLOG_COMMAND_NAME).printNumber(time).openList();
+		pto.openTerm(PROLOG_COMMAND_NAME).printNumber(maxNumberOfStates);
+		pto.printNumber(time).openList();
 		for (ModelCheckingOptions.Options o : options.getPrologOptions()) {
 			pto.printAtom(o.getPrologName());
 		}
