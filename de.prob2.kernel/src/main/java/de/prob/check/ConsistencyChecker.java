@@ -100,7 +100,7 @@ public class ConsistencyChecker extends CheckerBase {
 		StateSpaceStats stats = null;
 		try {
 			this.getStateSpace().startTransaction();
-			boolean firstIteration = true;
+			ModelCheckingOptions modifiedOptions = this.options;
 			boolean finished = false;
 			int deltaNodeProcessed = 0;
 			int maximumNodesLeft = nodesLimit;
@@ -116,10 +116,10 @@ public class ConsistencyChecker extends CheckerBase {
 				}
 				if(nodesLimit > 0) {
 					maximumNodesLeft = maximumNodesLeft - deltaNodeProcessed;
-					cmd = new ModelCheckingStepCommand(maximumNodesLeft, timeout, this.options.recheckExisting(firstIteration));
+					cmd = new ModelCheckingStepCommand(maximumNodesLeft, timeout, modifiedOptions);
 					finished = finished || maximumNodesLeft <= 0;
 				} else {
-					cmd = new ModelCheckingStepCommand(timeout, this.options.recheckExisting(firstIteration));
+					cmd = new ModelCheckingStepCommand(timeout, modifiedOptions);
 				}
 				this.getStateSpace().execute(cmd);
 				stats = cmd.getStats();
@@ -131,7 +131,7 @@ public class ConsistencyChecker extends CheckerBase {
 					return;
 				}
 				this.updateStats(cmd.getResult(), stats);
-				firstIteration = false;
+				modifiedOptions = modifiedOptions.recheckExisting(false);
 			} while (cmd.getResult() instanceof NotYetFinished && !finished);
 		} finally {
 			this.getStateSpace().endTransaction();
