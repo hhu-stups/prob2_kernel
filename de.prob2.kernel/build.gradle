@@ -31,10 +31,10 @@ final isSnapshot = project.version.endsWith("-SNAPSHOT")
 def parserVersion
 def cliDownloadURL
 if (isSnapshot) {
-	parserVersion = '2.9.26-SNAPSHOT'
+	parserVersion = '2.9.27-SNAPSHOT'
 	cliDownloadURL = "https://www3.hhu.de/stups/downloads/prob/cli/nightly"
 } else {
-	parserVersion = '2.9.25'
+	parserVersion = '2.9.26'
 	cliDownloadURL = "https://www3.hhu.de/stups/downloads/prob/cli/releases/${cli_version}"
 }
 
@@ -69,7 +69,7 @@ dependencies {
 	api group: "de.hhu.stups", name: "prologlib", version: parserVersion
 	api group: "de.hhu.stups", name: "unicode", version: parserVersion
 	api group: "de.hhu.stups", name: "theorymapping", version: parserVersion
-	api group: "de.hhu.stups", name: "value-translator", version: "0.0.2"
+	api group: "de.hhu.stups", name: "value-translator", version: "0.1.1"
 
 	// Groovy (Apache License 2.0)
 	final groovyVersion = "3.0.3"
