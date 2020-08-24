@@ -97,10 +97,7 @@ public class ConstraintBasedDeadlockCheckCommand extends AbstractCommand
 			this.result = new ModelCheckOk("No deadlock was found");
 		} else if (resultTerm.hasFunctor("errors", 1)) {
 			PrologTerm error = resultTerm.getArgument(1);
-			logger.error("CBC Deadlock Check produced errors: {}", error);
-			this.result = new CheckError(
-				"CBC Deadlock check produced errors. This was likely during the typechecking of "
-				+ "the given predicate. See Log for details.");
+			this.result = new CheckError("CBC Deadlock check produced errors: " + error);
 		} else if (resultTerm.hasFunctor("interrupted", 0)) {
 			this.result = new NotYetFinished("CBC Deadlock check was interrupted", -1);
 		} else if (resultTerm.hasFunctor("deadlock", 2)) {
