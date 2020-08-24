@@ -61,10 +61,18 @@ public class ConstraintBasedDeadlockCheckCommand extends AbstractCommand
 		return result;
 	}
 
+	/**
+	 * @deprecated Use {@link #getResult()} instead. If a deadlock was found, the result is an instance of {@link CBCDeadlockFound}, and a trace to the deadlock state can be obtained using {@link CBCDeadlockFound#getTrace(StateSpace)}.
+	 */
+	@Deprecated
 	public String getDeadlockStateId() {
 		return deadlockStateId;
 	}
 
+	/**
+	 * @deprecated Use {@link #getResult()} instead. If a deadlock was found, the result is an instance of {@link CBCDeadlockFound}, and a trace to the deadlock state can be obtained using {@link CBCDeadlockFound#getTrace(StateSpace)}.
+	 */
+	@Deprecated
 	public Transition getDeadlockOperation() {
 		return deadlockOperation;
 	}
