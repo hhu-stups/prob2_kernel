@@ -115,9 +115,7 @@ public class ConstraintBasedDeadlockCheckCommand extends AbstractCommand
 
 			result = new CBCDeadlockFound(deadlockStateId, deadlockOperation);
 		} else {
-			String msg = "unexpected result from deadlock check: " + resultTerm;
-			logger.error(msg);
-			throw new ProBError(msg);
+			throw new ProBError("unexpected result from deadlock check: " + resultTerm);
 		}
 	}
 
