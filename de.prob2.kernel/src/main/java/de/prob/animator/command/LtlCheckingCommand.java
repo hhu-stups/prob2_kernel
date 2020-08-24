@@ -16,6 +16,7 @@ import de.prob.animator.domainobjects.ErrorItem;
 import de.prob.animator.domainobjects.LTL;
 import de.prob.check.CheckInterrupted;
 import de.prob.check.IModelCheckingResult;
+import de.prob.check.LTLChecker;
 import de.prob.check.LTLCounterExample;
 import de.prob.check.LTLError;
 import de.prob.check.LTLNotYetFinished;
@@ -140,6 +141,10 @@ public final class LtlCheckingCommand extends EvaluationCommand implements
 		pto.closeTerm();
 	}
 
+	/**
+	 * @deprecated Use {@link LTLChecker} for a high-level API for LTL checking, or use {@link LtlCheckingCommand} directly.
+	 */
+	@Deprecated
 	public static IModelCheckingResult modelCheck(final StateSpace s, final LTL formula, final int max) {
 		LtlCheckingCommand cmd = new LtlCheckingCommand(s, formula, max);
 		s.execute(cmd);
