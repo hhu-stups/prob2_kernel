@@ -114,9 +114,8 @@ public class EvalResult extends AbstractEvalResult {
 			 * 
 			 * If the formula in question was a predicate, Value is
 			 * 'TRUE','POSSIBLY TRUE', or 'FALSE' Solutions is then a list of
-			 * triples bind(Name,Solution,PPSol) where Name is the name of the
-			 * free variable calculated by ProB, Solution is the Prolog
-			 * representation of the solution, and PPSol is the String pretty
+			 * terms solution(Name,PPSol) where Name is the name of the
+			 * free variable calculated by ProB and PPSol is the String pretty
 			 * print of the solution calculated by Prolog.
 			 *
 			 * If the formula in question was an expression,
@@ -126,9 +125,9 @@ public class EvalResult extends AbstractEvalResult {
 			 * From this information, an EvalResult object is created.
 			 */
 
-			PrologTerm v = pt.getArgument(1);
-			String value = v.getFunctor().intern();
-			ListPrologTerm solutionList = BindingGenerator.getList(pt.getArgument(2));
+			final CompoundPrologTerm resultTerm = BindingGenerator.getCompoundTerm(pt, 2);
+			final String value = PrologTerm.atomicString(resultTerm.getArgument(1));
+			final ListPrologTerm solutionList = BindingGenerator.getList(resultTerm.getArgument(2));
 			if ("TRUE".equals(value) && solutionList.isEmpty()) {
 				return TRUE;
 			}
@@ -136,18 +135,24 @@ public class EvalResult extends AbstractEvalResult {
 				return FALSE;
 			}
 			if (!"TRUE".equals(value) && !"FALSE".equals(value) && formulaCache.containsKey(value)) {
+				assert solutionList.isEmpty();
 				return formulaCache.get(value);
 			}
 
-			Map<String, String> solutions = solutionList.isEmpty() ? Collections.emptyMap() : new HashMap<>();
-
-			for (PrologTerm t : solutionList) {
-				CompoundPrologTerm cpt = BindingGenerator.getCompoundTerm(t, 2);
-				solutions.put(PrologTerm.atomicString(cpt.getArgument(1)).intern(), PrologTerm.atomicString(cpt.getArgument(2)).intern());
+			final Map<String, String> solutions;
+			if (solutionList.isEmpty()) {
+				solutions = Collections.emptyMap();
+			} else {
+				solutions = new HashMap<>();
+				for (PrologTerm t : solutionList) {
+					CompoundPrologTerm cpt = BindingGenerator.getCompoundTerm(t, "solution", 2);
+					solutions.put(PrologTerm.atomicString(cpt.getArgument(1)).intern(), PrologTerm.atomicString(cpt.getArgument(2)).intern());
+				}
 			}
 
 			EvalResult res = new EvalResult(value, solutions);
 			if (!"TRUE".equals(value) && !"FALSE".equals(value)) {
+				assert solutionList.isEmpty();
 				formulaCache.put(value, res);
 			}
 			return res;
