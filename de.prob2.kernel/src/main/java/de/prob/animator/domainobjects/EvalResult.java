@@ -114,7 +114,7 @@ public class EvalResult extends AbstractEvalResult {
 			}
 
 			return new ComputationNotCompletedResult(code, String.join(",", list));
-		} else if (pt.getFunctor().intern().equals("result")) {
+		} else if ("result".equals(pt.getFunctor().intern())) {
 			/*
 			 * If the formula in question was a predicate, the result term will
 			 * have the following form: result(Value,Solutions) where Value is
@@ -135,13 +135,13 @@ public class EvalResult extends AbstractEvalResult {
 			PrologTerm v = pt.getArgument(1);
 			String value = v.getFunctor().intern();
 			ListPrologTerm solutionList = BindingGenerator.getList(pt.getArgument(2));
-			if (value.equals("TRUE") && solutionList.isEmpty()) {
+			if ("TRUE".equals(value) && solutionList.isEmpty()) {
 				return TRUE;
 			}
-			if (value.equals("FALSE") && solutionList.isEmpty()) {
+			if ("FALSE".equals(value) && solutionList.isEmpty()) {
 				return FALSE;
 			}
-			if (!value.equals("TRUE") && !value.equals("FALSE") && formulaCache.containsKey(value)) {
+			if (!"TRUE".equals(value) && !"FALSE".equals(value) && formulaCache.containsKey(value)) {
 				return formulaCache.get(value);
 			}
 
@@ -158,21 +158,21 @@ public class EvalResult extends AbstractEvalResult {
 			}
 
 			EvalResult res = new EvalResult(value, solutions);
-			if (!value.equals("TRUE") && !value.equals("FALSE")) {
+			if (!"TRUE".equals(value) && !"FALSE".equals(value)) {
 				formulaCache.put(value, res);
 			}
 			return res;
-		} else if (pt.getFunctor().intern().equals("errors") && pt.getArgument(1).getFunctor().intern().equals("NOT-WELL-DEFINED")) {
+		} else if ("errors".equals(pt.getFunctor().intern()) && "NOT-WELL-DEFINED".equals(pt.getArgument(1).getFunctor().intern())) {
 			ListPrologTerm arg2 = BindingGenerator.getList(pt.getArgument(2));
 			return new WDError(arg2.stream().map(PrologTerm::getFunctor).collect(Collectors.toList()));
-		} else if (pt.getFunctor().intern().equals("errors") && pt.getArgument(1).getFunctor().intern().equals("UNKNOWN")) {
+		} else if ("errors".equals(pt.getFunctor().intern()) && "UNKNOWN".equals(pt.getArgument(1).getFunctor().intern())) {
 			ListPrologTerm arg2 = BindingGenerator.getList(pt.getArgument(2));
 			return new UnknownEvaluationResult(arg2.stream().map(PrologTerm::getFunctor).collect(Collectors.toList()));
-		} else if (pt.getFunctor().intern().equals("errors")
-				&& pt.getArgument(1).getFunctor().intern().equals("IDENTIFIER(S) NOT YET INITIALISED; INITIALISE MACHINE FIRST")) {
+		} else if ("errors".equals(pt.getFunctor().intern())
+				&& "IDENTIFIER(S) NOT YET INITIALISED; INITIALISE MACHINE FIRST".equals(pt.getArgument(1).getFunctor().intern())) {
 			ListPrologTerm arg2 = BindingGenerator.getList(pt.getArgument(2));
 			return new IdentifierNotInitialised(arg2.stream().map(PrologTerm::getFunctor).collect(Collectors.toList()));
-		} else if (pt.getFunctor().intern().equals("enum_warning")) {
+		} else if ("enum_warning".equals(pt.getFunctor().intern())) {
 			return new EnumerationWarning();
 		}
 		throw new IllegalArgumentException("Unknown result type " + pt.toString());
