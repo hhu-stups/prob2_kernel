@@ -165,6 +165,9 @@ public class EvalResult extends AbstractEvalResult {
 		} else if (pt.getFunctor().intern().equals("errors") && pt.getArgument(1).getFunctor().intern().equals("NOT-WELL-DEFINED")) {
 			ListPrologTerm arg2 = BindingGenerator.getList(pt.getArgument(2));
 			return new WDError(arg2.stream().map(PrologTerm::getFunctor).collect(Collectors.toList()));
+		} else if (pt.getFunctor().intern().equals("errors") && pt.getArgument(1).getFunctor().intern().equals("UNKNOWN")) {
+			ListPrologTerm arg2 = BindingGenerator.getList(pt.getArgument(2));
+			return new UnknownEvaluationResult(arg2.stream().map(PrologTerm::getFunctor).collect(Collectors.toList()));
 		} else if (pt.getFunctor().intern().equals("errors")
 				&& pt.getArgument(1).getFunctor().intern().equals("IDENTIFIER(S) NOT YET INITIALISED; INITIALISE MACHINE FIRST")) {
 			ListPrologTerm arg2 = BindingGenerator.getList(pt.getArgument(2));
