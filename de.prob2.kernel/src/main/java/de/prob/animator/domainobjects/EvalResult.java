@@ -110,18 +110,18 @@ public class EvalResult extends AbstractEvalResult {
 			return new ComputationNotCompletedResult(code, String.join(",", errors));
 		} else if ("result".equals(pt.getFunctor())) {
 			/*
-			 * If the formula in question was a predicate, the result term will
-			 * have the following form: result(Value,Solutions) where Value is
+			 * The result term will have the form result(Value,Solutions).
+			 * 
+			 * If the formula in question was a predicate, Value is
 			 * 'TRUE','POSSIBLY TRUE', or 'FALSE' Solutions is then a list of
 			 * triples bind(Name,Solution,PPSol) where Name is the name of the
 			 * free variable calculated by ProB, Solution is the Prolog
 			 * representation of the solution, and PPSol is the String pretty
 			 * print of the solution calculated by Prolog.
 			 *
-			 * If the formula in question was an expression, the result term
-			 * will have the following form: result(v(SRes,PRes),[],Code) where
-			 * SRes is the string representation of the result calculated by
-			 * ProB and PRes is the Prolog representation of the value.
+			 * If the formula in question was an expression,
+			 * Value is the string representation of the result calculated by
+			 * ProB and Solutions is an empty list.
 			 *
 			 * From this information, an EvalResult object is created.
 			 */
@@ -137,11 +137,6 @@ public class EvalResult extends AbstractEvalResult {
 			}
 			if (!"TRUE".equals(value) && !"FALSE".equals(value) && formulaCache.containsKey(value)) {
 				return formulaCache.get(value);
-			}
-
-			if (v instanceof CompoundPrologTerm && v.getArity() == 2) {
-				CompoundPrologTerm cpt = BindingGenerator.getCompoundTerm(v, 2);
-				value = PrologTerm.atomicString(cpt.getArgument(1));
 			}
 
 			Map<String, String> solutions = solutionList.isEmpty() ? Collections.emptyMap() : new HashMap<>();
