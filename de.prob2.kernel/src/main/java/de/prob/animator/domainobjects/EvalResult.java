@@ -156,13 +156,23 @@ public class EvalResult extends AbstractEvalResult {
 				formulaCache.put(value, res);
 			}
 			return res;
-		} else if ("errors".equals(pt.getFunctor()) && "NOT-WELL-DEFINED".equals(pt.getArgument(1).getFunctor())) {
-			return new WDError(PrologTerm.atomicStrings(BindingGenerator.getList(pt.getArgument(2))));
-		} else if ("errors".equals(pt.getFunctor()) && "UNKNOWN".equals(pt.getArgument(1).getFunctor())) {
-			return new UnknownEvaluationResult(PrologTerm.atomicStrings(BindingGenerator.getList(pt.getArgument(2))));
-		} else if ("errors".equals(pt.getFunctor())
-				&& "IDENTIFIER(S) NOT YET INITIALISED; INITIALISE MACHINE FIRST".equals(pt.getArgument(1).getFunctor())) {
-			return new IdentifierNotInitialised(PrologTerm.atomicStrings(BindingGenerator.getList(pt.getArgument(2))));
+		} else if ("errors".equals(pt.getFunctor())) {
+			final CompoundPrologTerm errorsTerm = BindingGenerator.getCompoundTerm(pt, 2);
+			final String errorType = PrologTerm.atomicString(errorsTerm.getArgument(1));
+			final List<String> errors = PrologTerm.atomicStrings(BindingGenerator.getList(errorsTerm.getArgument(2)));
+			switch (errorType) {
+				case "NOT-WELL-DEFINED":
+					return new WDError(errors);
+				
+				case "UNKNOWN":
+					return new UnknownEvaluationResult(errors);
+				
+				case "IDENTIFIER(S) NOT YET INITIALISED; INITIALISE MACHINE FIRST":
+					return new IdentifierNotInitialised(errors);
+				
+				default:
+					throw new IllegalArgumentException("Unknown error type: " + errorType);
+			}
 		} else if ("enum_warning".equals(pt.getFunctor())) {
 			return new EnumerationWarning();
 		}
