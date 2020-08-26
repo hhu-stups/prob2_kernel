@@ -1,8 +1,8 @@
 package de.prob.animator.domainobjects;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -104,16 +104,10 @@ public class EvalResult extends AbstractEvalResult {
 			 * Prolog list with the code on the first index and a list of errors
 			 * This results therefore in a ComputationNotCompleted command
 			 */
-			ListPrologTerm listP = (ListPrologTerm) pt;
-			ArrayList<String> list = new ArrayList<>();
-
-			String code = listP.get(0).getFunctor();
-
-			for (int i = 1; i < listP.size(); i++) {
-				list.add(listP.get(i).getArgument(1).getFunctor());
-			}
-
-			return new ComputationNotCompletedResult(code, String.join(",", list));
+			final List<String> strings = PrologTerm.atomicStrings((ListPrologTerm)pt);
+			final String code = strings.get(0);
+			final List<String> errors = strings.subList(1, strings.size());
+			return new ComputationNotCompletedResult(code, String.join(",", errors));
 		} else if ("result".equals(pt.getFunctor())) {
 			/*
 			 * If the formula in question was a predicate, the result term will
@@ -147,14 +141,14 @@ public class EvalResult extends AbstractEvalResult {
 
 			if (v instanceof CompoundPrologTerm && v.getArity() == 2) {
 				CompoundPrologTerm cpt = BindingGenerator.getCompoundTerm(v, 2);
-				value = cpt.getArgument(1).getFunctor();
+				value = PrologTerm.atomicString(cpt.getArgument(1));
 			}
 
 			Map<String, String> solutions = solutionList.isEmpty() ? Collections.emptyMap() : new HashMap<>();
 
 			for (PrologTerm t : solutionList) {
 				CompoundPrologTerm cpt = BindingGenerator.getCompoundTerm(t, 2);
-				solutions.put(cpt.getArgument(1).getFunctor().intern(), cpt.getArgument(2).getFunctor().intern());
+				solutions.put(PrologTerm.atomicString(cpt.getArgument(1)).intern(), PrologTerm.atomicString(cpt.getArgument(2)).intern());
 			}
 
 			EvalResult res = new EvalResult(value, solutions);
@@ -163,15 +157,12 @@ public class EvalResult extends AbstractEvalResult {
 			}
 			return res;
 		} else if ("errors".equals(pt.getFunctor()) && "NOT-WELL-DEFINED".equals(pt.getArgument(1).getFunctor())) {
-			ListPrologTerm arg2 = BindingGenerator.getList(pt.getArgument(2));
-			return new WDError(arg2.stream().map(PrologTerm::getFunctor).collect(Collectors.toList()));
+			return new WDError(PrologTerm.atomicStrings(BindingGenerator.getList(pt.getArgument(2))));
 		} else if ("errors".equals(pt.getFunctor()) && "UNKNOWN".equals(pt.getArgument(1).getFunctor())) {
-			ListPrologTerm arg2 = BindingGenerator.getList(pt.getArgument(2));
-			return new UnknownEvaluationResult(arg2.stream().map(PrologTerm::getFunctor).collect(Collectors.toList()));
+			return new UnknownEvaluationResult(PrologTerm.atomicStrings(BindingGenerator.getList(pt.getArgument(2))));
 		} else if ("errors".equals(pt.getFunctor())
 				&& "IDENTIFIER(S) NOT YET INITIALISED; INITIALISE MACHINE FIRST".equals(pt.getArgument(1).getFunctor())) {
-			ListPrologTerm arg2 = BindingGenerator.getList(pt.getArgument(2));
-			return new IdentifierNotInitialised(arg2.stream().map(PrologTerm::getFunctor).collect(Collectors.toList()));
+			return new IdentifierNotInitialised(PrologTerm.atomicStrings(BindingGenerator.getList(pt.getArgument(2))));
 		} else if ("enum_warning".equals(pt.getFunctor())) {
 			return new EnumerationWarning();
 		}
