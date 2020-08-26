@@ -114,7 +114,7 @@ public class EvalResult extends AbstractEvalResult {
 			}
 
 			return new ComputationNotCompletedResult(code, String.join(",", list));
-		} else if ("result".equals(pt.getFunctor().intern())) {
+		} else if ("result".equals(pt.getFunctor())) {
 			/*
 			 * If the formula in question was a predicate, the result term will
 			 * have the following form: result(Value,Solutions) where Value is
@@ -162,17 +162,17 @@ public class EvalResult extends AbstractEvalResult {
 				formulaCache.put(value, res);
 			}
 			return res;
-		} else if ("errors".equals(pt.getFunctor().intern()) && "NOT-WELL-DEFINED".equals(pt.getArgument(1).getFunctor().intern())) {
+		} else if ("errors".equals(pt.getFunctor()) && "NOT-WELL-DEFINED".equals(pt.getArgument(1).getFunctor())) {
 			ListPrologTerm arg2 = BindingGenerator.getList(pt.getArgument(2));
 			return new WDError(arg2.stream().map(PrologTerm::getFunctor).collect(Collectors.toList()));
-		} else if ("errors".equals(pt.getFunctor().intern()) && "UNKNOWN".equals(pt.getArgument(1).getFunctor().intern())) {
+		} else if ("errors".equals(pt.getFunctor()) && "UNKNOWN".equals(pt.getArgument(1).getFunctor())) {
 			ListPrologTerm arg2 = BindingGenerator.getList(pt.getArgument(2));
 			return new UnknownEvaluationResult(arg2.stream().map(PrologTerm::getFunctor).collect(Collectors.toList()));
-		} else if ("errors".equals(pt.getFunctor().intern())
-				&& "IDENTIFIER(S) NOT YET INITIALISED; INITIALISE MACHINE FIRST".equals(pt.getArgument(1).getFunctor().intern())) {
+		} else if ("errors".equals(pt.getFunctor())
+				&& "IDENTIFIER(S) NOT YET INITIALISED; INITIALISE MACHINE FIRST".equals(pt.getArgument(1).getFunctor())) {
 			ListPrologTerm arg2 = BindingGenerator.getList(pt.getArgument(2));
 			return new IdentifierNotInitialised(arg2.stream().map(PrologTerm::getFunctor).collect(Collectors.toList()));
-		} else if ("enum_warning".equals(pt.getFunctor().intern())) {
+		} else if ("enum_warning".equals(pt.getFunctor())) {
 			return new EnumerationWarning();
 		}
 		throw new IllegalArgumentException("Unknown result type " + pt.toString());
