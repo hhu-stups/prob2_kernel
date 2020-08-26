@@ -48,23 +48,22 @@ public class EvaluateFormulasCommandTest {
 
 		IEvalElement element = new ClassicalB("1<3", FormulaExpand.EXPAND);
 
-		final CompoundPrologTerm lpt = mkResult("true");
+		final CompoundPrologTerm lpt = mkResult("TRUE");
 		ISimplifiedROMap<String, PrologTerm> m1 = key -> lpt;
 		EvaluateFormulaCommand command = new EvaluateFormulaCommand(element,
 				"root");
 		command.processResult(m1);
 
 		AbstractEvalResult value = command.getValue();
-		assertEquals("true", ((EvalResult) value).getValue());
+		assertEquals("TRUE", ((EvalResult) value).getValue());
 		assertEquals("3", ((EvalResult) value).getSolutions().get("a"));
 	}
 
 	private static CompoundPrologTerm mkResult(final String r) {
 		return new CompoundPrologTerm("result", new CompoundPrologTerm(r),
-				new ListPrologTerm(new CompoundPrologTerm("bind",
+				new ListPrologTerm(new CompoundPrologTerm("solution",
 						new CompoundPrologTerm("a"),
-						new CompoundPrologTerm("3"))), new CompoundPrologTerm(
-						"foo"));
+						new CompoundPrologTerm("3"))));
 	}
 
 }
