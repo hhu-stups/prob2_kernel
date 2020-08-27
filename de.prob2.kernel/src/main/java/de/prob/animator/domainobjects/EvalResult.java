@@ -170,6 +170,11 @@ public class EvalResult extends AbstractEvalResult {
 				case "IDENTIFIER(S) NOT YET INITIALISED; INITIALISE MACHINE FIRST":
 					return new IdentifierNotInitialised(errors);
 				
+				case "ERROR":
+				case "SYNTAX ERROR":
+				case "TYPE ERROR":
+					return new UnknownEvaluationResult(errors); // TO DO: produce own class
+				
 				default:
 					throw new IllegalArgumentException("Unknown error type: " + errorType);
 			}
