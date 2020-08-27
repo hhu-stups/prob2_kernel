@@ -98,7 +98,7 @@ public class EvalResult extends AbstractEvalResult {
 	 * @return {@link AbstractEvalResult} translation of pt
 	 */
 	public static AbstractEvalResult getEvalResult(PrologTerm pt) {
-		if (pt instanceof ListPrologTerm) {
+		if (pt instanceof ListPrologTerm) { // deprecated
 			/*
 			 * If the evaluation was not successful, the result should be a
 			 * Prolog list with the code on the first index and a list of errors
@@ -167,13 +167,16 @@ public class EvalResult extends AbstractEvalResult {
 				case "UNKNOWN":
 					return new UnknownEvaluationResult(errors);
 				
-				case "IDENTIFIER(S) NOT YET INITIALISED; INITIALISE MACHINE FIRST":
+				case "NOT-INITIALISED":
+				case "IDENTIFIER(S) NOT YET INITIALISED; INITIALISE MACHINE FIRST": // deprecated
 					return new IdentifierNotInitialised(errors);
 				
 				case "ERROR":
 				case "SYNTAX ERROR":
 				case "TYPE ERROR":
-					return new UnknownEvaluationResult(errors); // TO DO: produce own class
+				case "INTERNAL ERROR":
+					//return new UnknownEvaluationResult(errors); // TO DO: produce own class
+			        return new ComputationNotCompletedResult("formula", String.join(",", errors));
 				
 				default:
 					throw new IllegalArgumentException("Unknown error type: " + errorType);
