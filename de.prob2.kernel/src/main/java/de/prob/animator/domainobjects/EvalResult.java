@@ -113,7 +113,7 @@ public class EvalResult extends AbstractEvalResult {
 			 * The result term will have the form result(Value,Solutions).
 			 * 
 			 * If the formula in question was a predicate, Value is
-			 * 'TRUE','POSSIBLY TRUE', or 'FALSE' Solutions is then a list of
+			 * 'TRUE', or 'FALSE' Solutions is then a list of
 			 * terms solution(Name,PPSol) where Name is the name of the
 			 * free variable calculated by ProB and PPSol is the String pretty
 			 * print of the solution calculated by Prolog.
