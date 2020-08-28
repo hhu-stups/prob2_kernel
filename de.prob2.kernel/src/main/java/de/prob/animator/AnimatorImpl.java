@@ -67,12 +67,7 @@ class AnimatorImpl implements IAnimator {
 				}
 				this.warningListeners.forEach(listener -> listener.warningsOccurred(errorItemsCommand.getErrors()));
 			}
-			try {
-				command.processResult(((YesResult) result).getBindings());
-			} catch (RuntimeException e) {
-				this.kill();
-				throw new CliError("Exception while processing command result", e);
-			}
+			command.processResult(((YesResult) result).getBindings());
 		} else {
 			logger.trace("Execution unsuccessful, processing error");
 			command.processErrorResult(result, errorItemsCommand.getErrors());
