@@ -6,7 +6,6 @@ plugins {
 dependencies {
 	implementation(project(":"))
 	
-	implementation(group: "ch.qos.logback", name: "logback-core", version: "1.2.3") // Eclipse Public License 1.0
 	implementation(group: "ch.qos.logback", name: "logback-classic", version: "1.2.3") // Eclipse Public License 1.0
 	implementation(group: "commons-cli", name: "commons-cli", version: "1.4") // Apache License 2.0
 }
