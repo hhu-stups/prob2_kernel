@@ -41,26 +41,29 @@ public final class CommandLineMain {
 	}
 	
 	private void run(final String[] args) throws IOException, ScriptException {
+		final CommandLine line;
 		try {
-			CommandLine line = parser.parse(options, args);
-			if (line.hasOption("maxCacheSize")) {
-				logger.debug("setting maximum cache size requested");
-				String value = line.getOptionValue("maxCacheSize");
-				logger.debug("retrieved maxSize");
-				Main.setMaxCacheSize(Integer.valueOf(value));
-				logger.debug("Max size set successfully to {}", value);
-			}
-			
-			if (line.hasOption("script")) {
-				logger.debug("Run Script");
-				String value = line.getOptionValue("script");
-				shell.runScript(new File(value), false);
-			}
+			line = parser.parse(options, args);
 		} catch (ParseException e) {
 			logger.debug("Failed to parse CLI", e);
 			HelpFormatter formatter = new HelpFormatter();
 			formatter.printHelp("java -jar probcli.jar", options);
 			System.exit(-1);
+			throw new AssertionError("System.exit shouldn't return", e);
+		}
+		
+		if (line.hasOption("maxCacheSize")) {
+			logger.debug("setting maximum cache size requested");
+			String value = line.getOptionValue("maxCacheSize");
+			logger.debug("retrieved maxSize");
+			Main.setMaxCacheSize(Integer.valueOf(value));
+			logger.debug("Max size set successfully to {}", value);
+		}
+		
+		if (line.hasOption("script")) {
+			logger.debug("Run Script");
+			String value = line.getOptionValue("script");
+			shell.runScript(new File(value), false);
 		}
 	}
 
@@ -77,10 +80,10 @@ public final class CommandLineMain {
 		
 		final Injector injector = Guice.createInjector(Stage.PRODUCTION, new CommandLineModule());
 		Main.setInjector(injector);
+		final CommandLineMain main = injector.getInstance(CommandLineMain.class);
 		try {
-			final CommandLineMain main = injector.getInstance(CommandLineMain.class);
 			main.run(args);
-		} catch (Exception e) {
+		} catch (IOException | ScriptException e) {
 			logger.error("Unhandled exception", e);
 			System.exit(-1);
 		} finally {
