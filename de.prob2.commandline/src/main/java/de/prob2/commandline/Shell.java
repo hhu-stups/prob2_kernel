@@ -69,8 +69,9 @@ final class Shell {
 			System.err.printf("Exception thrown by script %s: %s%n", scriptFile, e);
 			logger.error("Exception thrown by script", e);
 			throw e;
+		} finally {
+			proBs.shutdownAll();
 		}
-		proBs.shutdownAll();
 		stopwatch.stop();
 		if (!silent) {
 			final double seconds = stopwatch.elapsed(TimeUnit.MILLISECONDS) / 1000.0;

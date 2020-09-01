@@ -13,7 +13,6 @@ import com.google.inject.Injector;
 import com.google.inject.Stage;
 
 import de.prob.Main;
-import de.prob.cli.ProBInstanceProvider;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -84,8 +83,6 @@ public final class CommandLineMain {
 		} catch (IOException | ScriptException e) {
 			logger.error("Unhandled exception", e);
 			System.exit(-1);
-		} finally {
-			injector.getInstance(ProBInstanceProvider.class).shutdownAll();
 		}
 		System.exit(0);
 	}
