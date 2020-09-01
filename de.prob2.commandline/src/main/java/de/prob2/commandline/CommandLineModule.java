@@ -3,8 +3,6 @@ package de.prob2.commandline;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
-import de.prob.MainModule;
-
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
@@ -18,8 +16,6 @@ final class CommandLineModule extends AbstractModule {
 	
 	@Override
 	protected void configure() {
-		install(new MainModule());
-		
 		bind(CommandLineParser.class).to(DefaultParser.class);
 	}
 	

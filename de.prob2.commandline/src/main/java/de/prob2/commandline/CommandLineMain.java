@@ -13,6 +13,7 @@ import com.google.inject.Injector;
 import com.google.inject.Stage;
 
 import de.prob.Main;
+import de.prob.MainModule;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -27,13 +28,11 @@ public final class CommandLineMain {
 	
 	private final CommandLineParser parser;
 	private final Options options;
-	private final Shell shell;
 	
 	@Inject
-	private CommandLineMain(final CommandLineParser parser, final Options options, final Shell shell) {
+	private CommandLineMain(final CommandLineParser parser, final Options options) {
 		this.parser = parser;
 		this.options = options;
-		this.shell = shell;
 		logger.debug("Java version: {}", System.getProperty("java.version"));
 	}
 	
@@ -57,11 +56,13 @@ public final class CommandLineMain {
 			logger.debug("Max size set successfully to {}", value);
 		}
 		
+		final Injector proBInjector = Guice.createInjector(Stage.PRODUCTION, new MainModule());
+		
 		if (line.hasOption("script")) {
 			logger.debug("Run Script");
 			String value = line.getOptionValue("script");
 			try {
-				shell.runScript(new File(value), false);
+				proBInjector.getInstance(Shell.class).runScript(new File(value), false);
 			} catch (IOException | ScriptException e) {
 				logger.error("Exception while executing script", e);
 				System.exit(-1);
@@ -80,9 +81,8 @@ public final class CommandLineMain {
 		}
 		logger = LoggerFactory.getLogger(CommandLineMain.class);
 		
-		final Injector injector = Guice.createInjector(Stage.PRODUCTION, new CommandLineModule());
-		Main.setInjector(injector);
-		injector.getInstance(CommandLineMain.class).run(args);
+		final Injector cliInjector = Guice.createInjector(Stage.PRODUCTION, new CommandLineModule());
+		cliInjector.getInstance(CommandLineMain.class).run(args);
 		System.exit(0);
 	}
 }
