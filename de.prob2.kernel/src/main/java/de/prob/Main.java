@@ -25,9 +25,6 @@ import de.prob.cli.Installer;
  * The old name of this class is kept to avoid breaking existing code.
  */
 public class Main {
-
-	private static int maxCacheSize = 100;
-
 	private static Injector injector = null;
 
 	private static final Properties buildProperties;
@@ -112,18 +109,5 @@ public class Main {
 
 	public static String getGitSha() {
 		return buildProperties.getProperty("git");
-	}
-
-	public static int getMaxCacheSize() {
-		return maxCacheSize;
-	}
-
-	/**
-	 * DO NOT USE - for internal use only by the ProB 2 command line.
-	 * 
-	 * @param maxCacheSize the new max cache size
-	 */
-	public static void setMaxCacheSize(final int maxCacheSize) {
-		Main.maxCacheSize = maxCacheSize;
 	}
 }

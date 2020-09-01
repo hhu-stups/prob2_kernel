@@ -3,8 +3,10 @@ package de.prob.statespace
 import java.nio.file.Paths
 
 import com.google.common.util.concurrent.UncheckedExecutionException
+import com.google.inject.Guice
 
 import de.prob.Main
+import de.prob.MainModule
 import de.prob.scripting.ClassicalBFactory
 
 import spock.lang.Specification
@@ -106,9 +108,11 @@ class StateSpaceCachingTest extends Specification {
 
 	def "the cache is emptied when it gets too full"() {
 		given:
-		Main.maxCacheSize = 5
+		final mainModule = new MainModule()
+		mainModule.maxCacheSize = 5
+		final injector = Guice.createInjector(mainModule)
 		final path = Paths.get("groovyTests", "machines", "scheduler.mch").toString()
-		final factory = Main.injector.getInstance(ClassicalBFactory.class)
+		final factory = injector.getInstance(ClassicalBFactory.class)
 
 		when:
 		final s = factory.extract(path).load([:])
@@ -126,7 +130,6 @@ class StateSpaceCachingTest extends Specification {
 		if (s != null) {
 			s.kill()
 		}
-		Main.maxCacheSize = 100
 	}
 
 	def "trying to get a key from the LoadingCache that doesn't exist results in an exception"() {

@@ -48,15 +48,17 @@ public final class CommandLineMain {
 			throw new AssertionError("System.exit shouldn't return", e);
 		}
 		
+		final MainModule mainModule = new MainModule();
+		
 		if (line.hasOption("maxCacheSize")) {
 			logger.debug("setting maximum cache size requested");
 			String value = line.getOptionValue("maxCacheSize");
 			logger.debug("retrieved maxSize");
-			Main.setMaxCacheSize(Integer.valueOf(value));
+			mainModule.setMaxCacheSize(Integer.parseInt(value));
 			logger.debug("Max size set successfully to {}", value);
 		}
 		
-		final Injector proBInjector = Guice.createInjector(Stage.PRODUCTION, new MainModule());
+		final Injector proBInjector = Guice.createInjector(Stage.PRODUCTION, mainModule);
 		
 		if (line.hasOption("script")) {
 			logger.debug("Run Script");
