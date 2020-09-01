@@ -37,7 +37,7 @@ public final class CommandLineMain {
 		logger.debug("Java version: {}", System.getProperty("java.version"));
 	}
 	
-	private void run(final String[] args) throws IOException, ScriptException {
+	private void run(final String[] args) {
 		final CommandLine line;
 		try {
 			line = parser.parse(options, args);
@@ -60,7 +60,12 @@ public final class CommandLineMain {
 		if (line.hasOption("script")) {
 			logger.debug("Run Script");
 			String value = line.getOptionValue("script");
-			shell.runScript(new File(value), false);
+			try {
+				shell.runScript(new File(value), false);
+			} catch (IOException | ScriptException e) {
+				logger.error("Exception while executing script", e);
+				System.exit(-1);
+			}
 		}
 	}
 
@@ -77,13 +82,7 @@ public final class CommandLineMain {
 		
 		final Injector injector = Guice.createInjector(Stage.PRODUCTION, new CommandLineModule());
 		Main.setInjector(injector);
-		final CommandLineMain main = injector.getInstance(CommandLineMain.class);
-		try {
-			main.run(args);
-		} catch (IOException | ScriptException e) {
-			logger.error("Unhandled exception", e);
-			System.exit(-1);
-		}
+		injector.getInstance(CommandLineMain.class).run(args);
 		System.exit(0);
 	}
 }
