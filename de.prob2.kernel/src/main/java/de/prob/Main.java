@@ -46,6 +46,10 @@ public class Main {
 		super();
 	}
 
+	/**
+	 * @deprecated ProB 2's global injector should not be used anymore. Create your own injector instead, using {@code Guice.createInjector(new MainModule())}.
+	 */
+	@Deprecated
 	public static synchronized Injector getInjector() {
 		if (injector == null) {
 			injector = Guice.createInjector(Stage.PRODUCTION, new MainModule());
