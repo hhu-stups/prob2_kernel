@@ -59,7 +59,6 @@ public final class RulesTestUtil {
 			sb.append('\n');
 			sb.append(machineBody);
 			sb.append("\nEND");
-			System.out.println(sb);
 			try (
 				FileOutputStream fos = new FileOutputStream(tempFile);
 				OutputStreamWriter osw = new OutputStreamWriter(fos);

@@ -111,7 +111,6 @@ public class RulesMachineTest {
 		RulesMachineRun rulesMachineRun = new RulesMachineRun(file);
 		rulesMachineRun.setMaxNumberOfReportedCounterExamples(20);
 		rulesMachineRun.start();
-		System.out.println(rulesMachineRun.getRuleResults().getRuleResult("Rule1").getCounterExamples());
 		assertEquals(20, rulesMachineRun.getRuleResults().getRuleResult("Rule1").getCounterExamples().size());
 	}
 
@@ -122,7 +121,6 @@ public class RulesMachineTest {
 		RulesMachineRun rulesMachineRun = new RulesMachineRun(file);
 		rulesMachineRun.setMaxNumberOfReportedCounterExamples(1000);
 		rulesMachineRun.start();
-		System.out.println(rulesMachineRun.getRuleResults().getRuleResult("Rule1").getCounterExamples());
 		assertEquals(1000, rulesMachineRun.getRuleResults().getRuleResult("Rule1").getCounterExamples().size());
 	}
 
@@ -154,10 +152,8 @@ public class RulesMachineTest {
 		RulesMachineRun rulesMachineRun = startRulesMachineRunWithOperations(
 				"RULE Rule1 RULEID id1 BODY RULE_FAIL COUNTEREXAMPLE \"foo\" END END",
 				"RULE Rule2 DEPENDS_ON_RULE Rule1 BODY RULE_FAIL WHEN 1=2 COUNTEREXAMPLE \"fail\" END END");
-		System.out.println(rulesMachineRun.getFirstError());
 		// @formatter:on
 		assertFalse(rulesMachineRun.hasError());
-		System.out.println(rulesMachineRun.getRuleResults());
 		assertTrue(rulesMachineRun.getRuleResults().getRuleResult("Rule1").hasFailed());
 		assertEquals(RuleStatus.FAIL, rulesMachineRun.getRuleResults().getRuleResult("Rule1").getRuleState());
 		assertEquals(RuleStatus.NOT_CHECKED, rulesMachineRun.getRuleResults().getRuleResult("Rule2").getRuleState());
@@ -190,9 +186,6 @@ public class RulesMachineTest {
 
 		RuleResult rule1Result = ruleResults.getRuleResult("RULE_Rule1");
 		assertEquals(RuleStatus.FAIL, rule1Result.getRuleState());
-
-		// test existing computations
-		System.out.println(rulesMachineRun.getRulesProject().getOperationsMap());
 	}
 
 	@Test

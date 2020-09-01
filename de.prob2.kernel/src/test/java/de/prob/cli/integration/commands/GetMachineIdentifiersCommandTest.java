@@ -27,8 +27,6 @@ public class GetMachineIdentifiersCommandTest {
 
 	@Test
 	public void testGetMachineIdentifiersCommand() throws IOException, ModelTranslationError {
-		System.out.println(Main.getProBDirectory());
-		System.out.println(api.getVersion());
 		s = api.b_load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "ExampleMachine.mch").toString());
 		assertNotNull(s);
 		GetMachineIdentifiersCommand command = new GetMachineIdentifiersCommand(

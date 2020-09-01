@@ -19,7 +19,6 @@ public class RulesMachineErrorsTest {
 	@Test
 	public void testRulesMachineWithParseError() {
 		RulesMachineRun rulesMachineRun = startRulesMachineRunWithOperations("RULE foo BODY ;; END");
-		System.out.println(rulesMachineRun.getFirstError().getMessage());
 		assertEquals(ERROR_TYPES.PARSE_ERROR, rulesMachineRun.getFirstError().getType());
 		assertTrue(rulesMachineRun.getFirstError().getException() instanceof BException);
 	}
@@ -28,7 +27,6 @@ public class RulesMachineErrorsTest {
 	public void testRulesMachineWithTypeError() {
 		RulesMachineRun rulesMachineRun = startRulesMachineRunWithOperations(
 				"RULE foo BODY VAR xx IN xx := 1; xx := TRUE END;RULE_FAIL COUNTEREXAMPLE \"fail\" END END");
-		System.out.println(rulesMachineRun.getFirstError());
 		assertEquals(ERROR_TYPES.PROB_ERROR, rulesMachineRun.getFirstError().getType());
 	}
 
@@ -60,7 +58,6 @@ public class RulesMachineErrorsTest {
 				"RULE Rule1 BODY VAR xx IN xx := {1|->2}(3) END;RULE_FAIL COUNTEREXAMPLE \"fail\" END END",
 				"RULE Rule2 DEPENDS_ON_RULE Rule1 BODY RULE_FAIL COUNTEREXAMPLE \"fail\" END END"
 		);
-		System.out.println(rulesMachineRun.getFirstError());
 		// @formatter:on
 		assertTrue(rulesMachineRun.hasError());
 		int numberofStatesExecuted = rulesMachineRun.getExecuteRun().getExecuteModelCommand()
@@ -68,8 +65,6 @@ public class RulesMachineErrorsTest {
 		assertEquals(1, numberofStatesExecuted);
 		assertEquals(ERROR_TYPES.PROB_ERROR, rulesMachineRun.getFirstError().getType());
 		assertTrue(rulesMachineRun.getTotalNumberOfProBCliErrors().intValue() > 0);
-
-		System.out.println(rulesMachineRun.getRuleResults());
 
 		// Rule1 is not checked because of the WD Error
 		assertEquals(RuleStatus.NOT_CHECKED, rulesMachineRun.getRuleResults().getRuleResult("Rule1").getRuleState());
