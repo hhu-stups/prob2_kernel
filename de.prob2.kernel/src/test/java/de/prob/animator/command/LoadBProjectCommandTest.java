@@ -26,7 +26,7 @@ public class LoadBProjectCommandTest {
 		assertNotNull(resource);
 		File f =  new File(resource.toURI());
 		StructuredPrologOutput prologTermOutput = new StructuredPrologOutput();
-		ClassicalBFactory factory = new ClassicalBFactory(null);
+		ClassicalBFactory factory = new ClassicalBFactory(null, null);
 		BParser bparser = new BParser();
 		Start ast = factory.parseFile(f, bparser);
 		RecursiveMachineLoader rml = factory.parseAllMachines(ast,

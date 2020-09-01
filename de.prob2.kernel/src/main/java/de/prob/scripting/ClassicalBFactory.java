@@ -14,6 +14,7 @@ import de.be4.classicalb.core.parser.PlainFileContentProvider;
 import de.be4.classicalb.core.parser.analysis.prolog.RecursiveMachineLoader;
 import de.be4.classicalb.core.parser.exceptions.BCompoundException;
 import de.be4.classicalb.core.parser.node.Start;
+import de.prob.annotations.Home;
 import de.prob.exception.ProBError;
 import de.prob.model.classicalb.ClassicalBModel;
 
@@ -32,8 +33,16 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 	private final Provider<ClassicalBModel> modelCreator;
 
 	@Inject
-	public ClassicalBFactory(final Provider<ClassicalBModel> modelCreator) {
+	public ClassicalBFactory(final Provider<ClassicalBModel> modelCreator, final @Home String probdir) {
 		this.modelCreator = modelCreator;
+
+		// Provide location of ProB stdlib directory to the parser,
+		// if it hasn't been set already.
+		// (The null check for probdir is only needed because this constructor is called manually from LoadBProjectCommandTest.testWriteCommand.
+		// In all other cases, probdir is never null.)
+		if (System.getProperty("prob.stdlib") == null && probdir != null) {
+			System.setProperty("prob.stdlib", probdir + File.separator + "stdlib");
+		}
 	}
 
 	@Override

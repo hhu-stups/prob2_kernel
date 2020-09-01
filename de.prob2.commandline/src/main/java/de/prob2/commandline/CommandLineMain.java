@@ -13,7 +13,6 @@ import com.google.inject.Injector;
 import com.google.inject.Stage;
 
 import de.prob.Main;
-import de.prob.annotations.Home;
 import de.prob.cli.ProBInstanceProvider;
 
 import org.apache.commons.cli.CommandLine;
@@ -32,11 +31,10 @@ public final class CommandLineMain {
 	private final Shell shell;
 	
 	@Inject
-	private CommandLineMain(final CommandLineParser parser, final Options options, final Shell shell, @Home String probdir) {
+	private CommandLineMain(final CommandLineParser parser, final Options options, final Shell shell) {
 		this.parser = parser;
 		this.options = options;
 		this.shell = shell;
-		System.setProperty("prob.stdlib", probdir + File.separator + "stdlib");
 		logger.debug("Java version: {}", System.getProperty("java.version"));
 	}
 	
