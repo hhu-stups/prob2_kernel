@@ -60,7 +60,7 @@ class BasicStateTest extends Specification {
 		def oldmodel = s.getModel()
 		
 		
-		def model = new CSPModel(null)
+		def model = CliTestCommon.injector.getInstance(CSPModel.class)
 
 		s.model = model
 

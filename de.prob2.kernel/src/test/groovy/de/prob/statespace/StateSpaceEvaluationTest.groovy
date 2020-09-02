@@ -76,7 +76,7 @@ class StateSpaceEvaluationTest extends Specification {
 
 	def "csp formulas cannot be subscribed"() {
 		when:
-		CSPModel m = new CSPModel(null);
+		CSPModel m = CliTestCommon.injector.getInstance(CSPModel.class)
 		m = m.create("some content", new File("somedir"+File.separator+"someotherdir"+File.separator+"myfile.csp"))
 		CSP csp = new CSP("some formula", m)
 		def subscriber1 = "subscriber1"
