@@ -25,6 +25,7 @@ import de.prob.cli.Installer;
  * The old name of this class is kept to avoid breaking existing code.
  */
 public class Main {
+	@Deprecated
 	private static Injector injector = null;
 
 	private static final Properties buildProperties;
@@ -62,7 +63,10 @@ public class Main {
 	 *
 	 * @param i
 	 *            the new injector to use
+	 * 
+	 * @deprecated ProB 2 no longer uses the global injector.
 	 */
+	@Deprecated
 	public static synchronized void setInjector(final Injector i) {
 		injector = i;
 	}
