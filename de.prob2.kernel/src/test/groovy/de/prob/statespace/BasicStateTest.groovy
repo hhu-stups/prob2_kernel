@@ -2,9 +2,9 @@ package de.prob.statespace
 
 import java.nio.file.Paths
 
-import de.prob.Main
 import de.prob.animator.domainobjects.ClassicalB
 import de.prob.animator.domainobjects.StateError
+import de.prob.cli.CliTestCommon
 import de.prob.model.representation.CSPModel
 import de.prob.scripting.ClassicalBFactory
 
@@ -18,7 +18,7 @@ class BasicStateTest extends Specification {
 
 	def setupSpec() {
 		final path = Paths.get("groovyTests", "machines", "scheduler.mch").toString()
-		final factory = Main.injector.getInstance(ClassicalBFactory.class)
+		final factory = CliTestCommon.injector.getInstance(ClassicalBFactory.class)
 		s = factory.extract(path).load([:])
 		root = s.root
 		firstState = root.$initialise_machine()

@@ -1,10 +1,10 @@
 package de.prob.cli.integration;
 
-import de.prob.Main;
 import de.prob.animator.IAnimator;
 import de.prob.animator.ReusableAnimator;
 import de.prob.animator.command.GetVersionCommand;
 import de.prob.animator.domainobjects.FormulaExpand;
+import de.prob.cli.CliTestCommon;
 import de.prob.scripting.ClassicalBFactory;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
@@ -26,12 +26,12 @@ public final class ReusableAnimatorTest {
 	
 	@BeforeClass
 	public static void beforeClass() {
-		modelFactory = Main.getInjector().getInstance(ClassicalBFactory.class);
+		modelFactory = CliTestCommon.getInjector().getInstance(ClassicalBFactory.class);
 	}
 	
 	@Before
 	public void setUp() {
-		this.animator = Main.getInjector().getInstance(ReusableAnimator.class);
+		this.animator = CliTestCommon.getInjector().getInstance(ReusableAnimator.class);
 	}
 	
 	@After

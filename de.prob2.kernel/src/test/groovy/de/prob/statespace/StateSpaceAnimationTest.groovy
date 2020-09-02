@@ -2,10 +2,10 @@ package de.prob.statespace
 
 import java.nio.file.Paths
 
-import de.prob.Main
 import de.prob.animator.domainobjects.ClassicalB
 import de.prob.animator.domainobjects.FormulaExpand
 import de.prob.animator.domainobjects.IdentifierNotInitialised
+import de.prob.cli.CliTestCommon
 import de.prob.scripting.ClassicalBFactory
 
 import spock.lang.Specification
@@ -17,7 +17,7 @@ class StateSpaceAnimationTest extends Specification {
 
 	def setupSpec() {
 		final path = Paths.get("groovyTests", "machines", "scheduler.mch").toString()
-		ClassicalBFactory factory = Main.injector.getInstance(ClassicalBFactory.class)
+		ClassicalBFactory factory = CliTestCommon.injector.getInstance(ClassicalBFactory.class)
 		s = factory.extract(path).load([:])
 		root = s.root
 		firstState = root.$initialise_machine()

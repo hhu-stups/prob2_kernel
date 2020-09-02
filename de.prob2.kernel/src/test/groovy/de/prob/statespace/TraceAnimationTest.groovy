@@ -1,6 +1,6 @@
 package de.prob.statespace
 
-import de.prob.Main
+import de.prob.cli.CliTestCommon
 import de.prob.scripting.ClassicalBFactory
 
 import spock.lang.Specification
@@ -11,7 +11,7 @@ class TraceAnimationTest extends Specification {
 
 	def setupSpec() {
 		def path = System.getProperties().get("user.dir")+"/groovyTests/machines/scheduler.mch"
-		ClassicalBFactory factory = Main.getInjector().getInstance(ClassicalBFactory.class)
+		ClassicalBFactory factory = CliTestCommon.injector.getInstance(ClassicalBFactory.class)
 		s = factory.extract(path).load([:])
 	}
 

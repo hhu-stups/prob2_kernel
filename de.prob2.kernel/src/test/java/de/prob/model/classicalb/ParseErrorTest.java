@@ -3,7 +3,7 @@ package de.prob.model.classicalb;
 import java.io.IOException;
 import java.nio.file.Paths;
 
-import de.prob.Main;
+import de.prob.cli.CliTestCommon;
 import de.prob.exception.ProBError;
 import de.prob.scripting.Api;
 import de.prob.scripting.ModelTranslationError;
@@ -11,14 +11,13 @@ import de.prob.scripting.ModelTranslationError;
 import org.junit.Before;
 import org.junit.Test;
 
-
 public class ParseErrorTest {
 
 	private Api api;
 
 	@Before
 	public void setup() {
-		api = Main.getInjector().getInstance(Api.class);
+		api = CliTestCommon.getInjector().getInstance(Api.class);
 	}
 
 	@Test(expected = ProBError.class)

@@ -4,18 +4,15 @@ import java.io.BufferedReader;
 import java.io.StringReader;
 import java.util.Map;
 
-import de.prob.Main;
-
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 public class ProBInstanceProviderTest {
 
 	@Test
 	public void testExtractCliInformation() {
-		ProBInstanceProvider factory = Main.getInjector().getInstance(
-				ProBInstanceProvider.class);
+		ProBInstanceProvider factory = CliTestCommon.getInjector().getInstance(ProBInstanceProvider.class);
 
 		String text = "No file to process\nStarting Socket Server\n"
 				+ "Application Path: /Users/bendisposto/.prob\nPort: 61013\n"

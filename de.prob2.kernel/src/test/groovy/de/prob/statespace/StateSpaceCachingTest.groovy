@@ -5,8 +5,8 @@ import java.nio.file.Paths
 import com.google.common.util.concurrent.UncheckedExecutionException
 import com.google.inject.Guice
 
-import de.prob.Main
 import de.prob.MainModule
+import de.prob.cli.CliTestCommon
 import de.prob.scripting.ClassicalBFactory
 
 import spock.lang.Specification
@@ -17,7 +17,7 @@ class StateSpaceCachingTest extends Specification {
 
 	def setupSpec() {
 		final path = Paths.get("groovyTests", "machines", "scheduler.mch").toString()
-		final factory = Main.injector.getInstance(ClassicalBFactory.class)
+		final factory = CliTestCommon.injector.getInstance(ClassicalBFactory.class)
 		s = factory.extract(path).load([:])
 	}
 
