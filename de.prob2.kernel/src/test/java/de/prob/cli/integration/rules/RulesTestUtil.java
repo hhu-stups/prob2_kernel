@@ -12,10 +12,12 @@ import java.util.stream.Collectors;
 import de.be4.classicalb.core.parser.rules.AbstractOperation;
 import de.be4.classicalb.core.parser.rules.RuleOperation;
 import de.be4.classicalb.core.parser.rules.RulesProject;
+import de.prob.cli.CliTestCommon;
 import de.prob.model.brules.RuleResult;
 import de.prob.model.brules.RuleResults;
 import de.prob.model.brules.RuleStatus;
 import de.prob.model.brules.RulesMachineRun;
+import de.prob.model.brules.RulesMachineRunner;
 
 import static org.junit.Assert.*;
 
@@ -24,12 +26,16 @@ public final class RulesTestUtil {
 		throw new AssertionError("Utility class");
 	}
 
+	public static RulesMachineRunner getRulesMachineRunner() {
+		return CliTestCommon.getInjector().getInstance(RulesMachineRunner.class);
+	}
+
 	public static RulesMachineRun startRulesMachineRun(String file) {
 		return startRulesMachineRun(new File(file));
 	}
 
 	public static RulesMachineRun startRulesMachineRun(File file) {
-		RulesMachineRun rulesMachineRun = new RulesMachineRun(file);
+		RulesMachineRun rulesMachineRun = new RulesMachineRun(getRulesMachineRunner(), file);
 		rulesMachineRun.start();
 		if (!rulesMachineRun.hasError()) {
 			checkRulesMachineRunForConsistency(rulesMachineRun);

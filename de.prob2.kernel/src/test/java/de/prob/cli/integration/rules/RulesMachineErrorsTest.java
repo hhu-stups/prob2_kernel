@@ -34,7 +34,7 @@ public class RulesMachineErrorsTest {
 	public void testContinueAfterError() {
 		File runnerFile = createRulesMachineFile("OPERATIONS RULE Rule1 BODY VAR xx IN xx := {1|->2}(3) END;RULE_FAIL WHEN 1=2 COUNTEREXAMPLE \"fail\" END END;"
 				+ "RULE Rule2 BODY VAR xx IN xx := {1|->2}(3) END;RULE_FAIL WHEN 1=2 COUNTEREXAMPLE \"fail\" END END;" + "RULE Rule3 BODY RULE_FAIL WHEN 1=2 COUNTEREXAMPLE \"fail\" END END");
-		RulesMachineRun rulesMachineRun = new RulesMachineRun(runnerFile);
+		RulesMachineRun rulesMachineRun = new RulesMachineRun(RulesTestUtil.getRulesMachineRunner(), runnerFile);
 		rulesMachineRun.setContinueAfterErrors(true);
 		rulesMachineRun.start();
 		assertTrue(rulesMachineRun.getTotalNumberOfProBCliErrors().intValue() >= 2);

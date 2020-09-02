@@ -87,7 +87,7 @@ public class RulesMachineTest {
 		RulesMachineRun rulesMachineRun = startRulesMachineRunWithOperations(ruleWithWDError);
 		BigInteger numberAfterFirstRun = rulesMachineRun.getTotalNumberOfProBCliErrors();
 
-		RulesMachineRun rulesMachineRun2 = new RulesMachineRun(
+		RulesMachineRun rulesMachineRun2 = new RulesMachineRun(RulesTestUtil.getRulesMachineRunner(),
 				RulesTestUtil.createRulesMachineFileContainingOperations(ruleWithWDError).getAbsoluteFile());
 		rulesMachineRun2.setAnimator(rulesMachineRun.getAnimator());
 		rulesMachineRun2.start();
@@ -108,7 +108,7 @@ public class RulesMachineTest {
 	public void testChangeNumberOfReportedCounterExamples() {
 		File file = createRulesMachineFile(
 				"OPERATIONS RULE Rule1 BODY RULE_FAIL x WHEN x : 1..1000 COUNTEREXAMPLE STRING_FORMAT(\"~w\", x) END END");
-		RulesMachineRun rulesMachineRun = new RulesMachineRun(file);
+		RulesMachineRun rulesMachineRun = new RulesMachineRun(RulesTestUtil.getRulesMachineRunner(), file);
 		rulesMachineRun.setMaxNumberOfReportedCounterExamples(20);
 		rulesMachineRun.start();
 		assertEquals(20, rulesMachineRun.getRuleResults().getRuleResult("Rule1").getCounterExamples().size());
@@ -118,7 +118,7 @@ public class RulesMachineTest {
 	public void testExtractingAllCounterExample() {
 		File file = createRulesMachineFile(
 				"OPERATIONS RULE Rule1 BODY RULE_FAIL x WHEN x : 1..1000 COUNTEREXAMPLE STRING_FORMAT(\"This is a long counter example message including a unique number to test that the extracted B value will not be truncated: ~w\", x) END END");
-		RulesMachineRun rulesMachineRun = new RulesMachineRun(file);
+		RulesMachineRun rulesMachineRun = new RulesMachineRun(RulesTestUtil.getRulesMachineRunner(), file);
 		rulesMachineRun.setMaxNumberOfReportedCounterExamples(1000);
 		rulesMachineRun.start();
 		assertEquals(1000, rulesMachineRun.getRuleResults().getRuleResult("Rule1").getCounterExamples().size());
@@ -130,7 +130,7 @@ public class RulesMachineTest {
 				"CONSTANTS k PROPERTIES k : STRING OPERATIONS RULE Rule1 BODY IF k = \"abc\" THEN RULE_FAIL COUNTEREXAMPLE \"fail\" END END END");
 		Map<String, String> constantValuesToBeInjected = new HashMap<>();
 		constantValuesToBeInjected.put("k", "abc");
-		RulesMachineRun rulesMachineRun = new RulesMachineRun(file, null, constantValuesToBeInjected);
+		RulesMachineRun rulesMachineRun = new RulesMachineRun(RulesTestUtil.getRulesMachineRunner(), file, null, constantValuesToBeInjected);
 		rulesMachineRun.start();
 		assertTrue(rulesMachineRun.getRuleResults().getRuleResult("Rule1").hasFailed());
 	}
@@ -141,7 +141,7 @@ public class RulesMachineTest {
 				"OPERATIONS RULE Rule1 BODY RULE_FAIL x WHEN x : 1..MAXINT COUNTEREXAMPLE STRING_FORMAT(\"~w\", x) END END");
 		Map<String, String> prefs = new HashMap<>();
 		prefs.put("MAXINT", "12");
-		RulesMachineRun rulesMachineRun = new RulesMachineRun(file, prefs, Collections.<String, String>emptyMap());
+		RulesMachineRun rulesMachineRun = new RulesMachineRun(RulesTestUtil.getRulesMachineRunner(), file, prefs, Collections.<String, String>emptyMap());
 		rulesMachineRun.start();
 		assertEquals(12, rulesMachineRun.getRuleResults().getRuleResult("Rule1").getCounterExamples().size());
 	}
