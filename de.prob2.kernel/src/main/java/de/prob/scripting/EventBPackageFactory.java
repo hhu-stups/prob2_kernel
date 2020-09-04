@@ -1,5 +1,12 @@
 package de.prob.scripting;
 
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+import de.prob.model.eventb.EventBModel;
+import de.prob.model.eventb.EventBPackageModel;
+import de.prob.model.representation.AbstractElement;
+import de.prob.model.representation.Named;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -8,14 +15,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import com.google.inject.Inject;
-import com.google.inject.Provider;
-
-import de.prob.model.eventb.EventBModel;
-import de.prob.model.eventb.EventBPackageModel;
-import de.prob.model.representation.AbstractElement;
-import de.prob.model.representation.Named;
 
 public final class EventBPackageFactory implements ModelFactory<EventBModel> {
 	private static final class DummyElement extends AbstractElement implements Named {
@@ -70,6 +69,10 @@ public final class EventBPackageFactory implements ModelFactory<EventBModel> {
 		}
 
 		final String componentName = file.getName().replaceAll("\\.eventb$", "");
-		return new ExtractedModel<>(modelCreator.get().setLoadCommandPrologCode(loadcmd), new DummyElement(componentName));
+		/*TODO: Extract machines, contexts, axioms, ...
+		   Currently, the list of children is empty for EventBPackageModel
+		*/
+		EventBModel eventBModel = modelCreator.get().setLoadCommandPrologCode(loadcmd);
+		return new ExtractedModel<>(eventBModel, new DummyElement(componentName));
 	}
 }

@@ -1,12 +1,7 @@
 package de.prob.model.eventb;
 
-import java.io.File;
-import java.util.Collections;
-import java.util.List;
-
 import com.github.krukow.clj_lang.PersistentHashMap;
 import com.google.inject.Inject;
-
 import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.command.LoadEventBProjectCommand;
 import de.prob.animator.domainobjects.EvaluationException;
@@ -21,6 +16,10 @@ import de.prob.model.representation.Machine;
 import de.prob.model.representation.ModelElementList;
 import de.prob.scripting.StateSpaceProvider;
 import de.prob.statespace.FormalismType;
+
+import java.io.File;
+import java.util.Collections;
+import java.util.List;
 
 public class EventBModel extends AbstractModel {
 	@Inject
