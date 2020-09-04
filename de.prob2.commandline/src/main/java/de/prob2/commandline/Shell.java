@@ -1,4 +1,4 @@
-package de.prob;
+package de.prob2.commandline;
 
 import java.io.File;
 import java.io.FileReader;
@@ -17,14 +17,14 @@ import de.prob.scripting.ScriptEngineProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class Shell {
+final class Shell {
 
 	private final ScriptEngineProvider sep;
 	private final Logger logger = LoggerFactory.getLogger(Shell.class);
 	private final ProBInstanceProvider proBs;
 
 	@Inject
-	public Shell(final ScriptEngineProvider sep, final ProBInstanceProvider proBs) {
+	private Shell(final ScriptEngineProvider sep, final ProBInstanceProvider proBs) {
 		this.sep = sep;
 		this.proBs = proBs;
 	}
@@ -69,8 +69,9 @@ class Shell {
 			System.err.printf("Exception thrown by script %s: %s%n", scriptFile, e);
 			logger.error("Exception thrown by script", e);
 			throw e;
+		} finally {
+			proBs.shutdownAll();
 		}
-		proBs.shutdownAll();
 		stopwatch.stop();
 		if (!silent) {
 			final double seconds = stopwatch.elapsed(TimeUnit.MILLISECONDS) / 1000.0;

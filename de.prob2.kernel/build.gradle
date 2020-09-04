@@ -9,24 +9,64 @@ apply plugin: 'maven-publish'
 apply plugin: 'signing'
 apply plugin: 'jacoco'
 
-project.group = 'de.hhu.stups'
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
-final SOURCE_ENCODING = "UTF-8"
-
+allprojects {
+	apply(plugin: "java")
+	
+	project.group = 'de.hhu.stups'
+	// IMPORTANT: Before releasing ProB 2, remember to set cli_version below to a release version!
+	//project.version = '3.11.0'
+	project.version = '4.0.0-SNAPSHOT'
+	project.ext.isSnapshot = project.version.endsWith("-SNAPSHOT")
+	project.ext.SOURCE_ENCODING = "UTF-8"
+	
+	repositories {
+		mavenCentral()
+		if (isSnapshot) {
+			maven {
+				name "sonatype snapshots"
+				url "https://oss.sonatype.org/content/repositories/snapshots"
+			}
+		}
+	}
+	
+	configurations.all {
+		resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+	}
+	
+	if (project.hasProperty("probHome")) {
+		tasks.withType(JavaForkOptions) {
+			systemProperties["prob.home"] = project.probHome
+		}
+	}
+	
+	java {
+		sourceCompatibility = JavaVersion.VERSION_1_8
+		targetCompatibility = JavaVersion.VERSION_1_8
+		withSourcesJar()
+		withJavadocJar()
+	}
+	
+	tasks.withType(JavaCompile) {
+		options.encoding = SOURCE_ENCODING
+	}
+	
+	tasks.withType(Javadoc) {
+		options.encoding = SOURCE_ENCODING
+	}
+	
+	// Workaround for https://github.com/gradle/gradle/issues/5630
+	// See https://stackoverflow.com/a/52797107
+	javadoc {
+		options.addStringOption("sourcepath", "")
+	}
+}
 
 // IMPORTANT !!!
-//project.version = '3.11.0'
- project.version = '4.0.0-SNAPSHOT'
-
 // Remember to release the cli
 ext {
 	cli_version = '1.10.0-beta1'
 }
 // IMPORTANT !!!
-
-final isSnapshot = project.version.endsWith("-SNAPSHOT")
 
 def parserVersion
 def cliDownloadURL
@@ -36,22 +76,6 @@ if (isSnapshot) {
 } else {
 	parserVersion = '2.9.26'
 	cliDownloadURL = "https://www3.hhu.de/stups/downloads/prob/cli/releases/${cli_version}"
-}
-
-
-repositories {
-	mavenCentral()
-	if (isSnapshot) {
-		maven {
-			name "sonatype snapshots"
-			url "https://oss.sonatype.org/content/repositories/snapshots"
-		}
-	}
-}
-
-
-configurations.all {
-	resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 }
 
 
@@ -79,11 +103,6 @@ dependencies {
 	api group: "org.codehaus.groovy", name: "groovy-xml", version: groovyVersion
 
 	// Logging
-	// Normally, libraries should only depend on SLF4J and let the application decide what logging implementation to use.
-	// However, ProB 2 is both a library and an application. When executed as an application, it needs to provide its own logging implementation. When used as a library, it should ideally not force a particular logging implementation on the application that uses ProB 2.
-	// TODO Can/should this be fixed? Should ProB 2's CLI be pulled out into a separate subproject, so that library and application dependencies can be separated?
-	api group: "ch.qos.logback", name: "logback-core", version: "1.2.3" // Eclipse Public License 1.0
-	api group: "ch.qos.logback", name: "logback-classic", version: "1.2.3" // Eclipse Public License 1.0
 	api group: "org.slf4j", name: "slf4j-api", version: "1.7.30" // MIT License
 
 	// Misc dependencies
@@ -93,13 +112,13 @@ dependencies {
 	implementation group: "com.google.guava", name: "guava", version: "28.2-jre" // Apache License 2.0
 	implementation group: "com.google.code.gson", name: "gson", version: "2.8.6"
 	api group: "com.google.inject", name: "guice", version: "4.2.2" // Apache License 2.0
-	implementation group: "commons-cli", name: "commons-cli", version: "1.4" // Apache License 2.0
 	implementation group: "de.hhu.stups", name: "alloy2b", version: "1.2"
 	api group: "de.hhu.stups", name: "ltl-dsl", version: "0.1.3" // Eclipse Public License 1.0
 	api group: "de.hhu.stups", name: "rodin-eventb-ast", version: "3.2.0" // Eclipse Public License 1.0
 	implementation group: "de.hhu.stups", name: "tla2bAST", version: "1.1.3" // Eclipse Public License 1.0
 
 	// Test dependencies
+	testImplementation group: "ch.qos.logback", name: "logback-classic", version: "1.2.3" // Eclipse Public License 1.0
 	testImplementation group: "junit", name: "junit", version: "4.13" // Eclipse Public License 1.0
 	testImplementation group: "org.spockframework", name: "spock-core", version: "2.0-M2-groovy-3.0" // Apache License 2.0
 	// Byte Buddy and Objenesis are needed by Spock to mock classes
@@ -115,15 +134,7 @@ if (project.hasProperty("probHome")) {
 	}
 }
 
-tasks.withType(JavaCompile) {
-	options.encoding = SOURCE_ENCODING
-}
-
 tasks.withType(GroovyCompile) {
-	options.encoding = SOURCE_ENCODING
-}
-
-tasks.withType(Javadoc) {
 	options.encoding = SOURCE_ENCODING
 }
 
@@ -225,9 +236,9 @@ wrapper {
 
 task allTests(dependsOn: ['test', 'groovyIntegrationTests', 'cliIntegrationTests'])
 
-task groovyIntegrationTests(type: JavaExec, dependsOn: ['classes']) {
-	main = 'de.prob.Main'
-	classpath = sourceSets.main.runtimeClasspath
+task groovyIntegrationTests(type: JavaExec) {
+	main = "de.prob2.commandline.CommandLineMain"
+	classpath = project(":de.prob2.commandline").sourceSets.main.runtimeClasspath
 	args = ['-script', 'groovyTests']
 }
 project.jacoco.applyTo(groovyIntegrationTests)
@@ -262,17 +273,6 @@ eclipse {
 	project {
 		name = 'de.prob2.kernel'
 	}
-}
-
-// Workaround for https://github.com/gradle/gradle/issues/5630
-// See https://stackoverflow.com/a/52797107
-javadoc {
-	options.addStringOption("sourcepath", "")
-}
-
-java {
-	withSourcesJar()
-	withJavadocJar()
 }
 
 publishing {

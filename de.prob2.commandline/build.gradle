@@ -1,0 +1,15 @@
+plugins {
+	id("java")
+	id("application")
+}
+
+dependencies {
+	implementation(project(":"))
+	
+	implementation(group: "ch.qos.logback", name: "logback-classic", version: "1.2.3") // Eclipse Public License 1.0
+	implementation(group: "commons-cli", name: "commons-cli", version: "1.4") // Apache License 2.0
+}
+
+application {
+	mainClassName = "de.prob2.commandline.CommandLineMain"
+}

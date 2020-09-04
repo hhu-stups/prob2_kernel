@@ -3,13 +3,17 @@ package de.prob.statespace;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
-import de.prob.Main;
 import de.prob.annotations.MaxCacheSize;
 import de.prob.model.classicalb.ClassicalBModel;
 import de.prob.model.eventb.EventBModel;
 import de.prob.model.representation.CSPModel;
 
 public class ModelModule extends AbstractModule {
+	private final int maxCacheSize;
+
+	public ModelModule(final int maxCacheSize) {
+		this.maxCacheSize = maxCacheSize;
+	}
 
 	@Override
 	protected void configure() {
@@ -22,7 +26,7 @@ public class ModelModule extends AbstractModule {
 
 	@Provides
 	@MaxCacheSize
-	private static int getMaxSizeForStateCache() {
-		return Main.getMaxCacheSize();
+	private int getMaxCacheSize() {
+		return this.maxCacheSize;
 	}
 }

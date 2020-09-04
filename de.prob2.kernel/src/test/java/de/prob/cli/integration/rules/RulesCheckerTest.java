@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import de.prob.Main;
+import de.prob.cli.CliTestCommon;
 import de.prob.model.brules.RuleStatus;
 import de.prob.model.brules.RulesChecker;
 import de.prob.scripting.Api;
@@ -14,7 +14,9 @@ import de.prob.statespace.Trace;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class RulesCheckerTest {
 
@@ -22,7 +24,7 @@ public class RulesCheckerTest {
 
 	@Before
 	public void setupClass() {
-		api = Main.getInjector().getInstance(Api.class);
+		api = CliTestCommon.getInjector().getInstance(Api.class);
 	}
 
 	private static final Path DIR = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "brules");
