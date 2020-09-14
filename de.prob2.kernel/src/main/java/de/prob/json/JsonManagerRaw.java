@@ -57,11 +57,11 @@ final class JsonManagerRaw {
 			creationDateTime = null;
 		}
 		final JsonElement creatorElement = metadataObject.get("Created by");
-		final String creator = creatorElement == null ? null : creatorElement.getAsString();
+		final String creator = creatorElement.isJsonNull() ? null : creatorElement.getAsString();
 		final String proB2KernelVersion = metadataObject.get("ProB 2.0 kernel Version").getAsString();
 		final String proBCliVersion = metadataObject.get("ProB CLI Version").getAsString();
 		final JsonElement modelNameElement = metadataObject.get("Model");
-		final String modelName = modelNameElement == null ? null : modelNameElement.getAsString();
+		final String modelName = modelNameElement.isJsonNull() ? null : modelNameElement.getAsString();
 		return new JsonMetadata(null, 0, creationDateTime, creator, proB2KernelVersion, proBCliVersion, modelName);
 	}
 
