@@ -56,7 +56,8 @@ final class JsonManagerRaw {
 			LOGGER.warn("Failed to parse creation date from old metadata, replacing with null", e);
 			creationDateTime = null;
 		}
-		final String creator = metadataObject.get("Created by").getAsString();
+		final JsonElement creatorElement = metadataObject.get("Created by");
+		final String creator = creatorElement == null ? null : creatorElement.getAsString();
 		final String proB2KernelVersion = metadataObject.get("ProB 2.0 kernel Version").getAsString();
 		final String proBCliVersion = metadataObject.get("ProB CLI Version").getAsString();
 		final JsonElement modelNameElement = metadataObject.get("Model");
