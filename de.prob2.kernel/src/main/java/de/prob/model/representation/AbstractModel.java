@@ -107,23 +107,6 @@ public abstract class AbstractModel extends AbstractElement {
 		return stateSpaceProvider;
 	}
 
-	@Override
-	public Object getProperty(String name) {
-		if ("stateSpaceProvider".equals(name)) {
-			return getStateSpaceProvider();
-		}
-		if ("modelFile".equals(name)) {
-			return getModelFile();
-		}
-		if ("graph".equals(name)) {
-			return getGraph();
-		}
-		if ("children".equals(name)) {
-			return getChildren();
-		}
-		return null;
-	}
-
 	public AbstractElement get(List<String> path) {
 		if (path.isEmpty()) {
 			return null;
