@@ -94,7 +94,7 @@ public class TraceReplay {
 											 Map<String,Object> replayInformation, ITraceChecker traceChecker) {
 		String operationName = trans.getName();
 		OperationInfo machineOperationInfo = trans.getStateSpace().getLoadedMachine().getMachineOperationInfo(operationName);
-		final Map<String, String> ouputParameters = persistentTransition.getOuputParameters();
+		final Map<String, String> ouputParameters = persistentTransition.getOutputParameters();
 		if (machineOperationInfo != null && ouputParameters != null) {
 			List<String> outputParameterNames = machineOperationInfo.getOutputParameterNames();
 			try {
