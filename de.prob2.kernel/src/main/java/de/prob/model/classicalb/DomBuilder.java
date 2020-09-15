@@ -68,6 +68,18 @@ public class DomBuilder extends DepthFirstAdapter {
 
 	public ClassicalBMachine build(final Start ast) {
 		((Start) ast.clone()).apply(this);
+		if (this.machineId == null) {
+			// Special case for when a definition file is loaded as the main file.
+			// In that case the file doesn't contain a machine header,
+			// so machineId and name aren't set.
+			assert this.name == null;
+			this.machineId = new LinkedList<>();
+			// The same special machine name is set by RecursiveMachineLoader,
+			// but there's no good way to read it,
+			// so we hardcode it here again (not very nice...)
+			this.machineId.add(new TIdentifierLiteral("DEFINITION_FILE"));
+			this.name = extractIdentifierName(this.machineId);
+		}
 		return getMachine();
 	}
 

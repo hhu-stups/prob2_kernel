@@ -22,7 +22,7 @@ public class FactoryProvider {
 	public static final Map<Class<? extends ModelFactory<?>>, List<String>> FACTORY_TO_EXTENSIONS_MAP;
 	static {
 		final Map<Class<? extends ModelFactory<?>>, List<String>> map = new LinkedHashMap<>();
-		map.put(ClassicalBFactory.class, Arrays.asList("mch", "ref", "imp", "sys"));
+		map.put(ClassicalBFactory.class, Arrays.asList("mch", "ref", "imp", "sys", "def"));
 		map.put(EventBFactory.class, Arrays.asList("bum", "buc"));
 		map.put(EventBPackageFactory.class, Collections.singletonList("eventb"));
 		map.put(CSPFactory.class, Arrays.asList("csp", "cspm"));
