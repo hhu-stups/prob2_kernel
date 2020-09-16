@@ -66,14 +66,12 @@ public final class JsonManager<T> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(JsonManager.class);
 
-	private final JsonManagerRaw jsonManager;
 	private JsonManager.Context<T> context;
 
 	@Inject
-	private JsonManager(final JsonManagerRaw jsonManager) {
+	private JsonManager() {
 		super();
 
-		this.jsonManager = jsonManager;
 		this.context = null;
 	}
 
@@ -153,7 +151,7 @@ public final class JsonManager<T> {
 	 */
 	public ObjectWithMetadata<T> read(final Reader reader) {
 		LOGGER.trace("Attempting to load JSON data of type {}, current version {}", this.getContext().fileType, this.getContext().currentFormatVersion);
-		final ObjectWithMetadata<JsonObject> rawWithMetadata = this.jsonManager.readRaw(reader);
+		final ObjectWithMetadata<JsonObject> rawWithMetadata = JsonManagerRaw.readRaw(reader);
 		JsonObject rawObject = rawWithMetadata.getObject();
 		JsonMetadata metadata = rawWithMetadata.getMetadata();
 		LOGGER.trace("Found JSON data of type {}, version {}", metadata.getFileType(), metadata.getFormatVersion());
@@ -194,7 +192,7 @@ public final class JsonManager<T> {
 	 * @param metadata the metadata to attach to the JSON data
 	 */
 	public void write(final Writer writer, final T src, final JsonMetadata metadata) {
-		this.jsonManager.writeRaw(writer, this.getContext().gson.toJsonTree(src).getAsJsonObject(), metadata);
+		JsonManagerRaw.writeRaw(writer, this.getContext().gson.toJsonTree(src).getAsJsonObject(), metadata);
 	}
 
 	/**
@@ -204,7 +202,7 @@ public final class JsonManager<T> {
 	 * @param src the object to write
 	 */
 	public void write(final Writer writer, final T src) {
-		this.jsonManager.writeRaw(writer, this.getContext().gson.toJsonTree(src).getAsJsonObject(), this.defaultMetadataBuilder().build());
+		JsonManagerRaw.writeRaw(writer, this.getContext().gson.toJsonTree(src).getAsJsonObject(), this.defaultMetadataBuilder().build());
 	}
 
 	/**

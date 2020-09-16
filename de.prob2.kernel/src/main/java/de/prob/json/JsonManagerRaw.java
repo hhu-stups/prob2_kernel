@@ -1,5 +1,13 @@
 package de.prob.json;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.DateTimeParseException;
+
 import com.fatboyindustrial.gsonjavatime.Converters;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -10,23 +18,13 @@ import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
-import java.time.Instant;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.time.format.DateTimeParseException;
 
 /**
  * Provides some internals for {@link JsonManager}. This class only handles reading and writing untyped JSON structures (along with metadata). It does not convert these structures to proper objects or check the metadata (type and version) in any way - that is handled by {@link JsonManager}.
  */
-@Singleton
 final class JsonManagerRaw {
 	private static final Logger LOGGER = LoggerFactory.getLogger(JsonManagerRaw.class);
 
@@ -39,17 +37,14 @@ final class JsonManagerRaw {
 			.appendPattern("d MMM yyyy hh:mm:ssa O")
 			.toFormatter();
 
-	private final Gson metadataGson;
+	private static final Gson METADATA_GSON = Converters.registerAll(new GsonBuilder())
+		.disableHtmlEscaping()
+		.serializeNulls()
+		.setPrettyPrinting()
+		.create();
 
-	@Inject
 	private JsonManagerRaw() {
-		super();
-
-		this.metadataGson = Converters.registerAll(new GsonBuilder())
-			.disableHtmlEscaping()
-			.serializeNulls()
-			.setPrettyPrinting()
-			.create();
+		throw new AssertionError("Utility class");
 	}
 
 	private static JsonMetadata convertOldMetadata(final JsonElement metadataElement) {
@@ -71,7 +66,7 @@ final class JsonManagerRaw {
 		return new JsonMetadata(null, 0, creationDateTime, creator, proB2KernelVersion, proBCliVersion, modelName);
 	}
 
-	public ObjectWithMetadata<JsonObject> readRaw(final Reader reader) {
+	static ObjectWithMetadata<JsonObject> readRaw(final Reader reader) {
 		final JsonReader jsonReader = new JsonReader(reader);
 		// Read the main object from the reader.
 		final JsonObject root = JsonParser.parseReader(jsonReader).getAsJsonObject();
@@ -81,7 +76,7 @@ final class JsonManagerRaw {
 			// Main object contains metadata, use it.
 			LOGGER.trace("Found JSON metadata in main object");
 			final JsonElement metadataElement = root.remove(METADATA_PROPERTY);
-			metadata = this.metadataGson.fromJson(metadataElement, JsonMetadata.class);
+			metadata = METADATA_GSON.fromJson(metadataElement, JsonMetadata.class);
 		} else {
 			// Main object doesn't contain metadata, check for old metadata as a second JSON object stored directly after the main object.
 			// To do this, the reader needs to be set to lenient.
@@ -107,11 +102,11 @@ final class JsonManagerRaw {
 		return new ObjectWithMetadata<>(root, metadata);
 	}
 
-	public void writeRaw(final Writer writer, final JsonObject src, final JsonMetadata metadata) {
+	static void writeRaw(final Writer writer, final JsonObject src, final JsonMetadata metadata) {
 		final JsonWriter jsonWriter = new JsonWriter(writer);
 		jsonWriter.setHtmlSafe(false);
 		jsonWriter.setIndent("  ");
-		src.add(METADATA_PROPERTY, this.metadataGson.toJsonTree(metadata));
-		this.metadataGson.toJson(src, jsonWriter);
+		src.add(METADATA_PROPERTY, METADATA_GSON.toJsonTree(metadata));
+		METADATA_GSON.toJson(src, jsonWriter);
 	}
 }
