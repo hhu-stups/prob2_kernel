@@ -1,6 +1,8 @@
 package de.prob.json;
 
+import com.fatboyindustrial.gsonjavatime.Converters;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
@@ -37,13 +39,17 @@ final class JsonManagerRaw {
 			.appendPattern("d MMM yyyy hh:mm:ssa O")
 			.toFormatter();
 
-	private final Gson gson;
+	private final Gson metadataGson;
 
 	@Inject
-	private JsonManagerRaw(final Gson gson) {
+	private JsonManagerRaw() {
 		super();
 
-		this.gson = gson;
+		this.metadataGson = Converters.registerAll(new GsonBuilder())
+			.disableHtmlEscaping()
+			.serializeNulls()
+			.setPrettyPrinting()
+			.create();
 	}
 
 	private static JsonMetadata convertOldMetadata(final JsonElement metadataElement) {
@@ -75,7 +81,7 @@ final class JsonManagerRaw {
 			// Main object contains metadata, use it.
 			LOGGER.trace("Found JSON metadata in main object");
 			final JsonElement metadataElement = root.remove(METADATA_PROPERTY);
-			metadata = this.gson.fromJson(metadataElement, JsonMetadata.class);
+			metadata = this.metadataGson.fromJson(metadataElement, JsonMetadata.class);
 		} else {
 			// Main object doesn't contain metadata, check for old metadata as a second JSON object stored directly after the main object.
 			// To do this, the reader needs to be set to lenient.
@@ -105,7 +111,7 @@ final class JsonManagerRaw {
 		final JsonWriter jsonWriter = new JsonWriter(writer);
 		jsonWriter.setHtmlSafe(false);
 		jsonWriter.setIndent("  ");
-		src.add(METADATA_PROPERTY, this.gson.toJsonTree(metadata));
-		this.gson.toJson(src, jsonWriter);
+		src.add(METADATA_PROPERTY, this.metadataGson.toJsonTree(metadata));
+		this.metadataGson.toJson(src, jsonWriter);
 	}
 }

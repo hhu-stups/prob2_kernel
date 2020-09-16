@@ -3,6 +3,8 @@ package de.prob.check.tracereplay;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.inject.Inject;
@@ -18,7 +20,12 @@ public class TraceLoaderSaver {
 	@Inject
 	public TraceLoaderSaver(JsonManager<PersistentTrace> jsonManager) {
 		this.jsonManager = jsonManager;
-		jsonManager.initContext(new JsonManager.Context<PersistentTrace>(PersistentTrace.class, "Trace", 1) {
+		final Gson gson = new GsonBuilder()
+			.disableHtmlEscaping()
+			.serializeNulls()
+			.setPrettyPrinting()
+			.create();
+		jsonManager.initContext(new JsonManager.Context<PersistentTrace>(gson, PersistentTrace.class, "Trace", 1) {
 			@Override
 			public ObjectWithMetadata<JsonObject> convertOldData(final JsonObject oldObject, final JsonMetadata oldMetadata) {
 				if (oldMetadata.getFileType() == null) {

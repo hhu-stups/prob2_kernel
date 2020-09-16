@@ -106,6 +106,7 @@ dependencies {
 	api group: "org.slf4j", name: "slf4j-api", version: "1.7.30" // MIT License
 
 	// Misc dependencies
+	implementation group: "com.fatboyindustrial.gson-javatime-serialisers", name: "gson-javatime-serialisers", version: "1.1.1" // MIT License
 	// The following dependency needs to be api because the constructor of de.prob.model.representation.AbstractElement (and some subclasses) takes a com.github.krukow.clj_lang.PersistentHashMap.
 	// TODO Should we assume that external users do not call these constructors, and change this to an implementation dependency?
 	api group: "com.github.krukow", name: "clj-ds", version: "0.0.4" // Eclipse Public License 1.0

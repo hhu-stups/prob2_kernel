@@ -23,14 +23,24 @@ import java.util.Objects;
 public final class JsonManager<T> {
 
 	public static class Context<T> {
+		protected final Gson gson;
 		protected final Class<T> clazz;
 		protected final String fileType;
 		protected final int currentFormatVersion;
 
-		public Context(final Class<T> clazz, final String fileType, final int currentFormatVersion) {
+		public Context(final Gson gson, final Class<T> clazz, final String fileType, final int currentFormatVersion) {
+			this.gson = Objects.requireNonNull(gson, "gson");
 			this.clazz = Objects.requireNonNull(clazz, "clazz");
 			this.fileType = Objects.requireNonNull(fileType, "fileType");
 			this.currentFormatVersion = currentFormatVersion;
+		}
+		
+		/**
+		 * @deprecated Use {@link #Context(Gson, Class, String, int)} with an explicit {@class Gson} parameter instead.
+		 */
+		@Deprecated
+		public Context(final Class<T> clazz, final String fileType, final int currentFormatVersion) {
+			this(new Gson(), clazz, fileType, currentFormatVersion);
 		}
 
 		public JsonMetadataBuilder getDefaultMetadataBuilder() {
@@ -57,15 +67,13 @@ public final class JsonManager<T> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(JsonManager.class);
 
 	private final JsonManagerRaw jsonManager;
-	private final Gson gson;
 	private JsonManager.Context<T> context;
 
 	@Inject
-	private JsonManager(final JsonManagerRaw jsonManager, final Gson gson) {
+	private JsonManager(final JsonManagerRaw jsonManager) {
 		super();
 
 		this.jsonManager = jsonManager;
-		this.gson = gson;
 		this.context = null;
 	}
 
@@ -162,7 +170,7 @@ public final class JsonManager<T> {
 			rawObject = converted.getObject();
 			metadata = converted.getMetadata();
 		}
-		final T obj = this.gson.fromJson(rawObject, this.getContext().clazz);
+		final T obj = this.getContext().gson.fromJson(rawObject, this.getContext().clazz);
 		return new ObjectWithMetadata<>(obj, metadata);
 	}
 
@@ -186,7 +194,7 @@ public final class JsonManager<T> {
 	 * @param metadata the metadata to attach to the JSON data
 	 */
 	public void write(final Writer writer, final T src, final JsonMetadata metadata) {
-		this.jsonManager.writeRaw(writer, this.gson.toJsonTree(src).getAsJsonObject(), metadata);
+		this.jsonManager.writeRaw(writer, this.getContext().gson.toJsonTree(src).getAsJsonObject(), metadata);
 	}
 
 	/**
@@ -196,7 +204,7 @@ public final class JsonManager<T> {
 	 * @param src the object to write
 	 */
 	public void write(final Writer writer, final T src) {
-		this.jsonManager.writeRaw(writer, this.gson.toJsonTree(src).getAsJsonObject(), this.defaultMetadataBuilder().build());
+		this.jsonManager.writeRaw(writer, this.getContext().gson.toJsonTree(src).getAsJsonObject(), this.defaultMetadataBuilder().build());
 	}
 
 	/**
