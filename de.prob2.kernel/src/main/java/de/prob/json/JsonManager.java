@@ -36,7 +36,7 @@ public final class JsonManager<T> {
 		}
 		
 		/**
-		 * @deprecated Use {@link #Context(Gson, Class, String, int)} with an explicit {@class Gson} parameter instead.
+		 * @deprecated Use {@link #Context(Gson, Class, String, int)} with an explicit {@link Gson} parameter instead.
 		 */
 		@Deprecated
 		public Context(final Class<T> clazz, final String fileType, final int currentFormatVersion) {
