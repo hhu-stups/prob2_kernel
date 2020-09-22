@@ -1,21 +1,22 @@
 package de.prob.json;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
+import com.google.gson.*;
 import com.google.inject.Inject;
+import de.prob.check.tracereplay.PersistentTrace;
+import de.prob.check.tracereplay.PersistentTransition;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Provides utilities for reading and writing JSON data with attached metadata, in a way that correctly handles data from older and newer UI versions.
@@ -155,13 +156,27 @@ public final class JsonManager<T> {
 		JsonObject rawObject = rawWithMetadata.getObject();
 		JsonMetadata metadata = rawWithMetadata.getMetadata();
 		LOGGER.trace("Found JSON data of type {}, version {}", metadata.getFileType(), metadata.getFormatVersion());
-		// TODO Perform additional type validation checks if file type is missing (null)?
+
+		/*
+		 * Check if a trace file is correct
+		 * TODO check for any file if it is correct?
+		 */
+
+		LOGGER.info(this.getContext().clazz.getName());
+		if(this.getContext().clazz == PersistentTrace.class)
+		{
+			checkTracFile(rawObject);
+		}
+
+
 		if (metadata.getFileType() != null && !metadata.getFileType().equals(this.getContext().fileType)) {
 			throw new JsonParseException("Expected JSON data of type " + this.getContext().fileType + " but got " + metadata.getFileType());
 		}
+
 		if (metadata.getFormatVersion() > this.getContext().currentFormatVersion) {
 			throw new JsonParseException("JSON data uses format version " + metadata.getFormatVersion() + ", which is newer than the newest supported version (" + this.getContext().currentFormatVersion + ")");
 		}
+
 		if (metadata.getFormatVersion() < this.getContext().currentFormatVersion) {
 			LOGGER.info("Converting JSON data from old version {} to current version {}", metadata.getFormatVersion(), this.getContext().currentFormatVersion);
 			final ObjectWithMetadata<JsonObject> converted = this.getContext().convertOldData(rawObject, metadata);
@@ -169,9 +184,85 @@ public final class JsonManager<T> {
 			metadata = converted.getMetadata();
 		}
 		final T obj = this.getContext().gson.fromJson(rawObject, this.getContext().clazz);
+
 		return new ObjectWithMetadata<>(obj, metadata);
 	}
 
+
+	/**
+	 * Runs several sanity checks for a given JsonObject
+	 *
+	 * @param rawObject the object to be checked
+	 * @throws JsonParseException the object is somehow not valid
+	 */
+	private void checkTracFile(JsonObject rawObject){
+
+		// PersistentTrace Object sanity check
+		checkClassFieldsMatchJsonObject(context.clazz, rawObject);
+
+		// PersistentTransitions Object sanity check
+		JsonArray transitionList = rawObject.get("transitionList").getAsJsonArray();
+
+		//Check if jsonObjects can be safely translated to real objects
+		for(JsonElement jsonElement : transitionList){
+			checkClassFieldsMatchJsonObject(PersistentTransition.class, jsonElement.getAsJsonObject());
+			try {
+				this.context.gson.fromJson(jsonElement.getAsJsonObject(), PersistentTransition.class);
+			}catch(JsonSyntaxException e){
+				throw new JsonParseException("\n The JSON file seems to be corrupted. A value in the transitionList couldn't be parsed. Location is " + jsonElement
+						+ "\n\n" +  e.getMessage());
+			}
+		}
+	}
+
+	/**
+	 * Checks if the fields of a given class matching the fields found in a json object
+	 * @param clazz the class to run the check against
+	 * @param jsonObject the jsonObject in question
+	 * @throws JsonParseException the fields don´t match
+	 */
+	public void checkClassFieldsMatchJsonObject(Class clazz, JsonObject jsonObject) {
+		Set<String> fieldsFromTarget = Arrays.stream(clazz.getDeclaredFields())
+				.filter(field -> !field.isSynthetic()) //Filter fields that are generate via tests aká $jacocoData
+				.map(Field::getName).collect(Collectors.toSet());
+		Set<String> cp = new HashSet<>(fieldsFromTarget);
+		for(String key : jsonObject.keySet())
+		{
+			if(!fieldsFromTarget.contains(key)){
+				String closestMatch = findClosestMatch(key, new ArrayList<>(fieldsFromTarget));
+				throw new JsonParseException("The JSON file seems to be corrupted. Searched for key <" + key +
+						"> but available candidates are " + cp + ".\nDid you maybe meant <" + closestMatch + "> instead of <" + key + ">?\n" );
+			}
+			fieldsFromTarget.remove(key);
+		}
+
+		// Missing fields - gson is stupid an would parse it anyway leading to NPEs
+		if(!fieldsFromTarget.isEmpty()){
+			throw new JsonParseException("The JSON file seems to be corrupted. Some fields needed for generating " + clazz.getSimpleName()
+					+ " are not contained in the data found. Missing fields are: " + fieldsFromTarget + " at position: \n " + jsonObject);
+		}
+	}
+
+	/**
+	 * Finds the nearest neighbour in a list of string. If the list is empty a empty String is returned. The given list
+	 * is transformed to a no fixed size list as fixed size list will lead to errors.
+	 * @param target string we want to find the closest match
+	 * @param candidates potential matches
+	 * @return the closest match
+	 */
+	public String findClosestMatch(String target, List<String> candidates){
+		if(candidates.size() == 0){
+			return "";
+		}
+		List<String> list = new LinkedList<>(candidates);
+		list.sort((o1, o2) -> {
+
+			int levDistance1 = StringUtils.getLevenshteinDistance(target, o1);
+			int levDistance2 = StringUtils.getLevenshteinDistance(target, o2);
+			return levDistance1-levDistance2;
+		});
+		return list.get(0);
+	}
 	/**
 	 * Read an object along with its metadata from a JSON file. The file type and version number are checked against the settings in the context.
 	 *
