@@ -175,6 +175,9 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
 	implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
 
+	// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+	compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.0.1'
+
 
 	// Test dependencies
 	testImplementation group: "ch.qos.logback", name: "logback-classic", version: "1.2.3" // Eclipse Public License 1.0
