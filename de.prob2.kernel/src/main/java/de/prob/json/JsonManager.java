@@ -204,8 +204,10 @@ public final class JsonManager<T> {
 		JsonArray transitionList = rawObject.get("transitionList").getAsJsonArray();
 
 		//Check if jsonObjects can be safely translated to real objects
+		List<String> optionalFields = Arrays.asList("preds", "destStateNotChanged");
+
 		for(JsonElement jsonElement : transitionList){
-			checkClassFieldsMatchJsonObject(PersistentTransition.class, jsonElement.getAsJsonObject());
+			checkClassFieldsMatchJsonObject(PersistentTransition.class, jsonElement.getAsJsonObject(), optionalFields);
 			try {
 				this.context.gson.fromJson(jsonElement.getAsJsonObject(), PersistentTransition.class);
 			}catch(JsonSyntaxException e){
@@ -216,12 +218,13 @@ public final class JsonManager<T> {
 	}
 
 	/**
-	 * Checks if the fields of a given class matching the fields found in a json object
+	 * Same as checkClassFieldsMatchJsonObject(Class clazz, JsonObject jsonObject) but instead we can provide a list
+	 * with fields that are not needed
 	 * @param clazz the class to run the check against
 	 * @param jsonObject the jsonObject in question
-	 * @throws JsonParseException the fields don´t match
+	 * @param optionalFields a list with fields that are part of clazz but being optional for a functioning trace
 	 */
-	public void checkClassFieldsMatchJsonObject(Class clazz, JsonObject jsonObject) {
+	public void checkClassFieldsMatchJsonObject(Class clazz, JsonObject jsonObject, List<String> optionalFields){
 		Set<String> fieldsFromTarget = Arrays.stream(clazz.getDeclaredFields())
 				.filter(field -> !field.isSynthetic()) //Filter fields that are generate via tests aká $jacocoData
 				.map(Field::getName).collect(Collectors.toSet());
@@ -236,11 +239,24 @@ public final class JsonManager<T> {
 			fieldsFromTarget.remove(key);
 		}
 
+
 		// Missing fields - gson is stupid an would parse it anyway leading to NPEs
+		fieldsFromTarget.removeAll(optionalFields);
+
 		if(!fieldsFromTarget.isEmpty()){
 			throw new JsonParseException("The JSON file seems to be corrupted. Some fields needed for generating " + clazz.getSimpleName()
 					+ " are not contained in the data found. Missing fields are: " + fieldsFromTarget + " at position: \n " + jsonObject);
 		}
+	}
+
+	/**
+	 * Checks if the fields of a given class matching the fields found in a json object
+	 * @param clazz the class to run the check against
+	 * @param jsonObject the jsonObject in question
+	 * @throws JsonParseException the fields don´t match
+	 */
+	public void checkClassFieldsMatchJsonObject(Class clazz, JsonObject jsonObject) {
+		checkClassFieldsMatchJsonObject(clazz, jsonObject, Collections.emptyList());
 	}
 
 	/**
