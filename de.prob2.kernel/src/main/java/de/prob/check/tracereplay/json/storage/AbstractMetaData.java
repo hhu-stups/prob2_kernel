@@ -1,7 +1,8 @@
-package de.prob.check.tracereplay.json;
+package de.prob.check.tracereplay.json.storage;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import de.prob.Main;
 
 import java.time.LocalDate;
 
@@ -19,6 +20,16 @@ public abstract class AbstractMetaData {
 	private LocalDate savedAt;
 	private String creator;
 	private String proB2KernelVersion;
+
+	public AbstractMetaData(int formatVersion, LocalDate savedAt, String creator,  String proBCliVersion, String name) {
+		this.formatVersion = formatVersion;
+		this.savedAt = savedAt;
+		this.creator = creator;
+		this.proB2KernelVersion = Main.getVersion();
+		this.proBCliVersion = proBCliVersion;
+		this.name = name;
+	}
+
 	private String proBCliVersion;
 	private String name;
 
