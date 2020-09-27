@@ -1,12 +1,10 @@
 package de.prob.check.tracereplay.json;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import de.prob.check.tracereplay.PersistentTrace;
 import de.prob.check.tracereplay.json.storage.JsonFile;
 
-import de.prob.check.tracereplay.json.storage.MetaData;
+import de.prob.check.tracereplay.json.storage.TraceMetaData;
 import de.prob.check.tracereplay.json.storage.TraceStorage;
 import de.prob.statespace.StateSpace;
 
@@ -19,24 +17,38 @@ import java.time.LocalDate;
  */
 public class TraceManager {
 
-	private final ObjectMapper objectMapper;
+	private final JsonManager jsonManager;
 
 	@Inject
-	public TraceManager(ObjectMapper objectMapper){
-		this.objectMapper = objectMapper;
-	}
-
-	public <T> JsonFile<T> load(Path path) throws IOException {
-		return objectMapper.readValue(path.toFile(), new TypeReference<JsonFile<T>>(){});
+	public TraceManager(JsonManager jsonManager){
+		this.jsonManager = jsonManager;
 	}
 
 
-	//TODO refactor to two methods
+	/**
+	 * Loads a trace
+	 * @param path were to look
+	 * @return a loaded trace
+	 * @throws IOException something went wrong while loading
+	 */
+	public JsonFile<TraceStorage> load(Path path) throws IOException {
+		return jsonManager.load(path);
+	}
+
+
+	/**
+	 * saves a trace
+	 * @param trace the trace to save
+	 * @param stateSpace the corresponding state space
+	 * @param location where to save
+	 * @param proBCliVersion the probcli version
+	 * @param modelName the name of the machine the trace was created from
+	 * @throws IOException something went wrong with saving
+	 */
 	public void save(PersistentTrace trace, StateSpace stateSpace, Path location, String proBCliVersion, String modelName) throws IOException {
 		TraceStorage traceStorage = new TraceStorage(trace, stateSpace.getLoadedMachine());
-		MetaData metaData = new MetaData(1, LocalDate.now(), "User", proBCliVersion, modelName);
-		JsonFile<TraceStorage> jsonFile = new JsonFile<>("", "", traceStorage, metaData);
-		objectMapper.writeValue(location.toFile(), jsonFile);
+		TraceMetaData traceMetaData = new TraceMetaData(1, LocalDate.now(), "User", proBCliVersion, modelName);
+		jsonManager.save(location, traceStorage, traceMetaData);
 	}
 
 }

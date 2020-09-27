@@ -12,7 +12,7 @@ import java.time.LocalDate;
 		property = "type"
 )
 @JsonSubTypes(
-		@JsonSubTypes.Type(value = MetaData.class, name = "TraceMetaData")
+		@JsonSubTypes.Type(value = TraceMetaData.class, name = "TraceMetaData")
 )
 public abstract class AbstractMetaData {
 
