@@ -3,6 +3,7 @@ package de.prob.check.tracereplay.json;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.inject.Inject;
 import de.prob.check.tracereplay.PersistentTrace;
 import de.prob.check.tracereplay.json.storage.AbstractJsonFile;
@@ -27,6 +28,8 @@ public class TraceManager implements IJsonManager{
 		this.objectMapper = objectMapper;
 		objectMapper.enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+		objectMapper.registerModule(new JavaTimeModule());
+		objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 	}
 
 	

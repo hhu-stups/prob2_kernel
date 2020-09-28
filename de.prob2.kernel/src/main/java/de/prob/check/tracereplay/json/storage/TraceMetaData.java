@@ -1,5 +1,7 @@
 package de.prob.check.tracereplay.json.storage;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.LocalDate;
 
 /**
@@ -16,7 +18,11 @@ public class TraceMetaData extends AbstractMetaData {
 	 * @param proBCliVersion probcli version
 	 * @param name name
 	 */
-	public TraceMetaData(int formatVersion, LocalDate savedAt, String creator, String proBCliVersion, String name) {
+	public TraceMetaData(@JsonProperty("formatVersion") int formatVersion,
+						 @JsonProperty("savedAt") LocalDate savedAt,
+						 @JsonProperty("creator") String creator,
+						 @JsonProperty("proBCliVersion") String proBCliVersion,
+						 @JsonProperty("name") String name) {
 		super(formatVersion, savedAt, creator, proBCliVersion, name);
 	}
 }

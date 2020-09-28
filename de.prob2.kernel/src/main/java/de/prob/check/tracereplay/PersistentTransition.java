@@ -1,5 +1,6 @@
 package de.prob.check.tracereplay;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.prob.animator.domainobjects.AbstractEvalResult;
 import de.prob.animator.domainobjects.EvalResult;
 import de.prob.animator.domainobjects.FormulaExpand;
@@ -59,6 +60,30 @@ public class PersistentTransition {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Jackson constructor, only called by jackson deserializer
+	 * @param name the name of the transition
+	 * @param params parameters of the transition
+	 * @param results result of the transition
+	 * @param destState target state of the transition
+	 * @param destStateNotChanged target state is no change
+	 * @param preds predicates
+	 */
+	public PersistentTransition(@JsonProperty("name") String name,
+								@JsonProperty("params") Map<String, String> params,
+								@JsonProperty("results") Map<String, String> results,
+								@JsonProperty("destState") Map<String, String> destState,
+								@JsonProperty("destStateNotChanged") Set<String> destStateNotChanged,
+								@JsonProperty("preds") List<String> preds){
+		this.name = name;
+		this.params = params;
+		this.results = results;
+		this.destState = destState;
+		this.destStateNotChanged = destStateNotChanged;
+		this.preds = preds;
+
 	}
 
 	private void addValuesToDestState(Map<IEvalElement, AbstractEvalResult> map, PersistentTransition transitionAfter) {

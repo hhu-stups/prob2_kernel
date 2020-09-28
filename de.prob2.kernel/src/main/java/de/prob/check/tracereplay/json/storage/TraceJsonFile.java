@@ -1,5 +1,6 @@
 package de.prob.check.tracereplay.json.storage;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.check.tracereplay.PersistentTrace;
@@ -35,7 +36,34 @@ public class TraceJsonFile extends AbstractJsonFile{
 		constantNames = machine.getConstantNames();
 		setNames = machine.getSetNames();
 		machineOperationInfos = machine.getOperations();
+	}
 
+
+	/**
+	 * The constructor to deserialize files
+	 * @param name the name
+	 * @param description description
+	 * @param trace trace
+	 * @param variableNames variable names of the corresponding machine
+	 * @param machineOperationInfos machine operation infos of the corresponding machine
+	 * @param constantNames name of constants infos of the corresponding machine
+	 * @param setNames name of sets operation infos of the corresponding machine
+	 * @param metaData meta data
+	 */
+	public TraceJsonFile(@JsonProperty("name") String name,
+						 @JsonProperty("description") String description,
+						 @JsonProperty("trace") PersistentTrace trace,
+						 @JsonProperty("variablesNames") List<String> variableNames,
+						 @JsonProperty("machineOperationInfos") Map<String, OperationInfo> machineOperationInfos,
+						 @JsonProperty("constantNames") List<String> constantNames,
+						 @JsonProperty("setNames") List<String> setNames,
+						 @JsonProperty("metaData") AbstractMetaData metaData) {
+		super(name, description, metaData);
+		this.trace = trace;
+		this.variableNames = variableNames;
+		this.constantNames = constantNames;
+		this.setNames = setNames;
+		this.machineOperationInfos = machineOperationInfos;
 	}
 
 

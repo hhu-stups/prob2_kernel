@@ -2,6 +2,7 @@ package de.prob.statespace;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 
 public class OperationInfo {
@@ -34,14 +35,26 @@ public class OperationInfo {
 	private final List<String> writtenVariables;
 	private final List<String> nonDetWrittenVariables;
 
+	/**
+	 * Annotation is used by jackson to construct objects
+	 * @param operationName teh name of the operation
+	 * @param parameterNames name of the parameters
+	 * @param outputParameterNames name of the output parameters
+	 * @param topLevel operation is toplevel
+	 * @param type type of the operation
+	 * @param readVariables read variables
+	 * @param writtenVariables written variables
+	 * @param nonDetWrittenVariables non deterministic written variables
+	 */
 	public OperationInfo(
-		final String operationName,
-		final List<String> parameterNames,
-		final List<String> outputParameterNames,
-		final boolean topLevel,
-		final OperationInfo.Type type, final List<String> readVariables,
-		final List<String> writtenVariables,
-		final List<String> nonDetWrittenVariables
+			@JsonProperty("operationName") final String operationName,
+			@JsonProperty("parameterNames") final List<String> parameterNames,
+			@JsonProperty("outputParameterNames") final List<String> outputParameterNames,
+			@JsonProperty("topLevel") final boolean topLevel,
+			@JsonProperty("type") final OperationInfo.Type type,
+			@JsonProperty("readVariables") final List<String> readVariables,
+			@JsonProperty("writtenVariables") final List<String> writtenVariables,
+			@JsonProperty("nonDetWrittenVariables") final List<String> nonDetWrittenVariables
 	) {
 		this.operationName = operationName;
 		this.parameterNames = parameterNames;

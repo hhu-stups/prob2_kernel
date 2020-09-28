@@ -11,14 +11,12 @@ import de.prob.check.tracereplay.json.storage.AbstractMetaData;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.check.tracereplay.json.storage.TraceMetaData;
 import de.prob.statespace.LoadedMachine;
-import de.prob.statespace.Trace;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public class TraceManagerTest {
 
@@ -46,7 +44,7 @@ public class TraceManagerTest {
 	@Test
 	public void serialize_correct_data_structure_test() throws IOException {
 		LoadedMachine loadedMachine = proBKernelStub.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "ExampleMachine.mch"));
-		AbstractMetaData abstractMetaData = new TraceMetaData(1, LocalDateTime.now(), "User", "version", "bla");
+		AbstractMetaData abstractMetaData = new TraceMetaData(1, LocalDate.now(), "User", "version", "bla");
 		PersistentTrace persistentTrace = proBKernelStub.getATrace();
 		AbstractJsonFile abstractJsonFile = new TraceJsonFile("testFile", "description", persistentTrace, loadedMachine, abstractMetaData);
 		traceManager.save(Paths.get("src", "test", "resources", "de", "prob", "traces", "UnkownLift.prob2trace"), abstractJsonFile);
