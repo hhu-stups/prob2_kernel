@@ -4,11 +4,14 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import de.prob.Main;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
+
+/**
+ * Data container for meta data
+ */
 @JsonTypeInfo(
 		use = JsonTypeInfo.Id.NAME,
-		include = JsonTypeInfo.As.PROPERTY,
 		property = "type"
 )
 @JsonSubTypes(
@@ -16,12 +19,22 @@ import java.time.LocalDate;
 )
 public abstract class AbstractMetaData {
 
-	private int formatVersion;
-	private LocalDate savedAt;
-	private String creator;
-	private String proB2KernelVersion;
+	private final int formatVersion;
+	private final LocalDateTime savedAt;
+	private final String creator;
+	private final String proB2KernelVersion;
+	private final String proBCliVersion;
+	private final String name;
 
-	public AbstractMetaData(int formatVersion, LocalDate savedAt, String creator,  String proBCliVersion, String name) {
+	/**
+	 *
+	 * @param formatVersion format version
+	 * @param savedAt saved at time x
+ 	 * @param creator creator
+	 * @param proBCliVersion probcli version
+	 * @param name name
+	 */
+	public AbstractMetaData(int formatVersion, LocalDateTime savedAt, String creator, String proBCliVersion, String name) {
 		this.formatVersion = formatVersion;
 		this.savedAt = savedAt;
 		this.creator = creator;
@@ -30,56 +43,35 @@ public abstract class AbstractMetaData {
 		this.name = name;
 	}
 
-	private String proBCliVersion;
-	private String name;
-
 
 	public int getFormatVersion() {
 		return formatVersion;
 	}
 
-	public void setFormatVersion(int formatVersion) {
-		this.formatVersion = formatVersion;
-	}
 
-	public LocalDate getSavedAt() {
+	public LocalDateTime getSavedAt() {
 		return savedAt;
 	}
 
-	public void setSavedAt(LocalDate savedAt) {
-		this.savedAt = savedAt;
-	}
 
 	public String getCreator() {
 		return creator;
 	}
 
-	public void setCreator(String creator) {
-		this.creator = creator;
-	}
 
 	public String getProB2KernelVersion() {
 		return proB2KernelVersion;
 	}
 
-	public void setProB2KernelVersion(String proB2KernelVersion) {
-		this.proB2KernelVersion = proB2KernelVersion;
-	}
 
 	public String getProBCliVersion() {
 		return proBCliVersion;
 	}
 
-	public void setProBCliVersion(String proBCliVersion) {
-		this.proBCliVersion = proBCliVersion;
-	}
 
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
 
 }
