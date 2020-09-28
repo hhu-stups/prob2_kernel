@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import de.prob.Main;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 
 /**
@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 public abstract class AbstractMetaData {
 
 	private final int formatVersion;
-	private final LocalDateTime savedAt;
+	private final LocalDate savedAt;
 	private final String creator;
 	private final String proB2KernelVersion;
 	private final String proBCliVersion;
@@ -34,7 +34,7 @@ public abstract class AbstractMetaData {
 	 * @param proBCliVersion probcli version
 	 * @param name name
 	 */
-	public AbstractMetaData(int formatVersion, LocalDateTime savedAt, String creator, String proBCliVersion, String name) {
+	public AbstractMetaData(int formatVersion, LocalDate savedAt, String creator, String proBCliVersion, String name) {
 		this.formatVersion = formatVersion;
 		this.savedAt = savedAt;
 		this.creator = creator;
@@ -49,7 +49,7 @@ public abstract class AbstractMetaData {
 	}
 
 
-	public LocalDateTime getSavedAt() {
+	public LocalDate getSavedAt() {
 		return savedAt;
 	}
 

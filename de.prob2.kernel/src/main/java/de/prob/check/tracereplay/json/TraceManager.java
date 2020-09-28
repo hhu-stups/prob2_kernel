@@ -13,7 +13,7 @@ import de.prob.statespace.StateSpace;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 /**
  * Loads and safes traces
@@ -53,7 +53,7 @@ public class TraceManager implements IJsonManager{
 	 * @throws IOException something went wrong with saving
 	 */
 	public void save(PersistentTrace trace, StateSpace stateSpace, Path location, String proBCliVersion, String modelName) throws IOException {
-		TraceMetaData traceMetaData = new TraceMetaData(1, LocalDateTime.now(), "User", proBCliVersion, modelName);
+		TraceMetaData traceMetaData = new TraceMetaData(1, LocalDate.now(), "User", proBCliVersion, modelName);
 		TraceJsonFile abstractJsonFile = new TraceJsonFile("", "", trace, stateSpace.getLoadedMachine(), traceMetaData);
 		save(location, abstractJsonFile);
 	}

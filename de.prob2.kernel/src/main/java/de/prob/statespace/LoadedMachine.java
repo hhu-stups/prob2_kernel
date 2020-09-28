@@ -56,7 +56,7 @@ public class LoadedMachine {
 		return getOperations().get(operationName);
 	}
 
-	private Map<String, OperationInfo> getOperations() {
+	public Map<String, OperationInfo> getOperations() {
 		if (this.machineOperationInfos == null) {
 			GetMachineOperationInfos command = new GetMachineOperationInfos();
 			this.stateSpace.execute(command);

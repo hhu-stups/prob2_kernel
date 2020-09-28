@@ -1,15 +1,24 @@
 package de.prob.check.tracereplay.json.storage;
 
+import de.prob.animator.domainobjects.FormulaExpand;
+import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.check.tracereplay.PersistentTrace;
 import de.prob.statespace.LoadedMachine;
+import de.prob.statespace.OperationInfo;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Represents the trace file
  */
 public class TraceJsonFile extends AbstractJsonFile{
 
-	private PersistentTrace trace;
-	private LoadedMachine machine;
+	private final PersistentTrace trace;
+	private final List<String> variableNames;
+	private final Map<String, OperationInfo> machineOperationInfos;
+	private final List<String> constantNames;
+	private final List<String> setNames;
 
 	/**
 	 *
@@ -22,7 +31,11 @@ public class TraceJsonFile extends AbstractJsonFile{
 	public TraceJsonFile(String name, String description, PersistentTrace trace, LoadedMachine machine, AbstractMetaData metaData) {
 		super(name, description, metaData);
 		this.trace = trace;
-		this.machine = machine;
+		variableNames = machine.getVariableNames();
+		constantNames = machine.getConstantNames();
+		setNames = machine.getSetNames();
+		machineOperationInfos = machine.getOperations();
+
 	}
 
 
@@ -30,16 +43,22 @@ public class TraceJsonFile extends AbstractJsonFile{
 		return trace;
 	}
 
-	public void setTrace(PersistentTrace trace) {
-		this.trace = trace;
+
+	public List<String> getVariableNames() {
+		return variableNames;
 	}
 
-	public LoadedMachine getMachine() {
-		return machine;
+	public Map<String, OperationInfo> getMachineOperationInfos() {
+		return machineOperationInfos;
 	}
 
-	public void setMachine(LoadedMachine machine) {
-		this.machine = machine;
+	public List<String> getConstantNames() {
+		return constantNames;
 	}
+
+	public List<String> getSetNames() {
+		return setNames;
+	}
+
 
 }

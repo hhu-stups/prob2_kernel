@@ -1,6 +1,6 @@
 package de.prob.check.tracereplay.json.storage;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 /**
  * A container for the meta data of a json file
@@ -16,7 +16,7 @@ public class TraceMetaData extends AbstractMetaData {
 	 * @param proBCliVersion probcli version
 	 * @param name name
 	 */
-	public TraceMetaData(int formatVersion, LocalDateTime savedAt, String creator, String proBCliVersion, String name) {
+	public TraceMetaData(int formatVersion, LocalDate savedAt, String creator, String proBCliVersion, String name) {
 		super(formatVersion, savedAt, creator, proBCliVersion, name);
 	}
 }
