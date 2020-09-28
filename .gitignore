@@ -35,3 +35,4 @@ stateInspectorRepl
 # Temp/swap files
 *.swp
 *~
+/lsp/
