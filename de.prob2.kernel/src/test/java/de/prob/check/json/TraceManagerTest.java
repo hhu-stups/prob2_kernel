@@ -1,5 +1,8 @@
 package de.prob.check.json;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
+import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Stage;
@@ -17,6 +20,8 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TraceManagerTest {
 
@@ -38,6 +43,25 @@ public class TraceManagerTest {
 	@Test
 	public void deserialize_correct_file_test() throws IOException {
 		traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "traces", "UnkownLift.prob2trace"));
+	}
+
+
+	@Test
+	public void deserialize_file_wrong_value_test()  {
+		assertThrows(JsonMappingException.class,() ->
+		traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "traces", "test1.prob2trace")));
+	}
+
+	@Test
+	public void deserialize_file_wrong_field_test() {
+		assertThrows(UnrecognizedPropertyException.class, () ->
+		traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "traces", "test2.prob2trace")));
+	}
+
+	@Test
+	public void deserialize_file_missing_field_test() throws IOException {
+		assertThrows(ValueInstantiationException.class, () ->
+		traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "traces", "test4.prob2trace")));
 	}
 
 

@@ -1,8 +1,6 @@
 package de.prob.check.tracereplay.json.storage;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.prob.animator.domainobjects.FormulaExpand;
-import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.check.tracereplay.PersistentTrace;
 import de.prob.statespace.LoadedMachine;
 import de.prob.statespace.OperationInfo;
