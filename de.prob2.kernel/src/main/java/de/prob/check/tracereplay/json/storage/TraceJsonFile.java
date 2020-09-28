@@ -1,6 +1,7 @@
 package de.prob.check.tracereplay.json.storage;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.prob.check.tracereplay.PersistentTrace;
 import de.prob.statespace.LoadedMachine;
 import de.prob.statespace.OperationInfo;
@@ -11,13 +12,15 @@ import java.util.Map;
 /**
  * Represents the trace file
  */
+@JsonPropertyOrder({"name", "description", "trace", "variableNames", "machineOperationInfos", "constantNames", "setNames", "metaData"})
 public class TraceJsonFile extends AbstractJsonFile{
 
 	private final PersistentTrace trace;
 	private final List<String> variableNames;
-	private final Map<String, OperationInfo> machineOperationInfos;
 	private final List<String> constantNames;
 	private final List<String> setNames;
+	private final Map<String, OperationInfo> machineOperationInfos;
+
 
 	/**
 	 *
@@ -56,6 +59,7 @@ public class TraceJsonFile extends AbstractJsonFile{
 						 @JsonProperty("constantNames") List<String> constantNames,
 						 @JsonProperty("setNames") List<String> setNames,
 						 @JsonProperty("metaData") AbstractMetaData metaData) {
+
 		super(name, description, metaData);
 		this.trace = trace;
 		this.variableNames = variableNames;

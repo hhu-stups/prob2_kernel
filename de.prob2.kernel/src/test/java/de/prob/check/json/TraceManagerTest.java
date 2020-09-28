@@ -59,9 +59,16 @@ public class TraceManagerTest {
 	}
 
 	@Test
-	public void deserialize_file_missing_field_test() throws IOException {
+	public void deserialize_file_missing_field_test() {
 		assertThrows(ValueInstantiationException.class, () ->
 		traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "traces", "test4.prob2trace")));
+	}
+
+
+	@Test
+	public void deserialize_file_missing_optional_field_test() throws IOException {
+		assertThrows(ValueInstantiationException.class, () ->
+				traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "traces", "test4.prob2trace")));
 	}
 
 

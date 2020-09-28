@@ -6,7 +6,6 @@
     "description" : "",
     "transitionList" : [ ]
   },
-  "variableNames" : [ "x" ],
   "machineOperationInfos" : {
     "Foo" : {
       "operationName" : "Foo",
@@ -29,5 +28,6 @@
     "proBCliVersion" : "version",
     "name" : "bla",
     "proB2KernelVersion" : "4.0.0-SNAPSHOT"
-  }
+  },
+  "variableNames" : [ "x" ]
 }
