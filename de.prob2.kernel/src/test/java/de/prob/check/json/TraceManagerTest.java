@@ -42,7 +42,7 @@ public class TraceManagerTest {
 	
 	@Test
 	public void deserialize_correct_file_test() throws IOException {
-		traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "traces", "UnkownLift.prob2trace"));
+		traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "traces", "trace6.prob2trace"));
 	}
 
 
@@ -78,6 +78,6 @@ public class TraceManagerTest {
 		AbstractMetaData abstractMetaData = new TraceMetaData(1, LocalDate.now(), "User", "version", "bla");
 		PersistentTrace persistentTrace = proBKernelStub.getATrace();
 		AbstractJsonFile abstractJsonFile = new TraceJsonFile("testFile", "description", persistentTrace, loadedMachine, abstractMetaData);
-		traceManager.save(Paths.get("src", "test", "resources", "de", "prob", "traces", "UnkownLift.prob2trace"), abstractJsonFile);
+		traceManager.save(Paths.get("src", "test", "resources", "de", "prob", "traces", "test6.prob2trace"), abstractJsonFile);
 	}
 }
