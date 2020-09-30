@@ -270,8 +270,8 @@ class StateSpaceEvaluationTest extends Specification {
 		then:
 		result[root] == null // ignored because it is not initialised
 		def statesWOroot = states.findAll { it != root}
-		statesWOroot.collect { result[it][ready].getValue() }.inject(true) {acc, i -> acc && isEmptySet(i)}
-		statesWOroot.collect { result[it][active].getValue() }.inject(true) {acc, i -> acc && isEmptySet(i)}
+		statesWOroot.collect { result[it][ready].getValue() }.every {isEmptySet(it)}
+		statesWOroot.collect { result[it][active].getValue() }.every {isEmptySet(it)}
 		isEmptySet(result[firstState][waiting].getValue())
 		result[state2][waiting].getValue() == "{PID1}"
 		result[state3][waiting].getValue() == "{PID2}"

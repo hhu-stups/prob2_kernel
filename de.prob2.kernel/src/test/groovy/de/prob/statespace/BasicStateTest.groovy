@@ -318,7 +318,7 @@ class BasicStateTest extends Specification {
 		def transitions = firstState.getOutTransitions()
 
 		then:
-		transitions.inject(true) { acc, i -> acc && !i.isEvaluated() }
+		transitions.every {!it.isEvaluated()}
 	}
 
 	def "don't evaluate transitions"() {
@@ -329,7 +329,7 @@ class BasicStateTest extends Specification {
 		def transitions = firstState.getOutTransitions(false)
 
 		then:
-		transitions.inject(true) { acc, i -> acc && !i.isEvaluated() }
+		transitions.every {!it.isEvaluated()}
 	}
 
 	def "evaluate transitions"() {
@@ -340,7 +340,7 @@ class BasicStateTest extends Specification {
 		def transitions = firstState.getOutTransitions(true)
 
 		then:
-		transitions.inject(true) { acc, i -> acc && i.isEvaluated() }
+		transitions.every {it.isEvaluated()}
 	}
 
 	def "explore changes all the values"() {
