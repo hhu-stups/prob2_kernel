@@ -221,13 +221,9 @@ if (!project.hasProperty("probHome")) {
 
 test {
 	useJUnitPlatform()
-	exclude('de/prob/cli/integration')
 	systemProperty("logback.configurationFile", "de/prob/logging/production.xml")
 	testLogging {
 		exceptionFormat = 'full'
-	}
-	jacoco {
-		destinationFile = file("$buildDir/jacoco/jacocoTest.exec")
 	}
 }
 
@@ -240,7 +236,7 @@ wrapper {
 	distributionType = Wrapper.DistributionType.ALL
 }
 
-task allTests(dependsOn: ['test', 'groovyIntegrationTests', 'cliIntegrationTests'])
+task allTests(dependsOn: ['test', 'groovyIntegrationTests'])
 
 task groovyIntegrationTests(type: JavaExec) {
 	main = "de.prob2.commandline.CommandLineMain"
@@ -248,16 +244,6 @@ task groovyIntegrationTests(type: JavaExec) {
 	args = ['-script', 'groovyTests']
 }
 project.jacoco.applyTo(groovyIntegrationTests)
-
-
-task cliIntegrationTests(type: Test, dependsOn: ['test']) {
-	useJUnitPlatform()
-	include('de/prob/cli/integration/**/*')
-	systemProperty("logback.configurationFile", "de/prob/logging/production.xml")
-	jacoco {
-		destinationFile = file("$buildDir/jacoco/jacocoCliIntegrationTests.exec")
-	}
-}
 
 jacoco {
 	toolVersion = "0.8.5"
@@ -271,7 +257,7 @@ task codeCoverageReport(type: JacocoReport, dependsOn: ['allTests']) {
 		csv.enabled false
 		html.destination new File("${buildDir}/jacocoHtml")
 	}
-	executionData(test, groovyIntegrationTests, cliIntegrationTests)
+	executionData(test, groovyIntegrationTests)
 }
 
 check.dependsOn codeCoverageReport
