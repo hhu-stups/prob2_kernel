@@ -220,6 +220,7 @@ if (!project.hasProperty("probHome")) {
 }
 
 test {
+	useJUnitPlatform()
 	exclude('de/prob/cli/integration')
 	systemProperty("logback.configurationFile", "de/prob/logging/production.xml")
 	testLogging {
@@ -250,6 +251,7 @@ project.jacoco.applyTo(groovyIntegrationTests)
 
 
 task cliIntegrationTests(type: Test, dependsOn: ['test']) {
+	useJUnitPlatform()
 	include('de/prob/cli/integration/**/*')
 	systemProperty("logback.configurationFile", "de/prob/logging/production.xml")
 	jacoco {
