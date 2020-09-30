@@ -100,27 +100,27 @@ class BasicStateTest extends Specification {
 
 	def "isConstantsSetUp contacts Prolog to check constants setup status (if it isn't explored)"() {
 		setup:
-		root.constantsSetUp = true
+		root.constantsSetUp = false
 		root.explored = false
 
 		when:
 		def constantsSetUp = root.isConstantsSetUp()
 
 		then:
-		!constantsSetUp
+		constantsSetUp
 		root.isExplored()
 	}
 
 	def "if cached, constantsSetUp doesn't contact prolog"() {
 		setup:
-		root.constantsSetUp = true
+		root.constantsSetUp = false
 		root.explored = true
 
 		when:
 		def constantsSetUp = root.isConstantsSetUp()
 
 		then:
-		constantsSetUp
+		!constantsSetUp
 	}
 
 	def "isInitialised contacts Prolog to check initialisation status (if it isn't explored)"() {
@@ -349,7 +349,7 @@ class BasicStateTest extends Specification {
 		s.subscribe(root, [f])
 		root.transitions = []
 		root.values = [:]
-		root.constantsSetUp = true
+		root.constantsSetUp = false
 		root.initialised = true
 		root.invariantOk = false
 		root.timeoutOccurred = true
@@ -367,7 +367,7 @@ class BasicStateTest extends Specification {
 		then:
 		!root.transitions.isEmpty()
 		!root.getValues().isEmpty()
-		root.constantsSetUp == false
+		root.constantsSetUp == true
 		root.initialised == false
 		root.invariantOk == true
 		root.timeoutOccurred == false

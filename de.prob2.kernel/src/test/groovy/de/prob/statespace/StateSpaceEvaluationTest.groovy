@@ -6,6 +6,7 @@ import de.prob.animator.domainobjects.AbstractEvalResult
 import de.prob.animator.domainobjects.CSP
 import de.prob.animator.domainobjects.ClassicalB
 import de.prob.animator.domainobjects.IEvalElement
+import de.prob.animator.domainobjects.IdentifierNotInitialised
 import de.prob.cli.CliTestCommon
 import de.prob.model.representation.CSPModel
 import de.prob.scripting.ClassicalBFactory
@@ -268,7 +269,7 @@ class StateSpaceEvaluationTest extends Specification {
 		s.subscribe("I'm a subscriber!",[ready])
 		Map<State, Map<IEvalElement, AbstractEvalResult>> result = s.evaluateForGivenStates(states, [waiting, ready, active])
 		then:
-		result[root] == null // ignored because it is not initialised
+		result[root].values().every {it instanceof IdentifierNotInitialised}
 		def statesWOroot = states.findAll { it != root}
 		statesWOroot.collect { result[it][ready].getValue() }.every {isEmptySet(it)}
 		statesWOroot.collect { result[it][active].getValue() }.every {isEmptySet(it)}
