@@ -236,22 +236,18 @@ wrapper {
 	distributionType = Wrapper.DistributionType.ALL
 }
 
-task allTests(dependsOn: ['test', 'groovyIntegrationTests'])
-
 task groovyIntegrationTests(type: JavaExec) {
 	main = "de.prob2.commandline.CommandLineMain"
 	classpath = project(":de.prob2.commandline").sourceSets.main.runtimeClasspath
 	args = ['-script', 'groovyTests']
 }
+check.dependsOn(groovyIntegrationTests)
 project.jacoco.applyTo(groovyIntegrationTests)
 
 jacoco {
 	toolVersion = "0.8.5"
 }
-task codeCoverageReport(type: JacocoReport, dependsOn: ['allTests']) {
-	sourceDirectories.from([])
-	classDirectories.from('build/classes/groovy/main')
-	//onlyIf = {true}
+jacocoTestReport {
 	reports {
 		xml.enabled false
 		csv.enabled false
@@ -259,8 +255,6 @@ task codeCoverageReport(type: JacocoReport, dependsOn: ['allTests']) {
 	}
 	executionData(test, groovyIntegrationTests)
 }
-
-check.dependsOn codeCoverageReport
 
 eclipse {
 	project {
