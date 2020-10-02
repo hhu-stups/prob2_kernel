@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -37,6 +38,15 @@ public class TraceManagerTest {
 			this.proBKernelStub = injector1.getInstance(ProBKernelStub.class);
 		}
 		
+	}
+
+	@Test
+	public void serialize_correct_data_structure_test() throws IOException {
+		LoadedMachine loadedMachine = proBKernelStub.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "ExampleMachine.mch"));
+		AbstractMetaData abstractMetaData = new TraceMetaData(1, LocalDateTime.now(), "User", "version", "bla");
+		PersistentTrace persistentTrace = proBKernelStub.getATrace();
+		AbstractJsonFile abstractJsonFile = new TraceJsonFile("testFile", "description", persistentTrace, loadedMachine, abstractMetaData);
+		traceManager.save(Paths.get("src", "test", "resources", "de", "prob", "traces", "test6.prob2trace"), abstractJsonFile);
 	}
 	
 	
@@ -64,20 +74,13 @@ public class TraceManagerTest {
 		traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "traces", "test4.prob2trace")));
 	}
 
-
+/* TODO find example
 	@Test
 	public void deserialize_file_missing_optional_field_test() {
 		assertThrows(ValueInstantiationException.class, () ->
-				traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "traces", "test4.prob2trace")));
+				traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "traces", "test5.prob2trace")));
 	}
+*/
 
 
-	@Test
-	public void serialize_correct_data_structure_test() throws IOException {
-		LoadedMachine loadedMachine = proBKernelStub.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "ExampleMachine.mch"));
-		AbstractMetaData abstractMetaData = new TraceMetaData(1, LocalDate.now(), "User", "version", "bla");
-		PersistentTrace persistentTrace = proBKernelStub.getATrace();
-		AbstractJsonFile abstractJsonFile = new TraceJsonFile("testFile", "description", persistentTrace, loadedMachine, abstractMetaData);
-		traceManager.save(Paths.get("src", "test", "resources", "de", "prob", "traces", "test6.prob2trace"), abstractJsonFile);
-	}
 }

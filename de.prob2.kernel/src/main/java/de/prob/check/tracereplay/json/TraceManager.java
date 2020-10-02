@@ -1,7 +1,13 @@
 package de.prob.check.tracereplay.json;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.google.inject.Inject;
 import de.prob.check.tracereplay.PersistentTrace;
+import de.prob.check.tracereplay.json.storage.AbstractJsonFile;
+import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.json.JsonManager;
 import de.prob.json.JsonMetadata;
 
@@ -11,31 +17,37 @@ import java.nio.file.Path;
 /**
  * Loads and safes traces
  */
-public class TraceManager {
+public class TraceManager implements IJsonManager {
 
 	private final ObjectMapper objectMapper;
 
+	@Inject
 	public TraceManager(ObjectMapper objectMapper){
+
 		this.objectMapper = objectMapper;
+		this.objectMapper.enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+		this.objectMapper.enable(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS);
+		this.objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+		this.objectMapper.registerModule(new JavaTimeModule());
 	}
 
-	public PersistentTrace load(Path path) throws IOException {
-		return objectMapper.readValue(path.toFile(), PersistentTrace.class);
+	/**
+	 * @param path the path to load from
+	 * @return an object of the form AbstractJsonFile
+	 */
+	@Override
+	public TraceJsonFile load(Path path) throws IOException {
+		return objectMapper.readValue(path.toFile(), TraceJsonFile.class);
 	}
 
-	public void save(PersistentTrace trace, Path location, String proBCliVersion, String modelName) throws IOException {
-		final JsonMetadata metadata = this.jsonManager.defaultMetadataBuilder()
-				.withProBCliVersion(proBCliVersion)
-				.withModelName(modelName)
-				.build();
-		this.jsonManager.writeToFile(location, trace, metadata);
+
+	/**
+	 * @param location where to save
+	 * @param object   the object to be stored
+	 */
+	@Override
+	public void save(Path location, AbstractJsonFile object) throws IOException {
+		this.objectMapper.writeValue(location.toFile(), object);
 	}
 
-	public void save(PersistentTrace trace, Path location) throws IOException {
-		this.jsonManager.writeToFile(location, trace);
-	}
-
-	public JsonManager<PersistentTrace> getJsonManager() {
-		return jsonManager;
-	}
 }
