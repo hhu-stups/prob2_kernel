@@ -109,11 +109,34 @@ public class PersistentTransition {
 		return name;
 	}
 
+
+	public Set<String> getDestStateNotChanged() {
+		if (this.destStateNotChanged == null) {
+			return null;
+		}
+		return new HashSet<>(this.destStateNotChanged);
+	}
+
+	public List<String> getPreds() {
+		if (this.preds == null) {
+			return null;
+		}
+		return new ArrayList<>(this.preds);
+	}
+
 	public Map<String, String> getParameters() {
 		if (this.params == null) {
 			return null;
 		}
 		return new HashMap<>(this.params);
+	}
+
+
+	public Map<String, String> getResults() {
+		if (this.results == null) {
+			return null;
+		}
+		return new HashMap<>(this.results);
 	}
 
 	public Map<String, String> getOutputParameters() {

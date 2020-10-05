@@ -111,4 +111,6 @@ public class OperationInfo {
 			.add("nonDetWrittenVariables", this.nonDetWrittenVariables)
 			.toString();
 	}
+
+
 }
