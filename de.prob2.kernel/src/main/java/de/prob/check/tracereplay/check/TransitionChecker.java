@@ -1,12 +1,12 @@
 package de.prob.check.tracereplay.check;
 
+import de.prob.check.tracereplay.PersistentTrace;
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.statespace.LoadedMachine;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.Trace;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -16,6 +16,7 @@ public class TransitionChecker {
 
 
 	final List<PersistentTransition> oldTrace;
+	final String description;
 	final LoadedMachine currentMachine;
 	final Map<String, OperationInfo>oldMachineOperationInfos;
 
@@ -28,13 +29,14 @@ public class TransitionChecker {
 	 * @param oldSetNames the old set (from file)
 	 * @param oldMachineOperationInfos the machine operation details (from file)
 	 */
-	public TransitionChecker(List<PersistentTransition> oldTrace,
+	public TransitionChecker(PersistentTrace oldTrace,
 							 LoadedMachine currentMachine,
 							 List<String> oldVariableNames,
 							 List<String> oldConstantNames,
 							 List<String> oldSetNames,
 							 Map<String, OperationInfo>oldMachineOperationInfos){
-		this.oldTrace = oldTrace;
+		this.oldTrace = oldTrace.getTransitionList();
+		this.description = oldTrace.getDescription();
 		this.currentMachine = currentMachine;
 		this.oldMachineOperationInfos = oldMachineOperationInfos;
 
@@ -45,11 +47,16 @@ public class TransitionChecker {
 	 * Currently just resolving equal name conflicts for operations
 	 * @return the modified trace
 	 */
-	List<PersistentTransition> findProblems(){
-		Set<Conflict> conflicts = transitionListContainsOperationsByName(currentMachine.getOperationNames(), oldTrace);
+	public PersistentTrace resolveConflicts(){
+
+		//Hardocded $initialize_machine to prevent things from getting into trouble
+		Set<String> currentOperationNames = currentMachine.getOperationNames();
+		currentOperationNames.remove("$initialise_machine");
+
+		Set<Conflict> conflicts = transitionListContainsOperationsByName(currentOperationNames, oldTrace);
 		Map<String, String> resolvedConflicts = resolveOperationRenamingConflict(conflicts, oldMachineOperationInfos, currentMachine.getOperations());
 
-		return oldTrace.stream().map(persistentTransition -> {
+		List<PersistentTransition> newTransitions = oldTrace.stream().map(persistentTransition -> {
 			String newOperationName = resolvedConflicts.get(persistentTransition.getOperationName());
 			return new PersistentTransition(newOperationName, persistentTransition.getParameters(),
 					persistentTransition.getResults(),
@@ -58,6 +65,7 @@ public class TransitionChecker {
 					persistentTransition.getPreds());
 		}).collect(Collectors.toList());
 
+		return new PersistentTrace(description, newTransitions);
 	}
 
 
@@ -96,7 +104,7 @@ public class TransitionChecker {
 			Set<String> candidates = currentMachineOperationInfo.entrySet().stream().filter(
 					stringOperationInfoEntry -> {
 					OperationInfo currentOperation = stringOperationInfoEntry.getValue();
-					return equals(oldOperation, currentOperation);
+					return CheckerUtils.equals(oldOperation, currentOperation);
 					})
 					.map(Map.Entry::getKey).collect(Collectors.toSet());
 
@@ -105,47 +113,5 @@ public class TransitionChecker {
 			return new AbstractMap.SimpleEntry<>(oldOperation.getOperationName(), new ArrayList<>(candidates).get(0));
 		}).collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
 		
-	}
-
-	public <T> List<T> getFirstElementOrEmptyList(List<T> list){
-		if(list.size()>0){
-			return Collections.singletonList(list.get(0));
-		}else{
-			return new ArrayList<>();
-		}
-	}
-
-	/**
-	 * compares if two OperationInfos are the same expect for their name
-	 * @param old the operationInfo form the file
-	 * @param currentObject the current operationInfo
-	 * @return true if equal
-	 */
-	public boolean equals(OperationInfo old, OperationInfo currentObject){
-		boolean equalNonDetWrittenVariables = listComparator(old.getNonDetWrittenVariables(), currentObject.getNonDetWrittenVariables());
-		boolean outputParameterNames = listComparator(old.getOutputParameterNames(), currentObject.getOutputParameterNames());
-		boolean parameterNames = listComparator(old.getParameterNames(), currentObject.getParameterNames());
-		boolean writtenVariables = listComparator(old.getWrittenVariables(), currentObject.getWrittenVariables());
-		boolean readVariables = listComparator(old.getReadVariables(), currentObject.getReadVariables());
-
-		return  equalNonDetWrittenVariables && outputParameterNames && parameterNames && writtenVariables && readVariables;
-	}
-
-	/**
-	 * Return true if two list contain equal elements
-	 * @param a the first list
-	 * @param b the second list
-	 * @return the result of the comparison
-	 */
-	public boolean listComparator(List<String> a, List<String> b){
-		if(a.size() == b.size()){
-			for(int i = 0; i < a.size(); i++){
-				if(!a.get(i).equals(b.get(i))){
-					return false;
-				}
-			}
-			return true;
-		}
-		return false;
 	}
 }

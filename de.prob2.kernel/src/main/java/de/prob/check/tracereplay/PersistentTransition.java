@@ -72,12 +72,12 @@ public class PersistentTransition {
 	 * @param destStateNotChanged target state is no change
 	 * @param preds predicates
 	 */
-	public PersistentTransition(@JsonProperty("name") String name,
-								@JsonProperty("params") Map<String, String> params,
+	public PersistentTransition(@JsonProperty("operationName") String name,
+								@JsonProperty("parameters") Map<String, String> params,
 								@JsonProperty("results") Map<String, String> results,
-								@JsonProperty("destState") Map<String, String> destState,
+								@JsonProperty("destinationStateVariables") Map<String, String> destState,
 								@JsonProperty("destStateNotChanged") Set<String> destStateNotChanged,
-								@JsonProperty("preds") List<String> preds){
+								@JsonProperty("additionalPredicates") List<String> preds){
 		this.name = name;
 		this.params = params;
 		this.results = results;
