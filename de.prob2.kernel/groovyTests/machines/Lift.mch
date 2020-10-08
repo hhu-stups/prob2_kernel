@@ -1,23 +1,23 @@
 MACHINE Lift
 
-ABSTRACT_VARIABLES  floor
+ABSTRACT_VARIABLES  current_level
 
-INVARIANT  floor : 0..99 /* NAT */
+INVARIANT  current_level : 0..99 /* NAT */
 
-ASSERTIONS floor>=0
-INITIALISATION floor := 4
+ASSERTIONS current_level>=0
+INITIALISATION current_level := 4
 
 OPERATIONS
 
-	inc = PRE floor<99 THEN floor := floor + 1 END ;
+	inc = PRE current_level<99 THEN current_level := current_level + 1 END ;
 	
-	dec = BEGIN floor := floor - 1 END;
+	dec = BEGIN current_level := current_level - 1 END;
 	/* 
-	result  <-- ground = BEGIN result := bool(floor=0) END
-	dec = PRE floor>0 THEN floor := floor - 1 END ;  */
+	result  <-- ground = BEGIN result := bool(current_level=0) END
+	dec = PRE current_level>0 THEN current_level := current_level - 1 END ;  */
 	
 	result  <-- ground = 
-	            IF floor=0 THEN
+	            IF current_level=0 THEN
 	             result := TRUE
 	            ELSE
 	             result := FALSE
