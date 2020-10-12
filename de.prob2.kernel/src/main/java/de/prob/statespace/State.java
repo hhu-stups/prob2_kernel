@@ -1,5 +1,17 @@
 package de.prob.statespace;
 
+import de.prob.animator.command.EvaluateFormulasCommand;
+import de.prob.animator.command.EvaluateRegisteredFormulasCommand;
+import de.prob.animator.command.ExploreStateCommand;
+import de.prob.animator.command.GetBStateCommand;
+import de.prob.animator.domainobjects.AbstractEvalResult;
+import de.prob.animator.domainobjects.FormulaExpand;
+import de.prob.animator.domainobjects.IEvalElement;
+import de.prob.animator.domainobjects.StateError;
+import de.prob.model.representation.AbstractModel;
+import groovy.lang.GroovyObjectSupport;
+import org.codehaus.groovy.runtime.DefaultGroovyMethods;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -13,20 +25,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import de.prob.animator.command.EvaluateFormulasCommand;
-import de.prob.animator.command.EvaluateRegisteredFormulasCommand;
-import de.prob.animator.command.ExploreStateCommand;
-import de.prob.animator.command.GetBStateCommand;
-import de.prob.animator.domainobjects.AbstractEvalResult;
-import de.prob.animator.domainobjects.FormulaExpand;
-import de.prob.animator.domainobjects.IEvalElement;
-import de.prob.animator.domainobjects.StateError;
-import de.prob.model.representation.AbstractModel;
-
-import groovy.lang.GroovyObjectSupport;
-
-import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 
 /**
  * A reference to the state object in the ProB core.
@@ -149,14 +147,9 @@ public class State extends GroovyObjectSupport {
 	 */
 	public List<Transition> findTransitions(String name, List<String> predicates, int nrOfSolutions) {
 		final String predicate = predicates.isEmpty() ? "TRUE = TRUE" : '(' + String.join(") & (", predicates) + ')';
-		try {
-			final List<Transition> newOps = stateSpace.transitionFromPredicate(this, name, predicate, nrOfSolutions);
-			transitions.addAll(newOps);
-			return newOps;
-		} catch (IllegalArgumentException e) {
-			// Skip
-		}
-		return Collections.emptyList();
+		final List<Transition> newOps = stateSpace.transitionFromPredicate(this, name, predicate, nrOfSolutions);
+		transitions.addAll(newOps);
+		return newOps;
 	}
 
 	public State anyOperation(final Object filter) {
