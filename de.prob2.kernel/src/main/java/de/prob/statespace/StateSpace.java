@@ -57,7 +57,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 
 /**
  *
@@ -261,7 +260,7 @@ public class StateSpace implements IAnimator {
 		execute(command);
 		if (command.hasErrors()) {
 			throw new ExecuteOperationException("Executing operation " + opName + " with predicate " + predicate
-					+ " produced errors: " + command.getErrors().stream().map(GetOperationByPredicateCommand.GetOperationError::getMessage).collect(Collectors.joining(", ")), command.getErrors());
+					+ " produced errors: " + String.join(", ", command.getErrorMessages()), command.getErrors());
 		}
 		return command.getNewTransitions();
 	}
