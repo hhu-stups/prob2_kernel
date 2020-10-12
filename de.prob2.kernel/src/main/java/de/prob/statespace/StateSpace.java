@@ -12,6 +12,7 @@ import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.command.CheckIfStateIdValidCommand;
 import de.prob.animator.command.ComposedCommand;
 import de.prob.animator.command.EvaluateFormulasCommand;
+import de.prob.animator.command.ExecuteOperationException;
 import de.prob.animator.command.ExtendedStaticCheckCommand;
 import de.prob.animator.command.FindStateCommand;
 import de.prob.animator.command.FindTraceBetweenNodesCommand;
@@ -56,6 +57,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -258,8 +260,8 @@ public class StateSpace implements IAnimator {
 				pred, nrOfSolutions);
 		execute(command);
 		if (command.hasErrors()) {
-			throw new IllegalArgumentException("Executing operation " + opName + " with predicate " + predicate
-					+ " produced errors: " + String.join(", ", command.getErrors()));
+			throw new ExecuteOperationException("Executing operation " + opName + " with predicate " + predicate
+					+ " produced errors: " + command.getErrors().stream().map(GetOperationByPredicateCommand.GetOperationError::getMessage).collect(Collectors.joining(", ")), command.getErrors());
 		}
 		return command.getNewTransitions();
 	}
