@@ -1,6 +1,7 @@
 package de.prob.animator.command;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ExecuteOperationException extends IllegalArgumentException {
 
@@ -13,5 +14,9 @@ public class ExecuteOperationException extends IllegalArgumentException {
 
     public List<GetOperationByPredicateCommand.GetOperationError> getErrors() {
         return errors;
+    }
+
+    public List<String> getErrorMessages() {
+        return errors.stream().map(GetOperationByPredicateCommand.GetOperationError::getMessage).collect(Collectors.toList());
     }
 }
