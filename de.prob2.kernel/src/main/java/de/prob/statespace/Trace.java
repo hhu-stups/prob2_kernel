@@ -1,5 +1,16 @@
 package de.prob.statespace;
 
+import com.github.krukow.clj_lang.PersistentVector;
+import de.prob.animator.command.ComposedCommand;
+import de.prob.animator.command.EvaluationCommand;
+import de.prob.animator.domainobjects.AbstractEvalResult;
+import de.prob.animator.domainobjects.FormulaExpand;
+import de.prob.animator.domainobjects.IEvalElement;
+import de.prob.model.representation.AbstractModel;
+import de.prob.util.Tuple2;
+import groovy.lang.GroovyObjectSupport;
+import org.codehaus.groovy.runtime.DefaultGroovyMethods;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -9,20 +20,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import com.github.krukow.clj_lang.PersistentVector;
-
-import de.prob.animator.command.ComposedCommand;
-import de.prob.animator.command.EvaluationCommand;
-import de.prob.animator.domainobjects.AbstractEvalResult;
-import de.prob.animator.domainobjects.FormulaExpand;
-import de.prob.animator.domainobjects.IEvalElement;
-import de.prob.model.representation.AbstractModel;
-import de.prob.util.Tuple2;
-
-import groovy.lang.GroovyObjectSupport;
-
-import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 
 /**
  * @author joy
@@ -331,7 +328,12 @@ public class Trace extends GroovyObjectSupport {
 	 * @return {@code true}, if the operation can be executed. {@code false}, otherwise
 	 */
 	public boolean canExecuteEvent(String event, List<String> predicates) {
-		return getCurrentState().findTransition(event, predicates) != null;
+		try {
+			Transition t = getCurrentState().findTransition(event, predicates);
+			return t != null;
+		} catch (IllegalArgumentException e) {
+			return false;
+		}
 	}
 
 	public Trace anyOperation(final Object filter) {
