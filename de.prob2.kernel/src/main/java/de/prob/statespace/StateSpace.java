@@ -864,7 +864,7 @@ public class StateSpace implements IAnimator {
 				}
 			}
 			if (!toEvaluateInState.isEmpty()) {
-			    evalCommandsByState.put(stateId, new EvaluateFormulasCommand(toEvaluateInState, stateId.getId()));
+				evalCommandsByState.put(stateId, new EvaluateFormulasCommand(toEvaluateInState, stateId.getId()));
 			}
 		}
 
