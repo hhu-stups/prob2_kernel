@@ -168,6 +168,16 @@ task downloadCLIs(type: Download) {
 
 task downloadCSPMFrontend {
 	final cspmfDownloadURL = "https://www3.hhu.de/stups/downloads/cspmf"
+	if (osdetector.os == "windows") {
+		cspmfPlatform = 'windows'
+		probPlatform = 'windows'
+	} else if (osdetector.os == "osx") {
+		cspmfPlatform = 'darwin-64'
+		probPlatform = 'leopard64'
+	} else { // Linux
+		cspmfPlatform = 'linux-64'
+		probPlatform = 'linux64'
+	}
 	final files = [
 			cspmfPlatform: probPlatform,
 	].collectEntries {cspmfPlatform, probPlatform ->
@@ -191,40 +201,6 @@ task downloadCSPMFrontend {
 			}
 			target.executable = true
 		}
-	}
-}
-
-
-task downloadCSPMFrontend {
-	final cspmfDownloadURL = "https://www3.hhu.de/stups/downloads/cspmf"
-	def cspmfPlatform = ''
-	def libName = ""
-	def probPlatform = ''
-	if (osdetector.os == "windows") {
-		cspmfPlatform = 'windows'
-		libName = "cspmf.exe"
-		probPlatform = 'windows'
-	} else if (osdetector.os == "osx") {
-		cspmfPlatform = 'darwin-64'
-		libName = "cspmf"
-		probPlatform = 'leopard64'
-	} else { // Linux
-		cspmfPlatform = 'linux-64'
-		libName = "cspmf"
-		probPlatform = 'linux64'
-	}
-
-	doLast {
-		CLI_DOWNLOAD_DIR.mkdirs()
-		// Note: toString is used here to eagerly evaluate the GString (which is not hashed properly otherwise)
-		def url = "${cspmfDownloadURL}/${cspmfPlatform}/${libName}".toString()
-		def target = new File(CLI_DOWNLOAD_DIR, "${probPlatform}-${libName}")
-		download {
-			src(url)
-			dest(target)
-			onlyIfModified(true)
-		}
-		target.executable = true
 	}
 }
 
