@@ -168,6 +168,8 @@ task downloadCLIs(type: Download) {
 
 task downloadCSPMFrontend {
 	final cspmfDownloadURL = "https://www3.hhu.de/stups/downloads/cspmf"
+	def cspmfPlatform = ''
+	def probPlatform = ''
 	if (osdetector.os == "windows") {
 		cspmfPlatform = 'windows'
 		probPlatform = 'windows'
@@ -180,15 +182,15 @@ task downloadCSPMFrontend {
 	}
 	final files = [
 			cspmfPlatform: probPlatform,
-	].collectEntries {cspmfPlatform, probPlatform ->
+	].collectEntries {c, p ->
 		def libName
-		if (cspmfPlatform == "windows") {
+		if (c == "windows") {
 			libName = "cspmf.exe"
 		} else {
 			libName = "cspmf"
 		}
 		// Note: toString is used here to eagerly evaluate the GString (which is not hashed properly otherwise)
-		[("${cspmfDownloadURL}/${cspmfPlatform}/${libName}".toString()): new File(CLI_DOWNLOAD_DIR, "${probPlatform}-${libName}")]
+		[("${cspmfDownloadURL}/${c}/${libName}".toString()): new File(CLI_DOWNLOAD_DIR, "${p}-${libName}")]
 	}
 
 	doLast {
