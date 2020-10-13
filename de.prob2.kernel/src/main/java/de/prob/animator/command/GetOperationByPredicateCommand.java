@@ -79,7 +79,7 @@ public final class GetOperationByPredicateCommand extends AbstractCommand
 		evalElement = predicate;
 		if (!EvalElementType.PREDICATE.equals(evalElement.getKind()) && !EvalElementType.NONE.equals(evalElement.getKind())) {
 			String message = "Formula must be a predicate: " + predicate;
-		    throw new ExecuteOperationException(message, Collections.singletonList(new GetOperationError(GetOperationErrorType.PARSE_ERROR, message)));
+			throw new ExecuteOperationException(message, Collections.singletonList(new GetOperationError(GetOperationErrorType.PARSE_ERROR, message)));
 		}
 	}
 
@@ -87,7 +87,7 @@ public final class GetOperationByPredicateCommand extends AbstractCommand
 	 * This method is called when the command is prepared for sending. The
 	 * method is called by the Animator class, most likely it is not interesting
 	 * for other classes.
-	 * 
+	 *
 	 * @see de.prob.animator.command.AbstractCommand#writeCommand(de.prob.prolog.output.IPrologTermOutput)
 	 */
 	@Override
@@ -104,9 +104,9 @@ public final class GetOperationByPredicateCommand extends AbstractCommand
 	 * This method is called to extract relevant information from ProB's answer.
 	 * The method is called by the Animator class, most likely it is not
 	 * interesting for other classes.
-	 * 
-	 * 
-	 * 
+	 *
+	 *
+	 *
 	 * @see de.prob.animator.command.AbstractCommand#writeCommand(de.prob.prolog.output.IPrologTermOutput)
 	 */
 	@Override
