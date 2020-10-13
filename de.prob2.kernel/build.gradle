@@ -181,7 +181,7 @@ task downloadCSPMFrontend {
 		probPlatform = 'linux64'
 	}
 	final files = [
-			cspmfPlatform: probPlatform,
+			"${cspmfPlatform}".toString(): probPlatform,
 	].collectEntries {c, p ->
 		def libName
 		if (c == "windows") {
