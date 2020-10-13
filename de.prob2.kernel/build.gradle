@@ -169,8 +169,9 @@ task downloadCLIs(type: Download) {
 task downloadCSPMFrontend {
 	final cspmfDownloadURL = "https://www3.hhu.de/stups/downloads/cspmf"
 	// TODO: Refactor
+	def files = []
 	if(osdetector.os == "windows") {
-		final files = [
+		files = [
 				'windows'  : 'windows',
 		].collectEntries { cspmfPlatform, probPlatform ->
 			def libName = "cspmf.exe"
@@ -178,7 +179,7 @@ task downloadCSPMFrontend {
 			[("${cspmfDownloadURL}/${cspmfPlatform}/${libName}".toString()): new File(CLI_DOWNLOAD_DIR, "${probPlatform}-${libName}")]
 		}
 	} else if(osdetector.os == "osx") {
-		final files = [
+		files = [
 				'darwin-64': 'leopard64',
 		].collectEntries { cspmfPlatform, probPlatform ->
 			def libName = "cspmf"
@@ -186,7 +187,7 @@ task downloadCSPMFrontend {
 			[("${cspmfDownloadURL}/${cspmfPlatform}/${libName}".toString()): new File(CLI_DOWNLOAD_DIR, "${probPlatform}-${libName}")]
 		}
 	} else { //Linux
-		final files = [
+		files = [
 				'linux-64' : 'linux64',
 		].collectEntries { cspmfPlatform, probPlatform ->
 			def libName = "cspmf"
