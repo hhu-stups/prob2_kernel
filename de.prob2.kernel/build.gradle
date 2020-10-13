@@ -180,27 +180,6 @@ task downloadCLIs(type: Download) {
 }
 
 
-task downloadCLIs(type: Download) {
-	final files = []
-	def platform = ''
-	if (osdetector.os == "windows") {
-		platform = 'win64'
-		files << "probcli_${platform}.zip"
-		files << "windowslib64.zip"
-	} else if (osdetector.os == "osx") {
-		platform = 'leopard64'
-		files << "probcli_${platform}.zip"
-	} else { // Linux
-		platform = 'linux64'
-		files << "probcli_${platform}.zip"
-	}
-
-	src(files.collect {"${cliDownloadURL}/${it}"})
-	dest(CLI_DOWNLOAD_DIR)
-	onlyIfModified(true)
-}
-
-
 task downloadCSPMFrontend {
 	final cspmfDownloadURL = "https://www3.hhu.de/stups/downloads/cspmf"
 	def cspmfPlatform = ''
