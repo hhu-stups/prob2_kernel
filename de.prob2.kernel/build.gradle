@@ -168,32 +168,19 @@ task downloadCLIs(type: Download) {
 
 task downloadCSPMFrontend {
 	final cspmfDownloadURL = "https://www3.hhu.de/stups/downloads/cspmf"
-	// TODO: Refactor
-	def files = []
-	if(osdetector.os == "windows") {
-		files = [
-				'windows'  : 'windows',
-		].collectEntries { cspmfPlatform, probPlatform ->
-			def libName = "cspmf.exe"
-			// Note: toString is used here to eagerly evaluate the GString (which is not hashed properly otherwise)
-			[("${cspmfDownloadURL}/${cspmfPlatform}/${libName}".toString()): new File(CLI_DOWNLOAD_DIR, "${probPlatform}-${libName}")]
+	final files = [
+			'darwin-64': 'leopard64',
+			'linux-64': 'linux64',
+			'windows': 'windows',
+	].collectEntries {cspmfPlatform, probPlatform ->
+		def libName
+		if (cspmfPlatform == "windows") {
+			libName = "cspmf.exe"
+		} else {
+			libName = "cspmf"
 		}
-	} else if(osdetector.os == "osx") {
-		files = [
-				'darwin-64': 'leopard64',
-		].collectEntries { cspmfPlatform, probPlatform ->
-			def libName = "cspmf"
-			// Note: toString is used here to eagerly evaluate the GString (which is not hashed properly otherwise)
-			[("${cspmfDownloadURL}/${cspmfPlatform}/${libName}".toString()): new File(CLI_DOWNLOAD_DIR, "${probPlatform}-${libName}")]
-		}
-	} else { //Linux
-		files = [
-				'linux-64' : 'linux64',
-		].collectEntries { cspmfPlatform, probPlatform ->
-			def libName = "cspmf"
-			// Note: toString is used here to eagerly evaluate the GString (which is not hashed properly otherwise)
-			[("${cspmfDownloadURL}/${cspmfPlatform}/${libName}".toString()): new File(CLI_DOWNLOAD_DIR, "${probPlatform}-${libName}")]
-		}
+		// Note: toString is used here to eagerly evaluate the GString (which is not hashed properly otherwise)
+		[("${cspmfDownloadURL}/${cspmfPlatform}/${libName}".toString()): new File(CLI_DOWNLOAD_DIR, "${probPlatform}-${libName}")]
 	}
 
 	doLast {
@@ -208,6 +195,7 @@ task downloadCSPMFrontend {
 		}
 	}
 }
+
 
 
 task cleanDownloads(type: Delete) {
