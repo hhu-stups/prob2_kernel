@@ -168,21 +168,21 @@ task downloadCLIs(type: Download) {
 
 task downloadCSPMFrontend {
 	final cspmfDownloadURL = "https://www3.hhu.de/stups/downloads/cspmf"
-	def cspmfPlatform = ""
+	def cspmfPlatform = ''
 	def libName = ""
-	def probPlatform = ""
+	def probPlatform = ''
 	if (osdetector.os == "windows") {
-		cspmfPlatform = "windows"
+		cspmfPlatform = 'windows'
 		libName = "cspmf.exe"
-		probPlatform = "windows"
+		probPlatform = 'windows'
 	} else if (osdetector.os == "osx") {
-		cspmfPlatform = "darwin-64"
+		cspmfPlatform = 'darwin-64'
 		libName = "cspmf"
-		probPlatform = "leopard64"
+		probPlatform = 'leopard64'
 	} else { // Linux
-		cspmfPlatform = "linux-64"
+		cspmfPlatform = 'linux-64'
 		libName = "cspmf"
-		probPlatform = "linux64"
+		probPlatform = 'linux64'
 	}
 
 	doLast {
