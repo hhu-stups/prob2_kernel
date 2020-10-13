@@ -152,19 +152,24 @@ final CLI_DOWNLOAD_DIR = file("src/main/resources/de/prob/cli/binaries")
 
 task downloadCLIs(type: Download) {
 	final files = []
+	def platform = ''
 	if (osdetector.os == "windows") {
-		files << "probcli_win64.zip"
+		platform = 'win64'
+		files << "probcli_${platform}.zip"
 		files << "windowslib64.zip"
 	} else if (osdetector.os == "osx") {
-		files << "probcli_leopard64.zip"
+		platform = 'leopard64'
+		files << "probcli_${platform}.zip"
 	} else { // Linux
-		files << "probcli_linux64.zip"
+		platform = 'linux64'
+		files << "probcli_${platform}.zip"
 	}
 
 	src(files.collect {"${cliDownloadURL}/${it}"})
 	dest(CLI_DOWNLOAD_DIR)
 	onlyIfModified(true)
 }
+
 
 task downloadCSPMFrontend {
 	final cspmfDownloadURL = "https://www3.hhu.de/stups/downloads/cspmf"
