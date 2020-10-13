@@ -168,6 +168,35 @@ task downloadCLIs(type: Download) {
 
 task downloadCSPMFrontend {
 	final cspmfDownloadURL = "https://www3.hhu.de/stups/downloads/cspmf"
+	final files = [
+			cspmfPlatform: probPlatform,
+	].collectEntries {cspmfPlatform, probPlatform ->
+		def libName
+		if (cspmfPlatform == "windows") {
+			libName = "cspmf.exe"
+		} else {
+			libName = "cspmf"
+		}
+		// Note: toString is used here to eagerly evaluate the GString (which is not hashed properly otherwise)
+		[("${cspmfDownloadURL}/${cspmfPlatform}/${libName}".toString()): new File(CLI_DOWNLOAD_DIR, "${probPlatform}-${libName}")]
+	}
+
+	doLast {
+		CLI_DOWNLOAD_DIR.mkdirs()
+		files.each {url, target ->
+			download {
+				src(url)
+				dest(target)
+				onlyIfModified(true)
+			}
+			target.executable = true
+		}
+	}
+}
+
+
+task downloadCSPMFrontend {
+	final cspmfDownloadURL = "https://www3.hhu.de/stups/downloads/cspmf"
 	def cspmfPlatform = ''
 	def libName = ""
 	def probPlatform = ''
