@@ -177,7 +177,7 @@ task downloadCSPMFrontend {
 			// Note: toString is used here to eagerly evaluate the GString (which is not hashed properly otherwise)
 			[("${cspmfDownloadURL}/${cspmfPlatform}/${libName}".toString()): new File(CLI_DOWNLOAD_DIR, "${probPlatform}-${libName}")]
 		}
-	} else if(osxdetector.os == "osx") {
+	} else if(osdetector.os == "osx") {
 		final files = [
 				'darwin-64': 'leopard64',
 		].collectEntries { cspmfPlatform, probPlatform ->
