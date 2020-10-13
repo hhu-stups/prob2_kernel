@@ -163,7 +163,7 @@ task downloadCLIs(type: Download) {
 
 	src(files.collect {"${cliDownloadURL}/${it}"})
 	dest(CLI_DOWNLOAD_DIR)
-	onlyIfModified(true)
+	//onlyIfModified(true)
 }
 
 task downloadCSPMFrontend {
@@ -192,7 +192,7 @@ task downloadCSPMFrontend {
 			// Note: toString is used here to eagerly evaluate the GString (which is not hashed properly otherwise)
 			src(("${cspmfDownloadURL}/${cspmfPlatform}/${libName}".toString()))
 			dest(target)
-			onlyIfModified(true)
+			//onlyIfModified(true)
 		}
 		target.executable = true
 	}
