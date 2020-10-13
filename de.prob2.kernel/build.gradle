@@ -188,13 +188,13 @@ task downloadCSPMFrontend {
 	CLI_DOWNLOAD_DIR.mkdirs()
 	doLast {
 		def target = new File(CLI_DOWNLOAD_DIR, "${probPlatform}-${libName}")
+		target.executable = true
 		download {
 			// Note: toString is used here to eagerly evaluate the GString (which is not hashed properly otherwise)
 			src(("${cspmfDownloadURL}/${cspmfPlatform}/${libName}".toString()))
 			dest(target)
 			onlyIfModified(true)
 		}
-		target.executable = true
 	}
 }
 
