@@ -152,6 +152,36 @@ final CLI_DOWNLOAD_DIR = file("src/main/resources/de/prob/cli/binaries")
 
 task downloadCLIs(type: Download) {
 	final files = []
+	if (osdetector.os == "windows") {
+		[
+				'win64',
+		].each {platform ->
+			files << "probcli_${platform}.zip"
+		}
+		files << "windowslib64.zip"
+	} else if(osdetector.os == "osx") {
+		[
+				'leopard64',
+		].each {platform ->
+			files << "probcli_${platform}.zip"
+		}
+	} else { // Linux
+		[
+				'linux64',
+		].each {platform ->
+			files << "probcli_${platform}.zip"
+		}
+	}
+
+
+	src(files.collect {"${cliDownloadURL}/${it}"})
+	dest(CLI_DOWNLOAD_DIR)
+	onlyIfModified(true)
+}
+
+
+task downloadCLIs(type: Download) {
+	final files = []
 	def platform = ''
 	if (osdetector.os == "windows") {
 		platform = 'win64'
