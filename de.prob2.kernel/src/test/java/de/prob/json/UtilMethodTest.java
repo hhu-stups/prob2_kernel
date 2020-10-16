@@ -7,6 +7,7 @@ import com.google.gson.JsonParseException;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Stage;
+import de.prob.JsonManagerStubModule;
 import de.prob.check.tracereplay.PersistentTrace;
 import de.prob.check.tracereplay.PersistentTransition;
 import org.junit.Assert;
