@@ -1,9 +1,11 @@
-package de.prob.check.json;
+package de.prob;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import de.prob.animator.ReusableAnimator;
+import de.prob.animator.command.AbstractCommand;
 import de.prob.check.tracereplay.PersistentTrace;
+import de.prob.model.classicalb.ClassicalBModel;
 import de.prob.scripting.ClassicalBFactory;
 import de.prob.scripting.FactoryProvider;
 import de.prob.scripting.ModelFactory;
@@ -12,9 +14,11 @@ import de.prob.statespace.AnimationSelector;
 import de.prob.statespace.LoadedMachine;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.function.Function;
 
 public class ProBKernelStub {
@@ -33,14 +37,24 @@ public class ProBKernelStub {
 		this.reusableAnimator = reusableAnimator;
 	}
 
-	public LoadedMachine load(Path path){
+	/**
+	 * Just load something
+	 * @param path machine to load
+	 * @return the loaded machine
+	 * @throws IOException exceptions thrown from prob
+	 * @throws ModelTranslationError exceptions thrown from prob
+	 */
+	public LoadedMachine load(Path path) throws IOException, ModelTranslationError {
+
 		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension("mch"));
-		StateSpace stateSpace = reusableAnimator.createStateSpace();
+		ClassicalBModel bla = (ClassicalBModel) factory.extract(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "ExampleMachine.mch").toString()).getModel();
+			StateSpace stateSpace = reusableAnimator.createStateSpace();
 		Function<StateSpace, Trace> function = stateSpace1 -> {
 			try {
 				factory.extract(path.toString()).loadIntoStateSpace(stateSpace);
 			} catch (IOException | ModelTranslationError e) {
 				e.printStackTrace();
+
 			}
 			return new Trace(stateSpace);
 		};
@@ -48,7 +62,11 @@ public class ProBKernelStub {
 		trace = new Trace(stateSpace);
 		return stateSpace.getLoadedMachine();
 	}
-
+	
+	public void executeCommand(AbstractCommand command){
+		reusableAnimator.execute(command);
+	}
+	
 	public PersistentTrace getATrace(){
 
 		return new PersistentTrace(trace);
