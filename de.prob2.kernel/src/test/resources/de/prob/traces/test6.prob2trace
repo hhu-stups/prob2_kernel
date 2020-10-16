@@ -6,16 +6,36 @@
     "description" : "",
     "transitionList" : [ ]
   },
-  "variableNames" : [ "x" ],
+  "variableNames" : [ "floors" ],
   "machineOperationInfos" : {
-    "Foo" : {
-      "operationName" : "Foo",
-      "parameterNames" : [ "p1", "p2" ],
-      "outputParameterNames" : [ "out1", "out2" ],
+    "inccc" : {
+      "operationName" : "inccc",
+      "parameterNames" : [ ],
+      "outputParameterNames" : [ ],
       "topLevel" : true,
       "type" : "CLASSICAL_B",
-      "readVariables" : [ "x" ],
-      "writtenVariables" : [ "x" ],
+      "readVariables" : [ "floors" ],
+      "writtenVariables" : [ "floors" ],
+      "nonDetWrittenVariables" : [ ]
+    },
+    "dec" : {
+      "operationName" : "dec",
+      "parameterNames" : [ ],
+      "outputParameterNames" : [ ],
+      "topLevel" : true,
+      "type" : "CLASSICAL_B",
+      "readVariables" : [ "floors" ],
+      "writtenVariables" : [ "floors" ],
+      "nonDetWrittenVariables" : [ ]
+    },
+    "getfloors" : {
+      "operationName" : "getfloors",
+      "parameterNames" : [ ],
+      "outputParameterNames" : [ "out" ],
+      "topLevel" : true,
+      "type" : "CLASSICAL_B",
+      "readVariables" : [ "floors" ],
+      "writtenVariables" : [ ],
       "nonDetWrittenVariables" : [ ]
     }
   },
@@ -24,7 +44,7 @@
   "metaData" : {
     "type" : "TraceMetaData",
     "formatVersion" : 1,
-    "savedAt" : [ 2020, 10, 2, 9, 58, 51, 258609000 ],
+    "savedAt" : [ 2020, 10, 14, 13, 23, 19, 325305000 ],
     "creator" : "User",
     "proBCliVersion" : "version",
     "name" : "bla",
