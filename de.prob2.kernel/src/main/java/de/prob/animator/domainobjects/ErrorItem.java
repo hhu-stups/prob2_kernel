@@ -17,6 +17,7 @@ public final class ErrorItem {
 		WARNING,
 		ERROR,
 		INTERNAL_ERROR,
+		MESSAGE
 	}
 	
 	public static final class Location {
@@ -165,7 +166,11 @@ public final class ErrorItem {
 			case "error":
 				type = Type.ERROR;
 				break;
-			
+
+			case "message":
+				type = Type.MESSAGE;
+				break;
+
 			case "internal_error":
 				type = Type.INTERNAL_ERROR;
 				break;
@@ -229,6 +234,10 @@ public final class ErrorItem {
 			
 			case ERROR:
 				sb.append("Error: ");
+				break;
+
+			case MESSAGE:
+				sb.append("Message: ");
 				break;
 			
 			case INTERNAL_ERROR:
