@@ -10,6 +10,7 @@ import com.google.common.base.MoreObjects;
 import de.prob.animator.command.ExpandFormulaCommand;
 import de.prob.animator.command.ExpandFormulaNonrecursiveCommand;
 import de.prob.animator.command.GetBVisual2FormulaStructureCommand;
+import de.prob.animator.command.GetBVisual2FormulaStructureNonrecursiveCommand;
 import de.prob.animator.command.GetTopLevelFormulasCommand;
 import de.prob.animator.command.InsertFormulaForVisualizationCommand;
 import de.prob.statespace.State;
@@ -101,7 +102,54 @@ public final class BVisual2Formula {
 	}
 	
 	/**
+	 * <p>Expand (but don't evaluate) multiple formulas non-recursively. All formulas must belong to the same state space.</p>
+	 * <p>To fully expand a formula recursively, {@link #expandStructureMultiple(List)} should be used.</p>
+	 *
+	 * @param formulas the formulas to expand
+	 * @return the expanded formula structure
+	 *
+	 * @see #expandStructureNonrecursive() 
+	 */
+	public static List<ExpandedFormulaStructure> expandStructureNonrecursiveMultiple(final List<BVisual2Formula> formulas) {
+		Objects.requireNonNull(formulas, "formulas");
+		
+		if (formulas.isEmpty()) {
+			return Collections.emptyList();
+		}
+		
+		final BVisual2Formula firstFormula = formulas.get(0);
+		final List<GetBVisual2FormulaStructureNonrecursiveCommand> expandCommands = formulas.stream()
+			.peek(Objects::requireNonNull)
+			.peek(formula -> {
+				if (!formula.getStateSpace().equals(firstFormula.getStateSpace())) {
+					throw new IllegalArgumentException(String.format("Formula %s and %s don't belong to the same state space", firstFormula, formula));
+				}
+			})
+			.map(GetBVisual2FormulaStructureNonrecursiveCommand::new)
+			.collect(Collectors.toList());
+		
+		firstFormula.getStateSpace().execute(expandCommands);
+		
+		return expandCommands.stream()
+			.map(GetBVisual2FormulaStructureNonrecursiveCommand::getResult)
+			.collect(Collectors.toList());
+	}
+	
+	/**
+	 * <p>Expand (but don't evaluate) this formula non-recursively.</p>
+	 * <p>To expand many formulas in the same state, {@link #expandStructureNonrecursiveMultiple(List)} should be used for better performance. To fully expand a formula recursively, {@link #expandStructure()} should be used.</p>
+	 *
+	 * @return the expanded formula structure
+	 *
+	 * @see #expandStructureNonrecursiveMultiple(List)
+	 */
+	public ExpandedFormulaStructure expandStructureNonrecursive() {
+		return expandStructureNonrecursiveMultiple(Collections.singletonList(this)).get(0);
+	}
+	
+	/**
 	 * <p>Expand (but don't evaluate) multiple formulas recursively. All formulas must belong to the same state space.</p>
+	 * <p>If the formulas' children are not used (or only partially), {@link #expandStructureNonrecursiveMultiple(List)} should be used to avoid recursively expanding all children when not needed.</p>
 	 *
 	 * @param formulas the formulas to expand
 	 * @return the expanded formula structure
@@ -135,7 +183,7 @@ public final class BVisual2Formula {
 	
 	/**
 	 * <p>Expand (but don't evaluate) this formula recursively.</p>
-	 * <p>To expand many formulas in the same state, {@link #expandStructureMultiple(List)} should be used for better performance.</p>
+	 * <p>To expand many formulas in the same state, {@link #expandStructureMultiple(List)} should be used for better performance. If the formula's children are not used (or only partially), {@link #expandStructureNonrecursive()}} should be used to avoid recursively expanding all children when not needed.</p>
 	 *
 	 * @return the expanded formula structure
 	 *
