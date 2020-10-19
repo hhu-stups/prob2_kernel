@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.MoreObjects;
 
-import de.prob.animator.command.ComposedCommand;
 import de.prob.animator.command.ExpandFormulaCommand;
 import de.prob.animator.command.ExpandFormulaNonrecursiveCommand;
 import de.prob.animator.command.GetTopLevelFormulasCommand;
@@ -129,7 +128,7 @@ public final class BVisual2Formula {
 			.map(id -> new ExpandFormulaNonrecursiveCommand(id, state))
 			.collect(Collectors.toList());
 		
-		state.getStateSpace().execute(new ComposedCommand(expandCommands));
+		state.getStateSpace().execute(expandCommands);
 		
 		return expandCommands.stream()
 			.map(ExpandFormulaNonrecursiveCommand::getResult)
@@ -178,7 +177,7 @@ public final class BVisual2Formula {
 			.map(id -> new ExpandFormulaCommand(id, state))
 			.collect(Collectors.toList());
 		
-		state.getStateSpace().execute(new ComposedCommand(expandCommands));
+		state.getStateSpace().execute(expandCommands);
 		
 		return expandCommands.stream()
 			.map(ExpandFormulaCommand::getResult)
