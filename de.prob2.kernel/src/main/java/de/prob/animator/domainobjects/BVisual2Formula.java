@@ -9,6 +9,7 @@ import com.google.common.base.MoreObjects;
 
 import de.prob.animator.command.ExpandFormulaCommand;
 import de.prob.animator.command.ExpandFormulaNonrecursiveCommand;
+import de.prob.animator.command.GetBVisual2FormulaStructureCommand;
 import de.prob.animator.command.GetTopLevelFormulasCommand;
 import de.prob.animator.command.InsertFormulaForVisualizationCommand;
 import de.prob.statespace.State;
@@ -97,6 +98,51 @@ public final class BVisual2Formula {
 			.add("stateSpace", this.getStateSpace())
 			.add("id", this.getId())
 			.toString();
+	}
+	
+	/**
+	 * <p>Expand (but don't evaluate) multiple formulas recursively. All formulas must belong to the same state space.</p>
+	 *
+	 * @param formulas the formulas to expand
+	 * @return the expanded formula structure
+	 *
+	 * @see #expandStructure() 
+	 */
+	public static List<ExpandedFormulaStructure> expandStructureMultiple(final List<BVisual2Formula> formulas) {
+		Objects.requireNonNull(formulas, "formulas");
+		
+		if (formulas.isEmpty()) {
+			return Collections.emptyList();
+		}
+		
+		final BVisual2Formula firstFormula = formulas.get(0);
+		final List<GetBVisual2FormulaStructureCommand> expandCommands = formulas.stream()
+			.peek(Objects::requireNonNull)
+			.peek(formula -> {
+				if (!formula.getStateSpace().equals(firstFormula.getStateSpace())) {
+					throw new IllegalArgumentException(String.format("Formula %s and %s don't belong to the same state space", firstFormula, formula));
+				}
+			})
+			.map(GetBVisual2FormulaStructureCommand::new)
+			.collect(Collectors.toList());
+		
+		firstFormula.getStateSpace().execute(expandCommands);
+		
+		return expandCommands.stream()
+			.map(GetBVisual2FormulaStructureCommand::getResult)
+			.collect(Collectors.toList());
+	}
+	
+	/**
+	 * <p>Expand (but don't evaluate) this formula recursively.</p>
+	 * <p>To expand many formulas in the same state, {@link #expandStructureMultiple(List)} should be used for better performance.</p>
+	 *
+	 * @return the expanded formula structure
+	 *
+	 * @see #expandStructureMultiple(List)
+	 */
+	public ExpandedFormulaStructure expandStructure() {
+		return expandStructureMultiple(Collections.singletonList(this)).get(0);
 	}
 	
 	/**

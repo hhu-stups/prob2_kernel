@@ -8,24 +8,14 @@ import com.google.common.base.MoreObjects;
 
 import de.prob.parser.BindingGenerator;
 import de.prob.prolog.term.CompoundPrologTerm;
-import de.prob.statespace.State;
 import de.prob.statespace.StateSpace;
 
-public class ExpandedFormula {
-	private final String label;
-	private final String description;
+public final class ExpandedFormula extends ExpandedFormulaStructure {
 	private final BVisual2Value value;
-	private final BVisual2Formula formula;
-	private final List<BVisual2Formula> subformulas;
-	private final List<ExpandedFormula> children;
 
 	private ExpandedFormula(final BVisual2Formula formula, final String label, final String description, final BVisual2Value value, final List<BVisual2Formula> subformulas, final List<ExpandedFormula> children) {
-		this.label = label;
-		this.description = description;
+		super(formula, label, description, subformulas, children);
 		this.value = value;
-		this.formula = formula;
-		this.subformulas = subformulas;
-		this.children = children;
 	}
 
 	public static ExpandedFormula withUnexpandedChildren(final BVisual2Formula formula, final String label, final String description, final BVisual2Value value, final List<BVisual2Formula> subformulas) {
@@ -79,38 +69,16 @@ public class ExpandedFormula {
 		return ExpandedFormula.withExpandedChildren(formula, label, description, result, children);
 	}
 
-	public String getLabel() {
-		return label;
-	}
-
-	public String getDescription() {
-		return description;
+	@Override
+	public List<ExpandedFormula> getChildren() {
+		// This is safe - the ExpandedFormula constructor requires that children is a List<ExpandedFormula>.
+		@SuppressWarnings("unchecked")
+		final List<ExpandedFormula> children = (List<ExpandedFormula>)super.getChildren();
+		return children;
 	}
 
 	public BVisual2Value getValue() {
 		return value;
-	}
-
-	/**
-	 * Get the subformulas of this formula. Unlike {@link #getChildren()}, the formulas are returned as unevaluated {@link BVisual2Formula} objects.
-	 * 
-	 * @return the subformulas of this formula
-	 */
-	public List<BVisual2Formula> getSubformulas() {
-		return Collections.unmodifiableList(this.subformulas);
-	}
-	
-	/**
-	 * Get the expanded values of this formula's subformulas. {@code null} is returned if the subformulas have not been expanded, for example when this expanded formula was returned from {@link #withUnexpandedChildren(BVisual2Formula, String, String, BVisual2Value, List)} or {@link BVisual2Formula#expandNonrecursive(State)}.
-	 * 
-	 * @return the expanded values of this formula's subformulas, or {@code null} if the subformulas have not been expanded
-	 */
-	public List<ExpandedFormula> getChildren() {
-		return this.children == null ? null : Collections.unmodifiableList(this.children);
-	}
-
-	public BVisual2Formula getFormula() {
-		return this.formula;
 	}
 
 	@Override
