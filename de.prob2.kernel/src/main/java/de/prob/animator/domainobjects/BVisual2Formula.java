@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.MoreObjects;
 
+import de.prob.animator.command.EvaluateBVisual2FormulasCommand;
 import de.prob.animator.command.ExpandFormulaCommand;
 import de.prob.animator.command.ExpandFormulaNonrecursiveCommand;
 import de.prob.animator.command.GetBVisual2FormulaStructureCommand;
@@ -191,6 +192,44 @@ public final class BVisual2Formula {
 	 */
 	public ExpandedFormulaStructure expandStructure() {
 		return expandStructureMultiple(Collections.singletonList(this)).get(0);
+	}
+	
+	/**
+	 * <p>Evaluate multiple formulas in the given state. All formulas must belong to the same state space as the state.</p>
+	 * 
+	 * @param formulas the formulas to evaluate
+	 * @param state the state in which to evaluate the formulas
+	 * @return the evaluated formula values
+	 */
+	public static List<BVisual2Value> evaluateMultiple(final List<BVisual2Formula> formulas, final State state) {
+		Objects.requireNonNull(formulas, "formulas");
+		Objects.requireNonNull(state, "state");
+		
+		if (formulas.isEmpty()) {
+			return Collections.emptyList();
+		}
+		
+		for (final BVisual2Formula formula : formulas) {
+			Objects.requireNonNull(formula);
+			if (!formula.getStateSpace().equals(state.getStateSpace())) {
+				throw new IllegalArgumentException(String.format("Formula %s does not belong to the state space of the given state: %s", formula, state.getStateSpace()));
+			}
+		}
+		
+		final EvaluateBVisual2FormulasCommand evaluateCommand = new EvaluateBVisual2FormulasCommand(formulas, state);
+		state.getStateSpace().execute(evaluateCommand);
+		return evaluateCommand.getResults();
+	}
+	
+	/**
+	 * <p>Evaluate this formula in the given state. This formula must belong to the same state space as the state.</p>
+	 * <p>To evaluate many formulas in the same state, {@link #evaluateMultiple(List, State)} (List)} should be used for better performance.</p>
+	 *
+	 * @param state the state in which to evaluate the formula
+	 * @return the evaluated formula value
+	 */
+	public BVisual2Value evaluate(final State state) {
+		return evaluateMultiple(Collections.singletonList(this), state).get(0);
 	}
 	
 	/**
