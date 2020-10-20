@@ -165,7 +165,7 @@ public final class JsonManager<T> {
 		LOGGER.info(this.getContext().clazz.getName());
 		if(this.getContext().clazz == PersistentTrace.class)
 		{
-			checkTracFile(rawObject);
+			checkTraceFile(rawObject);
 		}
 
 
@@ -195,7 +195,7 @@ public final class JsonManager<T> {
 	 * @param rawObject the object to be checked
 	 * @throws JsonParseException the object is somehow not valid
 	 */
-	private void checkTracFile(JsonObject rawObject){
+	private void checkTraceFile(JsonObject rawObject){
 
 		// PersistentTrace Object sanity check
 		checkClassFieldsMatchJsonObject(context.clazz, rawObject);
