@@ -144,22 +144,6 @@ public class TraceChecker {
 
 	}
 
-	/**
-	 * Takes a set of operation names and maps the corresponding used parameters to it
-	 * @param operations the operation names to map to
-	 * @param loadedMachine the target where one gets the parameters from
-	 * @return a map representing a Set of parameter names used by the given operations
-	 */
-	/*public Map<String, Set<String>> parameterPerOperation(Set<String> operations, LoadedMachine loadedMachine){
-		return operations.stream().collect(Collectors.toMap(entry -> entry , entry -> {
-			List<String> outputVars = loadedMachine.getOperations().get(entry).getOutputParameterNames();
-			List<String> inputVars = loadedMachine.getOperations().get(entry).getParameterNames();
-			List<String> all = new ArrayList<>();
-			all.addAll(outputVars);
-			all.addAll(inputVars);
-			return new HashSet<>(all);
-		}));
-	}*/
 
 	/**
 	 * Returns the operations actually used by the trace, contains $initialisation
