@@ -6,8 +6,6 @@ import com.google.inject.Singleton;
 
 import de.prob.cli.ModuleCli.OsName;
 
-import java.io.File;
-
 /**
  * Creates {@link OsSpecificInfo} for each instance of the ProB 2.0 software.
  * This is determined from the System settings. The resulting
@@ -34,38 +32,35 @@ public class OsInfoProvider implements Provider<OsSpecificInfo> {
 
 	private static OsSpecificInfo whichOs(final String osString) {
 		final String os = osString.toLowerCase();
+		final String dirName;
+		final String libsZipResourceName;
+		final String cspmfResourceName;
+		final String cliName;
+		final String userInterruptCmd;
+		final String cspmfName;
 		if (os.contains("win")) {
-			return new OsSpecificInfo(
-				CLI_BINARIES_RESOURCE_PREFIX + "probcli_win64.zip",
-				CLI_BINARIES_RESOURCE_PREFIX + "windowslib64.zip",
-				CLI_BINARIES_RESOURCE_PREFIX + "windows-cspmf.exe",
-				"probcli.exe",
-				"lib" + File.separator + "send_user_interrupt.exe",
-				"win64",
-				"lib\\cspmf.exe"
-			);
-		} else if (os.contains("mac")) {
-			return new OsSpecificInfo(
-				CLI_BINARIES_RESOURCE_PREFIX + "probcli_leopard64.zip",
-				null,
-				CLI_BINARIES_RESOURCE_PREFIX + "leopard64-cspmf",
-				"probcli.sh",
-				"send_user_interrupt",
-				"leopard64",
-				"lib/cspmf"
-			);
-		} else if (os.contains("linux")) {
-			return new OsSpecificInfo(
-				CLI_BINARIES_RESOURCE_PREFIX + "probcli_linux64.zip",
-				null,
-				CLI_BINARIES_RESOURCE_PREFIX + "linux64-cspmf",
-				"probcli.sh",
-				"send_user_interrupt",
-				"linux64",
-				"lib/cspmf"
-			);
+			dirName = "win64";
+			libsZipResourceName = CLI_BINARIES_RESOURCE_PREFIX + "windowslib64.zip";
+			cspmfResourceName = CLI_BINARIES_RESOURCE_PREFIX + "windows-cspmf.exe";
+			cliName = "probcli.exe";
+			userInterruptCmd = "lib\\send_user_interrupt.exe";
+			cspmfName = "lib\\cspmf.exe";
 		} else {
-			throw new UnsupportedOperationException("Unsupported operating system: " + osString);
+			if (os.contains("mac")) {
+				dirName = "leopard64";
+			} else if (os.contains("linux")) {
+				dirName = "linux64";
+			} else {
+				throw new UnsupportedOperationException("Unsupported operating system: " + osString);
+			}
+			libsZipResourceName = null;
+			cspmfResourceName = CLI_BINARIES_RESOURCE_PREFIX + dirName + "-cspmf";
+			cliName = "probcli.sh";
+			userInterruptCmd = "send_user_interrupt";
+			cspmfName = "lib/cspmf";
 		}
+		
+		final String cliZipResourceName = CLI_BINARIES_RESOURCE_PREFIX + "probcli_" + dirName + ".zip";
+		return new OsSpecificInfo(cliZipResourceName, libsZipResourceName, cspmfResourceName, cliName, userInterruptCmd, dirName, cspmfName);
 	}
 }
