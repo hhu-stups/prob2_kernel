@@ -13,13 +13,11 @@ public class OsSpecificInfo {
 	private final String cspmfResourceName;
 	private final String cliName;
 	private final String userInterruptCmd;
-	private final String dirName;
 	private final String cspmfName;
 
 	public OsSpecificInfo(
 		final String cliZipResourceName, final String libsZipResourceName, final String cspmfResourceName, final String cliName,
 		final String userInterruptCmd,
-		final String dirName,
 		final String cspmfName
 	) {
 		this.cliZipResourceName = cliZipResourceName;
@@ -27,7 +25,6 @@ public class OsSpecificInfo {
 		this.cspmfResourceName = cspmfResourceName;
 		this.cliName = cliName;
 		this.userInterruptCmd = userInterruptCmd;
-		this.dirName = dirName;
 		this.cspmfName = cspmfName;
 	}
 
@@ -58,13 +55,6 @@ public class OsSpecificInfo {
 		return userInterruptCmd;
 	}
 
-	/**
-	 * @return dirName Windows: "win64", Mac: "leopard64", Linux: "linux64"
-	 */
-	public String getDirName() {
-		return dirName;
-	}
-	
 	public String getCspmfName() {
 		return this.cspmfName;
 	}

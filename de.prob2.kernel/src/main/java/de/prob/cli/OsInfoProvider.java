@@ -4,8 +4,6 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
-import de.prob.cli.ModuleCli.OsName;
-
 /**
  * Creates {@link OsSpecificInfo} for each instance of the ProB 2.0 software.
  * This is determined from the System settings. The resulting
@@ -60,6 +58,6 @@ public class OsInfoProvider implements Provider<OsSpecificInfo> {
 		}
 		
 		final String cliZipResourceName = CLI_BINARIES_RESOURCE_PREFIX + "probcli_" + dirName + ".zip";
-		return new OsSpecificInfo(cliZipResourceName, libsZipResourceName, cspmfResourceName, cliName, userInterruptCmd, dirName, cspmfName);
+		return new OsSpecificInfo(cliZipResourceName, libsZipResourceName, cspmfResourceName, cliName, userInterruptCmd, cspmfName);
 	}
 }
