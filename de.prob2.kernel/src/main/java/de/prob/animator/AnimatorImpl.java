@@ -46,6 +46,13 @@ class AnimatorImpl implements IAnimator {
 
 	@Override
 	public synchronized void execute(final AbstractCommand command) {
+		if (command instanceof ComposedCommand && command.getSubcommands().isEmpty()) {
+			// Optimization: an empty ComposedCommand has no effect,
+			// so return right away to avoid an unnecessary communication with the CLI.
+			logger.trace("Skipping execution of no-op ComposedCommand {}", command);
+			return;
+		}
+
 		if (DEBUG && !command.getSubcommands().isEmpty()) {
 			List<AbstractCommand> cmds = command.getSubcommands();
 			for (AbstractCommand abstractCommand : cmds) {
