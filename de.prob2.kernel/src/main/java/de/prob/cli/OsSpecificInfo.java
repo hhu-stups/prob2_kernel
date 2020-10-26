@@ -10,20 +10,17 @@ package de.prob.cli;
 public class OsSpecificInfo {
 	private final String cliName;
 	private final String userInterruptCmd;
-	private final String name;
 	private final String dirName;
 	private final String cspmfName;
 
 	public OsSpecificInfo(
 		final String cliName,
 		final String userInterruptCmd,
-		final String name,
 		final String dirName,
 		final String cspmfName
 	) {
 		this.cliName = cliName;
 		this.userInterruptCmd = userInterruptCmd;
-		this.name = name;
 		this.dirName = dirName;
 		this.cspmfName = cspmfName;
 	}
@@ -41,13 +38,6 @@ public class OsSpecificInfo {
 	 */
 	public String getUserInterruptCmd() {
 		return userInterruptCmd;
-	}
-
-	/**
-	 * @return name Windows: "Windows", Mac: "MacOs", Linux: "Linux"
-	 */
-	public String getName() {
-		return name;
 	}
 
 	/**

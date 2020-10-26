@@ -34,11 +34,11 @@ public class OsInfoProvider implements Provider<OsSpecificInfo> {
 	private static OsSpecificInfo whichOs(final String osString) {
 		final String os = osString.toLowerCase();
 		if (os.contains("win")) {
-			return new OsSpecificInfo("probcli.exe", "lib" + File.separator + "send_user_interrupt.exe", "Windows", "win64", "lib\\cspmf.exe");
+			return new OsSpecificInfo("probcli.exe", "lib" + File.separator + "send_user_interrupt.exe", "win64", "lib\\cspmf.exe");
 		} else if (os.contains("mac")) {
-			return new OsSpecificInfo("probcli.sh", "send_user_interrupt", "MacOs", "leopard64", "lib/cspmf");
+			return new OsSpecificInfo("probcli.sh", "send_user_interrupt", "leopard64", "lib/cspmf");
 		} else if (os.contains("linux")) {
-			return new OsSpecificInfo("probcli.sh", "send_user_interrupt", "Linux", "linux64", "lib/cspmf");
+			return new OsSpecificInfo("probcli.sh", "send_user_interrupt", "linux64", "lib/cspmf");
 		} else {
 			throw new UnsupportedOperationException("Unsupported operating system: " + osString);
 		}

@@ -8,9 +8,9 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class OsInfoProviderTest {
-	private static final String LINUX = "Linux";
-	private static final String MAC = "MacOs";
-	private static final String WIN = "Windows";
+	private static final String LINUX = "linux64";
+	private static final String MAC = "leopard64";
+	private static final String WIN = "win64";
 
 	private static final Map<String, String> SUPPORTED = new HashMap<>();
 	static {
@@ -45,7 +45,7 @@ public class OsInfoProviderTest {
 
 	@Test
 	public void testSupportedOS() {
-		SUPPORTED.forEach((key, value) -> assertEquals(value, new OsInfoProvider(key).get().getName()));
+		SUPPORTED.forEach((key, value) -> assertEquals(value, new OsInfoProvider(key).get().getDirName()));
 	}
 
 	@Test(expected = UnsupportedOperationException.class)
