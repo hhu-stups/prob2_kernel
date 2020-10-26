@@ -80,18 +80,21 @@ public final class Installer {
 		logger.trace("Installed probcli");
 	}
 
+	private void installLibs() throws IOException {
+		if (osInfo.getLibsZipResourceName() != null) {
+			logger.trace("Extracting libraries from {}", osInfo.getLibsZipResourceName());
+			try (final InputStream is = this.getClass().getResourceAsStream(osInfo.getLibsZipResourceName())) {
+				FileHandler.extractZip(is, DEFAULT_HOME);
+			}
+		}
+	}
+
 	/**
 	 * Install the cspmf binary.
 	 */
 	private void installCspmf() throws IOException {
 		logger.trace("Installing cspmf");
 		final Path outcspmf = DEFAULT_HOME.resolve(osInfo.getCspmfName());
-		if (osInfo.getLibsZipResourceName() != null) {
-			try (final InputStream is = this.getClass().getResourceAsStream(osInfo.getLibsZipResourceName())) {
-				FileHandler.extractZip(is, DEFAULT_HOME);
-			}
-		}
-		
 		try (final InputStream is = this.getClass().getResourceAsStream(osInfo.getCspmfResourceName())) {
 			Files.copy(is, outcspmf, StandardCopyOption.REPLACE_EXISTING);
 		}
@@ -115,6 +118,7 @@ public final class Installer {
 		) {
 			logger.debug("Acquired installer lock file");
 			installProbcli();
+			installLibs();
 			installCspmf();
 			logger.info("CLI binaries successfully installed");
 		} catch (IOException e) {
