@@ -45,13 +45,13 @@ public class OsInfoProviderTest {
 
 	@Test
 	public void testSupportedOS() {
-		SUPPORTED.forEach((key, value) -> assertEquals(value, new OsInfoProvider(key, "i386").get().getName()));
+		SUPPORTED.forEach((key, value) -> assertEquals(value, new OsInfoProvider(key).get().getName()));
 	}
 
 	@Test(expected = UnsupportedOperationException.class)
 	public void testUnsupportedOS() {
 		for (String string : UNSUPPORTED) {
-			new OsInfoProvider(string, "i386").get();
+			new OsInfoProvider(string).get();
 		}
 	}
 

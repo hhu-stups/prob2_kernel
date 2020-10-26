@@ -42,6 +42,10 @@ public class ModuleCli extends AbstractModule {
 	@interface DebuggingKey {
 	}
 
+	/**
+	 * Currently unused - at the moment we only ship probcli binaries for a single architecture (x86_64).
+	 * Might be used again in the future if we support more than one architecture again (e. g. ARM64).
+	 */
 	@Retention(RUNTIME)
 	@Target({ ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
 	@BindingAnnotation
