@@ -68,12 +68,20 @@ public final class Installer {
 		}
 	}
 
+	private InputStream checkedGetResourceAsStream(final String name) {
+		final InputStream stream = this.getClass().getResourceAsStream(name);
+		if (stream == null) {
+			throw new IllegalArgumentException("Resource not found: " + name);
+		}
+		return stream;
+	}
+
 	/**
 	 * Install probcli and related libraries and files.
 	 */
 	private void installProbcli() throws IOException {
 		logger.trace("Extracting probcli from {}", osInfo.getCliZipResourceName());
-		try (final InputStream is = this.getClass().getResourceAsStream(osInfo.getCliZipResourceName())) {
+		try (final InputStream is = this.checkedGetResourceAsStream(osInfo.getCliZipResourceName())) {
 			FileHandler.extractZip(is, DEFAULT_HOME);
 		}
 		setExecutable(DEFAULT_HOME.resolve(this.osInfo.getCliName()), true);
@@ -83,7 +91,7 @@ public final class Installer {
 	private void installLibs() throws IOException {
 		if (osInfo.getLibsZipResourceName() != null) {
 			logger.trace("Extracting libraries from {}", osInfo.getLibsZipResourceName());
-			try (final InputStream is = this.getClass().getResourceAsStream(osInfo.getLibsZipResourceName())) {
+			try (final InputStream is = this.checkedGetResourceAsStream(osInfo.getLibsZipResourceName())) {
 				FileHandler.extractZip(is, DEFAULT_HOME);
 			}
 		}
@@ -95,7 +103,7 @@ public final class Installer {
 	private void installCspmf() throws IOException {
 		logger.trace("Installing cspmf from {}", osInfo.getCspmfResourceName());
 		final Path outcspmf = DEFAULT_HOME.resolve(osInfo.getCspmfName());
-		try (final InputStream is = this.getClass().getResourceAsStream(osInfo.getCspmfResourceName())) {
+		try (final InputStream is = this.checkedGetResourceAsStream(osInfo.getCspmfResourceName())) {
 			Files.copy(is, outcspmf, StandardCopyOption.REPLACE_EXISTING);
 		}
 		setExecutable(outcspmf, true);
