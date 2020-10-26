@@ -18,6 +18,7 @@ import java.io.File;
  */
 @Singleton
 public class OsInfoProvider implements Provider<OsSpecificInfo> {
+	private static final String CLI_BINARIES_RESOURCE_PREFIX = "/de/prob/cli/binaries/";
 
 	private final OsSpecificInfo osInfo;
 
@@ -34,11 +35,35 @@ public class OsInfoProvider implements Provider<OsSpecificInfo> {
 	private static OsSpecificInfo whichOs(final String osString) {
 		final String os = osString.toLowerCase();
 		if (os.contains("win")) {
-			return new OsSpecificInfo("probcli.exe", "lib" + File.separator + "send_user_interrupt.exe", "win64", "lib\\cspmf.exe");
+			return new OsSpecificInfo(
+				CLI_BINARIES_RESOURCE_PREFIX + "probcli_win64.zip",
+				CLI_BINARIES_RESOURCE_PREFIX + "windowslib64.zip",
+				CLI_BINARIES_RESOURCE_PREFIX + "windows-cspmf.exe",
+				"probcli.exe",
+				"lib" + File.separator + "send_user_interrupt.exe",
+				"win64",
+				"lib\\cspmf.exe"
+			);
 		} else if (os.contains("mac")) {
-			return new OsSpecificInfo("probcli.sh", "send_user_interrupt", "leopard64", "lib/cspmf");
+			return new OsSpecificInfo(
+				CLI_BINARIES_RESOURCE_PREFIX + "probcli_leopard64.zip",
+				null,
+				CLI_BINARIES_RESOURCE_PREFIX + "leopard64-cspmf",
+				"probcli.sh",
+				"send_user_interrupt",
+				"leopard64",
+				"lib/cspmf"
+			);
 		} else if (os.contains("linux")) {
-			return new OsSpecificInfo("probcli.sh", "send_user_interrupt", "linux64", "lib/cspmf");
+			return new OsSpecificInfo(
+				CLI_BINARIES_RESOURCE_PREFIX + "probcli_linux64.zip",
+				null,
+				CLI_BINARIES_RESOURCE_PREFIX + "linux64-cspmf",
+				"probcli.sh",
+				"send_user_interrupt",
+				"linux64",
+				"lib/cspmf"
+			);
 		} else {
 			throw new UnsupportedOperationException("Unsupported operating system: " + osString);
 		}
