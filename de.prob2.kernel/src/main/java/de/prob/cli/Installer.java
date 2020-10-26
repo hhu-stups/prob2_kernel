@@ -72,7 +72,7 @@ public final class Installer {
 	 * Install probcli and related libraries and files.
 	 */
 	private void installProbcli() throws IOException {
-		logger.trace("Installing probcli");
+		logger.trace("Extracting probcli from {}", osInfo.getCliZipResourceName());
 		try (final InputStream is = this.getClass().getResourceAsStream(osInfo.getCliZipResourceName())) {
 			FileHandler.extractZip(is, DEFAULT_HOME);
 		}
@@ -93,7 +93,7 @@ public final class Installer {
 	 * Install the cspmf binary.
 	 */
 	private void installCspmf() throws IOException {
-		logger.trace("Installing cspmf");
+		logger.trace("Installing cspmf from {}", osInfo.getCspmfResourceName());
 		final Path outcspmf = DEFAULT_HOME.resolve(osInfo.getCspmfName());
 		try (final InputStream is = this.getClass().getResourceAsStream(osInfo.getCspmfResourceName())) {
 			Files.copy(is, outcspmf, StandardCopyOption.REPLACE_EXISTING);
