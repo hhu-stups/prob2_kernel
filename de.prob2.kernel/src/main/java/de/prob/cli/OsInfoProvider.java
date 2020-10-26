@@ -13,13 +13,13 @@ import com.google.inject.Singleton;
  * 
  */
 @Singleton
-public class OsInfoProvider implements Provider<OsSpecificInfo> {
+class OsInfoProvider implements Provider<OsSpecificInfo> {
 	private static final String CLI_BINARIES_RESOURCE_PREFIX = "/de/prob/cli/binaries/";
 
 	private final OsSpecificInfo osInfo;
 
 	@Inject
-	public OsInfoProvider(final OsFamily osFamily) {
+	OsInfoProvider(final OsFamily osFamily) {
 		osInfo = makeOsInfo(osFamily);
 	}
 

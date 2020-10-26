@@ -1,12 +1,12 @@
 package de.prob.cli;
 
-public enum OsFamily {
+enum OsFamily {
 	WINDOWS,
 	MACOS,
 	LINUX,
 	;
 	
-	public static OsFamily fromName(final String osName) {
+	static OsFamily fromName(final String osName) {
 		final String os = osName.toLowerCase();
 		if (os.contains("win")) {
 			return WINDOWS;
