@@ -3,9 +3,7 @@ package de.prob.cli;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.util.Random;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.BindingAnnotation;
@@ -22,6 +20,11 @@ public class ModuleCli extends AbstractModule {
 				.asEagerSingleton();
 		bind(String.class).annotatedWith(OsName.class).toInstance(System.getProperty("os.name"));
 		bind(String.class).annotatedWith(OsArch.class).toInstance(System.getProperty("os.arch"));
+	}
+
+	@Provides
+	private static OsFamily getOsFamily(@OsName final String osName) {
+		return OsFamily.fromName(osName);
 	}
 
 	@Provides

@@ -21,8 +21,8 @@ public class OsInfoProvider implements Provider<OsSpecificInfo> {
 	private final OsSpecificInfo osInfo;
 
 	@Inject
-	public OsInfoProvider(@OsName final String osString) {
-		osInfo = whichOs(osString);
+	public OsInfoProvider(final OsFamily osFamily) {
+		osInfo = makeOsInfo(osFamily);
 	}
 
 	@Override
@@ -30,15 +30,14 @@ public class OsInfoProvider implements Provider<OsSpecificInfo> {
 		return osInfo;
 	}
 
-	private static OsSpecificInfo whichOs(final String osString) {
-		final String os = osString.toLowerCase();
+	private static OsSpecificInfo makeOsInfo(final OsFamily os) {
 		final String dirName;
 		final String libsZipResourceName;
 		final String cspmfResourceName;
 		final String cliName;
 		final String userInterruptCmd;
 		final String cspmfName;
-		if (os.contains("win")) {
+		if (os == OsFamily.WINDOWS) {
 			dirName = "win64";
 			libsZipResourceName = CLI_BINARIES_RESOURCE_PREFIX + "windowslib64.zip";
 			cspmfResourceName = CLI_BINARIES_RESOURCE_PREFIX + "windows-cspmf.exe";
@@ -46,12 +45,12 @@ public class OsInfoProvider implements Provider<OsSpecificInfo> {
 			userInterruptCmd = "lib\\send_user_interrupt.exe";
 			cspmfName = "lib\\cspmf.exe";
 		} else {
-			if (os.contains("mac")) {
+			if (os == OsFamily.MACOS) {
 				dirName = "leopard64";
-			} else if (os.contains("linux")) {
+			} else if (os == OsFamily.LINUX) {
 				dirName = "linux64";
 			} else {
-				throw new UnsupportedOperationException("Unsupported operating system: " + osString);
+				throw new AssertionError("Unhandled operating system: " + os);
 			}
 			libsZipResourceName = null;
 			cspmfResourceName = CLI_BINARIES_RESOURCE_PREFIX + dirName + "-cspmf";
