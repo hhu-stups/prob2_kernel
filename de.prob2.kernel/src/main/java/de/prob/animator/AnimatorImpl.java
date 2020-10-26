@@ -42,7 +42,7 @@ class AnimatorImpl implements IAnimator {
 	}
 
 	@Override
-	public synchronized void execute(final AbstractCommand command) {
+	public void execute(final AbstractCommand command) {
 		if (command instanceof ComposedCommand && command.getSubcommands().isEmpty()) {
 			// Optimization: an empty ComposedCommand has no effect,
 			// so return right away to avoid an unnecessary communication with the CLI.
@@ -50,9 +50,14 @@ class AnimatorImpl implements IAnimator {
 			return;
 		}
 
-		logger.trace("Starting execution of {}", command);
-		IPrologResult result = processor.sendCommand(command);
-		final GetErrorItemsCommand errorItemsCommand = getErrorItems();
+		final IPrologResult result;
+		final GetErrorItemsCommand errorItemsCommand;
+		// Prevent multiple threads from communicating over the same connection at the same time.
+		synchronized (this) {
+			logger.trace("Starting execution of {}", command);
+			result = processor.sendCommand(command);
+			errorItemsCommand = getErrorItems();
+		}
 
 		if (result instanceof YesResult && (errorItemsCommand.getErrors().isEmpty() || errorItemsCommand.onlyWarningsOccurred())) {
 			logger.trace("Execution successful, processing result");
@@ -72,7 +77,7 @@ class AnimatorImpl implements IAnimator {
 		logger.trace("Done executing {}", command);
 	}
 
-	private synchronized GetErrorItemsCommand getErrorItems() {
+	private GetErrorItemsCommand getErrorItems() {
 		final IPrologResult errorResult = processor.sendCommand(getErrorItems);
 		if (errorResult instanceof YesResult) {
 			getErrorItems.processResult(((YesResult) errorResult).getBindings());
