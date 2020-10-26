@@ -2,7 +2,6 @@ package de.prob.animator;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import com.google.common.base.MoreObjects;
 import com.google.inject.Inject;
@@ -13,7 +12,6 @@ import de.prob.animator.command.GetErrorItemsCommand;
 import de.prob.animator.command.GetTotalNumberOfErrorsCommand;
 import de.prob.animator.domainobjects.ErrorItem;
 import de.prob.cli.ProBInstance;
-import de.prob.exception.CliError;
 import de.prob.exception.ProBError;
 import de.prob.statespace.AnimationSelector;
 
@@ -29,7 +27,6 @@ class AnimatorImpl implements IAnimator {
 	private final Logger logger = LoggerFactory.getLogger(AnimatorImpl.class);
 	private final CommandProcessor processor;
 	private final GetErrorItemsCommand getErrorItems;
-	public static final boolean DEBUG = false;
 	private final AnimationSelector animations;
 	private boolean busy = false;
 	private final Collection<IWarningListener> warningListeners = new ArrayList<>();
@@ -51,13 +48,6 @@ class AnimatorImpl implements IAnimator {
 			// so return right away to avoid an unnecessary communication with the CLI.
 			logger.trace("Skipping execution of no-op ComposedCommand {}", command);
 			return;
-		}
-
-		if (DEBUG && !command.getSubcommands().isEmpty()) {
-			List<AbstractCommand> cmds = command.getSubcommands();
-			for (AbstractCommand abstractCommand : cmds) {
-				execute(abstractCommand);
-			}
 		}
 
 		logger.trace("Starting execution of {}", command);
