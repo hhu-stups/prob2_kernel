@@ -44,7 +44,7 @@
   "metaData" : {
     "type" : "TraceMetaData",
     "formatVersion" : 1,
-    "savedAt" : [ 2020, 10, 14, 13, 23, 19, 325305000 ],
+    "savedAt" : [ 2020, 10, 26, 6, 44, 37, 839791000 ],
     "creator" : "User",
     "proBCliVersion" : "version",
     "name" : "bla",

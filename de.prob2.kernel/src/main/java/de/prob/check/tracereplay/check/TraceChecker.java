@@ -75,7 +75,7 @@ public class TraceChecker {
 	 */
 	public static Map<String, Set<String>> checkIfOperationCandidatesFulfillSuperficialCriteriaForBeingACloneOrRenamed(
 			final Set<String> candidates, final Map<String, OperationInfo> oldMachine, final Map<String, OperationInfo> newMachine){
-		Map<String, Set<String>> bla =  candidates.stream().collect(Collectors.toMap(entry -> entry , operation -> {
+		return candidates.stream().collect(Collectors.toMap(entry -> entry , operation -> {
 
 			OperationInfo operationInfo = oldMachine.get(operation);
 			System.out.println(operationInfo);
@@ -91,9 +91,7 @@ public class TraceChecker {
 			System.out.println(ga);
 			return ga;
 
-		}));
-				System.out.println(bla);
-				return bla.entrySet().stream()
+		})).entrySet().stream()
 				.filter(stringSetEntry -> !stringSetEntry.getValue().isEmpty())
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 	}
@@ -128,11 +126,6 @@ public class TraceChecker {
 	 */
 	public static Set<String> findCandidates(final int numberOfInputVars, final int numberOfOutputVars, final int numberOfWrittenVars,
 							   final int numberOfNonDetWrittenVars, final int numberOfReadVariables, final Map<String, OperationInfo> newMachine){
-		System.out.println(numberOfInputVars);
-		System.out.println(numberOfOutputVars);
-		System.out.println(numberOfWrittenVars);
-		System.out.println(numberOfNonDetWrittenVars);
-		System.out.println(numberOfReadVariables);
 		return newMachine.values().stream().filter(operationInfo ->
 			operationInfo.getParameterNames().size() == numberOfInputVars &&
 					operationInfo.getOutputParameterNames().size() == numberOfOutputVars &&
@@ -144,13 +137,12 @@ public class TraceChecker {
 
 	}
 
-
 	/**
 	 * Returns the operations actually used by the trace, contains $initialisation
 	 * @param trace the trace to analyse
 	 * @return a set of operations used in the trace
 	 */
-	public Set<String> usedOperations(PersistentTrace trace){
+	public static Set<String> usedOperations(PersistentTrace trace){
 		return trace.getTransitionList().stream().map(PersistentTransition::getOperationName).collect(Collectors.toSet());
 	}
 

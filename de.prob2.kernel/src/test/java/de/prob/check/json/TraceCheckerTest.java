@@ -1,12 +1,29 @@
 package de.prob.check.json;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Stage;
+import de.prob.JsonManagerStubModule;
+import de.prob.MainModule;
+import de.prob.ProBKernelStub;
+import de.prob.check.tracereplay.PersistentTrace;
 import de.prob.check.tracereplay.check.TraceChecker;
+import de.prob.check.tracereplay.json.TraceManager;
+import de.prob.check.tracereplay.json.storage.AbstractJsonFile;
+import de.prob.check.tracereplay.json.storage.AbstractMetaData;
+import de.prob.check.tracereplay.json.storage.TraceJsonFile;
+import de.prob.check.tracereplay.json.storage.TraceMetaData;
+import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.LoadedMachine;
 import de.prob.statespace.OperationInfo;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static de.prob.statespace.OperationInfo.Type.CLASSICAL_B;
@@ -14,6 +31,21 @@ import static de.prob.statespace.OperationInfo.Type.valueOf;
 
 public class TraceCheckerTest {
 
+
+	TraceManager traceManager = null;
+	ProBKernelStub proBKernelStub = null;
+
+	@BeforeEach
+	public void createJsonManager(){
+		if(traceManager==null && proBKernelStub==null) {
+			System.setProperty("prob.home", "/home/sebastian/prob_prolog");
+			Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new JsonManagerStubModule());
+			this.traceManager = injector.getInstance(TraceManager.class);
+			Injector injector1 = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
+			this.proBKernelStub = injector1.getInstance(ProBKernelStub.class);
+		}
+
+	}
 
 	@Test
 	public void findCandidates_test_3_candidates(){
@@ -153,9 +185,6 @@ public class TraceCheckerTest {
 		List<String> readVariables = Collections.emptyList();
 
 		List<String> inputParas2 = Arrays.asList("a", "c");
-		List<String> outputParas2 = Arrays.asList("d", "f", "g", "h");
-		List<String> detModifiedVars2 = Arrays.asList("i", "o");
-		List<String> nonDetModifiedVars2 = Collections.singletonList("j");
 		List<String> readVariables2 = Collections.singletonList("p");
 
 		// Expected
@@ -191,6 +220,20 @@ public class TraceCheckerTest {
 		Set<String> result = TraceChecker.findOperationsWithSameParameterLength(functionNamesInQuestion, oldOperations, newOperations);
 
 		Set<String> expected = new HashSet<>(Arrays.asList("inc", "inc1"));
+
+		Assert.assertEquals(expected, result);
+
+	}
+
+
+	@Test
+	public void mega() throws IOException {
+
+		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "traces", "testTraceMachine10Steps.prob2trace"));
+
+		Set<String> result = TraceChecker.usedOperations(bla.getTrace());
+
+		Set<String> expected = new HashSet<>(Arrays.asList("$initialise_machine", "dec", "getFloor", "inc"));
 
 		Assert.assertEquals(expected, result);
 
