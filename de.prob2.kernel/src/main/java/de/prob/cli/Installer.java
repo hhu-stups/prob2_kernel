@@ -89,8 +89,7 @@ public final class Installer {
 		final Path outcspmf = DEFAULT_HOME.resolve(osInfo.getCspmfName());
 		final String cspmfName;
 		if (osInfo.getDirName().startsWith("win")) {
-			final String bits = "win32".equals(osInfo.getDirName()) ? "32" : "64";
-			try (final InputStream is = this.getClass().getResourceAsStream(CLI_BINARIES_RESOURCE_PREFIX + "windowslib" + bits + ".zip")) {
+			try (final InputStream is = this.getClass().getResourceAsStream(CLI_BINARIES_RESOURCE_PREFIX + "windowslib64.zip")) {
 				FileHandler.extractZip(is, DEFAULT_HOME);
 			}
 			cspmfName = "windows-cspmf.exe";
