@@ -2,6 +2,7 @@ package de.prob.animator;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 
 import com.google.common.base.MoreObjects;
 import com.google.inject.Inject;
@@ -59,13 +60,29 @@ class AnimatorImpl implements IAnimator {
 			errorItemsCommand = getErrorItems();
 		}
 
-		if (result instanceof YesResult && (errorItemsCommand.getErrors().isEmpty() || errorItemsCommand.onlyWarningsOccurred())) {
+		final Optional<ErrorItem.Type> worstErrorType = errorItemsCommand.getErrors().stream()
+			.map(ErrorItem::getType)
+			.max(ErrorItem.Type::compareTo);
+		// If any error with type ERROR or worse was returned,
+		// the command is considered unsuccessful (even if Prolog said yes).
+		// The exact behavior in that case can be overridden by individual commands,
+		// but normally a ProBError exception containing the error information is thrown.
+		final boolean anyErrorIsFatal = worstErrorType.isPresent() && worstErrorType.get().compareTo(ErrorItem.Type.ERROR) >= 0;
+
+		if (result instanceof YesResult && !anyErrorIsFatal) {
 			logger.trace("Execution successful, processing result");
 			if (!errorItemsCommand.getErrors().isEmpty()) {
-				logger.warn("ProB reported warnings:");
-				for (final ErrorItem error : errorItemsCommand.getErrors()) {
-					assert error.getType() == ErrorItem.Type.WARNING;
-					logger.warn("{}", error);
+				assert worstErrorType.isPresent();
+				if (worstErrorType.get().compareTo(ErrorItem.Type.MESSAGE) <= 0) {
+					logger.info("ProB returned messages:");
+					for (final ErrorItem error : errorItemsCommand.getErrors()) {
+						logger.info("{}", error);
+					}
+				} else {
+					logger.warn("ProB reported warnings:");
+					for (final ErrorItem error : errorItemsCommand.getErrors()) {
+						logger.warn("{}", error);
+					}
 				}
 				this.warningListeners.forEach(listener -> listener.warningsOccurred(errorItemsCommand.getErrors()));
 			}

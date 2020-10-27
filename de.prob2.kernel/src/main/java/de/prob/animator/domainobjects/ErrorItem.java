@@ -14,10 +14,14 @@ import de.prob.prolog.term.PrologTerm;
 
 public final class ErrorItem {
 	public enum Type {
+		// Important: These types must be ordered from least to most severe.
+		// For example, MESSAGE is less severe than WARNING, which is less severe than ERROR, etc.
+		// This is used to determine the most severe error type from a list of ErrorItems.
+		MESSAGE,
 		WARNING,
 		ERROR,
 		INTERNAL_ERROR,
-		MESSAGE
+		;
 	}
 	
 	public static final class Location {
