@@ -2,6 +2,7 @@ package de.prob.animator;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import com.google.common.base.MoreObjects;
@@ -52,15 +53,15 @@ class AnimatorImpl implements IAnimator {
 		}
 
 		final IPrologResult result;
-		final GetErrorItemsCommand errorItemsCommand;
+		final List<ErrorItem> errors;
 		// Prevent multiple threads from communicating over the same connection at the same time.
 		synchronized (this) {
 			logger.trace("Starting execution of {}", command);
 			result = processor.sendCommand(command);
-			errorItemsCommand = getErrorItems();
+			errors = getErrorItems();
 		}
 
-		final Optional<ErrorItem.Type> worstErrorType = errorItemsCommand.getErrors().stream()
+		final Optional<ErrorItem.Type> worstErrorType = errors.stream()
 			.map(ErrorItem::getType)
 			.max(ErrorItem.Type::compareTo);
 		// If any error with type ERROR or worse was returned,
@@ -71,34 +72,34 @@ class AnimatorImpl implements IAnimator {
 
 		if (result instanceof YesResult && !anyErrorIsFatal) {
 			logger.trace("Execution successful, processing result");
-			if (!errorItemsCommand.getErrors().isEmpty()) {
+			if (!errors.isEmpty()) {
 				assert worstErrorType.isPresent();
 				if (worstErrorType.get().compareTo(ErrorItem.Type.MESSAGE) <= 0) {
 					logger.info("ProB returned messages:");
-					for (final ErrorItem error : errorItemsCommand.getErrors()) {
+					for (final ErrorItem error : errors) {
 						logger.info("{}", error);
 					}
 				} else {
 					logger.warn("ProB reported warnings:");
-					for (final ErrorItem error : errorItemsCommand.getErrors()) {
+					for (final ErrorItem error : errors) {
 						logger.warn("{}", error);
 					}
 				}
-				this.warningListeners.forEach(listener -> listener.warningsOccurred(errorItemsCommand.getErrors()));
+				this.warningListeners.forEach(listener -> listener.warningsOccurred(errors));
 			}
 			command.processResult(((YesResult) result).getBindings());
 		} else {
 			logger.trace("Execution unsuccessful, processing error");
-			command.processErrorResult(result, errorItemsCommand.getErrors());
+			command.processErrorResult(result, errors);
 		}
 		logger.trace("Done executing {}", command);
 	}
 
-	private GetErrorItemsCommand getErrorItems() {
+	private List<ErrorItem> getErrorItems() {
 		final IPrologResult errorResult = processor.sendCommand(getErrorItems);
 		if (errorResult instanceof YesResult) {
 			getErrorItems.processResult(((YesResult) errorResult).getBindings());
-			return getErrorItems;
+			return getErrorItems.getErrors();
 		} else {
 			throw new ProBError("Error getter command must return yes, not " + errorResult.getClass());
 		}
