@@ -64,6 +64,8 @@ public class TraceChecker {
 
 	}
 
+	
+
 	/**
 	 * Provided with a Set of operation names, this function will return a map, mapping the names of the provided operation
 	 * names to possible candidates in the new machine. Operations without suitable candiates are removed.
@@ -85,11 +87,8 @@ public class TraceChecker {
 			int numberOfNonDetWrittenVars = operationInfo.getNonDetWrittenVariables().size();
 			int numberOfReadVariables = operationInfo.getReadVariables().size();
 
-			Set<String> ga =  findCandidates(numberOfInputVars, numberOfOutputVars, numberOfWrittenVars, numberOfNonDetWrittenVars,
+			return findCandidates(numberOfInputVars, numberOfOutputVars, numberOfWrittenVars, numberOfNonDetWrittenVars,
 					numberOfReadVariables, newMachine);
-
-			System.out.println(ga);
-			return ga;
 
 		})).entrySet().stream()
 				.filter(stringSetEntry -> !stringSetEntry.getValue().isEmpty())
