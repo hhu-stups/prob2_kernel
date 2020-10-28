@@ -9,15 +9,27 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Performs static checks on a trace
+ * Performs static checks on a trace and finds potential incompatibilities
+ * After running checks this class holds the found incompatibilities
  */
-public class TraceChecker {
+public class TypeFinder {
 
 	private final PersistentTrace trace;
 	private final Map<String, OperationInfo> oldMachine;
 	private final Map<String, OperationInfo> newMachine;
 
-	public TraceChecker(PersistentTrace trace, Map<String, OperationInfo> oldMachine, Map<String, OperationInfo> newMachine){
+	private Set<String> typeIorII;
+	private Set<String> typeIII;
+	private Set<String> typeIV;
+	private Map<String, Set<String>> typeIIpermutation;
+
+
+	/**
+	 * @param trace the trace that is currently dealt with
+	 * @param oldMachine operation of the old machine with which the trace was created
+	 * @param newMachine operations of the new machine
+	 */
+	public TypeFinder(PersistentTrace trace, Map<String, OperationInfo> oldMachine, Map<String, OperationInfo> newMachine){
 		this.trace = trace;
 		this.newMachine = newMachine;
 		this.oldMachine = oldMachine;
@@ -31,36 +43,32 @@ public class TraceChecker {
 		Set<String> operationNamesTrace = usedOperations(trace);
 		Set<String> operationNamesBeta = newMachine.keySet();
 
-		Set<String> operationNamesDoesNoMatch = operationNamesTrace;
-		operationNamesDoesNoMatch.removeAll(operationNamesBeta);
+		Set<String> operationNamesDoesNotMatch = new HashSet<>(operationNamesTrace);
+		operationNamesDoesNotMatch.removeAll(operationNamesBeta);
 
-		Set<String> operationNamesMatch = operationNamesTrace;
-		operationNamesMatch.removeAll(operationNamesDoesNoMatch);
+		Set<String> operationNamesMatch = new HashSet<>(operationNamesTrace);
+		operationNamesMatch.removeAll(operationNamesDoesNotMatch);
 
 		//Type I/II candidates
 		Set<String> operationWithSameParameterLength = findOperationsWithSameParameterLength(operationNamesMatch, oldMachine, newMachine);
+		typeIorII = operationWithSameParameterLength;
 
 		//Type III candidates
-		Set<String> operationNotSameParameterLength = operationNamesMatch;
+		Set<String> operationNotSameParameterLength = new HashSet<>(operationNamesMatch);
 		operationNotSameParameterLength.removeAll(operationWithSameParameterLength);
+		typeIII = operationNotSameParameterLength;
 
 		//Is there an operation with the same signature?
 		//Type II
 		Map<String, Set<String>> candidatesForOperation =
-				checkIfOperationCandidatesFulfillSuperficialCriteriaForBeingACloneOrRenamed(operationNamesDoesNoMatch, oldMachine, newMachine);
+				checkIfOperationCandidatesFulfillSuperficialCriteriaForBeingACloneOrRenamed(operationNamesDoesNotMatch, oldMachine, newMachine);
+		typeIIpermutation = candidatesForOperation;
 
 
 		//Type IV
-		Set<String> operationsWithNoFittingCandidate = operationNamesDoesNoMatch;
+		Set<String> operationsWithNoFittingCandidate = new HashSet<>(operationNamesDoesNotMatch);
 		operationsWithNoFittingCandidate.removeAll(candidatesForOperation.keySet());
-
-
-		/**
-		 * 1) Run Type I/II check eventually add results to Type IV
-		 * 2) Try to find a type III mapping or else type 4
-		 * 3) Report all Type IV operations and request permission to try ambigious execution
-		 */
-
+		typeIV = operationsWithNoFittingCandidate;
 
 	}
 
@@ -78,9 +86,7 @@ public class TraceChecker {
 	public static Map<String, Set<String>> checkIfOperationCandidatesFulfillSuperficialCriteriaForBeingACloneOrRenamed(
 			final Set<String> candidates, final Map<String, OperationInfo> oldMachine, final Map<String, OperationInfo> newMachine){
 		return candidates.stream().collect(Collectors.toMap(entry -> entry , operation -> {
-
 			OperationInfo operationInfo = oldMachine.get(operation);
-			System.out.println(operationInfo);
 			int numberOfInputVars = operationInfo.getParameterNames().size();
 			int numberOfOutputVars = operationInfo.getOutputParameterNames().size();
 			int numberOfWrittenVars = operationInfo.getWrittenVariables().size();
@@ -142,7 +148,25 @@ public class TraceChecker {
 	 * @return a set of operations used in the trace
 	 */
 	public static Set<String> usedOperations(PersistentTrace trace){
-		return trace.getTransitionList().stream().map(PersistentTransition::getOperationName).collect(Collectors.toSet());
+		Set<String> result = trace.getTransitionList().stream().map(PersistentTransition::getOperationName).collect(Collectors.toSet());
+		result.remove("$initialise_machine");
+		return result;
+	}
+
+	public Set<String> getTypeIorII() {
+		return typeIorII;
+	}
+
+	public Set<String> getTypeIII() {
+		return typeIII;
+	}
+
+	public Set<String> getTypeIV() {
+		return typeIV;
+	}
+
+	public Map<String, Set<String>> getTypeIIpermutation() {
+		return typeIIpermutation;
 	}
 
 }

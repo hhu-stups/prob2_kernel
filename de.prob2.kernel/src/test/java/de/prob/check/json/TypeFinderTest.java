@@ -6,30 +6,21 @@ import com.google.inject.Stage;
 import de.prob.JsonManagerStubModule;
 import de.prob.MainModule;
 import de.prob.ProBKernelStub;
-import de.prob.check.tracereplay.PersistentTrace;
-import de.prob.check.tracereplay.check.TraceChecker;
+import de.prob.check.tracereplay.check.TypeFinder;
 import de.prob.check.tracereplay.json.TraceManager;
-import de.prob.check.tracereplay.json.storage.AbstractJsonFile;
-import de.prob.check.tracereplay.json.storage.AbstractMetaData;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
-import de.prob.check.tracereplay.json.storage.TraceMetaData;
-import de.prob.scripting.ModelTranslationError;
-import de.prob.statespace.LoadedMachine;
 import de.prob.statespace.OperationInfo;
 import org.junit.Assert;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.util.*;
 
 import static de.prob.statespace.OperationInfo.Type.CLASSICAL_B;
-import static de.prob.statespace.OperationInfo.Type.valueOf;
 
-public class TraceCheckerTest {
+public class TypeFinderTest {
 
 
 	TraceManager traceManager = null;
@@ -105,7 +96,7 @@ public class TraceCheckerTest {
 		expectedResult.add(operationInfo2.getOperationName());
 		expectedResult.add(operationInfo3.getOperationName());
 
-		Set<String> candidates = TraceChecker.findCandidates(inputParas.size(), outputParas.size(), detModifiedVars.size(),
+		Set<String> candidates = TypeFinder.findCandidates(inputParas.size(), outputParas.size(), detModifiedVars.size(),
 				nonDetModifiedVars.size(), readVariables.size(), operations);
 
 
@@ -168,7 +159,7 @@ public class TraceCheckerTest {
 		newOperations.put(operationInfo9.getOperationName(), operationInfo9);
 
 
-		Map<String, Set<String>> results = TraceChecker.checkIfOperationCandidatesFulfillSuperficialCriteriaForBeingACloneOrRenamed(functionNamesInQuestion, oldOperations, newOperations);
+		Map<String, Set<String>> results = TypeFinder.checkIfOperationCandidatesFulfillSuperficialCriteriaForBeingACloneOrRenamed(functionNamesInQuestion, oldOperations, newOperations);
 		System.out.println(results);
 	}
 
@@ -217,7 +208,7 @@ public class TraceCheckerTest {
 		newOperations.put(operationInfo9.getOperationName(), operationInfo2);
 		newOperations.put(operationInfo4.getOperationName(), operationInfo4);
 
-		Set<String> result = TraceChecker.findOperationsWithSameParameterLength(functionNamesInQuestion, oldOperations, newOperations);
+		Set<String> result = TypeFinder.findOperationsWithSameParameterLength(functionNamesInQuestion, oldOperations, newOperations);
 
 		Set<String> expected = new HashSet<>(Arrays.asList("inc", "inc1"));
 
@@ -227,15 +218,138 @@ public class TraceCheckerTest {
 
 
 	@Test
-	public void mega() throws IOException {
+	public void usedOperation_test() throws IOException {
 
 		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "traces", "testTraceMachine10Steps.prob2trace"));
 
-		Set<String> result = TraceChecker.usedOperations(bla.getTrace());
+		Set<String> result = TypeFinder.usedOperations(bla.getTrace());
 
 		Set<String> expected = new HashSet<>(Arrays.asList("$initialise_machine", "dec", "getFloor", "inc"));
 
 		Assert.assertEquals(expected, result);
+
+	}
+
+	@Test
+	public void check_no_type_II_permutation_test() throws IOException {
+
+		List<String> inputParas = Collections.emptyList();
+		List<String> outputParas = Collections.emptyList();
+		List<String> detModifiedVars = Collections.singletonList("x");
+		List<String> nonDetModifiedVars = Collections.emptyList();
+		List<String> readVariables = Collections.emptyList();
+
+		List<String> inputParas2 = Arrays.asList("a", "c");
+		List<String> readVariables2 = Collections.singletonList("p");
+
+		// Expected
+		OperationInfo operationInfo1 = new OperationInfo("inc", inputParas, outputParas, true,
+				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars);
+
+		OperationInfo operationInfo2 = new OperationInfo("dec", inputParas, outputParas, true,
+				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars);
+
+		OperationInfo operationInfo3 = new OperationInfo("getFloor", inputParas, outputParas, true,
+				CLASSICAL_B, readVariables2, detModifiedVars, nonDetModifiedVars);
+
+
+		Map<String, OperationInfo> oldOperations = new HashMap<>();
+		oldOperations.put(operationInfo1.getOperationName(), operationInfo1);
+		oldOperations.put(operationInfo2.getOperationName(), operationInfo2);
+		oldOperations.put(operationInfo3.getOperationName(), operationInfo3);
+
+		OperationInfo operationInfo4 = new OperationInfo("inc2", inputParas2, outputParas, true,
+				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars);
+
+		OperationInfo operationInfo5 = new OperationInfo("dec", inputParas2, outputParas, true,
+				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars);
+
+
+		OperationInfo operationInfo9 = new OperationInfo("inc", inputParas, outputParas, true,
+				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars);
+
+
+		Map<String, OperationInfo> newOperations = new HashMap<>();
+		newOperations.put(operationInfo4.getOperationName(), operationInfo4);
+		newOperations.put(operationInfo5.getOperationName(), operationInfo5);
+		newOperations.put(operationInfo9.getOperationName(), operationInfo9);
+
+
+		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "traces", "testTraceMachine10Steps.prob2trace"));
+
+
+		TypeFinder typeFinder = new TypeFinder(bla.getTrace(), oldOperations, newOperations);
+
+		typeFinder.check();
+
+
+		Set<String> typeI = new HashSet<>(Collections.singletonList("inc"));
+		Set<String> typeIII = new HashSet<>(Collections.singletonList("dec"));
+		Set<String> typeIV = new HashSet<>(Collections.singletonList("getFloor"));
+
+
+		Assert.assertEquals(typeI, typeFinder.getTypeIorII());
+		Assert.assertEquals(typeIII, typeFinder.getTypeIII());
+		Assert.assertEquals(typeIV, typeFinder.getTypeIV());
+	}
+
+
+	@Test
+	public void check_typ_II_permutation_test() throws IOException {
+
+		List<String> inputParas = Collections.emptyList();
+		List<String> outputParas = Collections.emptyList();
+		List<String> detModifiedVars = Collections.singletonList("x");
+		List<String> nonDetModifiedVars = Collections.emptyList();
+		List<String> readVariables = Collections.emptyList();
+
+		List<String> inputParas2 = Arrays.asList("a", "c");
+		List<String> readVariables2 = Collections.singletonList("p");
+
+		// Expected
+		OperationInfo operationInfo1 = new OperationInfo("inc", inputParas, outputParas, true,
+				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars);
+
+		OperationInfo operationInfo2 = new OperationInfo("dec", inputParas, outputParas, true,
+				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars);
+
+		OperationInfo operationInfo3 = new OperationInfo("getFloor", inputParas, outputParas, true,
+				CLASSICAL_B, readVariables2, detModifiedVars, nonDetModifiedVars);
+
+
+		Map<String, OperationInfo> oldOperations = new HashMap<>();
+		oldOperations.put(operationInfo1.getOperationName(), operationInfo1);
+		oldOperations.put(operationInfo2.getOperationName(), operationInfo2);
+		oldOperations.put(operationInfo3.getOperationName(), operationInfo3);
+
+		OperationInfo operationInfo4 = new OperationInfo("inc2", inputParas2, outputParas, true,
+				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars);
+
+		OperationInfo operationInfo5 = new OperationInfo("dec", inputParas2, outputParas, true,
+				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars);
+
+
+		OperationInfo operationInfo9 = new OperationInfo("inc1", inputParas, outputParas, true,
+				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars);
+
+
+		Map<String, OperationInfo> newOperations = new HashMap<>();
+		newOperations.put(operationInfo4.getOperationName(), operationInfo4);
+		newOperations.put(operationInfo5.getOperationName(), operationInfo5);
+		newOperations.put(operationInfo9.getOperationName(), operationInfo9);
+
+
+		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "traces", "testTraceMachine10Steps.prob2trace"));
+
+
+		TypeFinder typeFinder = new TypeFinder(bla.getTrace(), oldOperations, newOperations);
+
+		typeFinder.check();
+
+
+		Set<String> typeII_per = new HashSet<>(Collections.singletonList("inc1"));
+
+		Assert.assertEquals(typeII_per, typeFinder.getTypeIIpermutation());
 
 	}
 }
