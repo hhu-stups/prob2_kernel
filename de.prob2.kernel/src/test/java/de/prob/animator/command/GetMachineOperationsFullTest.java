@@ -5,6 +5,7 @@ import com.google.inject.Injector;
 import com.google.inject.Stage;
 import de.prob.MainModule;
 import de.prob.ProBKernelStub;
+import de.prob.prolog.term.PrologTerm;
 import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.LoadedMachine;
 import org.junit.Assert;
@@ -13,10 +14,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class GetMachineOperationsFullTest {
 
@@ -59,10 +58,21 @@ public class GetMachineOperationsFullTest {
 		String element2 = "b(operation(dec,[],[],b(precondition(b(greater(b(identifier(floors),integer,[nodeid(pos(30,1,12,12,12,18)),loc(local,'Lift',abstract_variables)]),b(integer(0),integer,[nodeid(pos(31,1,12,19,12,20))])),pred,[nodeid(pos(29,1,12,12,12,20))]),b(assign_single_id(b(identifier(floors),integer,[nodeid(pos(33,1,12,26,12,32)),loc(local,'Lift',abstract_variables)]),b(minus(b(identifier(floors),integer,[nodeid(pos(35,1,12,36,12,42)),loc(local,'Lift',abstract_variables)]),b(integer(1),integer,[nodeid(pos(36,1,12,45,12,46))])),integer,[nodeid(pos(34,1,12,36,12,46))])),subst,[nodeid(pos(32,1,12,26,12,46))])),subst,[nodeid(pos(28,1,12,8,12,50))])))";
 		String element3 = "b(operation(getfloors,[b(identifier(out),integer,[nodeid(pos(38,1,13,2,13,5)),introduced_by(operation)])],[],b(assign_single_id(b(identifier(out),integer,[nodeid(pos(41,1,13,28,13,31)),introduced_by(operation)]),b(identifier(floors),integer,[nodeid(pos(42,1,13,35,13,41)),loc(local,'Lift',abstract_variables)])),subst,[nodeid(pos(40,1,13,28,13,41))])))";
 
-		System.out.println(getMachineOperationsFull.getOperations());
 		List<String> toCompare = Arrays.asList(element1, element2, element3);
-		
-		Assert.assertEquals(toCompare.toString(), getMachineOperationsFull.getOperations().toString());
+
+		List<String> result = getMachineOperationsFull.getOperations().stream().map(PrologTerm::toString).collect(Collectors.toList());
+
+
+		Assert.assertEquals(new HashSet<>(toCompare), new HashSet<>(result));
 	}
 
+
+	@Test
+	public void get_full_map() throws IOException, ModelTranslationError {
+		proBKernelStub.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "testTraceMachine.mch"));
+		GetMachineOperationsFull getMachineOperationsFull = new GetMachineOperationsFull();
+		proBKernelStub.executeCommand(getMachineOperationsFull);
+
+		Assert.assertEquals(3, getMachineOperationsFull.getOperationsWithNames().size());
+	}
 }
