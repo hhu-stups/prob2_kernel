@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.CompoundPrologTerm;
+import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 
 import java.util.Map;
@@ -24,16 +25,22 @@ public class CompareTwoOperations extends AbstractCommand {
 	private final CompoundPrologTerm operationOld;
 	private final CompoundPrologTerm operationNew;
 	private final ObjectMapper objectMapper;
+	private final ListPrologTerm foundVariables;
+	private final ListPrologTerm freeVariables;
 
-	public CompareTwoOperations(CompoundPrologTerm operationOld, CompoundPrologTerm operationNew, ObjectMapper objectMapper){
+
+	public CompareTwoOperations(CompoundPrologTerm operationOld, CompoundPrologTerm operationNew, ListPrologTerm foundVars, ListPrologTerm freeVars, ObjectMapper objectMapper){
 		this.operationNew = operationNew;
 		this.operationOld = operationOld;
 		this.objectMapper = objectMapper;
+		this.foundVariables = foundVars;
+		this.freeVariables = freeVars;
 	}
 
 	@Override
 	public void writeCommand(IPrologTermOutput pto) {
-		pto.openTerm(PROLOG_COMMAND_NAME).printTerm(operationOld).printTerm(operationNew).printVariable(VARIABLE).closeTerm();
+		pto.openTerm(PROLOG_COMMAND_NAME).printTerm(operationOld).printTerm(operationNew).printTerm(foundVariables).printTerm(freeVariables).printVariable(VARIABLE).closeTerm();
+		System.out.println(pto);
 	}
 
 

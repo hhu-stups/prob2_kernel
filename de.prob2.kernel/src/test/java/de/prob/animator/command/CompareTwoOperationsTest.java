@@ -8,8 +8,8 @@ import de.prob.MainModule;
 import de.prob.ProBKernelStub;
 import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
+import de.prob.prolog.term.VariablePrologTerm;
 import de.prob.scripting.ModelTranslationError;
-import org.apache.groovy.util.Maps;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,11 +51,58 @@ public class CompareTwoOperationsTest {
 														new CompoundPrologTerm("floors")), new CompoundPrologTerm("integer"), new ListPrologTerm())), new CompoundPrologTerm("subst"), new ListPrologTerm())));
 
 
-		CompareTwoOperations compareTwoOperations = new CompareTwoOperations(compoundPrologTerm1, compoundPrologTerm1, new ObjectMapper());
+		PrepareOperations prepareOperations1 = new PrepareOperations(compoundPrologTerm1);
+
+		proBKernelStub.executeCommand(prepareOperations1);
+
+		CompareTwoOperations compareTwoOperations =
+				new CompareTwoOperations(prepareOperations1.getPreparedOperation(), compoundPrologTerm1, prepareOperations1.getFoundVars(), prepareOperations1.getFreeVars(), new ObjectMapper());
 		proBKernelStub.executeCommand(compareTwoOperations);
-		System.out.println(compareTwoOperations.getDelta());
 		Assert.assertEquals(1, compareTwoOperations.getDelta().size());
 		Map<String, String> expected = Collections.singletonMap("inccc", "inccc");
+		Assert.assertEquals(expected, compareTwoOperations.getDelta());
+	}
+
+
+	@Test
+	public void renamed_operations_test() throws IOException, ModelTranslationError {
+		proBKernelStub.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "machineWithOneOperation.mch"));
+
+		CompoundPrologTerm compoundPrologTerm1 = new CompoundPrologTerm("b",
+				new CompoundPrologTerm("operation", new CompoundPrologTerm("inccc"), new ListPrologTerm(), new ListPrologTerm(),
+						new CompoundPrologTerm("b",
+								new CompoundPrologTerm("assign_single_id",
+										new CompoundPrologTerm("b",
+												new CompoundPrologTerm("identifier",
+														new CompoundPrologTerm("floors")),new CompoundPrologTerm("integer"), new ListPrologTerm()),
+
+										new CompoundPrologTerm("b",
+												new CompoundPrologTerm("identifier",
+														new CompoundPrologTerm("floors")), new CompoundPrologTerm("integer"), new ListPrologTerm())), new CompoundPrologTerm("subst"), new ListPrologTerm())));
+
+		CompoundPrologTerm compoundPrologTerm2 = new CompoundPrologTerm("b",
+				new CompoundPrologTerm("operation", new CompoundPrologTerm("dinccc"), new ListPrologTerm(), new ListPrologTerm(),
+						new CompoundPrologTerm("b",
+								new CompoundPrologTerm("assign_single_id",
+										new CompoundPrologTerm("b",
+												new CompoundPrologTerm("identifier",
+														new CompoundPrologTerm("floors")),new CompoundPrologTerm("integer"), new ListPrologTerm()),
+
+										new CompoundPrologTerm("b",
+												new CompoundPrologTerm("identifier",
+														new CompoundPrologTerm("floors")), new CompoundPrologTerm("integer"), new ListPrologTerm())), new CompoundPrologTerm("subst"), new ListPrologTerm())));
+
+
+
+		PrepareOperations prepareOperations1 = new PrepareOperations(compoundPrologTerm1);
+
+		proBKernelStub.executeCommand(prepareOperations1);
+
+		CompareTwoOperations compareTwoOperations =
+				new CompareTwoOperations(prepareOperations1.getPreparedOperation(), compoundPrologTerm2, prepareOperations1.getFoundVars(), prepareOperations1.getFreeVars(), new ObjectMapper());
+		proBKernelStub.executeCommand(compareTwoOperations);
+		Assert.assertEquals(1, compareTwoOperations.getDelta().size());
+		Map<String, String> expected = Collections.singletonMap("inccc", "dinccc");
 		Assert.assertEquals(expected, compareTwoOperations.getDelta());
 	}
 	
