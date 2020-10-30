@@ -1,13 +1,9 @@
 package de.prob.check.json;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import de.prob.animator.command.CompareTwoOperations;
-import de.prob.animator.command.PrepareOperations;
 import de.prob.check.tracereplay.check.CheckerInterface;
 import de.prob.check.tracereplay.check.DeltaFinder;
 import de.prob.check.tracereplay.check.PrepareOperationsInterface;
 import de.prob.check.tracereplay.check.Triple;
-import de.prob.exception.ProBError;
 import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
 import org.junit.Assert;
@@ -18,18 +14,16 @@ import java.util.*;
 
 public class DeltaFinderTest {
 
-	CheckerInterface fakeCheckerInterface = (prepareOperations, candidate) -> {
-		return new HashMap<>();
-	};
-
-
-	PrepareOperationsInterface fakePrepareOperationsInterface = (operation) -> {
-		return new Triple<>(new ListPrologTerm(), new ListPrologTerm(), new CompoundPrologTerm("a"));
-	};
 
 
 	@Test
 	void checkDeterministicPairs_test(){
+		CheckerInterface fakeCheckerInterface = (prepareOperations, candidate) -> new HashMap<>();
+
+
+		PrepareOperationsInterface fakePrepareOperationsInterface = (operation) -> new Triple<>(new ListPrologTerm(), new ListPrologTerm(), new CompoundPrologTerm("a"));
+
+
 		Map<String, CompoundPrologTerm> oldOperation = new HashMap<>();
 		Map<String, CompoundPrologTerm> newOperation = new HashMap<>();
 		Set<String> candidates = new HashSet<>();
