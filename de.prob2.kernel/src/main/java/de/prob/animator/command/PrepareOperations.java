@@ -1,6 +1,7 @@
 package de.prob.animator.command;
 
 
+import de.prob.check.tracereplay.check.Triple;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.output.PrologTermStringOutput;
@@ -56,5 +57,11 @@ public class PrepareOperations extends AbstractCommand {
 	public CompoundPrologTerm getPreparedOperation() {
 		return preparedOperation;
 	}
+
+	public Triple<ListPrologTerm, ListPrologTerm, CompoundPrologTerm> asTriple(){
+		return new Triple<>(foundVars, freeVars, preparedOperation);
+	}
+
+
 
 }
