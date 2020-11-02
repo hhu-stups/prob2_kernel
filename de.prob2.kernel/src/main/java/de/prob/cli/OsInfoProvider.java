@@ -30,15 +30,11 @@ class OsInfoProvider implements Provider<OsSpecificInfo> {
 
 	private static OsSpecificInfo makeOsInfo(final OsFamily os) {
 		final String dirName;
-		final String libsZipResourceName;
-		final String cspmfResourceName;
 		final String cliName;
 		final String userInterruptCmd;
 		final String cspmfName;
 		if (os == OsFamily.WINDOWS) {
 			dirName = "win64";
-			libsZipResourceName = CLI_BINARIES_RESOURCE_PREFIX + "windowslib64.zip";
-			cspmfResourceName = CLI_BINARIES_RESOURCE_PREFIX + "windows-cspmf.exe";
 			cliName = "probcli.exe";
 			userInterruptCmd = "lib\\send_user_interrupt.exe";
 			cspmfName = "lib\\cspmf.exe";
@@ -50,14 +46,12 @@ class OsInfoProvider implements Provider<OsSpecificInfo> {
 			} else {
 				throw new AssertionError("Unhandled operating system: " + os);
 			}
-			libsZipResourceName = null;
-			cspmfResourceName = CLI_BINARIES_RESOURCE_PREFIX + dirName + "-cspmf";
 			cliName = "probcli.sh";
 			userInterruptCmd = "send_user_interrupt";
 			cspmfName = "lib/cspmf";
 		}
 		
-		final String cliZipResourceName = CLI_BINARIES_RESOURCE_PREFIX + "probcli_" + dirName + ".zip";
-		return new OsSpecificInfo(cliZipResourceName, libsZipResourceName, cspmfResourceName, cliName, userInterruptCmd, cspmfName);
+		final String binariesZipResourceName = CLI_BINARIES_RESOURCE_PREFIX + dirName + ".zip";
+		return new OsSpecificInfo(binariesZipResourceName, cliName, userInterruptCmd, cspmfName);
 	}
 }

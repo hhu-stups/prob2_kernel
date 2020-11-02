@@ -158,55 +158,76 @@ sourceSets {
 	}
 }
 
-final CLI_DOWNLOAD_DIR = new File(generatedResourcesDir, "de/prob/cli/binaries")
+final binariesDownloadDir = new File(project.buildDir, "binaries-download")
+final binariesDestinationDir = new File(generatedResourcesDir, "de/prob/cli/binaries")
 
-task downloadCLIs(type: Download) {
-	final files = []
-	[
-			'leopard64',
-			'linux64',
-			'win64',
-	].each {platform ->
-		files << "probcli_${platform}.zip"
+final platforms = [
+	"leopard64",
+	"linux64",
+	"win64",
+]
+final cspmfDirsByPlatform = [
+	"leopard64": "darwin-64",
+	"linux64": "linux-64",
+	"win64": "windows",
+]
+
+// Build a task for each platform that downloads the binaries and packs them into a single zip.
+// This zip is included in the ProB 2 resources and is extracted into the ProB home directory at runtime.
+final packBinariesTasks = platforms.collect {platform ->
+	// Construct the individual file names and URLs based on the platform name.
+	final probcliZipName = "probcli_${platform}.zip"
+	def cspmfName
+	def libZipName
+	if (platform == "win64") {
+		cspmfName = "cspmf.exe"
+		libZipName = "windowslib64.zip"
+	} else {
+		cspmfName = "cspmf"
+		libZipName = null
 	}
-	files << "windowslib64.zip"
-
-	src(files.collect {"${cliDownloadURL}/${it}"})
-	dest(CLI_DOWNLOAD_DIR)
-	onlyIfModified(true)
+	
+	final cspmfDir = cspmfDirsByPlatform[platform]
+	final urls = [
+		"${cliDownloadURL}/${probcliZipName}",
+		"https://www3.hhu.de/stups/downloads/cspmf/${cspmfDir}/${cspmfName}",
+	]
+	if (libZipName != null) {
+		urls << "${cliDownloadURL}/${libZipName}"
+	}
+	
+	// Download the collected URLs into a temporary directory so they can be repacked.
+	final downloadDir = new File(binariesDownloadDir, platform)
+	final downloadBinariesTask = task("downloadBinaries-${platform}", type: Download) {
+		src(urls)
+		dest(downloadDir)
+		onlyIfModified(true)
+	}
+	
+	// Pack the contents of all downloaded zip files and the cspmf binary into a single zip.
+	final packBinariesTask = task("packBinaries-${platform}", type: Zip) {
+		dependsOn(downloadBinariesTask)
+		
+		destinationDirectory = binariesDestinationDir
+		archiveFileName = "${platform}.zip"
+		// TODO Check why almost all files in windowslib64.zip are already included in probcli_win64.zip
+		// (maybe we can remove windowslib64.zip completely?)
+		duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+		
+		from(zipTree(new File(downloadDir, probcliZipName)))
+		from(new File(downloadDir, cspmfName)) {
+			into("lib")
+		}
+		if (libZipName != null) {
+			from(zipTree(new File(downloadDir, libZipName)))
+		}
+	}
+	return packBinariesTask
 }
 
-task downloadCSPMFrontend {
-	final cspmfDownloadURL = "https://www3.hhu.de/stups/downloads/cspmf"
-	final files = [
-			'darwin-64': 'leopard64',
-			'linux-64': 'linux64',
-			'windows': 'windows',
-	].collectEntries {cspmfPlatform, probPlatform ->
-		def libName
-		if (cspmfPlatform == "windows") {
-			libName = "cspmf.exe"
-		} else {
-			libName = "cspmf"
-		}
-		// Note: toString is used here to eagerly evaluate the GString (which is not hashed properly otherwise)
-		[("${cspmfDownloadURL}/${cspmfPlatform}/${libName}".toString()): new File(CLI_DOWNLOAD_DIR, "${probPlatform}-${libName}")]
-	}
-
-	doLast {
-		CLI_DOWNLOAD_DIR.mkdirs()
-		files.each {url, target ->
-			download {
-				src(url)
-				dest(target)
-				onlyIfModified(true)
-			}
-			target.executable = true
-		}
-	}
+task packBinaries {
+	dependsOn = packBinariesTasks
 }
-
-
 
 task cleanOldCliDownloads(type: Delete) {
 	// Delete old CLI download directory (no longer used)
@@ -230,7 +251,7 @@ processResources {
 
 if (!project.hasProperty("probHome")) {
 	// Automatically download probcli/cspmf, unless a custom PROB_HOME is set
-	processResources.dependsOn(cleanOldCliDownloads, downloadCLIs, downloadCSPMFrontend)
+	processResources.dependsOn(cleanOldCliDownloads, packBinaries)
 }
 
 test {

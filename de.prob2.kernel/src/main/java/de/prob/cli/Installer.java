@@ -7,7 +7,6 @@ import java.nio.channels.FileLock;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.PosixFileAttributeView;
 import java.nio.file.attribute.PosixFileAttributes;
@@ -68,47 +67,6 @@ public final class Installer {
 		}
 	}
 
-	private InputStream checkedGetResourceAsStream(final String name) {
-		final InputStream stream = this.getClass().getResourceAsStream(name);
-		if (stream == null) {
-			throw new IllegalArgumentException("Resource not found: " + name);
-		}
-		return stream;
-	}
-
-	/**
-	 * Install probcli and related libraries and files.
-	 */
-	private void installProbcli() throws IOException {
-		logger.trace("Extracting probcli from {}", osInfo.getCliZipResourceName());
-		try (final InputStream is = this.checkedGetResourceAsStream(osInfo.getCliZipResourceName())) {
-			FileHandler.extractZip(is, DEFAULT_HOME);
-		}
-		setExecutable(DEFAULT_HOME.resolve(this.osInfo.getCliName()), true);
-		logger.trace("Installed probcli");
-	}
-
-	private void installLibs() throws IOException {
-		if (osInfo.getLibsZipResourceName() != null) {
-			logger.trace("Extracting libraries from {}", osInfo.getLibsZipResourceName());
-			try (final InputStream is = this.checkedGetResourceAsStream(osInfo.getLibsZipResourceName())) {
-				FileHandler.extractZip(is, DEFAULT_HOME);
-			}
-		}
-	}
-
-	/**
-	 * Install the cspmf binary.
-	 */
-	private void installCspmf() throws IOException {
-		logger.trace("Installing cspmf from {}", osInfo.getCspmfResourceName());
-		final Path outcspmf = DEFAULT_HOME.resolve(osInfo.getCspmfName());
-		try (final InputStream is = this.checkedGetResourceAsStream(osInfo.getCspmfResourceName())) {
-			Files.copy(is, outcspmf, StandardCopyOption.REPLACE_EXISTING);
-		}
-		setExecutable(outcspmf, true);
-	}
-
 	/**
 	 * Install all CLI binaries, if necessary.
 	 */
@@ -124,10 +82,19 @@ public final class Installer {
 			final FileChannel lockFileChannel = FileChannel.open(LOCK_FILE_PATH, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
 			final FileLock lock = lockFileChannel.lock();
 		) {
-			logger.debug("Acquired installer lock file");
-			installProbcli();
-			installLibs();
-			installCspmf();
+			final String binariesZipResourceName = osInfo.getBinariesZipResourceName();
+			logger.trace("Extracting binaries from {}", binariesZipResourceName);
+			
+			try (final InputStream is = this.getClass().getResourceAsStream(binariesZipResourceName)) {
+				if (is == null) {
+					throw new IllegalArgumentException("Binaries zip not found in resources (make sure that you did not build ProB 2 with -PprobHome=... set): " + binariesZipResourceName);
+				}
+				FileHandler.extractZip(is, DEFAULT_HOME);
+			}
+			
+			setExecutable(DEFAULT_HOME.resolve(this.osInfo.getCliName()), true);
+			setExecutable(DEFAULT_HOME.resolve(this.osInfo.getCspmfName()), true);
+			
 			logger.info("CLI binaries successfully installed");
 		} catch (IOException e) {
 			logger.error("Failed to install CLI binaries", e);

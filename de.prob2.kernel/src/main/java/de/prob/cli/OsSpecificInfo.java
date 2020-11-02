@@ -8,36 +8,25 @@ package de.prob.cli;
  * 
  */
 public class OsSpecificInfo {
-	private final String cliZipResourceName;
-	private final String libsZipResourceName;
-	private final String cspmfResourceName;
+	private final String binariesZipResourceName;
 	private final String cliName;
 	private final String userInterruptCmd;
 	private final String cspmfName;
 
 	public OsSpecificInfo(
-		final String cliZipResourceName, final String libsZipResourceName, final String cspmfResourceName, final String cliName,
+		final String binariesZipResourceName,
+		final String cliName,
 		final String userInterruptCmd,
 		final String cspmfName
 	) {
-		this.cliZipResourceName = cliZipResourceName;
-		this.libsZipResourceName = libsZipResourceName;
-		this.cspmfResourceName = cspmfResourceName;
+		this.binariesZipResourceName = binariesZipResourceName;
 		this.cliName = cliName;
 		this.userInterruptCmd = userInterruptCmd;
 		this.cspmfName = cspmfName;
 	}
 
-	public String getCliZipResourceName() {
-		return cliZipResourceName;
-	}
-
-	public String getLibsZipResourceName() {
-		return libsZipResourceName;
-	}
-
-	public String getCspmfResourceName() {
-		return cspmfResourceName;
+	public String getBinariesZipResourceName() {
+		return this.binariesZipResourceName;
 	}
 
 	/**
