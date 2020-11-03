@@ -29,6 +29,7 @@ prob2preferences
 stateInspectorRepl
 *.csp.pl
 *.dot
+*.fuzz
 *.prob
 
 # Temp/swap files
