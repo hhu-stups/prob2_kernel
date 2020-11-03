@@ -158,65 +158,16 @@ sourceSets {
 	}
 }
 
-final binariesDownloadDir = new File(project.buildDir, "binaries-download")
-final binariesDestinationDir = new File(generatedResourcesDir, "de/prob/cli/binaries")
-
 final platforms = [
 	"leopard64",
 	"linux64",
 	"win64",
 ]
-final cspmfDirsByPlatform = [
-	"leopard64": "darwin-64",
-	"linux64": "linux-64",
-	"win64": "windows",
-]
 
-// Build a task for each platform that downloads the binaries and packs them into a single zip.
-// This zip is included in the ProB 2 resources and is extracted into the ProB home directory at runtime.
-final packBinariesTasks = platforms.collect {platform ->
-	// Construct the individual file names and URLs based on the platform name.
-	final probcliZipName = "probcli_${platform}.zip"
-	def cspmfName
-	if (platform == "win64") {
-		cspmfName = "cspmf.exe"
-	} else {
-		cspmfName = "cspmf"
-	}
-	
-	final cspmfDir = cspmfDirsByPlatform[platform]
-	final urls = [
-		"${cliDownloadURL}/${probcliZipName}",
-		"https://www3.hhu.de/stups/downloads/cspmf/${cspmfDir}/${cspmfName}",
-	]
-	
-	// Download the collected URLs into a temporary directory so they can be repacked.
-	final downloadDir = new File(binariesDownloadDir, platform)
-	final downloadBinariesTask = task("downloadBinaries-${platform}", type: Download) {
-		src(urls)
-		dest(downloadDir)
-		onlyIfModified(true)
-	}
-	
-	// Pack the contents of all downloaded zip files and the cspmf binary into a single zip.
-	final packBinariesTask = task("packBinaries-${platform}", type: Zip) {
-		dependsOn(downloadBinariesTask)
-		
-		destinationDirectory = binariesDestinationDir
-		archiveFileName = "${platform}.zip"
-		// TODO probcli_win64.zip already includes cspmf, but the leopard64 and linux64 versions don't
-		duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-		
-		from(zipTree(new File(downloadDir, probcliZipName)))
-		from(new File(downloadDir, cspmfName)) {
-			into("lib")
-		}
-	}
-	return packBinariesTask
-}
-
-task packBinaries {
-	dependsOn = packBinariesTasks
+task downloadBinaries(type: Download) {
+	src(platforms.collect {platform -> "${cliDownloadURL}/probcli_${platform}.zip"})
+	dest(new File(generatedResourcesDir, "de/prob/cli/binaries"))
+	onlyIfModified(true)
 }
 
 task cleanOldCliDownloads(type: Delete) {
@@ -241,7 +192,7 @@ processResources {
 
 if (!project.hasProperty("probHome")) {
 	// Automatically download probcli/cspmf, unless a custom PROB_HOME is set
-	processResources.dependsOn(cleanOldCliDownloads, packBinaries)
+	processResources.dependsOn(cleanOldCliDownloads, downloadBinaries)
 }
 
 test {

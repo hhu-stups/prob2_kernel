@@ -51,7 +51,7 @@ class OsInfoProvider implements Provider<OsSpecificInfo> {
 			cspmfName = "lib/cspmf";
 		}
 		
-		final String binariesZipResourceName = CLI_BINARIES_RESOURCE_PREFIX + dirName + ".zip";
+		final String binariesZipResourceName = CLI_BINARIES_RESOURCE_PREFIX + "probcli_" + dirName + ".zip";
 		return new OsSpecificInfo(binariesZipResourceName, cliName, userInterruptCmd, cspmfName);
 	}
 }
