@@ -33,11 +33,13 @@ class OsInfoProvider implements Provider<OsSpecificInfo> {
 		final String cliName;
 		final String userInterruptCmd;
 		final String cspmfName;
+		final String fuzzName;
 		if (os == OsFamily.WINDOWS) {
 			dirName = "win64";
 			cliName = "probcli.exe";
 			userInterruptCmd = "lib\\send_user_interrupt.exe";
 			cspmfName = "lib\\cspmf.exe";
+			fuzzName = "lib\\fuzz.exe";
 		} else {
 			if (os == OsFamily.MACOS) {
 				dirName = "leopard64";
@@ -49,9 +51,10 @@ class OsInfoProvider implements Provider<OsSpecificInfo> {
 			cliName = "probcli.sh";
 			userInterruptCmd = "send_user_interrupt";
 			cspmfName = "lib/cspmf";
+			fuzzName = "lib/fuzz";
 		}
 		
 		final String binariesZipResourceName = CLI_BINARIES_RESOURCE_PREFIX + "probcli_" + dirName + ".zip";
-		return new OsSpecificInfo(binariesZipResourceName, cliName, userInterruptCmd, cspmfName);
+		return new OsSpecificInfo(binariesZipResourceName, cliName, userInterruptCmd, cspmfName, fuzzName);
 	}
 }

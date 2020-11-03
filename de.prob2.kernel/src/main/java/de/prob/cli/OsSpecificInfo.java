@@ -12,17 +12,20 @@ public class OsSpecificInfo {
 	private final String cliName;
 	private final String userInterruptCmd;
 	private final String cspmfName;
+	private final String fuzzName;
 
 	public OsSpecificInfo(
 		final String binariesZipResourceName,
 		final String cliName,
 		final String userInterruptCmd,
-		final String cspmfName
+		final String cspmfName,
+		final String fuzzName
 	) {
 		this.binariesZipResourceName = binariesZipResourceName;
 		this.cliName = cliName;
 		this.userInterruptCmd = userInterruptCmd;
 		this.cspmfName = cspmfName;
+		this.fuzzName = fuzzName;
 	}
 
 	public String getBinariesZipResourceName() {
@@ -46,5 +49,9 @@ public class OsSpecificInfo {
 
 	public String getCspmfName() {
 		return this.cspmfName;
+	}
+
+	public String getFuzzName() {
+		return this.fuzzName;
 	}
 }
