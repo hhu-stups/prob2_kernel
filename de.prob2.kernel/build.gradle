@@ -178,13 +178,10 @@ final packBinariesTasks = platforms.collect {platform ->
 	// Construct the individual file names and URLs based on the platform name.
 	final probcliZipName = "probcli_${platform}.zip"
 	def cspmfName
-	def libZipName
 	if (platform == "win64") {
 		cspmfName = "cspmf.exe"
-		libZipName = "windowslib64.zip"
 	} else {
 		cspmfName = "cspmf"
-		libZipName = null
 	}
 	
 	final cspmfDir = cspmfDirsByPlatform[platform]
@@ -192,9 +189,6 @@ final packBinariesTasks = platforms.collect {platform ->
 		"${cliDownloadURL}/${probcliZipName}",
 		"https://www3.hhu.de/stups/downloads/cspmf/${cspmfDir}/${cspmfName}",
 	]
-	if (libZipName != null) {
-		urls << "${cliDownloadURL}/${libZipName}"
-	}
 	
 	// Download the collected URLs into a temporary directory so they can be repacked.
 	final downloadDir = new File(binariesDownloadDir, platform)
@@ -210,16 +204,12 @@ final packBinariesTasks = platforms.collect {platform ->
 		
 		destinationDirectory = binariesDestinationDir
 		archiveFileName = "${platform}.zip"
-		// TODO Check why almost all files in windowslib64.zip are already included in probcli_win64.zip
-		// (maybe we can remove windowslib64.zip completely?)
+		// TODO probcli_win64.zip already includes cspmf, but the leopard64 and linux64 versions don't
 		duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 		
 		from(zipTree(new File(downloadDir, probcliZipName)))
 		from(new File(downloadDir, cspmfName)) {
 			into("lib")
-		}
-		if (libZipName != null) {
-			from(zipTree(new File(downloadDir, libZipName)))
 		}
 	}
 	return packBinariesTask
