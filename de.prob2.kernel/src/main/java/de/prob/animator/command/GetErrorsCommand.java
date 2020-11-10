@@ -3,6 +3,9 @@ package de.prob.animator.command;
 import java.util.Collections;
 import java.util.List;
 
+import de.prob.animator.IAnimator;
+import de.prob.animator.IWarningListener;
+import de.prob.exception.ProBError;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.ListPrologTerm;
@@ -13,7 +16,9 @@ import de.prob.prolog.term.PrologTerm;
  * 
  * @author joy
  * 
+ * @deprecated Replaced by {@link GetErrorItemsCommand}. You shouldn't need to use this command directly - ProB 2's implementations of {@link IAnimator} automatically check for errors and report them by throwing a {@link ProBError} or calling all registered {@link IWarningListener} objects.
  */
+@Deprecated
 public class GetErrorsCommand extends AbstractCommand {
 	private static final String PROLOG_COMMAND_NAME = "get_error_messages";
 	public static final String ERRORS_VARIABLE = "Errors";
