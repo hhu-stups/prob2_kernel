@@ -32,6 +32,10 @@ public class GetErrorItemsCommand extends AbstractCommand {
 			.collect(Collectors.toList());
 	}
 
+	/**
+	 * @deprecated There are now more types than just errors and warnings. Use {@code errors.stream().map(ErrorItem::getType).max(ErrorItem.Type::compareTo)} to get the worst type of error item from a list.
+	 */
+	@Deprecated
 	public boolean onlyWarningsOccurred() {
 		return warningsOnly;
 	}
