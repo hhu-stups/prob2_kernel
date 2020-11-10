@@ -42,14 +42,13 @@ public class EvalResult extends AbstractEvalResult {
 
 	@Override
 	public String toString() {
-		String v = UnicodeTranslator.toUnicode(value);
 		if (solutions.isEmpty()) {
-			return v;
+			return value;
 		}
 
 		return solutions.entrySet().stream()
-			.map(e -> e.getKey() + " = " + UnicodeTranslator.toUnicode(e.getValue()))
-			.collect(Collectors.joining(" ∧ ", v + " (", ")"));
+			.map(e -> e.getKey() + " = " + e.getValue())
+			.collect(Collectors.joining(" ∧ ", value + " (", ")"));
 	}
 
 	/**
