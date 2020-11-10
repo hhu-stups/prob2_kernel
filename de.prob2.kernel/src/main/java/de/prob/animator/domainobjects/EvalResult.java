@@ -14,7 +14,6 @@ import de.prob.parser.BindingGenerator;
 import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
-import de.prob.unicode.UnicodeTranslator;
 
 import groovy.lang.MissingPropertyException;
 
