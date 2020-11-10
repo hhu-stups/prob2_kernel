@@ -177,7 +177,9 @@ public class EvalResult extends AbstractEvalResult {
 			        return new ComputationNotCompletedResult("formula", String.join(",", errors));
 				
 				default:
-					throw new IllegalArgumentException("Unknown error type: " + errorType);
+					// throw new IllegalArgumentException("Unknown error type: " + errorType);
+			        return new ComputationNotCompletedResult("formula", 
+			                     "Unknown error type: " + errorType + " " + String.join(",", errors));
 			}
 		} else if ("enum_warning".equals(pt.getFunctor())) {
 			return new EnumerationWarning();
