@@ -80,7 +80,7 @@ public class PersistentTransition {
 		if(name.equals(Transition.INITIALISE_MACHINE_NAME)){
 			params = Collections.emptyMap();
 			results = Collections.emptyMap();
-			name = TraceChecker.INITIALISATION_CLAUSE;
+			name = Transition.INITIALISE_MACHINE_NAME;
 		}
 
 		if(additionalPredicates==null){
