@@ -27,11 +27,6 @@ public class PrepareOperationsTest {
 	}
 
 
-	/**
-	 * Integration test. Functionality is tested in prolog
-	 * @throws IOException
-	 * @throws ModelTranslationError
-	 */
 	@Test
 	public void get_prepared_operation_test() throws IOException, ModelTranslationError {
 		proBKernelStub.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "machineWithOneOperation.mch"));
@@ -40,13 +35,14 @@ public class PrepareOperationsTest {
 
 		proBKernelStub.executeCommand(getMachineOperationsFull);
 
-		System.out.println(getMachineOperationsFull.getOperationsWithNames());
 		PrepareOperations prepareOperations = new PrepareOperations(getMachineOperationsFull.getOperationsWithNames().get("inccc"));
 
 		proBKernelStub.executeCommand(prepareOperations);
 
-		Assert.assertEquals(1, prepareOperations.getFreeVars().size());
-		Assert.assertEquals(1, prepareOperations.getFoundVars().size());
+		Assert.assertEquals(2, prepareOperations.getFreeVars().size());
+		Assert.assertEquals(2, prepareOperations.getFoundVars().size());
+		Assert.assertEquals("floors", prepareOperations.getFoundVars().get(0).getFunctor());
+		Assert.assertEquals("inccc", prepareOperations.getFoundVars().get(1).getFunctor());
 
 	}
 
