@@ -50,7 +50,7 @@ public class TraceManagerTest {
 		
 		LoadedMachine loadedMachine = proBKernelStub.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "ExampleMachine.mch"));
 
-		AbstractMetaData abstractMetaData = new TraceMetaData(1, LocalDateTime.now(), "User", "version", "bla");
+		AbstractMetaData abstractMetaData = new TraceMetaData(1, LocalDateTime.now(), "User", "version", "bla", "");
 		PersistentTrace persistentTrace = proBKernelStub.getATrace();
 		AbstractJsonFile abstractJsonFile = new TraceJsonFile("testFile", "description", persistentTrace, loadedMachine, abstractMetaData);
 		traceManager.save(Paths.get("src", "test", "resources", "de", "prob", "traces", "test6.prob2trace"), abstractJsonFile);
@@ -63,7 +63,7 @@ public class TraceManagerTest {
 
 		LoadedMachine loadedMachine = proBKernelStub.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "testTraceMachine.mch"));
 
-		AbstractMetaData abstractMetaData = new TraceMetaData(1, LocalDateTime.now(), "User", "version", "bla");
+		AbstractMetaData abstractMetaData = new TraceMetaData(1, LocalDateTime.now(), "User", "version", "bla", "");
 		PersistentTrace persistentTrace = proBKernelStub.getATrace();
 		AbstractJsonFile abstractJsonFile = new TraceJsonFile("testFile", "description", persistentTrace, loadedMachine, abstractMetaData);
 		traceManager.save(Paths.get("src", "test", "resources", "de", "prob", "traces", "test6.prob2trace"), abstractJsonFile);
