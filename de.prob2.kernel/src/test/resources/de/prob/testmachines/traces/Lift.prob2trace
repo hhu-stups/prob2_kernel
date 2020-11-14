@@ -1,0 +1,170 @@
+{
+  "type" : "Trace",
+  "name" : "Lift",
+  "description" : "",
+  "trace" : {
+    "description" : "",
+    "transitionList" : [ {
+      "operationName" : "$initialise_machine",
+      "parameters" : null,
+      "results" : null,
+      "destinationStateVariables" : {
+        "floors" : "0"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ],
+      "preds" : null,
+      "outputParameters" : null
+    }, {
+      "operationName" : "inc",
+      "parameters" : { },
+      "results" : { },
+      "destinationStateVariables" : {
+        "floors" : "1"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ],
+      "preds" : null,
+      "outputParameters" : { }
+    }, {
+      "operationName" : "dec",
+      "parameters" : { },
+      "results" : { },
+      "destinationStateVariables" : {
+        "floors" : "0"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ],
+      "preds" : null,
+      "outputParameters" : { }
+    }, {
+      "operationName" : "inc",
+      "parameters" : { },
+      "results" : { },
+      "destinationStateVariables" : {
+        "floors" : "1"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ],
+      "preds" : null,
+      "outputParameters" : { }
+    }, {
+      "operationName" : "dec",
+      "parameters" : { },
+      "results" : { },
+      "destinationStateVariables" : {
+        "floors" : "0"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ],
+      "preds" : null,
+      "outputParameters" : { }
+    }, {
+      "operationName" : "inc",
+      "parameters" : { },
+      "results" : { },
+      "destinationStateVariables" : {
+        "floors" : "1"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ],
+      "preds" : null,
+      "outputParameters" : { }
+    }, {
+      "operationName" : "dec",
+      "parameters" : { },
+      "results" : { },
+      "destinationStateVariables" : {
+        "floors" : "0"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ],
+      "preds" : null,
+      "outputParameters" : { }
+    }, {
+      "operationName" : "getfloors",
+      "parameters" : { },
+      "results" : {
+        "out" : "0"
+      },
+      "destinationStateVariables" : { },
+      "destStateNotChanged" : [ "floors" ],
+      "additionalPredicates" : [ ],
+      "preds" : null,
+      "outputParameters" : {
+        "out" : "0"
+      }
+    }, {
+      "operationName" : "getfloors",
+      "parameters" : { },
+      "results" : {
+        "out" : "0"
+      },
+      "destinationStateVariables" : { },
+      "destStateNotChanged" : [ "floors" ],
+      "additionalPredicates" : [ ],
+      "preds" : null,
+      "outputParameters" : {
+        "out" : "0"
+      }
+    }, {
+      "operationName" : "getfloors",
+      "parameters" : { },
+      "results" : {
+        "out" : "0"
+      },
+      "destinationStateVariables" : { },
+      "destStateNotChanged" : [ "floors" ],
+      "additionalPredicates" : [ ],
+      "preds" : null,
+      "outputParameters" : {
+        "out" : "0"
+      }
+    } ]
+  },
+  "variableNames" : [ "floors" ],
+  "machineOperationInfos" : {
+    "inc" : {
+      "operationName" : "inc",
+      "parameterNames" : [ ],
+      "outputParameterNames" : [ ],
+      "topLevel" : true,
+      "type" : "CLASSICAL_B",
+      "readVariables" : [ "floors" ],
+      "writtenVariables" : [ "floors" ],
+      "nonDetWrittenVariables" : [ ]
+    },
+    "dec" : {
+      "operationName" : "dec",
+      "parameterNames" : [ ],
+      "outputParameterNames" : [ ],
+      "topLevel" : true,
+      "type" : "CLASSICAL_B",
+      "readVariables" : [ "floors" ],
+      "writtenVariables" : [ "floors" ],
+      "nonDetWrittenVariables" : [ ]
+    },
+    "getfloors" : {
+      "operationName" : "getfloors",
+      "parameterNames" : [ ],
+      "outputParameterNames" : [ "out" ],
+      "topLevel" : true,
+      "type" : "CLASSICAL_B",
+      "readVariables" : [ "floors" ],
+      "writtenVariables" : [ ],
+      "nonDetWrittenVariables" : [ ]
+    }
+  },
+  "constantNames" : [ ],
+  "setNames" : [ ],
+  "metaData" : {
+    "type" : "TraceMetaData",
+    "formatVersion" : 1,
+    "savedAt" : [ 2020, 11, 5, 16, 14, 47, 252467000 ],
+    "creator" : "USER",
+    "proBCliVersion" : "1.10.0-nightly",
+    "name" : "HALLO",
+    "path" : "Lift.mch",
+    "proB2KernelVersion" : "4.0.0-SNAPSHOT"
+  }
+}
