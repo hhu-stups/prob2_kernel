@@ -40,7 +40,6 @@ public class CompareTwoOperations extends AbstractCommand {
 	@Override
 	public void writeCommand(IPrologTermOutput pto) {
 		pto.openTerm(PROLOG_COMMAND_NAME).printTerm(operationOld).printTerm(operationNew).printTerm(foundVariables).printTerm(freeVariables).printVariable(VARIABLE).closeTerm();
-		System.out.println(pto);
 	}
 
 
