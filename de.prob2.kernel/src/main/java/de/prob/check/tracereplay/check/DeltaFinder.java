@@ -1,6 +1,7 @@
 package de.prob.check.tracereplay.check;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.inject.Injector;
 import de.prob.animator.ReusableAnimator;
 import de.prob.animator.command.CompareTwoOperations;
 import de.prob.animator.command.GetMachineOperationsFull;
@@ -8,8 +9,14 @@ import de.prob.animator.command.PrepareOperations;
 import de.prob.exception.ProBError;
 import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
+import de.prob.scripting.FactoryProvider;
+import de.prob.scripting.ModelFactory;
+import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.StateSpace;
+import de.prob.statespace.Transition;
 
+import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -22,33 +29,77 @@ public class DeltaFinder {
 
 	private final Set<String> typeIorII;
 	private final Map<String, Set<String>> typeIICandidates;
-	private StateSpace stateSpace = null;
+	private ReusableAnimator animator;
+	private final String oldMachine;
+	private final String newMachine;
+	private final Injector injector;
 
 
+	private Map<String, Map<String, String>> resultTypeIorII;
+	private Map<String, Map<String, Map<String, String>>> resultTypeIIwithCandidates;
+	private Map<String, String> resultInitTypeIorII;
 
-	CheckerInterface checkerInterface = (prepareOperationTriple, candidate) -> {
+
+	/**
+	 * Wraps a stateful call and make it replaceable with a stateless call
+	 */
+	public final CheckerInterface checkerInterface = (prepareOperationTriple, candidate) -> {
 		CompareTwoOperations compareTwoOperations = new CompareTwoOperations(prepareOperationTriple.third,
 				candidate, prepareOperationTriple.first, prepareOperationTriple.second, new ObjectMapper());
 		try {
-			stateSpace.execute(compareTwoOperations);
+			animator.execute(compareTwoOperations);
 			return compareTwoOperations.getDelta();
 		} catch (ProBError e) {
 			return new HashMap<>();
 		}
 	};
 
-
-	PrepareOperationsInterface prepareOperationsInterface = (operation) -> {
+	/**
+	 * Wraps a stateful call and make it replaceable with a stateless call
+	 */
+	public final PrepareOperationsInterface prepareOperationsInterface = (operation) -> {
 		PrepareOperations prepareOperations = new PrepareOperations(operation);
-		stateSpace.execute(prepareOperations);
+		animator.execute(prepareOperations);
 		return prepareOperations.asTriple();
 	};
 
 
-	public DeltaFinder(Set<String> typeIorII, Map<String, Set<String>> typeIICandidates, ReusableAnimator animator, StateSpace stateSpace) {
+	public DeltaFinder(Set<String> typeIorII, Map<String, Set<String>> typeIICandidates, ReusableAnimator animator,
+					   String oldMachine,
+					   String newMachine,
+					   Injector injector) {
 		this.typeIorII = typeIorII;
 		this.typeIICandidates = typeIICandidates;
-		this.stateSpace = stateSpace;
+		this.oldMachine = oldMachine;
+		this.newMachine = newMachine;
+		this.injector = injector;
+		this.animator = animator;
+	}
+
+
+	/**
+	 * Wraps the steps necessary to calculate the two deltas
+	 * @throws IOException something went wrong when reading machine files
+	 * @throws ModelTranslationError the machine files contain errors
+	 */
+	public void calculateDelta() throws IOException, ModelTranslationError {
+		Map<String, CompoundPrologTerm> newOperations = getOperations(newMachine);
+		Map<String, CompoundPrologTerm> oldOperations = getOperations(oldMachine);
+
+		Map<String, CompoundPrologTerm> initOld = oldOperations.entrySet().stream()
+				.filter(entry-> entry.getKey().equals(Transition.INITIALISE_MACHINE_NAME))
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+		Map<String, CompoundPrologTerm> initNew = newOperations.entrySet().stream()
+				.filter(entry-> entry.getKey().equals(Transition.INITIALISE_MACHINE_NAME))
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+		resultInitTypeIorII = checkDeterministicPairs(initOld, initNew,
+				Collections.singleton(Transition.INITIALISE_MACHINE_NAME), checkerInterface,
+				prepareOperationsInterface).get(Transition.INITIALISE_MACHINE_NAME);
+
+
+		resultTypeIorII = checkDeterministicPairs(oldOperations, newOperations, typeIorII, checkerInterface, prepareOperationsInterface);
+		resultTypeIIwithCandidates = checkNondeterministicPairs(oldOperations, newOperations, typeIICandidates, checkerInterface, prepareOperationsInterface);
 	}
 
 
@@ -103,14 +154,47 @@ public class DeltaFinder {
 	}
 
 
-	Map<String, CompoundPrologTerm> getOldOperations() {
-		return null;
+	/**
+	 * Loads the old referenced machine into the statespace and retracts its operations,
+	 * then loads the current machine back into the animator
+	 * @param path the path of the currently not loaded machine
+	 * @return a map of operations
+	 * @throws IOException file not found
+	 * @throws ModelTranslationError error when loading the machine
+	 */
+	public Map<String, CompoundPrologTerm> getOperations(String path) throws IOException, ModelTranslationError {
+		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension(path.substring(path.lastIndexOf(".")+1)));
+		if(animator.getCurrentStateSpace()!=null)
+		{
+			animator.getCurrentStateSpace().kill();
+		}
+		StateSpace stateSpace = animator.createStateSpace();
+		factory.extract(path).loadIntoStateSpace(stateSpace);
+		GetMachineOperationsFull getMachineOperationsFull = new GetMachineOperationsFull();
+		animator.execute(getMachineOperationsFull);
+		animator.getCurrentStateSpace().kill();
+		return getMachineOperationsFull.getOperationsWithNames();
 	}
 
-	Map<String, CompoundPrologTerm> getNewOperations() {
-		GetMachineOperationsFull getMachineOperationsFull = new GetMachineOperationsFull();
-		stateSpace.execute(getMachineOperationsFull);
-		return getMachineOperationsFull.getOperationsWithNames();
+
+	public Map<String, Map<String, String>> getResultTypeIorII() {
+		return resultTypeIorII;
+	}
+
+
+	public Map<String, Map<String, String>> getResultTypeII() {
+		return resultTypeIorII.entrySet().stream().filter(entry-> !entry.getValue().entrySet().stream()
+				.filter(innerEntry -> !innerEntry.getValue().equals(innerEntry.getKey())).collect(Collectors.toSet()).isEmpty())
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+	}
+
+
+	public Map<String, Map<String, Map<String, String>>> getResultTypeIIWithCandidates() {
+		return resultTypeIIwithCandidates;
+	}
+
+	public Map<String, String> getResultTypeIIInit() {
+		return resultInitTypeIorII;
 	}
 }
 
