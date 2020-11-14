@@ -1,11 +1,11 @@
 package de.prob.check.tracereplay;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.prob.animator.domainobjects.AbstractEvalResult;
 import de.prob.animator.domainobjects.EvalResult;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
+import de.prob.check.tracereplay.check.TraceChecker;
 import de.prob.statespace.LoadedMachine;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.State;
@@ -26,8 +26,7 @@ public class PersistentTransition {
 	private Map<String, String> results;
 	private Map<String, String> destState;
 	private Set<String> destStateNotChanged;
-	private List<String> preds;
-
+	private List<String> additionalPredicates;
 
 	public PersistentTransition(Transition transition) {
 		this(transition, false, null);
@@ -70,20 +69,30 @@ public class PersistentTransition {
 	 * @param results result of the transition
 	 * @param destState target state of the transition
 	 * @param destStateNotChanged target state is no change
-	 * @param preds predicates
+	 * @param additionalPredicates predicates
 	 */
 	public PersistentTransition(@JsonProperty("operationName") String name,
 								@JsonProperty("parameters") Map<String, String> params,
 								@JsonProperty("results") Map<String, String> results,
 								@JsonProperty("destinationStateVariables") Map<String, String> destState,
 								@JsonProperty("destStateNotChanged") Set<String> destStateNotChanged,
-								@JsonProperty("additionalPredicates") List<String> preds){
+								@JsonProperty("additionalPredicates") List<String> additionalPredicates){
+		if(name.equals(Transition.INITIALISE_MACHINE_NAME)){
+			params = Collections.emptyMap();
+			results = Collections.emptyMap();
+			name = TraceChecker.INITIALISATION_CLAUSE;
+		}
+
+		if(additionalPredicates==null){
+			additionalPredicates = Collections.emptyList();
+		}
+
 		this.name = name;
 		this.params = params;
 		this.results = results;
 		this.destState = destState;
 		this.destStateNotChanged = destStateNotChanged;
-		this.preds = preds;
+		this.additionalPredicates = additionalPredicates;
 
 	}
 
@@ -117,11 +126,11 @@ public class PersistentTransition {
 		return new HashSet<>(this.destStateNotChanged);
 	}
 
-	public List<String> getPreds() {
-		if (this.preds == null) {
+	public List<String> getAdditionalPredicates() {
+		if (this.additionalPredicates == null) {
 			return null;
 		}
-		return new ArrayList<>(this.preds);
+		return new ArrayList<>(this.additionalPredicates);
 	}
 
 	public Map<String, String> getParameters() {
@@ -140,10 +149,7 @@ public class PersistentTransition {
 	}
 
 	public Map<String, String> getOutputParameters() {
-		if (this.results == null) {
-			return null;
-		}
-		return new HashMap<>(this.results);
+		return getResults();
 	}
 
 	public Map<String, String> getDestinationStateVariables() {
@@ -153,12 +159,31 @@ public class PersistentTransition {
 		return new HashMap<>(this.destState);
 	}
 
-	public List<String> getAdditionalPredicates() {
-		if (this.preds == null) {
-			return Collections.emptyList();
+
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof PersistentTransition)
+		{
+			if(((PersistentTransition) obj).name.equals(this.name)){
+				if(((PersistentTransition) obj).params.equals(this.params)){
+					if(((PersistentTransition) obj).destState.equals(this.destState)){
+						if(((PersistentTransition) obj).destStateNotChanged.equals(this.destStateNotChanged)){
+							if(((PersistentTransition) obj).results.equals(this.results)){
+								return ((PersistentTransition) obj).additionalPredicates.equals(this.additionalPredicates);
+							}
+						}
+					}
+				}
+			}
 		}
-		return new ArrayList<>(this.preds);
+		return false;
+
 	}
 
 
+	@Override
+	public String toString() {
+		return "PersistentTransition:" + "\n" + name + "\n"+ params.toString() + "\n" + destState.toString() + "\n"
+				+results.toString() + "\n" +destStateNotChanged.toString() ;
+	}
 }
