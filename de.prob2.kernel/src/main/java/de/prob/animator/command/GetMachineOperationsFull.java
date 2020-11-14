@@ -35,13 +35,10 @@ public class GetMachineOperationsFull extends AbstractCommand{
 	@Override
 	public void processResult(ISimplifiedROMap<String, PrologTerm> bindings) {
 		ListPrologTerm operations = (ListPrologTerm) bindings.get(VARIABLE);
-
 		ListPrologTerm operationNames = (ListPrologTerm) bindings.get(VARIABLE2);
-
-
 		ops = new HashMap<>();
-		for(int i = 0; i < operationNames.size(); i++){
-			ops.put(operationNames.get(i).toString(), (CompoundPrologTerm) operations.get(i));
+		for(int i = 0; i < operationNames.size(); i++){	
+			ops.put(operationNames.get(i).getFunctor(), (CompoundPrologTerm) operations.get(i));
 		}
 	}
 
