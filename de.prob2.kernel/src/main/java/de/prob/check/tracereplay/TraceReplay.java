@@ -23,15 +23,15 @@ public class TraceReplay {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TraceReplay.class);
 
 	public enum TraceReplayError {
-		COMMAND, NO_OPERATION_POSSIBLE, TRACE_REPLAY, MISMATCH_OUTPUT;
+		COMMAND, NO_OPERATION_POSSIBLE, TRACE_REPLAY, MISMATCH_OUTPUT
 	}
 
 	public static Trace replayTrace(PersistentTrace persistentTrace, StateSpace stateSpace) {
 		return replayTrace(persistentTrace, stateSpace, true, new HashMap<>(), new DefaultTraceChecker());
 	}
 
-	public static Trace replayTrace(PersistentTrace persistentTrace, StateSpace stateSpace, final boolean setCurrentAnimation, Map<String, Object> replayInformation,
-									ITraceChecker traceChecker) {
+	public static Trace  replayTrace(PersistentTrace persistentTrace, StateSpace stateSpace, final boolean setCurrentAnimation,
+									 Map<String, Object> replayInformation, ITraceChecker traceChecker) {
 		Trace trace = new Trace(stateSpace);
 		trace.setExploreStateByDefault(false);
 		boolean success = true;
@@ -61,7 +61,9 @@ public class TraceReplay {
 	}
 
 
-	private static Transition replayPersistentTransition(Trace t, PersistentTransition persistentTransition, boolean setCurrentAnimation, Map<String, Object> replayInformation, ITraceChecker traceChecker) {
+	private static Transition replayPersistentTransition(Trace t, PersistentTransition persistentTransition,
+														 boolean setCurrentAnimation, Map<String, Object> replayInformation,
+														 ITraceChecker traceChecker) {
 		StateSpace stateSpace = t.getStateSpace();
 		PredicateBuilder predicateBuilder = new PredicateBuilder();
 		if (persistentTransition.getParameters() != null) {
