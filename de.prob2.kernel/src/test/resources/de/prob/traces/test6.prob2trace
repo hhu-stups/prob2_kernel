@@ -44,10 +44,11 @@
   "metaData" : {
     "type" : "TraceMetaData",
     "formatVersion" : 1,
-    "savedAt" : [ 2020, 10, 26, 6, 44, 37, 839791000 ],
+    "savedAt" : [ 2020, 11, 16, 11, 19, 31, 651667000 ],
     "creator" : "User",
     "proBCliVersion" : "version",
     "name" : "bla",
+    "path" : "",
     "proB2KernelVersion" : "4.0.0-SNAPSHOT"
   }
 }

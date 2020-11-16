@@ -1,126 +1,102 @@
 {
   "type" : "Trace",
-  "name" : "testTraceMachine",
+  "name" : "Lift",
   "description" : "",
   "trace" : {
     "description" : "",
     "transitionList" : [ {
       "operationName" : "$initialise_machine",
       "parameters" : null,
-      "results" : null,
+      "outputParameters" : null,
       "destinationStateVariables" : {
-        "floor" : "0"
+        "floors" : "0"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ],
-      "preds" : null,
-      "outputParameters" : null
+      "additionalPredicates" : null
     }, {
-      "operationName" : "inc",
+      "operationName" : "getfloors",
       "parameters" : { },
-      "results" : { },
-      "destinationStateVariables" : {
-        "floor" : "1"
-      },
-      "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ],
-      "preds" : null,
-      "outputParameters" : { }
-    }, {
-      "operationName" : "dec",
-      "parameters" : { },
-      "results" : { },
-      "destinationStateVariables" : {
-        "floor" : "0"
-      },
-      "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ],
-      "preds" : null,
-      "outputParameters" : { }
-    }, {
-      "operationName" : "getFloor",
-      "parameters" : { },
-      "results" : {
+      "outputParameters" : {
         "out" : "0"
       },
       "destinationStateVariables" : { },
-      "destStateNotChanged" : [ "floor" ],
-      "additionalPredicates" : [ ],
-      "preds" : null,
-      "outputParameters" : {
-        "out" : "0"
-      }
+      "destStateNotChanged" : [ "floors" ],
+      "additionalPredicates" : null
     }, {
       "operationName" : "inc",
       "parameters" : { },
-      "results" : { },
+      "outputParameters" : { },
       "destinationStateVariables" : {
-        "floor" : "1"
+        "floors" : "1"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ],
-      "preds" : null,
-      "outputParameters" : { }
+      "additionalPredicates" : null
     }, {
-      "operationName" : "getFloor",
+      "operationName" : "inc",
       "parameters" : { },
-      "results" : {
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "floors" : "2"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : null
+    }, {
+      "operationName" : "dec",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "floors" : "1"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : null
+    }, {
+      "operationName" : "getfloors",
+      "parameters" : { },
+      "outputParameters" : {
         "out" : "1"
       },
       "destinationStateVariables" : { },
-      "destStateNotChanged" : [ "floor" ],
-      "additionalPredicates" : [ ],
-      "preds" : null,
+      "destStateNotChanged" : [ "floors" ],
+      "additionalPredicates" : null
+    }, {
+      "operationName" : "inc",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "floors" : "2"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : null
+    }, {
+      "operationName" : "getfloors",
+      "parameters" : { },
       "outputParameters" : {
-        "out" : "1"
-      }
-    }, {
-      "operationName" : "inc",
-      "parameters" : { },
-      "results" : { },
-      "destinationStateVariables" : {
-        "floor" : "2"
+        "out" : "2"
       },
-      "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ],
-      "preds" : null,
-      "outputParameters" : { }
+      "destinationStateVariables" : { },
+      "destStateNotChanged" : [ "floors" ],
+      "additionalPredicates" : null
     }, {
       "operationName" : "dec",
       "parameters" : { },
-      "results" : { },
+      "outputParameters" : { },
       "destinationStateVariables" : {
-        "floor" : "1"
+        "floors" : "1"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ],
-      "preds" : null,
-      "outputParameters" : { }
+      "additionalPredicates" : null
     }, {
       "operationName" : "inc",
       "parameters" : { },
-      "results" : { },
+      "outputParameters" : { },
       "destinationStateVariables" : {
-        "floor" : "2"
+        "floors" : "2"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ],
-      "preds" : null,
-      "outputParameters" : { }
-    }, {
-      "operationName" : "dec",
-      "parameters" : { },
-      "results" : { },
-      "destinationStateVariables" : {
-        "floor" : "1"
-      },
-      "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ],
-      "preds" : null,
-      "outputParameters" : { }
+      "additionalPredicates" : null
     } ]
   },
-  "variableNames" : [ "floor" ],
+  "variableNames" : [ "floors" ],
   "machineOperationInfos" : {
     "inc" : {
       "operationName" : "inc",
@@ -128,8 +104,8 @@
       "outputParameterNames" : [ ],
       "topLevel" : true,
       "type" : "CLASSICAL_B",
-      "readVariables" : [ "floor" ],
-      "writtenVariables" : [ "floor" ],
+      "readVariables" : [ "floors" ],
+      "writtenVariables" : [ "floors" ],
       "nonDetWrittenVariables" : [ ]
     },
     "dec" : {
@@ -138,17 +114,17 @@
       "outputParameterNames" : [ ],
       "topLevel" : true,
       "type" : "CLASSICAL_B",
-      "readVariables" : [ "floor" ],
-      "writtenVariables" : [ "floor" ],
+      "readVariables" : [ "floors" ],
+      "writtenVariables" : [ "floors" ],
       "nonDetWrittenVariables" : [ ]
     },
-    "getFloor" : {
-      "operationName" : "getFloor",
+    "getfloors" : {
+      "operationName" : "getfloors",
       "parameterNames" : [ ],
       "outputParameterNames" : [ "out" ],
       "topLevel" : true,
       "type" : "CLASSICAL_B",
-      "readVariables" : [ "floor" ],
+      "readVariables" : [ "floors" ],
       "writtenVariables" : [ ],
       "nonDetWrittenVariables" : [ ]
     }
@@ -158,10 +134,11 @@
   "metaData" : {
     "type" : "TraceMetaData",
     "formatVersion" : 1,
-    "savedAt" : [ 2020, 10, 5, 13, 47, 56, 812995000 ],
+    "savedAt" : [ 2020, 11, 16, 11, 17, 11, 576955000 ],
     "creator" : "USER",
     "proBCliVersion" : "1.10.0-nightly",
     "name" : "HALLO",
+    "path" : "Lift.mch",
     "proB2KernelVersion" : "4.0.0-SNAPSHOT"
   }
 }

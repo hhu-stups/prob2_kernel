@@ -46,8 +46,8 @@ public class TraceManagerTest {
 	@Test
 	public void serialize_correct_data_structure_test() throws IOException, ModelTranslationError {
 
-		
-		
+
+
 		LoadedMachine loadedMachine = proBKernelStub.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "ExampleMachine.mch"));
 
 		AbstractMetaData abstractMetaData = new TraceMetaData(1, LocalDateTime.now(), "User", "version", "bla", "");
@@ -94,13 +94,13 @@ public class TraceManagerTest {
 		traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "traces", "test4.prob2trace")));
 	}
 
-/* TODO find example
+
 	@Test
-	public void deserialize_file_missing_optional_field_test() {
-		assertThrows(ValueInstantiationException.class, () ->
-				traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "traces", "test5.prob2trace")));
+	public void deserialize_10_steps_test() throws IOException {
+		traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "traces", "testTraceMachine10Steps.prob2trace"));
 	}
-*/
+
+
 
 
 }

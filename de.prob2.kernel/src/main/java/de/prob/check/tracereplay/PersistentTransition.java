@@ -5,7 +5,6 @@ import de.prob.animator.domainobjects.AbstractEvalResult;
 import de.prob.animator.domainobjects.EvalResult;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
-import de.prob.check.tracereplay.check.TraceChecker;
 import de.prob.statespace.LoadedMachine;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.State;
@@ -23,7 +22,7 @@ public class PersistentTransition {
 
 	private final String name;
 	private Map<String, String> params;
-	private Map<String, String> results;
+	private Map<String, String> outputParameters;
 	private Map<String, String> destState;
 	private Set<String> destStateNotChanged;
 	private List<String> additionalPredicates;
@@ -53,9 +52,9 @@ public class PersistentTransition {
 				for (int i = 0; i < machineOperationInfo.getParameterNames().size(); i++) {
 					params.put(machineOperationInfo.getParameterNames().get(i), transition.getParameterValues().get(i));
 				}
-				results = new HashMap<>();
+				outputParameters = new HashMap<>();
 				for (int i = 0; i < machineOperationInfo.getOutputParameterNames().size(); i++) {
-					results.put(machineOperationInfo.getOutputParameterNames().get(i),
+					outputParameters.put(machineOperationInfo.getOutputParameterNames().get(i),
 							transition.getReturnValues().get(i));
 				}
 			}
@@ -66,20 +65,20 @@ public class PersistentTransition {
 	 * Jackson constructor, only called by jackson deserializer
 	 * @param name the name of the transition
 	 * @param params parameters of the transition
-	 * @param results result of the transition
+	 * @param outputParameters result of the transition
 	 * @param destState target state of the transition
 	 * @param destStateNotChanged target state is no change
 	 * @param additionalPredicates predicates
 	 */
 	public PersistentTransition(@JsonProperty("operationName") String name,
 								@JsonProperty("parameters") Map<String, String> params,
-								@JsonProperty("results") Map<String, String> results,
+								@JsonProperty("outputParameters") Map<String, String> outputParameters,
 								@JsonProperty("destinationStateVariables") Map<String, String> destState,
 								@JsonProperty("destStateNotChanged") Set<String> destStateNotChanged,
 								@JsonProperty("additionalPredicates") List<String> additionalPredicates){
 		if(name.equals(Transition.INITIALISE_MACHINE_NAME)){
 			params = Collections.emptyMap();
-			results = Collections.emptyMap();
+			outputParameters = Collections.emptyMap();
 			name = Transition.INITIALISE_MACHINE_NAME;
 		}
 
@@ -89,7 +88,7 @@ public class PersistentTransition {
 
 		this.name = name;
 		this.params = params;
-		this.results = results;
+		this.outputParameters = outputParameters;
 		this.destState = destState;
 		this.destStateNotChanged = destStateNotChanged;
 		this.additionalPredicates = additionalPredicates;
@@ -141,15 +140,8 @@ public class PersistentTransition {
 	}
 
 
-	public Map<String, String> getResults() {
-		if (this.results == null) {
-			return null;
-		}
-		return new HashMap<>(this.results);
-	}
-
 	public Map<String, String> getOutputParameters() {
-		return getResults();
+		return outputParameters;
 	}
 
 	public Map<String, String> getDestinationStateVariables() {
@@ -168,7 +160,7 @@ public class PersistentTransition {
 				if(((PersistentTransition) obj).params.equals(this.params)){
 					if(((PersistentTransition) obj).destState.equals(this.destState)){
 						if(((PersistentTransition) obj).destStateNotChanged.equals(this.destStateNotChanged)){
-							if(((PersistentTransition) obj).results.equals(this.results)){
+							if(((PersistentTransition) obj).outputParameters.equals(this.outputParameters)){
 								return ((PersistentTransition) obj).additionalPredicates.equals(this.additionalPredicates);
 							}
 						}
@@ -184,6 +176,6 @@ public class PersistentTransition {
 	@Override
 	public String toString() {
 		return "PersistentTransition:" + "\n" + name + "\n"+ params.toString() + "\n" + destState.toString() + "\n"
-				+results.toString() + "\n" +destStateNotChanged.toString() ;
+				+ outputParameters.toString() + "\n" +destStateNotChanged.toString() ;
 	}
 }

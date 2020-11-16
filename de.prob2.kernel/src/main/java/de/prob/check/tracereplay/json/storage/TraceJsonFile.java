@@ -95,7 +95,7 @@ public class TraceJsonFile extends AbstractJsonFile{
 	public TraceJsonFile changeTrace(PersistentTrace trace){
 
 		PersistentTransition t = trace.getTransitionList().get(0);
-		trace.getTransitionList().set(0, new PersistentTransition("$initialise_machine", t.getParameters(), t.getResults(), t.getDestinationStateVariables(), t.getDestStateNotChanged(), t.getAdditionalPredicates()));
+		trace.getTransitionList().set(0, new PersistentTransition("$initialise_machine", t.getParameters(), t.getOutputParameters(), t.getDestinationStateVariables(), t.getDestStateNotChanged(), t.getAdditionalPredicates()));
 		return new TraceJsonFile(super.getName(), getDescription(), trace, variableNames, machineOperationInfos, constantNames, setNames, getMetaData());
 	}
 
