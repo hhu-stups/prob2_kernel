@@ -259,8 +259,7 @@ public class StateSpace implements IAnimator {
 				pred, nrOfSolutions);
 		execute(command);
 		if (command.hasErrors()) {
-			throw new ExecuteOperationException("Executing operation " + opName + " with predicate " + predicate
-					+ " produced errors: " + String.join(", ", command.getErrorMessages()), command.getErrors());
+			throw new ExecuteOperationException("Executing operation " + opName + " with additional predicate produced errors: " + String.join(", ", command.getErrorMessages()), command.getErrors());
 		}
 		return command.getNewTransitions();
 	}
