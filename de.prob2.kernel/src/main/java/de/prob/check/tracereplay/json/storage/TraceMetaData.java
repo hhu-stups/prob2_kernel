@@ -2,8 +2,6 @@ package de.prob.check.tracereplay.json.storage;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.nio.file.Path;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**"

@@ -48,13 +48,14 @@ public class TraceChecker {
 
 		deltaFinder.calculateDelta();
 
-		Map<String, Delta> deltasTypeIorII = deltaFinder.getResultTypeIorII().entrySet().stream()
-				.collect(Collectors.toMap(Map.Entry::getKey, entry -> new Delta(entry.getValue(), oldInfos.get(entry.getKey()))));
+		List<Delta> deltasTypeIorII = deltaFinder.getResultTypeIorII().entrySet().stream()
+				.map(entry -> new Delta(entry.getValue(), oldInfos.get(entry.getKey()))).collect(Collectors.toList());
 
 		if(!deltaFinder.getResultTypeIIInit().isEmpty())
 		{
-			Delta init = new Delta(Transition.INITIALISE_MACHINE_NAME, Collections.emptyMap(), Collections.emptyMap(), deltaFinder.getResultTypeIIInit());
-			deltasTypeIorII.put(Transition.INITIALISE_MACHINE_NAME, init);
+			Delta init = new Delta(Transition.INITIALISE_MACHINE_NAME, Transition.INITIALISE_MACHINE_NAME,
+					Collections.emptyMap(), Collections.emptyMap(), deltaFinder.getResultTypeIIInit());
+			deltasTypeIorII.add(init);
 		}
 
 
