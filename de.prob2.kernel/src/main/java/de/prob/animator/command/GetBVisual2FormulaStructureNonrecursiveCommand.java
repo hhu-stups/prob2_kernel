@@ -10,6 +10,10 @@ import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;
 
+/**
+ * @deprecated Use {@link ExpandBVisual2FormulaCommand} instead.
+ */
+@Deprecated
 public final class GetBVisual2FormulaStructureNonrecursiveCommand extends AbstractCommand {
 	private static final String PROLOG_COMMAND_NAME = "prob2_get_bvisual2_formula_structure_nonrecursive";
 	

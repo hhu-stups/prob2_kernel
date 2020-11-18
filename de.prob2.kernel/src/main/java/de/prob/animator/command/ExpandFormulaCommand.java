@@ -7,6 +7,10 @@ import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.State;
 
+/**
+ * @deprecated Use {@link ExpandBVisual2FormulaCommand} instead.
+ */
+@Deprecated
 public class ExpandFormulaCommand extends AbstractCommand {
 	private static final String PROLOG_COMMAND_NAME = "expand_formula_with_descriptions";
 	private static final String TREE = "TREE";

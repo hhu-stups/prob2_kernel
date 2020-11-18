@@ -8,6 +8,7 @@ import com.google.common.base.MoreObjects;
 
 import de.prob.parser.BindingGenerator;
 import de.prob.prolog.term.CompoundPrologTerm;
+import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.State;
 import de.prob.statespace.StateSpace;
 
@@ -51,6 +52,103 @@ public class ExpandedFormulaStructure {
 			.map(pt -> ExpandedFormulaStructure.fromPrologTerm(stateSpace, BindingGenerator.getCompoundTerm(pt, "formula", 4)))
 			.collect(Collectors.toList());
 		return ExpandedFormulaStructure.withExpandedChildren(formula, label, description, children);
+	}
+	
+	public static ExpandedFormulaStructure fromExtendablePrologTerm(final StateSpace stateSpace, final PrologTerm term) {
+		BindingGenerator.getCompoundTerm(term, "formula", 1);
+		
+		BVisual2Formula formula = null;
+		String label = null;
+		String description = null;
+		BVisual2Value value = null;
+		List<BVisual2Formula> unexpandedChildren = null;
+		List<ExpandedFormulaStructure> expandedChildren = null;
+		for (final PrologTerm entry : BindingGenerator.getList(term.getArgument(1))) {
+			BindingGenerator.getCompoundTerm(entry, 1);
+			final PrologTerm arg = entry.getArgument(1);
+			switch (entry.getFunctor()) {
+				case "id":
+					if (formula != null) {
+						throw new IllegalArgumentException("Duplicate entry: " + entry.getFunctor());
+					}
+					formula = BVisual2Formula.fromFormulaId(stateSpace, arg.getFunctor());
+					break;
+				
+				case "label":
+					if (label != null) {
+						throw new IllegalArgumentException("Duplicate entry: " + entry.getFunctor());
+					}
+					label = PrologTerm.atomicString(arg);
+					break;
+				
+				case "description":
+					if (description != null) {
+						throw new IllegalArgumentException("Duplicate entry: " + entry.getFunctor());
+					}
+					description = PrologTerm.atomicString(arg);
+					break;
+				
+				case "value":
+					if (value != null) {
+						throw new IllegalArgumentException("Duplicate entry: " + entry.getFunctor());
+					}
+					value = BVisual2Value.fromPrologTerm(arg);
+					break;
+				
+				case "children_ids":
+					if (unexpandedChildren != null) {
+						throw new IllegalArgumentException("Duplicate entry: " + entry.getFunctor());
+					}
+					unexpandedChildren = BindingGenerator.getList(arg).stream()
+						.map(id -> BVisual2Formula.fromFormulaId(stateSpace, id.getFunctor()))
+						.collect(Collectors.toList());
+					break;
+				
+				case "children":
+					if (expandedChildren != null) {
+						throw new IllegalArgumentException("Duplicate entry: " + entry.getFunctor());
+					}
+					expandedChildren = BindingGenerator.getList(arg).stream()
+						.map(childTerm -> ExpandedFormulaStructure.fromExtendablePrologTerm(stateSpace, childTerm))
+						.collect(Collectors.toList());
+					break;
+				
+				default:
+					// Ignore unknown entries to allow adding more information in the future.
+					break;
+			}
+		}
+		
+		if (formula == null) {
+			throw new IllegalArgumentException("Missing formula ID");
+		} else if (label == null) {
+			throw new IllegalArgumentException("Missing label");
+		}
+		
+		if (description == null) {
+			// Avoid breaking existing code that relies on description never being null
+			description = "";
+		}
+		
+		if (unexpandedChildren != null) {
+			if (value == null) {
+				return ExpandedFormulaStructure.withUnexpandedChildren(formula, label, description, unexpandedChildren);
+			} else {
+				return ExpandedFormula.withUnexpandedChildren(formula, label, description, value, unexpandedChildren);
+			}
+		} else if (expandedChildren != null) {
+			if (value == null) {
+				return ExpandedFormulaStructure.withExpandedChildren(formula, label, description, expandedChildren);
+			} else {
+				// ExpandedFormula expects all of its children to also be evaluated.
+				final List<ExpandedFormula> expandedChildrenCast = expandedChildren.stream()
+					.map(ExpandedFormula.class::cast)
+					.collect(Collectors.toList());
+				return ExpandedFormula.withExpandedChildren(formula, label, description, value, expandedChildrenCast);
+			}
+		} else {
+			throw new IllegalArgumentException("Either children_ids or children must be present in entries");
+		}
 	}
 	
 	public BVisual2Formula getFormula() {

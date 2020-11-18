@@ -8,10 +8,7 @@ import java.util.stream.Collectors;
 import com.google.common.base.MoreObjects;
 
 import de.prob.animator.command.EvaluateBVisual2FormulasCommand;
-import de.prob.animator.command.ExpandFormulaCommand;
-import de.prob.animator.command.ExpandFormulaNonrecursiveCommand;
-import de.prob.animator.command.GetBVisual2FormulaStructureCommand;
-import de.prob.animator.command.GetBVisual2FormulaStructureNonrecursiveCommand;
+import de.prob.animator.command.ExpandBVisual2FormulaCommand;
 import de.prob.animator.command.GetTopLevelFormulasCommand;
 import de.prob.animator.command.InsertFormulaForVisualizationCommand;
 import de.prob.statespace.State;
@@ -119,20 +116,20 @@ public final class BVisual2Formula {
 		}
 		
 		final BVisual2Formula firstFormula = formulas.get(0);
-		final List<GetBVisual2FormulaStructureNonrecursiveCommand> expandCommands = formulas.stream()
+		final List<ExpandBVisual2FormulaCommand> expandCommands = formulas.stream()
 			.peek(Objects::requireNonNull)
 			.peek(formula -> {
 				if (!formula.getStateSpace().equals(firstFormula.getStateSpace())) {
 					throw new IllegalArgumentException(String.format("Formula %s and %s don't belong to the same state space", firstFormula, formula));
 				}
 			})
-			.map(GetBVisual2FormulaStructureNonrecursiveCommand::new)
+			.map(formula -> new ExpandBVisual2FormulaCommand(formula, null, false))
 			.collect(Collectors.toList());
 		
 		firstFormula.getStateSpace().execute(expandCommands);
 		
 		return expandCommands.stream()
-			.map(GetBVisual2FormulaStructureNonrecursiveCommand::getResult)
+			.map(ExpandBVisual2FormulaCommand::getExpanded)
 			.collect(Collectors.toList());
 	}
 	
@@ -165,20 +162,20 @@ public final class BVisual2Formula {
 		}
 		
 		final BVisual2Formula firstFormula = formulas.get(0);
-		final List<GetBVisual2FormulaStructureCommand> expandCommands = formulas.stream()
+		final List<ExpandBVisual2FormulaCommand> expandCommands = formulas.stream()
 			.peek(Objects::requireNonNull)
 			.peek(formula -> {
 				if (!formula.getStateSpace().equals(firstFormula.getStateSpace())) {
 					throw new IllegalArgumentException(String.format("Formula %s and %s don't belong to the same state space", firstFormula, formula));
 				}
 			})
-			.map(GetBVisual2FormulaStructureCommand::new)
+			.map(formula -> new ExpandBVisual2FormulaCommand(formula, null, true))
 			.collect(Collectors.toList());
 		
 		firstFormula.getStateSpace().execute(expandCommands);
 		
 		return expandCommands.stream()
-			.map(GetBVisual2FormulaStructureCommand::getResult)
+			.map(ExpandBVisual2FormulaCommand::getExpanded)
 			.collect(Collectors.toList());
 	}
 	
@@ -250,21 +247,21 @@ public final class BVisual2Formula {
 			return Collections.emptyList();
 		}
 		
-		final List<ExpandFormulaNonrecursiveCommand> expandCommands = formulas.stream()
+		final List<ExpandBVisual2FormulaCommand> expandCommands = formulas.stream()
 			.peek(Objects::requireNonNull)
 			.peek(formula -> {
 				if (!formula.getStateSpace().equals(state.getStateSpace())) {
 					throw new IllegalArgumentException(String.format("Formula %s does not belong to the state space of the given state: %s", formula, state.getStateSpace()));
 				}
 			})
-			.map(BVisual2Formula::getId)
-			.map(id -> new ExpandFormulaNonrecursiveCommand(id, state))
+			.map(formula -> new ExpandBVisual2FormulaCommand(formula, state, false))
 			.collect(Collectors.toList());
 		
 		state.getStateSpace().execute(expandCommands);
 		
 		return expandCommands.stream()
-			.map(ExpandFormulaNonrecursiveCommand::getResult)
+			.map(ExpandBVisual2FormulaCommand::getExpanded)
+			.map(ExpandedFormula.class::cast)
 			.collect(Collectors.toList());
 	}
 	
@@ -299,21 +296,21 @@ public final class BVisual2Formula {
 			return Collections.emptyList();
 		}
 		
-		final List<ExpandFormulaCommand> expandCommands = formulas.stream()
+		final List<ExpandBVisual2FormulaCommand> expandCommands = formulas.stream()
 			.peek(Objects::requireNonNull)
 			.peek(formula -> {
 				if (!formula.getStateSpace().equals(state.getStateSpace())) {
 					throw new IllegalArgumentException(String.format("Formula %s does not belong to the state space of the given state: %s", formula, state.getStateSpace()));
 				}
 			})
-			.map(BVisual2Formula::getId)
-			.map(id -> new ExpandFormulaCommand(id, state))
+			.map(formula -> new ExpandBVisual2FormulaCommand(formula, state, true))
 			.collect(Collectors.toList());
 		
 		state.getStateSpace().execute(expandCommands);
 		
 		return expandCommands.stream()
-			.map(ExpandFormulaCommand::getResult)
+			.map(ExpandBVisual2FormulaCommand::getExpanded)
+			.map(ExpandedFormula.class::cast)
 			.collect(Collectors.toList());
 	}
 	
