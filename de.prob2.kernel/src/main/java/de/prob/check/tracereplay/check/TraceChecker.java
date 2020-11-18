@@ -73,6 +73,10 @@ public class TraceChecker {
 		traceModifier.insertMultipleAmbiguousChanges(deltasTypeII);
 
 
+		traceModifier.setChangelogPhase2II(new HashSet<>(deltasTypeII.values()));
+
+
+
 	}
 
 

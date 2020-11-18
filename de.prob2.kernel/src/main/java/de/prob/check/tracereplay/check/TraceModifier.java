@@ -12,7 +12,7 @@ public class TraceModifier {
 
 	private final List<List<PersistentTransition>> changelogPhase1 = new LinkedList<>();
 	private final List<List<List<PersistentTransition>>> changelogPhase2 = new LinkedList<>();
-	private final Map<Set<String>, List<PersistentTransition>> changelogPhase2II = new HashMap<>();
+	private Map<Set<Delta>, List<PersistentTransition>> changelogPhase2II = new HashMap<>();
 	//Changelog phase 3 and 4
 
 
@@ -111,6 +111,9 @@ public class TraceModifier {
 		return result;
 	}
 
+	public void setChangelogPhase2II(Set<List<Delta>> change){
+		changelogPhase2II = changeLog(change, getLastChange());
+	}
 
 	public static Map<Set<Delta>, List<PersistentTransition>> changeLog(Set<List<Delta>> change, List<PersistentTransition> currentState){
 		if(!change.isEmpty())
@@ -177,7 +180,13 @@ public class TraceModifier {
 	}
 
 	public boolean isDirty(){
-		return changelogPhase1.size()==1 && !changelogPhase2.isEmpty();
+		return changelogPhase1.size()==1 && !changelogPhase2.isEmpty() && !changelogPhase2II.isEmpty();
 	}
+
+
+	public Map<Set<Delta>, List<PersistentTransition>> getChangelogPhase2II() {
+		return changelogPhase2II;
+	}
+
 
 }
