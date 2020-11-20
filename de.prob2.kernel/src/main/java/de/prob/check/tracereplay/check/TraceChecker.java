@@ -18,6 +18,7 @@ public class TraceChecker {
 	private final TraceModifier traceModifier;
 	private final Map<String, OperationInfo> oldOperationInfos;
 	private final PersistentTrace trace;
+	private final Map<String, List<Delta>> typeIICandidates;
 
 	public TraceChecker(PersistentTrace trace, Map<String, OperationInfo> oldInfos, Map<String, OperationInfo> newInfos,
 						Set<String> oldVars,
@@ -36,14 +37,13 @@ public class TraceChecker {
 				trace.getTransitionList().stream()
 						.filter(element -> !element.getOperationName().equals(Transition.INITIALISE_MACHINE_NAME))
 						.collect(Collectors.toList()));
-		typeFinder = new TypeFinder(traceWithoutInit, oldInfos, newInfos);
+		typeFinder = new TypeFinder(traceWithoutInit, oldInfos, newInfos, oldVars, newVars);
 		typeFinder.check();
 
-		VariableTypeFinder variableTypeFinder = new VariableTypeFinder(trace, oldVars, newVars);
 
 		ReusableAnimator animator = injector.getInstance(ReusableAnimator.class);
 
-		deltaFinder = new DeltaFinder(typeFinder.getTypeIorII(), typeFinder.getTypeIIpermutation(), animator, oldPath,
+		deltaFinder = new DeltaFinder(typeFinder.getTypeIorII(), typeFinder.getTypeIIPermutation(), typeFinder.getInitIsTypeIorIICandidate(), animator, oldPath,
 				newPath, injector);
 
 		deltaFinder.calculateDelta();
@@ -60,7 +60,7 @@ public class TraceChecker {
 
 
 
-		Map<String, List<Delta>> deltasTypeII = deltaFinder.getResultTypeIIWithCandidates().entrySet().stream()
+		typeIICandidates = deltaFinder.getResultTypeIIWithCandidates().entrySet().stream()
 				.collect(Collectors.toMap(Map.Entry::getKey, entry ->
 				{
 					Map<String, Map<String, String>> candidate = entry.getValue();
@@ -68,13 +68,10 @@ public class TraceChecker {
 							.map(stringStringMap -> new Delta(stringStringMap, oldInfos.get(entry.getKey()))).collect(Collectors.toList());
 				}));
 
+
 		traceModifier.insertMultipleUnambiguousChanges(deltasTypeIorII);
 
-		traceModifier.insertMultipleAmbiguousChanges(deltasTypeII);
-
-
-		traceModifier.setChangelogPhase2II(new HashSet<>(deltasTypeII.values()));
-
+		traceModifier.insertAmbiguousChanges(typeIICandidates);
 
 
 	}
@@ -98,6 +95,10 @@ public class TraceChecker {
 
 	public Map<String, OperationInfo> getOldOperationInfos(){
 		return oldOperationInfos;
+	}
+
+	public Map<String, List<Delta>> getTypeIICandidates() {
+		return typeIICandidates;
 	}
 
 
