@@ -33,6 +33,7 @@ public class DeltaFinder {
 	private final String oldMachine;
 	private final String newMachine;
 	private final Injector injector;
+	private final boolean typeIOrIICandidate;
 
 
 	private Map<String, Map<String, String>> resultTypeIorII;
@@ -64,7 +65,7 @@ public class DeltaFinder {
 	};
 
 
-	public DeltaFinder(Set<String> typeIorII, Map<String, Set<String>> typeIICandidates, ReusableAnimator animator,
+	public DeltaFinder(Set<String> typeIorII, Map<String, Set<String>> typeIICandidates, boolean typeIorIICandidate, ReusableAnimator animator,
 					   String oldMachine,
 					   String newMachine,
 					   Injector injector) {
@@ -74,6 +75,7 @@ public class DeltaFinder {
 		this.newMachine = newMachine;
 		this.injector = injector;
 		this.animator = animator;
+		this.typeIOrIICandidate = typeIorIICandidate;
 	}
 
 
@@ -93,9 +95,14 @@ public class DeltaFinder {
 				.filter(entry-> entry.getKey().equals(Transition.INITIALISE_MACHINE_NAME))
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-		resultInitTypeIorII = checkDeterministicPairs(initOld, initNew,
-				Collections.singleton(Transition.INITIALISE_MACHINE_NAME), checkerInterface,
-				prepareOperationsInterface).get(Transition.INITIALISE_MACHINE_NAME);
+		if(typeIOrIICandidate){
+			resultInitTypeIorII = checkDeterministicPairs(initOld, initNew,
+					Collections.singleton(Transition.INITIALISE_MACHINE_NAME), checkerInterface,
+					prepareOperationsInterface).get(Transition.INITIALISE_MACHINE_NAME);
+
+		}else{
+			resultInitTypeIorII = Collections.emptyMap();
+		}
 
 
 		resultTypeIorII = checkDeterministicPairs(oldOperations, newOperations, typeIorII, checkerInterface, prepareOperationsInterface);

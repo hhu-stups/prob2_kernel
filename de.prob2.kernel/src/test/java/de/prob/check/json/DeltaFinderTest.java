@@ -162,36 +162,6 @@ public class DeltaFinderTest {
 	}
 
 
-	@Test
-	void test_getOldOperations() throws IOException, ModelTranslationError {
-		System.setProperty("prob.home", "/home/sebastian/prob_prolog");
-
-		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "machineWithOneOperation.mch");
-		String pathAsStringOld = pathOld.toAbsolutePath().toString();
-
-
-		Path path = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "testTraceMachine.mch");
-		String pathAsString = path.toAbsolutePath().toString();
-
-
-		Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
-		ReusableAnimator reusableAnimator = injector.getInstance(ReusableAnimator.class);
-		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension(pathAsString.substring(pathAsString.lastIndexOf(".")+1)));
-		factory.extract(pathAsString).loadIntoStateSpace(reusableAnimator.createStateSpace());
-
-
-
-		DeltaFinder deltaFinder = new DeltaFinder(Collections.emptySet(), Collections.emptyMap(), reusableAnimator, "", "",
-				injector);
-
-
-		Map<String, CompoundPrologTerm> oldOperations = deltaFinder.getOperations(pathAsStringOld);
-
-
-
-		Assert.assertTrue(oldOperations.containsKey("inccc"));
-	}
-
 
 	@Test
 	void test_getOldNewOperations() throws IOException, ModelTranslationError {
@@ -212,7 +182,8 @@ public class DeltaFinderTest {
 
 
 
-		DeltaFinder deltaFinder = new DeltaFinder(Collections.emptySet(), Collections.emptyMap(), reusableAnimator, "", "",
+		DeltaFinder deltaFinder = new DeltaFinder(Collections.emptySet(), Collections.emptyMap(), false,
+				reusableAnimator, "", "",
 				injector);
 
 
@@ -239,7 +210,7 @@ public class DeltaFinderTest {
 		Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
 		ReusableAnimator reusableAnimator = injector.getInstance(ReusableAnimator.class);
 
-		DeltaFinder deltaFinder = new DeltaFinder(Collections.emptySet(), Collections.emptyMap(),
+		DeltaFinder deltaFinder = new DeltaFinder(Collections.emptySet(), Collections.emptyMap(), false,
 				reusableAnimator, pathAsStringOld, pathAsString, injector);
 
 		Map<String, CompoundPrologTerm> newOperations = deltaFinder.getOperations(pathAsString);
@@ -269,7 +240,7 @@ public class DeltaFinderTest {
 		Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
 		ReusableAnimator reusableAnimator = injector.getInstance(ReusableAnimator.class);
 
-		DeltaFinder deltaFinder = new DeltaFinder(Collections.emptySet(), Collections.emptyMap(), reusableAnimator,
+		DeltaFinder deltaFinder = new DeltaFinder(Collections.emptySet(), Collections.emptyMap(), false, reusableAnimator,
 				pathAsStringOld, pathAsString, injector);
 
 		Map<String, CompoundPrologTerm> oldOperations = deltaFinder.getOperations(pathAsStringOld);
@@ -300,7 +271,7 @@ public class DeltaFinderTest {
 		Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
 		ReusableAnimator reusableAnimator = injector.getInstance(ReusableAnimator.class);
 
-		DeltaFinder deltaFinder = new DeltaFinder(Collections.emptySet(), Collections.emptyMap(), reusableAnimator,
+		DeltaFinder deltaFinder = new DeltaFinder(Collections.emptySet(), Collections.emptyMap(), false, reusableAnimator,
 				pathAsStringOld, pathAsString, injector);
 
 		Set<String> candidates = new HashSet<>(Arrays.asList("inc", "dec", "getfloors", "$initialise_machine"));
@@ -335,4 +306,36 @@ public class DeltaFinderTest {
 		Assert.assertEquals(expected, result);
 
 	}
+
+
+	@Test
+	public void deltaFinder_initialisation_test() throws IOException, ModelTranslationError {
+		System.setProperty("prob.home", "/home/sebastian/prob_prolog");
+
+		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift.mch");
+		String pathAsStringOld = pathOld.toAbsolutePath().toString();
+
+
+		Path path = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift3.mch");
+		String pathAsString = path.toAbsolutePath().toString();
+
+		Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
+		ReusableAnimator reusableAnimator = injector.getInstance(ReusableAnimator.class);
+
+		DeltaFinder deltaFinder = new DeltaFinder(Collections.emptySet(), Collections.emptyMap(), true, reusableAnimator,
+				pathAsStringOld, pathAsString, injector);
+
+
+		deltaFinder.calculateDelta();
+
+		Map<String, String> result = deltaFinder.getResultTypeIIInit();
+
+		Map<String, String> expected = new HashMap<>();
+		expected.put("floors", "level");
+
+		Assert.assertEquals(expected, result);
+
+	}
+
+
 }
