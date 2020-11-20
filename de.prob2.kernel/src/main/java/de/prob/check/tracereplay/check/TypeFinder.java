@@ -17,22 +17,31 @@ public class TypeFinder {
 	private final PersistentTrace trace;
 	private final Map<String, OperationInfo> oldMachine;
 	private final Map<String, OperationInfo> newMachine;
+	private final Set<String> oldVars;
+	private final Set<String> newVars;
 
 	private Set<String> typeIorII;
 	private Set<String> typeIII;
 	private Set<String> typeIV;
-	private Map<String, Set<String>> typeIIpermutation;
+	private Map<String, Set<String>> typeIIPermutation;
+	private Boolean initIsTypeIorIICandidate;
+
 
 
 	/**
 	 * @param trace the trace that is currently dealt with
 	 * @param oldMachine operation of the old machine with which the trace was created
 	 * @param newMachine operations of the new machine
+	 * @param oldVars the Variables from the old machine
+	 * @param newVars the Variables from the new machine
 	 */
-	public TypeFinder(PersistentTrace trace, Map<String, OperationInfo> oldMachine, Map<String, OperationInfo> newMachine){
+	public TypeFinder(PersistentTrace trace, Map<String, OperationInfo> oldMachine, Map<String, OperationInfo> newMachine,
+					  Set<String> oldVars, Set<String> newVars){
 		this.trace = trace;
 		this.newMachine = newMachine;
 		this.oldMachine = oldMachine;
+		this.oldVars = oldVars;
+		this.newVars = newVars;
 	}
 
 	/**
@@ -62,7 +71,7 @@ public class TypeFinder {
 		//Type II
 		Map<String, Set<String>> candidatesForOperation =
 				checkIfOperationCandidatesFulfillSuperficialCriteriaForBeingACloneOrRenamed(operationNamesDoesNotMatch, oldMachine, newMachine);
-		typeIIpermutation = candidatesForOperation;
+		typeIIPermutation = candidatesForOperation;
 
 
 		//Type IV
@@ -70,6 +79,8 @@ public class TypeFinder {
 		operationsWithNoFittingCandidate.removeAll(candidatesForOperation.keySet());
 		typeIV = operationsWithNoFittingCandidate;
 
+
+		initIsTypeIorIICandidate = oldVars.size() == newVars.size();
 	}
 
 	
@@ -85,7 +96,7 @@ public class TypeFinder {
 	 */
 	public static Map<String, Set<String>> checkIfOperationCandidatesFulfillSuperficialCriteriaForBeingACloneOrRenamed(
 			final Set<String> candidates, final Map<String, OperationInfo> oldMachine, final Map<String, OperationInfo> newMachine){
-		return candidates.stream().collect(Collectors.toMap(entry -> entry , operation -> {
+		return candidates.stream().filter(oldMachine::containsKey).collect(Collectors.toMap(entry -> entry , operation -> {
 			OperationInfo operationInfo = oldMachine.get(operation);
 			int numberOfInputVars = operationInfo.getParameterNames().size();
 			int numberOfOutputVars = operationInfo.getOutputParameterNames().size();
@@ -165,8 +176,12 @@ public class TypeFinder {
 		return typeIV;
 	}
 
-	public Map<String, Set<String>> getTypeIIpermutation() {
-		return typeIIpermutation;
+	public Map<String, Set<String>> getTypeIIPermutation() {
+		return typeIIPermutation;
+	}
+
+	public Boolean getInitIsTypeIorIICandidate() {
+		return initIsTypeIorIICandidate;
 	}
 
 }

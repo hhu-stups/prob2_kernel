@@ -97,7 +97,7 @@ public class TypeFinderTest {
 		expectedResult.add(operationInfo3.getOperationName());
 
 		Set<String> candidates = TypeFinder.findCandidates(inputParas.size(), outputParas.size(), detModifiedVars.size(),
-				nonDetModifiedVars.size(), readVariables.size(), operations);
+				0, 0, operations);
 
 
 		Assert.assertEquals(expectedResult, candidates);
@@ -224,7 +224,7 @@ public class TypeFinderTest {
 
 		Set<String> result = TypeFinder.usedOperations(bla.getTrace());
 
-		Set<String> expected = new HashSet<>(Arrays.asList("$initialise_machine", "dec", "getFloor", "inc"));
+		Set<String> expected = new HashSet<>(Arrays.asList("dec", "getfloors", "inc"));
 
 		Assert.assertEquals(expected, result);
 
@@ -278,14 +278,14 @@ public class TypeFinderTest {
 		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "traces", "testTraceMachine10Steps.prob2trace"));
 
 
-		TypeFinder typeFinder = new TypeFinder(bla.getTrace(), oldOperations, newOperations);
+		TypeFinder typeFinder = new TypeFinder(bla.getTrace(), oldOperations, newOperations, Collections.emptySet(), Collections.emptySet());
 
 		typeFinder.check();
 
 
 		Set<String> typeI = new HashSet<>(Collections.singletonList("inc"));
 		Set<String> typeIII = new HashSet<>(Collections.singletonList("dec"));
-		Set<String> typeIV = new HashSet<>(Collections.singletonList("getFloor"));
+		Set<String> typeIV = new HashSet<>(Collections.singletonList("getfloors"));
 
 
 		Assert.assertEquals(typeI, typeFinder.getTypeIorII());
@@ -342,14 +342,60 @@ public class TypeFinderTest {
 		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "traces", "testTraceMachine10Steps.prob2trace"));
 
 
-		TypeFinder typeFinder = new TypeFinder(bla.getTrace(), oldOperations, newOperations);
+		TypeFinder typeFinder = new TypeFinder(bla.getTrace(), oldOperations, newOperations, Collections.emptySet(), Collections.emptySet());
 
 		typeFinder.check();
 
 
-		Set<String> typeII_per = new HashSet<>(Collections.singletonList("inc1"));
+		Map<String,Set<String>> typeII_per = Collections.singletonMap("inc", Collections.singleton("inc1"));
 
-		Assert.assertEquals(typeII_per, typeFinder.getTypeIIpermutation());
+		Assert.assertEquals(typeII_per, typeFinder.getTypeIIPermutation());
+
+	}
+
+
+	@Test
+	public void check_init_type_test() throws IOException {
+
+
+		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "traces", "testTraceMachine10Steps.prob2trace"));
+
+
+		Set<String> oldVars = Collections.singleton("world");
+
+
+
+		TypeFinder typeFinder = new TypeFinder(bla.getTrace(), Collections.emptyMap(), Collections.emptyMap(), oldVars, Collections.emptySet());
+
+		typeFinder.check();
+
+
+
+		Assert.assertFalse(typeFinder.getInitIsTypeIorIICandidate());
+
+	}
+
+
+	@Test
+	public void check_init_type_test_2() throws IOException {
+
+
+		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "traces", "testTraceMachine10Steps.prob2trace"));
+
+
+		Set<String> oldVars = Collections.singleton("world");
+
+		Set<String> newVars = Collections.singleton("hallo");
+
+
+
+		TypeFinder typeFinder = new TypeFinder(bla.getTrace(), Collections.emptyMap(), Collections.emptyMap(), oldVars, newVars);
+
+		typeFinder.check();
+
+
+
+		Assert.assertTrue(typeFinder.getInitIsTypeIorIICandidate());
 
 	}
 }
