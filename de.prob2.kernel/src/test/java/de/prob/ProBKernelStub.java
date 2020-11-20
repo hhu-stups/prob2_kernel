@@ -66,7 +66,11 @@ public class ProBKernelStub {
 	public void executeCommand(AbstractCommand command){
 		reusableAnimator.execute(command);
 	}
-	
+
+	public void killCurrent(){
+		reusableAnimator.getCurrentStateSpace().kill();
+	}
+
 	public PersistentTrace getATrace(){
 
 		return new PersistentTrace(trace);
