@@ -5,15 +5,12 @@ import de.prob.check.tracereplay.PersistentTransition;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class TraceModifier {
 
 
 	private final List<List<PersistentTransition>> changelogPhase1 = new LinkedList<>();
-	private final List<List<List<PersistentTransition>>> changelogPhase2 = new LinkedList<>();
-	private Map<Set<Delta>, List<PersistentTransition>> changelogPhase2II = new HashMap<>();
-	//Changelog phase 3 and 4
+	private final Map<Set<Delta>, List<PersistentTransition>> changelogPhase2II = new HashMap<>();
 
 
 	public TraceModifier(PersistentTrace trace){
@@ -25,12 +22,17 @@ public class TraceModifier {
 		delta.forEach(value -> changelogPhase1.add(changeAll(value, getLastChange())));
 	}
 
-
-	public void insertMultipleAmbiguousChanges(Map<String, List<Delta>> delta){
-		changelogPhase2.add(changeAmbiguous(delta, getLastChange()));
+	public void insertAmbiguousChanges(Map<String, List<Delta>> typeIICandidates){
+		changelogPhase2II.putAll(changeLog(new HashSet<>(typeIICandidates.values()), getLastChange()));
 	}
 
 
+	/**
+	 * Takes a delta and applies it to all PersistentTransitions of g given Transistionlist
+	 * @param delta the delta to apply
+	 * @param currentState the list of transition to apply it to
+	 * @return the modified list, a copy of the original
+	 */
 	public static List<PersistentTransition> changeAll(Delta delta, List<PersistentTransition> currentState){
 		return currentState.stream().map(persistentTransition -> {
 			if(persistentTransition.getOperationName().equals(delta.originalName)){
@@ -59,33 +61,13 @@ public class TraceModifier {
 	}
 
 
-	public static List<List<PersistentTransition>> changeAmbiguous(Map<String, List<Delta>> change, List<PersistentTransition> currentState){
 
-		if(change.isEmpty()){
-			return Collections.singletonList(currentState);
-		}
-
-		List<List<List<PersistentTransition>>> transformedDelta = change.values().stream()
-				.map(deltas -> deltas.stream().map(value -> changeAll(value, currentState))
-				.collect(Collectors.toList()))
-				.collect(Collectors.toList());
-
-		if(transformedDelta.size()==1){
-			return transformedDelta.get(0);
-		}else{
-			 List<List<PersistentTransition>> first = transformedDelta.get(0);
-			 transformedDelta.remove(first);
-			 return transformedDelta.stream().reduce(first, (given, actual) ->
-					given.stream().flatMap(transitionList ->
-							actual.stream().map(transitionList1 -> unifyTransitionList(transitionList, transitionList1, currentState)))
-							.collect(Collectors.toList()));
-		}
-
-
-	}
-
-
-	public static List<Set<Delta>> deltaPermutation(List<List<Delta>> change){
+	/**
+	 * Calculates all possible permutations of a given delta
+	 * @param change a set where each element represents one operation from the original trace. Each list inside represents a collection of possible deltas
+	 * @return a list where each element represents a possible permutation
+	 */
+	public static List<Set<Delta>> deltaPermutation(Set<List<Delta>> change){
 
 		List<List<Set<Delta>>> bla = change.stream().map(set -> set.stream().map(delta -> {
 			Set<Delta> deltaList = new HashSet<>();
@@ -104,6 +86,13 @@ public class TraceModifier {
 		);
 	}
 
+	/**
+	 * Concatenates two collections
+	 * @param one the first collection
+	 * @param two the second collection
+	 * @param <U> the type of the collection
+	 * @return the concatenated collection
+	 */
 	public static <U> List<U> concat(Collection<U> one, Collection<U> two){
 		List<U> result = new ArrayList<>();
 		result.addAll(one);
@@ -111,37 +100,34 @@ public class TraceModifier {
 		return result;
 	}
 
-	public void setChangelogPhase2II(Set<List<Delta>> change){
-		changelogPhase2II = changeLog(change, getLastChange());
-	}
 
+	/**
+	 * Gets a nested collection of deltas, representing possible overlapping/interfering changes. Calculates all possible
+	 * permutations of the applied deltas
+	 * @param change a set where each element represents one operation from the original trace. Each list inside represents a collection of possible deltas
+	 * @param currentState a list of persistent transitions representing the trace
+	 * @return a map containing a mapping between all possible combinations of deltas to their corresponding Transition list
+	 */
 	public static Map<Set<Delta>, List<PersistentTransition>> changeLog(Set<List<Delta>> change, List<PersistentTransition> currentState){
 		if(!change.isEmpty())
 		{
-			List<Set<Delta>> deltaPermutation = deltaPermutation(new ArrayList<>(change));
+			List<Set<Delta>> deltaPermutation = deltaPermutation(change);
 
 			List<List<PersistentTransition>> transformed = deltaPermutation.stream()
 					.map(set -> applyMultipleChanges(set , new ArrayList<>(currentState))).collect(Collectors.toList());
 
-			return zip(deltaPermutation, transformed);
+			return TraceCheckerUtils.zip(deltaPermutation, transformed);
 		}
 
 		return Collections.emptyMap();
 	}
 
-
-	public static <T, U> Map<T, U> zip(List<T> list1, List<U> list2){
-		if(list1.size() == list2.size()){
-			Map<T, U> sideResult = new HashMap<>();
-			for(int i = 0;  i < list1.size(); i++){
-				sideResult.put(list1.get(i), list2.get(i));
-			}
-			return sideResult;
-		}
-		return Collections.emptyMap();
-	}
-
-
+	/**
+	 * applies multiple deltas to a given transition list
+	 * @param deltas a set of changes to be applied
+	 * @param currentState the state from where to start
+	 * @return a transition list with all changes applied
+	 */
 	public static List<PersistentTransition> applyMultipleChanges(Set<Delta> deltas, List<PersistentTransition> currentState){
 
 		if(deltas.isEmpty()) return currentState;
@@ -156,6 +142,24 @@ public class TraceModifier {
 	}
 
 
+	/**
+	 * Unifies two transition list
+	 * Example:
+	 * List1:
+	 * a - a - b - d
+	 * List2:
+	 * a - c - d - d
+	 * current List
+	 * h - a - d - d
+	 *
+	 * result:
+	 * a - c - b - d
+	 *
+	 * @param list1 the first list
+	 * @param list2 the second list
+	 * @param currentState the third list - used to detect the change
+	 * @return the list with all changes applied
+	 */
 	public static List<PersistentTransition> unifyTransitionList(List<PersistentTransition> list1,
 																 List<PersistentTransition> list2,
 																 List<PersistentTransition> currentState){
@@ -170,6 +174,14 @@ public class TraceModifier {
 		}).collect(Collectors.toList());
 	}
 
+	/**
+	 * Searches a list to find if it contains a certain element at the same postion
+	 * @param element the element to search for
+	 * @param list the list where the element is from
+	 * @param searchList the list to search in
+	 * @param <U> the type of the element
+	 * @return true if the element is contained in both lists on the same position
+	 */
 	public static <U> boolean hasElementAtPosition(U element, List<U> list, List<U> searchList){
 		return list.get(searchList.indexOf(element)).equals(element);
 	}
@@ -179,8 +191,12 @@ public class TraceModifier {
 		return changelogPhase1.get(changelogPhase1.size()-1);
 	}
 
+	/**
+	 *
+	 * @return the original trace was modified
+	 */
 	public boolean isDirty(){
-		return changelogPhase1.size()==1 && !changelogPhase2.isEmpty() && !changelogPhase2II.isEmpty();
+		return changelogPhase1.size()==1 && !changelogPhase2II.isEmpty();
 	}
 
 
