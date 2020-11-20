@@ -14,7 +14,11 @@ public class Delta {
 	final Map<String, String> outputParameters;
 	final Map<String, String> variables;
 
-
+	/**
+	 * Extracts tbe delta from the calculated changes
+	 * @param changes the changes calculated by the Delta Finder
+	 * @param operationInfo the old operation
+	 */
 	public Delta(Map<String, String> changes, OperationInfo operationInfo){
 		originalName = operationInfo.getOperationName();
 		List<String> oldInput = operationInfo.getParameterNames();
@@ -44,6 +48,14 @@ public class Delta {
 
 	}
 
+	/**
+	 * Like the other constructor - the candidates are splitted
+	 * @param originalName the name of the operation in the old machine
+	 * @param deltaName the new name
+	 * @param inputParameters a map, mapping new to old input variables
+	 * @param outputParameters a map, mapping new to old output variables
+	 * @param variables a map, mapping new to old variables
+	 */
 	public Delta(String originalName, String deltaName, Map<String, String> inputParameters, Map<String, String> outputParameters,
 				 Map<String, String> variables){
 		this.originalName = originalName;
