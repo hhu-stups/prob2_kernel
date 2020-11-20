@@ -53,6 +53,26 @@ public class Delta {
 		this.variables = variables;
 	}
 
+	public String getOriginalName() {
+		return originalName;
+	}
+
+	public String getDeltaName() {
+		return deltaName;
+	}
+
+	public Map<String, String> getInputParameters() {
+		return inputParameters;
+	}
+
+	public Map<String, String> getOutputParameters() {
+		return outputParameters;
+	}
+
+	public Map<String, String> getVariables() {
+		return variables;
+	}
+
 	@Override
 	public String toString() {
 		return "Original Name <" + originalName + "> Delta Name <" + deltaName+ "> Output Parameter: " +
