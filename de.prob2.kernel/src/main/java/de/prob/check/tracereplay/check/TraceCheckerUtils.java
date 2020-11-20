@@ -7,6 +7,15 @@ import java.util.Map;
 
 public class TraceCheckerUtils {
 
+	/**
+	 * Zips two lists to a map - return an empty list if list have different sizes, naturally equal elements will override
+	 * each other
+	 * @param list1 the first list
+	 * @param list2 the second list
+	 * @param <T> Type of the first List
+	 * @param <U> Type of the second list
+	 * @return a Map of the Type <T, U>
+	 */
 	public static <T, U> Map<T, U> zip(List<T> list1, List<U> list2){
 		if(list1.size() == list2.size()){
 			Map<T, U> sideResult = new HashMap<>();
