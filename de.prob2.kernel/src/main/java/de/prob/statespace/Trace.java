@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -361,7 +362,7 @@ public class Trace extends GroovyObjectSupport {
 		return stateSpace;
 	}
 
-	public Set<Transition> getNextTransitions() {
+	public synchronized Set<Transition> getNextTransitions() {
 		return getNextTransitions(false, FormulaExpand.TRUNCATE);
 	}
 
@@ -369,12 +370,12 @@ public class Trace extends GroovyObjectSupport {
 	 * @deprecated Use {@link #getNextTransitions(boolean, FormulaExpand)} with an explicit {@link FormulaExpand} argument instead
 	 */
 	@Deprecated
-	public Set<Transition> getNextTransitions(boolean evaluate) {
+	public synchronized Set<Transition> getNextTransitions(boolean evaluate) {
 		return this.getNextTransitions(evaluate, FormulaExpand.TRUNCATE);
 	}
 
-	public Set<Transition> getNextTransitions(boolean evaluate, FormulaExpand expansion) {
-		return new HashSet<>(getCurrentState().getOutTransitions(evaluate, expansion));
+	public synchronized Set<Transition> getNextTransitions(boolean evaluate, FormulaExpand expansion) {
+		return new CopyOnWriteArraySet<>(getCurrentState().getOutTransitions(evaluate, expansion));
 	}
 
 	public State getCurrentState() {

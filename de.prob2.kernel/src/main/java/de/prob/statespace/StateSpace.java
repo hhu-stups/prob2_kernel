@@ -56,6 +56,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -823,11 +824,11 @@ public class StateSpace implements IAnimator {
 	 *            how formulas should be expanded
 	 * @return a set containing all of the evaluated transitions
 	 */
-	public Set<Transition> evaluateTransitions(final Collection<Transition> transitions,
+	public synchronized Set<Transition> evaluateTransitions(final Collection<Transition> transitions,
 			final FormulaExpand expansion) {
 		GetOpsFromIds cmd = new GetOpsFromIds(transitions, expansion);
 		execute(cmd);
-		return new LinkedHashSet<>(transitions);
+		return new CopyOnWriteArraySet<>(transitions);
 	}
 
 	/**
