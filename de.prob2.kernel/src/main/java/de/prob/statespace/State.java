@@ -346,7 +346,7 @@ public class State extends GroovyObjectSupport {
 		return stateErrors;
 	}
 
-	public List<Transition> getOutTransitions() {
+	public synchronized List<Transition> getOutTransitions() {
 		// The FormulaExpand argument is ignored if evaluate is false
 		return getOutTransitions(false, FormulaExpand.TRUNCATE);
 	}
@@ -355,7 +355,7 @@ public class State extends GroovyObjectSupport {
 	 * @deprecated Use {@link #getOutTransitions(boolean, FormulaExpand)} with an explicit {@link FormulaExpand} argument instead
 	 */
 	@Deprecated
-	public List<Transition> getOutTransitions(boolean evaluate) {
+	public synchronized List<Transition> getOutTransitions(boolean evaluate) {
 		return this.getOutTransitions(evaluate, FormulaExpand.TRUNCATE);
 	}
 
@@ -372,7 +372,7 @@ public class State extends GroovyObjectSupport {
 	 * @param evaluate whether or not the list of transitions should be evaluated. By default this is set to false.
 	 * @return the outgoing transitions from this state
 	 */
-	public List<Transition> getOutTransitions(boolean evaluate, FormulaExpand expansion) {
+	public synchronized List<Transition> getOutTransitions(boolean evaluate, FormulaExpand expansion) {
 		if (!explored) {
 			explore();
 		}
