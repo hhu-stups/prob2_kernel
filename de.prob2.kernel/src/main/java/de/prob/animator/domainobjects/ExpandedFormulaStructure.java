@@ -135,7 +135,7 @@ public class ExpandedFormulaStructure {
 		return new ExpandedFormulaStructure.Builder();
 	}
 	
-	public static ExpandedFormulaStructure fromExtendablePrologTerm(final StateSpace stateSpace, final PrologTerm term) {
+	public static ExpandedFormulaStructure fromPrologTerm(final StateSpace stateSpace, final PrologTerm term) {
 		BindingGenerator.getCompoundTerm(term, "formula", 1);
 		
 		final ExpandedFormulaStructure.Builder builder = builder();
@@ -195,13 +195,13 @@ public class ExpandedFormulaStructure {
 				
 				case "children":
 					builder.children(BindingGenerator.getList(arg).stream()
-						.map(childTerm -> ExpandedFormulaStructure.fromExtendablePrologTerm(stateSpace, childTerm))
+						.map(childTerm -> ExpandedFormulaStructure.fromPrologTerm(stateSpace, childTerm))
 						.collect(Collectors.toList()));
 					if (expandedChildren != null) {
 						throw new IllegalArgumentException("Duplicate entry: " + entry.getFunctor());
 					}
 					expandedChildren = BindingGenerator.getList(arg).stream()
-						.map(childTerm -> ExpandedFormulaStructure.fromExtendablePrologTerm(stateSpace, childTerm))
+						.map(childTerm -> ExpandedFormulaStructure.fromPrologTerm(stateSpace, childTerm))
 						.collect(Collectors.toList());
 					break;
 				

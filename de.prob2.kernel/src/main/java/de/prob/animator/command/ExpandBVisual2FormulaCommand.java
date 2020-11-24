@@ -48,7 +48,7 @@ public class ExpandBVisual2FormulaCommand extends AbstractCommand {
 	
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
-		this.expanded = ExpandedFormulaStructure.fromExtendablePrologTerm(this.formula.getStateSpace(), bindings.get(EXPANDED_FORMULA_VAR));
+		this.expanded = ExpandedFormulaStructure.fromPrologTerm(this.formula.getStateSpace(), bindings.get(EXPANDED_FORMULA_VAR));
 	}
 	
 	public ExpandedFormulaStructure getExpanded() {
