@@ -1,7 +1,7 @@
 package de.prob.animator.command;
 
 import de.prob.animator.domainobjects.BVisual2Formula;
-import de.prob.animator.domainobjects.ExpandedFormulaStructure;
+import de.prob.animator.domainobjects.ExpandedFormula;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;
@@ -15,7 +15,7 @@ public class ExpandBVisual2FormulaCommand extends AbstractCommand {
 	private final BVisual2Formula formula;
 	private final State evaluationState;
 	private final boolean recursive;
-	private ExpandedFormulaStructure expanded;
+	private ExpandedFormula expanded;
 	
 	/**
 	 * @param formula the formula to expand
@@ -48,10 +48,10 @@ public class ExpandBVisual2FormulaCommand extends AbstractCommand {
 	
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
-		this.expanded = ExpandedFormulaStructure.fromPrologTerm(this.formula.getStateSpace(), bindings.get(EXPANDED_FORMULA_VAR));
+		this.expanded = ExpandedFormula.fromPrologTerm(this.formula.getStateSpace(), bindings.get(EXPANDED_FORMULA_VAR));
 	}
 	
-	public ExpandedFormulaStructure getExpanded() {
+	public ExpandedFormula getExpanded() {
 		return this.expanded;
 	}
 }

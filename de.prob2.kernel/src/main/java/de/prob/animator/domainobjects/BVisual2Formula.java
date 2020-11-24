@@ -108,7 +108,7 @@ public final class BVisual2Formula {
 	 *
 	 * @see #expandStructureNonrecursive() 
 	 */
-	public static List<ExpandedFormulaStructure> expandStructureNonrecursiveMultiple(final List<BVisual2Formula> formulas) {
+	public static List<ExpandedFormula> expandStructureNonrecursiveMultiple(final List<BVisual2Formula> formulas) {
 		Objects.requireNonNull(formulas, "formulas");
 		
 		if (formulas.isEmpty()) {
@@ -141,7 +141,7 @@ public final class BVisual2Formula {
 	 *
 	 * @see #expandStructureNonrecursiveMultiple(List)
 	 */
-	public ExpandedFormulaStructure expandStructureNonrecursive() {
+	public ExpandedFormula expandStructureNonrecursive() {
 		return expandStructureNonrecursiveMultiple(Collections.singletonList(this)).get(0);
 	}
 	
@@ -154,7 +154,7 @@ public final class BVisual2Formula {
 	 *
 	 * @see #expandStructure() 
 	 */
-	public static List<ExpandedFormulaStructure> expandStructureMultiple(final List<BVisual2Formula> formulas) {
+	public static List<ExpandedFormula> expandStructureMultiple(final List<BVisual2Formula> formulas) {
 		Objects.requireNonNull(formulas, "formulas");
 		
 		if (formulas.isEmpty()) {
@@ -187,7 +187,7 @@ public final class BVisual2Formula {
 	 *
 	 * @see #expandStructureMultiple(List)
 	 */
-	public ExpandedFormulaStructure expandStructure() {
+	public ExpandedFormula expandStructure() {
 		return expandStructureMultiple(Collections.singletonList(this)).get(0);
 	}
 	
@@ -261,7 +261,6 @@ public final class BVisual2Formula {
 		
 		return expandCommands.stream()
 			.map(ExpandBVisual2FormulaCommand::getExpanded)
-			.map(ExpandedFormula.class::cast)
 			.collect(Collectors.toList());
 	}
 	
@@ -310,7 +309,6 @@ public final class BVisual2Formula {
 		
 		return expandCommands.stream()
 			.map(ExpandBVisual2FormulaCommand::getExpanded)
-			.map(ExpandedFormula.class::cast)
 			.collect(Collectors.toList());
 	}
 	
