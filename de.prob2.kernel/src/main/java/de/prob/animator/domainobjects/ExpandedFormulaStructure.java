@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import com.google.common.base.MoreObjects;
 
 import de.prob.parser.BindingGenerator;
-import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.State;
 import de.prob.statespace.StateSpace;
@@ -136,52 +135,6 @@ public class ExpandedFormulaStructure {
 		return new ExpandedFormulaStructure.Builder();
 	}
 	
-	/**
-	 * @deprecated Use {@link #builder()} instead.
-	 */
-	@Deprecated
-	public static ExpandedFormulaStructure withUnexpandedChildren(final BVisual2Formula formula, final String label, final String description, final List<BVisual2Formula> subformulas) {
-		return builder()
-			.formula(formula)
-			.label(label)
-			.description(description)
-			.subformulas(subformulas)
-			.build();
-	}
-	
-	/**
-	 * @deprecated Use {@link #builder()} instead.
-	 */
-	@Deprecated
-	public static ExpandedFormulaStructure withExpandedChildren(final BVisual2Formula formula, final String label, final String description, final List<? extends ExpandedFormulaStructure> children) {
-		return builder()
-			.formula(formula)
-			.label(label)
-			.description(description)
-			.children(children)
-			.build();
-	}
-	
-	/**
-	 * @deprecated Use {@link #builder()} instead.
-	 */
-	@Deprecated
-	public static ExpandedFormulaStructure withoutChildren(final BVisual2Formula formula, final String label, final String description) {
-		return withExpandedChildren(formula, label, description, Collections.emptyList());
-	}
-	
-	public static ExpandedFormulaStructure fromPrologTerm(final StateSpace stateSpace, final CompoundPrologTerm cpt) {
-		BindingGenerator.getCompoundTerm(cpt, "formula", 4);
-		return builder()
-			.label(cpt.getArgument(1).getFunctor())
-			.description(cpt.getArgument(2).getFunctor())
-			.formula(BVisual2Formula.fromFormulaId(stateSpace, cpt.getArgument(3).getFunctor()))
-			.children(BindingGenerator.getList(cpt.getArgument(4)).stream()
-				.map(pt -> ExpandedFormulaStructure.fromPrologTerm(stateSpace, BindingGenerator.getCompoundTerm(pt, "formula", 4)))
-				.collect(Collectors.toList()))
-			.build();
-	}
-	
 	public static ExpandedFormulaStructure fromExtendablePrologTerm(final StateSpace stateSpace, final PrologTerm term) {
 		BindingGenerator.getCompoundTerm(term, "formula", 1);
 		
@@ -283,7 +236,7 @@ public class ExpandedFormulaStructure {
 	}
 	
 	/**
-	 * Get the expanded values of this formula's subformulas. {@code null} is returned if the subformulas have not been expanded, for example when this expanded formula was returned from {@link #withUnexpandedChildren(BVisual2Formula, String, String, List)} or {@link BVisual2Formula#expandNonrecursive(State)}.
+	 * Get the expanded values of this formula's subformulas. {@code null} is returned if the subformulas have not been expanded, for example when this expanded formula was returned from {@link BVisual2Formula#expandNonrecursive(State)}.
 	 * 
 	 * @return the expanded values of this formula's subformulas, or {@code null} if the subformulas have not been expanded
 	 */
