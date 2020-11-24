@@ -138,70 +138,36 @@ public final class ExpandedFormula {
 		BindingGenerator.getCompoundTerm(term, "formula", 1);
 		
 		final ExpandedFormula.Builder builder = builder();
-		BVisual2Formula formula = null;
-		String label = null;
-		String description = null;
-		BVisual2Value value = null;
-		List<BVisual2Formula> unexpandedChildren = null;
-		List<ExpandedFormula> expandedChildren = null;
 		for (final PrologTerm entry : BindingGenerator.getList(term.getArgument(1))) {
 			BindingGenerator.getCompoundTerm(entry, 1);
 			final PrologTerm arg = entry.getArgument(1);
 			switch (entry.getFunctor()) {
 				case "id":
 					builder.formula(BVisual2Formula.fromFormulaId(stateSpace, arg.getFunctor()));
-					if (formula != null) {
-						throw new IllegalArgumentException("Duplicate entry: " + entry.getFunctor());
-					}
-					formula = BVisual2Formula.fromFormulaId(stateSpace, arg.getFunctor());
 					break;
 				
 				case "label":
 					builder.label(PrologTerm.atomicString(arg));
-					if (label != null) {
-						throw new IllegalArgumentException("Duplicate entry: " + entry.getFunctor());
-					}
-					label = PrologTerm.atomicString(arg);
 					break;
 				
 				case "description":
 					builder.description(PrologTerm.atomicString(arg));
-					if (description != null) {
-						throw new IllegalArgumentException("Duplicate entry: " + entry.getFunctor());
-					}
-					description = PrologTerm.atomicString(arg);
 					break;
 				
 				case "value":
 					builder.value(BVisual2Value.fromPrologTerm(arg));
-					if (value != null) {
-						throw new IllegalArgumentException("Duplicate entry: " + entry.getFunctor());
-					}
-					value = BVisual2Value.fromPrologTerm(arg);
 					break;
 				
 				case "children_ids":
 					builder.subformulas(BindingGenerator.getList(arg).stream()
 						.map(id -> BVisual2Formula.fromFormulaId(stateSpace, id.getFunctor()))
 						.collect(Collectors.toList()));
-					if (unexpandedChildren != null) {
-						throw new IllegalArgumentException("Duplicate entry: " + entry.getFunctor());
-					}
-					unexpandedChildren = BindingGenerator.getList(arg).stream()
-						.map(id -> BVisual2Formula.fromFormulaId(stateSpace, id.getFunctor()))
-						.collect(Collectors.toList());
 					break;
 				
 				case "children":
 					builder.children(BindingGenerator.getList(arg).stream()
 						.map(childTerm -> ExpandedFormula.fromPrologTerm(stateSpace, childTerm))
 						.collect(Collectors.toList()));
-					if (expandedChildren != null) {
-						throw new IllegalArgumentException("Duplicate entry: " + entry.getFunctor());
-					}
-					expandedChildren = BindingGenerator.getList(arg).stream()
-						.map(childTerm -> ExpandedFormula.fromPrologTerm(stateSpace, childTerm))
-						.collect(Collectors.toList());
 					break;
 				
 				default:
