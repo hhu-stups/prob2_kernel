@@ -15,7 +15,7 @@ public class GetOpsFromIds extends AbstractCommand {
 	private final ComposedCommand allCommands;
 
 	public GetOpsFromIds(final Collection<Transition> edges, final FormulaExpand expansion) {
-		allCommands = new ComposedCommand(edges.stream()
+		allCommands = new ComposedCommand(edges.parallelStream()
 			.filter(opInfo -> opInfo.canBeEvaluated(expansion))
 			.map(opInfo -> new GetOpFromId(opInfo, expansion))
 			.collect(Collectors.toList()));
