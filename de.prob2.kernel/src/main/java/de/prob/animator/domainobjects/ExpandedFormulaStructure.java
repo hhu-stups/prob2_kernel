@@ -13,50 +13,179 @@ import de.prob.statespace.State;
 import de.prob.statespace.StateSpace;
 
 public class ExpandedFormulaStructure {
+	public static class Builder {
+		BVisual2Formula formula;
+		String label;
+		String description;
+		BVisual2Value value;
+		List<BVisual2Formula> subformulas;
+		List<? extends ExpandedFormulaStructure> children;
+		
+		Builder() {
+			this.formula = null;
+			this.label = null;
+			this.description = null;
+			this.value = null;
+			this.subformulas = null;
+			this.children = null;
+		}
+		
+		public ExpandedFormulaStructure.Builder formula(final BVisual2Formula formula) {
+			if (this.formula != null) {
+				throw new IllegalStateException("formula already set");
+			}
+			this.formula = formula;
+			return this;
+		}
+		
+		public ExpandedFormulaStructure.Builder label(final String label) {
+			if (this.label != null) {
+				throw new IllegalStateException("label already set");
+			}
+			this.label = label;
+			return this;
+		}
+		
+		public ExpandedFormulaStructure.Builder description(final String description) {
+			if (this.description != null) {
+				throw new IllegalStateException("description already set");
+			}
+			this.description = description;
+			return this;
+		}
+		
+		public ExpandedFormulaStructure.Builder value(final BVisual2Value value) {
+			if (this.value != null) {
+				throw new IllegalStateException("value already set");
+			}
+			this.value = value;
+			return this;
+		}
+		
+		public ExpandedFormulaStructure.Builder subformulas(final List<BVisual2Formula> subformulas) {
+			if (this.subformulas != null) {
+				throw new IllegalStateException("subformulas already set");
+			} else if (this.children != null) {
+				throw new IllegalStateException("Cannot set both children and subformulas");
+			}
+			this.subformulas = subformulas;
+			return this;
+		}
+		
+		public ExpandedFormulaStructure.Builder children(final List<? extends ExpandedFormulaStructure> children) {
+			if (this.children != null) {
+				throw new IllegalStateException("children already set");
+			} else if (this.subformulas != null) {
+				throw new IllegalStateException("Cannot set both subformulas and children");
+			}
+			this.children = children;
+			return this;
+		}
+		
+		public ExpandedFormulaStructure build() {
+			if (this.value != null) {
+				return new ExpandedFormula(this);
+			} else {
+				return new ExpandedFormulaStructure(this);
+			}
+		}
+	}
+	
 	private final BVisual2Formula formula;
 	private final String label;
 	private final String description;
 	private final List<BVisual2Formula> subformulas;
 	private final List<? extends ExpandedFormulaStructure> children;
 	
-	ExpandedFormulaStructure(final BVisual2Formula formula, final String label, final String description, final List<BVisual2Formula> subformulas, final List<? extends ExpandedFormulaStructure> children) {
+	ExpandedFormulaStructure(final ExpandedFormulaStructure.Builder builder) {
 		super();
-		this.label = label;
-		this.description = description;
-		this.formula = formula;
-		this.subformulas = subformulas;
-		this.children = children;
+		
+		if (builder.formula == null) {
+			throw new IllegalArgumentException("Missing required field: formula");
+		}
+		this.formula = builder.formula;
+		
+		if (builder.label == null) {
+			throw new IllegalArgumentException("Missing required field: label");
+		}
+		this.label = builder.label;
+		
+		if (builder.description == null) {
+			// Avoid breaking existing code that relies on description never being null
+			this.description = "";
+		} else {
+			this.description = builder.description;
+		}
+		
+		if (builder.children != null) {
+			assert builder.subformulas == null;
+			this.subformulas = builder.children.stream()
+				.map(ExpandedFormulaStructure::getFormula)
+				.collect(Collectors.toList());
+		} else {
+			if (builder.subformulas == null) {
+				throw new IllegalArgumentException("Missing required field: subformulas");
+			}
+			this.subformulas = builder.subformulas;
+		}
+		
+		this.children = builder.children;
 	}
 	
+	public static ExpandedFormulaStructure.Builder builder() {
+		return new ExpandedFormulaStructure.Builder();
+	}
+	
+	/**
+	 * @deprecated Use {@link #builder()} instead.
+	 */
+	@Deprecated
 	public static ExpandedFormulaStructure withUnexpandedChildren(final BVisual2Formula formula, final String label, final String description, final List<BVisual2Formula> subformulas) {
-		return new ExpandedFormulaStructure(formula, label, description, subformulas, null);
+		return builder()
+			.formula(formula)
+			.label(label)
+			.description(description)
+			.subformulas(subformulas)
+			.build();
 	}
 	
+	/**
+	 * @deprecated Use {@link #builder()} instead.
+	 */
+	@Deprecated
 	public static ExpandedFormulaStructure withExpandedChildren(final BVisual2Formula formula, final String label, final String description, final List<? extends ExpandedFormulaStructure> children) {
-		final List<BVisual2Formula> subformulas = children.stream()
-			.map(ExpandedFormulaStructure::getFormula)
-			.collect(Collectors.toList());
-		return new ExpandedFormulaStructure(formula, label, description, subformulas, children);
+		return builder()
+			.formula(formula)
+			.label(label)
+			.description(description)
+			.children(children)
+			.build();
 	}
 	
+	/**
+	 * @deprecated Use {@link #builder()} instead.
+	 */
+	@Deprecated
 	public static ExpandedFormulaStructure withoutChildren(final BVisual2Formula formula, final String label, final String description) {
 		return withExpandedChildren(formula, label, description, Collections.emptyList());
 	}
 	
 	public static ExpandedFormulaStructure fromPrologTerm(final StateSpace stateSpace, final CompoundPrologTerm cpt) {
 		BindingGenerator.getCompoundTerm(cpt, "formula", 4);
-		final String label = cpt.getArgument(1).getFunctor();
-		final String description = cpt.getArgument(2).getFunctor();
-		final BVisual2Formula formula = BVisual2Formula.fromFormulaId(stateSpace, cpt.getArgument(3).getFunctor());
-		final List<ExpandedFormulaStructure> children = BindingGenerator.getList(cpt.getArgument(4)).stream()
-			.map(pt -> ExpandedFormulaStructure.fromPrologTerm(stateSpace, BindingGenerator.getCompoundTerm(pt, "formula", 4)))
-			.collect(Collectors.toList());
-		return ExpandedFormulaStructure.withExpandedChildren(formula, label, description, children);
+		return builder()
+			.label(cpt.getArgument(1).getFunctor())
+			.description(cpt.getArgument(2).getFunctor())
+			.formula(BVisual2Formula.fromFormulaId(stateSpace, cpt.getArgument(3).getFunctor()))
+			.children(BindingGenerator.getList(cpt.getArgument(4)).stream()
+				.map(pt -> ExpandedFormulaStructure.fromPrologTerm(stateSpace, BindingGenerator.getCompoundTerm(pt, "formula", 4)))
+				.collect(Collectors.toList()))
+			.build();
 	}
 	
 	public static ExpandedFormulaStructure fromExtendablePrologTerm(final StateSpace stateSpace, final PrologTerm term) {
 		BindingGenerator.getCompoundTerm(term, "formula", 1);
 		
+		final ExpandedFormulaStructure.Builder builder = builder();
 		BVisual2Formula formula = null;
 		String label = null;
 		String description = null;
@@ -68,6 +197,7 @@ public class ExpandedFormulaStructure {
 			final PrologTerm arg = entry.getArgument(1);
 			switch (entry.getFunctor()) {
 				case "id":
+					builder.formula(BVisual2Formula.fromFormulaId(stateSpace, arg.getFunctor()));
 					if (formula != null) {
 						throw new IllegalArgumentException("Duplicate entry: " + entry.getFunctor());
 					}
@@ -75,6 +205,7 @@ public class ExpandedFormulaStructure {
 					break;
 				
 				case "label":
+					builder.label(PrologTerm.atomicString(arg));
 					if (label != null) {
 						throw new IllegalArgumentException("Duplicate entry: " + entry.getFunctor());
 					}
@@ -82,6 +213,7 @@ public class ExpandedFormulaStructure {
 					break;
 				
 				case "description":
+					builder.description(PrologTerm.atomicString(arg));
 					if (description != null) {
 						throw new IllegalArgumentException("Duplicate entry: " + entry.getFunctor());
 					}
@@ -89,6 +221,7 @@ public class ExpandedFormulaStructure {
 					break;
 				
 				case "value":
+					builder.value(BVisual2Value.fromPrologTerm(arg));
 					if (value != null) {
 						throw new IllegalArgumentException("Duplicate entry: " + entry.getFunctor());
 					}
@@ -96,6 +229,9 @@ public class ExpandedFormulaStructure {
 					break;
 				
 				case "children_ids":
+					builder.subformulas(BindingGenerator.getList(arg).stream()
+						.map(id -> BVisual2Formula.fromFormulaId(stateSpace, id.getFunctor()))
+						.collect(Collectors.toList()));
 					if (unexpandedChildren != null) {
 						throw new IllegalArgumentException("Duplicate entry: " + entry.getFunctor());
 					}
@@ -105,6 +241,9 @@ public class ExpandedFormulaStructure {
 					break;
 				
 				case "children":
+					builder.children(BindingGenerator.getList(arg).stream()
+						.map(childTerm -> ExpandedFormulaStructure.fromExtendablePrologTerm(stateSpace, childTerm))
+						.collect(Collectors.toList()));
 					if (expandedChildren != null) {
 						throw new IllegalArgumentException("Duplicate entry: " + entry.getFunctor());
 					}
@@ -119,36 +258,7 @@ public class ExpandedFormulaStructure {
 			}
 		}
 		
-		if (formula == null) {
-			throw new IllegalArgumentException("Missing formula ID");
-		} else if (label == null) {
-			throw new IllegalArgumentException("Missing label");
-		}
-		
-		if (description == null) {
-			// Avoid breaking existing code that relies on description never being null
-			description = "";
-		}
-		
-		if (unexpandedChildren != null) {
-			if (value == null) {
-				return ExpandedFormulaStructure.withUnexpandedChildren(formula, label, description, unexpandedChildren);
-			} else {
-				return ExpandedFormula.withUnexpandedChildren(formula, label, description, value, unexpandedChildren);
-			}
-		} else if (expandedChildren != null) {
-			if (value == null) {
-				return ExpandedFormulaStructure.withExpandedChildren(formula, label, description, expandedChildren);
-			} else {
-				// ExpandedFormula expects all of its children to also be evaluated.
-				final List<ExpandedFormula> expandedChildrenCast = expandedChildren.stream()
-					.map(ExpandedFormula.class::cast)
-					.collect(Collectors.toList());
-				return ExpandedFormula.withExpandedChildren(formula, label, description, value, expandedChildrenCast);
-			}
-		} else {
-			throw new IllegalArgumentException("Either children_ids or children must be present in entries");
-		}
+		return builder.build();
 	}
 	
 	public BVisual2Formula getFormula() {

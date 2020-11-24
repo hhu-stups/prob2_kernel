@@ -1,11 +1,11 @@
 package de.prob.animator.command;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 import de.prob.animator.domainobjects.BVisual2Formula;
 import de.prob.animator.domainobjects.BVisual2Value;
 import de.prob.animator.domainobjects.ExpandedFormula;
+import de.prob.animator.domainobjects.ExpandedFormulaStructure;
 import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
@@ -47,14 +47,15 @@ public class ExpandFormulaNonrecursiveCommand extends AbstractCommand {
 
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
-		final BVisual2Formula formula = BVisual2Formula.fromFormulaId(this.state.getStateSpace(), this.id);
-		final String name = PrologTerm.atomicString(bindings.get(LABEL_VARIABLE));
-		final String description = PrologTerm.atomicString(bindings.get(DESCRIPTION_VARIABLE));
-		final BVisual2Value value = BVisual2Value.fromPrologTerm(bindings.get(VALUE_VARIABLE));
-		final List<BVisual2Formula> subformulas = BindingGenerator.getList(bindings, SUB_IDS_VARIABLE).stream()
-			.map(id -> BVisual2Formula.fromFormulaId(this.state.getStateSpace(), id.getFunctor()))
-			.collect(Collectors.toList());
-		result = ExpandedFormula.withUnexpandedChildren(formula, name, description, value, subformulas);
+		result = (ExpandedFormula)ExpandedFormulaStructure.builder()
+			.formula(BVisual2Formula.fromFormulaId(this.state.getStateSpace(), this.id))
+			.label(PrologTerm.atomicString(bindings.get(LABEL_VARIABLE)))
+			.description(PrologTerm.atomicString(bindings.get(DESCRIPTION_VARIABLE)))
+			.value(BVisual2Value.fromPrologTerm(bindings.get(VALUE_VARIABLE)))
+			.subformulas(BindingGenerator.getList(bindings, SUB_IDS_VARIABLE).stream()
+				.map(id -> BVisual2Formula.fromFormulaId(this.state.getStateSpace(), id.getFunctor()))
+				.collect(Collectors.toList()))
+			.build();
 	}
 
 	public ExpandedFormula getResult() {

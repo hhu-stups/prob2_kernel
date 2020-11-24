@@ -1,6 +1,5 @@
 package de.prob.animator.command;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 import de.prob.animator.domainobjects.BVisual2Formula;
@@ -41,12 +40,14 @@ public final class GetBVisual2FormulaStructureNonrecursiveCommand extends Abstra
 	
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
-		final String name = PrologTerm.atomicString(bindings.get(LABEL_VARIABLE));
-		final String description = PrologTerm.atomicString(bindings.get(DESCRIPTION_VARIABLE));
-		final List<BVisual2Formula> subformulas = BindingGenerator.getList(bindings, SUB_IDS_VARIABLE).stream()
-			.map(id -> BVisual2Formula.fromFormulaId(this.formula.getStateSpace(), id.getFunctor()))
-			.collect(Collectors.toList());
-		this.result = ExpandedFormulaStructure.withUnexpandedChildren(formula, name, description, subformulas);
+		this.result = ExpandedFormulaStructure.builder()
+			.formula(formula)
+			.label(PrologTerm.atomicString(bindings.get(LABEL_VARIABLE)))
+			.description(PrologTerm.atomicString(bindings.get(DESCRIPTION_VARIABLE)))
+			.subformulas(BindingGenerator.getList(bindings, SUB_IDS_VARIABLE).stream()
+				.map(id -> BVisual2Formula.fromFormulaId(this.formula.getStateSpace(), id.getFunctor()))
+				.collect(Collectors.toList()))
+			.build();
 	}
 	
 	public ExpandedFormulaStructure getResult() {
