@@ -64,8 +64,10 @@ public final class GetOperationByPredicateCommand extends AbstractCommand
 	private final IEvalElement evalElement;
 	private final String stateId;
 	private final String name;
+
 	private final List<Transition> operations = new ArrayList<>();
 	private final List<GetOperationError> errors = new ArrayList<>();
+
 	private final int nrOfSolutions;
 	private final StateSpace s;
 

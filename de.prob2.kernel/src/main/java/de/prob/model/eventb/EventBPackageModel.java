@@ -34,7 +34,7 @@ public final class EventBPackageModel extends EventBModel {
 		if (this.getLoadCommandPrologCode() == null) {
 			throw new IllegalStateException("loadCommandPrologCode must be set before loading an EventBPackageModel");
 		}
-		
+
 		return new LoadEventBFileCommand(this.getLoadCommandPrologCode());
 	}
 }

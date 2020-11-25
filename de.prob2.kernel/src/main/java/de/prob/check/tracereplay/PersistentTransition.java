@@ -9,11 +9,8 @@ import de.prob.statespace.OperationInfo;
 import de.prob.statespace.State;
 import de.prob.statespace.Transition;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,7 +21,6 @@ public class PersistentTransition {
 	private Map<String, String> results;
 	private Map<String, String> destState;
 	private Set<String> destStateNotChanged;
-	private List<String> preds;
 
 	public PersistentTransition(Transition transition) {
 		this(transition, false, null);
@@ -101,13 +97,6 @@ public class PersistentTransition {
 			return null;
 		}
 		return new HashMap<>(this.destState);
-	}
-
-	public List<String> getAdditionalPredicates() {
-		if (this.preds == null) {
-			return Collections.emptyList();
-		}
-		return new ArrayList<>(this.preds);
 	}
 
 }

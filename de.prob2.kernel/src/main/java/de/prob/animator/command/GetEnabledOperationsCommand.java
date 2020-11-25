@@ -6,7 +6,7 @@
 
 package de.prob.animator.command;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,7 +29,8 @@ public final class GetEnabledOperationsCommand extends AbstractCommand
 	private static final String OPERATIONS_VARIABLE = "PLOps";
 
 	private final String id;
-	private List<Transition> enabledOperations = Collections.emptyList();
+
+	private List<Transition> enabledOperations = new ArrayList<>();
 
 	private final StateSpace s;
 
@@ -41,10 +42,11 @@ public final class GetEnabledOperationsCommand extends AbstractCommand
 	// [op(id,name,src,dest,[Arguments], [ArgsPrettyPrint],[Infos])]
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
-		enabledOperations = ((ListPrologTerm)bindings.get(OPERATIONS_VARIABLE)).stream()
+		List<Transition> transitions = ((ListPrologTerm) bindings.get(OPERATIONS_VARIABLE)).stream()
 			.map(op -> Transition.createTransitionFromCompoundPrologTerm(
 				s, BindingGenerator.getCompoundTerm(op, 4)))
 			.collect(Collectors.toList());
+		enabledOperations.addAll(transitions);
 	}
 
 	@Override

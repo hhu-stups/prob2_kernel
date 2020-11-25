@@ -1,8 +1,9 @@
 package de.prob.animator.command;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.parser.ISimplifiedROMap;
@@ -15,8 +16,11 @@ public class GetOpsFromIds extends AbstractCommand {
 	private final ComposedCommand allCommands;
 
 	public GetOpsFromIds(final Collection<Transition> edges, final FormulaExpand expansion) {
-		List<GetOpFromId> opInfos = new CopyOnWriteArrayList<>();
-		for(Transition opInfo : edges) {
+		List<GetOpFromId> opInfos = new ArrayList<>();
+
+		//copy edges to avoid race condition
+		List<Transition> copiedEdges = new ArrayList<>(edges);
+		for(Transition opInfo : copiedEdges) {
 			if(opInfo.canBeEvaluated(expansion)) {
 				opInfos.add(new GetOpFromId(opInfo, expansion));
 			}
