@@ -16,6 +16,8 @@ public final class ExpandedFormula {
 		BVisual2Formula formula;
 		String label;
 		String description;
+		String functorSymbol;
+		List<String> rodinLabels;
 		BVisual2Value value;
 		List<BVisual2Formula> subformulas;
 		List<ExpandedFormula> children;
@@ -50,6 +52,22 @@ public final class ExpandedFormula {
 				throw new IllegalStateException("description already set");
 			}
 			this.description = description;
+			return this;
+		}
+		
+		public ExpandedFormula.Builder functorSymbol(final String functorSymbol) {
+			if (this.functorSymbol != null) {
+				throw new IllegalStateException("functorSymbol already set");
+			}
+			this.functorSymbol = functorSymbol;
+			return this;
+		}
+		
+		public ExpandedFormula.Builder rodinLabels(final List<String> rodinLabels) {
+			if (this.rodinLabels != null) {
+				throw new IllegalStateException("rodinLabels already set");
+			}
+			this.rodinLabels = rodinLabels;
 			return this;
 		}
 		
@@ -89,6 +107,8 @@ public final class ExpandedFormula {
 	private final BVisual2Formula formula;
 	private final String label;
 	private final String description;
+	private final String functorSymbol;
+	private final List<String> rodinLabels;
 	private final BVisual2Value value;
 	private final List<BVisual2Formula> subformulas;
 	private final List<ExpandedFormula> children;
@@ -113,6 +133,8 @@ public final class ExpandedFormula {
 			this.description = builder.description;
 		}
 		
+		this.functorSymbol = builder.functorSymbol;
+		this.rodinLabels = builder.rodinLabels;
 		this.value = builder.value;
 		
 		if (builder.children != null) {
@@ -154,6 +176,14 @@ public final class ExpandedFormula {
 					builder.description(PrologTerm.atomicString(arg));
 					break;
 				
+				case "functor_symbol":
+					builder.functorSymbol(PrologTerm.atomicString(arg));
+					break;
+				
+				case "rodin_labels":
+					builder.rodinLabels(PrologTerm.atomicStrings(BindingGenerator.getList(arg)));
+					break;
+				
 				case "value":
 					builder.value(BVisual2Value.fromPrologTerm(arg));
 					break;
@@ -191,6 +221,14 @@ public final class ExpandedFormula {
 		return description;
 	}
 	
+	public String getFunctorSymbol() {
+		return this.functorSymbol;
+	}
+	
+	public List<String> getRodinLabels() {
+		return this.rodinLabels == null ? null : Collections.unmodifiableList(this.rodinLabels);
+	}
+	
 	public BVisual2Value getValue() {
 		return value;
 	}
@@ -219,6 +257,8 @@ public final class ExpandedFormula {
 			.add("formula", this.getFormula())
 			.add("label", this.getLabel())
 			.add("description", this.getDescription())
+			.add("functorSymbol", this.getFunctorSymbol())
+			.add("rodinLabels", this.getRodinLabels())
 			.add("value", this.getValue())
 			.add("subformulas", this.getSubformulas())
 			.add("children", this.getChildren())
