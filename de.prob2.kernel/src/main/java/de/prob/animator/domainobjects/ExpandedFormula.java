@@ -126,13 +126,7 @@ public final class ExpandedFormula {
 		}
 		this.label = builder.label;
 		
-		if (builder.description == null) {
-			// Avoid breaking existing code that relies on description never being null
-			this.description = "";
-		} else {
-			this.description = builder.description;
-		}
-		
+		this.description = builder.description;
 		this.functorSymbol = builder.functorSymbol;
 		this.rodinLabels = builder.rodinLabels;
 		this.value = builder.value;
