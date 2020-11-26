@@ -21,11 +21,11 @@ import java.util.Set;
 public class PersistentTransition {
 
 	private final String name;
-	private Map<String, String> params;
-	private Map<String, String> outputParameters;
-	private Map<String, String> destState;
-	private Set<String> destStateNotChanged;
-	private List<String> additionalPredicates;
+	private final Map<String, String> params = new HashMap<>();
+	private final Map<String, String> outputParameters = new HashMap<>();
+	private final Map<String, String> destState = new HashMap<>();
+	private final Set<String> destStateNotChanged = new HashSet<>();
+	private final List<String> additionalPredicates = new ArrayList<>();
 
 	public PersistentTransition(Transition transition) {
 		this(transition, false, null);
@@ -48,11 +48,11 @@ public class PersistentTransition {
 			if (!Transition.INITIALISE_MACHINE_NAME.equals(name)) {
 				// for each operation
 				OperationInfo machineOperationInfo = loadedMachine.getMachineOperationInfo(name);
-				params = new HashMap<>();
+
 				for (int i = 0; i < machineOperationInfo.getParameterNames().size(); i++) {
 					params.put(machineOperationInfo.getParameterNames().get(i), transition.getParameterValues().get(i));
 				}
-				outputParameters = new HashMap<>();
+
 				for (int i = 0; i < machineOperationInfo.getOutputParameterNames().size(); i++) {
 					outputParameters.put(machineOperationInfo.getOutputParameterNames().get(i),
 							transition.getReturnValues().get(i));
@@ -87,19 +87,16 @@ public class PersistentTransition {
 		}
 
 		this.name = name;
-		this.params = params;
-		this.outputParameters = outputParameters;
-		this.destState = destState;
-		this.destStateNotChanged = destStateNotChanged;
-		this.additionalPredicates = additionalPredicates;
+		this.params.putAll(params);
+		this.outputParameters.putAll(outputParameters);
+		this.destState.putAll(destState);
+		this.destStateNotChanged.addAll(destStateNotChanged);
+		this.additionalPredicates.addAll(additionalPredicates);
 
 	}
 
 	private void addValuesToDestState(Map<IEvalElement, AbstractEvalResult> map, PersistentTransition transitionAfter) {
-		if (destState == null) {
-			destState = new HashMap<>();
-			destStateNotChanged = new HashSet<>();
-		}
+
 		for (Map.Entry<IEvalElement, AbstractEvalResult> entry : map.entrySet()) {
 			if (entry.getValue() instanceof EvalResult) {
 				String name = entry.getKey().getCode();
@@ -119,23 +116,14 @@ public class PersistentTransition {
 
 
 	public Set<String> getDestStateNotChanged() {
-		if (this.destStateNotChanged == null) {
-			return null;
-		}
 		return new HashSet<>(this.destStateNotChanged);
 	}
 
 	public List<String> getAdditionalPredicates() {
-		if (this.additionalPredicates == null) {
-			return null;
-		}
 		return new ArrayList<>(this.additionalPredicates);
 	}
 
 	public Map<String, String> getParameters() {
-		if (this.params == null) {
-			return null;
-		}
 		return new HashMap<>(this.params);
 	}
 
@@ -145,9 +133,6 @@ public class PersistentTransition {
 	}
 
 	public Map<String, String> getDestinationStateVariables() {
-		if (this.destState == null) {
-			return null;
-		}
 		return new HashMap<>(this.destState);
 	}
 
