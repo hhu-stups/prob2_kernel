@@ -3,7 +3,6 @@ package de.prob.check.tracereplay;
 import de.hhu.stups.prob.translator.BValue;
 import de.hhu.stups.prob.translator.Translator;
 import de.hhu.stups.prob.translator.exceptions.TranslationException;
-
 import de.prob.animator.command.GetOperationByPredicateCommand;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
@@ -12,12 +11,16 @@ import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
 import de.prob.statespace.Transition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class TraceReplay {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(TraceReplay.class);
 
 	public enum TraceReplayError {
 		COMMAND, NO_OPERATION_POSSIBLE, TRACE_REPLAY, MISMATCH_OUTPUT;
@@ -124,6 +127,7 @@ public class TraceReplay {
 			} catch (TranslationException e) {
 				replayInformation.put("error", e);
 				traceChecker.showError(TraceReplayError.TRACE_REPLAY, replayInformation);
+				LOGGER.error("", e);
 				return false;
 			}
 		}
