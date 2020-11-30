@@ -1,4 +1,4 @@
-package de.prob.check.json;
+package de.prob.check;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;

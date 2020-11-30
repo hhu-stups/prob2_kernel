@@ -1,4 +1,4 @@
-package de.prob.check.json;
+package de.prob.check;
 
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.Delta;
