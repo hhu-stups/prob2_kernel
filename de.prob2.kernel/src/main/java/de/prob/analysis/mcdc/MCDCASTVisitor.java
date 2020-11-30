@@ -52,8 +52,10 @@ public class MCDCASTVisitor extends DepthFirstAdapter {
 		return new ArrayList<>(tempTestCases);
 	}
 
-	private List<ConcreteMCDCTestCase> filterRequiredTests(List<ConcreteMCDCTestCase> testCases,
-														   boolean requiredTest) {
+	private List<ConcreteMCDCTestCase> filterRequiredTests(
+		List<ConcreteMCDCTestCase> testCases,
+		boolean requiredTest
+	) {
 		return testCases.stream()
 				.filter(x -> x.getTruthValue() == requiredTest)
 				.collect(Collectors.toCollection(ArrayList::new));
@@ -65,9 +67,11 @@ public class MCDCASTVisitor extends DepthFirstAdapter {
 		tempTestCases.add(new ConcreteMCDCTestCase(new ANegationPredicate(node), false));
 	}
 
-	private void addTestCases(List<ConcreteMCDCTestCase> leftChildTests,
-							  List<ConcreteMCDCTestCase> rightChildTests,
-							  List<AbstractMCDCTestCase> requiredTests) {
+	private void addTestCases(
+		List<ConcreteMCDCTestCase> leftChildTests,
+		List<ConcreteMCDCTestCase> rightChildTests,
+		List<AbstractMCDCTestCase> requiredTests
+	) {
 		tempTestCases.clear();
 		for (AbstractMCDCTestCase required : requiredTests) {
 			for (ConcreteMCDCTestCase lct : filterRequiredTests(leftChildTests, required.getLeft())) {

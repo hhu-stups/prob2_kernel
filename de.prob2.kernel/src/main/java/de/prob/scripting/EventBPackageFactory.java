@@ -69,9 +69,8 @@ public final class EventBPackageFactory implements ModelFactory<EventBModel> {
 		}
 
 		final String componentName = file.getName().replaceAll("\\.eventb$", "");
-		/*TODO: Extract machines, contexts, axioms, ...
-		   Currently, the list of children is empty for EventBPackageModel
-		*/
+		// TODO: Extract machines, contexts, axioms, ...
+		// Currently, the list of children is empty for EventBPackageModel
 		EventBModel eventBModel = modelCreator.get().setLoadCommandPrologCode(loadcmd);
 		return new ExtractedModel<>(eventBModel, new DummyElement(componentName));
 	}
