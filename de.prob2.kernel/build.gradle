@@ -73,10 +73,10 @@ ext {
 def parserVersion
 def cliDownloadURL
 if (isSnapshot) {
-	parserVersion = '2.9.27-SNAPSHOT'
+	parserVersion = '2.9.28-SNAPSHOT'
 	cliDownloadURL = "https://www3.hhu.de/stups/downloads/prob/cli/nightly"
 } else {
-	parserVersion = '2.9.26'
+	parserVersion = '2.9.27'
 	cliDownloadURL = "https://www3.hhu.de/stups/downloads/prob/cli/releases/${cli_version}"
 }
 
@@ -95,7 +95,7 @@ dependencies {
 	api group: "de.hhu.stups", name: "prologlib", version: parserVersion
 	api group: "de.hhu.stups", name: "unicode", version: parserVersion
 	api group: "de.hhu.stups", name: "theorymapping", version: parserVersion
-	api group: "de.hhu.stups", name: "value-translator", version: "0.1.1"
+	api group: "de.hhu.stups", name: "value-translator", version: "0.1.2"
 
 	// Groovy (Apache License 2.0)
 	final groovyVersion = "3.0.3"
