@@ -65,6 +65,7 @@ public class ProBKernelStub {
 
 
 	public StateSpace createStateSpace(Path path) throws IOException, ModelTranslationError {
+		killCurrent();
 		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension("mch"));
 		ClassicalBModel bla = (ClassicalBModel) factory.extract(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "ExampleMachine.mch").toString()).getModel();
 		StateSpace stateSpace = reusableAnimator.createStateSpace();
@@ -77,7 +78,10 @@ public class ProBKernelStub {
 	}
 
 	public void killCurrent(){
-		reusableAnimator.getCurrentStateSpace().kill();
+		if(reusableAnimator.getCurrentStateSpace()!=null)
+		{
+			reusableAnimator.getCurrentStateSpace().kill();
+		}
 	}
 
 	public PersistentTrace getATrace(){

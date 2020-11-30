@@ -11,19 +11,17 @@ import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
 import de.prob.statespace.Transition;
-import jdk.jfr.TransitionTo;
 
 import java.util.*;
-import java.util.concurrent.TransferQueue;
 import java.util.stream.Collectors;
 
 public class TraceExplorer {
 
 
 
-	public static PersistentHashMap<Trace, PersistentVector<PersistenceDelta>> replayTrace(List<PersistentTransition> transitionList, StateSpace stateSpace,
-														 ReplayOptions options, Set<String> typeIVBodyCandidates,
-														 Set<String> typeIIICandidates, Map<String,OperationInfo> operationInfo) {
+	public static PersistentHashMap<Trace, PersistentVector<PersistenceDelta>> replayTrace(List<PersistentTransition> transitionList,
+																						   StateSpace stateSpace,
+																						   Map<String,OperationInfo> operationInfo) {
 
 		Trace trace = new Trace(stateSpace);
 		trace.setExploreStateByDefault(true);
@@ -52,20 +50,43 @@ public class TraceExplorer {
 			}
 
 
+			Map<Trace, Set<Trace>> result1;
+			if(traceStorage.isEmpty()){
+				result1 = new HashMap<>();
+				result1.put(trace, replayPersistentTransition(trace, transition ).stream().map(trace::add).collect(Collectors.toSet()));
+			}else{
+				result1 = traceStorage.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey,
+						entry -> variations.stream().flatMap(element -> replayPersistentTransition(entry.getKey(), element).stream())
+								.map(innerTransition -> entry.getKey().add(innerTransition)).collect(Collectors.toSet())));
 
-			Map<Trace, Set<Trace>> result1 = traceStorage.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey,
-					entry -> variations.stream().flatMap(element -> replayPersistentTransition(entry.getKey(), element).stream())
-							.map(innerTransition -> entry.getKey().add(innerTransition)).collect(Collectors.toSet())));
+			}
+
 
 
 			PersistentHashMap<Trace, PersistentVector<PersistenceDelta>> finalTraceStorage = traceStorage;
-			traceStorage = PersistentHashMap.create(result1.entrySet().stream().flatMap(entry -> entry.getValue().stream()
-					.map(innerEntry -> new AbstractMap.SimpleEntry<>(innerEntry,
-							PersistentVector.create(finalTraceStorage.get(entry.getKey()),
-									new PersistenceDelta(transition,
-											Collections.singletonList(
-													new PersistentTransition(innerEntry.getCurrentTransition(),
-															new PersistentTransition(entry.getKey().getCurrentTransition())))))))));
+			Map<Trace, PersistentVector<PersistenceDelta>> da = result1.entrySet().stream().flatMap(entry -> entry.getValue().stream()
+					.map(innerEntry -> {
+
+						PersistentTransition previous;
+						if(trace.getCurrentTransition() == null){
+							previous = null;
+						}else{
+							previous = new PersistentTransition(trace.getCurrentTransition());
+						}
+
+
+						return new AbstractMap.SimpleEntry<>(innerEntry,
+								finalTraceStorage.getOrDefault(entry.getKey(), PersistentVector.emptyVector()).cons(
+										new PersistenceDelta(transition,
+												Collections.singletonList(
+														new PersistentTransition(innerEntry.getCurrentTransition(), previous)))));
+					}))
+					.collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
+
+
+
+
+			traceStorage = PersistentHashMap.create(da);
 		}
 
 
