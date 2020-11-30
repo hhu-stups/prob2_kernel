@@ -158,23 +158,14 @@ public class Transition {
 	}
 
 	public List<BValue> getTranslatedParams() throws TranslationException {
-		if (translatedParams != null) {
-			return translatedParams;
+		if (translatedParams == null) {
+			List<BValue> list = new ArrayList<>();
+			for (String s : getParameterValues()) {
+				list.add(Translator.translate(s));
+			}
+			translatedParams = list;
 		}
-		translateParamsAndRetVals();
 		return translatedParams;
-	}
-
-	private void translateParamsAndRetVals() throws TranslationException {
-		evaluate(FormulaExpand.EXPAND);
-		translatedParams = new ArrayList<>();
-		for (String str : params) {
-			translatedParams.add(Translator.translate(str));
-		}
-		translatedRetV = new ArrayList<>();
-		for (String str : returnValues) {
-			translatedRetV.add(Translator.translate(str));
-		}
 	}
 
 	/**
@@ -194,10 +185,13 @@ public class Transition {
 	}
 
 	public List<BValue> getTranslatedReturnValues() throws TranslationException {
-		if (translatedRetV != null) {
-			return translatedRetV;
+		if (translatedRetV == null) {
+			List<BValue> list = new ArrayList<>();
+			for (String s : getReturnValues()) {
+				list.add(Translator.translate(s));
+			}
+			translatedRetV = list;
 		}
-		translateParamsAndRetVals();
 		return translatedRetV;
 	}
 
