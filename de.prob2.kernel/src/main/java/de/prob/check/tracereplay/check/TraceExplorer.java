@@ -1,7 +1,6 @@
 package de.prob.check.tracereplay.check;
 
 import com.github.krukow.clj_lang.PersistentHashMap;
-import com.github.krukow.clj_lang.PersistentHashSet;
 import com.github.krukow.clj_lang.PersistentVector;
 import de.prob.animator.command.GetOperationByPredicateCommand;
 import de.prob.animator.domainobjects.*;
@@ -32,31 +31,14 @@ public class TraceExplorer {
 
 
 		for (PersistentTransition transition : transitionList) {
-			List<PersistentTransition> variations;
-
-			if(!transition.getOperationName().equals(Transition.INITIALISE_MACHINE_NAME)) {
-				List<String> da = operationInfo.get(transition.getOperationName()).getWrittenVariables();
-				da.addAll(operationInfo.get(transition.getOperationName()).getNonDetWrittenVariables());
-
-				variations = variationFinder(transition, da).stream().map(transition::createFromOld).collect(Collectors.toList());
-
-				if(variations.isEmpty()){
-					variations.add(transition);
-				}
-			}
-			else{
-				variations = new ArrayList<>();
-				variations.add(transition);
-			}
-
 
 			Map<Trace, Set<Trace>> result1;
 			if(traceStorage.isEmpty()){
 				result1 = new HashMap<>();
 				result1.put(trace, replayPersistentTransition(trace, transition ).stream().map(trace::add).collect(Collectors.toSet()));
 			}else{
-				result1 = traceStorage.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey,
-						entry -> variations.stream().flatMap(element -> replayPersistentTransition(entry.getKey(), element).stream())
+				result1 = traceStorage.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry ->
+						replayPersistentTransition(entry.getKey(), transition).stream()
 								.map(innerTransition -> entry.getKey().add(innerTransition)).collect(Collectors.toSet())));
 
 			}
@@ -93,12 +75,54 @@ public class TraceExplorer {
 		return traceStorage;
 	}
 
+	/**
+	 * Gets a mapping from variables to values (input/output/variables) and the variables of the current operation and
+	 * calculates all possible mappings, e.g.
+	 * inc(x,y) -> inc(x,y,z) produces
+	 * 			-> inc(x,y)
+	 * 			-> inc(x, void, y)
+	 * 			-> inc(void, x, y)
+	 * 		[..]
+	 * void means that the mapping is not existent in the resulting map
+	 * @param elements the mapping from the current transition
+	 * @param target the variables manipulated by the transition according to the new machine
+	 * @return all possible mappings
+	 */
+	public static Set<Map<String, String>> possibleConstellations(Map<String, String> elements, List<String> target){
 
+		if(elements.isEmpty()||target.isEmpty()) return Collections.emptySet();
 
-	public static Set<Map<String, String>> variationFinder(PersistentTransition transition, List<String> manipulatedVars){
-		List<String> values = new ArrayList<>(transition.getDestinationStateVariables().values());
-		return TraceCheckerUtils.generatePerm(manipulatedVars).stream()
-				.map(current -> TraceCheckerUtils.zip(current, values)).collect(Collectors.toSet());
+		List<String> values = new ArrayList<>(elements.keySet());
+
+		if(values.size()>target.size()){
+			return permutate(TraceCheckerUtils.generatePerm(values), target);
+		}
+		else {
+			return permutate(TraceCheckerUtils.generatePerm(target), values);
+		}
+
+	}
+
+	/**
+	 * helper for @possibleConstellations
+	 * @param permutations a list with all permuations
+	 * @param values the values to map onto
+	 * @return a set of mappings with the new constelations
+	 */
+	public static Set<Map<String, String>> permutate(List<List<String>> permutations, List<String> values){
+		Set<Map<String, String>> resultSet = new HashSet<>();
+		for(List<String> option : permutations){
+			Map<String, String> resultMap = new HashMap<>();
+			for(int i = 0; i < option.size(); i++){
+				if(i < values.size()){
+					resultMap.put(values.get(i), option.get(i));
+				}
+				//Else the values are not for direct interest when building the predicate
+			}
+			resultSet.add(resultMap);
+		}
+
+		return resultSet;
 	}
 
 
