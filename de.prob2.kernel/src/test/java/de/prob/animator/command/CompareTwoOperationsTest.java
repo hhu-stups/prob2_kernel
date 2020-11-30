@@ -8,7 +8,6 @@ import de.prob.MainModule;
 import de.prob.ProBKernelStub;
 import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
-import de.prob.prolog.term.VariablePrologTerm;
 import de.prob.scripting.ModelTranslationError;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;

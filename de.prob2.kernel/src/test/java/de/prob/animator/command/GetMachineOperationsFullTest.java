@@ -7,7 +7,6 @@ import de.prob.MainModule;
 import de.prob.ProBKernelStub;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.scripting.ModelTranslationError;
-import de.prob.statespace.LoadedMachine;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
