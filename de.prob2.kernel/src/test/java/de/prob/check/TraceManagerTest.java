@@ -1,4 +1,4 @@
-package de.prob.check.json;
+package de.prob.check;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
