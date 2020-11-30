@@ -224,7 +224,7 @@ public final class JsonManager<T> {
 	 * @param jsonObject the jsonObject in question
 	 * @param optionalFields a list with fields that are part of clazz but being optional for a functioning trace
 	 */
-	public void checkClassFieldsMatchJsonObject(Class clazz, JsonObject jsonObject, List<String> optionalFields){
+	public void checkClassFieldsMatchJsonObject(Class<?> clazz, JsonObject jsonObject, List<String> optionalFields){
 		Set<String> fieldsFromTarget = Arrays.stream(clazz.getDeclaredFields())
 				.filter(field -> !field.isSynthetic()) //Filter fields that are generate via tests aká $jacocoData
 				.map(Field::getName).collect(Collectors.toSet());
@@ -255,7 +255,7 @@ public final class JsonManager<T> {
 	 * @param jsonObject the jsonObject in question
 	 * @throws JsonParseException the fields don´t match
 	 */
-	public void checkClassFieldsMatchJsonObject(Class clazz, JsonObject jsonObject) {
+	public void checkClassFieldsMatchJsonObject(Class<?> clazz, JsonObject jsonObject) {
 		checkClassFieldsMatchJsonObject(clazz, jsonObject, Collections.emptyList());
 	}
 
