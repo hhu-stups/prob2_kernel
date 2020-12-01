@@ -1,7 +1,5 @@
 package de.prob.check;
 
-import com.github.krukow.clj_lang.PersistentHashMap;
-import com.github.krukow.clj_lang.PersistentVector;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Stage;
@@ -14,7 +12,6 @@ import de.prob.check.tracereplay.check.TraceExplorer;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.StateSpace;
-import de.prob.statespace.Trace;
 import de.prob.statespace.Transition;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,7 +20,6 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class TraceExplorerIntegrationTest {
 
@@ -51,8 +47,7 @@ public class TraceExplorerIntegrationTest {
 
 		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "Lift.mch"));
 
-		PersistentHashMap<Trace, PersistentVector<PersistenceDelta>> result =
-				TraceExplorer.replayTrace(Collections.emptyList(), stateSpace, stateSpace.getLoadedMachine().getOperations());
+		Set<List<PersistenceDelta>> result = TraceExplorer.replayTrace(Collections.emptyList(), stateSpace, stateSpace.getLoadedMachine().getOperations());
 
 		Assert.assertTrue(result.isEmpty());
 	}
@@ -67,13 +62,14 @@ public class TraceExplorerIntegrationTest {
 				Collections.emptyMap(), Collections.singletonMap("floors", "0"), Collections.emptySet(), Collections.emptyList());
 
 
-		PersistentHashMap<Trace, PersistentVector<PersistenceDelta>> result =
+		Set<List<PersistenceDelta>> result =
 				TraceExplorer.replayTrace(Collections.singletonList(init), stateSpace, stateSpace.getLoadedMachine().getOperations());
 
 
-		PersistenceDelta expected = result.entrySet().stream().findFirst().get().getValue().get(0);
 
-		Assert.assertEquals(1, result.entrySet().size());
+		Assert.assertEquals(1, result.size());
+		assert result.size()>=1;
+		PersistenceDelta expected = result.stream().findFirst().get().get(0);
 		Assert.assertEquals(expected.getOldTransition(), init);
 		Assert.assertEquals(expected.getNewTransitions().get(0), init);
 	}
@@ -102,12 +98,11 @@ public class TraceExplorerIntegrationTest {
 		List<PersistenceDelta> expected = Arrays.asList(delta1,delta2,delta3);
 
 
-		PersistentHashMap<Trace, PersistentVector<PersistenceDelta>> result =
+		Set<List<PersistenceDelta>> result =
 				TraceExplorer.replayTrace(Arrays.asList(init, first, second), stateSpace, stateSpace.getLoadedMachine().getOperations());
 
-
-
-		Assert.assertEquals(expected, new ArrayList<>(result.entrySet().stream().findFirst().get().getValue()));
+		Assert.assertFalse(result.isEmpty());
+		Assert.assertEquals(expected, new ArrayList<>(result.stream().findFirst().get()));
 	}
 
 
@@ -143,12 +138,12 @@ public class TraceExplorerIntegrationTest {
 
 		List<PersistenceDelta> expected = Arrays.asList(delta1,delta2,delta3);
 
-		PersistentHashMap<Trace, PersistentVector<PersistenceDelta>> result =
+		Set<List<PersistenceDelta>> result =
 				TraceExplorer.replayTrace(Arrays.asList(init, first, second), stateSpace, stateSpace.getLoadedMachine().getOperations());
 
 
-
-		Assert.assertEquals(expected, new ArrayList<>(result.entrySet().stream().findFirst().get().getValue()));
+		Assert.assertFalse(result.isEmpty());
+		Assert.assertEquals(expected, new ArrayList<>(result.stream().findFirst().get()));
 	}
 
 
@@ -210,14 +205,13 @@ public class TraceExplorerIntegrationTest {
 		List<PersistenceDelta> expected2 = Arrays.asList(delta1,delta2_var2,delta3);
 		List<PersistenceDelta> expected3 = Arrays.asList(delta1,delta2_var3,delta3);
 
-		PersistentHashMap<Trace, PersistentVector<PersistenceDelta>> result =
+		Set<List<PersistenceDelta>> result =
 				TraceExplorer.replayTrace(Arrays.asList(init, first, second), stateSpace, stateSpace.getLoadedMachine().getOperations());
 
 
-		Set<List<PersistenceDelta>> da = result.values().stream().map(ArrayList::new).collect(Collectors.toSet());
-		Set<List<PersistenceDelta>> gna = new HashSet<>(Arrays.asList(expected1, expected2, expected3));
+		Set<List<PersistenceDelta>> expected = new HashSet<>(Arrays.asList(expected1, expected2, expected3));
 
-		Assert.assertTrue(dummyCompare(da, gna));
+		Assert.assertTrue(dummyCompare(result, expected));
 
 	}
 
@@ -278,15 +272,13 @@ public class TraceExplorerIntegrationTest {
 		List<PersistenceDelta> expected2 = Arrays.asList(delta1,delta2_var2,delta3);
 		List<PersistenceDelta> expected3 = Arrays.asList(delta1,delta2_var3,delta3);
 
-		PersistentHashMap<Trace, PersistentVector<PersistenceDelta>> result =
+		Set<List<PersistenceDelta>> result =
 				TraceExplorer.replayTrace(Arrays.asList(init, first, second), stateSpace, stateSpace.getLoadedMachine().getOperations());
 
 
-		Set<List<PersistenceDelta>> da = result.values().stream().map(ArrayList::new).collect(Collectors.toSet());
-		Set<List<PersistenceDelta>> gna = new HashSet<>(Arrays.asList(expected1, expected2, expected3));
+		Set<List<PersistenceDelta>> expected = new HashSet<>(Arrays.asList(expected1, expected2, expected3));
 
-		Assert.assertTrue(dummyCompare(da, gna));
-
+		Assert.assertTrue(dummyCompare(result, expected));
 	}
 
 	public boolean dummyCompare(Set<List<PersistenceDelta>> d1, Set<List<PersistenceDelta>> d2){

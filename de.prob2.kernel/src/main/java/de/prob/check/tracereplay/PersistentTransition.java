@@ -125,7 +125,11 @@ public class PersistentTransition {
 	}
 
 
-	public PersistentTransition createFromOld(Map<String, String> destState){
+	public PersistentTransition copyWithNewDestState(Map<String, String> destState){
+		return  new PersistentTransition(name, params, outputParameters, destState, destStateNotChanged, additionalPredicates);
+	}
+
+	public PersistentTransition copyWithNewParameters(Map<String, String> params){
 		return  new PersistentTransition(name, params, outputParameters, destState, destStateNotChanged, additionalPredicates);
 	}
 

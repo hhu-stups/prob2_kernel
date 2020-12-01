@@ -18,7 +18,7 @@ public class TraceExplorer {
 
 
 
-	public static PersistentHashMap<Trace, PersistentVector<PersistenceDelta>> replayTrace(List<PersistentTransition> transitionList,
+	public static Set<List<PersistenceDelta>> replayTrace(List<PersistentTransition> transitionList,
 																						   StateSpace stateSpace,
 																						   Map<String,OperationInfo> operationInfo) {
 
@@ -33,45 +33,35 @@ public class TraceExplorer {
 		for (PersistentTransition transition : transitionList) {
 
 			Set<PersistentTransition> variations = new HashSet<>();
+			variations.add(transition);
 			if(operationInfo.containsKey(transition.getOperationName())){
-				variations = possibleConstellations(transition.getParameters(),
-						operationInfo.get(transition.getOperationName()).getParameterNames()).stream()
-						.map(mapping -> new PersistentTransition(transition.getOperationName(), mapping,
-								transition.getOutputParameters(), transition.getDestinationStateVariables(),
-								transition.getDestStateNotChanged() ,transition.getAdditionalPredicates())).collect(Collectors.toSet());
+
+				variations = variations.stream().flatMap(variation ->
+						possibleConstellations(new HashMap<>(variation.getParameters()),
+								new ArrayList<>(operationInfo.get(variation.getOperationName()).getParameterNames())).stream()
+								.map(variation::copyWithNewParameters)).collect(Collectors.toSet());
 
 				if(variations.isEmpty()) variations.add(transition);
 
-				List<PersistentTransition> gba = variations.stream().flatMap(variation ->
+				variations = variations.stream().flatMap(variation ->
 						possibleConstellations(new HashMap<>(variation.getDestinationStateVariables()),
-						new ArrayList<>(operationInfo.get(variation.getOperationName()).getWrittenVariables())).stream()
-						.map(	mapping ->{
-								return new PersistentTransition(variation.getOperationName(), variation.getParameters(),
-								variation.getOutputParameters(), mapping,
-								variation.getDestStateNotChanged(), variation.getAdditionalPredicates());})
-								)
-						.collect(Collectors.toList());
-
-				variations = gba.stream().collect(Collectors.toSet());
+								new ArrayList<>(operationInfo.get(variation.getOperationName()).getWrittenVariables())).stream()
+								.map(variation::copyWithNewDestState)).collect(Collectors.toSet());
 			}
+
 			if(variations.isEmpty())
 			{
-				variations = new HashSet<>();
 				variations.add(transition);
 			}
 
-			Map<Trace, Set<Trace>> result1;
+			Map<Trace, Set<Trace>> pathsMapedToPathsToGo;
 			if(traceStorage.isEmpty()){
-				result1 = new HashMap<>();
-				result1.put(trace, replayPersistentTransition(trace, transition).stream().map(trace::add).collect(Collectors.toSet()));
+				pathsMapedToPathsToGo = new HashMap<>();
+				pathsMapedToPathsToGo.put(trace, replayPersistentTransition(trace, transition).stream().map(trace::add).collect(Collectors.toSet()));
 			}else{
 				Set<PersistentTransition> finalVariations = variations;
 
-				/*Set<Transition> sideResult = traceStorage.keySet().stream().flatMap(innerTrace -> finalVariations.stream()
-						.map(variation -> replayPersistentTransition(innerTrace, variation))).flatMap(Collection::stream).collect(Collectors.toSet());
-				*/
-
-				result1 = traceStorage.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry ->
+				pathsMapedToPathsToGo = traceStorage.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry ->
 						finalVariations.stream().flatMap(variation -> replayPersistentTransition(entry.getKey(), variation).stream()
 								.map(innerTransition -> entry.getKey().add(innerTransition))).collect(Collectors.toSet())));
 
@@ -79,7 +69,7 @@ public class TraceExplorer {
 
 
 			PersistentHashMap<Trace, PersistentVector<PersistenceDelta>> finalTraceStorage = traceStorage;
-			Map<Trace, PersistentVector<PersistenceDelta>> da = result1.entrySet().stream().flatMap(entry -> entry.getValue().stream()
+			Map<Trace, PersistentVector<PersistenceDelta>> da = pathsMapedToPathsToGo.entrySet().stream().flatMap(entry -> entry.getValue().stream()
 					.map(innerEntry -> {
 
 						PersistentTransition previous;
@@ -111,7 +101,7 @@ public class TraceExplorer {
 		}
 
 
-		return traceStorage;
+		return traceStorage.values().stream().map(ArrayList::new).collect(Collectors.toSet());
 	}
 
 
@@ -169,7 +159,13 @@ public class TraceExplorer {
 		return resultSet;
 	}
 
-
+	/**
+	 * Compares a trace and a set of traces on the property of their equivalence. Equivalence is archived if the
+	 * contained transitions list can be transformed to persistent transitions and those are equivalent
+	 * @param t the trace to compare
+	 * @param set the set of traces to compare against
+	 * @return wherever the set contains the given trace t
+	 */
 	public static boolean setContainsEqualTrace(Trace t, Set<Trace> set){
 		return set.stream().anyMatch(trace -> {
 			List<PersistentTransition> transitionList1 = trace.getTransitionList().stream()
