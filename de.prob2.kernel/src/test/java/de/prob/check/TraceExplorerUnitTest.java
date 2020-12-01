@@ -21,9 +21,9 @@ public class TraceExplorerUnitTest {
 
 
 		Set<Map<String, String>> expected = new HashSet<>();
-		expected.add(Collections.singletonMap("x","x"));
-		expected.add(Collections.singletonMap("x","y"));
-		expected.add(Collections.singletonMap("x","z"));
+		expected.add(Collections.singletonMap("y","1"));
+		expected.add(Collections.singletonMap("x","1"));
+		expected.add(Collections.singletonMap("z","1"));
 
 		Assert.assertEquals(expected, result);
 
@@ -44,28 +44,28 @@ public class TraceExplorerUnitTest {
 
 		Set<Map<String, String>> expected = new HashSet<>();
 		Map<String, String> result1 = new HashMap<>();
-		result1.put("x", "x");
-		result1.put("y", "y");
+		result1.put("x", "2");
+		result1.put("y", "1");
 		expected.add(result1);
 		Map<String, String> result2 = new HashMap<>();
-		result2.put("x", "y");
-		result2.put("y", "x");
+		result2.put("x", "1");
+		result2.put("y", "2");
 		expected.add(result2);
 		Map<String, String> result3 = new HashMap<>();
-		result3.put("x", "z");
-		result3.put("y", "y");
+		result3.put("z", "1");
+		result3.put("y", "2");
 		expected.add(result3);
 		Map<String, String> result4 = new HashMap<>();
-		result4.put("x", "z");
-		result4.put("y", "x");
+		result4.put("z", "2");
+		result4.put("y", "1");
 		expected.add(result4);
 		Map<String, String> result5 = new HashMap<>();
-		result5.put("x", "x");
-		result5.put("y", "z");
+		result5.put("x", "2");
+		result5.put("z", "1");
 		expected.add(result5);
 		Map<String, String> result6 = new HashMap<>();
-		result6.put("x", "y");
-		result6.put("y", "z");
+		result6.put("x", "1");
+		result6.put("z", "2");
 		expected.add(result6);
 
 
@@ -90,28 +90,28 @@ public class TraceExplorerUnitTest {
 
 		Set<Map<String, String>> expected = new HashSet<>();
 		Map<String, String> result1 = new HashMap<>();
-		result1.put("x", "x");
-		result1.put("y", "y");
+		result1.put("y", "1");
+		result1.put("z", "2");
 		expected.add(result1);
 		Map<String, String> result2 = new HashMap<>();
-		result2.put("x", "y");
-		result2.put("y", "x");
+		result2.put("x", "1");
+		result2.put("z", "2");
 		expected.add(result2);
 		Map<String, String> result3 = new HashMap<>();
-		result3.put("x", "z");
-		result3.put("y", "y");
+		result3.put("x", "2");
+		result3.put("z", "1");
 		expected.add(result3);
 		Map<String, String> result4 = new HashMap<>();
-		result4.put("x", "z");
-		result4.put("y", "x");
+		result4.put("y", "2");
+		result4.put("z", "1");
 		expected.add(result4);
 		Map<String, String> result5 = new HashMap<>();
-		result5.put("x", "x");
-		result5.put("y", "z");
+		result5.put("x", "1");
+		result5.put("y", "2");
 		expected.add(result5);
 		Map<String, String> result6 = new HashMap<>();
-		result6.put("x", "y");
-		result6.put("y", "z");
+		result6.put("x", "2");
+		result6.put("y", "1");
 		expected.add(result6);
 
 
@@ -173,13 +173,13 @@ public class TraceExplorerUnitTest {
 
 		Set<Map<String, String>> expected = new HashSet<>();
 		Map<String, String> result1 = new HashMap<>();
-		result1.put("x", "x");
+		result1.put("x", "1");
 		expected.add(result1);
 		Map<String, String> result2 = new HashMap<>();
-		result2.put("x", "y");
+		result2.put("y", "1");
 		expected.add(result2);
 		Map<String, String> result3 = new HashMap<>();
-		result3.put("x", "z");
+		result3.put("z", "1");
 		expected.add(result3);
 
 
