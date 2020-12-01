@@ -155,4 +155,35 @@ public class TraceExplorerUnitTest {
 		Assert.assertTrue( result.isEmpty());
 
 	}
+
+	@Test
+	public void variationsFinder_test_6(){
+
+		Map<String, String> parameter = new HashMap<>();
+		parameter.put("x", "1");
+
+		PersistentTransition first = new PersistentTransition("inc", parameter,
+				Collections.emptyMap(), Collections.emptyMap(), Collections.emptySet(), Collections.emptyList());
+
+		List<String> paras = new ArrayList<>();
+		paras.add("x");
+		paras.add("y");
+		paras.add("z");
+		Set<Map<String, String>> result = TraceExplorer.possibleConstellations(first.getParameters(), paras);
+
+		Set<Map<String, String>> expected = new HashSet<>();
+		Map<String, String> result1 = new HashMap<>();
+		result1.put("x", "x");
+		expected.add(result1);
+		Map<String, String> result2 = new HashMap<>();
+		result2.put("x", "y");
+		expected.add(result2);
+		Map<String, String> result3 = new HashMap<>();
+		result3.put("x", "z");
+		expected.add(result3);
+
+
+		Assert.assertEquals( expected, result);
+
+	}
 }
