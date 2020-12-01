@@ -61,6 +61,35 @@ public class PersistentTransition {
 		}
 	}
 
+
+	public PersistentTransition(Transition transition, PersistentTransition transitionBefore) {
+		this.name = transition.getName();
+		final LoadedMachine loadedMachine = transition.getStateSpace().getLoadedMachine();
+		final State destinationState = transition.getDestination();
+		if (Transition.SETUP_CONSTANTS_NAME.equals(name) ) {
+			addValuesToDestState2(destinationState.getConstantValues(FormulaExpand.EXPAND), null);
+		} else {
+
+			addValuesToDestState2(destinationState.getVariableValues(FormulaExpand.EXPAND), transitionBefore);
+
+
+			if (!Transition.INITIALISE_MACHINE_NAME.equals(name)) {
+				// for each operation
+				OperationInfo machineOperationInfo = loadedMachine.getMachineOperationInfo(name);
+
+				for (int i = 0; i < machineOperationInfo.getParameterNames().size(); i++) {
+					params.put(machineOperationInfo.getParameterNames().get(i), transition.getParameterValues().get(i));
+				}
+
+				for (int i = 0; i < machineOperationInfo.getOutputParameterNames().size(); i++) {
+					outputParameters.put(machineOperationInfo.getOutputParameterNames().get(i),
+							transition.getReturnValues().get(i));
+				}
+			}
+		}
+	}
+
+
 	/**
 	 * Jackson constructor, only called by jackson deserializer
 	 * @param name the name of the transition
@@ -95,6 +124,27 @@ public class PersistentTransition {
 
 	}
 
+
+	public PersistentTransition createFromOld(Map<String, String> destState){
+		return  new PersistentTransition(name, params, outputParameters, destState, destStateNotChanged, additionalPredicates);
+	}
+
+	private void addValuesToDestState2(Map<IEvalElement, AbstractEvalResult> map,  PersistentTransition transitionBefore) {
+
+		for (Map.Entry<IEvalElement, AbstractEvalResult> entry : map.entrySet()) {
+			if (entry.getValue() instanceof EvalResult) {
+				String name = entry.getKey().getCode();
+				String value = ((EvalResult) entry.getValue()).getValue();
+				destState.put(name, value);
+				if(transitionBefore != null && value.equals(transitionBefore.destState.get(name))) {
+					destState.remove(name);
+					destStateNotChanged.add(name);
+				}
+			}
+		}
+	}
+
+
 	private void addValuesToDestState(Map<IEvalElement, AbstractEvalResult> map, PersistentTransition transitionAfter) {
 
 		for (Map.Entry<IEvalElement, AbstractEvalResult> entry : map.entrySet()) {
@@ -102,6 +152,7 @@ public class PersistentTransition {
 				String name = entry.getKey().getCode();
 				String value = ((EvalResult) entry.getValue()).getValue();
 				destState.put(name, value);
+				//If the future is the same as the current state, then the current state can't change...
 				if(transitionAfter != null && value.equals(transitionAfter.destState.get(name))) {
 					transitionAfter.destState.remove(name);
 					transitionAfter.destStateNotChanged.add(name);
@@ -160,7 +211,7 @@ public class PersistentTransition {
 
 	@Override
 	public String toString() {
-		return "PersistentTransition:" + "\n" + name + "\n"+ params.toString() + "\n" + destState.toString() + "\n"
-				+ outputParameters.toString() + "\n" +destStateNotChanged.toString() ;
+		return "PersistentTransition:" + name +  params.toString()  + destState.toString()
+				+ outputParameters.toString()  +destStateNotChanged.toString() ;
 	}
 }
