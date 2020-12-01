@@ -32,17 +32,50 @@ public class TraceExplorer {
 
 		for (PersistentTransition transition : transitionList) {
 
+			Set<PersistentTransition> variations = new HashSet<>();
+			if(operationInfo.containsKey(transition.getOperationName())){
+				variations = possibleConstellations(transition.getParameters(),
+						operationInfo.get(transition.getOperationName()).getParameterNames()).stream()
+						.map(mapping -> new PersistentTransition(transition.getOperationName(), mapping,
+								transition.getOutputParameters(), transition.getDestinationStateVariables(),
+								transition.getDestStateNotChanged() ,transition.getAdditionalPredicates())).collect(Collectors.toSet());
+
+				if(variations.isEmpty()) variations.add(transition);
+
+				List<PersistentTransition> gba = variations.stream().flatMap(variation ->
+						possibleConstellations(new HashMap<>(variation.getDestinationStateVariables()),
+						new ArrayList<>(operationInfo.get(variation.getOperationName()).getWrittenVariables())).stream()
+						.map(	mapping ->{
+								return new PersistentTransition(variation.getOperationName(), variation.getParameters(),
+								variation.getOutputParameters(), mapping,
+								variation.getDestStateNotChanged(), variation.getAdditionalPredicates());})
+								)
+						.collect(Collectors.toList());
+
+				variations = gba.stream().collect(Collectors.toSet());
+			}
+			if(variations.isEmpty())
+			{
+				variations = new HashSet<>();
+				variations.add(transition);
+			}
+
 			Map<Trace, Set<Trace>> result1;
 			if(traceStorage.isEmpty()){
 				result1 = new HashMap<>();
-				result1.put(trace, replayPersistentTransition(trace, transition ).stream().map(trace::add).collect(Collectors.toSet()));
+				result1.put(trace, replayPersistentTransition(trace, transition).stream().map(trace::add).collect(Collectors.toSet()));
 			}else{
+				Set<PersistentTransition> finalVariations = variations;
+
+				/*Set<Transition> sideResult = traceStorage.keySet().stream().flatMap(innerTrace -> finalVariations.stream()
+						.map(variation -> replayPersistentTransition(innerTrace, variation))).flatMap(Collection::stream).collect(Collectors.toSet());
+				*/
+
 				result1 = traceStorage.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry ->
-						replayPersistentTransition(entry.getKey(), transition).stream()
-								.map(innerTransition -> entry.getKey().add(innerTransition)).collect(Collectors.toSet())));
+						finalVariations.stream().flatMap(variation -> replayPersistentTransition(entry.getKey(), variation).stream()
+								.map(innerTransition -> entry.getKey().add(innerTransition))).collect(Collectors.toSet())));
 
 			}
-
 
 
 			PersistentHashMap<Trace, PersistentVector<PersistenceDelta>> finalTraceStorage = traceStorage;
@@ -66,22 +99,31 @@ public class TraceExplorer {
 					.collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
 
 
+			Map<Trace, PersistentVector<PersistenceDelta>> trueResult = new HashMap<>();
+			for(Trace t : da.keySet()){
+				if (!trueResult.containsKey(t)&&!setContainsEqualTrace(t, trueResult.keySet())) {
+					trueResult.put(t, da.get(t));
+				}
+			}
 
 
-			traceStorage = PersistentHashMap.create(da);
+			traceStorage = PersistentHashMap.create(trueResult);
 		}
 
 
 		return traceStorage;
 	}
 
+
+
+
 	/**
 	 * Gets a mapping from variables to values (input/output/variables) and the variables of the current operation and
 	 * calculates all possible mappings, e.g.
-	 * inc(x,y) -> inc(x,y,z) produces
-	 * 			-> inc(x,y)
-	 * 			-> inc(x, void, y)
-	 * 			-> inc(void, x, y)
+	 * inc(1,2) -> inc(x,y,z) produces
+	 * 			-> inc(1, 2, ?)
+	 * 			-> inc(1, ?, 2)
+	 * 			-> inc(?, 1, 2)
 	 * 		[..]
 	 * void means that the mapping is not existent in the resulting map
 	 * @param elements the mapping from the current transition
@@ -93,21 +135,23 @@ public class TraceExplorer {
 		if(elements.isEmpty()||target.isEmpty()) return Collections.emptySet();
 
 		List<String> values = new ArrayList<>(elements.keySet());
-
+		Set<Map<String, String>> result;
 		if(values.size()>target.size()){
-			return permutate(TraceCheckerUtils.generatePerm(values), target);
+			result =  permutate(TraceCheckerUtils.generatePerm(values), new ArrayList<>(target));
 		}
 		else {
-			return permutate(TraceCheckerUtils.generatePerm(target), values);
+			result =  permutate(TraceCheckerUtils.generatePerm(new ArrayList<>(target)), values);
 		}
 
+		return result.stream().map(entry ->
+				entry.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, inner -> elements.get(inner.getKey())))).collect(Collectors.toSet());
 	}
 
 	/**
 	 * helper for @possibleConstellations
-	 * @param permutations a list with all permuations
+	 * @param permutations a list with all permutations
 	 * @param values the values to map onto
-	 * @return a set of mappings with the new constelations
+	 * @return a set of mappings with the new constellations
 	 */
 	public static Set<Map<String, String>> permutate(List<List<String>> permutations, List<String> values){
 		Set<Map<String, String>> resultSet = new HashSet<>();
@@ -123,6 +167,18 @@ public class TraceExplorer {
 		}
 
 		return resultSet;
+	}
+
+
+	public static boolean setContainsEqualTrace(Trace t, Set<Trace> set){
+		return set.stream().anyMatch(trace -> {
+			List<PersistentTransition> transitionList1 = trace.getTransitionList().stream()
+					.map(transition -> new PersistentTransition(transition, null)).collect(Collectors.toList());
+			List<PersistentTransition> transitionList2 = t.getTransitionList().stream()
+					.map(transition -> new PersistentTransition(transition, null)).collect(Collectors.toList());
+
+			return transitionList1.equals(transitionList2);
+		});
 	}
 
 
@@ -143,8 +199,9 @@ public class TraceExplorer {
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
 
-		return possibleSolutions.entrySet().stream().flatMap(entry -> entry.getValue().getNewTransitions().stream()).collect(Collectors.toSet());
+		Set<Transition> gna = possibleSolutions.entrySet().stream().flatMap(entry -> entry.getValue().getNewTransitions().stream()).collect(Collectors.toSet());
 
+		return gna;
 	}
 
 	enum Constraint{

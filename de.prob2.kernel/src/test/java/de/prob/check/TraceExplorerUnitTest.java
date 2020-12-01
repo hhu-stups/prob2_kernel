@@ -2,6 +2,7 @@ package de.prob.check;
 
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.TraceExplorer;
+import de.prob.statespace.Transition;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
