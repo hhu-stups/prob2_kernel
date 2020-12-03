@@ -5,8 +5,10 @@ import java.util.Objects;
 
 import de.prob.parser.BindingGenerator;
 import de.prob.prolog.term.PrologTerm;
+import de.prob.statespace.State;
 
 public class DynamicCommandItem {
+	private final State state;
 
 	private final String command;
 	
@@ -23,6 +25,7 @@ public class DynamicCommandItem {
 	private final String available;
 	
 	private DynamicCommandItem(
+		State state,
 		String command,
 		String name,
 		String description,
@@ -31,6 +34,7 @@ public class DynamicCommandItem {
 		List<PrologTerm> additionalInfo,
 		String available
 	) {
+		this.state = state;
 		this.command = command;
 		this.name = name;
 		this.description = description;
@@ -40,7 +44,7 @@ public class DynamicCommandItem {
 		this.available = available;
 	}
 	
-	public static DynamicCommandItem fromPrologTerm(final PrologTerm term) {
+	public static DynamicCommandItem fromPrologTerm(final State state, final PrologTerm term) {
 		BindingGenerator.getCompoundTerm(term, "command", 7);
 		final String command = PrologTerm.atomicString(term.getArgument(1));
 		final String name = PrologTerm.atomicString(term.getArgument(2));
@@ -51,6 +55,7 @@ public class DynamicCommandItem {
 		final String available = PrologTerm.atomicString(term.getArgument(7));
 		
 		return new DynamicCommandItem(
+			state,
 			command,
 			name,
 			description,
@@ -59,6 +64,10 @@ public class DynamicCommandItem {
 			additionalInfo,
 			available
 		);
+	}
+	
+	public State getState() {
+		return this.state;
 	}
 	
 	public String getCommand() {

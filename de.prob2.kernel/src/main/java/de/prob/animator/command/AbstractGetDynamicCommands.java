@@ -33,7 +33,7 @@ public abstract class AbstractGetDynamicCommands extends AbstractCommand {
 	@Override
 	public void processResult(ISimplifiedROMap<String, PrologTerm> bindings) {
 		commands = BindingGenerator.getList(bindings, LIST).stream()
-			.map(DynamicCommandItem::fromPrologTerm)
+			.map(term -> DynamicCommandItem.fromPrologTerm(this.id, term))
 			.collect(Collectors.toList());
 	}
 
