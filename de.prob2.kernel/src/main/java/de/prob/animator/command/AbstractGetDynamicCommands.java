@@ -7,7 +7,6 @@ import de.prob.animator.domainobjects.DynamicCommandItem;
 import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
-import de.prob.prolog.term.IntegerPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.State;
@@ -29,12 +28,8 @@ public abstract class AbstractGetDynamicCommands extends AbstractCommand {
 		final String command = PrologTerm.atomicString(commandTerm.getArgument(1));
 		final String name = PrologTerm.atomicString(commandTerm.getArgument(2));
 		final String description = PrologTerm.atomicString(commandTerm.getArgument(3));
-		final int arity = ((IntegerPrologTerm) commandTerm.getArgument(4)).getValue().intValue();
-		ListPrologTerm listTerm = (ListPrologTerm) commandTerm.getArgument(5);
-		final List<String> relevantPreferences = new ArrayList<>();
-		for(PrologTerm term : listTerm) {
-			relevantPreferences.add(PrologTerm.atomicString(term));
-		}
+		final int arity = BindingGenerator.getInteger(commandTerm.getArgument(4)).getValue().intValue();
+		final List<String> relevantPreferences = PrologTerm.atomicStrings(BindingGenerator.getList(commandTerm.getArgument(5)));
 		final List<PrologTerm> additionalInfo = BindingGenerator.getList(commandTerm.getArgument(6));
 		final String available = PrologTerm.atomicString(commandTerm.getArgument(7));
 		return new DynamicCommandItem(command, name, description, arity, relevantPreferences, additionalInfo, available);
