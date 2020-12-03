@@ -12,9 +12,9 @@ import de.prob.statespace.State;
 
 public abstract class AbstractGetDynamicCommands extends AbstractCommand {
 
-	private static final String LIST = "List";
+	static final String LIST = "List";
 	private List<DynamicCommandItem> commands;
-	private final State id;
+	final State id;
 	private final String commandName;
 
 	public AbstractGetDynamicCommands(State id, String commandName) {
@@ -37,7 +37,7 @@ public abstract class AbstractGetDynamicCommands extends AbstractCommand {
 			.collect(Collectors.toList());
 	}
 
-	public List<DynamicCommandItem> getCommands() {
+	public List<? extends DynamicCommandItem> getCommands() {
 		return commands;
 	}
 

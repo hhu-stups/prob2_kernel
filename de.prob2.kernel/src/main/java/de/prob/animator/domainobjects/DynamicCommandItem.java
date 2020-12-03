@@ -24,7 +24,7 @@ public class DynamicCommandItem {
 	
 	private final String available;
 	
-	private DynamicCommandItem(
+	DynamicCommandItem(
 		State state,
 		String command,
 		String name,
