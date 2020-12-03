@@ -405,7 +405,7 @@ public class TraceExplorerIntegrationTest {
 		Assert.assertEquals(expected,result);
 	}
 
-
+	@Test
 	public void integration_2_traceReplay2_three_transitions_with_larger_signature() throws IOException, ModelTranslationError {
 
 

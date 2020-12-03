@@ -256,7 +256,8 @@ public class TraceExplorer {
 	 * Calculates the new all possible mappings for a variable
 	 * @param transition the transition to calculate the mappings for
 	 * @param operationMapping the corresponding operation
-	 * @return the mapping
+	 * @return a set with all mappings each mapping name represents either input/output/variables and maps to the corresponding
+	 * identifiers in the schema new -> old
 	 */
 	public static Set<Map<MappingNames, Map<String, String>>> calculateVarMappings(PersistentTransition transition,
 																				   OperationInfo operationMapping){
@@ -417,9 +418,7 @@ public class TraceExplorer {
 				})).entrySet().stream().filter(entry -> !entry.getValue().getNewTransitions().isEmpty())
 				.collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-		Set<Transition> gna = possibleSolutions.entrySet().stream().flatMap(entry -> entry.getValue().getNewTransitions().stream()).collect(Collectors.toSet());
-
-		return gna;
+		return possibleSolutions.entrySet().stream().flatMap(entry -> entry.getValue().getNewTransitions().stream()).collect(Collectors.toSet());
 	}
 
 
@@ -431,7 +430,7 @@ public class TraceExplorer {
 		final GetOperationByPredicateCommand command =  commandBuild(stateSpace, persistentTransition, t, Constraint.PARAMETER_AND_DESTINATION_STATE);
 
 		stateSpace.execute(command);
-
+		System.out.println(persistentTransition);
 		return command.getNewTransitions().get(0);
 	}
 

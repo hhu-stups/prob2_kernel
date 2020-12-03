@@ -413,6 +413,106 @@ public class TraceExplorerUnitTest {
 
 		Map<TraceExplorer.MappingNames, Map<String, String>> mappingHelper1 = new HashMap<>();
 		Map<String, String> mapping1_1 = new HashMap<>();
+		mapping1_1.put("y", "x");
+		Map<String, String> mapping2_1 = new HashMap<>();
+		mapping2_1.put("floors", "levels");
+
+		mappingHelper1.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, mapping1_1);
+		mappingHelper1.put(TraceExplorer.MappingNames.VARIABLES, mapping2_1);
+		mappingHelper1.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
+
+		PersistentTransition expected = new PersistentTransition(floors.getOperationName(), Collections.singletonMap("y", "0"),
+				emptyMap(), Collections.singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList());
+
+		PersistentTransition result = TraceExplorer.createPersistentTransitionFromMapping(mappingHelper1, floors);
+
+		Assert.assertEquals(expected, result);
+	}
+
+
+	@Test
+	public void createPersistentTransitionFromMapping_test_3(){
+
+		PersistentTransition floors = new PersistentTransition("floors", new HashMap<String, String>() {{
+			put("x", "2");
+			put("y", "1");
+		}},
+				emptyMap(), Collections.singletonMap("floors", "3"), Collections.emptySet(), Collections.emptyList());
+
+
+
+		Map<TraceExplorer.MappingNames, Map<String, String>> mappingHelper1 = new HashMap<>();
+		Map<String, String> mapping1_1 = new HashMap<>();
+		mapping1_1.put("y", "x");
+		mapping1_1.put("z", "y");
+		Map<String, String> mapping2_1 = new HashMap<>();
+		mapping2_1.put("floors", "levels");
+
+		mappingHelper1.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, mapping1_1);
+		mappingHelper1.put(TraceExplorer.MappingNames.VARIABLES, mapping2_1);
+		mappingHelper1.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
+
+		PersistentTransition expected = new PersistentTransition(floors.getOperationName(), new HashMap<String, String>() {{
+			put("y", "2");
+			put("z", "1");
+		}},
+				emptyMap(), Collections.singletonMap("levels", "3"), Collections.emptySet(), Collections.emptyList());
+
+		PersistentTransition result = TraceExplorer.createPersistentTransitionFromMapping(mappingHelper1, floors);
+
+		Assert.assertEquals(expected, result);
+	}
+
+
+	@Test
+	public void createPersistentTransitionFromMapping_test_4(){
+
+		PersistentTransition floors = new PersistentTransition("floors", new HashMap<String, String>() {{
+			put("x", "2");
+			put("y", "1");
+			put("z", "0");
+
+		}},
+				emptyMap(), Collections.singletonMap("floors", "3"), Collections.emptySet(), Collections.emptyList());
+
+
+
+		Map<TraceExplorer.MappingNames, Map<String, String>> mappingHelper1 = new HashMap<>();
+		Map<String, String> mapping1_1 = new HashMap<>();
+		mapping1_1.put("x", "z");
+		Map<String, String> mapping2_1 = new HashMap<>();
+		mapping2_1.put("floors", "levels");
+
+		mappingHelper1.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, mapping1_1);
+		mappingHelper1.put(TraceExplorer.MappingNames.VARIABLES, mapping2_1);
+		mappingHelper1.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
+
+		PersistentTransition expected = new PersistentTransition(floors.getOperationName(), new HashMap<String, String>() {{
+			put("x", "0");
+		}},
+				emptyMap(), Collections.singletonMap("levels", "3"), Collections.emptySet(), Collections.emptyList());
+
+		PersistentTransition result = TraceExplorer.createPersistentTransitionFromMapping(mappingHelper1, floors);
+
+		Assert.assertEquals(expected, result);
+	}
+
+
+	@Test
+	public void createPersistentTransitionFromMapping_test_5(){
+
+		PersistentTransition floors = new PersistentTransition("floors", new HashMap<String, String>() {{
+			put("x", "1");
+			put("y", "0");
+			put("z", "0");
+
+		}},
+				emptyMap(), Collections.singletonMap("floors", "1"), Collections.emptySet(), Collections.emptyList());
+
+
+
+		Map<TraceExplorer.MappingNames, Map<String, String>> mappingHelper1 = new HashMap<>();
+		Map<String, String> mapping1_1 = new HashMap<>();
 		mapping1_1.put("x", "y");
 		Map<String, String> mapping2_1 = new HashMap<>();
 		mapping2_1.put("floors", "levels");
@@ -421,8 +521,10 @@ public class TraceExplorerUnitTest {
 		mappingHelper1.put(TraceExplorer.MappingNames.VARIABLES, mapping2_1);
 		mappingHelper1.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
 
-		PersistentTransition expected = new PersistentTransition(floors.getOperationName(), Collections.singletonMap("x", "1"),
-				emptyMap(), Collections.singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList());
+		PersistentTransition expected = new PersistentTransition(floors.getOperationName(), new HashMap<String, String>() {{
+			put("x", "0");
+		}},
+				emptyMap(), Collections.singletonMap("levels", "1"), Collections.emptySet(), Collections.emptyList());
 
 		PersistentTransition result = TraceExplorer.createPersistentTransitionFromMapping(mappingHelper1, floors);
 
