@@ -79,9 +79,9 @@ allprojects {
 					}
 					
 					scm {
-						connection = 'scm:git:git://github.com/bendisposto/prob2.git'
-						developerConnection = 'scm:git:git@github.com:bendisposto/prob2.git'
-						url = 'https://github.com/bendisposto/prob2'
+						connection = 'scm:git:https://github.com/hhu-stups/prob2_kernel.git'
+						developerConnection = 'scm:git:git@gitlab.cs.uni-duesseldorf.de:stups/prob/prob2_kernel.git'
+						url = 'https://github.com/hhu-stups/prob2_kernel'
 					}
 					
 					developers {
