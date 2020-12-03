@@ -2,6 +2,9 @@ package de.prob.check.tracereplay.check;
 
 import de.prob.check.tracereplay.PersistentTrace;
 import de.prob.check.tracereplay.PersistentTransition;
+import de.prob.statespace.OperationInfo;
+import de.prob.statespace.StateSpace;
+import de.prob.statespace.Transition;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -11,10 +14,14 @@ public class TraceModifier {
 
 	private final List<List<PersistentTransition>> changelogPhase1 = new LinkedList<>();
 	private final Map<Set<Delta>, List<PersistentTransition>> changelogPhase2II = new HashMap<>();
+	private final Map<Set<Delta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>> , List<PersistenceDelta>>> changelogPhase3IIMap = new HashMap<>();
+	private final Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>> , List<PersistenceDelta>> changelogPhase3Without2 = new HashMap<>();
+	private final StateSpace stateSpace;
 
+	public TraceModifier(PersistentTrace trace, StateSpace stateSpace){
 
-	public TraceModifier(PersistentTrace trace){
 		changelogPhase1.add(trace.getTransitionList());
+		this.stateSpace = stateSpace;
 	}
 
 
@@ -27,8 +34,33 @@ public class TraceModifier {
 	}
 
 
+	public void applyTypeIVInitChangesDeterministic(Map<String, String> variables){
+		changelogPhase1.add(changeAllElementsWithName(Transition.INITIALISE_MACHINE_NAME, Collections.emptyMap(),
+				Collections.emptyMap(), variables, Collections.emptySet(), getLastChange()));
+	}
+
+
+	public void makeTypeIII(Set<String> typeIIICandidates, Map<String,OperationInfo> newInfos){
+
+
+
+		//No type II change?
+		if(!changelogPhase2II.isEmpty()){
+			Map<Set<Delta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>> , List<PersistenceDelta>>> results = changelogPhase2II
+					.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry ->
+							TraceExplorer.replayTrace2(entry.getValue(), stateSpace, newInfos, typeIIICandidates)));
+
+			changelogPhase3IIMap.putAll(results);
+		}else{
+			if(changelogPhase1.size()>1){
+				changelogPhase3Without2.putAll(TraceExplorer.replayTrace2(getLastChange(), stateSpace, newInfos, typeIIICandidates));
+			}
+		}
+
+	}
+
 	/**
-	 * Takes a delta and applies it to all PersistentTransitions of g given Transistionlist
+	 * Takes a delta and applies it to all PersistentTransitions of g given Transition list
 	 * @param delta the delta to apply
 	 * @param currentState the list of transition to apply it to
 	 * @return the modified list, a copy of the original
@@ -175,7 +207,7 @@ public class TraceModifier {
 	}
 
 	/**
-	 * Searches a list to find if it contains a certain element at the same postion
+	 * Searches a list to find if it contains a certain element at the same position
 	 * @param element the element to search for
 	 * @param list the list where the element is from
 	 * @param searchList the list to search in
@@ -184,6 +216,22 @@ public class TraceModifier {
 	 */
 	public static <U> boolean hasElementAtPosition(U element, List<U> list, List<U> searchList){
 		return list.get(searchList.indexOf(element)).equals(element);
+	}
+
+
+	public List<PersistentTransition> changeAllElementsWithName(String name, Map<String, String> inputParameter,
+										  Map<String, String> outputParameter, Map<String, String> variablesChangingState,
+																Set<String> variablesNotChangingState,
+																List<PersistentTransition> toChange){
+
+		return toChange.stream().map(transition -> {
+			if(transition.getOperationName().equals(name)){
+				return new PersistentTransition(name, inputParameter, outputParameter, variablesChangingState,
+						variablesNotChangingState, Collections.emptyList());
+			}else{
+				return transition;
+			}
+		}).collect(Collectors.toList());
 	}
 
 
@@ -196,7 +244,7 @@ public class TraceModifier {
 	 * @return the original trace was modified
 	 */
 	public boolean isDirty(){
-		return changelogPhase1.size()==1 && !changelogPhase2II.isEmpty();
+		return changelogPhase1.size()>1 && !changelogPhase2II.isEmpty() && !changelogPhase3IIMap.isEmpty();
 	}
 
 
@@ -204,5 +252,8 @@ public class TraceModifier {
 		return changelogPhase2II;
 	}
 
+	public Map<Set<Delta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>>> getChangelogPhase3II() {
+		return changelogPhase3IIMap;
+	}
 
 }
