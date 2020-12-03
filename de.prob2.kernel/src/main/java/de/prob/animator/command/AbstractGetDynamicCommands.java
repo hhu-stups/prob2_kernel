@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.prob.animator.domainobjects.DynamicCommandItem;
-import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.ListPrologTerm;
@@ -23,18 +22,6 @@ public abstract class AbstractGetDynamicCommands extends AbstractCommand {
 		this.commandName = commandName;
 	}
 
-	private static DynamicCommandItem toCommandItem(final PrologTerm commandTerm) {
-		BindingGenerator.getCompoundTerm(commandTerm, "command", 7);
-		final String command = PrologTerm.atomicString(commandTerm.getArgument(1));
-		final String name = PrologTerm.atomicString(commandTerm.getArgument(2));
-		final String description = PrologTerm.atomicString(commandTerm.getArgument(3));
-		final int arity = BindingGenerator.getInteger(commandTerm.getArgument(4)).getValue().intValue();
-		final List<String> relevantPreferences = PrologTerm.atomicStrings(BindingGenerator.getList(commandTerm.getArgument(5)));
-		final List<PrologTerm> additionalInfo = BindingGenerator.getList(commandTerm.getArgument(6));
-		final String available = PrologTerm.atomicString(commandTerm.getArgument(7));
-		return new DynamicCommandItem(command, name, description, arity, relevantPreferences, additionalInfo, available);
-	}
-
 	@Override
 	public void writeCommand(IPrologTermOutput pto) {
 		pto.openTerm(commandName);
@@ -47,7 +34,7 @@ public abstract class AbstractGetDynamicCommands extends AbstractCommand {
 	public void processResult(ISimplifiedROMap<String, PrologTerm> bindings) {
 		ListPrologTerm res = (ListPrologTerm) bindings.get(LIST);
 		for (PrologTerm prologTerm : res) {
-			commands.add(toCommandItem(prologTerm));
+			commands.add(DynamicCommandItem.fromPrologTerm(prologTerm));
 		}		
 	}
 

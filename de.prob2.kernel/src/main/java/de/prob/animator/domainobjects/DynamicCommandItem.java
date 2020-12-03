@@ -3,6 +3,7 @@ package de.prob.animator.domainobjects;
 import java.util.List;
 import java.util.Objects;
 
+import de.prob.parser.BindingGenerator;
 import de.prob.prolog.term.PrologTerm;
 
 public class DynamicCommandItem {
@@ -21,7 +22,7 @@ public class DynamicCommandItem {
 	
 	private final String available;
 	
-	public DynamicCommandItem(
+	private DynamicCommandItem(
 		String command,
 		String name,
 		String description,
@@ -37,6 +38,27 @@ public class DynamicCommandItem {
 		this.relevantPreferences = relevantPreferences;
 		this.additionalInfo = additionalInfo;
 		this.available = available;
+	}
+	
+	public static DynamicCommandItem fromPrologTerm(final PrologTerm term) {
+		BindingGenerator.getCompoundTerm(term, "command", 7);
+		final String command = PrologTerm.atomicString(term.getArgument(1));
+		final String name = PrologTerm.atomicString(term.getArgument(2));
+		final String description = PrologTerm.atomicString(term.getArgument(3));
+		final int arity = BindingGenerator.getInteger(term.getArgument(4)).getValue().intValue();
+		final List<String> relevantPreferences = PrologTerm.atomicStrings(BindingGenerator.getList(term.getArgument(5)));
+		final List<PrologTerm> additionalInfo = BindingGenerator.getList(term.getArgument(6));
+		final String available = PrologTerm.atomicString(term.getArgument(7));
+		
+		return new DynamicCommandItem(
+			command,
+			name,
+			description,
+			arity,
+			relevantPreferences,
+			additionalInfo,
+			available
+		);
 	}
 	
 	public String getCommand() {
