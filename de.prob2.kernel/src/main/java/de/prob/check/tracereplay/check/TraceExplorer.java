@@ -23,8 +23,7 @@ public class TraceExplorer {
 
 
 	public static Set<List<PersistenceDelta>> replayTrace(List<PersistentTransition> transitionList,
-														  StateSpace stateSpace, Map<String,OperationInfo> operationInfo,
-														  Set<String> typeIIICandidates) {
+														  StateSpace stateSpace, Map<String,OperationInfo> operationInfo) {
 
 		Trace trace = new Trace(stateSpace);
 		trace.setExploreStateByDefault(true);
@@ -109,9 +108,6 @@ public class TraceExplorer {
 		Trace trace = new Trace(stateSpace);
 		trace.setExploreStateByDefault(true);
 
-	//	PersistentHashMap<Trace, PersistentVector<PersistenceDelta>> traceStorage = PersistentHashMap.create();
-	//	Map<String, Set<Map<MappingNames, Map<String, String>>>> varMappings = generateVarMappings(transitionList, operationInfo, typeIIICandidates);
-
 		Map<Map<String, Map<MappingNames, Map<String, String>>> , List<PersistenceDelta>> selectedMappingsToResults
 				= generateAllPossibleMappingVariations(transitionList, operationInfo, typeIIICandidates).stream()
 				.map(entry -> new AbstractMap.SimpleEntry<>(entry, new ArrayList<PersistenceDelta>()))
@@ -158,32 +154,9 @@ public class TraceExplorer {
 	}
 
 
-	public static Map<String, Set<Map<MappingNames, Map<String, String>>>> generateVarMappings(List<PersistentTransition> transitionList, Map<String,
-			OperationInfo> operationInfo, Set<String> typeIIICandidates){
-		List<PersistentTransition> typeIIITransitions = transitionList.stream()
-				.filter(transition -> transition.getOperationName().equals(Transition.INITIALISE_MACHINE_NAME) ||
-						transition.getOperationName().equals(Transition.SETUP_CONSTANTS_NAME))
-				.filter(transition -> typeIIICandidates.contains(transition.getOperationName())).collect(toList());
 
-		Map<String, Set<Map<MappingNames, Map<String, String>>>> varMappings = new HashMap<>();
-
-		for (PersistentTransition transition : transitionList) {
-
-			String currentName = transition.getOperationName();
-			if (operationInfo.containsKey(currentName) && !varMappings.containsKey(currentName) && typeIIICandidates.contains(currentName)) {
-				varMappings.put(currentName, calculateVarMappings(transition, operationInfo.get(currentName)));
-
-			}
-		}
-
-		return varMappings;
-	}
-
-
-
-
-	public static Set<Map<String, Map<MappingNames, Map<String, String>>>>
-	generateAllPossibleMappingVariations(List<PersistentTransition> transitionList, Map<String,
+	public static Set<Map<String, Map<MappingNames, Map<String, String>>>> generateAllPossibleMappingVariations(
+			List<PersistentTransition> transitionList, Map<String,
 			OperationInfo> operationInfo, Set<String> typeIIICandidates){
 
 		List<PersistentTransition> typeIIITransitions = transitionList.stream()
@@ -210,6 +183,12 @@ public class TraceExplorer {
 
 	}
 
+	/**
+	 * Calculates the cartesian product for the special case of input
+	 * @param a the first "vector"
+	 * @param b the second "vector"
+	 * @return the cartesian product
+	 */
 	private static List<HashMap<String, Map<MappingNames, Map<String, String>>>> product(
 			List<HashMap<String, Map<MappingNames, Map<String, String>>>> a,
 			List<HashMap<String, Map<MappingNames, Map<String, String>>>> b) {
@@ -243,6 +222,9 @@ public class TraceExplorer {
 
 	}
 
+	/**
+	 * An helper datatype to better group maps of the form Map<String, String>
+	 */
 	public enum MappingNames{
 		VARIABLES, INPUT_PARAMETERS, OUTPUT_PARAMETERS
 	}
@@ -339,7 +321,7 @@ public class TraceExplorer {
 	 * @param values the values to map onto
 	 * @return a set of mappings with the new constellations
 	 */
-	public static Set<Map<String, String>> permutate(List<List<String>> permutations, List<String> values){
+	public static Set<Map<String, String>> permuted(List<List<String>> permutations, List<String> values){
 		Set<Map<String, String>> resultSet = new HashSet<>();
 		for(List<String> option : permutations){
 			Map<String, String> resultMap = new HashMap<>();
@@ -430,57 +412,5 @@ public class TraceExplorer {
 	}
 
 
-	public static List<Transition> resultChecker(ReplayOptions options, List<Transition> possibleTransitions,
-												 PersistentTransition persistentTransition, StateSpace stateSpace){
-
-		return possibleTransitions.stream().filter(transition -> {
-
-			if(!options.checkDestState()) return true;
-
-			Map<String, String> results = convertResult(transition);
-
-			Map<String, String> comparator = filterFromTransition(persistentTransition.getDestinationStateVariables(), results);
-
-			return comparator.isEmpty();
-		}).filter(transition -> {
-
-			if(!options.checkDestStateNotChanged()) return true;
-
-
-			Map<String, String> results = convertResult(transition);
-
-			Set<String> comparator = persistentTransition.getDestStateNotChanged().stream()
-					.filter(results::containsKey).collect(Collectors.toSet());
-
-			return comparator.isEmpty();
-		}).filter(transition -> {
-
-			if(!options.checkOutput()) return true;
-
-			List<String> outputParameterNames = stateSpace.getLoadedMachine().getOperations()
-					.get(persistentTransition.getOperationName()).getOutputParameterNames();
-
-			Map<String, String> toCompare = TraceCheckerUtils.zip(outputParameterNames, transition.getReturnValues());
-
-			Map<String , String> comparator = filterFromTransition(persistentTransition.getOutputParameters(), toCompare);
-
-			return comparator.isEmpty();
-		}).collect(toList());
-	}
-
-
-	public static Map<String, String> convertResult(Transition transition){
-		Map<ClassicalB, EvalResult> converted = transition.getDestination().getVariableValues(FormulaExpand.EXPAND)
-				.entrySet().stream().collect(toMap(key -> (ClassicalB) key.getKey(), key -> (EvalResult) key.getValue()));
-		return converted.entrySet().stream().collect(toMap(entry -> entry.getKey().toString(), entry -> entry.getValue().getValue()));
-
-	}
-
-	public static Map<String, String> filterFromTransition(Map<String, String> persistentTransition, Map<String, String> toCompare){
-		return persistentTransition.entrySet().stream()
-				.filter(entry -> toCompare.containsKey(entry.getKey()) &&
-						toCompare.get(entry.getKey()).equals(entry.getValue()))
-				.collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
-	}
 
 }
