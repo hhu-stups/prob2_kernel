@@ -137,6 +137,10 @@ public class PersistentTransition {
 		return  new PersistentTransition(name, params, outputParameters, destState, destStateNotChanged, additionalPredicates);
 	}
 
+	public PersistentTransition copyWithDestStateNotChanged(Set<String> destStateNotChanged){
+		return  new PersistentTransition(name, params, outputParameters, destState, destStateNotChanged, additionalPredicates);
+	}
+
 	private void addValuesToDestState2(Map<IEvalElement, AbstractEvalResult> map,  PersistentTransition transitionBefore) {
 
 		for (Map.Entry<IEvalElement, AbstractEvalResult> entry : map.entrySet()) {
