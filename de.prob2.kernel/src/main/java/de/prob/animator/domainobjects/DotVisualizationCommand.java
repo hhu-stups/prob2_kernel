@@ -5,11 +5,12 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 
 import de.prob.animator.command.GetAllDotCommands;
 import de.prob.animator.command.GetDotForVisualizationCommand;
-import de.prob.animator.command.GetSvgForVisualizationCommand;
 import de.prob.exception.ProBError;
+import de.prob.parser.BindingGenerator;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.State;
 
@@ -60,6 +61,14 @@ public final class DotVisualizationCommand extends DynamicCommandItem {
 		final GetAllDotCommands cmd = new GetAllDotCommands(state);
 		state.getStateSpace().execute(cmd);
 		return cmd.getCommands();
+	}
+	
+	public Optional<String> getPreferredDotLayoutEngine() {
+		return this.getAdditionalInfo().stream()
+			.filter(t -> "preferred_dot_type".equals(t.getFunctor()))
+			.map(t -> BindingGenerator.getCompoundTerm(t, 1))
+			.map(t -> PrologTerm.atomicString(t.getArgument(1)))
+			.findAny();
 	}
 	
 	/**
@@ -114,14 +123,47 @@ public final class DotVisualizationCommand extends DynamicCommandItem {
 	}
 	
 	/**
+	 * <p>
+	 * Execute this visualization command and return the generated graph in the requested output format as a byte array.
+	 * {@link DotLayoutEngine} provides constants for common output format names.
+	 * </p>
+	 * <p>
+	 * This internally generates the graph in dot format and uses the dot command to convert it to the requested format.
+	 * If you need more control about how dot is called,
+	 * use {@link #visualizeAsDotToBytes(List)} to generate the source code and {@link DotCall} to convert it.
+	 * </p>
+	 *
+	 * @param outputFormat the format in which to output the generated graph
+	 * @param formulas arguments for the command, if it takes any
+	 * @return the generated graph in the requested format
+	 */
+	public byte[] visualizeToBytes(final String outputFormat, final List<IEvalElement> formulas) {
+		final DotCall dotCall = new DotCall(this.getState().getStateSpace().getCurrentPreference("DOT"))
+			.layoutEngine(this.getPreferredDotLayoutEngine().orElseGet(() ->
+				this.getState().getStateSpace().getCurrentPreference("DOT_ENGINE")
+			))
+			.outputFormat(outputFormat)
+			.input(this.visualizeAsDotToBytes(formulas));
+		try {
+			return dotCall.call();
+		} catch (InterruptedException e) {
+			throw new ProBError("dot call interrupted", e);
+		}
+	}
+	
+	/**
 	 * Execute this visualization command and write the generated graph in SVG format into the given file.
 	 *
 	 * @param svgFilePath the file into which to write the generated dot source code
 	 * @param formulas arguments for the command, if it takes any
 	 */
 	public void visualizeAsSvgToFile(final Path svgFilePath, final List<IEvalElement> formulas) {
-		final GetSvgForVisualizationCommand cmd = new GetSvgForVisualizationCommand(this.getState(), this, svgFilePath.toFile(), formulas);
-		this.getState().getStateSpace().execute(cmd);
+		final byte[] svgData = this.visualizeToBytes(DotOutputFormat.SVG, formulas);
+		try {
+			Files.write(svgFilePath, svgData);
+		} catch (IOException e) {
+			throw new ProBError("Failed to write SVG data to file", e);
+		}
 	}
 	
 	/**
@@ -131,23 +173,6 @@ public final class DotVisualizationCommand extends DynamicCommandItem {
 	 * @return the generated graph in SVG format
 	 */
 	public String visualizeAsSvgToString(final List<IEvalElement> formulas) {
-		final Path tempSvgFile;
-		try {
-			tempSvgFile = Files.createTempFile("prob2", ".svg");
-		} catch (IOException e) {
-			throw new ProBError("Failed to create temporary SVG file", e);
-		}
-		try {
-			this.visualizeAsSvgToFile(tempSvgFile, formulas);
-			return new String(Files.readAllBytes(tempSvgFile), StandardCharsets.UTF_8);
-		} catch (IOException e) {
-			throw new ProBError("Failed to read temporary SVG file", e);
-		} finally {
-			try {
-				Files.delete(tempSvgFile);
-			} catch (IOException e) {
-				LOGGER.error("Failed to delete temporary SVG file", e);
-			}
-		}
+		return new String(this.visualizeToBytes(DotOutputFormat.SVG, formulas), StandardCharsets.UTF_8);
 	}
 }
