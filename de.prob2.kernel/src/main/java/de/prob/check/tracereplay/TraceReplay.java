@@ -30,15 +30,23 @@ public class TraceReplay {
 		return replayTrace(persistentTrace, stateSpace, true, new HashMap<>(), new DefaultTraceChecker());
 	}
 
-	public static Trace  replayTrace(PersistentTrace persistentTrace, StateSpace stateSpace, final boolean setCurrentAnimation,
+	/**
+	 * Iterate through a transition list and tries to replay every transition contained
+	 * @param persistentTrace the trace to replay
+	 * @param stateSpace the current stateSpace - will be used to execute commands and replay trace
+	 * @param setCurrentAnimation if true the replayed trace will be set as the current animation
+	 * @param replayInformation a reference to an map in which additional results will be stored
+	 * @param traceChecker an interface implementation for processing results
+	 * @return A Trace when the replay was successful else return null
+	 */
+	public static Trace replayTrace(PersistentTrace persistentTrace, StateSpace stateSpace, final boolean setCurrentAnimation,
 									 Map<String, Object> replayInformation, ITraceChecker traceChecker) {
 		Trace trace = new Trace(stateSpace);
 		trace.setExploreStateByDefault(false);
 		boolean success = true;
 		final List<PersistentTransition> transitionList = persistentTrace.getTransitionList();
 		for (int i = 0; i < transitionList.size(); i++) {
-			final int finalI = i;
-			traceChecker.updateProgress((double) finalI / transitionList.size(), replayInformation);
+			traceChecker.updateProgress((double) i / transitionList.size(), replayInformation);
 			Transition trans = replayPersistentTransition(trace, transitionList.get(i), setCurrentAnimation, replayInformation, traceChecker);
 			if (trans != null) {
 				trace = trace.add(trans);
