@@ -1,5 +1,14 @@
 package de.prob.check.tracereplay.check;
 
+import com.google.inject.Injector;
+import de.prob.animator.ReusableAnimator;
+import de.prob.scripting.FactoryProvider;
+import de.prob.scripting.ModelFactory;
+import de.prob.scripting.ModelTranslationError;
+import de.prob.statespace.StateSpace;
+
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.*;
 
 public class TraceCheckerUtils {
@@ -14,14 +23,18 @@ public class TraceCheckerUtils {
 	 * @return a Map of the Type <T, U>
 	 */
 	public static <T, U> Map<T, U> zip(List<T> list1, List<U> list2){
-		if(list1.size() == list2.size()){
-			Map<T, U> sideResult = new HashMap<>();
+		Map<T, U> sideResult = new HashMap<>();
+		if(list1.size() <= list2.size()){
 			for(int i = 0;  i < list1.size(); i++){
 				sideResult.put(list1.get(i), list2.get(i));
 			}
-			return sideResult;
+		}else {
+
+			for(int i = 0;  i < list2.size(); i++){
+				sideResult.put(list1.get(i), list2.get(i));
+			}
 		}
-		return Collections.emptyMap();
+		return sideResult;
 	}
 
 
@@ -49,6 +62,26 @@ public class TraceCheckerUtils {
 			}
 		}
 		return returnValue;
+	}
+
+	private static ReusableAnimator reusableAnimator;
+	public static ReusableAnimator getReusableAnimator(Injector injector){
+		if (reusableAnimator==null){
+			reusableAnimator = injector.getInstance(ReusableAnimator.class);
+		}
+		return reusableAnimator;
+	}
+
+	public static StateSpace createStateSpace(String path, Injector injector) throws IOException, ModelTranslationError {
+		ReusableAnimator animator = getReusableAnimator(injector);
+		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension(path.substring(path.lastIndexOf(".")+1)));
+		if(animator.getCurrentStateSpace()!=null)
+		{
+			animator.getCurrentStateSpace().kill();
+		}
+		StateSpace stateSpace = animator.createStateSpace();
+		factory.extract(path).loadIntoStateSpace(stateSpace);
+		return stateSpace;
 	}
 
 }

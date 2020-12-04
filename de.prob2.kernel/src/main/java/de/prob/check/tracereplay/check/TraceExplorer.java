@@ -15,8 +15,7 @@ import de.prob.statespace.Transition;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
+import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 
 public class TraceExplorer {
@@ -110,8 +109,8 @@ public class TraceExplorer {
 		Trace trace = new Trace(stateSpace);
 		trace.setExploreStateByDefault(true);
 
-		PersistentHashMap<Trace, PersistentVector<PersistenceDelta>> traceStorage = PersistentHashMap.create();
-		Map<String, Set<Map<MappingNames, Map<String, String>>>> varMappings = generateVarMappings(transitionList, operationInfo, typeIIICandidates);
+	//	PersistentHashMap<Trace, PersistentVector<PersistenceDelta>> traceStorage = PersistentHashMap.create();
+	//	Map<String, Set<Map<MappingNames, Map<String, String>>>> varMappings = generateVarMappings(transitionList, operationInfo, typeIIICandidates);
 
 		Map<Map<String, Map<MappingNames, Map<String, String>>> , List<PersistenceDelta>> selectedMappingsToResults
 				= generateAllPossibleMappingVariations(transitionList, operationInfo, typeIIICandidates).stream()
@@ -126,12 +125,14 @@ public class TraceExplorer {
 		Set<Map<String, Map<MappingNames, Map<String, String>>> > selectedMappingsToResultsKeys = selectedMappingsToResults.keySet();
 		//Maybe special treatment for init and setup constants?
 
+
 		selectedMappingsToResultsKeys.forEach(entry ->
 				transitionList.forEach(transition -> {
 			Transition result;
 			if(entry.containsKey(transition.getOperationName())){
 				PersistentTransition reworkedTransition =
 						createPersistentTransitionFromMapping(entry.get(transition.getOperationName()), transition);
+
 				result =  replayPersistentTransition2(selectedMappingToCurrentState.get(entry), reworkedTransition);
 			}
 			else{
@@ -219,6 +220,29 @@ public class TraceExplorer {
 		})).collect(toList());
 	}
 
+
+	/**
+	 * Creates all possible pairs between two maps e.g.
+	 * [a,b,c] + [x,z]
+	 * -> [[a:x, b:z], [a:z, b:x], [a:x, c:z], [a:z, c:x], [c:x, b:z], [b:x, c:z]]
+	 * @param oldVars the "old" variables of a persistent transition
+	 * @param newVars the "new" variables extracted from the operation info
+	 * @return a set of mappings
+	 */
+	public static Set<Map<String, String>> createAllPossiblePairs(List<String> oldVars, List<String> newVars){
+		if(oldVars.isEmpty()) return emptySet();
+		if(newVars.isEmpty()) return emptySet();
+
+		List<List<String>> permutationsOld = TraceCheckerUtils.generatePerm(new ArrayList<>(oldVars));
+
+		List<List<String>> permutationsNew = TraceCheckerUtils.generatePerm(new ArrayList<>(newVars));
+
+
+		return permutationsOld.stream().flatMap(permutationOld -> permutationsNew.stream().map(permutationNew ->
+				TraceCheckerUtils.zip(permutationOld, permutationNew))).collect(toSet());
+
+	}
+
 	public enum MappingNames{
 		VARIABLES, INPUT_PARAMETERS, OUTPUT_PARAMETERS
 	}
@@ -233,31 +257,37 @@ public class TraceExplorer {
 	public static PersistentTransition createPersistentTransitionFromMapping(Map<MappingNames, Map<String, String>> mapping,
 																			 PersistentTransition current){
 
-		HashMap<MappingNames, Map<String, String>> mappingsHelper = new HashMap<>();
+		Map<String, String> destChangedVariables = mapping.get(MappingNames.VARIABLES).entrySet().stream()
+				.filter(entry -> !current.getDestStateNotChanged().contains(entry.getKey()))
+				.collect(toMap(Map.Entry::getValue, entry -> current.getDestinationStateVariables().get(entry.getKey())));
 
-		mappingsHelper.put(MappingNames.VARIABLES, current.getDestinationStateVariables());
-		mappingsHelper.put(MappingNames.OUTPUT_PARAMETERS, current.getOutputParameters());
 
-		Map<MappingNames, Map<String, String>> result = mapping.entrySet().stream()
-				.filter(entry -> !entry.getKey().equals(MappingNames.INPUT_PARAMETERS))
-				.collect(toMap(Map.Entry::getKey, entry -> entry.getValue().entrySet().stream()
-						.collect(toMap(Map.Entry::getValue, innerEntry ->
-								mappingsHelper.get(entry.getKey()).get(innerEntry.getKey())))));
+
+		Set<String> destNotChangedVariables = mapping.get(MappingNames.VARIABLES).entrySet().stream()
+				.filter(entry -> current.getDestStateNotChanged().contains(entry.getKey()))
+				.map(Map.Entry::getValue).collect(toSet());
+
+
+		Map<String, String> resultOutputParameters = mapping.get(MappingNames.OUTPUT_PARAMETERS).entrySet().stream()
+				.collect(toMap(Map.Entry::getValue, entry -> current.getOutputParameters().get(entry.getKey())));
+
 
 		Map<String, String> resultInputParameters = mapping.get(MappingNames.INPUT_PARAMETERS).entrySet().stream()
-				.collect(toMap(Map.Entry::getKey, entry -> current.getParameters().get(entry.getValue())));
+				.collect(toMap(Map.Entry::getValue, entry -> current.getParameters().get(entry.getKey())));
 
 
-		return current.copyWithNewDestState(result.get(MappingNames.VARIABLES)).copyWithNewParameters(resultInputParameters)
-				.copyWithNewOutputParameters(result.get(MappingNames.OUTPUT_PARAMETERS));
+		return current.copyWithNewDestState(destChangedVariables).copyWithNewParameters(resultInputParameters)
+				.copyWithNewOutputParameters(resultOutputParameters).copyWithDestStateNotChanged(destNotChangedVariables);
 	}
+
+
 
 	/**
 	 * Calculates the new all possible mappings for a variable
 	 * @param transition the transition to calculate the mappings for
 	 * @param operationMapping the corresponding operation
 	 * @return a set with all mappings each mapping name represents either input/output/variables and maps to the corresponding
-	 * identifiers in the schema new -> old
+	 * identifiers in the schema old -> new
 	 */
 	public static Set<Map<MappingNames, Map<String, String>>> calculateVarMappings(PersistentTransition transition,
 																				   OperationInfo operationMapping){
@@ -283,7 +313,7 @@ public class TraceExplorer {
 			if(!operationInfos.get(name).isEmpty())
 			{
 				mappings = mappings.stream()
-						.flatMap(mapping -> possibleConstellations2(new ArrayList<>(mapping.get(name).keySet()),
+						.flatMap(mapping -> createAllPossiblePairs(new ArrayList<>(mapping.get(name).keySet()),
 								operationInfos.get(name)).stream().map(mappingValue -> {
 									HashMap<MappingNames, Map<String, String>> alteredInnerMapping = new HashMap<>(mapping);
 									alteredInnerMapping.put(name, mappingValue);
@@ -302,64 +332,6 @@ public class TraceExplorer {
 		return mapping.entrySet().stream().collect(toMap(Map.Entry::getKey, Map.Entry::getKey));
 	}
 
-
-	/**
-	 * Gets a mapping from variables to values (input/output/variables) and the variables of the current operation and
-	 * calculates all possible mappings, e.g.
-	 * inc(1,2) -> inc(x,y,z) produces
-	 * 			-> inc(1, 2, ?)
-	 * 			-> inc(1, ?, 2)
-	 * 			-> inc(?, 1, 2)
-	 * 		[..]
-	 * void means that the mapping is not existent in the resulting map
-	 * @param values the mapping from the current transition
-	 * @param target the variables manipulated by the transition according to the new machine
-	 * @return all possible mappings
-	 */
-	public static Set<Map<String, String>> possibleConstellations2(List<String> values, List<String> target){
-
-		if(values.isEmpty()||target.isEmpty()) return Collections.emptySet();
-
-		Set<Map<String, String>> result;
-		if(values.size()>target.size()){
-			result =  permutate(TraceCheckerUtils.generatePerm(values), new ArrayList<>(target));
-		}
-		else {
-			result =  permutate(TraceCheckerUtils.generatePerm(new ArrayList<>(target)), values);
-		}
-
-		return result;
-	}
-
-	/**
-	 * Gets a mapping from variables to values (input/output/variables) and the variables of the current operation and
-	 * calculates all possible mappings, e.g.
-	 * inc(1,2) -> inc(x,y,z) produces
-	 * 			-> inc(1, 2, ?)
-	 * 			-> inc(1, ?, 2)
-	 * 			-> inc(?, 1, 2)
-	 * 		[..]
-	 * void means that the mapping is not existent in the resulting map
-	 * @param elements the mapping from the current transition
-	 * @param target the variables manipulated by the transition according to the new machine
-	 * @return all possible mappings
-	 */
-	public static Set<Map<String, String>> possibleConstellations(Map<String, String> elements, List<String> target){
-
-		if(elements.isEmpty()||target.isEmpty()) return Collections.emptySet();
-
-		List<String> values = new ArrayList<>(elements.keySet());
-		Set<Map<String, String>> result;
-		if(values.size()>target.size()){
-			result =  permutate(TraceCheckerUtils.generatePerm(values), new ArrayList<>(target));
-		}
-		else {
-			result =  permutate(TraceCheckerUtils.generatePerm(new ArrayList<>(target)), values);
-		}
-
-		return result.stream().map(entry ->
-				entry.entrySet().stream().collect(toMap(Map.Entry::getValue, inner -> elements.get(inner.getKey())))).collect(Collectors.toSet());
-	}
 
 	/**
 	 * helper for @possibleConstellations
@@ -430,7 +402,6 @@ public class TraceExplorer {
 		final GetOperationByPredicateCommand command =  commandBuild(stateSpace, persistentTransition, t, Constraint.PARAMETER_AND_DESTINATION_STATE);
 
 		stateSpace.execute(command);
-		System.out.println(persistentTransition);
 		return command.getNewTransitions().get(0);
 	}
 
