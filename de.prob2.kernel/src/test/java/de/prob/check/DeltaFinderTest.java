@@ -23,6 +23,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
+import static java.util.Collections.singleton;
+
 
 public class DeltaFinderTest {
 
@@ -333,6 +335,43 @@ public class DeltaFinderTest {
 		Map<String, String> expected = new HashMap<>();
 		expected.put("floors", "level");
 
+		Assert.assertEquals(expected, result);
+
+	}
+
+
+
+	@Test
+	public void deltaFinder_correction_of_the_categorization() throws IOException, ModelTranslationError {
+		System.setProperty("prob.home", "/home/sebastian/prob_prolog");
+
+		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "LiftProto.mch");
+		String pathAsStringOld = pathOld.toAbsolutePath().toString();
+
+
+		Path path = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "LiftProto2.mch");
+		String pathAsString = path.toAbsolutePath().toString();
+
+		Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
+		ReusableAnimator reusableAnimator = injector.getInstance(ReusableAnimator.class);
+
+		Map<String, Set<String>> typeIICandidates = new HashMap<>();
+		typeIICandidates.put("getfloors", singleton("getlevels"));
+
+		DeltaFinder deltaFinder = new DeltaFinder(Collections.emptySet(), typeIICandidates, true, reusableAnimator,
+				pathAsStringOld, pathAsString, injector);
+
+
+		deltaFinder.calculateDelta();
+
+		Map<String, Map<String, String>> result = deltaFinder.getResultTypeIorII();
+
+		Map<String, Map<String, String>> expected = new HashMap<>();
+		Map<String, String> helper = new HashMap<>();
+		helper.put("getfloors", "getlevels");
+		helper.put("out", "out");
+		helper.put("floors", "levels");
+		expected.put("getfloors", helper);
 		Assert.assertEquals(expected, result);
 
 	}

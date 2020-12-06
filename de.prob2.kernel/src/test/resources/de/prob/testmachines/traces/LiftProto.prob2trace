@@ -1,0 +1,202 @@
+{
+  "type" : "Trace",
+  "name" : "LiftProto",
+  "description" : "",
+  "trace" : {
+    "description" : "",
+    "transitionList" : [ {
+      "operationName" : "$initialise_machine",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "floors" : "0"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "inc",
+      "parameters" : {
+        "x" : "2",
+        "y" : "1"
+      },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "floors" : "3"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "inc",
+      "parameters" : {
+        "x" : "0",
+        "y" : "0"
+      },
+      "outputParameters" : { },
+      "destinationStateVariables" : { },
+      "destStateNotChanged" : [ "floors" ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "dec",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "floors" : "2"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "inc",
+      "parameters" : {
+        "x" : "2",
+        "y" : "0"
+      },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "floors" : "4"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "inc",
+      "parameters" : {
+        "x" : "1",
+        "y" : "2"
+      },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "floors" : "7"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "inc",
+      "parameters" : {
+        "x" : "0",
+        "y" : "2"
+      },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "floors" : "9"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "inc",
+      "parameters" : {
+        "x" : "0",
+        "y" : "1"
+      },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "floors" : "10"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "inc",
+      "parameters" : {
+        "x" : "2",
+        "y" : "0"
+      },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "floors" : "12"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "inc",
+      "parameters" : {
+        "x" : "0",
+        "y" : "2"
+      },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "floors" : "14"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "getfloors",
+      "parameters" : { },
+      "outputParameters" : {
+        "out" : "14"
+      },
+      "destinationStateVariables" : { },
+      "destStateNotChanged" : [ "floors" ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "dec",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "floors" : "13"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "dec",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "floors" : "12"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "getfloors",
+      "parameters" : { },
+      "outputParameters" : {
+        "out" : "12"
+      },
+      "destinationStateVariables" : { },
+      "destStateNotChanged" : [ "floors" ],
+      "additionalPredicates" : [ ]
+    } ]
+  },
+  "variableNames" : [ "floors" ],
+  "machineOperationInfos" : {
+    "inc" : {
+      "operationName" : "inc",
+      "parameterNames" : [ "x", "y" ],
+      "outputParameterNames" : [ ],
+      "topLevel" : true,
+      "type" : "CLASSICAL_B",
+      "readVariables" : [ "floors" ],
+      "writtenVariables" : [ "floors" ],
+      "nonDetWrittenVariables" : [ ]
+    },
+    "dec" : {
+      "operationName" : "dec",
+      "parameterNames" : [ ],
+      "outputParameterNames" : [ ],
+      "topLevel" : true,
+      "type" : "CLASSICAL_B",
+      "readVariables" : [ "floors" ],
+      "writtenVariables" : [ "floors" ],
+      "nonDetWrittenVariables" : [ ]
+    },
+    "getfloors" : {
+      "operationName" : "getfloors",
+      "parameterNames" : [ ],
+      "outputParameterNames" : [ "out" ],
+      "topLevel" : true,
+      "type" : "CLASSICAL_B",
+      "readVariables" : [ "floors" ],
+      "writtenVariables" : [ ],
+      "nonDetWrittenVariables" : [ ]
+    }
+  },
+  "constantNames" : [ ],
+  "setNames" : [ ],
+  "metaData" : {
+    "type" : "TraceMetaData",
+    "formatVersion" : 1,
+    "savedAt" : [ 2020, 12, 1, 16, 58, 51, 961544000 ],
+    "creator" : "USER",
+    "proBCliVersion" : "1.10.0-nightly",
+    "name" : "HALLO",
+    "path" : "LiftProto.mch",
+    "proB2KernelVersion" : "4.0.0-SNAPSHOT"
+  }
+}

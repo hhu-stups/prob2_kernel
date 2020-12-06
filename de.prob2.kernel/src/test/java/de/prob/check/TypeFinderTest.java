@@ -9,7 +9,10 @@ import de.prob.ProBKernelStub;
 import de.prob.check.tracereplay.check.TypeFinder;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
+import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.OperationInfo;
+import de.prob.statespace.Transition;
+import org.codehaus.groovy.classgen.asm.OperandStack;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +22,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 import static de.prob.statespace.OperationInfo.Type.CLASSICAL_B;
+import static java.util.Collections.singleton;
 
 public class TypeFinderTest {
 
@@ -347,7 +351,7 @@ public class TypeFinderTest {
 		typeFinder.check();
 
 
-		Map<String,Set<String>> typeII_per = Collections.singletonMap("inc", Collections.singleton("inc1"));
+		Map<String,Set<String>> typeII_per = Collections.singletonMap("inc", singleton("inc1"));
 
 		Assert.assertEquals(typeII_per, typeFinder.getTypeIIPermutation());
 
@@ -361,7 +365,7 @@ public class TypeFinderTest {
 		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "traces", "testTraceMachine10Steps.prob2trace"));
 
 
-		Set<String> oldVars = Collections.singleton("world");
+		Set<String> oldVars = singleton("world");
 
 
 
@@ -383,9 +387,9 @@ public class TypeFinderTest {
 		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "traces", "testTraceMachine10Steps.prob2trace"));
 
 
-		Set<String> oldVars = Collections.singleton("world");
+		Set<String> oldVars = singleton("world");
 
-		Set<String> newVars = Collections.singleton("hallo");
+		Set<String> newVars = singleton("hallo");
 
 
 
@@ -398,4 +402,7 @@ public class TypeFinderTest {
 		Assert.assertTrue(typeFinder.getInitIsTypeIorIICandidate());
 
 	}
+
+
+	
 }

@@ -16,11 +16,11 @@ import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * Finds a operation if it is renamed or contains renamed variables/parameter
@@ -106,7 +106,19 @@ public class DeltaFinder {
 
 
 		resultTypeIorII = checkDeterministicPairs(oldOperations, newOperations, typeIorII, checkerInterface, prepareOperationsInterface);
-		resultTypeIIwithCandidates = checkNondeterministicPairs(oldOperations, newOperations, typeIICandidates, checkerInterface, prepareOperationsInterface);
+		Map<String, Map<String, Map<String, String>>> typeIIWithCandidates =
+				checkNondeterministicPairs(oldOperations, newOperations, typeIICandidates, checkerInterface, prepareOperationsInterface);
+
+		Map<String, Map<String, String>> trueTypeIINonAmbiguous = typeIIWithCandidates.entrySet().stream()
+				.filter(stringMapMap -> stringMapMap.getValue().size() == 1)
+				.collect(toMap(Map.Entry::getKey, entry -> entry.getValue().entrySet().stream().findFirst().get().getValue()));
+
+		trueTypeIINonAmbiguous.forEach((key, value) -> resultTypeIorII.put(key, value));
+
+		resultTypeIIwithCandidates = typeIIWithCandidates.entrySet().stream()
+				.filter(stringMapMap -> stringMapMap.getValue().size() > 1).collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+
 	}
 
 
