@@ -3,8 +3,11 @@ package de.prob.check.tracereplay.check;
 import com.google.inject.Injector;
 import de.prob.animator.ReusableAnimator;
 import de.prob.check.tracereplay.PersistentTrace;
+import de.prob.check.tracereplay.PersistentTransition;
+import de.prob.check.tracereplay.ReplayOptions;
 import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.OperationInfo;
+import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
 
 import java.io.IOException;
@@ -17,20 +20,21 @@ public class TraceChecker {
 	private final DeltaFinder deltaFinder;
 	private final TraceModifier traceModifier;
 	private final Map<String, OperationInfo> oldOperationInfos;
+	private final Map<String, OperationInfo> newOperationInfos;
 	private final PersistentTrace trace;
 	private final Map<String, List<Delta>> typeIICandidates;
 
 	public TraceChecker(PersistentTrace trace, Map<String, OperationInfo> oldInfos, Map<String, OperationInfo> newInfos,
-						Set<String> oldVars,
-						Set<String> newVars,
-						String oldPath, String newPath, Injector injector) throws IOException, ModelTranslationError {
+						Set<String> oldVars, Set<String> newVars, String oldPath, String newPath, Injector injector, StateSpace stateSpace)
+			throws IOException, ModelTranslationError {
 
 		this.trace = trace;
 		this.oldOperationInfos = oldInfos;
+		this.newOperationInfos = newInfos;
 
 
 
-		traceModifier = new TraceModifier(trace);
+		traceModifier = new TraceModifier(trace, TraceCheckerUtils.createStateSpace(newPath, injector));
 
 
 		PersistentTrace traceWithoutInit = new PersistentTrace(trace.getDescription(),
@@ -74,6 +78,11 @@ public class TraceChecker {
 		traceModifier.insertAmbiguousChanges(typeIICandidates);
 
 
+		traceModifier.makeTypeIII(typeFinder.getTypeIII(), newInfos);
+
+
+
+
 	}
 
 
@@ -96,6 +105,11 @@ public class TraceChecker {
 	public Map<String, OperationInfo> getOldOperationInfos(){
 		return oldOperationInfos;
 	}
+
+	public Map<String, OperationInfo> getNewOperationInfos(){
+		return newOperationInfos;
+	}
+
 
 	public Map<String, List<Delta>> getTypeIICandidates() {
 		return typeIICandidates;
