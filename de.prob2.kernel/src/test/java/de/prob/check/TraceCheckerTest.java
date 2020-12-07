@@ -1,4 +1,4 @@
-package de.prob.check.json;
+package de.prob.check;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Guice;
@@ -7,7 +7,6 @@ import com.google.inject.Stage;
 import de.prob.JsonManagerStubModule;
 import de.prob.MainModule;
 import de.prob.ProBKernelStub;
-import de.prob.check.tracereplay.check.*;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.scripting.ModelTranslationError;
@@ -18,8 +17,6 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.stream.Collectors;
 
 public class TraceCheckerTest {
 
@@ -54,13 +51,15 @@ public class TraceCheckerTest {
 		LoadedMachine old = proBKernelStub.load(machinePath);
 		Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
 
-
+/*
 		TraceChecker traceChecker =
 				new TraceChecker(traceJsonFile.getTrace(), old.getOperations(), traceJsonFile.getMachineOperationInfos(),
 						new HashSet<>(old.getVariableNames()), new HashSet<>(traceJsonFile.getVariableNames()), 
-						machinePath.toAbsolutePath().toString(), machinePathNew.toAbsolutePath().toString(), injector);
+						machinePath.toAbsolutePath().toString(), machinePathNew.toAbsolutePath().toString(), injector, );
 
 		System.out.println(traceChecker.getTraceModifier().getLastChange().get(0));
+		*/
+ 
 	}
 
 }

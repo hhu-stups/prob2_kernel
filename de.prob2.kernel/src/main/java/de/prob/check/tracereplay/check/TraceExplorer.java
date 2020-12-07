@@ -1,7 +1,5 @@
 package de.prob.check.tracereplay.check;
 
-import com.github.krukow.clj_lang.PersistentHashMap;
-import com.github.krukow.clj_lang.PersistentVector;
 import com.google.common.collect.Maps;
 import de.prob.animator.command.GetOperationByPredicateCommand;
 import de.prob.animator.domainobjects.*;
@@ -22,88 +20,9 @@ public class TraceExplorer {
 
 
 
-	public static Set<List<PersistenceDelta>> replayTrace(List<PersistentTransition> transitionList,
-														  StateSpace stateSpace, Map<String,OperationInfo> operationInfo) {
-
-		Trace trace = new Trace(stateSpace);
-		trace.setExploreStateByDefault(true);
-
-		PersistentHashMap<Trace, PersistentVector<PersistenceDelta>> traceStorage = PersistentHashMap.create();
-		Map<String, Set<Map<MappingNames, Map<String, String>>>> varMappings = new HashMap<>();
-		//Maybe special treatment for init and setup constants?
-
-		for (PersistentTransition transition : transitionList) {
-
-			String currentName = transition.getOperationName();
-			if(operationInfo.containsKey(currentName) && !varMappings.containsKey(currentName)){
-				varMappings.put(currentName,calculateVarMappings(transition, operationInfo.get(currentName)));
-			}
-
-			final Set<PersistentTransition> variations = new HashSet<>();
-
-			if(varMappings.containsKey(currentName)){
-				variations.addAll(varMappings.get(currentName).stream()
-						.map(mapping -> createPersistentTransitionFromMapping(mapping, transition)).collect(toList()));
-			}
-
-			if(variations.isEmpty()){
-				variations.add(transition);
-			}
-
-			Map<Trace, Set<Trace>> pathsMapedToPathsToGo;
-			if(traceStorage.isEmpty()){
-				pathsMapedToPathsToGo = new HashMap<>();
-				pathsMapedToPathsToGo.put(trace, replayPersistentTransition(trace, transition).stream().map(trace::add).collect(Collectors.toSet()));
-			}else{
-				pathsMapedToPathsToGo = traceStorage.entrySet().stream().collect(toMap(Map.Entry::getKey, entry ->
-						variations.stream().flatMap(variation -> replayPersistentTransition(entry.getKey(), variation).stream()
-								.map(innerTransition -> entry.getKey().add(innerTransition))).collect(Collectors.toSet())));
-
-			}
-
-
-			PersistentHashMap<Trace, PersistentVector<PersistenceDelta>> finalTraceStorage = traceStorage;
-			Map<Trace, PersistentVector<PersistenceDelta>> da = pathsMapedToPathsToGo.entrySet().stream().flatMap(entry -> entry.getValue().stream()
-					.map(innerEntry -> {
-
-						PersistentTransition previous;
-						if(trace.getCurrentTransition() == null){
-							previous = null;
-						}else{
-							previous = new PersistentTransition(trace.getCurrentTransition());
-						}
-
-
-						return new AbstractMap.SimpleEntry<>(innerEntry,
-								finalTraceStorage.getOrDefault(entry.getKey(), PersistentVector.emptyVector()).cons(
-										new PersistenceDelta(transition,
-												singletonList(
-														new PersistentTransition(innerEntry.getCurrentTransition(), previous)))));
-					}))
-					.collect(toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
-
-
-			Map<Trace, PersistentVector<PersistenceDelta>> trueResult = new HashMap<>();
-			for(Trace t : da.keySet()){
-
-				if (!trueResult.containsKey(t)&&!setContainsEqualTrace(t, trueResult.keySet())) {
-					trueResult.put(t, da.get(t));
-				}
-			}
-
-
-			traceStorage = PersistentHashMap.create(trueResult);
-		}
-
-
-		return traceStorage.values().stream().map(ArrayList::new).collect(Collectors.toSet());
-	}
-
-
-
-	public static Map<Map<String, Map<MappingNames, Map<String, String>>> , List<PersistenceDelta>> replayTrace2(List<PersistentTransition> transitionList,
-														  StateSpace stateSpace, Map<String,OperationInfo> operationInfo,
-														  Set<String> typeIIICandidates) {
+	public static Map<Map<String, Map<String, String>> , List<PersistenceDelta>> replayTrace(List<PersistentTransition> transitionList,
+																							 StateSpace stateSpace, Map<String,OperationInfo> operationInfo,
+																							 Set<String> typeIIICandidates) {
 
 		Trace trace = new Trace(stateSpace);
 		trace.setExploreStateByDefault(true);
@@ -150,14 +69,27 @@ public class TraceExplorer {
 			selectedMappingsToResults.get(entry).add(new PersistenceDelta(transition, singletonList(newPersistentTransition)));
 		}));
 
-		return selectedMappingsToResults;
+
+		return selectedMappingsToResults.entrySet().stream().collect(toMap(variationToDelta ->
+				variationToDelta.getKey().entrySet().stream().collect(toMap(Map.Entry::getKey, operationToVariation ->
+						operationToVariation.getValue().values().stream().reduce(new HashMap<>(), (acc, current) ->{
+							Map<String, String> mapping = new HashMap<>();
+							mapping.putAll(acc);
+							mapping.putAll(current);
+							return mapping;
+						}))), Map.Entry::getValue));
 	}
 
 
 
 	public static Set<Map<String, Map<MappingNames, Map<String, String>>>> generateAllPossibleMappingVariations(
-			List<PersistentTransition> transitionList, Map<String,
-			OperationInfo> operationInfo, Set<String> typeIIICandidates){
+			List<PersistentTransition> transitionList, Map<String, OperationInfo> operationInfo, Set<String> typeIIICandidates){
+
+		if(typeIIICandidates.isEmpty()) {
+			Set<Map<String, Map<MappingNames, Map<String, String>>>> result = new HashSet<>();
+			result.add(emptyMap());
+			return result;
+		}
 
 		List<PersistentTransition> typeIIITransitions = transitionList.stream()
 				.filter(transition -> !transition.getOperationName().equals(Transition.INITIALISE_MACHINE_NAME) ||
@@ -223,7 +155,7 @@ public class TraceExplorer {
 	}
 
 	/**
-	 * An helper datatype to better group maps of the form Map<String, String>
+	 * An helper datatype to better group maps of the form Map<\String, String>
 	 */
 	public enum MappingNames{
 		VARIABLES, INPUT_PARAMETERS, OUTPUT_PARAMETERS
@@ -276,30 +208,41 @@ public class TraceExplorer {
 
 		Map<MappingNames, List<String>> operationInfos = new HashMap<>();
 
-		operationInfos.put(MappingNames.VARIABLES, operationMapping.getWrittenVariables());
+		List<String> variables = new ArrayList<>(operationMapping.getWrittenVariables());
+		variables.addAll(operationMapping.getNonDetWrittenVariables());
+		variables.addAll(operationMapping.getReadVariables());
+
+		operationInfos.put(MappingNames.VARIABLES, variables);
 		operationInfos.put(MappingNames.INPUT_PARAMETERS, operationMapping.getParameterNames());
 		operationInfos.put(MappingNames.OUTPUT_PARAMETERS, operationMapping.getOutputParameterNames());
+
+		Map<MappingNames, List<String>> mappingHelper1 = new HashMap<>();
+		List<String> oldVariables = new ArrayList<>(transition.getDestStateNotChanged());
+		oldVariables.addAll(transition.getDestinationStateVariables().keySet());
+		mappingHelper1.put(MappingNames.VARIABLES, oldVariables);
+		mappingHelper1.put(MappingNames.INPUT_PARAMETERS, new ArrayList<>(transition.getParameters().keySet()));
+		mappingHelper1.put(MappingNames.OUTPUT_PARAMETERS, new ArrayList<>(transition.getOutputParameters().keySet()));
 
 
 		HashMap<MappingNames, Map<String, String>> mappingsHelper = new HashMap<>();
 
-		mappingsHelper.put(MappingNames.VARIABLES, createSelfMapping(transition.getDestinationStateVariables()));
-		mappingsHelper.put(MappingNames.INPUT_PARAMETERS, createSelfMapping(transition.getParameters()));
-		mappingsHelper.put(MappingNames.OUTPUT_PARAMETERS, createSelfMapping(transition.getOutputParameters()));
+		mappingsHelper.put(MappingNames.VARIABLES, emptyMap());
+		mappingsHelper.put(MappingNames.INPUT_PARAMETERS, emptyMap());
+		mappingsHelper.put(MappingNames.OUTPUT_PARAMETERS, emptyMap());
 
 		Set<Map<MappingNames, Map<String, String>>> mappings = new HashSet<>();
 		mappings.add(mappingsHelper);
 
 		for(MappingNames name : operationInfos.keySet()){
 
-			if(!operationInfos.get(name).isEmpty())
-			{
+			if(!operationInfos.get(name).isEmpty()) {
 				mappings = mappings.stream()
-						.flatMap(mapping -> createAllPossiblePairs(new ArrayList<>(mapping.get(name).keySet()),
+						.flatMap(mapping ->  createAllPossiblePairs(new ArrayList<>(mappingHelper1.get(name)),
 								operationInfos.get(name)).stream().map(mappingValue -> {
-									HashMap<MappingNames, Map<String, String>> alteredInnerMapping = new HashMap<>(mapping);
-									alteredInnerMapping.put(name, mappingValue);
-									return alteredInnerMapping; })).collect(Collectors.toSet());
+							HashMap<MappingNames, Map<String, String>> alteredInnerMapping = new HashMap<>(mapping);
+							alteredInnerMapping.put(name, mappingValue);
+							return alteredInnerMapping;
+						})).collect(Collectors.toSet());
 			}
 
 			if(mappings.isEmpty()) mappings.add(mappingsHelper);
@@ -308,10 +251,6 @@ public class TraceExplorer {
 
 		return mappings;
 
-	}
-
-	public static Map<String, String> createSelfMapping(Map<String, String> mapping){
-		return mapping.entrySet().stream().collect(toMap(Map.Entry::getKey, Map.Entry::getKey));
 	}
 
 
@@ -335,44 +274,6 @@ public class TraceExplorer {
 		}
 
 		return resultSet;
-	}
-
-	/**
-	 * Compares a trace and a set of traces on the property of their equivalence. Equivalence is archived if the
-	 * contained transitions list can be transformed to persistent transitions and those are equivalent
-	 * @param t the trace to compare
-	 * @param set the set of traces to compare against
-	 * @return wherever the set contains the given trace t
-	 */
-	public static boolean setContainsEqualTrace(Trace t, Set<Trace> set){
-		return set.stream().anyMatch(trace -> {
-			List<PersistentTransition> transitionList1 = trace.getTransitionList().stream()
-					.map(transition -> new PersistentTransition(transition, null)).collect(toList());
-			List<PersistentTransition> transitionList2 = t.getTransitionList().stream()
-					.map(transition -> new PersistentTransition(transition, null)).collect(toList());
-
-			return transitionList1.equals(transitionList2);
-		});
-	}
-
-
-	//Evtl. Return map<PersistentTransition, Transition>
-	private static Set<Transition> replayPersistentTransition(Trace t, PersistentTransition persistentTransition) {
-
-
-		Map<Constraint, GetOperationByPredicateCommand>  possibleSolutions = Arrays.stream(Constraint.values()).collect(toMap(entry -> entry,
-				entry ->{
-					StateSpace stateSpace = t.getStateSpace();
-
-					final GetOperationByPredicateCommand command =  commandBuild(stateSpace, persistentTransition, t, entry);
-
-					stateSpace.execute(command);
-
-					return command;
-				})).entrySet().stream().filter(entry -> !entry.getValue().getNewTransitions().isEmpty())
-				.collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
-
-		return possibleSolutions.entrySet().stream().flatMap(entry -> entry.getValue().getNewTransitions().stream()).collect(Collectors.toSet());
 	}
 
 

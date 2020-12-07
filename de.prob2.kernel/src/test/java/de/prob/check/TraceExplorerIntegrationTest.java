@@ -24,9 +24,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.singletonMap;
+import static java.util.Collections.*;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
+import static org.codehaus.groovy.runtime.InvokerHelper.asList;
 
 public class TraceExplorerIntegrationTest {
 
@@ -54,8 +55,8 @@ public class TraceExplorerIntegrationTest {
 
 		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "Lift.mch"));
 
-		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result =
-				TraceExplorer.replayTrace2(Collections.emptyList(), stateSpace, stateSpace.getLoadedMachine().getOperations(), Stream.of("inc", "dec", "getfloors").collect(Collectors.toSet()));
+		Map<Map<String,  Map<String, String>>, List<PersistenceDelta>> result =
+				TraceExplorer.replayTrace(Collections.emptyList(), stateSpace, stateSpace.getLoadedMachine().getOperations(), Stream.of("inc", "dec", "getfloors").collect(Collectors.toSet()));
 
 		Assert.assertTrue(result.isEmpty());
 	}
@@ -350,44 +351,35 @@ public class TraceExplorerIntegrationTest {
 		List<PersistenceDelta> expected3 = Arrays.asList(delta1,delta2_var3,delta3);
 
 
-		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> expected =
-				TraceExplorer.generateAllPossibleMappingVariations(transitionList, stateSpace.getLoadedMachine().getOperations(),
-						Stream.of("inc", "dec").collect(Collectors.toSet())).stream()
-				.map(entry -> new AbstractMap.SimpleEntry<>(entry, new ArrayList<PersistenceDelta>()))
-				.collect(toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
+		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> expected = new HashMap<>();
 
 
-		Map<TraceExplorer.MappingNames, Map<String, String>> expectedHelper_dec = new HashMap<>();
-		expectedHelper_dec.put(TraceExplorer.MappingNames.VARIABLES, singletonMap("floors", "levels"));
-		expectedHelper_dec.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, emptyMap());
-		expectedHelper_dec.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
+		Map<String, String> expectedHelper_dec = new HashMap<>();
+		expectedHelper_dec.put("floors", "levels");
 
 
-		Map<TraceExplorer.MappingNames, Map<String, String>> expectedHelper_1 = new HashMap<>();
-		expectedHelper_1.put(TraceExplorer.MappingNames.VARIABLES, singletonMap("floors", "levels"));
-		expectedHelper_1.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, singletonMap("x", "a"));
-		expectedHelper_1.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
+		Map<String, String> expectedHelper_1 = new HashMap<>();
+		expectedHelper_1.put("floors", "levels");
+		expectedHelper_1.put("a", "x");
 
-		Map<TraceExplorer.MappingNames, Map<String, String>> expectedHelper_2 = new HashMap<>();
-		expectedHelper_2.put(TraceExplorer.MappingNames.VARIABLES, singletonMap("floors", "levels"));
-		expectedHelper_2.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, singletonMap("x", "b"));
-		expectedHelper_2.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
+		Map<String, String> expectedHelper_2 = new HashMap<>();
+		expectedHelper_2.put("floors", "levels");
+		expectedHelper_2.put("b", "x");
 
-		Map<TraceExplorer.MappingNames, Map<String, String>> expectedHelper_3 = new HashMap<>();
-		expectedHelper_3.put(TraceExplorer.MappingNames.VARIABLES, singletonMap("floors", "levels"));
-		expectedHelper_3.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, singletonMap("x", "c"));
-		expectedHelper_3.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
+		Map<String, String> expectedHelper_3 = new HashMap<>();
+		expectedHelper_3.put("floors", "levels");
+		expectedHelper_3.put("c", "x");
 
 
-		Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>> expected_inner1 = new HashMap<>();
+		Map<String,  Map<String, String>> expected_inner1 = new HashMap<>();
 		expected_inner1.put("inc", expectedHelper_1);
 		expected_inner1.put("dec", expectedHelper_dec);
 
-		Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>> expected_inner2 = new HashMap<>();
+		Map<String, Map<String, String>> expected_inner2 = new HashMap<>();
 		expected_inner2.put("inc", expectedHelper_2);
 		expected_inner2.put("dec", expectedHelper_dec);
 
-		Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>> expected_inner3 = new HashMap<>();
+		Map<String, Map<String, String>> expected_inner3 = new HashMap<>();
 		expected_inner3.put("inc", expectedHelper_3);
 		expected_inner3.put("dec", expectedHelper_dec);
 
@@ -397,11 +389,8 @@ public class TraceExplorerIntegrationTest {
 		expected.put(expected_inner3,  expected3);
 
 
-		for(Map.Entry<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> entry : expected.entrySet() ){
-			System.out.println(entry);
-		}
-		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result =
-				TraceExplorer.replayTrace2(transitionList, stateSpace, stateSpace.getLoadedMachine().getOperations(), Stream.of("inc", "dec").collect(Collectors.toSet()));
+		Map<Map<String,  Map<String, String>>, List<PersistenceDelta>> result =
+				TraceExplorer.replayTrace(transitionList, stateSpace, stateSpace.getLoadedMachine().getOperations(), Stream.of("inc", "dec").collect(Collectors.toSet()));
 
 
 
@@ -414,16 +403,20 @@ public class TraceExplorerIntegrationTest {
 
 		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "Lift4.mch"));
 
+
+
 		PersistentTransition init = new PersistentTransition(Transition.INITIALISE_MACHINE_NAME, Collections.emptyMap(),
 				Collections.emptyMap(), singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList());
 
 		PersistentTransition first = new PersistentTransition("inc", new HashMap<String, String>() {{
 			put("a","1");
-		}},
-				Collections.emptyMap(), singletonMap("floors", "1"), Collections.emptySet(), Collections.emptyList());
+		}}, Collections.emptyMap(), singletonMap("floors", "1"), Collections.emptySet(), Collections.emptyList());
 
 		PersistentTransition second = new PersistentTransition("dec", Collections.emptyMap(),
 				Collections.emptyMap(), singletonMap("floors", "0"), Collections.emptySet(), Collections.emptyList());
+
+
+
 
 
 		PersistentTransition initNew = new PersistentTransition(Transition.INITIALISE_MACHINE_NAME, Collections.emptyMap(),
@@ -437,15 +430,16 @@ public class TraceExplorerIntegrationTest {
 				Collections.emptyMap(), singletonMap("levels", "1"), Collections.emptySet(), Collections.emptyList());
 
 		PersistentTransition firstNew_var2 = new PersistentTransition("inc", new HashMap<String, String>() {{
-			put("x","0");
-			put("y","1");
-			put("z","0");
+
+			put("x","1");
+			put("y","-1");
+			put("z","1");
 		}},
 				Collections.emptyMap(), singletonMap("levels", "1"), Collections.emptySet(), Collections.emptyList());
 
 		PersistentTransition firstNew_var3 = new PersistentTransition("inc", new HashMap<String, String>() {{
-			put("x","0");
-			put("y","0");
+			put("x","-1");
+			put("y","1");
 			put("z","1");
 		}},
 
@@ -472,44 +466,35 @@ public class TraceExplorerIntegrationTest {
 		List<PersistenceDelta> expected3 = Arrays.asList(delta1,delta2_var3,delta3);
 
 
-		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> expected =
-				TraceExplorer.generateAllPossibleMappingVariations(transitionList, stateSpace.getLoadedMachine().getOperations(),
-						Stream.of("inc", "dec").collect(Collectors.toSet())).stream()
-						.map(entry -> new AbstractMap.SimpleEntry<>(entry, new ArrayList<PersistenceDelta>()))
-						.collect(toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
+		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> expected = new HashMap<>();
 
 
-		Map<TraceExplorer.MappingNames, Map<String, String>> expectedHelper_dec = new HashMap<>();
-		expectedHelper_dec.put(TraceExplorer.MappingNames.VARIABLES, singletonMap("floors", "levels"));
-		expectedHelper_dec.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, emptyMap());
-		expectedHelper_dec.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
+		Map<String, String> expectedHelper_dec = new HashMap<>();
+		expectedHelper_dec.put("floors", "levels");
 
 
-		Map<TraceExplorer.MappingNames, Map<String, String>> expectedHelper_1 = new HashMap<>();
-		expectedHelper_1.put(TraceExplorer.MappingNames.VARIABLES, singletonMap("floors", "levels"));
-		expectedHelper_1.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, singletonMap("a", "x"));
-		expectedHelper_1.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
+		Map<String, String> expectedHelper_1 = new HashMap<>();
+		expectedHelper_1.put("floors", "levels");
+		expectedHelper_1.put("a", "x");
 
-		Map<TraceExplorer.MappingNames, Map<String, String>> expectedHelper_2 = new HashMap<>();
-		expectedHelper_2.put(TraceExplorer.MappingNames.VARIABLES, singletonMap("floors", "levels"));
-		expectedHelper_2.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, singletonMap("a", "x"));
-		expectedHelper_2.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
+		Map<String, String> expectedHelper_2 = new HashMap<>();
+		expectedHelper_2.put("floors", "levels");
+		expectedHelper_2.put("a", "y");
 
-		Map<TraceExplorer.MappingNames, Map<String, String>> expectedHelper_3 = new HashMap<>();
-		expectedHelper_3.put(TraceExplorer.MappingNames.VARIABLES, singletonMap("floors", "levels"));
-		expectedHelper_3.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, singletonMap("a", "x"));
-		expectedHelper_3.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
+		Map<String, String> expectedHelper_3 = new HashMap<>();
+		expectedHelper_3.put("floors", "levels");
+		expectedHelper_3.put("a", "z");
 
 
-		Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>> expected_inner1 = new HashMap<>();
+		Map<String, Map<String, String>> expected_inner1 = new HashMap<>();
 		expected_inner1.put("inc", expectedHelper_1);
 		expected_inner1.put("dec", expectedHelper_dec);
 
-		Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>> expected_inner2 = new HashMap<>();
+		Map<String, Map<String, String>> expected_inner2 = new HashMap<>();
 		expected_inner2.put("inc", expectedHelper_2);
 		expected_inner2.put("dec", expectedHelper_dec);
 
-		Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>> expected_inner3 = new HashMap<>();
+		Map<String, Map<String, String>> expected_inner3 = new HashMap<>();
 		expected_inner3.put("inc", expectedHelper_3);
 		expected_inner3.put("dec", expectedHelper_dec);
 
@@ -519,45 +504,45 @@ public class TraceExplorerIntegrationTest {
 		expected.put(expected_inner3,  expected3);
 
 
-		for(Map.Entry<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> entry : expected.entrySet() ){
-			System.out.println(entry);
-		}
-		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result =
-				TraceExplorer.replayTrace2(transitionList, stateSpace, stateSpace.getLoadedMachine().getOperations(), Stream.of("inc", "dec").collect(Collectors.toSet()));
+
+		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result =
+				TraceExplorer.replayTrace(transitionList, stateSpace, stateSpace.getLoadedMachine().getOperations(),
+						Stream.of("inc", "dec").collect(Collectors.toSet()));
 
 
 
 		Assert.assertEquals(expected,result);
 	}
 
-/*
+
 	@Test
-	public void integration_2_traceReplay3_complex() throws IOException, ModelTranslationError {
+	public void integration_3_traceReplay_no_type_III_candidates() throws IOException, ModelTranslationError {
 
 
-		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "LiftProto2.mch"));
-
-		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "LiftProto.prob2trace"));
+		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "Lift3.mch"));
 
 
-		TraceExplorer.replayTrace(bla.getTrace().getTransitionList(), stateSpace, stateSpace.getLoadedMachine().getOperations(),Stream.of("inc", "dec").collect(Collectors.toSet()) );
-	}
-*/
-	public boolean dummyCompare(Set<List<PersistenceDelta>> d1, Set<List<PersistenceDelta>> d2){
-		for(List<PersistenceDelta> d : d1){
-			if(dummyCompare_aux(d, d2)){
-				return true;
-			}
-		}
-		return false;
-	}
+		PersistentTransition init = new PersistentTransition(Transition.INITIALISE_MACHINE_NAME, emptyMap(),
+				emptyMap(), singletonMap("level", "0"), emptySet(), emptyList());
 
-	public boolean dummyCompare_aux(List<PersistenceDelta> d1, Set<List<PersistenceDelta>> d2){
-		for(List<PersistenceDelta> inner : d2){
-			if(d1.equals(inner)){
-				return true;
-			}
-		}
-		return false;
+		PersistentTransition first = new PersistentTransition("inc", emptyMap(), emptyMap(),
+				singletonMap("level", "1"), emptySet(), emptyList());
+
+		PersistentTransition second = new PersistentTransition("dec", Collections.emptyMap(),
+				Collections.emptyMap(), singletonMap("level", "0"), Collections.emptySet(), Collections.emptyList());
+
+
+
+		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> expected = new HashMap<>();
+		expected.put(emptyMap(), Stream.of(new PersistenceDelta(init, singletonList(init)),
+				new PersistenceDelta(first, singletonList(first)),new PersistenceDelta(second, singletonList(second))).collect(toList()));
+
+
+		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result =
+				TraceExplorer.replayTrace(Stream.of(init,first,second).collect(toList()), stateSpace, stateSpace.getLoadedMachine().getOperations(), emptySet());
+
+
+
+		Assert.assertEquals(expected,result);
 	}
 }

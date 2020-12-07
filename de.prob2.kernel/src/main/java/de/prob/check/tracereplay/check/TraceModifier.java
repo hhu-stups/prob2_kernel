@@ -59,13 +59,11 @@ public class TraceModifier {
 		if(!changelogPhase2II.isEmpty()){
 			Map<Set<Delta>, Map<Map<String, Map<String, String>> , List<PersistenceDelta>>> results = changelogPhase2II
 					.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry ->
-							TraceExplorer.replayTrace2(entry.getValue(), stateSpace, newInfos, typeIIICandidates)));
+							TraceExplorer.replayTrace(entry.getValue(), stateSpace, newInfos, typeIIICandidates)));
 
 			changelogPhase3IIMap.putAll(results);
 		}else{
-			if(changelogPhase1.size()>1){
-				changelogPhase3Without2.putAll(TraceExplorer.replayTrace2(getLastChange(), stateSpace, newInfos, typeIIICandidates));
-			}
+			changelogPhase3IIMap.put(Collections.emptySet(), TraceExplorer.replayTrace(getLastChange(), stateSpace, newInfos, typeIIICandidates));
 		}
 
 	}
@@ -255,7 +253,7 @@ public class TraceModifier {
 	 * @return the original trace was modified
 	 */
 	public boolean isDirty(){
-		return changelogPhase1.size()>1 && !changelogPhase2II.isEmpty() && !changelogPhase3IIMap.isEmpty();
+		return changelogPhase1.size()>1 || !changelogPhase2II.isEmpty() || !changelogPhase3IIMap.isEmpty();
 	}
 
 
