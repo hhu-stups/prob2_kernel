@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import de.prob.animator.CommandInterruptedException;
 import de.prob.animator.command.GetAllDotCommands;
 import de.prob.animator.command.GetDotForVisualizationCommand;
 import de.prob.exception.ProBError;
@@ -175,7 +177,7 @@ public final class DotVisualizationCommand extends DynamicCommandItem {
 		try {
 			return dotCall.call();
 		} catch (InterruptedException e) {
-			throw new ProBError("dot call interrupted", e);
+			throw new CommandInterruptedException("dot call interrupted", Collections.emptyList(), e);
 		}
 	}
 	
