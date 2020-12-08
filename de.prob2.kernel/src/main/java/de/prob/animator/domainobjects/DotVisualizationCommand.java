@@ -20,6 +20,12 @@ import org.slf4j.LoggerFactory;
 public final class DotVisualizationCommand extends DynamicCommandItem {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DotVisualizationCommand.class);
 	
+	public static final String EXPRESSION_AS_GRAPH_NAME = "expr_as_graph";
+	public static final String FORMULA_TREE_NAME = "formula_tree";
+	public static final String STATE_AS_GRAPH_NAME = "state_as_graph";
+	public static final String STATE_SPACE_NAME = "state_space";
+	public static final String STATE_SPACE_FAST_NAME = "state_space_sfdp";
+	
 	private DotVisualizationCommand(
 		final State state,
 		final String command,
@@ -57,10 +63,32 @@ public final class DotVisualizationCommand extends DynamicCommandItem {
 		);
 	}
 	
+	
+	/**
+	 * Get a list of information about all supported dot visualization commands.
+	 * 
+	 * @param state the state in which the commands should be executed when called
+	 * @return information about all supported dot visualization commands
+	 */
 	public static List<DotVisualizationCommand> getAll(final State state) {
 		final GetAllDotCommands cmd = new GetAllDotCommands(state);
 		state.getStateSpace().execute(cmd);
 		return cmd.getCommands();
+	}
+	
+	/**
+	 * Get information about a specific dot visualization command by name.
+	 * Some common dot visualization command names are defined as constants in {@link DotVisualizationCommand}.
+	 * 
+	 * @param commandName the name of the command to look up
+	 * @param state the state in which the command should be executed when called
+	 * @return information about the named dot visualization command
+	 */
+	public static DotVisualizationCommand getByName(final String commandName, final State state) {
+		return getAll(state).stream()
+			.filter(command -> commandName.equals(command.getCommand()))
+			.findAny()
+			.orElseThrow(() -> new IllegalArgumentException("Could not find dot visualization command named " + commandName));
 	}
 	
 	public Optional<String> getPreferredDotLayoutEngine() {
