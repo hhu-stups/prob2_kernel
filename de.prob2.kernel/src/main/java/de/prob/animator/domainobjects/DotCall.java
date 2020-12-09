@@ -222,7 +222,11 @@ public final class DotCall {
 		try {
 			return runnableFuture.get();
 		} catch (ExecutionException e) {
-			throw new ProBError(e.getCause());
+			if (e.getCause() instanceof InterruptedException) {
+				throw (InterruptedException)e.getCause();
+			} else {
+				throw new ProBError(e.getCause());
+			}
 		}
 	}
 }
