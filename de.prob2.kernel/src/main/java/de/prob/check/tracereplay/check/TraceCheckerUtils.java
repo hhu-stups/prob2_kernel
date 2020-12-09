@@ -15,7 +15,7 @@ public class TraceCheckerUtils {
 
 	/**
 	 * Zips two lists to a map - return an empty list if list have different sizes, naturally equal elements will override
-	 * each other
+	 * each other; orders will not preserved
 	 * @param list1 the first list
 	 * @param list2 the second list
 	 * @param <T> Type of the first List
@@ -37,6 +37,30 @@ public class TraceCheckerUtils {
 		return sideResult;
 	}
 
+
+	/**
+	 * Zips two lists to a map - return an empty list if list have different sizes, naturally equal elements will override
+	 * each other
+	 * @param list1 the first list
+	 * @param list2 the second list
+	 * @param <T> Type of the first List
+	 * @param <U> Type of the second list
+	 * @return a Map of the Type <T, U>
+	 */
+	public static <T, U> LinkedHashMap<T, U> zipPreserveOrder(List<T> list1, List<U> list2){
+		LinkedHashMap<T, U> sideResult = new LinkedHashMap<>();
+		if(list1.size() <= list2.size()){
+			for(int i = 0;  i < list1.size(); i++){
+				sideResult.put(list1.get(i), list2.get(i));
+			}
+		}else {
+
+			for(int i = 0;  i < list2.size(); i++){
+				sideResult.put(list1.get(i), list2.get(i));
+			}
+		}
+		return sideResult;
+	}
 
 	/**
 	 * Generate a permutation of a list
