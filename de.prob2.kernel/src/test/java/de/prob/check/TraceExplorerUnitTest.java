@@ -7,6 +7,7 @@ import de.prob.JsonManagerStubModule;
 import de.prob.MainModule;
 import de.prob.ProBKernelStub;
 import de.prob.check.tracereplay.PersistentTransition;
+import de.prob.check.tracereplay.check.PersistenceDelta;
 import de.prob.check.tracereplay.check.TraceExplorer;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.scripting.ModelTranslationError;
@@ -734,76 +735,216 @@ public class TraceExplorerUnitTest {
 		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "Lift2.mch"));
 
 
-		Set<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>> expected = new HashSet<>();
-
-		Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>> expectedHelper1_1 = new HashMap<>();
-
-		Map<TraceExplorer.MappingNames, Map<String, String>> expectedHelper_dec = new HashMap<>();
-
-
-		expectedHelper_dec.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, emptyMap());
-		expectedHelper_dec.put(TraceExplorer.MappingNames.VARIABLES, emptyMap());
-		expectedHelper_dec.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
-
-
-
-
-		Map<TraceExplorer.MappingNames, Map<String, String>> expectedHelper1 = new HashMap<>();
-		Map<String, String> mapping1_1 = new HashMap<>();
-		mapping1_1.put("a", "x");
-		Map<String, String> mapping2_1 = new HashMap<>();
-		mapping2_1.put("floors", "levels");
-
-		expectedHelper1.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, mapping1_1);
-		expectedHelper1.put(TraceExplorer.MappingNames.VARIABLES, mapping2_1);
-		expectedHelper1.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
-
-		expectedHelper1_1.put("inc", expectedHelper1);
-		expectedHelper1_1.put("dec", expectedHelper_dec);
-
-
-
-		Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>> expectedHelper1_2 = new HashMap<>();
-		Map<TraceExplorer.MappingNames, Map<String, String>> expectedHelper2 = new HashMap<>();
-		Map<String, String> mapping1_2 = new HashMap<>();
-		mapping1_2.put("b", "x");
-		Map<String, String> mapping2_2 = new HashMap<>();
-		mapping2_2.put("floors", "levels");
-
-		expectedHelper2.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, mapping1_2);
-		expectedHelper2.put(TraceExplorer.MappingNames.VARIABLES, mapping2_2);
-		expectedHelper2.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
-
-		expectedHelper1_2.put("inc", expectedHelper2);
-		expectedHelper1_2.put("dec", expectedHelper_dec);
-
-
-
-		Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>> expectedHelper1_3 = new HashMap<>();
-		Map<TraceExplorer.MappingNames, Map<String, String>> expectedHelper3 = new HashMap<>();
-		Map<String, String> mapping1_3 = new HashMap<>();
-		mapping1_3.put("c", "x");
-		Map<String, String> mapping2_3 = new HashMap<>();
-		mapping2_3.put("floors", "levels");
-
-		expectedHelper3.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, mapping1_3);
-		expectedHelper3.put(TraceExplorer.MappingNames.VARIABLES, mapping2_3);
-		expectedHelper3.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
-
-
-		expectedHelper1_3.put("inc", expectedHelper3);
-		expectedHelper1_3.put("dec", expectedHelper_dec);
-
-
-
-		expected.add(expectedHelper1_3);
-		expected.add(expectedHelper1_2);
-		expected.add(expectedHelper1_1);
-
 		Set<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>> result =
 				TraceExplorer.generateAllPossibleMappingVariations(asList(init, first, second), stateSpace.getLoadedMachine().getOperations(), emptySet());
 
-		Assert.assertEquals(expected, result);
+		Assert.assertEquals(singleton(emptyMap()), result);
 
+	}
+
+
+	@Test
+	public void removeEntriesWithEmptyValues_test_return_all(){
+		PersistentTransition init = new PersistentTransition(Transition.INITIALISE_MACHINE_NAME, emptyMap(),
+				emptyMap(), singletonMap("levels", "0"), emptySet(), emptyList());
+
+		PersistentTransition first = new PersistentTransition("inc", singletonMap("a", "1"), emptyMap(),
+				singletonMap("floors", "1"), emptySet(), emptyList());
+
+		PersistentTransition second = new PersistentTransition("dec", Collections.emptyMap(),
+				Collections.emptyMap(), singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList());
+
+
+
+
+		PersistentTransition initNew = new PersistentTransition(Transition.INITIALISE_MACHINE_NAME, Collections.emptyMap(),
+				Collections.emptyMap(), singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList());
+
+		PersistentTransition firstNew_var1 = new PersistentTransition("inc", new HashMap<String, String>() {{
+			put("x","1");
+			put("y","0");
+			put("z","TRUE");
+		}},
+				Collections.emptyMap(), singletonMap("levels", "1"), Collections.emptySet(), Collections.emptyList());
+
+		PersistentTransition firstNew_var2 = new PersistentTransition("inc", new HashMap<String, String>() {{
+
+			put("x","0");
+			put("y","1");
+			put("z","TRUE");
+		}},
+				Collections.emptyMap(), singletonMap("levels", "1"), Collections.emptySet(), Collections.emptyList());
+
+
+
+
+		PersistentTransition secondNew = new PersistentTransition("dec", Collections.emptyMap(),
+				Collections.emptyMap(), singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList());
+
+
+		//The explorer will find multiple possible solutions, we expect at least 3, because we want to test if the mapping from
+		//old to new parameters is working properly
+
+		PersistenceDelta delta1 = new PersistenceDelta(init, Collections.singletonList(initNew));
+		PersistenceDelta delta2_var1 = new PersistenceDelta(first, Collections.singletonList(firstNew_var1));
+		PersistenceDelta delta2_var2 = new PersistenceDelta(first, Collections.singletonList(firstNew_var2));
+
+		PersistenceDelta delta3 = new PersistenceDelta(second, Collections.singletonList(secondNew));
+
+
+		List<PersistenceDelta> expected1 = Arrays.asList(delta1,delta2_var1,delta3);
+		List<PersistenceDelta> expected2 = Arrays.asList(delta1,delta2_var2,delta3);
+
+
+		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> expected = new HashMap<>();
+
+
+
+
+		Map<String, String> expectedHelper_1 = new HashMap<>();
+		expectedHelper_1.put("floors", "levels");
+		expectedHelper_1.put("a", "x");
+
+		Map<String, String> expectedHelper_2 = new HashMap<>();
+		expectedHelper_2.put("floors", "levels");
+		expectedHelper_2.put("a", "y");
+
+
+		Map<String, Map<String, String>> expected_inner1 = new HashMap<>();
+		expected_inner1.put("inc", expectedHelper_1);
+
+		Map<String, Map<String, String>> expected_inner2 = new HashMap<>();
+		expected_inner2.put("inc", expectedHelper_2);
+
+
+
+
+		expected.put(expected_inner1,  expected1);
+		expected.put(expected_inner2,  expected2);
+
+		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result = TraceExplorer.removeEntriesWithEmptyValues(expected);
+
+		Assert.assertEquals(expected, result);
+	}
+
+	@Test
+	public void removeEntriesWithEmptyValues_test_return_empty_map(){
+		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> prepared = new HashMap<>();
+
+
+		Map<String, String> preparedHelper_1 = new HashMap<>();
+		preparedHelper_1.put("floors", "levels");
+		preparedHelper_1.put("a", "x");
+
+		Map<String, String> preparedHelper_2 = new HashMap<>();
+		preparedHelper_2.put("floors", "levels");
+		preparedHelper_2.put("a", "y");
+
+
+		Map<String, Map<String, String>> prepared_inner1 = new HashMap<>();
+		prepared_inner1.put("inc", preparedHelper_1);
+
+		Map<String, Map<String, String>> prepared_inner2 = new HashMap<>();
+		prepared_inner2.put("inc", preparedHelper_2);
+
+
+		prepared.put(prepared_inner1,  emptyList());
+		prepared.put(prepared_inner2,  emptyList());
+
+
+
+		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result = TraceExplorer.removeEntriesWithEmptyValues(prepared);
+
+
+		Assert.assertEquals(emptyMap(), result);
+
+	}
+
+	@Test
+	public void removeEntriesWithEmptyValues_test_return_clean_one(){
+		PersistentTransition init = new PersistentTransition(Transition.INITIALISE_MACHINE_NAME, emptyMap(),
+				emptyMap(), singletonMap("levels", "0"), emptySet(), emptyList());
+
+		PersistentTransition first = new PersistentTransition("inc", singletonMap("a", "1"), emptyMap(),
+				singletonMap("floors", "1"), emptySet(), emptyList());
+
+		PersistentTransition second = new PersistentTransition("dec", Collections.emptyMap(),
+				Collections.emptyMap(), singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList());
+
+
+
+
+		PersistentTransition initNew = new PersistentTransition(Transition.INITIALISE_MACHINE_NAME, Collections.emptyMap(),
+				Collections.emptyMap(), singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList());
+
+		PersistentTransition firstNew_var1 = new PersistentTransition("inc", new HashMap<String, String>() {{
+			put("x","1");
+			put("y","0");
+			put("z","TRUE");
+		}},
+				Collections.emptyMap(), singletonMap("levels", "1"), Collections.emptySet(), Collections.emptyList());
+
+
+
+		PersistentTransition secondNew = new PersistentTransition("dec", Collections.emptyMap(),
+				Collections.emptyMap(), singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList());
+
+
+		//The explorer will find multiple possible solutions, we expect at least 3, because we want to test if the mapping from
+		//old to new parameters is working properly
+
+		PersistenceDelta delta1 = new PersistenceDelta(init, Collections.singletonList(initNew));
+		PersistenceDelta delta2_var1 = new PersistenceDelta(first, Collections.singletonList(firstNew_var1));
+
+		PersistenceDelta delta3 = new PersistenceDelta(second, Collections.singletonList(secondNew));
+
+
+		List<PersistenceDelta> prepared1 = Arrays.asList(delta1,delta2_var1,delta3);
+
+
+		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> prepared = new HashMap<>();
+
+
+		Map<String, String> preparedHelper_1 = new HashMap<>();
+		preparedHelper_1.put("floors", "levels");
+		preparedHelper_1.put("a", "x");
+
+		Map<String, String> preparedHelper_2 = new HashMap<>();
+		preparedHelper_2.put("floors", "levels");
+		preparedHelper_2.put("a", "y");
+
+
+		Map<String, Map<String, String>> prepared_inner1 = new HashMap<>();
+		prepared_inner1.put("inc", preparedHelper_1);
+
+		Map<String, Map<String, String>> prepared_inner2 = new HashMap<>();
+		prepared_inner2.put("inc", preparedHelper_2);
+
+
+		prepared.put(prepared_inner1,  prepared1);
+		prepared.put(prepared_inner2,  emptyList());
+
+
+		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> expected = new HashMap<>();
+
+
+		Map<String, String> expectedHelper = new HashMap<>();
+		expectedHelper.put("floors", "levels");
+		expectedHelper.put("a", "x");
+
+
+
+		Map<String, Map<String, String>> expected_inner = new HashMap<>();
+		expected_inner.put("inc", expectedHelper);
+
+
+		expected.put(expected_inner,  prepared1);
+
+
+
+		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result = TraceExplorer.removeEntriesWithEmptyValues(prepared);
+
+
+		Assert.assertEquals(expected, result);
 	}
 }

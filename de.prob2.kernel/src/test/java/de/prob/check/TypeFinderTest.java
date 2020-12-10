@@ -226,7 +226,7 @@ public class TypeFinderTest {
 
 		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "traces", "testTraceMachine10Steps.prob2trace"));
 
-		Set<String> result = TypeFinder.usedOperations(bla.getTrace());
+		Set<String> result = TypeFinder.usedOperations(bla.getTrace().getTransitionList());
 
 		Set<String> expected = new HashSet<>(Arrays.asList("dec", "getfloors", "inc"));
 
@@ -282,7 +282,7 @@ public class TypeFinderTest {
 		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "traces", "testTraceMachine10Steps.prob2trace"));
 
 
-		TypeFinder typeFinder = new TypeFinder(bla.getTrace(), oldOperations, newOperations, Collections.emptySet(), Collections.emptySet());
+		TypeFinder typeFinder = new TypeFinder(bla.getTrace().getTransitionList(), oldOperations, newOperations, Collections.emptySet(), Collections.emptySet());
 
 		typeFinder.check();
 
@@ -346,7 +346,7 @@ public class TypeFinderTest {
 		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "traces", "testTraceMachine10Steps.prob2trace"));
 
 
-		TypeFinder typeFinder = new TypeFinder(bla.getTrace(), oldOperations, newOperations, Collections.emptySet(), Collections.emptySet());
+		TypeFinder typeFinder = new TypeFinder(bla.getTrace().getTransitionList(), oldOperations, newOperations, Collections.emptySet(), Collections.emptySet());
 
 		typeFinder.check();
 
@@ -369,7 +369,7 @@ public class TypeFinderTest {
 
 
 
-		TypeFinder typeFinder = new TypeFinder(bla.getTrace(), Collections.emptyMap(), Collections.emptyMap(), oldVars, Collections.emptySet());
+		TypeFinder typeFinder = new TypeFinder(bla.getTrace().getTransitionList(), Collections.emptyMap(), Collections.emptyMap(), oldVars, Collections.emptySet());
 
 		typeFinder.check();
 
@@ -393,7 +393,7 @@ public class TypeFinderTest {
 
 
 
-		TypeFinder typeFinder = new TypeFinder(bla.getTrace(), Collections.emptyMap(), Collections.emptyMap(), oldVars, newVars);
+		TypeFinder typeFinder = new TypeFinder(bla.getTrace().getTransitionList(), Collections.emptyMap(), Collections.emptyMap(), oldVars, newVars);
 
 		typeFinder.check();
 

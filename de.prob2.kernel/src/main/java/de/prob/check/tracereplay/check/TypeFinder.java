@@ -4,9 +4,13 @@ package de.prob.check.tracereplay.check;
 import de.prob.check.tracereplay.PersistentTrace;
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.statespace.OperationInfo;
+import de.prob.statespace.Transition;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.emptySet;
 
 /**
  * Performs static checks on a trace and finds potential incompatibilities
@@ -14,7 +18,7 @@ import java.util.stream.Collectors;
  */
 public class TypeFinder {
 
-	private final PersistentTrace trace;
+	private final List<PersistentTransition> trace;
 	private final Map<String, OperationInfo> oldMachine;
 	private final Map<String, OperationInfo> newMachine;
 	private final Set<String> oldVars;
@@ -35,7 +39,7 @@ public class TypeFinder {
 	 * @param oldVars the Variables from the old machine
 	 * @param newVars the Variables from the new machine
 	 */
-	public TypeFinder(PersistentTrace trace, Map<String, OperationInfo> oldMachine, Map<String, OperationInfo> newMachine,
+	public TypeFinder(List<PersistentTransition> trace, Map<String, OperationInfo> oldMachine, Map<String, OperationInfo> newMachine,
 					  Set<String> oldVars, Set<String> newVars){
 		this.trace = trace;
 		this.newMachine = newMachine;
@@ -44,12 +48,28 @@ public class TypeFinder {
 		this.newVars = newVars;
 	}
 
+
+	public TypeFinder(List<PersistentTransition> trace, Map<String, OperationInfo> newMachine, Set<String> newVars){
+		this.trace = trace;
+		this.newMachine = newMachine;
+		this.oldMachine = emptyMap();
+		this.newVars = newVars;
+		this.oldVars = emptySet();
+	}
+
+
+	public static List<PersistentTransition> stripInitClause(List<PersistentTransition> transitionList){
+		return transitionList.stream()
+				.filter(element -> !element.getOperationName().equals(Transition.INITIALISE_MACHINE_NAME))
+				.collect(Collectors.toList());
+	}
+
 	/**
 	 * See master thesis for reference
 	 * We try to narrow down the best candidate for our operation and apply checks to verify our assumption
 	 */
 	public void check(){
-		Set<String> operationNamesTrace = usedOperations(trace);
+		Set<String> operationNamesTrace = usedOperations(stripInitClause(trace));
 		Set<String> operationNamesBeta = newMachine.keySet();
 
 		Set<String> operationNamesDoesNotMatch = new HashSet<>(operationNamesTrace);
@@ -122,6 +142,8 @@ public class TypeFinder {
 	 */
 	public static Set<String> findOperationsWithSameParameterLength(final Set<String> candidates, final Map<String, OperationInfo> oldMachine,
 													  final Map<String, OperationInfo> newMachine){
+
+		if(oldMachine.isEmpty()) return emptySet();
 		return candidates.stream().filter(operation ->
 				newMachine.get(operation).getOutputParameterNames().size() + newMachine.get(operation).getParameterNames().size()
 						==
@@ -154,14 +176,12 @@ public class TypeFinder {
 	}
 
 	/**
-	 * Returns the operations actually used by the trace, contains $initialisation
-	 * @param trace the trace to analyse
+	 * Returns the operations actually used by the trace
+	 * @param transitionList the trace to analyse
 	 * @return a set of operations used in the trace
 	 */
-	public static Set<String> usedOperations(PersistentTrace trace){
-		Set<String> result = trace.getTransitionList().stream().map(PersistentTransition::getOperationName).collect(Collectors.toSet());
-		result.remove("$initialise_machine");
-		return result;
+	public static Set<String> usedOperations(List<PersistentTransition> transitionList){
+		return transitionList.stream().map(PersistentTransition::getOperationName).collect(Collectors.toSet());
 	}
 
 	public Set<String> getTypeIorII() {

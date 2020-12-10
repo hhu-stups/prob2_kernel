@@ -14,6 +14,7 @@ import de.prob.prolog.term.ListPrologTerm;
 import de.prob.scripting.FactoryProvider;
 import de.prob.scripting.ModelFactory;
 import de.prob.scripting.ModelTranslationError;
+import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
@@ -179,14 +180,14 @@ public class DeltaFinderTest {
 
 		Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
 		ReusableAnimator reusableAnimator = injector.getInstance(ReusableAnimator.class);
-		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension(pathAsString.substring(pathAsString.lastIndexOf(".")+1)));
-		factory.extract(pathAsString).loadIntoStateSpace(reusableAnimator.createStateSpace());
+		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension(pathAsString.substring(pathAsStringOld.lastIndexOf(".")+1)));
+		StateSpace stateSpace = reusableAnimator.createStateSpace();
+		factory.extract(pathAsString).loadIntoStateSpace(stateSpace);
 
 
 
 		DeltaFinder deltaFinder = new DeltaFinder(Collections.emptySet(), Collections.emptyMap(), false,
-				reusableAnimator, "", "",
-				injector);
+				 "", "", injector, stateSpace.getLoadedMachine().getOperations());
 
 
 		Map<String, CompoundPrologTerm> newOperations = deltaFinder.getOperations(pathAsString);
@@ -211,9 +212,14 @@ public class DeltaFinderTest {
 
 		Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
 		ReusableAnimator reusableAnimator = injector.getInstance(ReusableAnimator.class);
+		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension(pathAsString.substring(pathAsStringOld.lastIndexOf(".")+1)));
+		StateSpace stateSpace = reusableAnimator.createStateSpace();
+		factory.extract(pathAsString).loadIntoStateSpace(stateSpace);
+
+
 
 		DeltaFinder deltaFinder = new DeltaFinder(Collections.emptySet(), Collections.emptyMap(), false,
-				reusableAnimator, pathAsStringOld, pathAsString, injector);
+				pathAsStringOld, pathAsString, injector, stateSpace.getLoadedMachine().getOperations());
 
 		Map<String, CompoundPrologTerm> newOperations = deltaFinder.getOperations(pathAsString);
 
@@ -241,9 +247,13 @@ public class DeltaFinderTest {
 
 		Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
 		ReusableAnimator reusableAnimator = injector.getInstance(ReusableAnimator.class);
+		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension(pathAsString.substring(pathAsStringOld.lastIndexOf(".")+1)));
+		StateSpace stateSpace = reusableAnimator.createStateSpace();
+		factory.extract(pathAsString).loadIntoStateSpace(stateSpace);
 
-		DeltaFinder deltaFinder = new DeltaFinder(Collections.emptySet(), Collections.emptyMap(), false, reusableAnimator,
-				pathAsStringOld, pathAsString, injector);
+
+		DeltaFinder deltaFinder = new DeltaFinder(Collections.emptySet(), Collections.emptyMap(), false,
+				pathAsStringOld, pathAsString, injector, stateSpace.getLoadedMachine().getOperations());
 
 		Map<String, CompoundPrologTerm> oldOperations = deltaFinder.getOperations(pathAsStringOld);
 		Map<String, CompoundPrologTerm> newOperations = deltaFinder.getOperations(pathAsString);
@@ -272,9 +282,13 @@ public class DeltaFinderTest {
 
 		Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
 		ReusableAnimator reusableAnimator = injector.getInstance(ReusableAnimator.class);
+		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension(pathAsString.substring(pathAsStringOld.lastIndexOf(".")+1)));
+		StateSpace stateSpace = reusableAnimator.createStateSpace();
+		factory.extract(pathAsString).loadIntoStateSpace(stateSpace);
 
-		DeltaFinder deltaFinder = new DeltaFinder(Collections.emptySet(), Collections.emptyMap(), false, reusableAnimator,
-				pathAsStringOld, pathAsString, injector);
+
+		DeltaFinder deltaFinder = new DeltaFinder(Collections.emptySet(), Collections.emptyMap(), false,
+				pathAsStringOld, pathAsString, injector, stateSpace.getLoadedMachine().getOperations());
 
 		Set<String> candidates = new HashSet<>(Arrays.asList("inc", "dec", "getfloors", "$initialise_machine"));
 		Map<String, CompoundPrologTerm> newOperations = deltaFinder.getOperations(pathAsString);
@@ -323,9 +337,13 @@ public class DeltaFinderTest {
 
 		Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
 		ReusableAnimator reusableAnimator = injector.getInstance(ReusableAnimator.class);
+		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension(pathAsString.substring(pathAsStringOld.lastIndexOf(".")+1)));
+		StateSpace stateSpace = reusableAnimator.createStateSpace();
+		factory.extract(pathAsString).loadIntoStateSpace(stateSpace);
 
-		DeltaFinder deltaFinder = new DeltaFinder(Collections.emptySet(), Collections.emptyMap(), true, reusableAnimator,
-				pathAsStringOld, pathAsString, injector);
+
+		DeltaFinder deltaFinder = new DeltaFinder(Collections.emptySet(), Collections.emptyMap(), true,
+				pathAsStringOld, pathAsString, injector, stateSpace.getLoadedMachine().getOperations());
 
 
 		deltaFinder.calculateDelta();
@@ -354,17 +372,21 @@ public class DeltaFinderTest {
 
 		Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
 		ReusableAnimator reusableAnimator = injector.getInstance(ReusableAnimator.class);
+		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension(pathAsString.substring(pathAsStringOld.lastIndexOf(".")+1)));
+		StateSpace stateSpace = reusableAnimator.createStateSpace();
+		factory.extract(pathAsString).loadIntoStateSpace(stateSpace);
+
 
 		Map<String, Set<String>> typeIICandidates = new HashMap<>();
 		typeIICandidates.put("getfloors", singleton("getlevels"));
 
-		DeltaFinder deltaFinder = new DeltaFinder(Collections.emptySet(), typeIICandidates, true, reusableAnimator,
-				pathAsStringOld, pathAsString, injector);
+		DeltaFinder deltaFinder = new DeltaFinder(Collections.emptySet(), typeIICandidates, true,
+				pathAsStringOld, pathAsString, injector, stateSpace.getLoadedMachine().getOperations());
 
 
 		deltaFinder.calculateDelta();
 
-		Map<String, Map<String, String>> result = deltaFinder.getResultTypeIorII();
+		Map<String, Map<String, String>> result = deltaFinder.getResultTypeII();
 
 		Map<String, Map<String, String>> expected = new HashMap<>();
 		Map<String, String> helper = new HashMap<>();

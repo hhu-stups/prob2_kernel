@@ -2,9 +2,12 @@ package de.prob.check.tracereplay.check;
 
 import de.prob.statespace.OperationInfo;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static java.util.Collections.emptyMap;
 
 public class Delta {
 
@@ -62,6 +65,19 @@ public class Delta {
 		this.deltaName = deltaName;
 		this.inputParameters = inputParameters;
 		this.outputParameters = outputParameters;
+		this.variables = variables;
+	}
+
+	/**
+	 * Constructor for initialisation
+	 * @param name
+	 * @param variables
+	 */
+	public Delta(String name, Map<String, String> variables){
+		this.originalName = name;
+		this.deltaName = name;
+		this.inputParameters = emptyMap();
+		this.outputParameters = emptyMap();
 		this.variables = variables;
 	}
 

@@ -26,8 +26,6 @@ import java.util.stream.Stream;
 
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
-import static org.codehaus.groovy.runtime.InvokerHelper.asList;
 
 public class TraceExplorerIntegrationTest {
 
@@ -56,7 +54,7 @@ public class TraceExplorerIntegrationTest {
 		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "Lift.mch"));
 
 		Map<Map<String,  Map<String, String>>, List<PersistenceDelta>> result =
-				TraceExplorer.replayTrace(Collections.emptyList(), stateSpace, stateSpace.getLoadedMachine().getOperations(), Stream.of("inc", "dec", "getfloors").collect(Collectors.toSet()));
+				new TraceExplorer(false).replayTrace(Collections.emptyList(), stateSpace, stateSpace.getLoadedMachine().getOperations(), Stream.of("inc", "dec", "getfloors").collect(Collectors.toSet()));
 
 		Assert.assertTrue(result.isEmpty());
 	}
@@ -159,7 +157,7 @@ public class TraceExplorerIntegrationTest {
 
 
 		Map<Map<String,  Map<String, String>>, List<PersistenceDelta>> result =
-				TraceExplorer.replayTrace(transitionList, stateSpace, stateSpace.getLoadedMachine().getOperations(), Stream.of("inc", "dec").collect(Collectors.toSet()));
+				new TraceExplorer(true).replayTrace(transitionList, stateSpace, stateSpace.getLoadedMachine().getOperations(), Stream.of("inc", "dec").collect(Collectors.toSet()));
 
 
 
@@ -275,7 +273,7 @@ public class TraceExplorerIntegrationTest {
 
 
 		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result =
-				TraceExplorer.replayTrace(transitionList, stateSpace, stateSpace.getLoadedMachine().getOperations(),
+				new TraceExplorer(true).replayTrace(transitionList, stateSpace, stateSpace.getLoadedMachine().getOperations(),
 						Stream.of("inc", "dec").collect(Collectors.toSet()));
 
 
@@ -308,7 +306,7 @@ public class TraceExplorerIntegrationTest {
 
 
 		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result =
-				TraceExplorer.replayTrace(Stream.of(init,first,second).collect(toList()), stateSpace, stateSpace.getLoadedMachine().getOperations(), emptySet());
+				new TraceExplorer(true).replayTrace(Stream.of(init,first,second).collect(toList()), stateSpace, stateSpace.getLoadedMachine().getOperations(), emptySet());
 
 
 
@@ -403,7 +401,7 @@ public class TraceExplorerIntegrationTest {
 
 
 		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result =
-				TraceExplorer.replayTrace(Stream.of(init,first,second).collect(toList()), stateSpace, stateSpace.getLoadedMachine().getOperations(), singleton("inc"));
+				new TraceExplorer(true).replayTrace(Stream.of(init,first,second).collect(toList()), stateSpace, stateSpace.getLoadedMachine().getOperations(), singleton("inc"));
 
 
 
@@ -429,10 +427,57 @@ public class TraceExplorerIntegrationTest {
 
 
 		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result =
-				TraceExplorer.replayTrace(Stream.of(init,first,second).collect(toList()), stateSpace, stateSpace.getLoadedMachine().getOperations(), emptySet());
+				new TraceExplorer(true).replayTrace(Stream.of(init,first,second).collect(toList()), stateSpace, stateSpace.getLoadedMachine().getOperations(), emptySet());
 
 
 		Assert.assertEquals(emptyMap(),result);
+	}
+
+
+	@Test
+	public void integration_5_traceReplay_ini_was_not_set() throws IOException, ModelTranslationError {
+
+		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "Lift2.mch"));
+
+
+		PersistentTransition init = new PersistentTransition(Transition.INITIALISE_MACHINE_NAME, emptyMap(),
+				emptyMap(), singletonMap("floors", "0"), emptySet(), emptyList());
+
+		PersistentTransition first = new PersistentTransition("inc", singletonMap("x", "1"), emptyMap(),
+				singletonMap("levels", "1"), emptySet(), emptyList());
+
+		PersistentTransition second = new PersistentTransition("dec", Collections.emptyMap(),
+				Collections.emptyMap(), singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList());
+
+
+		PersistenceDelta deltaInit = new PersistenceDelta(init, singletonList(
+				new PersistentTransition(Transition.INITIALISE_MACHINE_NAME, emptyMap(),
+						emptyMap(), singletonMap("levels", "0"), emptySet(), emptyList())));
+
+		PersistenceDelta deltaFirst = new PersistenceDelta(first, singletonList(first));
+
+		PersistenceDelta deltaSecond = new PersistenceDelta(second, singletonList(second));
+
+		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> expected = new HashMap<>();
+		expected.put(emptyMap(), Arrays.asList(deltaInit, deltaFirst, deltaSecond));
+
+		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result =
+				new TraceExplorer(false).replayTrace(Stream.of(init,first,second).collect(toList()), stateSpace, stateSpace.getLoadedMachine().getOperations(), emptySet());
+
+
+		Assert.assertEquals(expected,result);
+	}
+	
+	
+	@Test
+	public void integration_6_realWorldExample() throws IOException, ModelTranslationError {
+		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "LiftProto2.mch"));
+
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "LiftProto.prob2trace"));
+
+		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result = new TraceExplorer(false).replayTrace(jsonFile.getTrace().getTransitionList(), stateSpace, jsonFile.getMachineOperationInfos(), singleton("inc"));
+
+		System.out.println(result);
 	}
 
 
