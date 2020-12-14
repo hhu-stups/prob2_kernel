@@ -1,9 +1,11 @@
 package de.prob.animator.domainobjects;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -162,7 +164,11 @@ public final class DotCall {
 					dotProcess.getOutputStream().write(this.input);
 					dotProcess.getOutputStream().close();
 				} catch (IOException e) {
-					LOGGER.error("Failed to write dot input", e);
+					if (dotProcess.isAlive()) {
+						LOGGER.error("Failed to write dot input", e);
+					} else {
+						LOGGER.info("dot is no longer alive - could not write input", e);
+					}
 				}
 			}, String.format("stdin writer for DotProcess %x", this.hashCode()));
 			stdinWriter.start();
@@ -179,15 +185,31 @@ public final class DotCall {
 						errorOutput.add(line);
 						LOGGER.error("Error output from dot: {}", line);
 					});
-				} catch (IOException e) {
-					LOGGER.error("Failed to read dot error output", e);
+				} catch (IOException | UncheckedIOException e) {
+					if (dotProcess.isAlive()) {
+						LOGGER.error("Failed to read dot error output", e);
+					} else {
+						LOGGER.info("dot is no longer alive - could not read error output", e);
+					}
 				}
 			}, String.format("stderr reader for DotProcess %x", this.hashCode()));
 			stderrLogger.start();
 			
 			// Read stdout while dot is running, to prevent the stream buffer from filling up and blocking dot.
 			// (Unlike with stderr, this actually happens in practice, when the generated output is large.)
-			final byte[] rendered = ByteStreams.toByteArray(dotProcess.getInputStream());
+			final ByteArrayOutputStream renderedStream = new ByteArrayOutputStream();
+			final Thread stdoutReader = new Thread(() -> {
+				try {
+					ByteStreams.copy(dotProcess.getInputStream(), renderedStream);
+				} catch (IOException e) {
+					if (dotProcess.isAlive()) {
+						LOGGER.error("Failed to read dot output", e);
+					} else {
+						LOGGER.info("dot is no longer alive - could not read output", e);
+					}
+				}
+			}, String.format("stdout reader for DotProcess %x", this.hashCode()));
+			stdoutReader.start();
 			
 			final int exitCode;
 			try {
@@ -204,7 +226,8 @@ public final class DotCall {
 				throw new ProBError("dot exited with status code " + exitCode + ":\n" + errorOutput);
 			}
 			
-			return rendered;
+			stdoutReader.join(); // Make sure that all output has been read
+			return renderedStream.toByteArray();
 		});
 	}
 	
