@@ -6,13 +6,13 @@ plugins {
 apply plugin: 'java-library'
 apply plugin: 'groovy'
 apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
-apply plugin: 'signing'
 apply plugin: 'jacoco'
 
 
 allprojects {
 	apply(plugin: "java")
+	apply(plugin: "maven-publish")
+	apply(plugin: "signing")
 	
 	project.group = 'de.hhu.stups'
 	// IMPORTANT: Before releasing ProB 2, remember to set cli_version below to a release version!
@@ -60,6 +60,58 @@ allprojects {
 	// See https://stackoverflow.com/a/52797107
 	javadoc {
 		options.addStringOption("sourcepath", "")
+	}
+	
+	publishing {
+		publications {
+			mavenJava(MavenPublication) {
+				from components.java
+				
+				pom {
+					name = project.name
+					url = 'http://www.prob2.de'
+					
+					licenses {
+						license {
+							name = 'Eclipse Public License, Version 1.0'
+							url = 'http://www.eclipse.org/org/documents/epl-v10.html'
+						}
+					}
+					
+					scm {
+						connection = 'scm:git:https://github.com/hhu-stups/prob2_kernel.git'
+						developerConnection = 'scm:git:git@gitlab.cs.uni-duesseldorf.de:stups/prob/prob2_kernel.git'
+						url = 'https://github.com/hhu-stups/prob2_kernel'
+					}
+					
+					developers {
+						developer {
+							id = 'bendisposto'
+							name = 'Jens Bendisposto'
+							email = 'jens@bendisposto.de'
+						}
+					}
+				}
+			}
+		}
+		
+		repositories {
+			maven {
+				final releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+				final snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots"
+				url isSnapshot ? snapshotsRepoUrl : releasesRepoUrl
+				if (project.hasProperty('ossrhUsername') && project.hasProperty('ossrhPassword')) {
+					credentials {
+						username project.ossrhUsername
+						password project.ossrhPassword
+					}
+				}
+			}
+		}
+	}
+	
+	signing {
+		sign publishing.publications.mavenJava
 	}
 }
 
@@ -238,55 +290,4 @@ eclipse {
 	}
 }
 
-publishing {
-	publications {
-		mavenJava(MavenPublication) {
-			from components.java
-			
-			pom {
-				name = "prob2-kernel"
-				description = 'The ProB 2.0 Kernel'
-				url = 'http://www.prob2.de'
-				
-				licenses {
-					license {
-						name = 'Eclipse Public License, Version 1.0'
-						url = 'http://www.eclipse.org/org/documents/epl-v10.html'
-					}
-				}
-				
-				scm {
-					connection = 'scm:git:git://github.com/bendisposto/prob2.git'
-					developerConnection = 'scm:git:git@github.com:bendisposto/prob2.git'
-					url = 'https://github.com/bendisposto/prob2'
-				}
-				
-				developers {
-					developer {
-						id = 'bendisposto'
-						name = 'Jens Bendisposto'
-						email = 'jens@bendisposto.de'
-					}
-				}
-			}
-		}
-	}
-	
-	repositories {
-		maven {
-			final releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
-			final snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots"
-			url isSnapshot ? snapshotsRepoUrl : releasesRepoUrl
-			if (project.hasProperty('ossrhUsername') && project.hasProperty('ossrhPassword')) {
-				credentials {
-					username project.ossrhUsername
-					password project.ossrhPassword
-				}
-			}
-		}
-	}
-}
-
-signing {
-	sign publishing.publications.mavenJava
-}
+publishing.publications.mavenJava.pom.description = "The ProB 2.0 Kernel library"

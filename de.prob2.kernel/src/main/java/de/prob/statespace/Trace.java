@@ -240,23 +240,28 @@ public class Trace extends GroovyObjectSupport {
 		State currentState = this.current.getCurrentState();
 		TraceElement current = this.current;
 		PersistentVector<Transition> transitionList = this.transitionList;
-		for (int i = 0; i < numOfSteps; i++) {
-			final List<Transition> ops = currentState.getOutTransitions();
-			if (ops.isEmpty()) {
-				break;
+		try {
+			this.stateSpace.startTransaction();
+			for (int i = 0; i < numOfSteps; i++) {
+				final List<Transition> ops = currentState.getOutTransitions();
+				if (ops.isEmpty()) {
+					break;
+				}
+				Collections.shuffle(ops);
+				final Transition op = ops.get(0);
+				current = new TraceElement(op, current);
+				if (i == 0) {
+					transitionList = branchTransitionListIfNecessary(op);
+				} else {
+					transitionList = transitionList.assocN(transitionList.size(), op);
+				}
+				currentState = op.getDestination();
+				if(Thread.currentThread().isInterrupted()) {
+					return this;
+				}
 			}
-			Collections.shuffle(ops);
-			final Transition op = ops.get(0);
-			current = new TraceElement(op, current);
-			if (i == 0) {
-				transitionList = branchTransitionListIfNecessary(op);
-			} else {
-				transitionList = transitionList.assocN(transitionList.size(), op);
-			}
-			currentState = op.getDestination();
-			if(Thread.currentThread().isInterrupted()) {
-				return this;
-			}
+		} finally {
+			this.stateSpace.endTransaction();
 		}
 
 		return new Trace(stateSpace, current, transitionList, this.uuid);

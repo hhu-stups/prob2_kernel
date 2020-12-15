@@ -1,9 +1,11 @@
 package de.prob.animator.command;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.prob.animator.domainobjects.DotVisualizationCommand;
 import de.prob.animator.domainobjects.DynamicCommandItem;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.parser.ISimplifiedROMap;
@@ -11,6 +13,10 @@ import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.State;
 
+/**
+ * @deprecated Use {@link DotVisualizationCommand#visualizeAsSvgToFile(Path, List)} or {@link DotVisualizationCommand#visualizeAsSvgToString(List)} instead.
+ */
+@Deprecated
 public class GetSvgForVisualizationCommand extends AbstractCommand {
 	private static final String PROLOG_COMMAND_NAME = "call_dot_command_and_dot_in_state";
 	
