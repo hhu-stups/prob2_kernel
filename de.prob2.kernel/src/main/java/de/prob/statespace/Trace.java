@@ -383,6 +383,9 @@ public class Trace extends GroovyObjectSupport {
 	}
 
 	public State getPreviousState() {
+		if(!canGoBack()) {
+			return null;
+		}
 		return current.getPrevious().getCurrentState();
 	}
 
