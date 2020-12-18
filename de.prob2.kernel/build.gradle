@@ -16,8 +16,8 @@ allprojects {
 	
 	project.group = 'de.hhu.stups'
 	// IMPORTANT: Before releasing ProB 2, remember to set cli_version below to a release version!
-	//project.version = '3.11.0'
-	project.version = '4.0.0-SNAPSHOT'
+	project.version = '3.12.0'
+	//project.version = '4.0.0-SNAPSHOT'
 	project.ext.isSnapshot = project.version.endsWith("-SNAPSHOT")
 	project.ext.SOURCE_ENCODING = "UTF-8"
 	
