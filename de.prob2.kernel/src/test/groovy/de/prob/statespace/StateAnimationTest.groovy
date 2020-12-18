@@ -2,9 +2,9 @@ package de.prob.statespace
 
 import java.nio.file.Paths
 
-import de.prob.Main
 import de.prob.animator.domainobjects.ClassicalB
 import de.prob.animator.domainobjects.FormulaExpand
+import de.prob.cli.CliTestCommon
 import de.prob.scripting.ClassicalBFactory
 
 import spock.lang.Specification
@@ -17,7 +17,7 @@ class StateAnimationTest extends Specification {
 
 	def setupSpec() {
 		final path = Paths.get("groovyTests", "machines", "scheduler.mch").toString()
-		final factory = Main.injector.getInstance(ClassicalBFactory.class)
+		final factory = CliTestCommon.injector.getInstance(ClassicalBFactory.class)
 		s = factory.extract(path).load([:])
 		root = s.root
 		firstState = root.$initialise_machine()
@@ -73,8 +73,11 @@ class StateAnimationTest extends Specification {
 	}
 
 	def "you can't find an illegal transition"() {
-		expect:
-		root.findTransition("blah", []) == null
+		when:
+		root.findTransition("blah", [])
+
+		then:
+		thrown(IllegalArgumentException)
 	}
 
 	def "transition that is cached will be simply returned if no predicates are given"() {

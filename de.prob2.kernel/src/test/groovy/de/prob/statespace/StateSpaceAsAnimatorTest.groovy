@@ -2,10 +2,10 @@ package de.prob.statespace
 
 import java.nio.file.Paths
 
-import de.prob.Main
 import de.prob.animator.command.CheckInitialisationStatusCommand
 import de.prob.animator.command.CheckInvariantStatusCommand
 import de.prob.animator.command.ExploreStateCommand
+import de.prob.cli.CliTestCommon
 import de.prob.scripting.ClassicalBFactory
 
 import spock.lang.Specification
@@ -17,7 +17,7 @@ class StateSpaceAsAnimatorTest extends Specification {
 
 	def setupSpec() {
 		final path = Paths.get("groovyTests", "machines", "scheduler.mch").toString()
-		final factory = Main.injector.getInstance(ClassicalBFactory.class)
+		final factory = CliTestCommon.injector.getInstance(ClassicalBFactory.class)
 		s = factory.extract(path).load([:])
 		root = s.root
 		firstState = root.$initialise_machine()
@@ -78,7 +78,7 @@ class StateSpaceAsAnimatorTest extends Specification {
 
 	def "it is possible to notify animation listeners that the animator is busy"() {
 		given:
-		final animations = Main.injector.getInstance(AnimationSelector.class)
+		final animations = CliTestCommon.injector.getInstance(AnimationSelector.class)
 		animations.addNewAnimation(new Trace(s))
 		final IAnimationChangeListener mylistener = Mock()
 

@@ -2,9 +2,9 @@ package de.prob.statespace
 
 import java.nio.file.Paths
 
-import de.prob.Main
 import de.prob.animator.domainobjects.ClassicalB
 import de.prob.animator.domainobjects.StateError
+import de.prob.cli.CliTestCommon
 import de.prob.model.representation.CSPModel
 import de.prob.scripting.ClassicalBFactory
 
@@ -18,7 +18,7 @@ class BasicStateTest extends Specification {
 
 	def setupSpec() {
 		final path = Paths.get("groovyTests", "machines", "scheduler.mch").toString()
-		final factory = Main.injector.getInstance(ClassicalBFactory.class)
+		final factory = CliTestCommon.injector.getInstance(ClassicalBFactory.class)
 		s = factory.extract(path).load([:])
 		root = s.root
 		firstState = root.$initialise_machine()
@@ -60,7 +60,7 @@ class BasicStateTest extends Specification {
 		def oldmodel = s.getModel()
 		
 		
-		def model = new CSPModel(null)
+		def model = CliTestCommon.injector.getInstance(CSPModel.class)
 
 		s.model = model
 
@@ -96,6 +96,31 @@ class BasicStateTest extends Specification {
 		then:
 		root.hashCode() == sameroot.hashCode()
 		root.hashCode() != otherroot.hashCode()
+	}
+
+	def "isConstantsSetUp contacts Prolog to check constants setup status (if it isn't explored)"() {
+		setup:
+		root.constantsSetUp = false
+		root.explored = false
+
+		when:
+		def constantsSetUp = root.isConstantsSetUp()
+
+		then:
+		constantsSetUp
+		root.isExplored()
+	}
+
+	def "if cached, constantsSetUp doesn't contact prolog"() {
+		setup:
+		root.constantsSetUp = false
+		root.explored = true
+
+		when:
+		def constantsSetUp = root.isConstantsSetUp()
+
+		then:
+		!constantsSetUp
 	}
 
 	def "isInitialised contacts Prolog to check initialisation status (if it isn't explored)"() {
@@ -293,7 +318,7 @@ class BasicStateTest extends Specification {
 		def transitions = firstState.getOutTransitions()
 
 		then:
-		transitions.inject(true) { acc, i -> acc && !i.isEvaluated() }
+		transitions.every {!it.isEvaluated()}
 	}
 
 	def "don't evaluate transitions"() {
@@ -304,7 +329,7 @@ class BasicStateTest extends Specification {
 		def transitions = firstState.getOutTransitions(false)
 
 		then:
-		transitions.inject(true) { acc, i -> acc && !i.isEvaluated() }
+		transitions.every {!it.isEvaluated()}
 	}
 
 	def "evaluate transitions"() {
@@ -315,7 +340,7 @@ class BasicStateTest extends Specification {
 		def transitions = firstState.getOutTransitions(true)
 
 		then:
-		transitions.inject(true) { acc, i -> acc && i.isEvaluated() }
+		transitions.every {it.isEvaluated()}
 	}
 
 	def "explore changes all the values"() {
@@ -324,6 +349,7 @@ class BasicStateTest extends Specification {
 		s.subscribe(root, [f])
 		root.transitions = []
 		root.values = [:]
+		root.constantsSetUp = false
 		root.initialised = true
 		root.invariantOk = false
 		root.timeoutOccurred = true
@@ -341,6 +367,7 @@ class BasicStateTest extends Specification {
 		then:
 		!root.transitions.isEmpty()
 		!root.getValues().isEmpty()
+		root.constantsSetUp == true
 		root.initialised == false
 		root.invariantOk == true
 		root.timeoutOccurred == false

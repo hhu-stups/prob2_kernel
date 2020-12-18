@@ -1,7 +1,7 @@
 package de.prob.synthesis;
 
 public interface BSynthesisResult {
-  boolean isProgram();
+	boolean isProgram();
 
-  boolean isDistinguishingExample();
+	boolean isDistinguishingExample();
 }

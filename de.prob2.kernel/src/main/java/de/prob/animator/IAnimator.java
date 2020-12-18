@@ -1,8 +1,10 @@
 package de.prob.animator;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 import de.prob.animator.command.AbstractCommand;
+import de.prob.animator.command.ComposedCommand;
 
 /**
  * This interface provides the methods needed to access the ProB prolog kernel.
@@ -29,7 +31,19 @@ public interface IAnimator {
 	 * @param commands
 	 *            multiple {@link AbstractCommand}s to execute
 	 */
-	void execute(AbstractCommand... commands);
+	default void execute(AbstractCommand... commands) {
+		this.execute(new ComposedCommand(commands));
+	}
+
+	/**
+	 * Takes multiple commands and executes them.
+	 * 
+	 * @param commands
+	 *            multiple {@link AbstractCommand}s to execute
+	 */
+	default void execute(List<? extends AbstractCommand> commands) {
+		this.execute(new ComposedCommand(commands));
+	}
 
 	/**
 	 * Interrupt any commands that are currently being executed.

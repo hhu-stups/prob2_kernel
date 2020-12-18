@@ -203,7 +203,7 @@ public class FormulaUtil {
 				if (!(f.getAst() instanceof AEqualPredicate)) {
 					throw new IllegalArgumentException("Expected predicate to be conjunct of equivalences.");
 				}
-				final String[] split2 = f.toUnicode().split(UnicodeTranslator.toUnicode("="));
+				final String[] split2 = f.toUnicode().split(UnicodeTranslator.toRodinUnicode("="));
 				assert split2.length == 2;
 				final Node lhs = new EventB(split2[0], formula.getTypes(), FormulaExpand.EXPAND).getAst();
 				if (!(lhs instanceof AIdentifierExpression)) {

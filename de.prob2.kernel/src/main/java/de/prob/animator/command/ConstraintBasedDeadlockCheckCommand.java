@@ -61,10 +61,18 @@ public class ConstraintBasedDeadlockCheckCommand extends AbstractCommand
 		return result;
 	}
 
+	/**
+	 * @deprecated Use {@link #getResult()} instead. If a deadlock was found, the result is an instance of {@link CBCDeadlockFound}, and a trace to the deadlock state can be obtained using {@link CBCDeadlockFound#getTrace(StateSpace)}.
+	 */
+	@Deprecated
 	public String getDeadlockStateId() {
 		return deadlockStateId;
 	}
 
+	/**
+	 * @deprecated Use {@link #getResult()} instead. If a deadlock was found, the result is an instance of {@link CBCDeadlockFound}, and a trace to the deadlock state can be obtained using {@link CBCDeadlockFound#getTrace(StateSpace)}.
+	 */
+	@Deprecated
 	public Transition getDeadlockOperation() {
 		return deadlockOperation;
 	}
@@ -89,10 +97,7 @@ public class ConstraintBasedDeadlockCheckCommand extends AbstractCommand
 			this.result = new ModelCheckOk("No deadlock was found");
 		} else if (resultTerm.hasFunctor("errors", 1)) {
 			PrologTerm error = resultTerm.getArgument(1);
-			logger.error("CBC Deadlock Check produced errors: {}", error);
-			this.result = new CheckError(
-				"CBC Deadlock check produced errors. This was likely during the typechecking of "
-				+ "the given predicate. See Log for details.");
+			this.result = new CheckError("CBC Deadlock check produced errors: " + error);
 		} else if (resultTerm.hasFunctor("interrupted", 0)) {
 			this.result = new NotYetFinished("CBC Deadlock check was interrupted", -1);
 		} else if (resultTerm.hasFunctor("deadlock", 2)) {
@@ -107,9 +112,7 @@ public class ConstraintBasedDeadlockCheckCommand extends AbstractCommand
 
 			result = new CBCDeadlockFound(deadlockStateId, deadlockOperation);
 		} else {
-			String msg = "unexpected result from deadlock check: " + resultTerm;
-			logger.error(msg);
-			throw new ProBError(msg);
+			throw new ProBError("unexpected result from deadlock check: " + resultTerm);
 		}
 	}
 

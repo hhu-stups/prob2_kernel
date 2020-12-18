@@ -7,9 +7,8 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.MoreObjects;
 
-import de.prob.animator.command.ComposedCommand;
-import de.prob.animator.command.ExpandFormulaCommand;
-import de.prob.animator.command.ExpandFormulaNonrecursiveCommand;
+import de.prob.animator.command.EvaluateBVisual2FormulasCommand;
+import de.prob.animator.command.ExpandBVisual2FormulaCommand;
 import de.prob.animator.command.GetTopLevelFormulasCommand;
 import de.prob.animator.command.InsertFormulaForVisualizationCommand;
 import de.prob.statespace.State;
@@ -101,6 +100,136 @@ public final class BVisual2Formula {
 	}
 	
 	/**
+	 * <p>Expand (but don't evaluate) multiple formulas non-recursively. All formulas must belong to the same state space.</p>
+	 * <p>To fully expand a formula recursively, {@link #expandStructureMultiple(List)} should be used.</p>
+	 *
+	 * @param formulas the formulas to expand
+	 * @return the expanded formula structure
+	 *
+	 * @see #expandStructureNonrecursive() 
+	 */
+	public static List<ExpandedFormula> expandStructureNonrecursiveMultiple(final List<BVisual2Formula> formulas) {
+		Objects.requireNonNull(formulas, "formulas");
+		
+		if (formulas.isEmpty()) {
+			return Collections.emptyList();
+		}
+		
+		final BVisual2Formula firstFormula = formulas.get(0);
+		final List<ExpandBVisual2FormulaCommand> expandCommands = formulas.stream()
+			.peek(Objects::requireNonNull)
+			.peek(formula -> {
+				if (!formula.getStateSpace().equals(firstFormula.getStateSpace())) {
+					throw new IllegalArgumentException(String.format("Formula %s and %s don't belong to the same state space", firstFormula, formula));
+				}
+			})
+			.map(formula -> new ExpandBVisual2FormulaCommand(formula, null, false))
+			.collect(Collectors.toList());
+		
+		firstFormula.getStateSpace().execute(expandCommands);
+		
+		return expandCommands.stream()
+			.map(ExpandBVisual2FormulaCommand::getExpanded)
+			.collect(Collectors.toList());
+	}
+	
+	/**
+	 * <p>Expand (but don't evaluate) this formula non-recursively.</p>
+	 * <p>To expand many formulas in the same state, {@link #expandStructureNonrecursiveMultiple(List)} should be used for better performance. To fully expand a formula recursively, {@link #expandStructure()} should be used.</p>
+	 *
+	 * @return the expanded formula structure
+	 *
+	 * @see #expandStructureNonrecursiveMultiple(List)
+	 */
+	public ExpandedFormula expandStructureNonrecursive() {
+		return expandStructureNonrecursiveMultiple(Collections.singletonList(this)).get(0);
+	}
+	
+	/**
+	 * <p>Expand (but don't evaluate) multiple formulas recursively. All formulas must belong to the same state space.</p>
+	 * <p>If the formulas' children are not used (or only partially), {@link #expandStructureNonrecursiveMultiple(List)} should be used to avoid recursively expanding all children when not needed.</p>
+	 *
+	 * @param formulas the formulas to expand
+	 * @return the expanded formula structure
+	 *
+	 * @see #expandStructure() 
+	 */
+	public static List<ExpandedFormula> expandStructureMultiple(final List<BVisual2Formula> formulas) {
+		Objects.requireNonNull(formulas, "formulas");
+		
+		if (formulas.isEmpty()) {
+			return Collections.emptyList();
+		}
+		
+		final BVisual2Formula firstFormula = formulas.get(0);
+		final List<ExpandBVisual2FormulaCommand> expandCommands = formulas.stream()
+			.peek(Objects::requireNonNull)
+			.peek(formula -> {
+				if (!formula.getStateSpace().equals(firstFormula.getStateSpace())) {
+					throw new IllegalArgumentException(String.format("Formula %s and %s don't belong to the same state space", firstFormula, formula));
+				}
+			})
+			.map(formula -> new ExpandBVisual2FormulaCommand(formula, null, true))
+			.collect(Collectors.toList());
+		
+		firstFormula.getStateSpace().execute(expandCommands);
+		
+		return expandCommands.stream()
+			.map(ExpandBVisual2FormulaCommand::getExpanded)
+			.collect(Collectors.toList());
+	}
+	
+	/**
+	 * <p>Expand (but don't evaluate) this formula recursively.</p>
+	 * <p>To expand many formulas in the same state, {@link #expandStructureMultiple(List)} should be used for better performance. If the formula's children are not used (or only partially), {@link #expandStructureNonrecursive()}} should be used to avoid recursively expanding all children when not needed.</p>
+	 *
+	 * @return the expanded formula structure
+	 *
+	 * @see #expandStructureMultiple(List)
+	 */
+	public ExpandedFormula expandStructure() {
+		return expandStructureMultiple(Collections.singletonList(this)).get(0);
+	}
+	
+	/**
+	 * <p>Evaluate multiple formulas in the given state. All formulas must belong to the same state space as the state.</p>
+	 * 
+	 * @param formulas the formulas to evaluate
+	 * @param state the state in which to evaluate the formulas
+	 * @return the evaluated formula values
+	 */
+	public static List<BVisual2Value> evaluateMultiple(final List<BVisual2Formula> formulas, final State state) {
+		Objects.requireNonNull(formulas, "formulas");
+		Objects.requireNonNull(state, "state");
+		
+		if (formulas.isEmpty()) {
+			return Collections.emptyList();
+		}
+		
+		for (final BVisual2Formula formula : formulas) {
+			Objects.requireNonNull(formula);
+			if (!formula.getStateSpace().equals(state.getStateSpace())) {
+				throw new IllegalArgumentException(String.format("Formula %s does not belong to the state space of the given state: %s", formula, state.getStateSpace()));
+			}
+		}
+		
+		final EvaluateBVisual2FormulasCommand evaluateCommand = new EvaluateBVisual2FormulasCommand(formulas, state);
+		state.getStateSpace().execute(evaluateCommand);
+		return evaluateCommand.getResults();
+	}
+	
+	/**
+	 * <p>Evaluate this formula in the given state. This formula must belong to the same state space as the state.</p>
+	 * <p>To evaluate many formulas in the same state, {@link #evaluateMultiple(List, State)} (List)} should be used for better performance.</p>
+	 *
+	 * @param state the state in which to evaluate the formula
+	 * @return the evaluated formula value
+	 */
+	public BVisual2Value evaluate(final State state) {
+		return evaluateMultiple(Collections.singletonList(this), state).get(0);
+	}
+	
+	/**
 	 * <p>Expand and evaluate multiple formulas non-recursively in the given state. All formulas must belong to the same state space as the state.</p>
 	 * <p>To fully expand a formula recursively, {@link #expandMultiple(List, State)} should be used.</p>
 	 * 
@@ -118,21 +247,20 @@ public final class BVisual2Formula {
 			return Collections.emptyList();
 		}
 		
-		final List<ExpandFormulaNonrecursiveCommand> expandCommands = formulas.stream()
+		final List<ExpandBVisual2FormulaCommand> expandCommands = formulas.stream()
 			.peek(Objects::requireNonNull)
 			.peek(formula -> {
 				if (!formula.getStateSpace().equals(state.getStateSpace())) {
 					throw new IllegalArgumentException(String.format("Formula %s does not belong to the state space of the given state: %s", formula, state.getStateSpace()));
 				}
 			})
-			.map(BVisual2Formula::getId)
-			.map(id -> new ExpandFormulaNonrecursiveCommand(id, state))
+			.map(formula -> new ExpandBVisual2FormulaCommand(formula, state, false))
 			.collect(Collectors.toList());
 		
-		state.getStateSpace().execute(new ComposedCommand(expandCommands));
+		state.getStateSpace().execute(expandCommands);
 		
 		return expandCommands.stream()
-			.map(ExpandFormulaNonrecursiveCommand::getResult)
+			.map(ExpandBVisual2FormulaCommand::getExpanded)
 			.collect(Collectors.toList());
 	}
 	
@@ -167,21 +295,20 @@ public final class BVisual2Formula {
 			return Collections.emptyList();
 		}
 		
-		final List<ExpandFormulaCommand> expandCommands = formulas.stream()
+		final List<ExpandBVisual2FormulaCommand> expandCommands = formulas.stream()
 			.peek(Objects::requireNonNull)
 			.peek(formula -> {
 				if (!formula.getStateSpace().equals(state.getStateSpace())) {
 					throw new IllegalArgumentException(String.format("Formula %s does not belong to the state space of the given state: %s", formula, state.getStateSpace()));
 				}
 			})
-			.map(BVisual2Formula::getId)
-			.map(id -> new ExpandFormulaCommand(id, state))
+			.map(formula -> new ExpandBVisual2FormulaCommand(formula, state, true))
 			.collect(Collectors.toList());
 		
-		state.getStateSpace().execute(new ComposedCommand(expandCommands));
+		state.getStateSpace().execute(expandCommands);
 		
 		return expandCommands.stream()
-			.map(ExpandFormulaCommand::getResult)
+			.map(ExpandBVisual2FormulaCommand::getExpanded)
 			.collect(Collectors.toList());
 	}
 	

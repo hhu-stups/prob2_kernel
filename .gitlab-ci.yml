@@ -14,7 +14,7 @@ variables:
 
 .tests:
   stage: test
-  script: ./de.prob2.kernel/gradlew ${GRADLE_OPTIONS} -b de.prob2.kernel/build.gradle clean allTests
+  script: ./de.prob2.kernel/gradlew ${GRADLE_OPTIONS} -b de.prob2.kernel/build.gradle clean check jacocoTestReport
   before_script:
     - export GRADLE_USER_HOME=`pwd`/.gradle
   artifacts:
@@ -23,6 +23,9 @@ variables:
       - "*/build/jacocoHtml"
       - "*/build/reports"
       - "*/build/test-results"
+      - "**/prob_log.txt"
+      - "**/ProB.log.*.log"
+    when: always
 
 .docker-tests:
   extends: .tests
@@ -56,7 +59,7 @@ tests:macos:
 tests:windows64:
   extends: .tests
   before_script: []
-  script: de.prob2.kernel\gradlew.bat %GRADLE_OPTIONS% -b de.prob2.kernel\build.gradle clean allTests
+  script: de.prob2.kernel\gradlew.bat %GRADLE_OPTIONS% -b de.prob2.kernel\build.gradle clean check jacocoTestReport
   tags:
     - prob
     - win64

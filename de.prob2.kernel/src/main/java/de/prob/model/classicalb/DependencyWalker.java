@@ -30,19 +30,19 @@ public class DependencyWalker extends DepthFirstAdapter {
 	private DependencyGraph graph;
 	private final String prefix;
 	private final String name;
-	private final Map<String, Start> map;
+	private final Map<String, Start> parsedMachines;
 	private ModelElementList<ClassicalBMachine> machines;
 	private Set<LinkedList<TIdentifierLiteral>> machineIds;
 
 	public DependencyWalker(final LinkedList<TIdentifierLiteral> machine,
 			final ModelElementList<ClassicalBMachine> machines,
-			final DependencyGraph graph, final Map<String, Start> map) {
+			final DependencyGraph graph, final Map<String, Start> parsedMachines) {
 		this.machineIds = new HashSet<>();
 		this.name = extractMachineName(machine);
 		this.prefix = extractMachinePrefix(machine);
 		this.machines = machines;
 		this.graph = graph;
-		this.map = map;
+		this.parsedMachines = parsedMachines;
 	}
 
 	@Override
@@ -117,7 +117,7 @@ public class DependencyWalker extends DepthFirstAdapter {
 
 	private ClassicalBMachine makeMachine(final String dest, final String prefix) {
 		final DomBuilder builder = new DomBuilder(prefix);
-		final Start start = map.get(dest);
+		final Start start = parsedMachines.get(dest);
 		start.apply(builder);
 		return builder.getMachine();
 	}

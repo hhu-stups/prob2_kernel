@@ -4,9 +4,16 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Maps;
 
 import de.hhu.stups.prob.translator.BValue;
 import de.hhu.stups.prob.translator.Translator;
@@ -41,6 +48,24 @@ import de.prob.prolog.term.PrologTerm;
  * @author joy
  */
 public class Transition {
+	public static final String PARTIAL_SETUP_CONSTANTS_NAME = "$partial_setup_constants";
+	public static final String SETUP_CONSTANTS_NAME = "$setup_constants";
+	public static final String INITIALISE_MACHINE_NAME = "$initialise_machine";
+	
+	private static final BiMap<String, String> PRETTY_NAME_MAP;
+	
+	static {
+		final BiMap<String, String> prettyNameMap = HashBiMap.create();
+		prettyNameMap.put(PARTIAL_SETUP_CONSTANTS_NAME, "PARTIAL_SETUP_CONSTANTS");
+		prettyNameMap.put(SETUP_CONSTANTS_NAME, "SETUP_CONSTANTS");
+		prettyNameMap.put(INITIALISE_MACHINE_NAME, "INITIALISATION");
+		PRETTY_NAME_MAP = Maps.unmodifiableBiMap(prettyNameMap);
+	}
+	
+	private static final Set<String> ARTIFICIAL_NAMES = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
+		PARTIAL_SETUP_CONSTANTS_NAME, SETUP_CONSTANTS_NAME, INITIALISE_MACHINE_NAME
+	)));
+
 	private final StateSpace stateSpace;
 	private final String id;
 	private final String name;
@@ -51,6 +76,7 @@ public class Transition {
 	private List<BValue> translatedParams;
 	private List<BValue> translatedRetV;
 	private String rep;
+	private String prettyRep;
 	private boolean evaluated;
 	private FormulaExpand formulaExpansion;
 	private final FormalismType formalismType;
@@ -68,6 +94,18 @@ public class Transition {
 		formalismType = stateSpace.getModel().getFormalismType();
 	}
 
+	public static String prettifyName(final String name) {
+		return PRETTY_NAME_MAP.getOrDefault(name, name);
+	}
+
+	public static String unprettifyName(final String name) {
+		return PRETTY_NAME_MAP.inverse().getOrDefault(name, name);
+	}
+
+	public static boolean isArtificialTransitionName(final String name) {
+		return ARTIFICIAL_NAMES.contains(name);
+	}
+
 	/**
 	 * @return String identifier associated with this Operation
 	 */
@@ -80,6 +118,10 @@ public class Transition {
 	 */
 	public String getName() {
 		return name;
+	}
+
+	public String getPrettyName() {
+		return prettifyName(this.getName());
 	}
 
 	/**
@@ -116,23 +158,14 @@ public class Transition {
 	}
 
 	public List<BValue> getTranslatedParams() throws TranslationException {
-		if (translatedParams != null) {
-			return translatedParams;
+		if (translatedParams == null) {
+			List<BValue> list = new ArrayList<>();
+			for (String s : getParameterValues()) {
+				list.add(Translator.translate(s));
+			}
+			translatedParams = list;
 		}
-		translateParamsAndRetVals();
 		return translatedParams;
-	}
-
-	private void translateParamsAndRetVals() throws TranslationException {
-		evaluate(FormulaExpand.EXPAND);
-		translatedParams = new ArrayList<>();
-		for (String str : params) {
-			translatedParams.add(Translator.translate(str));
-		}
-		translatedRetV = new ArrayList<>();
-		for (String str : returnValues) {
-			translatedRetV.add(Translator.translate(str));
-		}
 	}
 
 	/**
@@ -152,10 +185,13 @@ public class Transition {
 	}
 
 	public List<BValue> getTranslatedReturnValues() throws TranslationException {
-		if (translatedRetV != null) {
-			return translatedRetV;
+		if (translatedRetV == null) {
+			List<BValue> list = new ArrayList<>();
+			for (String s : getReturnValues()) {
+				list.add(Translator.translate(s));
+			}
+			translatedRetV = list;
 		}
-		translateParamsAndRetVals();
 		return translatedRetV;
 	}
 
@@ -229,20 +265,11 @@ public class Transition {
 	}
 
 	public String getPrettyRep() {
-		String rep = getRep();
-		if (name.equals("$initialise_machine")) {
-			rep = rep.replaceAll("\\$initialise_machine", "INITIALISATION");
-		} else if (name.equals("$setup_constants")) {
-			rep = rep.replaceAll("\\$setup_constants", "SETUP_CONSTANTS");
-		} else if (name.equals("$partial_setup_constants")) {
-			rep = rep.replaceAll("\\$partial_setup_constants", "PARTIAL_SETUP_CONSTANTS");
-		}
-		return rep;
+		return this.prettyRep;
 	}
 
 	public boolean isArtificialTransition() {
-		return name.equals("$initialise_machine") || name.equals("$setup_constants")
-			|| name.equals("$partial_setup_constants");
+		return isArtificialTransitionName(this.getName());
 	}
 
 	@Override
@@ -347,6 +374,7 @@ public class Transition {
 		this.params = params;
 		this.returnValues = returnValues;
 		this.rep = createRep(name, params, returnValues);
+		this.prettyRep = createRep(this.getPrettyName(), params, returnValues);
 		evaluated = true;
 	}
 

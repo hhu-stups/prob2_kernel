@@ -25,7 +25,7 @@ assert formula.children.size() == 2
 final f1 = formula.children[0]
 assert f1.label == "ready \u2229 waiting = \u2205"
 assert f1.value == BVisual2Value.PredicateValue.TRUE
-assert f1.children.size() == 1
+assert f1.children.size() == 2
 
 final f11 = f1.children[0]
 assert f11.label == 'ready \u2229 waiting'
@@ -42,10 +42,15 @@ assert f112.label == "waiting"
 assert (f112.value as BVisual2Value.ExpressionValue).value == toUnicode("{}")
 assert f112.children.empty
 
+final f12 = f1.children[1]
+assert f12.label == "\u2205"
+assert (f12.value as BVisual2Value.ExpressionValue).value == toUnicode("{}")
+assert f12.children.empty
+
 final f2 = formula.children[1]
 assert f2.label == 'card(active) \u2264 1'
 assert f2.value == BVisual2Value.PredicateValue.TRUE
-assert f2.children.size() == 1
+assert f2.children.size() == 2
 
 final f21 = f2.children[0]
 assert f21.label == 'card(active)'
@@ -56,5 +61,10 @@ final f211 = f21.children[0]
 assert f211.label == 'active'
 assert (f211.value as BVisual2Value.ExpressionValue).value == toUnicode('{}')
 assert f211.children.empty
+
+final f22 = f2.children[1]
+assert f22.label == "1"
+assert (f22.value as BVisual2Value.ExpressionValue).value == "1"
+assert f22.children.empty
 
 "expanding a B formula works"

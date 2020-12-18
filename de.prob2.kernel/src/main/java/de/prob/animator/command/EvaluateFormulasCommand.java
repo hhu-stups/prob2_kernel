@@ -15,9 +15,6 @@ import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Calculates the values of Classical-B Predicates and Expressions.
  * 
@@ -27,8 +24,6 @@ import org.slf4j.LoggerFactory;
 public class EvaluateFormulasCommand extends AbstractCommand {
 
 	private static final String PROLOG_COMMAND_NAME = "evaluate_formulas";
-
-	Logger logger = LoggerFactory.getLogger(EvaluateFormulasCommand.class);
 
 	private static final String EVALUATE_RESULT_VARIABLE = "Res";
 

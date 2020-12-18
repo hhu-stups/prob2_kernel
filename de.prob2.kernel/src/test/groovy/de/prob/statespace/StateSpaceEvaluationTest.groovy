@@ -2,15 +2,16 @@ package de.prob.statespace
 
 import java.nio.file.Paths
 
-import de.prob.Main
 import de.prob.animator.domainobjects.AbstractEvalResult
 import de.prob.animator.domainobjects.CSP
 import de.prob.animator.domainobjects.ClassicalB
 import de.prob.animator.domainobjects.IEvalElement
+import de.prob.animator.domainobjects.IdentifierNotInitialised
+import de.prob.cli.CliTestCommon
 import de.prob.model.representation.CSPModel
 import de.prob.scripting.ClassicalBFactory
 
-import spock.lang.Specification 
+import spock.lang.Specification
 
 class StateSpaceEvaluationTest extends Specification {
 	private static StateSpace s
@@ -19,7 +20,7 @@ class StateSpaceEvaluationTest extends Specification {
 
 	def setupSpec() {
 		final path = Paths.get("groovyTests", "machines", "scheduler.mch").toString()
-		final factory = Main.injector.getInstance(ClassicalBFactory.class)
+		final factory = CliTestCommon.injector.getInstance(ClassicalBFactory.class)
 		s = factory.extract(path).load([:])
 		root = s.root
 		firstState = root.$initialise_machine()
@@ -76,7 +77,7 @@ class StateSpaceEvaluationTest extends Specification {
 
 	def "csp formulas cannot be subscribed"() {
 		when:
-		CSPModel m = new CSPModel(null);
+		CSPModel m = CliTestCommon.injector.getInstance(CSPModel.class)
 		m = m.create("some content", new File("somedir"+File.separator+"someotherdir"+File.separator+"myfile.csp"))
 		CSP csp = new CSP("some formula", m)
 		def subscriber1 = "subscriber1"
@@ -129,7 +130,7 @@ class StateSpaceEvaluationTest extends Specification {
 	def "multiple csp formulas cannot be subscribed"() {
 		when:
 		true
-		CSPModel m = Main.getInjector().getInstance(CSPModel.class);
+		CSPModel m = CliTestCommon.injector.getInstance(CSPModel.class)
 		m = m.create("some content", new File("somedir"+File.separator+"someotherdir"+File.separator+"myfile.csp"))
 		CSP csp = new CSP("some formula", m)
 		CSP csp2 = new CSP("some formula2", m)
@@ -268,10 +269,10 @@ class StateSpaceEvaluationTest extends Specification {
 		s.subscribe("I'm a subscriber!",[ready])
 		Map<State, Map<IEvalElement, AbstractEvalResult>> result = s.evaluateForGivenStates(states, [waiting, ready, active])
 		then:
-		result[root] == null // ignored because it is not initialised
+		result[root].values().every {it instanceof IdentifierNotInitialised}
 		def statesWOroot = states.findAll { it != root}
-		statesWOroot.collect { result[it][ready].getValue() }.inject(true) {acc, i -> acc && isEmptySet(i)}
-		statesWOroot.collect { result[it][active].getValue() }.inject(true) {acc, i -> acc && isEmptySet(i)}
+		statesWOroot.collect { result[it][ready].getValue() }.every {isEmptySet(it)}
+		statesWOroot.collect { result[it][active].getValue() }.every {isEmptySet(it)}
 		isEmptySet(result[firstState][waiting].getValue())
 		result[state2][waiting].getValue() == "{PID1}"
 		result[state3][waiting].getValue() == "{PID2}"

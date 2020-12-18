@@ -15,13 +15,26 @@ import de.prob.statespace.ModelModule;
  * 
  */
 public class MainModule extends AbstractModule {
+	private int maxCacheSize;
+
+	public MainModule() {
+		this.maxCacheSize = 100;
+	}
+
+	public int getMaxCacheSize() {
+		return maxCacheSize;
+	}
+
+	public void setMaxCacheSize(final int maxCacheSize) {
+		this.maxCacheSize = maxCacheSize;
+	}
 
 	@Override
 	protected final void configure() {
 		install(new MainConfiguration());
 		install(new ModuleCli());
 		install(new AnimatorModule());
-		install(new ModelModule());
+		install(new ModelModule(this.maxCacheSize));
 		install(new ScriptingModule());
 	}
 }

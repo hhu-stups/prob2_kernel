@@ -21,9 +21,6 @@ import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Calculates the enabled operations, the state values, the initialization, the
  * invariant, the timeout, the operations with timeout, and the errors for a
@@ -34,12 +31,10 @@ import org.slf4j.LoggerFactory;
  */
 public final class ExploreStateCommand extends AbstractCommand implements
 		IStateSpaceModifier {
-
-	Logger logger = LoggerFactory.getLogger(ExploreStateCommand.class);
-
 	private final String stateId;
 	private final GetEnabledOperationsCommand getOpsCmd;
 	private final EvaluateRegisteredFormulasCommand evalFormulasCmd;
+	private final CheckBooleanPropertyCommand checkConstantsSetUpCmd;
 	private final CheckBooleanPropertyCommand checkInitialisedCmd;
 	private final CheckInvariantStatusCommand checkInvCmd;
 	private final CheckBooleanPropertyCommand checkMaxOpCmd;
@@ -54,13 +49,14 @@ public final class ExploreStateCommand extends AbstractCommand implements
 		getOpsCmd = new GetEnabledOperationsCommand(s, stateId);
 		evalFormulasCmd = new EvaluateRegisteredFormulasCommand(stateID,
 				formulas);
+		checkConstantsSetUpCmd = new CheckConstantsSetUpStatusCommand(stateId);
 		checkInitialisedCmd = new CheckInitialisationStatusCommand(stateId);
 		checkInvCmd = new CheckInvariantStatusCommand(stateId);
 		checkMaxOpCmd = new CheckMaxOperationReachedStatusCommand(stateId);
 		checkTimeoutCmd = new CheckTimeoutStatusCommand(stateId);
 		checkTimeoutOpsCmd = new GetOperationsWithTimeout(stateId);
 		getStateErrCmd = new GetStateBasedErrorsCommand(stateId);
-		allCommands = new ComposedCommand(getOpsCmd, evalFormulasCmd,
+		allCommands = new ComposedCommand(getOpsCmd, evalFormulasCmd, checkConstantsSetUpCmd,
 				checkInitialisedCmd, checkInvCmd, checkMaxOpCmd,
 				checkTimeoutCmd, checkTimeoutOpsCmd, getStateErrCmd);
 
@@ -74,21 +70,15 @@ public final class ExploreStateCommand extends AbstractCommand implements
 	public void processResult(
 			final ISimplifiedROMap<String, PrologTerm> bindings) {
 		allCommands.processResult(bindings);
-
-		boolean initialised = checkInitialisedCmd.getResult();
-		boolean timeoutOccured = checkTimeoutCmd.getResult();
-		List<Transition> enabledOperations = getOpsCmd.getEnabledOperations();
-
-		if (!initialised && enabledOperations.isEmpty() && !timeoutOccured) {
-			logger.error("ProB could not find valid constants. This might be caused by the animation settings (e.g., Integer range or deferred set size) or by an inconsistency in the axioms");
-			// TODO: Should an Error be thrown so that the StateSpace knows
-			// about it?
-		}
 	}
 
 	@Override
 	public void writeCommand(final IPrologTermOutput pto) {
 		allCommands.writeCommand(pto);
+	}
+
+	public boolean isConstantsSetUp() {
+		return checkConstantsSetUpCmd.getResult();
 	}
 
 	public boolean isInitialised() {

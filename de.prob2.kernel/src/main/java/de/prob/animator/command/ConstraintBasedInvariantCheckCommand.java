@@ -64,6 +64,10 @@ public class ConstraintBasedInvariantCheckCommand extends AbstractCommand
 		return events;
 	}
 
+	/**
+	 * @deprecated Use {@link #getResult()} instead. If any counterexamples were found, the result is an instance of {@link CBCInvariantViolationFound}, and a list of counterexamples can be obtained using {@link CBCInvariantViolationFound#getCounterexamples()}.
+	 */
+	@Deprecated
 	public List<InvariantCheckCounterExample> getCounterExamples() {
 		return counterexamples;
 	}

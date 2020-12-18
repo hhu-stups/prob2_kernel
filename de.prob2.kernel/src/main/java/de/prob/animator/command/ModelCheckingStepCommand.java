@@ -6,6 +6,7 @@
 
 package de.prob.animator.command;
 
+import java.util.Collections;
 import java.util.List;
 
 import de.prob.animator.IPrologResult;
@@ -23,11 +24,12 @@ import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.PrologTerm;
+import de.prob.statespace.Transition;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ModelCheckingStepCommand extends AbstractCommand {
+public class ModelCheckingStepCommand extends AbstractCommand implements IStateSpaceModifier {
 	private static final Logger logger = LoggerFactory.getLogger(ModelCheckingStepCommand.class);
 
 	private static final String PROLOG_COMMAND_NAME = "do_modelchecking";
@@ -48,7 +50,9 @@ public class ModelCheckingStepCommand extends AbstractCommand {
 	 * </ol>
 	 */
 	private static final int STATS_ARITY = 3;
+	private static final int DEFAULT_MAX_NUMBER_OF_STATES = 100000;
 
+	private final int maxNumberOfStates;
 	private final int time;
 	private final ModelCheckingOptions options;
 	private IModelCheckingResult result;
@@ -57,10 +61,16 @@ public class ModelCheckingStepCommand extends AbstractCommand {
 
 	private StateSpaceStats stats;
 
-	public ModelCheckingStepCommand(final int time,
-			final ModelCheckingOptions options) {
+	public ModelCheckingStepCommand(final int maxNumberOfStates, final int time,
+									final ModelCheckingOptions options) {
 		this.time = time;
 		this.options = options;
+		this.maxNumberOfStates = maxNumberOfStates;
+	}
+
+	public ModelCheckingStepCommand(final int time,
+			final ModelCheckingOptions options) {
+		this(DEFAULT_MAX_NUMBER_OF_STATES, time, options);
 	}
 
 	public IModelCheckingResult getResult() {
@@ -155,7 +165,8 @@ public class ModelCheckingStepCommand extends AbstractCommand {
 
 	@Override
 	public void writeCommand(final IPrologTermOutput pto) {
-		pto.openTerm(PROLOG_COMMAND_NAME).printNumber(time).openList();
+		pto.openTerm(PROLOG_COMMAND_NAME).printNumber(maxNumberOfStates);
+		pto.printNumber(time).openList();
 		for (ModelCheckingOptions.Options o : options.getPrologOptions()) {
 			pto.printAtom(o.getPrologName());
 		}
@@ -164,5 +175,13 @@ public class ModelCheckingStepCommand extends AbstractCommand {
 
 	public StateSpaceStats getStats() {
 		return stats;
+	}
+
+	@Override
+	public List<Transition> getNewTransitions() {
+		// This method has to be implemented to indicate that the state space may have expanded by executing this command.
+		// However, we don't know which transitions have been added exactly, so we can only return an empty list here.
+		// TODO Is there a better way to handle this than just returning an empty list?
+		return Collections.emptyList();
 	}
 }

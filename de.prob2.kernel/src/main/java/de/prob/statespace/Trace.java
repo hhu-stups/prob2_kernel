@@ -1,17 +1,6 @@
 package de.prob.statespace;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
 import com.github.krukow.clj_lang.PersistentVector;
-
 import de.prob.animator.command.ComposedCommand;
 import de.prob.animator.command.EvaluationCommand;
 import de.prob.animator.domainobjects.AbstractEvalResult;
@@ -19,10 +8,19 @@ import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.model.representation.AbstractModel;
 import de.prob.util.Tuple2;
-
 import groovy.lang.GroovyObjectSupport;
-
 import org.codehaus.groovy.runtime.DefaultGroovyMethods;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * @author joy
@@ -33,7 +31,7 @@ public class Trace extends GroovyObjectSupport {
 	private final TraceElement head;
 	private final StateSpace stateSpace;
 	private final UUID uuid;
-	private final List<Transition> transitionList;
+	private final PersistentVector<Transition> transitionList;
 
 	public Trace(final StateSpace s) {
 		this(s.getRoot());
@@ -43,11 +41,11 @@ public class Trace extends GroovyObjectSupport {
 		this(startState.getStateSpace(), new TraceElement(startState), PersistentVector.emptyVector(), UUID.randomUUID());
 	}
 
-	public Trace(final StateSpace s, final TraceElement head, List<Transition> transitionList, UUID uuid) {
+	public Trace(final StateSpace s, final TraceElement head, PersistentVector<Transition> transitionList, UUID uuid) {
 		this(s, head, head, transitionList, uuid);
 	}
 
-	private Trace(final StateSpace s, final TraceElement head, final TraceElement current, List<Transition> transitionList, UUID uuid) {
+	private Trace(final StateSpace s, final TraceElement head, final TraceElement current, PersistentVector<Transition> transitionList, UUID uuid) {
 		this.stateSpace = s;
 		this.head = head;
 		this.current = current;
@@ -127,7 +125,7 @@ public class Trace extends GroovyObjectSupport {
 	public Trace add(final Transition op) {
 		// TODO: Should we check to ensure that current.getCurrentState() == op.getSrcId()
 		final TraceElement newHE = new TraceElement(op, current);
-		final List<Transition> transitionList = branchTransitionListIfNecessary(op);
+		final PersistentVector<Transition> transitionList = branchTransitionListIfNecessary(op);
 		final Trace newTrace = new Trace(stateSpace, newHE, transitionList, this.uuid);
 		newTrace.setExploreStateByDefault(this.exploreStateByDefault);
 		if (exploreStateByDefault && !op.getDestination().isExplored()) {
@@ -215,7 +213,7 @@ public class Trace extends GroovyObjectSupport {
 
 	private PersistentVector<Transition> branchTransitionListIfNecessary(Transition newOp) {
 		if (head.equals(current)) {
-			return ((PersistentVector<Transition>)transitionList).assocN(transitionList.size(), newOp);
+			return transitionList.assocN(transitionList.size(), newOp);
 		} else {
 			final PersistentVector<Transition> tList = PersistentVector.create(transitionList.subList(0, current.getIndex() + 1));
 			return tList.assocN(tList.size(), newOp);
@@ -241,24 +239,29 @@ public class Trace extends GroovyObjectSupport {
 
 		State currentState = this.current.getCurrentState();
 		TraceElement current = this.current;
-		PersistentVector<Transition> transitionList = (PersistentVector<Transition>)this.transitionList;
-		for (int i = 0; i < numOfSteps; i++) {
-			final List<Transition> ops = currentState.getOutTransitions();
-			if (ops.isEmpty()) {
-				break;
+		PersistentVector<Transition> transitionList = this.transitionList;
+		try {
+			this.stateSpace.startTransaction();
+			for (int i = 0; i < numOfSteps; i++) {
+				final List<Transition> ops = currentState.getOutTransitions();
+				if (ops.isEmpty()) {
+					break;
+				}
+				Collections.shuffle(ops);
+				final Transition op = ops.get(0);
+				current = new TraceElement(op, current);
+				if (i == 0) {
+					transitionList = branchTransitionListIfNecessary(op);
+				} else {
+					transitionList = transitionList.assocN(transitionList.size(), op);
+				}
+				currentState = op.getDestination();
+				if(Thread.currentThread().isInterrupted()) {
+					return this;
+				}
 			}
-			Collections.shuffle(ops);
-			final Transition op = ops.get(0);
-			current = new TraceElement(op, current);
-			if (i == 0) {
-				transitionList = branchTransitionListIfNecessary(op);
-			} else {
-				transitionList = transitionList.assocN(transitionList.size(), op);
-			}
-			currentState = op.getDestination();
-			if(Thread.currentThread().isInterrupted()) {
-				return this;
-			}
+		} finally {
+			this.stateSpace.endTransaction();
 		}
 
 		return new Trace(stateSpace, current, transitionList, this.uuid);
@@ -277,7 +280,7 @@ public class Trace extends GroovyObjectSupport {
 	@Deprecated
 	@Override
 	public Trace invokeMethod(String method, Object params) {
-		if (method.startsWith("$") && !"$setup_constants".equals(method) && !"$initialise_machine".equals(method)) {
+		if (method.startsWith("$") && !Transition.SETUP_CONSTANTS_NAME.equals(method) && !Transition.INITIALISE_MACHINE_NAME.equals(method)) {
 			method = method.substring(1);
 		}
 
@@ -331,7 +334,12 @@ public class Trace extends GroovyObjectSupport {
 	 * @return {@code true}, if the operation can be executed. {@code false}, otherwise
 	 */
 	public boolean canExecuteEvent(String event, List<String> predicates) {
-		return getCurrentState().findTransition(event, predicates) != null;
+		try {
+			Transition t = getCurrentState().findTransition(event, predicates);
+			return t != null;
+		} catch (IllegalArgumentException e) {
+			return false;
+		}
 	}
 
 	public Trace anyOperation(final Object filter) {
@@ -359,7 +367,7 @@ public class Trace extends GroovyObjectSupport {
 		return stateSpace;
 	}
 
-	public Set<Transition> getNextTransitions() {
+	public synchronized Set<Transition> getNextTransitions() {
 		return getNextTransitions(false, FormulaExpand.TRUNCATE);
 	}
 
@@ -367,12 +375,12 @@ public class Trace extends GroovyObjectSupport {
 	 * @deprecated Use {@link #getNextTransitions(boolean, FormulaExpand)} with an explicit {@link FormulaExpand} argument instead
 	 */
 	@Deprecated
-	public Set<Transition> getNextTransitions(boolean evaluate) {
+	public synchronized Set<Transition> getNextTransitions(boolean evaluate) {
 		return this.getNextTransitions(evaluate, FormulaExpand.TRUNCATE);
 	}
 
-	public Set<Transition> getNextTransitions(boolean evaluate, FormulaExpand expansion) {
-		return new HashSet<>(getCurrentState().getOutTransitions(evaluate, expansion));
+	public synchronized Set<Transition> getNextTransitions(boolean evaluate, FormulaExpand expansion) {
+		return new CopyOnWriteArraySet<>(getCurrentState().getOutTransitions(evaluate, expansion));
 	}
 
 	public State getCurrentState() {
@@ -380,6 +388,9 @@ public class Trace extends GroovyObjectSupport {
 	}
 
 	public State getPreviousState() {
+		if(!canGoBack()) {
+			return null;
+		}
 		return current.getPrevious().getCurrentState();
 	}
 

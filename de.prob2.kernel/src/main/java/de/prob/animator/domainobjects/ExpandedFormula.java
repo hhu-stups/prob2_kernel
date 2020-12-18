@@ -7,73 +7,226 @@ import java.util.stream.Collectors;
 import com.google.common.base.MoreObjects;
 
 import de.prob.parser.BindingGenerator;
-import de.prob.prolog.term.CompoundPrologTerm;
+import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.State;
 import de.prob.statespace.StateSpace;
 
-public class ExpandedFormula {
-	private final String label;
-	private final BVisual2Value value;
-	private final BVisual2Formula formula;
-	private final List<BVisual2Formula> subformulas;
-	private final List<ExpandedFormula> children;
-
-	private ExpandedFormula(final BVisual2Formula formula, final String label, final BVisual2Value value, final List<BVisual2Formula> subformulas, final List<ExpandedFormula> children) {
-		this.label = label;
-		this.value = value;
-		this.formula = formula;
-		this.subformulas = subformulas;
-		this.children = children;
+public final class ExpandedFormula {
+	public static class Builder {
+		BVisual2Formula formula;
+		String label;
+		String description;
+		String functorSymbol;
+		List<String> rodinLabels;
+		BVisual2Value value;
+		List<BVisual2Formula> subformulas;
+		List<ExpandedFormula> children;
+		
+		Builder() {
+			this.formula = null;
+			this.label = null;
+			this.description = null;
+			this.value = null;
+			this.subformulas = null;
+			this.children = null;
+		}
+		
+		public ExpandedFormula.Builder formula(final BVisual2Formula formula) {
+			if (this.formula != null) {
+				throw new IllegalStateException("formula already set");
+			}
+			this.formula = formula;
+			return this;
+		}
+		
+		public ExpandedFormula.Builder label(final String label) {
+			if (this.label != null) {
+				throw new IllegalStateException("label already set");
+			}
+			this.label = label;
+			return this;
+		}
+		
+		public ExpandedFormula.Builder description(final String description) {
+			if (this.description != null) {
+				throw new IllegalStateException("description already set");
+			}
+			this.description = description;
+			return this;
+		}
+		
+		public ExpandedFormula.Builder functorSymbol(final String functorSymbol) {
+			if (this.functorSymbol != null) {
+				throw new IllegalStateException("functorSymbol already set");
+			}
+			this.functorSymbol = functorSymbol;
+			return this;
+		}
+		
+		public ExpandedFormula.Builder rodinLabels(final List<String> rodinLabels) {
+			if (this.rodinLabels != null) {
+				throw new IllegalStateException("rodinLabels already set");
+			}
+			this.rodinLabels = rodinLabels;
+			return this;
+		}
+		
+		public ExpandedFormula.Builder value(final BVisual2Value value) {
+			if (this.value != null) {
+				throw new IllegalStateException("value already set");
+			}
+			this.value = value;
+			return this;
+		}
+		
+		public ExpandedFormula.Builder subformulas(final List<BVisual2Formula> subformulas) {
+			if (this.subformulas != null) {
+				throw new IllegalStateException("subformulas already set");
+			} else if (this.children != null) {
+				throw new IllegalStateException("Cannot set both children and subformulas");
+			}
+			this.subformulas = subformulas;
+			return this;
+		}
+		
+		public ExpandedFormula.Builder children(final List<ExpandedFormula> children) {
+			if (this.children != null) {
+				throw new IllegalStateException("children already set");
+			} else if (this.subformulas != null) {
+				throw new IllegalStateException("Cannot set both subformulas and children");
+			}
+			this.children = children;
+			return this;
+		}
+		
+		public ExpandedFormula build() {
+			return new ExpandedFormula(this);
+		}
 	}
 	
-	/**
-	 * @deprecated Use {@link #withExpandedChildren(BVisual2Formula, String, BVisual2Value, List)} instead.
-	 */
-	@Deprecated
-	public ExpandedFormula(final String label, final BVisual2Value value, final BVisual2Formula formula, final List<ExpandedFormula> children) {
-		this.label = label;
-		this.value = value;
-		this.formula = formula;
-		this.subformulas = children.stream()
-			.map(ExpandedFormula::getFormula)
-			.collect(Collectors.toList());
-		this.children = children;
+	private final BVisual2Formula formula;
+	private final String label;
+	private final String description;
+	private final String functorSymbol;
+	private final List<String> rodinLabels;
+	private final BVisual2Value value;
+	private final List<BVisual2Formula> subformulas;
+	private final List<ExpandedFormula> children;
+	
+	ExpandedFormula(final ExpandedFormula.Builder builder) {
+		super();
+		
+		if (builder.formula == null) {
+			throw new IllegalArgumentException("Missing required field: formula");
+		}
+		this.formula = builder.formula;
+		
+		if (builder.label == null) {
+			throw new IllegalArgumentException("Missing required field: label");
+		}
+		this.label = builder.label;
+		
+		this.description = builder.description;
+		this.functorSymbol = builder.functorSymbol;
+		this.rodinLabels = builder.rodinLabels;
+		this.value = builder.value;
+		
+		if (builder.children != null) {
+			assert builder.subformulas == null;
+			this.subformulas = builder.children.stream()
+				.map(ExpandedFormula::getFormula)
+				.collect(Collectors.toList());
+		} else {
+			if (builder.subformulas == null) {
+				throw new IllegalArgumentException("Missing required field: subformulas");
+			}
+			this.subformulas = builder.subformulas;
+		}
+		
+		this.children = builder.children;
 	}
-
-	public static ExpandedFormula withUnexpandedChildren(final BVisual2Formula formula, final String label, final BVisual2Value value, final List<BVisual2Formula> subformulas) {
-		return new ExpandedFormula(formula, label, value, subformulas, null);
+	
+	public static ExpandedFormula.Builder builder() {
+		return new ExpandedFormula.Builder();
 	}
-
-	public static ExpandedFormula withExpandedChildren(final BVisual2Formula formula, final String label, final BVisual2Value value, final List<ExpandedFormula> children) {
-		final List<BVisual2Formula> subformulas = children.stream()
-			.map(ExpandedFormula::getFormula)
-			.collect(Collectors.toList());
-		return new ExpandedFormula(formula, label, value, subformulas, children);
+	
+	public static ExpandedFormula fromPrologTerm(final StateSpace stateSpace, final PrologTerm term) {
+		BindingGenerator.getCompoundTerm(term, "formula", 1);
+		
+		final ExpandedFormula.Builder builder = builder();
+		for (final PrologTerm entry : BindingGenerator.getList(term.getArgument(1))) {
+			BindingGenerator.getCompoundTerm(entry, 1);
+			final PrologTerm arg = entry.getArgument(1);
+			switch (entry.getFunctor()) {
+				case "id":
+					builder.formula(BVisual2Formula.fromFormulaId(stateSpace, arg.getFunctor()));
+					break;
+				
+				case "label":
+					builder.label(PrologTerm.atomicString(arg));
+					break;
+				
+				case "description":
+					builder.description(PrologTerm.atomicString(arg));
+					break;
+				
+				case "functor_symbol":
+					builder.functorSymbol(PrologTerm.atomicString(arg));
+					break;
+				
+				case "rodin_labels":
+					builder.rodinLabels(PrologTerm.atomicStrings(BindingGenerator.getList(arg)));
+					break;
+				
+				case "value":
+					builder.value(BVisual2Value.fromPrologTerm(arg));
+					break;
+				
+				case "children_ids":
+					builder.subformulas(BindingGenerator.getList(arg).stream()
+						.map(id -> BVisual2Formula.fromFormulaId(stateSpace, id.getFunctor()))
+						.collect(Collectors.toList()));
+					break;
+				
+				case "children":
+					builder.children(BindingGenerator.getList(arg).stream()
+						.map(childTerm -> ExpandedFormula.fromPrologTerm(stateSpace, childTerm))
+						.collect(Collectors.toList()));
+					break;
+				
+				default:
+					// Ignore unknown entries to allow adding more information in the future.
+					break;
+			}
+		}
+		
+		return builder.build();
 	}
-
-	public static ExpandedFormula withoutChildren(final BVisual2Formula formula, final String label, final BVisual2Value value) {
-		return withExpandedChildren(formula, label, value, Collections.emptyList());
+	
+	public BVisual2Formula getFormula() {
+		return this.formula;
 	}
-
-	public static ExpandedFormula fromPrologTerm(final StateSpace stateSpace, final CompoundPrologTerm cpt) {
-		BindingGenerator.getCompoundTerm(cpt, "formula", 4);
-		final String label = cpt.getArgument(1).getFunctor();
-		final BVisual2Value result = BVisual2Value.fromPrologTerm(cpt.getArgument(2));
-		final BVisual2Formula formula = BVisual2Formula.fromFormulaId(stateSpace, cpt.getArgument(3).getFunctor());
-		final List<ExpandedFormula> children = BindingGenerator.getList(cpt.getArgument(4)).stream()
-			.map(pt -> ExpandedFormula.fromPrologTerm(stateSpace, BindingGenerator.getCompoundTerm(pt, "formula", 4)))
-			.collect(Collectors.toList());
-		return ExpandedFormula.withExpandedChildren(formula, label, result, children);
-	}
-
+	
 	public String getLabel() {
 		return label;
 	}
-
+	
+	public String getDescription() {
+		return description;
+	}
+	
+	public String getFunctorSymbol() {
+		return this.functorSymbol;
+	}
+	
+	public List<String> getRodinLabels() {
+		return this.rodinLabels == null ? null : Collections.unmodifiableList(this.rodinLabels);
+	}
+	
 	public BVisual2Value getValue() {
 		return value;
 	}
-
+	
 	/**
 	 * Get the subformulas of this formula. Unlike {@link #getChildren()}, the formulas are returned as unevaluated {@link BVisual2Formula} objects.
 	 * 
@@ -84,32 +237,23 @@ public class ExpandedFormula {
 	}
 	
 	/**
-	 * Get the expanded values of this formula's subformulas. {@code null} is returned if the subformulas have not been expanded, for example when this expanded formula was returned from {@link #withUnexpandedChildren(BVisual2Formula, String, BVisual2Value, List)} or {@link BVisual2Formula#expandNonrecursive(State)}.
+	 * Get the expanded values of this formula's subformulas. {@code null} is returned if the subformulas have not been expanded, for example when this expanded formula was returned from {@link BVisual2Formula#expandNonrecursive(State)}.
 	 * 
 	 * @return the expanded values of this formula's subformulas, or {@code null} if the subformulas have not been expanded
 	 */
 	public List<ExpandedFormula> getChildren() {
 		return this.children == null ? null : Collections.unmodifiableList(this.children);
 	}
-
-	public BVisual2Formula getFormula() {
-		return this.formula;
-	}
 	
-	/**
-	 * @deprecated Use {@link #getFormula()} instead.
-	 */
-	@Deprecated
-	public String getId() {
-		return this.getFormula().getId();
-	}
-
 	@Override
 	public String toString() {
 		return MoreObjects.toStringHelper(this)
-			.add("label", this.getLabel())
-			.add("value", this.getValue())
 			.add("formula", this.getFormula())
+			.add("label", this.getLabel())
+			.add("description", this.getDescription())
+			.add("functorSymbol", this.getFunctorSymbol())
+			.add("rodinLabels", this.getRodinLabels())
+			.add("value", this.getValue())
 			.add("subformulas", this.getSubformulas())
 			.add("children", this.getChildren())
 			.toString();

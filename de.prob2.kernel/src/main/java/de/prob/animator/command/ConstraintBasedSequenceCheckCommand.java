@@ -66,9 +66,7 @@ public class ConstraintBasedSequenceCheckCommand extends AbstractCommand impleme
 			pto.printAtom(event);
 		}
 		pto.closeList();
-		if (predicate != null) {
-			predicate.printProlog(pto);
-		}
+		predicate.printProlog(pto);
 		pto.printNumber(timeout);
 		pto.printVariable(RESULT_VARIABLE);
 		pto.closeTerm();

@@ -1,5 +1,51 @@
 package de.prob.statespace;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.util.concurrent.UncheckedExecutionException;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+import de.prob.animator.IAnimator;
+import de.prob.animator.IWarningListener;
+import de.prob.animator.command.AbstractCommand;
+import de.prob.animator.command.CheckIfStateIdValidCommand;
+import de.prob.animator.command.ComposedCommand;
+import de.prob.animator.command.EvaluateFormulasCommand;
+import de.prob.animator.command.ExecuteOperationException;
+import de.prob.animator.command.ExtendedStaticCheckCommand;
+import de.prob.animator.command.FindStateCommand;
+import de.prob.animator.command.FindTraceBetweenNodesCommand;
+import de.prob.animator.command.FormulaTypecheckCommand;
+import de.prob.animator.command.GetCurrentPreferencesCommand;
+import de.prob.animator.command.GetDefaultPreferencesCommand;
+import de.prob.animator.command.GetOperationByPredicateCommand;
+import de.prob.animator.command.GetOpsFromIds;
+import de.prob.animator.command.GetPreferenceCommand;
+import de.prob.animator.command.GetShortestTraceCommand;
+import de.prob.animator.command.GetStatesFromPredicate;
+import de.prob.animator.command.IStateSpaceModifier;
+import de.prob.animator.command.RegisterFormulasCommand;
+import de.prob.animator.command.SetPreferenceCommand;
+import de.prob.animator.command.UnregisterFormulaCommand;
+import de.prob.animator.domainobjects.AbstractEvalResult;
+import de.prob.animator.domainobjects.CSP;
+import de.prob.animator.domainobjects.ClassicalB;
+import de.prob.animator.domainobjects.ErrorItem;
+import de.prob.animator.domainobjects.FormulaExpand;
+import de.prob.animator.domainobjects.IEvalElement;
+import de.prob.animator.domainobjects.ProBPreference;
+import de.prob.animator.domainobjects.TypeCheckResult;
+import de.prob.annotations.MaxCacheSize;
+import de.prob.formula.PredicateBuilder;
+import de.prob.model.classicalb.ClassicalBModel;
+import de.prob.model.eventb.EventBModel;
+import de.prob.model.representation.AbstractElement;
+import de.prob.model.representation.AbstractModel;
+import de.prob.model.representation.CSPModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -10,45 +56,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
-
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.inject.Inject;
-import com.google.inject.Provider;
-
-import de.prob.animator.IAnimator;
-import de.prob.animator.IWarningListener;
-import de.prob.animator.command.AbstractCommand;
-import de.prob.animator.command.CheckIfStateIdValidCommand;
-import de.prob.animator.command.ComposedCommand;
-import de.prob.animator.command.EvaluationCommand;
-import de.prob.animator.command.FindStateCommand;
-import de.prob.animator.command.FindTraceBetweenNodesCommand;
-import de.prob.animator.command.FormulaTypecheckCommand;
-import de.prob.animator.command.GetCurrentPreferencesCommand;
-import de.prob.animator.command.GetOperationByPredicateCommand;
-import de.prob.animator.command.GetOpsFromIds;
-import de.prob.animator.command.GetShortestTraceCommand;
-import de.prob.animator.command.GetStatesFromPredicate;
-import de.prob.animator.command.RegisterFormulasCommand;
-import de.prob.animator.command.UnregisterFormulaCommand;
-import de.prob.animator.domainobjects.AbstractEvalResult;
-import de.prob.animator.domainobjects.CSP;
-import de.prob.animator.domainobjects.ClassicalB;
-import de.prob.animator.domainobjects.FormulaExpand;
-import de.prob.animator.domainobjects.IEvalElement;
-import de.prob.animator.domainobjects.TypeCheckResult;
-import de.prob.annotations.MaxCacheSize;
-import de.prob.exception.ProBError;
-import de.prob.model.classicalb.ClassicalBModel;
-import de.prob.model.eventb.EventBModel;
-import de.prob.model.representation.AbstractElement;
-import de.prob.model.representation.AbstractModel;
-import de.prob.model.representation.CSPModel;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.ExecutionException;
 
 /**
  *
@@ -81,47 +90,25 @@ public class StateSpace implements IAnimator {
 
 	private final LoadingCache<String, State> states;
 
-	/**
-	 * An implementation of a {@link CacheLoader} that tries to load a state
-	 * with the specified id into the {@link StateSpace#states} cache.
-	 *
-	 * ProB prolog is queried to see if the specified state exists in the state
-	 * space on the prolog side, and if so, the state is loaded into the states
-	 * cache.
-	 *
-	 * Otherwise, an {@link IllegalArgumentException} is thrown.
-	 *
-	 * @author joy
-	 *
-	 */
-	private class StateCacheLoader extends CacheLoader<String, State> {
-
-		private final StateSpace stateSpace;
-
-		public StateCacheLoader(final StateSpace stateSpace) {
-			this.stateSpace = stateSpace;
-		}
-
-		@Override
-		public State load(final String key) throws Exception {
-			CheckIfStateIdValidCommand cmd = new CheckIfStateIdValidCommand(key);
-			stateSpace.execute(cmd);
-			if (cmd.isValidState()) {
-				return new State(key, stateSpace);
-			}
-			throw new IllegalArgumentException(key + " does not represent a valid state in the StateSpace");
-		}
-
-	}
-
 	private AbstractModel model;
 	private AbstractElement mainComponent;
 	private volatile boolean killed;
+	private final Collection<IStatesCalculatedListener> statesCalculatedListeners = new ArrayList<>();
 
 	@Inject
 	public StateSpace(final Provider<IAnimator> panimator, @MaxCacheSize final int maxSize) {
 		animator = panimator.get();
-		states = CacheBuilder.newBuilder().maximumSize(maxSize).build(new StateCacheLoader(this));
+		states = CacheBuilder.newBuilder().maximumSize(maxSize).build(new CacheLoader<String, State>() {
+			@Override
+			public State load(final String key) {
+				CheckIfStateIdValidCommand cmd = new CheckIfStateIdValidCommand(key);
+				execute(cmd);
+				if (cmd.isValidState()) {
+					return new State(key, StateSpace.this);
+				}
+				throw new IllegalArgumentException(key + " does not represent a valid state in the StateSpace");
+			}
+		});
 	}
 
 	/**
@@ -140,15 +127,15 @@ public class StateSpace implements IAnimator {
 	 * @param id
 	 *            of the state to be retrieved
 	 * @return the state object associated with the given id. This is added to
-	 *         the cache via the loading mechanism in {@link StateCacheLoader}
+	 *         an internal cache.
 	 * @throws IllegalArgumentException
 	 *             if a state with the specified id doesn't exist
 	 */
 	public State getState(final String id) {
 		try {
 			return states.get(id);
-		} catch (Exception e) {
-			throw new IllegalArgumentException(e.getMessage());
+		} catch (ExecutionException | UncheckedExecutionException e) {
+			throw new IllegalArgumentException(e);
 		}
 	}
 
@@ -273,47 +260,35 @@ public class StateSpace implements IAnimator {
 				pred, nrOfSolutions);
 		execute(command);
 		if (command.hasErrors()) {
-			throw new IllegalArgumentException("Executing operation " + opName + " with predicate " + predicate
-					+ " produced errors: " + String.join(", ", command.getErrors()));
+			throw new ExecuteOperationException("Executing operation " + opName + " with additional predicate produced errors: " + String.join(", ", command.getErrorMessages()), command.getErrors());
 		}
 		return command.getNewTransitions();
 	}
 
 	public List<Transition> getTransitionsBasedOnParameterValues(final State stateId, final String opName,
 			final List<String> parameterValues, final int nrOfSolutions) {
-		String predicate = "1 = 1";// default value
-		if (!opName.equals("$initialise_machine") && !opName.equals("$setup_constants")) {
-			if (!getLoadedMachine().containsOperations(opName)) {
-				throw new IllegalArgumentException("Unknown operation '" + opName + "'");
+		if (Transition.isArtificialTransitionName(opName)) {
+			throw new IllegalArgumentException(opName + " is a special operation and does not take positional arguments. Use transitionFromPredicate instead and specify the argument/variable/constant values as a predicate.");
+		}
+
+		if (!getLoadedMachine().containsOperations(opName)) {
+			throw new IllegalArgumentException("Unknown operation '" + opName + "'");
+		}
+		OperationInfo machineOperationInfo = getLoadedMachine().getMachineOperationInfo(opName);
+		List<String> parameterNames = machineOperationInfo.getParameterNames();
+		final PredicateBuilder pb = new PredicateBuilder();
+		if (!parameterNames.isEmpty()) {
+			if (parameterNames.size() != parameterValues.size()) {
+				throw new IllegalArgumentException("Cannot execute operation " + opName
+						+ " because the number of parameters does not match the number of provied values: "
+						+ parameterNames.size() + " vs " + parameterValues.size());
 			}
-			OperationInfo machineOperationInfo = getLoadedMachine().getMachineOperationInfo(opName);
-			List<String> parameterNames = machineOperationInfo.getParameterNames();
-			StringBuilder sb = new StringBuilder();
-			if (!parameterNames.isEmpty()) {
-				if (parameterNames.size() != parameterValues.size()) {
-					throw new IllegalArgumentException("Cannot execute operation " + opName
-							+ " because the number of parameters does not match the number of provied values: "
-							+ parameterNames.size() + " vs " + parameterValues.size());
-				}
-				for (int i = 0; i < parameterNames.size(); i++) {
-					sb.append(parameterNames.get(i)).append(" = ").append(parameterValues.get(i));
-					if (i < parameterNames.size() - 1) {
-						sb.append(" & ");
-					}
-				}
-				predicate = sb.toString();
+			for (int i = 0; i < parameterNames.size(); i++) {
+				pb.add(parameterNames.get(i), parameterValues.get(i));
 			}
 		}
 
-		final IEvalElement pred = model.parseFormula(predicate, FormulaExpand.EXPAND);
-		final GetOperationByPredicateCommand command = new GetOperationByPredicateCommand(this, stateId.getId(), opName,
-				pred, nrOfSolutions);
-		execute(command);
-		if (command.hasErrors()) {
-			throw new IllegalArgumentException("Executing operation " + opName + " with predicate " + predicate
-					+ " produced errors: " + String.join(", ", command.getErrors()));
-		}
-		return command.getNewTransitions();
+		return this.transitionFromPredicate(stateId, opName, pb.toString(), nrOfSolutions);
 	}
 
 	/**
@@ -526,12 +501,57 @@ public class StateSpace implements IAnimator {
 	}
 
 	/**
-	 * @return a {@link Map} of the preferences in the current animation
+	 * Get information about the available ProB preferences in the animator.
+	 * This only includes information that does not change during the execution of the animator,
+	 * such as the preferences' type, default value, and description.
+	 * In particular,
+	 * the preferences' actual values are not included here and must be queried separately using {@link #getCurrentPreferences()}.
+	 * 
+	 * @return information about the available preferences in the animator
+	 */
+	public List<ProBPreference> getPreferenceInformation() {
+		final GetDefaultPreferencesCommand cmd = new GetDefaultPreferencesCommand();
+		this.execute(cmd);
+		return cmd.getPreferences();
+	}
+	
+	/**
+	 * Get the current value of a single ProB preference.
+	 * To get the current values of all preferences at once,
+	 * use {@link #getCurrentPreferences()}
+	 * 
+	 * @param name the name of the preference whose value to get
+	 * @return the current value of the preference
+	 */
+	public String getCurrentPreference(final String name) {
+		final GetPreferenceCommand cmd = new GetPreferenceCommand(name);
+		this.execute(cmd);
+		return cmd.getValue();
+	}
+
+	/**
+	 * Get the current values of all ProB preferences in the animator.
+	 * 
+	 * @return the current values of all ProB preferences in the animator
 	 */
 	public Map<String, String> getCurrentPreferences() {
 		GetCurrentPreferencesCommand cmd = new GetCurrentPreferencesCommand();
 		execute(cmd);
 		return cmd.getPreferences();
+	}
+
+	/**
+	 * Change the values of the given ProB preferences in the animator.
+	 * Any preferences not listed in the map remain unchanged.
+	 * 
+	 * @param preferences the preference name/value pairs to change
+	 */
+	public void changePreferences(final Map<String, String> preferences) {
+		final List<AbstractCommand> commands = new ArrayList<>();
+		preferences.forEach((key, value) ->
+			commands.add(new SetPreferenceCommand(key, value))
+		);
+		this.execute(new ComposedCommand(commands));
 	}
 
 	// ANIMATOR
@@ -540,14 +560,24 @@ public class StateSpace implements IAnimator {
 		animator.sendInterrupt();
 	}
 
-	@Override
-	public void execute(final AbstractCommand command) {
-		animator.execute(command);
+	public void addStatesCalculatedListener(final IStatesCalculatedListener listener) {
+		this.statesCalculatedListeners.add(listener);
+	}
+
+	public void removeStatesCalculatedListener(final IStatesCalculatedListener listener) {
+		this.statesCalculatedListeners.remove(listener);
+	}
+
+	private void statesCalculated(final List<Transition> newTransitions) {
+		this.statesCalculatedListeners.forEach(listener -> listener.newTransitions(newTransitions));
 	}
 
 	@Override
-	public void execute(final AbstractCommand... commands) {
-		animator.execute(commands);
+	public void execute(final AbstractCommand command) {
+		animator.execute(command);
+		if (command instanceof IStateSpaceModifier) {
+			this.statesCalculated(((IStateSpaceModifier)command).getNewTransitions());
+		}
 	}
 
 	@Override
@@ -717,10 +747,31 @@ public class StateSpace implements IAnimator {
 	 *            the new model
 	 * @param mainComponent
 	 *            the new main component
+	 * @deprecated Use {@link #initModel(AbstractModel, AbstractElement)} instead
 	 */
+	@Deprecated
 	public void setModel(final AbstractModel model, final AbstractElement mainComponent) {
 		this.model = model;
 		this.mainComponent = mainComponent;
+	}
+
+	/**
+	 * Set the model that is being animated. This should be set at the
+	 * beginning of an animation and can only be set once per StateSpace.
+	 * A StateSpace object always corresponds to exactly one model.
+	 *
+	 * @param model the new model
+	 * @param mainComponent the new main component
+	 * @throws IllegalStateException if the model or main component has already been set
+	 */
+	public void initModel(final AbstractModel model, final AbstractElement mainComponent) {
+		if (this.getModel() != null) {
+			throw new IllegalStateException("model has already been set");
+		}
+		if (this.getMainComponent() != null) {
+			throw new IllegalStateException("mainComponent has already been set");
+		}
+		this.setModel(model, mainComponent);
 	}
 
 	/**
@@ -773,11 +824,11 @@ public class StateSpace implements IAnimator {
 	 *            how formulas should be expanded
 	 * @return a set containing all of the evaluated transitions
 	 */
-	public Set<Transition> evaluateTransitions(final Collection<Transition> transitions,
+	public synchronized Set<Transition> evaluateTransitions(final Collection<Transition> transitions,
 			final FormulaExpand expansion) {
 		GetOpsFromIds cmd = new GetOpsFromIds(transitions, expansion);
 		execute(cmd);
-		return new LinkedHashSet<>(transitions);
+		return new CopyOnWriteArraySet<>(transitions);
 	}
 
 	/**
@@ -796,35 +847,44 @@ public class StateSpace implements IAnimator {
 	public Map<State, Map<IEvalElement, AbstractEvalResult>> evaluateForGivenStates(final Collection<State> states,
 			final List<IEvalElement> formulas) {
 		Map<State, Map<IEvalElement, AbstractEvalResult>> result = new HashMap<>();
-		List<EvaluationCommand> cmds = new ArrayList<>();
+		Map<State, EvaluateFormulasCommand> evalCommandsByState = new HashMap<>();
 
 		for (State stateId : states) {
-			if (stateId.isInitialised()) {
-				Map<IEvalElement, AbstractEvalResult> res = new HashMap<>();
-				result.put(stateId, res);
+			Map<IEvalElement, AbstractEvalResult> res = new HashMap<>();
+			result.put(stateId, res);
 
-				// Check for cached values
-				Map<IEvalElement, AbstractEvalResult> map = stateId.getValues();
-				for (IEvalElement f : formulas) {
-					if (map.containsKey(f)) {
-						res.put(f, map.get(f));
-					} else {
-						cmds.add(f.getCommand(stateId));
-					}
+			// Check for cached values
+			Map<IEvalElement, AbstractEvalResult> map = stateId.getValues();
+			final List<IEvalElement> toEvaluateInState = new ArrayList<>();
+			for (IEvalElement f : formulas) {
+				if (map.containsKey(f)) {
+					res.put(f, map.get(f));
+				} else {
+					toEvaluateInState.add(f);
 				}
-
+			}
+			if (!toEvaluateInState.isEmpty()) {
+				evalCommandsByState.put(stateId, new EvaluateFormulasCommand(toEvaluateInState, stateId.getId()));
 			}
 		}
 
-		execute(new ComposedCommand(cmds));
+		execute(new ComposedCommand(new ArrayList<>(evalCommandsByState.values())));
 
-		for (EvaluationCommand efCmd : cmds) {
-			IEvalElement formula = efCmd.getEvalElement();
-			AbstractEvalResult value = efCmd.getValue();
-			State id = addState(efCmd.getStateId());
-			result.get(id).put(formula, value);
-		}
+		evalCommandsByState.forEach((state, evalCommand) ->
+			result.get(state).putAll(evalCommand.getResultMap())
+		);
 		return result;
+	}
+
+	/**
+	 * Run extended static checks on the loaded machine.
+	 * 
+	 * @return a list of all problems found by the extended static check
+	 */
+	public List<ErrorItem> performExtendedStaticChecks() {
+		final ExtendedStaticCheckCommand cmd = new ExtendedStaticCheckCommand();
+		this.execute(cmd);
+		return cmd.getProblems();
 	}
 
 	@Override

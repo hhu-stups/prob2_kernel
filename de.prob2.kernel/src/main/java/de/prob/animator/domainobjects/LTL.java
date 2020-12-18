@@ -1,10 +1,7 @@
 package de.prob.animator.domainobjects;
 
-import com.google.gson.Gson;
-
 import de.be4.classicalb.core.parser.ClassicalBParser;
 import de.be4.ltl.core.parser.LtlParseException;
-
 import de.prob.animator.command.EvaluationCommand;
 import de.prob.animator.command.LtlCheckingCommand;
 import de.prob.ltl.parser.LtlParser;
@@ -56,8 +53,7 @@ public class LTL extends AbstractEvalElement {
 
 	@Override
 	public String serialized() {
-		// FIXME, maybe?
-		return "#LTL:" + new Gson().toJson(this);
+		throw new UnsupportedOperationException("LTL formulas cannot be serialized");
 	}
 
 	@Override

@@ -10,12 +10,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.google.gson.Gson;
-
 import de.prob.Main;
 import de.prob.animator.command.EvaluateFormulaCommand;
 import de.prob.animator.command.EvaluationCommand;
-import de.prob.cli.OsSpecificInfo;
 import de.prob.model.representation.CSPModel;
 import de.prob.model.representation.FormulaUUID;
 import de.prob.model.representation.IFormulaUUID;
@@ -49,8 +46,7 @@ public class CSP extends AbstractEvalElement {
 		
 		this.uuid = new FormulaUUID();
 		this.fileName = model.getModelFile().getAbsolutePath();
-		OsSpecificInfo osInfo = Main.getInjector().getInstance(OsSpecificInfo.class);
-		this.cspmfPath = Paths.get(Main.getProBDirectory(), osInfo.getCspmfName());
+		this.cspmfPath = Paths.get(Main.getProBDirectory(), model.getOsInfo().getCspmfName());
 	}
 
 	@Override
@@ -105,7 +101,7 @@ public class CSP extends AbstractEvalElement {
 
 	@Override
 	public String serialized() {
-		return "#CSP:" + new Gson().toJson(this);
+		throw new UnsupportedOperationException("CSP formulas cannot be serialized");
 	}
 
 	@Override

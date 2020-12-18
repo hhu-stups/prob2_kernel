@@ -27,7 +27,7 @@ assert constants.collect { it.name } == [
 	"down",
 	"up"
 ]
-assert !constants.inject(false) { acc, val -> acc || val.isAbstract}
+assert !constants.any {it.isAbstract}
 
 final axioms = levels.axioms
 assert axioms != null

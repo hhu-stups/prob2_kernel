@@ -11,6 +11,7 @@ import de.be4.classicalb.core.parser.BParser;
 import de.be4.classicalb.core.parser.exceptions.BCompoundException;
 import de.be4.classicalb.core.parser.rules.AbstractOperation;
 import de.be4.classicalb.core.parser.rules.RulesProject;
+import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.command.LoadRulesProjectCommand;
 import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.EvaluationException;
@@ -22,7 +23,6 @@ import de.prob.model.representation.DependencyGraph;
 import de.prob.model.representation.ModelElementList;
 import de.prob.scripting.StateSpaceProvider;
 import de.prob.statespace.FormalismType;
-import de.prob.statespace.StateSpace;
 
 public class RulesModel extends AbstractModel {
 
@@ -64,16 +64,6 @@ public class RulesModel extends AbstractModel {
 	}
 
 	@Override
-	public boolean checkSyntax(String formula) {
-		try {
-			parseFormula(formula, FormulaExpand.TRUNCATE);
-			return true;
-		} catch (EvaluationException e) {
-			return false;
-		}
-	}
-
-	@Override
 	public <T extends AbstractElement> ModelElementList<T> getChildrenOfType(final Class<T> c) {
 		return new ModelElementList<>();
 	}
@@ -84,12 +74,7 @@ public class RulesModel extends AbstractModel {
 	}
 
 	@Override
-	public StateSpace load(AbstractElement mainComponent, Map<String, String> preferences) {
-		return stateSpaceProvider.loadFromCommand(this, mainComponent, preferences,
-				new LoadRulesProjectCommand(project, modelFile));
-	}
-
-	public LoadRulesProjectCommand getLoadCommand() {
+	public AbstractCommand getLoadCommand(final AbstractElement mainComponent) {
 		return new LoadRulesProjectCommand(project, modelFile);
 	}
 

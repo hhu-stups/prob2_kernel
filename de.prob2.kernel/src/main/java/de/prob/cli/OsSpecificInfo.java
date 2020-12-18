@@ -8,27 +8,28 @@ package de.prob.cli;
  * 
  */
 public class OsSpecificInfo {
+	private final String binariesZipResourceName;
 	private final String cliName;
-	private final String helperCmd;
 	private final String userInterruptCmd;
-	private final String name;
-	private final String dirName;
 	private final String cspmfName;
+	private final String fuzzName;
 
 	public OsSpecificInfo(
+		final String binariesZipResourceName,
 		final String cliName,
-		final String helperCmd,
 		final String userInterruptCmd,
-		final String name,
-		final String dirName,
-		final String cspmfName
+		final String cspmfName,
+		final String fuzzName
 	) {
+		this.binariesZipResourceName = binariesZipResourceName;
 		this.cliName = cliName;
-		this.helperCmd = helperCmd;
 		this.userInterruptCmd = userInterruptCmd;
-		this.name = name;
-		this.dirName = dirName;
 		this.cspmfName = cspmfName;
+		this.fuzzName = fuzzName;
+	}
+
+	public String getBinariesZipResourceName() {
+		return this.binariesZipResourceName;
 	}
 
 	/**
@@ -39,13 +40,6 @@ public class OsSpecificInfo {
 	}
 
 	/**
-	 * @return helperCmd - Windows: null, Mac and Linux: "sh"
-	 */
-	public String getHelperCmd() {
-		return helperCmd;
-	}
-
-	/**
 	 * @return userInterruptCmd - Windows: "send_user_interrupt.exe", Mac and
 	 *         Linux: "send_user_interrupt"
 	 */
@@ -53,22 +47,11 @@ public class OsSpecificInfo {
 		return userInterruptCmd;
 	}
 
-	/**
-	 * @return name Windows: "Windows", Mac: "MacOs", Linux: "Linux"
-	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * @return dirName Windows: "win32", Mac: "leopard64", Linux 32-Bit:
-	 *         "linux32", Linux 64-Bit: "linux64"
-	 */
-	public String getDirName() {
-		return dirName;
-	}
-	
 	public String getCspmfName() {
 		return this.cspmfName;
+	}
+
+	public String getFuzzName() {
+		return this.fuzzName;
 	}
 }

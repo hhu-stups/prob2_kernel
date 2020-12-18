@@ -37,6 +37,8 @@ public class EventB extends AbstractEvalElement implements IBEvalElement {
 
 	private EvalElementType kind;
 	private Node ast = null;
+	private boolean allowAssignments = true; // if true we try to parse as substitutions
+	// TO DO: provide constructor/method for setting this; also we may wish to add a way to set Kind
 
 	private final Set<IFormulaExtension> types;
 
@@ -70,7 +72,7 @@ public class EventB extends AbstractEvalElement implements IBEvalElement {
 	}
 	
 	public IParseResult ensurePredicateParsed() {
-		final String unicode = UnicodeTranslator.toUnicode(this.getCode());
+		final String unicode = this.toUnicode();
 		kind = EvalElementType.PREDICATE;
 		IParseResult parseResult = FormulaFactory.getInstance(types)
 				.parsePredicate(unicode, null);
@@ -81,7 +83,7 @@ public class EventB extends AbstractEvalElement implements IBEvalElement {
 	}
 	
 	public IParseResult ensureExpressionParsed() {
-		final String unicode = UnicodeTranslator.toUnicode(this.getCode());
+		final String unicode = this.toUnicode();
 		kind = EvalElementType.EXPRESSION;
 		IParseResult parseResult = FormulaFactory.getInstance(types)
 				.parseExpression(unicode, null);
@@ -92,7 +94,7 @@ public class EventB extends AbstractEvalElement implements IBEvalElement {
 	}
 	
 	public IParseResult ensureAssignmentParsed() {
-		final String unicode = UnicodeTranslator.toUnicode(this.getCode());
+		final String unicode = this.toUnicode();
 		kind = EvalElementType.ASSIGNMENT;
 		IParseResult parseResult = FormulaFactory.getInstance(types)
 				.parseAssignment(unicode, null);
@@ -112,10 +114,14 @@ public class EventB extends AbstractEvalElement implements IBEvalElement {
 			if(parseResult.hasProblem()) {
 				errors.add("Parsing expression failed because: " + parseResult);
 				addProblems(parseResult, errors);
-				parseResult = ensureAssignmentParsed();
-				if(parseResult.hasProblem()) {
-					errors.add("Parsing substitution failed because: " + parseResult);
-					addProblems(parseResult, errors);
+				if (allowAssignments) {
+					parseResult = ensureAssignmentParsed();
+					if(parseResult.hasProblem()) {
+						errors.add("Parsing substitution failed because: " + parseResult);
+						addProblems(parseResult, errors);
+						kind = EvalElementType.NONE;
+					}
+				} else {
 					kind = EvalElementType.NONE;
 				}
 			}
@@ -123,7 +129,7 @@ public class EventB extends AbstractEvalElement implements IBEvalElement {
 		
 		if(parseResult.hasProblem()) {
 			errors.add("Code: " + this.getCode());
-			errors.add("Unicode translation: " + UnicodeTranslator.toUnicode(this.getCode()));
+			errors.add("Unicode translation: " + this.toUnicode());
 			throw new EvaluationException("Could not parse formula:\n" + String.join("\n", errors));
 		}
 	}
@@ -192,6 +198,8 @@ public class EventB extends AbstractEvalElement implements IBEvalElement {
 				parseResult = ensureExpressionParsed();
 				if(!parseResult.hasProblem()) {
 					return kind;
+				} else if (!allowAssignments) {
+					return EvalElementType.NONE;
 				} else {
 					parseResult = ensureAssignmentParsed();
 					if(!parseResult.hasProblem()) {
@@ -232,7 +240,7 @@ public class EventB extends AbstractEvalElement implements IBEvalElement {
 	}
 
 	public String toUnicode() {
-		return UnicodeTranslator.toUnicode(this.getCode());
+		return UnicodeTranslator.toRodinUnicode(this.getCode());
 	}
 
 	public IParseResult getRodinParsedResult() {

@@ -66,7 +66,7 @@ class PrologProcessProvider implements Provider<ProcessHandle> {
 			prologProcess = pb.start();
 			logger.debug("Cli started");
 		} catch (IOException e) {
-			throw new CliError("Problem while starting up ProB CLI. Tried to execute: " + executable, e);
+			throw new CliError("Problem while starting up ProB CLI: " + e.getMessage(), e);
 		}
 
 		toDestroyOnShutdown.add(prologProcess);
@@ -75,9 +75,6 @@ class PrologProcessProvider implements Provider<ProcessHandle> {
 
 	private List<String> makeCommand(final String executable) {
 		List<String> command = new ArrayList<>();
-		if (osInfo.getHelperCmd() != null) {
-			command.add(osInfo.getHelperCmd());
-		}
 		command.add(executable);
 		command.add("-sf");
 		return command;

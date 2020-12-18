@@ -4,6 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import de.prob.animator.domainobjects.Join;
+
+// TODO The purpose of this class is similar to Join - should they be merged?
+/**
+ * Creates a conjunction of predicates incrementally,
+ * from other predicates or from name/value pairs.
+ * 
+ * @see Join
+ */
 public class PredicateBuilder {
 
 	private final List<String> predicates = new ArrayList<>();
@@ -12,18 +21,23 @@ public class PredicateBuilder {
 		//
 	}
 
-	public PredicateBuilder addList(List<String> predicates) {
-		if (predicates != null) {
-			this.predicates.addAll(predicates);
-		}
+	public PredicateBuilder add(final String predicate) {
+		this.predicates.add(predicate);
+		return this;
+	}
 
+	public PredicateBuilder addList(List<String> predicates) {
+		this.predicates.addAll(predicates);
+		return this;
+	}
+
+	public PredicateBuilder add(final String name, final String value) {
+		this.add(name + "=" + value);
 		return this;
 	}
 
 	public PredicateBuilder addMap(Map<String, String> map) {
-		if (map != null) {
-			map.forEach((k, v) -> predicates.add(k + '=' + v));
-		}
+		map.forEach(this::add);
 		return this;
 	}
 

@@ -56,14 +56,14 @@ public class BSynthesizer {
 	) throws BSynthesisException {
 		// dummy output state
 		final Set<IOExample> positiveIOExamples = positiveExamples.stream()
-			  .map(example -> new IOExample(example, example))
-			  .collect(Collectors.toSet());
+			.map(example -> new IOExample(example, example))
+			.collect(Collectors.toSet());
 		final Set<IOExample> negativeIOExamples = negativeExamples.stream()
-			  .map(example -> new IOExample(example, example))
-			  .collect(Collectors.toSet());
+			.map(example -> new IOExample(example, example))
+			.collect(Collectors.toSet());
 
 		final BSynthesisCommand synthesisCommand = new BSynthesisCommand(
-			  SynthesisType.PREDICATE, positiveIOExamples, negativeIOExamples, componentLibrary);
+			SynthesisType.PREDICATE, positiveIOExamples, negativeIOExamples, componentLibrary);
 		synthesisCommand.setSolverTimeOut(solverTimeOut);
 		synthesisCommand.setSynthesisMode(synthesisMode);
 		try {
@@ -102,7 +102,7 @@ public class BSynthesizer {
 		final BLibrary componentLibrary
 	) throws BSynthesisException {
 		final BSynthesisCommand synthesisCommand = new BSynthesisCommand(
-			  SynthesisType.OPERATION, positiveExamples, negativeExamples, componentLibrary);
+			SynthesisType.OPERATION, positiveExamples, negativeExamples, componentLibrary);
 		synthesisCommand.setSolverTimeOut(solverTimeOut);
 		synthesisCommand.setSynthesisMode(synthesisMode);
 		try {

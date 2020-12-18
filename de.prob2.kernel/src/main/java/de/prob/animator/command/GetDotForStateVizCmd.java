@@ -5,13 +5,20 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
+import java.util.List;
 import java.util.stream.Collectors;
 
+import de.prob.animator.domainobjects.DotVisualizationCommand;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.State;
 
+/**
+ * @deprecated Use {@link DotVisualizationCommand#getByName(String, State)}, {@link DotVisualizationCommand#STATE_AS_GRAPH_NAME}, and {@link DotVisualizationCommand#visualizeAsDotToFile(Path, List)} instead.
+ */
+@Deprecated
 public class GetDotForStateVizCmd extends AbstractCommand {
 	private static final String PROLOG_COMMAND_NAME = "write_dot_for_state_viz";
 

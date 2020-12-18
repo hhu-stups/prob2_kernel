@@ -3,10 +3,6 @@ package de.prob.cli;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
-import de.prob.cli.ModuleCli.OsArch;
-import de.prob.cli.ModuleCli.OsName;
-
-import java.io.File;
 
 /**
  * Creates {@link OsSpecificInfo} for each instance of the ProB 2.0 software.
@@ -17,13 +13,14 @@ import java.io.File;
  * 
  */
 @Singleton
-public class OsInfoProvider implements Provider<OsSpecificInfo> {
+class OsInfoProvider implements Provider<OsSpecificInfo> {
+	private static final String CLI_BINARIES_RESOURCE_PREFIX = "/de/prob/cli/binaries/";
 
 	private final OsSpecificInfo osInfo;
 
 	@Inject
-	public OsInfoProvider(@OsName final String osString, @OsArch final String osArch) {
-		osInfo = whichOs(osString, osArch);
+	OsInfoProvider(final OsFamily osFamily) {
+		osInfo = makeOsInfo(osFamily);
 	}
 
 	@Override
@@ -31,32 +28,33 @@ public class OsInfoProvider implements Provider<OsSpecificInfo> {
 		return osInfo;
 	}
 
-	private OsSpecificInfo whichOs(final String osString, final String osArch) {
-		final String os = osString.toLowerCase();
-		if (os.contains("win")) {
-			final String dirName;
-			if ("amd64".equals(osArch) || "x64".equals(osArch)) {
-				dirName = "win64";
-			} else if ("i386".equals(osArch) || "x86".equals(osArch)) {
-				dirName = "win32";
-			} else {
-				throw new UnsupportedOperationException("Unsupported architecture for Windows: " + osArch);
-			}
-			return new OsSpecificInfo("probcli.exe", null, "lib" + File.separator + "send_user_interrupt.exe", "Windows", dirName, "lib\\cspmf.exe");
-		} else if (os.contains("mac")) {
-			return new OsSpecificInfo("probcli.sh", "sh", "send_user_interrupt", "MacOs", "leopard64", "lib/cspmf");
-		} else if (os.contains("linux")) {
-			final String dirName;
-			if ("i386".equals(osArch)) {
-				dirName = "linux32";
-			} else if ("amd64".equals(osArch)) {
+	private static OsSpecificInfo makeOsInfo(final OsFamily os) {
+		final String dirName;
+		final String cliName;
+		final String userInterruptCmd;
+		final String cspmfName;
+		final String fuzzName;
+		if (os == OsFamily.WINDOWS) {
+			dirName = "win64";
+			cliName = "probcli.exe";
+			userInterruptCmd = "lib\\send_user_interrupt.exe";
+			cspmfName = "lib\\cspmf.exe";
+			fuzzName = "lib\\fuzz.exe";
+		} else {
+			if (os == OsFamily.MACOS) {
+				dirName = "leopard64";
+			} else if (os == OsFamily.LINUX) {
 				dirName = "linux64";
 			} else {
-				throw new UnsupportedOperationException("Unsupported architecture for Linux: " + osArch);
+				throw new AssertionError("Unhandled operating system: " + os);
 			}
-			return new OsSpecificInfo("probcli.sh", "sh", "send_user_interrupt", "Linux", dirName, "lib/cspmf");
-		} else {
-			throw new UnsupportedOperationException("Unsupported operating system: " + osString);
+			cliName = "probcli.sh";
+			userInterruptCmd = "send_user_interrupt";
+			cspmfName = "lib/cspmf";
+			fuzzName = "lib/fuzz";
 		}
+		
+		final String binariesZipResourceName = CLI_BINARIES_RESOURCE_PREFIX + "probcli_" + dirName + ".zip";
+		return new OsSpecificInfo(binariesZipResourceName, cliName, userInterruptCmd, cspmfName, fuzzName);
 	}
 }

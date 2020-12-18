@@ -1,8 +1,8 @@
 package de.prob.animator.domainobjects;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -14,23 +14,16 @@ import de.prob.parser.BindingGenerator;
 import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
-import de.prob.unicode.UnicodeTranslator;
 
 import groovy.lang.MissingPropertyException;
 
 public class EvalResult extends AbstractEvalResult {
-
-	private static final  Map<String, String> EMPTY_MAP = Collections.emptyMap();
-	public static final  EvalResult TRUE = new EvalResult("TRUE", EMPTY_MAP);
-	public static final  EvalResult FALSE = new EvalResult("FALSE", EMPTY_MAP);
+	public static final  EvalResult TRUE = new EvalResult("TRUE", Collections.emptyMap());
+	public static final  EvalResult FALSE = new EvalResult("FALSE", Collections.emptyMap());
 	private static final  HashMap<String, EvalResult> formulaCache = new HashMap<>();
 
 	private final String value;
 	private final Map<String, String> solutions;
-
-	// These fields are saved in this class to be able to later produce
-	// a TranslatedEvalResult from this class. However, they are otherwise
-	// not of use to the user.
 
 	public EvalResult(final String value, final Map<String, String> solutions) {
 		super();
@@ -48,14 +41,13 @@ public class EvalResult extends AbstractEvalResult {
 
 	@Override
 	public String toString() {
-		String v = UnicodeTranslator.toUnicode(value);
 		if (solutions.isEmpty()) {
-			return v;
+			return value;
 		}
 
 		return solutions.entrySet().stream()
-			.map(e -> e.getKey() + " = " + UnicodeTranslator.toUnicode(e.getValue()))
-			.collect(Collectors.joining(" ∧ ", v + " (", ")"));
+			.map(e -> e.getKey() + " = " + e.getValue())
+			.collect(Collectors.joining(" ∧ ", value + " (", ")"));
 	}
 
 	/**
@@ -104,78 +96,92 @@ public class EvalResult extends AbstractEvalResult {
 	 * @return {@link AbstractEvalResult} translation of pt
 	 */
 	public static AbstractEvalResult getEvalResult(PrologTerm pt) {
-		if (pt instanceof ListPrologTerm) {
+		if (pt instanceof ListPrologTerm) { // deprecated
 			/*
 			 * If the evaluation was not successful, the result should be a
 			 * Prolog list with the code on the first index and a list of errors
 			 * This results therefore in a ComputationNotCompleted command
 			 */
-			ListPrologTerm listP = (ListPrologTerm) pt;
-			ArrayList<String> list = new ArrayList<>();
-
-			String code = listP.get(0).getFunctor();
-
-			for (int i = 1; i < listP.size(); i++) {
-				list.add(listP.get(i).getArgument(1).getFunctor());
-			}
-
-			return new ComputationNotCompletedResult(code, String.join(",", list));
-		} else if (pt.getFunctor().intern().equals("result")) {
+			final List<String> strings = PrologTerm.atomicStrings((ListPrologTerm)pt);
+			final String code = strings.get(0);
+			final List<String> errors = strings.subList(1, strings.size());
+			return new ComputationNotCompletedResult(code, String.join(",", errors));
+		} else if ("result".equals(pt.getFunctor())) {
 			/*
-			 * If the formula in question was a predicate, the result term will
-			 * have the following form: result(Value,Solutions) where Value is
-			 * 'TRUE','POSSIBLY TRUE', or 'FALSE' Solutions is then a list of
-			 * triples bind(Name,Solution,PPSol) where Name is the name of the
-			 * free variable calculated by ProB, Solution is the Prolog
-			 * representation of the solution, and PPSol is the String pretty
+			 * The result term will have the form result(Value,Solutions).
+			 * 
+			 * If the formula in question was a predicate, Value is
+			 * 'TRUE', or 'FALSE' Solutions is then a list of
+			 * terms solution(Name,PPSol) where Name is the name of the
+			 * free variable calculated by ProB and PPSol is the String pretty
 			 * print of the solution calculated by Prolog.
 			 *
-			 * If the formula in question was an expression, the result term
-			 * will have the following form: result(v(SRes,PRes),[],Code) where
-			 * SRes is the string representation of the result calculated by
-			 * ProB and PRes is the Prolog representation of the value.
+			 * If the formula in question was an expression,
+			 * Value is the string representation of the result calculated by
+			 * ProB and Solutions is an empty list.
 			 *
 			 * From this information, an EvalResult object is created.
 			 */
 
-			PrologTerm v = pt.getArgument(1);
-			String value = v.getFunctor().intern();
-			ListPrologTerm solutionList = BindingGenerator.getList(pt.getArgument(2));
-			if (value.equals("TRUE") && solutionList.isEmpty()) {
+			final CompoundPrologTerm resultTerm = BindingGenerator.getCompoundTerm(pt, 2);
+			final String value = PrologTerm.atomicString(resultTerm.getArgument(1));
+			final ListPrologTerm solutionList = BindingGenerator.getList(resultTerm.getArgument(2));
+			if ("TRUE".equals(value) && solutionList.isEmpty()) {
 				return TRUE;
 			}
-			if (value.equals("FALSE") && solutionList.isEmpty()) {
+			if ("FALSE".equals(value) && solutionList.isEmpty()) {
 				return FALSE;
 			}
-			if (!value.equals("TRUE") && !value.equals("FALSE") && formulaCache.containsKey(value)) {
+			if (!"TRUE".equals(value) && !"FALSE".equals(value) && formulaCache.containsKey(value)) {
+				assert solutionList.isEmpty();
 				return formulaCache.get(value);
 			}
 
-			if (v instanceof CompoundPrologTerm && v.getArity() == 2) {
-				CompoundPrologTerm cpt = BindingGenerator.getCompoundTerm(v, 2);
-				value = cpt.getArgument(1).getFunctor();
-			}
-
-			Map<String, String> solutions = solutionList.isEmpty() ? EMPTY_MAP : new HashMap<>();
-
-			for (PrologTerm t : solutionList) {
-				CompoundPrologTerm cpt = BindingGenerator.getCompoundTerm(t, 2);
-				solutions.put(cpt.getArgument(1).getFunctor().intern(), cpt.getArgument(2).getFunctor().intern());
+			final Map<String, String> solutions;
+			if (solutionList.isEmpty()) {
+				solutions = Collections.emptyMap();
+			} else {
+				solutions = new HashMap<>();
+				for (PrologTerm t : solutionList) {
+					CompoundPrologTerm cpt = BindingGenerator.getCompoundTerm(t, "solution", 2);
+					solutions.put(PrologTerm.atomicString(cpt.getArgument(1)).intern(), PrologTerm.atomicString(cpt.getArgument(2)).intern());
+				}
 			}
 
 			EvalResult res = new EvalResult(value, solutions);
-			if (!value.equals("TRUE") && !value.equals("FALSE")) {
+			if (!"TRUE".equals(value) && !"FALSE".equals(value)) {
+				assert solutionList.isEmpty();
 				formulaCache.put(value, res);
 			}
 			return res;
-		} else if (pt.getFunctor().intern().equals("errors") && pt.getArgument(1).getFunctor().intern().equals("NOT-WELL-DEFINED")) {
-			ListPrologTerm arg2 = BindingGenerator.getList(pt.getArgument(2));
-			return new WDError(arg2.stream().map(PrologTerm::getFunctor).collect(Collectors.toList()));
-		} else if (pt.getFunctor().intern().equals("errors")
-				&& pt.getArgument(1).getFunctor().intern().equals("IDENTIFIER(S) NOT YET INITIALISED; INITIALISE MACHINE FIRST")) {
-			ListPrologTerm arg2 = BindingGenerator.getList(pt.getArgument(2));
-			return new IdentifierNotInitialised(arg2.stream().map(PrologTerm::getFunctor).collect(Collectors.toList()));
-		} else if (pt.getFunctor().intern().equals("enum_warning")) {
+		} else if ("errors".equals(pt.getFunctor())) {
+			final CompoundPrologTerm errorsTerm = BindingGenerator.getCompoundTerm(pt, 2);
+			final String errorType = PrologTerm.atomicString(errorsTerm.getArgument(1));
+			final List<String> errors = PrologTerm.atomicStrings(BindingGenerator.getList(errorsTerm.getArgument(2)));
+			switch (errorType) {
+				case "NOT-WELL-DEFINED":
+					return new WDError(errors);
+				
+				case "UNKNOWN":
+					return new UnknownEvaluationResult(errors);
+				
+				case "NOT-INITIALISED":
+				case "IDENTIFIER(S) NOT YET INITIALISED; INITIALISE MACHINE FIRST": // deprecated
+					return new IdentifierNotInitialised(errors);
+				
+				case "ERROR":
+				case "SYNTAX ERROR":
+				case "TYPE ERROR":
+				case "INTERNAL ERROR":
+					//return new UnknownEvaluationResult(errors); // TO DO: produce own class
+					return new ComputationNotCompletedResult("formula", String.join(",", errors));
+				
+				default:
+					// throw new IllegalArgumentException("Unknown error type: " + errorType);
+					return new ComputationNotCompletedResult("formula",
+						"Unknown error type: " + errorType + " " + String.join(",", errors));
+			}
+		} else if ("enum_warning".equals(pt.getFunctor())) {
 			return new EnumerationWarning();
 		}
 		throw new IllegalArgumentException("Unknown result type " + pt.toString());

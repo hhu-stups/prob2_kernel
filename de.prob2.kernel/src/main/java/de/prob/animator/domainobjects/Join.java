@@ -4,21 +4,25 @@ import java.util.List;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
+import de.prob.formula.PredicateBuilder;
 import de.prob.model.classicalb.ClassicalBModel;
 
+// TODO The purpose of this class is similar to PredicateBuilder - should they be merged?
 /**
  * Contains methods for combining {@link IEvalElement}s.
+ * 
+ * @see PredicateBuilder
  */
 public final class Join {
 
 	private Join() {}
 
 	public static IEvalElement conjunctWithStrings(ClassicalBModel model, List<String> elements) {
-		StringJoiner stringJoiner = new StringJoiner(" & ");
+		final PredicateBuilder pb = new PredicateBuilder();
 		for (String element : elements) {
-			stringJoiner.add("(" + element + ")");
+			pb.add("(" + element + ")");
 		}
-		return model.parseFormula(stringJoiner.toString(), FormulaExpand.EXPAND);
+		return model.parseFormula(pb.toString(), FormulaExpand.EXPAND);
 	}
 
 	public static IEvalElement conjunct(ClassicalBModel model, List<IEvalElement> elements) {

@@ -1,7 +1,7 @@
-import java.nio.file.Paths
+import de.prob.statespace.Trace
 
 import de.prob.animator.domainobjects.WDError
-import de.prob.statespace.Trace
+import java.nio.file.Paths
 
 final s = api.b_load(Paths.get(dir, "machines", "scheduler.mch").toString())
 def t = new Trace(s)

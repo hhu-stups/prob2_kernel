@@ -22,7 +22,7 @@ public class FactoryProvider {
 	public static final Map<Class<? extends ModelFactory<?>>, List<String>> FACTORY_TO_EXTENSIONS_MAP;
 	static {
 		final Map<Class<? extends ModelFactory<?>>, List<String>> map = new LinkedHashMap<>();
-		map.put(ClassicalBFactory.class, Arrays.asList("mch", "ref", "imp", "sys"));
+		map.put(ClassicalBFactory.class, Arrays.asList("mch", "ref", "imp", "sys", "def"));
 		map.put(EventBFactory.class, Arrays.asList("bum", "buc"));
 		map.put(EventBPackageFactory.class, Collections.singletonList("eventb"));
 		map.put(CSPFactory.class, Arrays.asList("csp", "cspm"));
@@ -30,6 +30,7 @@ public class FactoryProvider {
 		map.put(RulesModelFactory.class, Collections.singletonList("rmch"));
 		map.put(XTLFactory.class, Arrays.asList("P", "pl"));
 		map.put(ZFactory.class, Arrays.asList("zed", "tex"));
+		map.put(ZFuzzFactory.class, Collections.singletonList("fuzz"));
 		map.put(AlloyFactory.class, Collections.singletonList("als"));
 		FACTORY_TO_EXTENSIONS_MAP = Collections.unmodifiableMap(map);
 	}
@@ -43,12 +44,6 @@ public class FactoryProvider {
 		EXTENSION_TO_FACTORY_MAP = Collections.unmodifiableMap(map);
 	}
 
-	/**
-	 * @deprecated Use the values of {@link #FACTORY_TO_EXTENSIONS_MAP} instead
-	 */
-	@Deprecated
-	public static final List<String> EXTENSION_PATTERNS_ORDERED = Arrays.asList("*.mch", "*.ref", "*.imp", "*.sys", "*.bum", "*.buc", "*.eventb", "*.csp", "*.cspm", "*.tla", "*.rmch", "*.P", "*.pl", "*.zed", "*.tex", "*.als");
-
 	private final ClassicalBFactory classicalBFactory;
 	private final CSPFactory cspFactory;
 	private final EventBFactory eventBFactory;
@@ -57,6 +52,7 @@ public class FactoryProvider {
 	private final RulesModelFactory bRulesFactory;
 	private final XTLFactory xtlFactory;
 	private final ZFactory zFactory;
+	private final ZFuzzFactory zFuzzFactory;
 	private final AlloyFactory alloyFactory;
 
 	@Inject
@@ -69,6 +65,7 @@ public class FactoryProvider {
 		final RulesModelFactory bRulesFactory,
 		final XTLFactory xtlFactory,
 		final ZFactory zFactory,
+		final ZFuzzFactory zFuzzFactory,
 		final AlloyFactory alloyFactory
 	) {
 		this.classicalBFactory = bfactory;
@@ -79,6 +76,7 @@ public class FactoryProvider {
 		this.bRulesFactory = bRulesFactory;
 		this.xtlFactory = xtlFactory;
 		this.zFactory = zFactory;
+		this.zFuzzFactory = zFuzzFactory;
 		this.alloyFactory = alloyFactory;
 	}
 	
@@ -124,6 +122,10 @@ public class FactoryProvider {
 
 	public ZFactory getZFactory() {
 		return this.zFactory;
+	}
+	
+	public ZFuzzFactory getZFuzzFactory() {
+		return this.zFuzzFactory;
 	}
 	
 	public AlloyFactory getAlloyFactory() {

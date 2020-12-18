@@ -1,0 +1,54 @@
+\documentclass{article}
+\usepackage{fuzz}
+
+\begin{document}
+
+\subsection*{Test framework}
+We alternately execute an operation and check its outcome, so we have to
+phases $op$ and $check$. Additionally we have a counter to specify wich testcase
+should be executed.
+\begin{zed}
+  Phase ::= op | check \\
+  Testframe \defs [~test:\nat; phase : Phase~] \\
+  TestframeInit \defs [~Testframe | test=1 \land phase=op~] \\
+\end{zed}
+We define basic schemas for operations and checks, checks do not change the state.
+\begin{zed}
+  Op \defs [~\Delta State;\Delta Testframe | phase\mapsto phase' = op\mapsto check  \land test=test'~]\\
+  Check \defs [~\Xi State;\Delta Testframe | phase\mapsto phase' = check\mapsto op  \land test'=test+1~]\\
+\end{zed}
+
+\subsection*{State and initialisation}
+We need two types
+\begin{zed}
+  A ::= a1 | a2 | a3 \\
+  B ::= b1 | b2 | b3 \\
+\end{zed}
+Our state consists of a set of tuples, which is initialised empty
+\begin{zed}
+  State \defs [~s : A \rel B~]\\
+  StateInit \defs [State | s = \emptyset~]\\
+\end{zed}
+Now we combine the test frame and the state itself:
+\begin{zed}
+  FullState \defs Testframe \land State \\
+  Init \defs [~FullState' | TestframeInit' \land StateInit' ~]\\
+\end{zed}
+
+\subsection*{Comprehension sets with several parameters}
+The first test checks if a comprehension set whose arguments are not
+ordered alphabetically, is computed correctly
+\begin{zed}
+  Test1 \defs [~Testframe | test=1~]\\
+  Op1 \defs [~Test1;Op | s' = \{~ y:A; x:B | y=a1 \land x=b1 ~\}~]\\
+  Check1 \defs [~Test1;Check | s = \{a1 \mapsto b1\}~]\\
+\end{zed}
+The second test is the same, but with alphabetically ordered arguments
+\begin{zed}
+  Test2 \defs [~Testframe | test=2~]\\
+  Op2 \defs [~Test2;Op | s' = \{~ x:A; y:B | x=a2 \land y=b2 ~\}~]\\
+  Check2 \defs [~Test2;Check | s = \{a2 \mapsto b2\}~]\\
+\end{zed}
+
+
+\end{document}

@@ -5,7 +5,6 @@ import de.prob.animator.command.SetBGoalCommand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.exception.ProBError;
 import de.prob.statespace.StateSpace;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +21,7 @@ public class ConsistencyChecker extends CheckerBase {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConsistencyChecker.class);
 	private static final int TIMEOUT_MS = 500;
 
+	private ModelCheckingLimitConfiguration limitConfiguration;
 	private final ModelCheckingOptions options;
 	private final IEvalElement goal;
 
@@ -65,12 +65,15 @@ public class ConsistencyChecker extends CheckerBase {
 	 *            {@link IModelCheckListener} if the UI should be informed of
 	 *            updates. Otherwise, null.
 	 */
-	public ConsistencyChecker(final StateSpace s, final ModelCheckingOptions options, final IEvalElement goal,
-			final IModelCheckListener ui) {
+	public ConsistencyChecker(final StateSpace s, final ModelCheckingOptions options, final IEvalElement goal, final IModelCheckListener ui) {
 		super(s, ui);
-
+		this.limitConfiguration = new ModelCheckingLimitConfiguration(getStateSpace(), stopwatch, TIMEOUT_MS,-1, -1);
 		this.options = options;
 		this.goal = goal;
+	}
+
+	public ModelCheckingLimitConfiguration getLimitConfiguration() {
+		return limitConfiguration;
 	}
 
 	@Override
@@ -85,25 +88,31 @@ public class ConsistencyChecker extends CheckerBase {
 			}
 		}
 
-		ModelCheckingStepCommand cmd;
+		ModelCheckingStepCommand cmd = null;
+		StateSpaceStats stats = null;
 		try {
 			this.getStateSpace().startTransaction();
-			boolean firstIteration = true;
+			ModelCheckingOptions modifiedOptions = this.options;
+			limitConfiguration.computeStateSpaceCoverage();
 			do {
-				cmd = new ModelCheckingStepCommand(TIMEOUT_MS, this.options.recheckExisting(firstIteration));
+				limitConfiguration.updateTimeLimit();
+				limitConfiguration.updateNodeLimit();
+				cmd = limitConfiguration.nodesLimitSet() ? new ModelCheckingStepCommand(limitConfiguration.getMaximumNodesLeft(), limitConfiguration.getTimeout(), modifiedOptions) : new ModelCheckingStepCommand(limitConfiguration.getTimeout(), modifiedOptions);
 				this.getStateSpace().execute(cmd);
+				stats = cmd.getStats();
+				limitConfiguration.updateStateSpaceCoverage(stats);
 				if (Thread.interrupted()) {
 					LOGGER.info("Consistency checker received a Java thread interrupt");
-					this.isFinished(new CheckInterrupted(), cmd.getStats());
+					this.isFinished(new CheckInterrupted(), stats);
 					return;
 				}
-				this.updateStats(cmd.getResult(), cmd.getStats());
-				firstIteration = false;
-			} while (cmd.getResult() instanceof NotYetFinished);
+				this.updateStats(cmd.getResult(), stats);
+				modifiedOptions = modifiedOptions.recheckExisting(false);
+			} while (cmd.getResult() instanceof NotYetFinished && !limitConfiguration.isFinished());
 		} finally {
 			this.getStateSpace().endTransaction();
 		}
-		this.isFinished(cmd.getResult(), cmd.getStats());
+		this.isFinished(cmd.getResult(), stats);
 	}
 
 	/**

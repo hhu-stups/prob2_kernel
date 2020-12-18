@@ -1,25 +1,21 @@
 package de.prob.model.eventb.translate;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
+import de.prob.model.eventb.EventBModel;
+import de.prob.model.representation.AbstractElement;
+import org.eventb.core.ast.extension.IFormulaExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-
-import de.prob.model.eventb.EventBModel;
-import de.prob.model.representation.AbstractElement;
-
-import org.eventb.core.ast.extension.IFormulaExtension;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.xml.sax.SAXException;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 public class EventBDatabaseTranslator {
 	private static final Logger logger = LoggerFactory.getLogger(EventBDatabaseTranslator.class);
@@ -29,13 +25,13 @@ public class EventBDatabaseTranslator {
 
 	public EventBDatabaseTranslator(EventBModel m,
 			final String fileName) throws FileNotFoundException {
+		File modelFile = new File(fileName);
+		String fullFileName = modelFile.getAbsolutePath();
 		try {
 			SAXParserFactory parserFactory = SAXParserFactory.newInstance();
 			parserFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 			SAXParser saxParser = parserFactory.newSAXParser();
 
-			File modelFile = new File(fileName);
-			String fullFileName = modelFile.getAbsolutePath();
 			this.model = m.setModelFile(modelFile);
 
 			String directory = fullFileName.substring(0,
@@ -69,7 +65,9 @@ public class EventBDatabaseTranslator {
 				this.model = xmlHandler.getModel();
 			}
 		} catch (FileNotFoundException e) {
-			throw e; // TO DO: probably tell the user to clean the project, when the bum or buc files exist
+			String additionalMsg = "Translated .bcm or .bcc file could not be found. Try to clean the Rodin project";
+			logger.error(additionalMsg);
+			throw new EventBFileNotFoundException(fullFileName, additionalMsg, true);
 		} catch (IOException | ParserConfigurationException | SAXException e) {
 			logger.error("Error during EventB translation", e);
 		}

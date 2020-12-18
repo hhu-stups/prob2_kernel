@@ -71,11 +71,11 @@ assert thrown2
 
 final cmd9 = new GetOperationByPredicateCommand(s, "0", "blah", "TRUE = TRUE" as ClassicalB, 1)
 s.execute(cmd9)
-assert cmd9.errors == ["Unknown Operation blah"]
+assert cmd9.getErrorMessages() == ["Unknown Operation blah"]
 
 final cmd10 = new GetOperationByPredicateCommand(s, "0", "blah", "TRUE = TRUE" as ClassicalB, 0)
 s.execute(cmd10)
-assert cmd10.errors == ["max nr of solutions too small"]
+assert cmd10.getErrorMessages() == ["max nr of solutions too small"]
 
 final cmd11 = new GetOperationByPredicateCommand(s, "0", "blah", "TRUE = FALSE" as ClassicalB, 1)
 s.execute(cmd11)

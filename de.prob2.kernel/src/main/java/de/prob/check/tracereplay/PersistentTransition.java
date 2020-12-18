@@ -1,15 +1,21 @@
 package de.prob.check.tracereplay;
 
-import java.util.*;
-
-import de.prob.animator.domainobjects.FormulaExpand;
-import de.prob.statespace.OperationInfo;
 import de.prob.animator.domainobjects.AbstractEvalResult;
 import de.prob.animator.domainobjects.EvalResult;
+import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.statespace.LoadedMachine;
+import de.prob.statespace.OperationInfo;
 import de.prob.statespace.State;
 import de.prob.statespace.Transition;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class PersistentTransition {
 
@@ -20,6 +26,7 @@ public class PersistentTransition {
 	private Set<String> destStateNotChanged;
 	private List<String> preds;
 
+
 	public PersistentTransition(Transition transition) {
 		this(transition, false, null);
 	}
@@ -28,7 +35,7 @@ public class PersistentTransition {
 		this.name = transition.getName();
 		final LoadedMachine loadedMachine = transition.getStateSpace().getLoadedMachine();
 		final State destinationState = transition.getDestination();
-		if ("$setup_constants".equals(name)) {
+		if (Transition.SETUP_CONSTANTS_NAME.equals(name)) {
 			if (storeDestinationState) {
 				addValuesToDestState(destinationState.getConstantValues(FormulaExpand.EXPAND), null);
 			}
@@ -38,7 +45,7 @@ public class PersistentTransition {
 				);
 			}
 
-			if (!"$initialise_machine".equals(name)) {
+			if (!Transition.INITIALISE_MACHINE_NAME.equals(name)) {
 				// for each operation
 				OperationInfo machineOperationInfo = loadedMachine.getMachineOperationInfo(name);
 				params = new HashMap<>();
@@ -83,7 +90,7 @@ public class PersistentTransition {
 		return new HashMap<>(this.params);
 	}
 
-	public Map<String, String> getOuputParameters() {
+	public Map<String, String> getOutputParameters() {
 		if (this.results == null) {
 			return null;
 		}
@@ -103,5 +110,6 @@ public class PersistentTransition {
 		}
 		return new ArrayList<>(this.preds);
 	}
+
 
 }

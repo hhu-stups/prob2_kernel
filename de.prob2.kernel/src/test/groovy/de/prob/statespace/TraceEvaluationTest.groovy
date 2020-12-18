@@ -2,7 +2,6 @@ package de.prob.statespace
 
 import java.nio.file.Paths
 
-import de.prob.Main
 import de.prob.animator.domainobjects.ClassicalB
 import de.prob.animator.domainobjects.ComputationNotCompletedResult
 import de.prob.animator.domainobjects.EnumerationWarning
@@ -11,6 +10,7 @@ import de.prob.animator.domainobjects.EventB
 import de.prob.animator.domainobjects.FormulaExpand
 import de.prob.animator.domainobjects.IdentifierNotInitialised
 import de.prob.animator.domainobjects.WDError
+import de.prob.cli.CliTestCommon
 import de.prob.scripting.ClassicalBFactory
 import de.prob.scripting.EventBFactory
 
@@ -22,7 +22,7 @@ class TraceEvaluationTest extends Specification {
 
 	def setupSpec() {
 		final path = Paths.get("groovyTests", "machines", "scheduler.mch").toString()
-		final factory = Main.injector.getInstance(ClassicalBFactory.class)
+		final factory = CliTestCommon.injector.getInstance(ClassicalBFactory.class)
 		s = factory.extract(path).load([:])
 	}
 
@@ -121,7 +121,7 @@ class TraceEvaluationTest extends Specification {
 	def "Evaluating a formula over a trace also works for EventB"() {
 		given:
 		final path = Paths.get("groovyTests", "Lift", "lift0.bcm").toString()
-		final factory = Main.injector.getInstance(EventBFactory.class)
+		final factory = CliTestCommon.injector.getInstance(EventBFactory.class)
 		final s = factory.extract(path).load([:])
 		t = new Trace(s)
 		final t2 = t.$setup_constants().$initialise_machine().up()

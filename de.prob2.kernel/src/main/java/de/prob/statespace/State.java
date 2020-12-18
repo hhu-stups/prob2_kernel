@@ -1,5 +1,17 @@
 package de.prob.statespace;
 
+import de.prob.animator.command.EvaluateFormulasCommand;
+import de.prob.animator.command.EvaluateRegisteredFormulasCommand;
+import de.prob.animator.command.ExploreStateCommand;
+import de.prob.animator.command.GetBStateCommand;
+import de.prob.animator.domainobjects.AbstractEvalResult;
+import de.prob.animator.domainobjects.FormulaExpand;
+import de.prob.animator.domainobjects.IEvalElement;
+import de.prob.animator.domainobjects.StateError;
+import de.prob.model.representation.AbstractModel;
+import groovy.lang.GroovyObjectSupport;
+import org.codehaus.groovy.runtime.DefaultGroovyMethods;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -13,20 +25,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import de.prob.animator.command.EvaluateFormulasCommand;
-import de.prob.animator.command.EvaluateRegisteredFormulasCommand;
-import de.prob.animator.command.ExploreStateCommand;
-import de.prob.animator.command.GetBStateCommand;
-import de.prob.animator.domainobjects.AbstractEvalResult;
-import de.prob.animator.domainobjects.FormulaExpand;
-import de.prob.animator.domainobjects.IEvalElement;
-import de.prob.animator.domainobjects.StateError;
-import de.prob.model.representation.AbstractModel;
-
-import groovy.lang.GroovyObjectSupport;
-
-import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 
 /**
  * A reference to the state object in the ProB core.
@@ -42,6 +40,7 @@ public class State extends GroovyObjectSupport {
 	private StateSpace stateSpace;
 	private boolean explored;
 	private List<Transition> transitions;
+	private boolean constantsSetUp;
 	private boolean initialised;
 	private boolean invariantOk;
 	private boolean timeoutOccurred;
@@ -70,7 +69,7 @@ public class State extends GroovyObjectSupport {
 	@Deprecated
 	@Override
 	public State invokeMethod(String method, Object params) {
-		if (method.startsWith("$") && !"$setup_constants".equals(method) && !"$initialise_machine".equals(method)) {
+		if (method.startsWith("$") && !Transition.SETUP_CONSTANTS_NAME.equals(method) && !Transition.INITIALISE_MACHINE_NAME.equals(method)) {
 			method = method.substring(1);
 		}
 
@@ -148,14 +147,9 @@ public class State extends GroovyObjectSupport {
 	 */
 	public List<Transition> findTransitions(String name, List<String> predicates, int nrOfSolutions) {
 		final String predicate = predicates.isEmpty() ? "TRUE = TRUE" : '(' + String.join(") & (", predicates) + ')';
-		try {
-			final List<Transition> newOps = stateSpace.transitionFromPredicate(this, name, predicate, nrOfSolutions);
-			transitions.addAll(newOps);
-			return newOps;
-		} catch (IllegalArgumentException e) {
-			// Skip
-		}
-		return Collections.emptyList();
+		final List<Transition> newOps = stateSpace.transitionFromPredicate(this, name, predicate, nrOfSolutions);
+		transitions.addAll(newOps);
+		return newOps;
 	}
 
 	public State anyOperation(final Object filter) {
@@ -303,6 +297,13 @@ public class State extends GroovyObjectSupport {
 		return transitions;
 	}
 
+	public boolean isConstantsSetUp() {
+		if (!explored) {
+			explore();
+		}
+		return constantsSetUp;
+	}
+
 	public boolean isInitialised() {
 		if (!explored) {
 			explore();
@@ -345,7 +346,7 @@ public class State extends GroovyObjectSupport {
 		return stateErrors;
 	}
 
-	public List<Transition> getOutTransitions() {
+	public synchronized List<Transition> getOutTransitions() {
 		// The FormulaExpand argument is ignored if evaluate is false
 		return getOutTransitions(false, FormulaExpand.TRUNCATE);
 	}
@@ -354,7 +355,7 @@ public class State extends GroovyObjectSupport {
 	 * @deprecated Use {@link #getOutTransitions(boolean, FormulaExpand)} with an explicit {@link FormulaExpand} argument instead
 	 */
 	@Deprecated
-	public List<Transition> getOutTransitions(boolean evaluate) {
+	public synchronized List<Transition> getOutTransitions(boolean evaluate) {
 		return this.getOutTransitions(evaluate, FormulaExpand.TRUNCATE);
 	}
 
@@ -371,7 +372,7 @@ public class State extends GroovyObjectSupport {
 	 * @param evaluate whether or not the list of transitions should be evaluated. By default this is set to false.
 	 * @return the outgoing transitions from this state
 	 */
-	public List<Transition> getOutTransitions(boolean evaluate, FormulaExpand expansion) {
+	public synchronized List<Transition> getOutTransitions(boolean evaluate, FormulaExpand expansion) {
 		if (!explored) {
 			explore();
 		}
@@ -386,6 +387,7 @@ public class State extends GroovyObjectSupport {
 		stateSpace.execute(cmd);
 		transitions = cmd.getNewTransitions();
 		values.putAll(cmd.getFormulaResults());
+		constantsSetUp = cmd.isConstantsSetUp();
 		initialised = cmd.isInitialised();
 		invariantOk = cmd.isInvariantOk();
 		timeoutOccurred = cmd.isTimeoutOccured();

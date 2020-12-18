@@ -20,7 +20,6 @@ build/
 
 # Logs
 prob_log.txt
-prob_test_log.txt
 *.log
 *.log.*
 
@@ -30,6 +29,7 @@ prob2preferences
 stateInspectorRepl
 *.csp.pl
 *.dot
+*.fuzz
 *.prob
 
 # Temp/swap files

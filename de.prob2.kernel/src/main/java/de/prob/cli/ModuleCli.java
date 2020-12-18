@@ -3,9 +3,7 @@ package de.prob.cli;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.util.Random;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.BindingAnnotation;
@@ -20,30 +18,19 @@ public class ModuleCli extends AbstractModule {
 		bind(ProBInstance.class).toProvider(ProBInstanceProvider.class);
 		bind(OsSpecificInfo.class).toProvider(OsInfoProvider.class)
 				.asEagerSingleton();
+		bind(String.class).annotatedWith(OsName.class).toInstance(System.getProperty("os.name"));
+		bind(String.class).annotatedWith(OsArch.class).toInstance(System.getProperty("os.arch"));
 	}
 
 	@Provides
-	@OsName
-	private static String getOsName() {
-		return System.getProperty("os.name");
-	}
-
-	@Provides
-	@OsArch
-	private static String getOsArch() {
-		return System.getProperty("os.arch");
+	private static OsFamily getOsFamily(@OsName final String osName) {
+		return OsFamily.fromName(osName);
 	}
 
 	@Provides
 	@DebuggingKey
 	private static String createDebuggingKey() {
-		Random random;
-		try {
-			random = SecureRandom.getInstance("SHA1PRNG");
-		} catch (NoSuchAlgorithmException e) {
-			random = new Random();
-		}
-		return Long.toHexString(random.nextLong());
+		return Long.toHexString(new SecureRandom().nextLong());
 	}
 
 	@Retention(RUNTIME)
@@ -58,6 +45,10 @@ public class ModuleCli extends AbstractModule {
 	@interface DebuggingKey {
 	}
 
+	/**
+	 * Currently unused - at the moment we only ship probcli binaries for a single architecture (x86_64).
+	 * Might be used again in the future if we support more than one architecture again (e. g. ARM64).
+	 */
 	@Retention(RUNTIME)
 	@Target({ ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
 	@BindingAnnotation

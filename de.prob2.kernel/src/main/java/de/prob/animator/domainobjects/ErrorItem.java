@@ -14,9 +14,14 @@ import de.prob.prolog.term.PrologTerm;
 
 public final class ErrorItem {
 	public enum Type {
+		// Important: These types must be ordered from least to most severe.
+		// For example, MESSAGE is less severe than WARNING, which is less severe than ERROR, etc.
+		// This is used to determine the most severe error type from a list of ErrorItems.
+		MESSAGE,
 		WARNING,
 		ERROR,
 		INTERNAL_ERROR,
+		;
 	}
 	
 	public static final class Location {
@@ -61,9 +66,9 @@ public final class ErrorItem {
 			return new ErrorItem.Location(
 				location.getFilename() == null ? "(unknown file)" : location.getFilename(),
 				location.getStartLine(),
-				location.getStartColumn(),
+				location.getStartColumn() - 1,
 				location.getEndLine(),
-				location.getEndColumn()
+				location.getEndColumn() - 1
 			);
 		}
 		
@@ -165,7 +170,11 @@ public final class ErrorItem {
 			case "error":
 				type = Type.ERROR;
 				break;
-			
+
+			case "message":
+				type = Type.MESSAGE;
+				break;
+
 			case "internal_error":
 				type = Type.INTERNAL_ERROR;
 				break;
@@ -229,6 +238,10 @@ public final class ErrorItem {
 			
 			case ERROR:
 				sb.append("Error: ");
+				break;
+
+			case MESSAGE:
+				sb.append("Message: ");
 				break;
 			
 			case INTERNAL_ERROR:

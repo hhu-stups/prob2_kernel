@@ -1,13 +1,16 @@
 package de.prob.model.classicalb;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import com.github.krukow.clj_lang.PersistentHashMap;
-
 import com.google.inject.Inject;
 
 import de.be4.classicalb.core.parser.BParser;
@@ -16,7 +19,7 @@ import de.be4.classicalb.core.parser.exceptions.BCompoundException;
 import de.be4.classicalb.core.parser.exceptions.BParseException;
 import de.be4.classicalb.core.parser.node.Start;
 import de.be4.classicalb.core.parser.node.TIdentifierLiteral;
-
+import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.command.LoadBProjectCommand;
 import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.EvaluationException;
@@ -29,7 +32,6 @@ import de.prob.model.representation.Machine;
 import de.prob.model.representation.ModelElementList;
 import de.prob.scripting.StateSpaceProvider;
 import de.prob.statespace.FormalismType;
-import de.prob.statespace.StateSpace;
 
 public class ClassicalBModel extends AbstractModel {
 	private final ClassicalBMachine mainMachine;
@@ -77,7 +79,6 @@ public class ClassicalBModel extends AbstractModel {
 			for (final LinkedList<TIdentifierLiteral> machineId : vertices) {
 				final String machineName = machineId.getLast().getText();
 				final Start ast = rml.getParsedMachines().get(machineName);
-				if (ast == null) throw new IllegalStateException("Cannot get machine, maybe the name "+machineName+" is not allowed");
 				if (!done.contains(machineId)) {
 					final DependencyWalker walker = new DependencyWalker(machineId, machines, graph, rml.getParsedMachines());
 					ast.apply(walker);
@@ -97,6 +98,18 @@ public class ClassicalBModel extends AbstractModel {
 
 	public ClassicalBMachine getMainMachine() {
 		return mainMachine;
+	}
+
+	public List<Path> getLoadedMachineFiles() {
+		return this.rml.getMachineFilesLoaded().stream()
+			.map(File::toPath)
+			.collect(Collectors.toList());
+	}
+
+	public Map<String, Path> getMachineFilesByName() {
+		final Map<String, Path> machineFilePaths = new TreeMap<>();
+		this.rml.getParsedFiles().forEach((name, file) -> machineFilePaths.put(name, file.toPath()));
+		return machineFilePaths;
 	}
 
 	@Override
@@ -119,18 +132,8 @@ public class ClassicalBModel extends AbstractModel {
 	}
 
 	@Override
-	public boolean checkSyntax(final String formula) {
-		try {
-			parseFormula(formula, FormulaExpand.TRUNCATE);
-			return true;
-		} catch (EvaluationException e) {
-			return false;
-		}
-	}
-
-	@Override
-	public StateSpace load(final AbstractElement mainComponent, final Map<String, String> preferences) {
-		return getStateSpaceProvider().loadFromCommand(this, mainComponent, preferences, new LoadBProjectCommand(rml, getModelFile()));
+	public AbstractCommand getLoadCommand(final AbstractElement mainComponent) {
+		return new LoadBProjectCommand(rml, getModelFile());
 	}
 
 	@Override
