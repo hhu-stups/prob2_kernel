@@ -64,12 +64,20 @@ public class TypeFinder {
 				.collect(Collectors.toList());
 	}
 
+	public static List<PersistentTransition> stripNonOpClause(List<PersistentTransition> transitionList){
+		return transitionList.stream()
+				.filter(element -> !element.getOperationName().equals(Transition.INITIALISE_MACHINE_NAME))
+				.filter(element -> !element.getOperationName().equals(Transition.SETUP_CONSTANTS_NAME))
+				.filter(element -> !element.getOperationName().equals(Transition.PARTIAL_SETUP_CONSTANTS_NAME))
+				.collect(Collectors.toList());
+	}
+
 	/**
 	 * See master thesis for reference
 	 * We try to narrow down the best candidate for our operation and apply checks to verify our assumption
 	 */
 	public void check(){
-		Set<String> operationNamesTrace = usedOperations(stripInitClause(trace));
+		Set<String> operationNamesTrace = usedOperations(stripNonOpClause(trace));
 		Set<String> operationNamesBeta = newMachine.keySet();
 
 		Set<String> operationNamesDoesNotMatch = new HashSet<>(operationNamesTrace);
@@ -132,6 +140,7 @@ public class TypeFinder {
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 	}
 
+	//TODO Fix that - lol
 	/**
 	 * Gets a set with operation names that exists in the old and the new machine and returns a filtered set with the names
 	 * where the number of input and output parameters from the old machine is the same as in the new machine

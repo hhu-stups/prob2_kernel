@@ -20,14 +20,16 @@ public class TraceChecker {
 	private final IDeltaFinder deltaFinder;
 
 
-	public TraceChecker(List<PersistentTransition> transitionList, Map<String, OperationInfo> newOperationInfos,
-						Set<String> newVars, String newPath, Injector injector) throws IOException, ModelTranslationError {
+	public TraceChecker(List<PersistentTransition> transitionList, Map<String, OperationInfo> newInfos,
+						Set<String> newVars, Map<String, OperationInfo> oldInfos, Set<String> oldVars,
+						String newPath, Injector injector) throws IOException, ModelTranslationError {
 
-		this.newOperationInfos = newOperationInfos;
-		this.oldOperationInfos = emptyMap();
+		this.newOperationInfos = newInfos;
+		this.oldOperationInfos = oldInfos;
 
-		typeFinder = new TypeFinder(transitionList, newOperationInfos, newVars);
+		typeFinder = new TypeFinder(transitionList, oldInfos, newInfos, oldVars, newVars);
 		typeFinder.check();
+
 
 		traceModifier = new TraceModifier(transitionList, TraceCheckerUtils.createStateSpace(newPath, injector));
 
@@ -55,8 +57,13 @@ public class TraceChecker {
 	}
 
 
-	public TraceChecker(List<PersistentTransition> transitionList, Map<String, OperationInfo> oldInfos, Map<String, OperationInfo> newInfos,
-						Set<String> oldVars, Set<String> newVars, String oldPath, String newPath, Injector injector)
+	public TraceChecker(List<PersistentTransition> transitionList,
+						Map<String, OperationInfo> oldInfos,
+						Map<String, OperationInfo> newInfos,
+						Set<String> oldVars,
+						Set<String> newVars,
+						String oldPath,
+						String newPath, Injector injector)
 			throws IOException, ModelTranslationError {
 
 		this.oldOperationInfos = oldInfos;

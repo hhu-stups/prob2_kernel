@@ -24,6 +24,7 @@ import static java.util.stream.Collectors.*;
 /**
  * Finds a operation if it is renamed or contains renamed variables/parameter
  */
+//Todo RenamingAnalyzer
 public class DeltaFinder implements IDeltaFinder {
 
 	private final Set<String> typeIorII;
@@ -37,9 +38,7 @@ public class DeltaFinder implements IDeltaFinder {
 
 	private Map<String, List<Delta>> typeIIWithCandidatesAsDeltaMap;
 	private List<Delta> typeIIAsDeltaList;
-
 	private Map<String, Map<String, String>> resultTypeII;
-	//private Map<String, Map<String, Map<String, String>>> resultTypeIIWithCandidates;
 	private Map<String, String> resultInitTypeII;
 
 
@@ -112,6 +111,7 @@ public class DeltaFinder implements IDeltaFinder {
 		Map<String, Map<String, Map<String, String>>> resultTypeIIWithCandidates = filterTrueNonDeterministic(typeIIWithCandidates);
 
 		typeIIWithCandidatesAsDeltaMap = transformToDeltaMap(resultTypeIIWithCandidates);
+
 
 	}
 
@@ -221,7 +221,11 @@ public class DeltaFinder implements IDeltaFinder {
 		if(typeIOrIICandidate){
 			Map<String, String> initMapping = checkDeterministicPairs(initOld, initNew,
 					Collections.singleton(Transition.INITIALISE_MACHINE_NAME), checkerInterface,
-					prepareOperationsInterface).get(Transition.INITIALISE_MACHINE_NAME).entrySet().stream().collect(toMap(entry-> entry.getValue(), entry -> entry.getKey()))	;
+					prepareOperationsInterface)
+					.get(Transition.INITIALISE_MACHINE_NAME)
+					.entrySet()
+					.stream()
+					.collect(toMap(Map.Entry::getValue, Map.Entry::getKey))	;
 			boolean initIsTypeI = initMapping
 					.entrySet()
 					.stream()
@@ -229,7 +233,7 @@ public class DeltaFinder implements IDeltaFinder {
 					.collect(toSet()).isEmpty();
 
 			if(!initIsTypeI){
-				return  initMapping;
+				return initMapping;
 			}else{
 				return emptyMap();
 			}

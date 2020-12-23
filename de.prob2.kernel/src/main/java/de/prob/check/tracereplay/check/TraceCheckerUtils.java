@@ -8,7 +8,6 @@ import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.StateSpace;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.*;
 
 public class TraceCheckerUtils {
@@ -87,6 +86,24 @@ public class TraceCheckerUtils {
 		}
 		return returnValue;
 	}
+
+
+	public static  <E> List<List<E>> generatePerm(List<E> original, int pos, int length, List<E> perm) {
+		List<List<E>> collectedResult = new ArrayList<>();
+		if (pos == length) {
+			collectedResult.add(perm);
+		} else {
+			for (int i = pos ; i < original.size() ; i++) {
+				ArrayList<E> permCopy = new ArrayList<>(perm);
+				permCopy.add(pos, original.get(i));
+				collectedResult.addAll(generatePerm(new ArrayList<>(original), pos+1, length, permCopy));
+			}
+		}
+		return collectedResult;
+	}
+
+
+
 
 	private static ReusableAnimator reusableAnimator;
 	public static ReusableAnimator getReusableAnimator(Injector injector){
