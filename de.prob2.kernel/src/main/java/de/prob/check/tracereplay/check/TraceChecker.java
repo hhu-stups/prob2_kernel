@@ -2,9 +2,10 @@ package de.prob.check.tracereplay.check;
 
 import com.google.inject.Injector;
 import de.prob.check.tracereplay.PersistentTransition;
+import de.prob.check.tracereplay.check.exceptions.MappingFactoryInterface;
+import de.prob.check.tracereplay.check.exceptions.ToManyOptionsIdentifierMapping;
 import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.OperationInfo;
-import de.prob.statespace.Transition;
 
 import java.io.IOException;
 import java.util.*;
@@ -20,9 +21,16 @@ public class TraceChecker {
 	private final IDeltaFinder deltaFinder;
 
 
-	public TraceChecker(List<PersistentTransition> transitionList, Map<String, OperationInfo> newInfos,
-						Set<String> newVars, Map<String, OperationInfo> oldInfos, Set<String> oldVars,
-						String newPath, Injector injector) throws IOException, ModelTranslationError {
+	public TraceChecker(List<PersistentTransition> transitionList,
+						Map<String, OperationInfo> newInfos,
+						Map<String, OperationInfo> oldInfos,
+						Set<String> newVars,
+						Set<String> oldVars,
+						Set<String> newSets,
+						Set<String> newConst,
+						String newPath,
+						Injector injector,
+						MappingFactoryInterface mappingFactory) throws IOException, ModelTranslationError {
 
 		this.newOperationInfos = newInfos;
 		this.oldOperationInfos = oldInfos;
@@ -33,9 +41,9 @@ public class TraceChecker {
 
 		traceModifier = new TraceModifier(transitionList, TraceCheckerUtils.createStateSpace(newPath, injector));
 
-		TraceExplorer traceExplorer = new TraceExplorer(false);
+		TraceExplorer traceExplorer = new TraceExplorer(false, mappingFactory);
 
-		traceModifier.makeTypeIII(typeFinder.getTypeIII(), newOperationInfos, traceExplorer);
+		traceModifier.makeTypeIII(typeFinder.getTypeIII(), newInfos, oldOperationInfos, newVars, newSets, newConst, traceExplorer);
 
 		this.deltaFinder = new IDeltaFinder() {
 			@Override
@@ -62,8 +70,12 @@ public class TraceChecker {
 						Map<String, OperationInfo> newInfos,
 						Set<String> oldVars,
 						Set<String> newVars,
+						Set<String> newSets,
+						Set<String> newConst,
 						String oldPath,
-						String newPath, Injector injector)
+						String newPath,
+						Injector injector,
+						MappingFactoryInterface mappingFactory)
 			throws IOException, ModelTranslationError {
 
 		this.oldOperationInfos = oldInfos;
@@ -92,13 +104,13 @@ public class TraceChecker {
 		TraceExplorer traceExplorer;
 		if(!deltaFinder.getResultTypeIIInit().isEmpty())
 		{
-			traceExplorer = new TraceExplorer(true);
+			traceExplorer = new TraceExplorer(true, mappingFactory);
 		}else{
-			traceExplorer = new TraceExplorer(false);
+			traceExplorer = new TraceExplorer(false, mappingFactory);
 		}
 
 
-		traceModifier.makeTypeIII(typeFinder.getTypeIII(), newInfos, traceExplorer);
+		traceModifier.makeTypeIII(typeFinder.getTypeIII(), newInfos, oldInfos, newVars, newSets, newConst, traceExplorer);
 
 		this.deltaFinder = deltaFinder;
 

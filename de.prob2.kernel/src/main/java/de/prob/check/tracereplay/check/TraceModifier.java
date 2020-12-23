@@ -207,7 +207,8 @@ public class TraceModifier {
 				emptyMap(), variables, Collections.emptySet(), getLastChange()));
 	}
 
-	public void makeTypeIII(Set<String> typeIIICandidates, Map<String, OperationInfo> newInfos, TraceExplorer traceExplorer) {
+	public void makeTypeIII(Set<String> typeIIICandidates, Map<String, OperationInfo> oldInfos,
+							Map<String, OperationInfo> newInfos, Set<String> newVars, Set<String> newSets, Set<String> newConst, TraceExplorer traceExplorer) {
 
 		//No type II change?
 		if (!changelogPhase2II.isEmpty()) {
@@ -218,7 +219,7 @@ public class TraceModifier {
 					.map(entry ->
 					{
 						Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result =
-								traceExplorer.replayTrace(entry.getValue(), stateSpace, newInfos, typeIIICandidates);
+								traceExplorer.replayTrace(entry.getValue(), stateSpace, newInfos, typeIIICandidates, newVars, newSets, newConst);
 						if (result.values().isEmpty()) {
 							new AbstractMap.SimpleEntry<>(emptySet(), emptyMap());
 						}
@@ -229,7 +230,7 @@ public class TraceModifier {
 
 			changelogPhase3IIMap.putAll(results);
 		} else {
-			changelogPhase3IIMap.put(Collections.emptySet(), traceExplorer.replayTrace(getLastChange(), stateSpace, newInfos, typeIIICandidates));
+			changelogPhase3IIMap.put(Collections.emptySet(), traceExplorer.replayTrace(getLastChange(), stateSpace, newInfos,typeIIICandidates,  newVars, newSets, newConst));
 		}
 
 
