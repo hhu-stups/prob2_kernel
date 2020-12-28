@@ -6,14 +6,13 @@ import com.google.inject.Stage;
 import de.prob.JsonManagerStubModule;
 import de.prob.MainModule;
 import de.prob.ProBKernelStub;
-import de.prob.check.tracereplay.PersistentTransition;
-import de.prob.check.tracereplay.check.PersistenceDelta;
 import de.prob.check.tracereplay.check.TraceChecker;
-import de.prob.check.tracereplay.check.TraceExplorer;
+import de.prob.check.tracereplay.check.TraceCheckerUtils;
+import de.prob.check.tracereplay.check.exceptions.MappingFactoryInterface;
+import de.prob.check.tracereplay.check.exceptions.ToManyOptionsIdentifierMapping;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.scripting.ModelTranslationError;
-import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,11 +21,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static java.util.Collections.singleton;
 
 public class TraceCheckerIntegrationTest {
 
@@ -49,6 +43,7 @@ public class TraceCheckerIntegrationTest {
 
 
 
+
 	@Test
 	public void integration_1_realWorldExample() throws IOException, ModelTranslationError {
 		Path newPath = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "LiftProto2.mch");
@@ -56,10 +51,21 @@ public class TraceCheckerIntegrationTest {
 
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "LiftProto.prob2trace"));
 
-		TraceChecker traceChecker = new TraceChecker(jsonFile.getTrace().getTransitionList(), stateSpace.getLoadedMachine().getOperations(),
-				new HashSet<>(stateSpace.getLoadedMachine().getVariableNames()), newPath.toString(), injector);
+		TraceChecker traceChecker = new TraceChecker(
+				jsonFile.getTrace().getTransitionList(),
+				jsonFile.getMachineOperationInfos(),
+				stateSpace.getLoadedMachine().getOperations(),
+				new HashSet<>(jsonFile.getVariableNames()),
+				new HashSet<>(stateSpace.getLoadedMachine().getVariableNames()),
+				new HashSet<>(stateSpace.getLoadedMachine().getSetNames()),
+				new HashSet<>(stateSpace.getLoadedMachine().getConstantNames()),
+				newPath.toString(),
+				injector,
+				new TestUtils.StubFactoryImplementation()
+				);
 
-
+		System.out.println(traceChecker.getTraceModifier().getLastChange());
+		System.out.println(traceChecker.getTraceModifier().getChangelogPhase3II());
 		System.out.println(traceChecker.getTraceModifier().getChangelogPhase3II());
 	}
 

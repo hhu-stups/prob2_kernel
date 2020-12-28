@@ -93,10 +93,15 @@ public class TraceCheckerUtils {
 		if (pos == length) {
 			collectedResult.add(perm);
 		} else {
-			for (int i = pos ; i < original.size() ; i++) {
+			for (int i = 0 ; i < original.size() ; i++) {
 				ArrayList<E> permCopy = new ArrayList<>(perm);
-				permCopy.add(pos, original.get(i));
-				collectedResult.addAll(generatePerm(new ArrayList<>(original), pos+1, length, permCopy));
+				E ithChrackter  = original.get(i);
+
+				List<E> newOriginal = new ArrayList<>(original);
+				newOriginal.remove(ithChrackter);
+
+				permCopy.add(pos, ithChrackter);
+				collectedResult.addAll(generatePerm(newOriginal, pos+1, length, permCopy));
 			}
 		}
 		return collectedResult;

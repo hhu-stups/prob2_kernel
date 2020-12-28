@@ -3,7 +3,6 @@ package de.prob.check.tracereplay.check;
 import com.google.inject.Injector;
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.exceptions.MappingFactoryInterface;
-import de.prob.check.tracereplay.check.exceptions.ToManyOptionsIdentifierMapping;
 import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.OperationInfo;
 
@@ -22,8 +21,8 @@ public class TraceChecker {
 
 
 	public TraceChecker(List<PersistentTransition> transitionList,
-						Map<String, OperationInfo> newInfos,
 						Map<String, OperationInfo> oldInfos,
+						Map<String, OperationInfo> newInfos,
 						Set<String> newVars,
 						Set<String> oldVars,
 						Set<String> newSets,

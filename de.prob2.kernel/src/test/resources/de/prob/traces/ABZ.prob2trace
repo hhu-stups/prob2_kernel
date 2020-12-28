@@ -1,0 +1,467 @@
+{
+  "type" : "Trace",
+  "name" : "PitmanController_v6",
+  "description" : "",
+  "trace" : {
+    "description" : "",
+    "transitionList" : [ {
+      "operationName" : "$setup_constants",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "pitman_direction" : "{(Neutral↦neutral_blink),(Downward5↦left_blink),(Downward7↦left_blink),(Upward5↦right_blink),(Upward7↦right_blink)}",
+        "BLINK_DIRECTION" : "{left_blink,right_blink}",
+        "PITMAN_TIP_BLINKING" : "{Downward5,Upward5}",
+        "LAMP_STATUS" : "{0,100}",
+        "lamp_off" : "0",
+        "cycleMaxLampStatus" : "{(FALSE↦0),(TRUE↦100)}",
+        "lamp_on" : "100",
+        "BLINK_CYCLE_COUNTER" : "{-1,0,1,2,3}",
+        "PITMAN_DIRECTION_BLINKING" : "{Downward7,Upward7}"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "$initialise_machine",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "blinkRight" : "0",
+        "engineOn" : "FALSE",
+        "onCycle" : "FALSE",
+        "keyState" : "KeyInsertedOnPosition",
+        "pitmanArmUpDown" : "Neutral",
+        "remaining_blinks" : "0",
+        "active_blinkers" : "∅",
+        "hazardWarningSwitchOn" : "switch_off",
+        "blinkLeft" : "0"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "ENV_Turn_EngineOn",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "engineOn" : "TRUE"
+      },
+      "destStateNotChanged" : [ "blinkRight", "onCycle", "keyState", "pitmanArmUpDown", "remaining_blinks", "active_blinkers", "hazardWarningSwitchOn", "blinkLeft" ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "ENV_Pitman_DirectionBlinking",
+      "parameters" : {
+        "newPos" : "Downward7"
+      },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "pitmanArmUpDown" : "Downward7",
+        "remaining_blinks" : "-1",
+        "active_blinkers" : "{left_blink}"
+      },
+      "destStateNotChanged" : [ "blinkRight", "engineOn", "onCycle", "keyState", "hazardWarningSwitchOn", "blinkLeft" ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "ENV_Pitman_Reset_to_Neutral",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "pitmanArmUpDown" : "Neutral",
+        "remaining_blinks" : "0",
+        "active_blinkers" : "∅"
+      },
+      "destStateNotChanged" : [ "blinkRight", "engineOn", "onCycle", "keyState", "hazardWarningSwitchOn", "blinkLeft" ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "ENV_Pitman_DirectionBlinking",
+      "parameters" : {
+        "newPos" : "Upward7"
+      },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "pitmanArmUpDown" : "Upward7",
+        "remaining_blinks" : "-1",
+        "active_blinkers" : "{right_blink}"
+      },
+      "destStateNotChanged" : [ "blinkRight", "engineOn", "onCycle", "keyState", "hazardWarningSwitchOn", "blinkLeft" ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "ENV_Pitman_Tip_blinking_short",
+      "parameters" : {
+        "newPos" : "Downward5"
+      },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "pitmanArmUpDown" : "Downward5",
+        "remaining_blinks" : "3",
+        "active_blinkers" : "{left_blink}"
+      },
+      "destStateNotChanged" : [ "blinkRight", "engineOn", "onCycle", "keyState", "hazardWarningSwitchOn", "blinkLeft" ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "TIME_Tip_blinking_Timeout",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "remaining_blinks" : "-1"
+      },
+      "destStateNotChanged" : [ "blinkRight", "engineOn", "onCycle", "keyState", "pitmanArmUpDown", "active_blinkers", "hazardWarningSwitchOn", "blinkLeft" ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "ENV_Pitman_DirectionBlinking",
+      "parameters" : {
+        "newPos" : "Upward7"
+      },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "pitmanArmUpDown" : "Upward7",
+        "active_blinkers" : "{right_blink}"
+      },
+      "destStateNotChanged" : [ "blinkRight", "engineOn", "onCycle", "keyState", "remaining_blinks", "hazardWarningSwitchOn", "blinkLeft" ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "ENV_Pitman_Reset_to_Neutral",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "pitmanArmUpDown" : "Neutral",
+        "remaining_blinks" : "0",
+        "active_blinkers" : "∅"
+      },
+      "destStateNotChanged" : [ "blinkRight", "engineOn", "onCycle", "keyState", "hazardWarningSwitchOn", "blinkLeft" ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "ENV_Pitman_DirectionBlinking",
+      "parameters" : {
+        "newPos" : "Downward7"
+      },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "pitmanArmUpDown" : "Downward7",
+        "remaining_blinks" : "-1",
+        "active_blinkers" : "{left_blink}"
+      },
+      "destStateNotChanged" : [ "blinkRight", "engineOn", "onCycle", "keyState", "hazardWarningSwitchOn", "blinkLeft" ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "ENV_Pitman_DirectionBlinking",
+      "parameters" : {
+        "newPos" : "Upward7"
+      },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "pitmanArmUpDown" : "Upward7",
+        "active_blinkers" : "{right_blink}"
+      },
+      "destStateNotChanged" : [ "blinkRight", "engineOn", "onCycle", "keyState", "remaining_blinks", "hazardWarningSwitchOn", "blinkLeft" ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "ENV_Pitman_DirectionBlinking",
+      "parameters" : {
+        "newPos" : "Downward7"
+      },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "pitmanArmUpDown" : "Downward7",
+        "active_blinkers" : "{left_blink}"
+      },
+      "destStateNotChanged" : [ "blinkRight", "engineOn", "onCycle", "keyState", "remaining_blinks", "hazardWarningSwitchOn", "blinkLeft" ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "ENV_Pitman_Tip_blinking_short",
+      "parameters" : {
+        "newPos" : "Downward5"
+      },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "pitmanArmUpDown" : "Downward5",
+        "remaining_blinks" : "3"
+      },
+      "destStateNotChanged" : [ "blinkRight", "engineOn", "onCycle", "keyState", "active_blinkers", "hazardWarningSwitchOn", "blinkLeft" ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "ENV_Pitman_Reset_to_Neutral",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "pitmanArmUpDown" : "Neutral"
+      },
+      "destStateNotChanged" : [ "blinkRight", "engineOn", "onCycle", "keyState", "remaining_blinks", "active_blinkers", "hazardWarningSwitchOn", "blinkLeft" ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "ENV_Hazard_blinking",
+      "parameters" : {
+        "newSwitchPos" : "switch_on"
+      },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "remaining_blinks" : "-1",
+        "active_blinkers" : "{left_blink,right_blink}",
+        "hazardWarningSwitchOn" : "switch_on"
+      },
+      "destStateNotChanged" : [ "blinkRight", "engineOn", "onCycle", "keyState", "pitmanArmUpDown", "blinkLeft" ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "ENV_Hazard_blinking",
+      "parameters" : {
+        "newSwitchPos" : "switch_off"
+      },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "remaining_blinks" : "0",
+        "active_blinkers" : "∅",
+        "hazardWarningSwitchOn" : "switch_off"
+      },
+      "destStateNotChanged" : [ "blinkRight", "engineOn", "onCycle", "keyState", "pitmanArmUpDown", "blinkLeft" ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "ENV_Pitman_Tip_blinking_short",
+      "parameters" : {
+        "newPos" : "Downward5"
+      },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "pitmanArmUpDown" : "Downward5",
+        "remaining_blinks" : "3",
+        "active_blinkers" : "{left_blink}"
+      },
+      "destStateNotChanged" : [ "blinkRight", "engineOn", "onCycle", "keyState", "hazardWarningSwitchOn", "blinkLeft" ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "ENV_Pitman_Tip_blinking_short",
+      "parameters" : {
+        "newPos" : "Upward5"
+      },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "pitmanArmUpDown" : "Upward5",
+        "active_blinkers" : "{right_blink}"
+      },
+      "destStateNotChanged" : [ "blinkRight", "engineOn", "onCycle", "keyState", "remaining_blinks", "hazardWarningSwitchOn", "blinkLeft" ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "TIME_Tip_blinking_Timeout",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "remaining_blinks" : "-1"
+      },
+      "destStateNotChanged" : [ "blinkRight", "engineOn", "onCycle", "keyState", "pitmanArmUpDown", "active_blinkers", "hazardWarningSwitchOn", "blinkLeft" ],
+      "additionalPredicates" : [ ]
+    } ]
+  },
+  "variableNames" : [ "active_blinkers", "remaining_blinks", "onCycle", "blinkLeft", "blinkRight", "hazardWarningSwitchOn", "pitmanArmUpDown", "keyState", "engineOn" ],
+  "machineOperationInfos" : {
+    "ENV_Turn_EngineOn" : {
+      "operationName" : "ENV_Turn_EngineOn",
+      "parameterNames" : [ ],
+      "outputParameterNames" : [ ],
+      "topLevel" : true,
+      "type" : "CLASSICAL_B",
+      "readVariables" : [ "BLINK_CYCLE_COUNTER", "BLINK_DIRECTION", "PITMAN_DIRECTION_BLINKING", "active_blinkers", "blinkLeft", "blinkRight", "cycleMaxLampStatus", "engineOn", "hazardWarningSwitchOn", "keyState", "lamp_off", "onCycle", "pitmanArmUpDown", "pitman_direction", "remaining_blinks" ],
+      "writtenVariables" : [ "active_blinkers", "blinkLeft", "blinkRight", "engineOn", "remaining_blinks" ],
+      "nonDetWrittenVariables" : [ "active_blinkers", "blinkLeft", "blinkRight", "remaining_blinks" ]
+    },
+    "ENV_Turn_EngineOff" : {
+      "operationName" : "ENV_Turn_EngineOff",
+      "parameterNames" : [ ],
+      "outputParameterNames" : [ ],
+      "topLevel" : true,
+      "type" : "CLASSICAL_B",
+      "readVariables" : [ "active_blinkers", "blinkLeft", "blinkRight", "engineOn", "hazardWarningSwitchOn", "lamp_off", "remaining_blinks" ],
+      "writtenVariables" : [ "active_blinkers", "blinkLeft", "blinkRight", "engineOn", "remaining_blinks" ],
+      "nonDetWrittenVariables" : [ "active_blinkers", "blinkLeft", "blinkRight", "remaining_blinks" ]
+    },
+    "ENV_Pitman_DirectionBlinking" : {
+      "operationName" : "ENV_Pitman_DirectionBlinking",
+      "parameterNames" : [ "newPos" ],
+      "outputParameterNames" : [ ],
+      "topLevel" : true,
+      "type" : "CLASSICAL_B",
+      "readVariables" : [ "BLINK_CYCLE_COUNTER", "BLINK_DIRECTION", "PITMAN_DIRECTION_BLINKING", "active_blinkers", "blinkLeft", "blinkRight", "cycleMaxLampStatus", "engineOn", "hazardWarningSwitchOn", "lamp_off", "onCycle", "pitmanArmUpDown", "pitman_direction", "remaining_blinks" ],
+      "writtenVariables" : [ "active_blinkers", "blinkLeft", "blinkRight", "pitmanArmUpDown", "remaining_blinks" ],
+      "nonDetWrittenVariables" : [ "active_blinkers", "blinkLeft", "blinkRight", "remaining_blinks" ]
+    },
+    "ENV_Pitman_Reset_to_Neutral" : {
+      "operationName" : "ENV_Pitman_Reset_to_Neutral",
+      "parameterNames" : [ ],
+      "outputParameterNames" : [ ],
+      "topLevel" : true,
+      "type" : "CLASSICAL_B",
+      "readVariables" : [ "active_blinkers", "blinkLeft", "blinkRight", "hazardWarningSwitchOn", "lamp_off", "pitmanArmUpDown", "remaining_blinks" ],
+      "writtenVariables" : [ "active_blinkers", "blinkLeft", "blinkRight", "pitmanArmUpDown", "remaining_blinks" ],
+      "nonDetWrittenVariables" : [ "active_blinkers", "blinkLeft", "blinkRight", "remaining_blinks" ]
+    },
+    "ENV_Pitman_Tip_blinking_short" : {
+      "operationName" : "ENV_Pitman_Tip_blinking_short",
+      "parameterNames" : [ "newPos" ],
+      "outputParameterNames" : [ ],
+      "topLevel" : true,
+      "type" : "CLASSICAL_B",
+      "readVariables" : [ "BLINK_CYCLE_COUNTER", "BLINK_DIRECTION", "PITMAN_TIP_BLINKING", "active_blinkers", "blinkLeft", "blinkRight", "cycleMaxLampStatus", "engineOn", "hazardWarningSwitchOn", "lamp_off", "onCycle", "pitmanArmUpDown", "pitman_direction", "remaining_blinks" ],
+      "writtenVariables" : [ "active_blinkers", "blinkLeft", "blinkRight", "pitmanArmUpDown", "remaining_blinks" ],
+      "nonDetWrittenVariables" : [ "active_blinkers", "blinkLeft", "blinkRight", "remaining_blinks" ]
+    },
+    "TIME_Tip_blinking_Timeout" : {
+      "operationName" : "TIME_Tip_blinking_Timeout",
+      "parameterNames" : [ ],
+      "outputParameterNames" : [ ],
+      "topLevel" : true,
+      "type" : "CLASSICAL_B",
+      "readVariables" : [ "BLINK_CYCLE_COUNTER", "PITMAN_TIP_BLINKING", "active_blinkers", "pitmanArmUpDown", "pitman_direction", "remaining_blinks" ],
+      "writtenVariables" : [ "remaining_blinks" ],
+      "nonDetWrittenVariables" : [ ]
+    },
+    "ENV_Hazard_blinking" : {
+      "operationName" : "ENV_Hazard_blinking",
+      "parameterNames" : [ "newSwitchPos" ],
+      "outputParameterNames" : [ ],
+      "topLevel" : true,
+      "type" : "CLASSICAL_B",
+      "readVariables" : [ "BLINK_CYCLE_COUNTER", "BLINK_DIRECTION", "PITMAN_DIRECTION_BLINKING", "cycleMaxLampStatus", "engineOn", "hazardWarningSwitchOn", "lamp_off", "onCycle", "pitmanArmUpDown", "pitman_direction", "remaining_blinks" ],
+      "writtenVariables" : [ "active_blinkers", "blinkLeft", "blinkRight", "hazardWarningSwitchOn", "remaining_blinks" ],
+      "nonDetWrittenVariables" : [ "active_blinkers", "blinkLeft", "blinkRight", "remaining_blinks" ]
+    },
+    "SET_AllBlinkersOff" : {
+      "operationName" : "SET_AllBlinkersOff",
+      "parameterNames" : [ ],
+      "outputParameterNames" : [ ],
+      "topLevel" : false,
+      "type" : "CLASSICAL_B",
+      "readVariables" : [ "lamp_off" ],
+      "writtenVariables" : [ "active_blinkers", "blinkLeft", "blinkRight", "remaining_blinks" ],
+      "nonDetWrittenVariables" : [ ]
+    },
+    "SET_AllBlinkersOn" : {
+      "operationName" : "SET_AllBlinkersOn",
+      "parameterNames" : [ ],
+      "outputParameterNames" : [ ],
+      "topLevel" : false,
+      "type" : "CLASSICAL_B",
+      "readVariables" : [ "BLINK_DIRECTION", "cycleMaxLampStatus", "onCycle" ],
+      "writtenVariables" : [ "active_blinkers", "blinkLeft", "blinkRight", "remaining_blinks" ],
+      "nonDetWrittenVariables" : [ ]
+    },
+    "SET_BlinkersOn" : {
+      "operationName" : "SET_BlinkersOn",
+      "parameterNames" : [ "direction", "rem" ],
+      "outputParameterNames" : [ ],
+      "topLevel" : false,
+      "type" : "CLASSICAL_B",
+      "readVariables" : [ "BLINK_CYCLE_COUNTER", "BLINK_DIRECTION", "cycleMaxLampStatus", "lamp_off", "onCycle" ],
+      "writtenVariables" : [ "active_blinkers", "blinkLeft", "blinkRight", "remaining_blinks" ],
+      "nonDetWrittenVariables" : [ "blinkLeft", "blinkRight" ]
+    },
+    "SET_RemainingBlinks" : {
+      "operationName" : "SET_RemainingBlinks",
+      "parameterNames" : [ "rem" ],
+      "outputParameterNames" : [ ],
+      "topLevel" : false,
+      "type" : "CLASSICAL_B",
+      "readVariables" : [ "BLINK_CYCLE_COUNTER", "remaining_blinks" ],
+      "writtenVariables" : [ "remaining_blinks" ],
+      "nonDetWrittenVariables" : [ ]
+    },
+    "TIME_BlinkerOn" : {
+      "operationName" : "TIME_BlinkerOn",
+      "parameterNames" : [ ],
+      "outputParameterNames" : [ ],
+      "topLevel" : true,
+      "type" : "CLASSICAL_B",
+      "readVariables" : [ "active_blinkers", "blinkLeft", "blinkRight", "lamp_off", "lamp_on", "remaining_blinks" ],
+      "writtenVariables" : [ "blinkLeft", "blinkRight", "onCycle", "remaining_blinks" ],
+      "nonDetWrittenVariables" : [ "blinkLeft", "blinkRight", "remaining_blinks" ]
+    },
+    "TIME_BlinkerOff" : {
+      "operationName" : "TIME_BlinkerOff",
+      "parameterNames" : [ ],
+      "outputParameterNames" : [ ],
+      "topLevel" : true,
+      "type" : "CLASSICAL_B",
+      "readVariables" : [ "active_blinkers", "blinkLeft", "blinkRight", "lamp_off", "remaining_blinks" ],
+      "writtenVariables" : [ "active_blinkers", "blinkLeft", "blinkRight", "onCycle" ],
+      "nonDetWrittenVariables" : [ "active_blinkers" ]
+    },
+    "TIME_Nothing" : {
+      "operationName" : "TIME_Nothing",
+      "parameterNames" : [ "newOnCycle" ],
+      "outputParameterNames" : [ ],
+      "topLevel" : true,
+      "type" : "CLASSICAL_B",
+      "readVariables" : [ "active_blinkers", "blinkLeft", "blinkRight", "lamp_off" ],
+      "writtenVariables" : [ "onCycle" ],
+      "nonDetWrittenVariables" : [ ]
+    },
+    "SET_EngineOn" : {
+      "operationName" : "SET_EngineOn",
+      "parameterNames" : [ ],
+      "outputParameterNames" : [ ],
+      "topLevel" : false,
+      "type" : "CLASSICAL_B",
+      "readVariables" : [ "engineOn", "keyState" ],
+      "writtenVariables" : [ "engineOn" ],
+      "nonDetWrittenVariables" : [ ]
+    },
+    "SET_EngineOff" : {
+      "operationName" : "SET_EngineOff",
+      "parameterNames" : [ ],
+      "outputParameterNames" : [ ],
+      "topLevel" : false,
+      "type" : "CLASSICAL_B",
+      "readVariables" : [ "engineOn" ],
+      "writtenVariables" : [ "engineOn" ],
+      "nonDetWrittenVariables" : [ ]
+    },
+    "SET_Pitman_DirectionBlinking" : {
+      "operationName" : "SET_Pitman_DirectionBlinking",
+      "parameterNames" : [ "newPos" ],
+      "outputParameterNames" : [ ],
+      "topLevel" : false,
+      "type" : "CLASSICAL_B",
+      "readVariables" : [ "PITMAN_DIRECTION_BLINKING", "pitmanArmUpDown" ],
+      "writtenVariables" : [ "pitmanArmUpDown" ],
+      "nonDetWrittenVariables" : [ ]
+    },
+    "SET_Pitman_Reset_to_Neutral" : {
+      "operationName" : "SET_Pitman_Reset_to_Neutral",
+      "parameterNames" : [ ],
+      "outputParameterNames" : [ ],
+      "topLevel" : false,
+      "type" : "CLASSICAL_B",
+      "readVariables" : [ "pitmanArmUpDown" ],
+      "writtenVariables" : [ "pitmanArmUpDown" ],
+      "nonDetWrittenVariables" : [ ]
+    },
+    "SET_Pitman_Tip_blinking_short" : {
+      "operationName" : "SET_Pitman_Tip_blinking_short",
+      "parameterNames" : [ "newPos" ],
+      "outputParameterNames" : [ ],
+      "topLevel" : false,
+      "type" : "CLASSICAL_B",
+      "readVariables" : [ "PITMAN_TIP_BLINKING", "pitmanArmUpDown" ],
+      "writtenVariables" : [ "pitmanArmUpDown" ],
+      "nonDetWrittenVariables" : [ ]
+    },
+    "SET_Hazard_blinking" : {
+      "operationName" : "SET_Hazard_blinking",
+      "parameterNames" : [ "newSwitchPos" ],
+      "outputParameterNames" : [ ],
+      "topLevel" : false,
+      "type" : "CLASSICAL_B",
+      "readVariables" : [ "hazardWarningSwitchOn" ],
+      "writtenVariables" : [ "hazardWarningSwitchOn" ],
+      "nonDetWrittenVariables" : [ ]
+    }
+  },
+  "constantNames" : [ "pitman_direction", "BLINK_DIRECTION", "LAMP_STATUS", "lamp_on", "lamp_off", "BLINK_CYCLE_COUNTER", "cycleMaxLampStatus", "PITMAN_DIRECTION_BLINKING", "PITMAN_TIP_BLINKING" ],
+  "setNames" : [ "DIRECTIONS", "SWITCH_STATUS", "PITMAN_POSITION", "KEY_STATE" ],
+  "metaData" : {
+    "type" : "TraceMetaData",
+    "formatVersion" : 1,
+    "savedAt" : [ 2020, 12, 21, 7, 54, 35, 675777000 ],
+    "creator" : "USER",
+    "proBCliVersion" : "1.10.0-nightly",
+    "name" : "HALLO",
+    "path" : "PitmanController_v6.mch",
+    "proB2KernelVersion" : "4.0.0-SNAPSHOT"
+  }
+}

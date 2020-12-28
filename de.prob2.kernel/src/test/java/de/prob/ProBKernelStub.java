@@ -48,7 +48,7 @@ public class ProBKernelStub {
 
 		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension("mch"));
 		ClassicalBModel bla = (ClassicalBModel) factory.extract(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "ExampleMachine.mch").toString()).getModel();
-			StateSpace stateSpace = reusableAnimator.createStateSpace();
+		StateSpace stateSpace = reusableAnimator.createStateSpace();
 		Function<StateSpace, Trace> function = stateSpace1 -> {
 			try {
 				factory.extract(path.toString()).loadIntoStateSpace(stateSpace);

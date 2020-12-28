@@ -6,7 +6,6 @@ import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.exceptions.MappingFactoryInterface;
-import de.prob.check.tracereplay.check.exceptions.ToManyOptionsIdentifierMapping;
 import de.prob.check.tracereplay.check.exceptions.TransitionHasNoSuccessorException;
 import de.prob.formula.PredicateBuilder;
 import de.prob.statespace.OperationInfo;
@@ -90,7 +89,6 @@ public class TraceExplorer {
 						})
 						.collect(toList())).collect(toList());
 
-		System.out.println(listOfMappings.size());
 
 		return new HashSet<>(listOfMappings.stream().reduce(emptyList(), (acc, current) -> {
 			if (acc.isEmpty()) return current;
@@ -133,7 +131,7 @@ public class TraceExplorer {
 
 		int permutationNewSize = Math.min(oldVars.size(), newVars.size());
 
-		if(oldVars.size() > 9 || newVars.size() > 9 || oldVars.size()+newVars.size() >9)
+		if(oldVars.size() > 9 || newVars.size() > 9 || oldVars.size()+newVars.size() > 9)
 		{
 			return singleton(mappingFactory.produceMappingManager().askForMapping(oldVars, newVars, name ,currentMapping));
 		}
@@ -191,24 +189,24 @@ public class TraceExplorer {
 	 * identifiers in the schema old -> new
 	 */
 	public Set<Map<MappingNames, Map<String, String>>> calculateVarMappings(PersistentTransition transition,
-																				   OperationInfo operationMapping,
-																				   Set<String> usedVars,
-																				   Set<String> usedSets,
-																					Set<String> usedConstants) {
+																			OperationInfo operationMapping,
+																			Set<String> usedVars,
+																			Set<String> usedSets,
+																			Set<String> usedConstants) {
 
 
 		Map<MappingNames, List<String>> operationInfos = new HashMap<>();
 
-		operationInfos.put(MappingNames.VARIABLES_MODIFIED, operationMapping.getNonDetWrittenVariables());
-		operationInfos.put(MappingNames.VARIABLES_READ, operationMapping.getReadVariables());
+		operationInfos.put(MappingNames.VARIABLES_MODIFIED, new ArrayList<>(operationMapping.getNonDetWrittenVariables()));
+		operationInfos.put(MappingNames.VARIABLES_READ, new ArrayList<>(operationMapping.getReadVariables()));
 
 		operationInfos.get(MappingNames.VARIABLES_MODIFIED).addAll(usedVars);
 		operationInfos.get(MappingNames.VARIABLES_READ).addAll(usedVars);
 		operationInfos.get(MappingNames.VARIABLES_READ).addAll(usedConstants);
 		operationInfos.get(MappingNames.VARIABLES_READ).addAll(usedSets);
 
-		operationInfos.put(MappingNames.INPUT_PARAMETERS, operationMapping.getParameterNames());
-		operationInfos.put(MappingNames.OUTPUT_PARAMETERS, operationMapping.getOutputParameterNames());
+		operationInfos.put(MappingNames.INPUT_PARAMETERS, new ArrayList<>(operationMapping.getParameterNames()));
+		operationInfos.put(MappingNames.OUTPUT_PARAMETERS, new ArrayList<>(operationMapping.getOutputParameterNames()));
 
 		Map<MappingNames, List<String>> transitionInfos = new HashMap<>();
 		transitionInfos.put(MappingNames.VARIABLES_MODIFIED, new ArrayList<>(transition.getDestinationStateVariables().keySet()));
@@ -229,20 +227,17 @@ public class TraceExplorer {
 
 		for (MappingNames name : MappingNames.values()) {
 
-			System.out.println(transition);
 			Set<Map<MappingNames, Map<String, String>>> mappingsCopy = mappings;
 			Set<Map<MappingNames, Map<String, String>>> mappingsAppliedToExistingCopy =
 					createAllPossiblePairs((new ArrayList<>(transitionInfos.get(name))), operationInfos.get(name), name, transition.getOperationName())
 					.stream()
 					.flatMap(possiblePair ->{
-							System.out.println("possiblePair size: "+ possiblePair.size());
 							return mappingsCopy.stream().map(mapping -> {
 								Map<MappingNames, Map<String, String>> alteredInnerMapping = new HashMap<>(mapping);
 								alteredInnerMapping.put(name, possiblePair);
 								return alteredInnerMapping;
 							});})
 					.collect(toSet());
-			System.out.println("finished");
 			if(!mappingsAppliedToExistingCopy.isEmpty()){
 				mappings = mappingsAppliedToExistingCopy;
 			}

@@ -7,8 +7,8 @@ import de.prob.JsonManagerStubModule;
 import de.prob.MainModule;
 import de.prob.ProBKernelStub;
 import de.prob.check.tracereplay.PersistentTransition;
-import de.prob.check.tracereplay.check.PersistenceDelta;
 import de.prob.check.tracereplay.check.TraceExplorer;
+import de.prob.check.tracereplay.check.exceptions.MappingFactoryInterface;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.OperationInfo;
@@ -90,7 +90,12 @@ public class TraceExplorerUnitTest {
 		expected.add(result5);
 		expected.add(result6);
 
-		Assert.assertEquals(expected, TraceExplorer.createAllPossiblePairs(oldV, newV));
+
+
+		MappingFactoryInterface mappingFactoryInterface = new TestUtils.StubFactoryImplementation();
+		TraceExplorer traceExplorer = new TraceExplorer(false, mappingFactoryInterface);
+
+		Assert.assertEquals(expected, traceExplorer.createAllPossiblePairs(oldV, newV, TraceExplorer.MappingNames.VARIABLES_MODIFIED, "inc"));
 	}
 
 
@@ -131,7 +136,11 @@ public class TraceExplorerUnitTest {
 		expected.add(result5);
 		expected.add(result6);
 
-		Assert.assertEquals(expected, TraceExplorer.createAllPossiblePairs(oldV, newV));
+		MappingFactoryInterface mappingFactoryInterface = new TestUtils.StubFactoryImplementation();
+		TraceExplorer traceExplorer = new TraceExplorer(false, mappingFactoryInterface);
+
+
+		Assert.assertEquals(expected, traceExplorer.createAllPossiblePairs(oldV, newV, TraceExplorer.MappingNames.VARIABLES_MODIFIED, ""));
 	}
 
 	@Test
@@ -171,7 +180,11 @@ public class TraceExplorerUnitTest {
 		expected.add(result5);
 		expected.add(result6);
 
-		Assert.assertEquals(expected, TraceExplorer.createAllPossiblePairs(oldV, newV));
+		MappingFactoryInterface mappingFactoryInterface = new TestUtils.StubFactoryImplementation();
+		TraceExplorer traceExplorer = new TraceExplorer(false, mappingFactoryInterface);
+
+
+		Assert.assertEquals(expected, traceExplorer.createAllPossiblePairs(oldV, newV, TraceExplorer.MappingNames.VARIABLES_MODIFIED, ""));
 	}
 
 
@@ -187,7 +200,12 @@ public class TraceExplorerUnitTest {
 				Collections.emptyList(),true, OperationInfo.Type.CLASSICAL_B, Collections.emptyList(), Collections.singletonList("levels"),
 				Collections.emptyList());
 
-		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> result = TraceExplorer.calculateVarMappings(floors, operationInfo);
+		MappingFactoryInterface mappingFactoryInterface = new TestUtils.StubFactoryImplementation();
+		TraceExplorer traceExplorer = new TraceExplorer(false, mappingFactoryInterface);
+
+
+		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> result = traceExplorer
+				.calculateVarMappings(floors, operationInfo, singleton("levels"), emptySet(), emptySet());
 
 
 		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> expected = new HashSet<>();
@@ -199,11 +217,13 @@ public class TraceExplorerUnitTest {
 		mapping2.put("floors", "levels");
 
 		expectedHelper.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, mapping1);
-		expectedHelper.put(TraceExplorer.MappingNames.VARIABLES, mapping2);
+		expectedHelper.put(TraceExplorer.MappingNames.VARIABLES_MODIFIED, mapping2);
+		expectedHelper.put(TraceExplorer.MappingNames.VARIABLES_READ, emptyMap());
 		expectedHelper.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
 
 		expected.add(expectedHelper);
-
+		System.out.println(expected);
+		System.out.println(result);
 		Assert.assertTrue(expected.containsAll(result));
 	}
 
@@ -223,7 +243,12 @@ public class TraceExplorerUnitTest {
 				Collections.emptyList(),true, OperationInfo.Type.CLASSICAL_B, Collections.emptyList(), Collections.singletonList("levels"),
 				Collections.emptyList());
 
-		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> result = TraceExplorer.calculateVarMappings(floors, operationInfo);
+
+		MappingFactoryInterface mappingFactoryInterface = new TestUtils.StubFactoryImplementation();
+		TraceExplorer traceExplorer = new TraceExplorer(false, mappingFactoryInterface);
+
+		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> result =
+				traceExplorer.calculateVarMappings(floors, operationInfo, singleton("levels"), emptySet(), emptySet());
 
 
 		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> expected = new HashSet<>();
@@ -235,7 +260,8 @@ public class TraceExplorerUnitTest {
 		mapping2_1.put("floors", "levels");
 
 		expectedHelper1.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, mapping1_1);
-		expectedHelper1.put(TraceExplorer.MappingNames.VARIABLES, mapping2_1);
+		expectedHelper1.put(TraceExplorer.MappingNames.VARIABLES_MODIFIED, mapping2_1);
+		expectedHelper1.put(TraceExplorer.MappingNames.VARIABLES_READ, emptyMap());
 		expectedHelper1.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
 
 
@@ -246,7 +272,8 @@ public class TraceExplorerUnitTest {
 		mapping2_2.put("floors", "levels");
 
 		expectedHelper2.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, mapping1_2);
-		expectedHelper2.put(TraceExplorer.MappingNames.VARIABLES, mapping2_2);
+		expectedHelper2.put(TraceExplorer.MappingNames.VARIABLES_MODIFIED, mapping2_2);
+		expectedHelper2.put(TraceExplorer.MappingNames.VARIABLES_READ, emptyMap());
 		expectedHelper2.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
 
 
@@ -257,7 +284,8 @@ public class TraceExplorerUnitTest {
 		mapping2_3.put("floors", "levels");
 
 		expectedHelper3.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, mapping1_3);
-		expectedHelper3.put(TraceExplorer.MappingNames.VARIABLES, mapping2_3);
+		expectedHelper3.put(TraceExplorer.MappingNames.VARIABLES_MODIFIED, mapping2_3);
+		expectedHelper3.put(TraceExplorer.MappingNames.VARIABLES_READ, emptyMap());
 		expectedHelper3.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
 
 
@@ -266,8 +294,6 @@ public class TraceExplorerUnitTest {
 		expected.add(expectedHelper2);
 		expected.add(expectedHelper3);
 
-		System.out.println(expected);
-		System.out.println(result);
 
      	Assert.assertTrue(expected.containsAll(result));
 	}
@@ -285,7 +311,10 @@ public class TraceExplorerUnitTest {
 				Collections.emptyList(),true, OperationInfo.Type.CLASSICAL_B, Collections.emptyList(), Collections.singletonList("levels"),
 				Collections.emptyList());
 
-		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> result = TraceExplorer.calculateVarMappings(floors, operationInfo);
+		MappingFactoryInterface mappingFactoryInterface = new TestUtils.StubFactoryImplementation();
+		TraceExplorer traceExplorer = new TraceExplorer(false, mappingFactoryInterface);
+
+		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> result = traceExplorer.calculateVarMappings(floors, operationInfo, singleton("levels"), emptySet(), emptySet());
 
 
 		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> expected = new HashSet<>();
@@ -297,7 +326,9 @@ public class TraceExplorerUnitTest {
 		mapping2_1.put("floors", "levels");
 
 		expectedHelper1.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, mapping1_1);
-		expectedHelper1.put(TraceExplorer.MappingNames.VARIABLES, mapping2_1);
+		expectedHelper1.put(TraceExplorer.MappingNames.VARIABLES_MODIFIED, mapping2_1);
+		expectedHelper1.put(TraceExplorer.MappingNames.VARIABLES_READ, emptyMap());
+
 		expectedHelper1.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
 
 
@@ -308,7 +339,9 @@ public class TraceExplorerUnitTest {
 		mapping2_2.put("floors", "levels");
 
 		expectedHelper2.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, mapping1_2);
-		expectedHelper2.put(TraceExplorer.MappingNames.VARIABLES, mapping2_2);
+		expectedHelper2.put(TraceExplorer.MappingNames.VARIABLES_MODIFIED, mapping2_2);
+		expectedHelper2.put(TraceExplorer.MappingNames.VARIABLES_READ, emptyMap());
+
 		expectedHelper2.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
 
 
@@ -319,7 +352,9 @@ public class TraceExplorerUnitTest {
 		mapping2_3.put("floors", "levels");
 
 		expectedHelper3.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, mapping1_3);
-		expectedHelper3.put(TraceExplorer.MappingNames.VARIABLES, mapping2_3);
+		expectedHelper3.put(TraceExplorer.MappingNames.VARIABLES_MODIFIED, mapping2_3);
+		expectedHelper3.put(TraceExplorer.MappingNames.VARIABLES_READ, emptyMap());
+
 		expectedHelper3.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
 
 
@@ -351,16 +386,19 @@ public class TraceExplorerUnitTest {
 		mapping2_1.put("floors", "levels");
 
 		expectedHelper1.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, emptyMap());
-		expectedHelper1.put(TraceExplorer.MappingNames.VARIABLES, mapping2_1);
+		expectedHelper1.put(TraceExplorer.MappingNames.VARIABLES_READ, mapping2_1);
+		expectedHelper1.put(TraceExplorer.MappingNames.VARIABLES_MODIFIED, emptyMap());
 		expectedHelper1.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
 
 
 		expected.add(expectedHelper1);
+		MappingFactoryInterface mappingFactoryInterface = new TestUtils.StubFactoryImplementation();
+		TraceExplorer traceExplorer = new TraceExplorer(false, mappingFactoryInterface);
 
-		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> result = TraceExplorer.calculateVarMappings(floors, operationInfo);
 
-		System.out.println(expected);
-		System.out.println(result);
+		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> result = traceExplorer.calculateVarMappings(floors, operationInfo, emptySet(), emptySet(), emptySet());
+
+
 		Assert.assertTrue(expected.containsAll(result));
 	}
 
@@ -383,16 +421,20 @@ public class TraceExplorerUnitTest {
 		mapping2_1.put("floors", "levels");
 
 		expectedHelper1.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, emptyMap());
-		expectedHelper1.put(TraceExplorer.MappingNames.VARIABLES, mapping2_1);
+		expectedHelper1.put(TraceExplorer.MappingNames.VARIABLES_READ, mapping2_1);
+		expectedHelper1.put(TraceExplorer.MappingNames.VARIABLES_MODIFIED
+				, emptyMap());
+
 		expectedHelper1.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
 
 
 		expected.add(expectedHelper1);
 
-		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> result = TraceExplorer.calculateVarMappings(floors, operationInfo);
+		MappingFactoryInterface mappingFactoryInterface = new TestUtils.StubFactoryImplementation();
+		TraceExplorer traceExplorer = new TraceExplorer(false, mappingFactoryInterface);
 
-		System.out.println(expected);
-		System.out.println(result);
+		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> result = traceExplorer.calculateVarMappings(floors, operationInfo, emptySet(), emptySet(), emptySet());
+
 		Assert.assertTrue(expected.containsAll(result));
 	}
 
@@ -412,7 +454,9 @@ public class TraceExplorerUnitTest {
 		mapping2_1.put("floors", "levels");
 
 		mappingHelper1.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, mapping1_1);
-		mappingHelper1.put(TraceExplorer.MappingNames.VARIABLES, mapping2_1);
+		mappingHelper1.put(TraceExplorer.MappingNames.VARIABLES_MODIFIED, mapping2_1);
+		mappingHelper1.put(TraceExplorer.MappingNames.VARIABLES_READ, emptyMap());
+
 		mappingHelper1.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
 
 		PersistentTransition expected = new PersistentTransition(floors.getOperationName(), Collections.singletonMap("y", "4"),
@@ -442,7 +486,9 @@ public class TraceExplorerUnitTest {
 		mapping2_1.put("floors", "levels");
 
 		mappingHelper1.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, mapping1_1);
-		mappingHelper1.put(TraceExplorer.MappingNames.VARIABLES, mapping2_1);
+		mappingHelper1.put(TraceExplorer.MappingNames.VARIABLES_MODIFIED, mapping2_1);
+		mappingHelper1.put(TraceExplorer.MappingNames.VARIABLES_READ, emptyMap());
+
 		mappingHelper1.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
 
 		PersistentTransition expected = new PersistentTransition(floors.getOperationName(), Collections.singletonMap("a", "0"),
@@ -473,7 +519,9 @@ public class TraceExplorerUnitTest {
 		mapping2_1.put("floors", "levels");
 
 		mappingHelper1.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, mapping1_1);
-		mappingHelper1.put(TraceExplorer.MappingNames.VARIABLES, mapping2_1);
+		mappingHelper1.put(TraceExplorer.MappingNames.VARIABLES_MODIFIED, mapping2_1);
+		mappingHelper1.put(TraceExplorer.MappingNames.VARIABLES_READ, emptyMap());
+
 		mappingHelper1.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
 
 		PersistentTransition expected = new PersistentTransition(floors.getOperationName(), new HashMap<String, String>() {{
@@ -508,7 +556,9 @@ public class TraceExplorerUnitTest {
 		mapping2_1.put("floors", "levels");
 
 		mappingHelper1.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, mapping1_1);
-		mappingHelper1.put(TraceExplorer.MappingNames.VARIABLES, mapping2_1);
+		mappingHelper1.put(TraceExplorer.MappingNames.VARIABLES_MODIFIED, mapping2_1);
+		mappingHelper1.put(TraceExplorer.MappingNames.VARIABLES_READ, emptyMap());
+
 		mappingHelper1.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
 
 		PersistentTransition expected = new PersistentTransition(floors.getOperationName(), new HashMap<String, String>() {{
@@ -542,7 +592,9 @@ public class TraceExplorerUnitTest {
 		mapping2_1.put("floors", "levels");
 
 		mappingHelper1.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, mapping1_1);
-		mappingHelper1.put(TraceExplorer.MappingNames.VARIABLES, mapping2_1);
+		mappingHelper1.put(TraceExplorer.MappingNames.VARIABLES_MODIFIED, mapping2_1);
+		mappingHelper1.put(TraceExplorer.MappingNames.VARIABLES_READ, mapping2_1);
+
 		mappingHelper1.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
 
 		PersistentTransition expected = new PersistentTransition(floors.getOperationName(), new HashMap<String, String>() {{
@@ -574,11 +626,12 @@ public class TraceExplorerUnitTest {
 		Map<String, String> mapping2_1 = new HashMap<>();
 		mapping2_1.put("floors", "levels");
 		Map<String, String> mapping3_1 = new HashMap<>();
-		mapping2_1.put("out", "outter");
+		mapping3_1.put("out", "outter");
 
 		mappingHelper1.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, mapping1_1);
-		mappingHelper1.put(TraceExplorer.MappingNames.VARIABLES, mapping2_1);
-		mappingHelper1.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, mapping3_1);
+		mappingHelper1.put(TraceExplorer.MappingNames.VARIABLES_MODIFIED, mapping3_1);
+		mappingHelper1.put(TraceExplorer.MappingNames.VARIABLES_READ, mapping2_1);
+		mappingHelper1.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
 
 		PersistentTransition expected = new PersistentTransition(floors.getOperationName(), new HashMap<String, String>() {{
 			put("a", "2");
@@ -610,7 +663,8 @@ public class TraceExplorerUnitTest {
 		mapping2_1.put("floors", "levels");
 
 		mappingHelper1.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, mapping1_1);
-		mappingHelper1.put(TraceExplorer.MappingNames.VARIABLES, mapping2_1);
+		mappingHelper1.put(TraceExplorer.MappingNames.VARIABLES_MODIFIED, emptyMap());
+		mappingHelper1.put(TraceExplorer.MappingNames.VARIABLES_READ, mapping2_1);
 		mappingHelper1.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
 
 		PersistentTransition expected = new PersistentTransition(floors.getOperationName(), new HashMap<String, String>() {{
@@ -654,7 +708,8 @@ public class TraceExplorerUnitTest {
 		mapping_dec.put("floors", "levels");
 
 		expectedHelper_dec.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, emptyMap());
-		expectedHelper_dec.put(TraceExplorer.MappingNames.VARIABLES, mapping_dec);
+		expectedHelper_dec.put(TraceExplorer.MappingNames.VARIABLES_MODIFIED, mapping_dec);
+		expectedHelper_dec.put(TraceExplorer.MappingNames.VARIABLES_READ, emptyMap());
 		expectedHelper_dec.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
 
 
@@ -667,7 +722,8 @@ public class TraceExplorerUnitTest {
 		mapping2_1.put("floors", "levels");
 
 		expectedHelper1.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, mapping1_1);
-		expectedHelper1.put(TraceExplorer.MappingNames.VARIABLES, mapping2_1);
+		expectedHelper1.put(TraceExplorer.MappingNames.VARIABLES_MODIFIED, mapping2_1);
+		expectedHelper1.put(TraceExplorer.MappingNames.VARIABLES_READ, emptyMap());
 		expectedHelper1.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
 
 		expectedHelper1_1.put("inc", expectedHelper1);
@@ -683,7 +739,8 @@ public class TraceExplorerUnitTest {
 		mapping2_2.put("floors", "levels");
 
 		expectedHelper2.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, mapping1_2);
-		expectedHelper2.put(TraceExplorer.MappingNames.VARIABLES, mapping2_2);
+		expectedHelper2.put(TraceExplorer.MappingNames.VARIABLES_MODIFIED, mapping2_2);
+		expectedHelper2.put(TraceExplorer.MappingNames.VARIABLES_READ, emptyMap());
 		expectedHelper2.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
 
 		expectedHelper1_2.put("inc", expectedHelper2);
@@ -699,7 +756,8 @@ public class TraceExplorerUnitTest {
 		mapping2_3.put("floors", "levels");
 
 		expectedHelper3.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, mapping1_3);
-		expectedHelper3.put(TraceExplorer.MappingNames.VARIABLES, mapping2_3);
+		expectedHelper3.put(TraceExplorer.MappingNames.VARIABLES_MODIFIED, mapping2_3);
+		expectedHelper3.put(TraceExplorer.MappingNames.VARIABLES_READ, emptyMap());
 		expectedHelper3.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
 
 
@@ -712,7 +770,20 @@ public class TraceExplorerUnitTest {
 		expected.add(expectedHelper1_2);
 		expected.add(expectedHelper1_1);
 
-		Set<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>> result = TraceExplorer.generateAllPossibleMappingVariations(asList(init, first, second), stateSpace.getLoadedMachine().getOperations(), Stream.of("inc", "dec").collect(Collectors.toSet()));
+		MappingFactoryInterface mappingFactoryInterface = new TestUtils.StubFactoryImplementation();
+		TraceExplorer traceExplorer = new TraceExplorer(false, mappingFactoryInterface);
+
+
+
+
+		Set<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>> result = traceExplorer
+				.generateAllPossibleMappingVariations(
+						asList(init, first, second),
+						stateSpace.getLoadedMachine().getOperations(),
+						Stream.of("inc", "dec").collect(Collectors.toSet()),
+						singleton("levels"),
+						emptySet(),
+						emptySet());
 
 		Assert.assertEquals(expected, result);
 
@@ -735,14 +806,25 @@ public class TraceExplorerUnitTest {
 		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "Lift2.mch"));
 
 
+		MappingFactoryInterface mappingFactoryInterface = new TestUtils.StubFactoryImplementation();
+		TraceExplorer traceExplorer = new TraceExplorer(false, mappingFactoryInterface);
+
+
+
 		Set<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>> result =
-				TraceExplorer.generateAllPossibleMappingVariations(asList(init, first, second), stateSpace.getLoadedMachine().getOperations(), emptySet());
+				traceExplorer.generateAllPossibleMappingVariations(
+						asList(init, first, second),
+						stateSpace.getLoadedMachine().getOperations(),
+						emptySet(),
+						emptySet(),
+						emptySet(),
+						emptySet());
 
 		Assert.assertEquals(singleton(emptyMap()), result);
 
 	}
 
-
+/*
 	@Test
 	public void removeEntriesWithEmptyValues_test_return_all(){
 		PersistentTransition init = new PersistentTransition(Transition.INITIALISE_MACHINE_NAME, emptyMap(),
@@ -947,4 +1029,6 @@ public class TraceExplorerUnitTest {
 
 		Assert.assertEquals(expected, result);
 	}
+	*/
+
 }
