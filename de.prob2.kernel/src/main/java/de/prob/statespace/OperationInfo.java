@@ -1,6 +1,10 @@
 package de.prob.statespace;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
@@ -96,6 +100,16 @@ public class OperationInfo {
 
 	public List<String> getNonDetWrittenVariables() {
 		return this.nonDetWrittenVariables;
+	}
+
+	public List<String> getAllVariables(){
+		return Stream.of(readVariables, writtenVariables, nonDetWrittenVariables).flatMap(Collection::stream).collect(Collectors.toList());
+	}
+
+	public Set<String> getAllIdentifier(){
+		return Stream.of(readVariables, writtenVariables, nonDetWrittenVariables, getParameterNames(), getOutputParameterNames())
+				.flatMap(Collection::stream).collect(Collectors.toSet());
+
 	}
 
 	@Override

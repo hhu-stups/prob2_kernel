@@ -14,6 +14,8 @@ import de.prob.statespace.Trace;
 import de.prob.statespace.Transition;
 
 import java.util.*;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
@@ -23,6 +25,8 @@ public class TraceExplorer {
 
 	private final boolean initWasSet;
 	private final MappingFactoryInterface mappingFactory;
+	private final static String WILDCARD = "$?";
+	private final static String VOIDCARD = "$void";
 
 	public TraceExplorer(boolean initWasSet, MappingFactoryInterface mappingFactory) {
 		this.initWasSet = initWasSet;
@@ -126,10 +130,10 @@ public class TraceExplorer {
 	 * @return a set of mappings
 	 */
 	public Set<Map<String, String>> createAllPossiblePairs(List<String> oldVars, List<String> newVars, MappingNames currentMapping, String name) {
-		if (oldVars.isEmpty()) return emptySet();
-		if (newVars.isEmpty()) return emptySet();
+		if (oldVars.isEmpty()&&newVars.isEmpty()) return emptySet();
 
-		int permutationNewSize = Math.min(oldVars.size(), newVars.size());
+
+		int size = Math.min(oldVars.size(), newVars.size());
 
 		if(oldVars.size() > 9 || newVars.size() > 9 || oldVars.size()+newVars.size() > 9)
 		{
@@ -137,8 +141,8 @@ public class TraceExplorer {
 		}
 		else
 		{
-			List<List<String>> permutationsOld = TraceCheckerUtils.generatePerm(new ArrayList<>(oldVars), 0, permutationNewSize, emptyList());
-			List<List<String>> permutationsNew = TraceCheckerUtils.generatePerm(new ArrayList<>(newVars), 0, permutationNewSize, emptyList());
+			List<List<String>> permutationsOld = TraceCheckerUtils.generatePerm(new ArrayList<>(oldVars), 0, size, emptyList());
+			List<List<String>> permutationsNew = TraceCheckerUtils.generatePerm(new ArrayList<>(newVars), 0, size, emptyList());
 
 			return permutationsOld.stream().flatMap(permutationOld -> permutationsNew.stream().map(permutationNew ->
 					TraceCheckerUtils.zip(permutationOld, permutationNew))).collect(toSet());
@@ -158,27 +162,34 @@ public class TraceExplorer {
 	public static PersistentTransition createPersistentTransitionFromMapping(Map<MappingNames, Map<String, String>> mapping,
 																			 PersistentTransition current) {
 
-		Map<String, String> destChangedVariables = mapping.get(MappingNames.VARIABLES_MODIFIED).entrySet().stream()
+		Map<String, String> destChangedVariables =
+				mapping.get(MappingNames.VARIABLES_MODIFIED).entrySet().stream()
 				.filter(entry -> !current.getDestStateNotChanged().contains(entry.getKey()))
 				.collect(toMap(Map.Entry::getValue, entry -> current.getDestinationStateVariables().get(entry.getKey())));
 
 
-		Set<String> destNotChangedVariables = mapping.get(MappingNames.VARIABLES_READ).entrySet().stream()
+		Set<String> destNotChangedVariables =
+				mapping.get(MappingNames.VARIABLES_READ).entrySet().stream()
 				.filter(entry -> current.getDestStateNotChanged().contains(entry.getKey()))
 				.map(Map.Entry::getValue).collect(toSet());
 
 
-		Map<String, String> resultOutputParameters = mapping.get(MappingNames.OUTPUT_PARAMETERS).entrySet().stream()
+		Map<String, String> resultOutputParameters =
+				mapping.get(MappingNames.OUTPUT_PARAMETERS).entrySet().stream()
 				.collect(toMap(Map.Entry::getValue, entry -> current.getOutputParameters().get(entry.getKey())));
 
 
-		Map<String, String> resultInputParameters = mapping.get(MappingNames.INPUT_PARAMETERS).entrySet().stream()
+		Map<String, String> resultInputParameters =
+				mapping.get(MappingNames.INPUT_PARAMETERS).entrySet().stream()
 				.collect(toMap(Map.Entry::getValue, entry -> current.getParameters().get(entry.getKey())));
 
 
 		return current.copyWithNewDestState(destChangedVariables).copyWithNewParameters(resultInputParameters)
 				.copyWithNewOutputParameters(resultOutputParameters).copyWithDestStateNotChanged(destNotChangedVariables);
 	}
+
+
+
 
 	/**
 	 * Calculates the new all possible mappings for a variable

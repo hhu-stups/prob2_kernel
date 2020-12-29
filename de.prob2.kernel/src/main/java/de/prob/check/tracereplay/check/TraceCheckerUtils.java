@@ -5,10 +5,14 @@ import de.prob.animator.ReusableAnimator;
 import de.prob.scripting.FactoryProvider;
 import de.prob.scripting.ModelFactory;
 import de.prob.scripting.ModelTranslationError;
+import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toMap;
 
 public class TraceCheckerUtils {
 
@@ -129,5 +133,102 @@ public class TraceCheckerUtils {
 		factory.extract(path).loadIntoStateSpace(stateSpace);
 		return stateSpace;
 	}
+
+
+	/**
+	 * Wild cards are those where in the old operation the identifier did not exist - those don't show up in the mapping
+	 * @param newInfo the operation infos from the new operation
+	 * @param currentMappings the current mapping old -> new
+	 */
+	public static Set<String> calculateAllWildCards(OperationInfo newInfo, Map<String, String> currentMappings){
+		Set<String> result = newInfo.getAllIdentifier();
+		result.removeAll(currentMappings.values());
+		return result;
+	}
+
+
+	/**
+	 * Void cards are those where in the new operation the identifier did not exist - those don't show up in the mapping
+	 * @param oldInfo the operation infos from the old operation
+	 * @param currentMappings the current mapping old -> new
+	 */
+	public static Set<String> calculateAllVoidCards(OperationInfo oldInfo, Map<String, String> currentMappings){
+		Set<String> result = oldInfo.getAllIdentifier();
+		result.removeAll(currentMappings.keySet());
+		return result;
+	}
+
+
+	/**
+	 * Wild cards are those where in the old operation the identifier did not exist - those don't show up in the mapping
+	 * @param newInfo the operation infos from the new operation
+	 * @param currentMappings the current mapping old -> new
+	 */
+	public static Set<String> calculateVarWildCards(OperationInfo newInfo, Map<String, String> currentMappings){
+		Set<String> result = new HashSet<>(newInfo.getAllVariables());
+		result.removeAll(currentMappings.values());
+		return result;
+	}
+
+
+	/**
+	 * Void cards are those where in the new operation the identifier did not exist - those don't show up in the mapping
+	 * @param oldInfo the operation infos from the old operation
+	 * @param currentMappings the current mapping old -> new
+	 */
+	public static Set<String> calculateVarVoidCards(OperationInfo oldInfo, Map<String, String> currentMappings){
+		Set<String> result = new HashSet<>(oldInfo.getAllVariables());
+		result.removeAll(currentMappings.keySet());
+		return result;
+	}
+
+
+	/**
+	 * Wild cards are those where in the old operation the identifier did not exist - those don't show up in the mapping
+	 * @param newInfo the operation infos from the new operation
+	 * @param currentMappings the current mapping old -> new
+	 */
+	public static Set<String> calculateInWildCards(OperationInfo newInfo, Map<String, String> currentMappings){
+		Set<String> result = new HashSet<>(newInfo.getParameterNames());
+		result.removeAll(currentMappings.values());
+		return result;
+	}
+
+
+	/**
+	 * Void cards are those where in the new operation the identifier did not exist - those don't show up in the mapping
+	 * @param oldInfo the operation infos from the old operation
+	 * @param currentMappings the current mapping old -> new
+	 */
+	public static Set<String> calculateInVoidCards(OperationInfo oldInfo, Map<String, String> currentMappings){
+		Set<String> result = new HashSet<>(oldInfo.getParameterNames());
+		result.removeAll(currentMappings.keySet());
+		return result;
+	}
+
+
+	/**
+	 * Wild cards are those where in the old operation the identifier did not exist - those don't show up in the mapping
+	 * @param newInfo the operation infos from the new operation
+	 * @param currentMappings the current mapping old -> new
+	 */
+	public static Set<String> calculateOutWildCards(OperationInfo newInfo, Map<String, String> currentMappings){
+		Set<String> result = new HashSet<>(newInfo.getOutputParameterNames());
+		result.removeAll(currentMappings.values());
+		return result;
+	}
+
+
+	/**
+	 * Void cards are those where in the new operation the identifier did not exist - those don't show up in the mapping
+	 * @param oldInfo the operation infos from the old operation
+	 * @param currentMappings the current mapping old -> new
+	 */
+	public static Set<String> calculateOutVoidCards(OperationInfo oldInfo, Map<String, String> currentMappings){
+		Set<String> result = new HashSet<>(oldInfo.getOutputParameterNames());
+		result.removeAll(currentMappings.keySet());
+		return result;
+	}
+
 
 }
