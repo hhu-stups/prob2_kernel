@@ -14,6 +14,7 @@ public class PersistenceDelta {
 
 	private final PersistentTransition oldTransition;
 	private final List<PersistentTransition> newTransitions;
+	private PrivilegeLevel privilegeLevel;
 
 
 	public PersistenceDelta(PersistentTransition oldTransition, List<PersistentTransition> newTransitions){

@@ -53,7 +53,7 @@ OPERATIONS
  ENV_Turn_EngineOn =
  BEGIN
    SET_EngineOn ||
-   IF pitmanArmUpDown :PITMAN_DIRECTION_BLINKING &
+   IF pitmanArmUpDown : PITMAN_DIRECTION_BLINKING &
       hazardWarningSwitchOn = switch_off THEN
 	  SET_BlinkersOn(pitman_direction(pitmanArmUpDown),continuousBlink)
    END
@@ -119,9 +119,9 @@ OPERATIONS
 
 
 
- ENV_Hazard_blinking(newSwitchPos, oldSwitchPos) = SELECT newSwitchPos /= hazardWarningSwitchOn THEN
+ ENV_Hazard_blinking(newSwitchPos) = SELECT newSwitchPos /= hazardWarningSwitchOn THEN
  // ELS-1, ELS-5
-	 SELECT newSwitchPos = switch_on & oldSwitchPos = switch_on // hazardWarningSwitchOn = switch_off
+	 SELECT newSwitchPos = switch_on // hazardWarningSwitchOn = switch_off
 	 THEN
 		SET_AllBlinkersOn
 	  WHEN newSwitchPos = switch_off // hazardWarningSwitchOn = switch_on

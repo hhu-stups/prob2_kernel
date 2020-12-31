@@ -1,12 +1,15 @@
 package de.prob.check.tracereplay.check;
 
 import com.google.common.collect.Maps;
+import de.prob.animator.command.ConstructTraceCommand;
 import de.prob.animator.command.GetOperationByPredicateCommand;
+import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.exceptions.MappingFactoryInterface;
 import de.prob.check.tracereplay.check.exceptions.TransitionHasNoSuccessorException;
+import de.prob.check.tracereplay.check.exceptions.TransitionNotAccessibleException;
 import de.prob.formula.PredicateBuilder;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
@@ -25,8 +28,6 @@ public class TraceExplorer {
 
 	private final boolean initWasSet;
 	private final MappingFactoryInterface mappingFactory;
-	private final static String WILDCARD = "$?";
-	private final static String VOIDCARD = "$void";
 
 	public TraceExplorer(boolean initWasSet, MappingFactoryInterface mappingFactory) {
 		this.initWasSet = initWasSet;
@@ -242,12 +243,11 @@ public class TraceExplorer {
 			Set<Map<MappingNames, Map<String, String>>> mappingsAppliedToExistingCopy =
 					createAllPossiblePairs((new ArrayList<>(transitionInfos.get(name))), operationInfos.get(name), name, transition.getOperationName())
 					.stream()
-					.flatMap(possiblePair ->{
-							return mappingsCopy.stream().map(mapping -> {
-								Map<MappingNames, Map<String, String>> alteredInnerMapping = new HashMap<>(mapping);
-								alteredInnerMapping.put(name, possiblePair);
-								return alteredInnerMapping;
-							});})
+					.flatMap(possiblePair -> mappingsCopy.stream().map(mapping -> {
+						Map<MappingNames, Map<String, String>> alteredInnerMapping = new HashMap<>(mapping);
+						alteredInnerMapping.put(name, possiblePair);
+						return alteredInnerMapping;
+					}))
 					.collect(toSet());
 			if(!mappingsAppliedToExistingCopy.isEmpty()){
 				mappings = mappingsAppliedToExistingCopy;
@@ -397,6 +397,127 @@ public class TraceExplorer {
 		return new GetOperationByPredicateCommand(stateSpace, t.getCurrentState().getId(),
 				persistentTransition.getOperationName(), pred, 1);
 	}
+
+
+
+	public static PersistenceDelta findPathToTarget(PersistentTransition current, PersistentTransition next,
+										Trace t, PrivilegeLevel privilegeLevel) throws TransitionHasNoSuccessorException {
+
+
+		boolean operationsEnabled = !t.getCurrentState().getOutTransitions()
+				.stream()
+				.filter(entry -> entry.getName().equals(current.getOperationName()))
+				.collect(toSet()).isEmpty();
+
+
+		List<PersistenceDelta> result = new ArrayList<>();
+		if(operationsEnabled){
+			result = downgradeAndReplay(t, privilegeLevel, current);
+		}
+
+		if(result.isEmpty()){
+			result = ambiguousReplay(t, privilegeLevel, current, next);
+		}
+
+		if(result.isEmpty()){
+			throw new TransitionHasNoSuccessorException(current);
+		}
+
+		return result.get(0);
+	}
+
+	private static List<PersistenceDelta> ambiguousReplay(Trace t, PrivilegeLevel privilegeLevel, PersistentTransition current, PersistentTransition next){
+		List<String> possibleTransitions = t.getCurrentState().getOutTransitions()
+				.stream()
+				.filter(entry -> entry.getName().equals(current.getOperationName()))
+				.collect(toCollection(() -> new TreeSet<>(Comparator.comparing(Transition::getName))))
+				.stream()
+				.map(Transition::getName)
+				.collect(toList());
+
+		List<ConstructTraceCommand> commands = possibleTransitions
+				.stream()
+				.map(name -> new ConstructTraceCommand(
+						t.getStateSpace(),
+						t.getCurrentState(),
+						Arrays.asList(name, next.getOperationName()),
+						Arrays.asList(
+								new ClassicalB("1=1", FormulaExpand.EXPAND),
+								new ClassicalB(privilegeLevel.constructPredicate(next).toString(), FormulaExpand.EXPAND))))
+				.collect(toList());
+
+		List<PersistenceDelta> result = new ArrayList<>();
+		StateSpace stateSpace = t.getStateSpace();
+		for(ConstructTraceCommand command : commands){
+			stateSpace.execute(command);
+			if(!command.getNewTransitions().isEmpty()){
+				result.add(new PersistenceDelta(current,
+						Arrays.asList(new PersistentTransition(command.getNewTransitions().get(0), new PersistentTransition(t.getCurrentTransition())),
+								new PersistentTransition(command.getNewTransitions().get(1), new PersistentTransition(t.getCurrentTransition())))));
+			}
+		}
+		return result;
+	}
+
+	private static List<PersistenceDelta> downgradeAndReplay(Trace t, PrivilegeLevel privilegeLevel, PersistentTransition current) {
+		List<PrivilegeLevel> newOptions = downgrading(privilegeLevel, false);
+		if(newOptions.isEmpty()){
+			return emptyList();
+		}
+		List<Transition> result = new ArrayList<>();
+		for(PrivilegeLevel privilegeLevelFromList : newOptions){
+			try{
+				Transition transition =replayPersistentTransition(t, current, privilegeLevelFromList.constructPredicate(current));
+				result.add(transition);
+			}catch (TransitionHasNoSuccessorException ignored){ }
+		}
+		if(result.isEmpty()){
+			return newOptions.stream().flatMap(entry -> downgradeAndReplay(t, entry, current).stream()).collect(toList());
+		}else{
+			return result
+					.stream()
+					.map(entry -> new PersistenceDelta(current, singletonList(new PersistentTransition(entry, new PersistentTransition(t.getCurrentTransition())))))
+					.collect(toList());
+		}
+	}
+
+
+	private static Transition replayPersistentTransition(Trace t, PersistentTransition persistentTransition, PredicateBuilder predicateBuilder)
+			throws TransitionHasNoSuccessorException {
+
+		StateSpace stateSpace = t.getStateSpace();
+
+		final IEvalElement pred = stateSpace.getModel().parseFormula(predicateBuilder.toString(), FormulaExpand.EXPAND);
+
+		GetOperationByPredicateCommand command =
+				new GetOperationByPredicateCommand(stateSpace, t.getCurrentState().getId(),
+				persistentTransition.getOperationName(), pred, 1);
+
+		stateSpace.execute(command);
+
+		if (command.getNewTransitions().size() >= 1) {
+			return command.getNewTransitions().get(0);
+		}
+		throw new TransitionHasNoSuccessorException(persistentTransition);
+	}
+
+
+	public static List<PrivilegeLevel> downgrading(PrivilegeLevel privilegeLevel, boolean ignoreName){
+		if(privilegeLevel.inputParameters && privilegeLevel.outputParameter && privilegeLevel.variables){
+			return Stream.of(privilegeLevel.dropInput(), privilegeLevel.dropOutput(), privilegeLevel.dropVariables()).collect(toList());
+		}else if(privilegeLevel.inputParameters && privilegeLevel.outputParameter){
+			return Stream.of(privilegeLevel.dropInput(), privilegeLevel.dropOutput()).collect(toList());
+		} else if(privilegeLevel.inputParameters && privilegeLevel.variables){
+			return Stream.of(privilegeLevel.dropInput(), privilegeLevel.dropVariables()).collect(toList());
+		}else if(privilegeLevel.variables && privilegeLevel.outputParameter){
+			return Stream.of(privilegeLevel.dropVariables(), privilegeLevel.dropOutput()).collect(toList());
+		}else if(privilegeLevel.name && ignoreName){
+			return Stream.of(privilegeLevel.dropEverythingExpectName()).collect(toList());
+		}else{
+			return emptyList();
+		}
+	}
+
 
 	/**
 	 * An helper datatype to better group maps of the form Map<\String, String>
