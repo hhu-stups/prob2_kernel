@@ -46,7 +46,7 @@ public class LTLChecker extends CheckerBase {
 				this.getStateSpace().execute(cmd);
 				if (Thread.interrupted()) {
 					LOGGER.info("LTL checker received a Java thread interrupt");
-					this.isFinished(new LTLNotYetFinished(formula), null);
+					this.isFinished(new CheckInterrupted(), null);
 					return;
 				}
 				this.updateStats(cmd.getResult(), null);
