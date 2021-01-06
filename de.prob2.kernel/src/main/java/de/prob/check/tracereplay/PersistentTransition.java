@@ -125,6 +125,20 @@ public class PersistentTransition {
 	}
 
 
+	public static List<PersistentTransition> createFromList(final List<Transition> transitions, Transition before){
+		if(transitions.isEmpty()) return Collections.emptyList();
+		PersistentTransition first = new PersistentTransition(transitions.get(0), new PersistentTransition(before));
+		transitions.remove(0);
+		List<PersistentTransition> result = new ArrayList<>();
+		result.add(first);
+		for(int i= 0; i < transitions.size(); i++){
+			result.add(new PersistentTransition(transitions.get(i), result.get(i)));
+		}
+		return result;
+
+	}
+
+
 	public PersistentTransition copyWithNewDestState(Map<String, String> destState){
 		return  new PersistentTransition(name, params, outputParameters, destState, destStateNotChanged, additionalPredicates);
 	}

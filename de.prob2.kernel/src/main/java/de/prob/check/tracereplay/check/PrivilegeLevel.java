@@ -3,6 +3,12 @@ package de.prob.check.tracereplay.check;
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.formula.PredicateBuilder;
 
+import java.util.List;
+import java.util.stream.Stream;
+
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
+
 public class PrivilegeLevel{
 
 	final boolean name;
@@ -32,6 +38,10 @@ public class PrivilegeLevel{
 		this.outputParameter = true;
 	}
 
+	public  boolean isOff(){
+		return variables&&inputParameters&&outputParameter;
+	}
+
 	public PrivilegeLevel dropName(){
 		return new PrivilegeLevel(false, variables, inputParameters, outputParameter);
 	}
@@ -50,6 +60,22 @@ public class PrivilegeLevel{
 
 	public PrivilegeLevel dropEverythingExpectName(){
 		return new PrivilegeLevel(name, false, false, false);
+	}
+
+	public List<PrivilegeLevel> downgrading(boolean ignoreName){
+		if(inputParameters && outputParameter && variables){
+			return Stream.of(dropInput(), dropOutput(), dropVariables()).collect(toList());
+		}else if(inputParameters && outputParameter){
+			return Stream.of(dropInput(), dropOutput()).collect(toList());
+		} else if(inputParameters && variables){
+			return Stream.of(dropInput(), dropVariables()).collect(toList());
+		}else if(variables && outputParameter){
+			return Stream.of(dropVariables(), dropOutput()).collect(toList());
+		}else if(name && ignoreName){
+			return Stream.of(dropEverythingExpectName()).collect(toList());
+		}else{
+			return emptyList();
+		}
 	}
 
 	public PredicateBuilder constructPredicate(PersistentTransition transition){
