@@ -16,7 +16,6 @@ import de.prob.statespace.Trace;
 import de.prob.statespace.Transition;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
@@ -165,28 +164,35 @@ public class TraceExplorer {
 	 *
 	 * @param t              the trace
 	 * @param transition     the transition we are looking for
-	 * @param privilegeLevel the current privilige level
 	 * @return a list of transition showing the way
 	 */
-	private static List<Transition> findPath(Trace t, PersistentTransition transition, PrivilegeLevel privilegeLevel) {
-		List<Transition> lookAheadResult = lookAhead(t, privilegeLevel, transition);
+	private static List<Transition> findPath(Trace t, PersistentTransition transition) {
+
+		List<String> possibleTransitions = enabledOperations(t);
+		if(possibleTransitions.contains(transition.getOperationName())){
+			return replayTransition(t, transition.getOperationName(), new PredicateBuilder());
+		}
+
+		List<Transition> lookAheadResult = lookAhead(t, transition);
 
 		if (!lookAheadResult.isEmpty()) {
 			return lookAheadResult;
 		}
 
-		return ambiguousTransition(t, privilegeLevel, transition);
+		return renamedTransition(t, transition);
+
 	}
+
+
 
 	/**
 	 * Skips a step and look if the current transition is enabled afterwards
 	 *
 	 * @param t              the trace
-	 * @param privilegeLevel the privilige level
 	 * @param current        the current transition
 	 * @return a list of transitions that can be taken to skip the transition
 	 */
-	public static List<Transition> lookAhead(Trace t, PrivilegeLevel privilegeLevel, PersistentTransition current) {
+	public static List<Transition> lookAhead(Trace t, PersistentTransition current) {
 		List<String> possibleTransitions = enabledOperations(t);
 
 		List<ConstructTraceCommand> commands = possibleTransitions
@@ -195,28 +201,21 @@ public class TraceExplorer {
 						t.getStateSpace(),
 						t.getCurrentState(),
 						Arrays.asList(name, current.getOperationName()),
-						Arrays.asList(new ClassicalB("1=1", FormulaExpand.EXPAND),
-								new ClassicalB(privilegeLevel.constructPredicate(current).toString(), FormulaExpand.EXPAND))))
+						Arrays.asList(
+								new ClassicalB("1=1", FormulaExpand.EXPAND),
+								new ClassicalB(new PredicateBuilderFactory().createPredicateBuilder(current).toString(), FormulaExpand.EXPAND))))
 				.collect(toList());
 
-		List<Transition> result = new ArrayList<>();
 		StateSpace stateSpace = t.getStateSpace();
 
 		for (ConstructTraceCommand command : commands) {
 			stateSpace.execute(command);
 			if (!command.getNewTransitions().isEmpty() && command.getErrors().isEmpty()) {
-				result.addAll(command.getNewTransitions());
-				break;
+				return command.getNewTransitions();
 			}
 		}
 
-		if(result.isEmpty()){
-			List<List<Transition>> preResult = privilegeLevel.downgrading(false).stream().map(entry -> lookAhead(t, entry, current)).collect(toList());
-			result.addAll(firstOrEmpty(preResult));
-		}
-
-
-		return result;
+		return emptyList();
 	}
 
 	/**
@@ -234,43 +233,25 @@ public class TraceExplorer {
 				.collect(toList());
 	}
 
-	/**
-	 * TODO care about removing single identifiers?
-	 * Gets a transition, trace, privilege level. Will continuously decrease the privilege level until it finds a active transition
-	 *
-	 * @param t              the trace
-	 * @param privilegeLevel the privilege level
-	 * @param current        the current transition to inspect
-	 * @return one suitable transition in a list
-	 */
-	public static List<Transition> downgradeAndReplay(Trace t, PrivilegeLevel privilegeLevel, String name, PersistentTransition current) {
-		List<Transition> transitions = replayTransition(t, name, privilegeLevel.constructPredicate(current));
-		List<Transition> result = new ArrayList<>(transitions);
-		if (result.isEmpty() && !privilegeLevel.isOff()) {
-			List<PrivilegeLevel> newOptions = privilegeLevel.downgrading(false);
-			List<List<Transition>> sideResult =  newOptions.stream().map(entry -> downgradeAndReplay(t, entry, name, current)).collect(toList());
-			result.addAll(firstOrEmpty(sideResult));
-		}
-
-		return result;
-	}
 
 	/**
-	 * The current operation cannot be found, it seems like it was renamed, lets try to execute operations and hope we
-	 * can satisfy the original predicates
+	 * The current operation cannot be found, it seems like it was renamed or removed, lets try to execute operations
+	 * and hope we can satisfy the original predicates dealing with variables
 	 *
 	 * @param t              the trace
-	 * @param privilegeLevel the amount of predicates to satisfy
 	 * @param current        the current transition
 	 * @return a list of transitions that satisfy the privilige
 	 */
-	public static List<Transition> ambiguousTransition(Trace t, PrivilegeLevel privilegeLevel, PersistentTransition current) {
+	public static List<Transition> renamedTransition(Trace t, PersistentTransition current) {
 		List<String> enabledOperations = enabledOperations(t);
 
-		List<List<Transition>> sideResult = enabledOperations.stream().map(entry -> downgradeAndReplay(t, privilegeLevel, entry, current)).collect(toList());
+		List<List<Transition>> result = enabledOperations.stream()
+				.map(entry -> replayTransition(t, entry, new PredicateBuilderFactory(true, false, false, emptySet())
+						.createPredicateBuilder(current)))
+				.collect(toList());
 
-		return firstOrEmpty(sideResult);
 
+		return firstOrEmpty(result);
 	}
 
 	public static <U> List<U>  firstOrEmpty(List<List<U>> list){
@@ -490,7 +471,7 @@ public class TraceExplorer {
 							.entrySet().stream()
 							.map(entry -> new PersistenceDelta(entry.getKey(), singletonList(entry.getValue())))
 							.collect(toList());
-					return new AbstractMap.SimpleEntry<>(mapping, createNewTransitionList_1(preparedDelta, trace, typeIVCandidates, new PrivilegeLevel()));
+					return new AbstractMap.SimpleEntry<>(mapping, createNewTransitionList_1(preparedDelta, trace, typeIVCandidates));
 				})
 				.filter(entry -> !entry.getValue().isEmpty())
 				.collect(toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
@@ -516,11 +497,12 @@ public class TraceExplorer {
 		return newTransitions;
 	}
 
-	public List<PersistenceDelta> createNewTransitionList_1(List<PersistenceDelta> persistentTransitions, Trace oldState, Set<String> typeIV, PrivilegeLevel privilegeLevel) {
+	public List<PersistenceDelta> createNewTransitionList_1(List<PersistenceDelta> persistentTransitions, Trace oldState, Set<String> typeIV){
 		Trace currentState = oldState;
 		List<PersistenceDelta> newTransitions = new ArrayList<>();
+
 		for (PersistenceDelta oldTPersistentTransition : persistentTransitions) {
-			boolean dirty = false;
+
 			PersistentTransition oldPTransition = oldTPersistentTransition.getOldTransition();
 			if (!typeIV.contains(oldPTransition.getOperationName())) {
 				try {
@@ -530,20 +512,22 @@ public class TraceExplorer {
 					PersistentTransition newPersistentTransition = generateNewTransition(oldTransition, newTransition);
 					newTransitions.add(new PersistenceDelta(oldTPersistentTransition.getOldTransition(), singletonList(newPersistentTransition)));
 
-				} catch (TransitionHasNoSuccessorException ignored) {
-					dirty = true;
+				} catch (TransitionHasNoSuccessorException ignored) { return emptyList();}
+			} else {
+				List<Transition> result = findPath(currentState, oldPTransition);
+				if(result.isEmpty()) {
+					return newTransitions;
+				}else {
+					currentState = currentState.addTransitions(result);
+					newTransitions.add(new PersistenceDelta(oldPTransition, PersistentTransition.createFromList(result, currentState.getCurrentTransition())));
 				}
-			}
-
-			if (typeIV.contains(oldPTransition.getOperationName()) || dirty) {
-				List<Transition> result = findPath(currentState, oldPTransition, privilegeLevel);
-				currentState = currentState.addTransitions(result);
-				newTransitions.add(new PersistenceDelta(oldPTransition, PersistentTransition.createFromList(result, currentState.getCurrentTransition())));
 			}
 
 		}
 		return newTransitions;
 	}
+
+
 
 	//Evtl. Return map<PersistentTransition, Transition>
 	private Transition replayPersistentTransition(Trace t, PersistentTransition persistentTransition) throws TransitionHasNoSuccessorException {

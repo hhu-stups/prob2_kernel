@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.emptySet;
+import static java.util.Collections.singleton;
 
 public class TraceExplorerTypeIVIntegration {
 
@@ -59,7 +60,7 @@ public class TraceExplorerTypeIVIntegration {
 								stateSpace,
 								jsonFile.getMachineOperationInfos(),
 								emptySet(),
-								emptySet(),
+								singleton("on"),
 								emptySet(),
 								emptySet(),
 								emptySet());
@@ -83,7 +84,7 @@ public class TraceExplorerTypeIVIntegration {
 								stateSpace,
 								jsonFile.getMachineOperationInfos(),
 								emptySet(),
-								emptySet(),
+								singleton("on"),
 								emptySet(),
 								emptySet(),
 								emptySet());
@@ -113,7 +114,7 @@ public class TraceExplorerTypeIVIntegration {
 								stateSpace,
 								jsonFile.getMachineOperationInfos(),
 								emptySet(),
-								emptySet(),
+								singleton("on"),
 								emptySet(),
 								emptySet(),
 								emptySet());

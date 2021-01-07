@@ -6,7 +6,6 @@ import com.google.inject.Stage;
 import de.prob.JsonManagerStubModule;
 import de.prob.MainModule;
 import de.prob.ProBKernelStub;
-import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.PersistenceDelta;
 import de.prob.check.tracereplay.check.TraceAnalyser;
 import de.prob.check.tracereplay.check.TraceExplorer;
@@ -20,10 +19,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
@@ -60,15 +57,15 @@ public class TraceAnalyserTest {
 								stateSpace,
 								jsonFile.getMachineOperationInfos(),
 								emptySet(),
-								emptySet(),
+								singleton("on"),
 								emptySet(),
 								emptySet(),
 								emptySet());
 
-		Map<String, TraceAnalyser.AnalyzerResult> bla = TraceAnalyser.analyze(singleton("on"), result.values().stream().findFirst().get());
+		Map<String, TraceAnalyser.AnalyserResult> bla = TraceAnalyser.analyze(singleton("on"), result.values().stream().findFirst().get(), jsonFile.getTrace().getTransitionList());
 
 		Assert.assertEquals(1, bla.entrySet().size());
-		Assert.assertEquals(TraceAnalyser.AnalyzerResult.Mixed, bla.get("on"));
+		Assert.assertEquals(TraceAnalyser.AnalyserResult.Mixed, bla.get("on"));
 	}
 
 
@@ -86,15 +83,15 @@ public class TraceAnalyserTest {
 								stateSpace,
 								jsonFile.getMachineOperationInfos(),
 								emptySet(),
-								emptySet(),
+								singleton("on"),
 								emptySet(),
 								emptySet(),
 								emptySet());
 
-		Map<String, TraceAnalyser.AnalyzerResult> bla = TraceAnalyser.analyze(singleton("on"), result.values().stream().findFirst().get());
+		Map<String, TraceAnalyser.AnalyserResult> bla = TraceAnalyser.analyze(singleton("on"), result.values().stream().findFirst().get(), jsonFile.getTrace().getTransitionList());
 
 		Assert.assertEquals(1, bla.entrySet().size());
-		Assert.assertEquals(TraceAnalyser.AnalyzerResult.Intermediate, bla.get("on"));
+		Assert.assertEquals(TraceAnalyser.AnalyserResult.Intermediate, bla.get("on"));
 	}
 
 
@@ -112,15 +109,15 @@ public class TraceAnalyserTest {
 								stateSpace,
 								jsonFile.getMachineOperationInfos(),
 								emptySet(),
-								emptySet(),
+								singleton("on"),
 								emptySet(),
 								emptySet(),
 								emptySet());
 
-		Map<String, TraceAnalyser.AnalyzerResult> bla = TraceAnalyser.analyze(singleton("on"), result.values().stream().findFirst().get());
+		Map<String, TraceAnalyser.AnalyserResult> bla = TraceAnalyser.analyze(singleton("on"), result.values().stream().findFirst().get(), jsonFile.getTrace().getTransitionList());
 
 		Assert.assertEquals(1, bla.entrySet().size());
-		Assert.assertEquals(TraceAnalyser.AnalyzerResult.Straight, bla.get("on"));
+		Assert.assertEquals(TraceAnalyser.AnalyserResult.Straight, bla.get("on"));
 	}
 
 }

@@ -1,14 +1,16 @@
 package de.prob.check.tracereplay.check;
 
+import de.prob.check.tracereplay.PersistentTransition;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static de.prob.check.tracereplay.check.TraceAnalyser.AnalyzerResult.*;
+import static de.prob.check.tracereplay.check.TraceAnalyser.AnalyserResult.*;
 
 public class TraceAnalyser {
 
 
-	public static Map<String, AnalyzerResult> analyze(Set<String> typeIV, List<PersistenceDelta> newTrace){
+	public static Map<String, AnalyserResult> analyze(Set<String> typeIV, List<PersistenceDelta> newTrace, List<PersistentTransition> oldTrace){
 
 		Map<String, List<PersistenceDelta>> space = new HashMap<>();
 		for(PersistenceDelta persistenceDelta : newTrace){
@@ -22,6 +24,13 @@ public class TraceAnalyser {
 			}
 		}
 
+		if(oldTrace.size() != newTrace.size()){
+			PersistentTransition lastTransitionOld = oldTrace.get(newTrace.size()-1);
+			Map<String, AnalyserResult> result = new HashMap<>();
+			result.put(lastTransitionOld.getOperationName(), Removed);
+			return result;
+		}
+
 		return space.entrySet()
 				.stream()
 				.filter(entry -> typeIV.contains(entry.getKey()))
@@ -30,7 +39,7 @@ public class TraceAnalyser {
 	}
 
 	
-	public static AnalyzerResult analyze(List<PersistenceDelta> list){
+	public static AnalyserResult analyze(List<PersistenceDelta> list){
 
 		List<NewTransitionsStatus> analyzedList = list.stream().map(element -> {
 			if(element.getNewTransitions().size()==2){
@@ -53,8 +62,8 @@ public class TraceAnalyser {
 		Straight, Intermediate
 	}
 
-	public enum AnalyzerResult{
-		Straight, Intermediate, Mixed
+	public enum AnalyserResult {
+		Straight, Intermediate, Mixed, Removed
 	}
 
 
