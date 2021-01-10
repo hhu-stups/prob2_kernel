@@ -8,8 +8,8 @@ import de.prob.statespace.Transition;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.emptySet;
+import static de.prob.check.tracereplay.check.TraceCheckerUtils.firstOrEmpty;
+import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 
 public class TraceModifier {
@@ -18,7 +18,7 @@ public class TraceModifier {
 	private final List<List<PersistentTransition>> changelogPhase1 = new LinkedList<>();
 	private final Map<Set<Delta>, List<PersistentTransition>> changelogPhase2 = new HashMap<>();
 	private final Map<Set<Delta>, Map<Map<String, Map<String, String>>, List<PersistenceDelta>>> changelogPhase3 = new HashMap<>();
-	private final Map<Map<String, Map<String, String>>, Map<String, TraceAnalyser.AnalyserResult>> changelogPhase4 = new HashMap<>();
+	private final Map<Set<Delta>, Map<Map<String, Map<String, String>>, Map<String, TraceAnalyser.AnalyserResult>>> changelogPhase4 = new HashMap<>();
 	private final StateSpace stateSpace;
 
 
@@ -207,7 +207,7 @@ public class TraceModifier {
 				emptyMap(), variables, Collections.emptySet(), getLastChange()));
 	}
 
-	public void makeTypeIII(Set<String> typeIIICandidates, Map<String, OperationInfo> oldInfos,
+	public void makeTypeIII(Set<String> typeIIICandidates, Set<String> typeIVCandidates,
 							Map<String, OperationInfo> newInfos, Set<String> newVars, Set<String> newSets, Set<String> newConst, TraceExplorer traceExplorer) {
 
 		//No type II change?
@@ -219,7 +219,7 @@ public class TraceModifier {
 					.map(entry ->
 					{
 						Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result =
-								traceExplorer.replayTrace(entry.getValue(), stateSpace, newInfos, typeIIICandidates, newVars, newSets, newConst);
+								traceExplorer.replayTrace(entry.getValue(), stateSpace, newInfos, typeIIICandidates, typeIVCandidates, newVars, newSets, newConst);
 						if (result.values().isEmpty()) {
 							new AbstractMap.SimpleEntry<>(emptySet(), emptyMap());
 						}
@@ -229,15 +229,48 @@ public class TraceModifier {
 
 
 			changelogPhase3.putAll(results);
+			Map<Set<Delta>, Map<Map<String, Map<String, String>>, Map<String, TraceAnalyser.AnalyserResult>>> typeIVResults =
+					performTypeIVAnalysing(traceExplorer.getUpdatedTypeIV(), results);
+			changelogPhase4.putAll(typeIVResults);
+
 		} else {
-			changelogPhase3.put(Collections.emptySet(), traceExplorer.replayTrace(getLastChange(), stateSpace, newInfos,typeIIICandidates,  newVars, newSets, newConst));
+			Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result = traceExplorer.replayTrace(getLastChange(), stateSpace, newInfos, typeIIICandidates, typeIVCandidates, newVars, newSets, newConst);
+			Map<Map<String, Map<String, String>>, Map<String, TraceAnalyser.AnalyserResult>> typeIVResults =
+					performTypeIVAnalysing2(traceExplorer.getUpdatedTypeIV(), result);
+			changelogPhase3.put(Collections.emptySet(), result);
+
+			if(!result.containsValue(emptyList()))
+			{
+				changelogPhase4.put(Collections.emptySet(), typeIVResults);
+			}
+
 		}
 
 
 		if(changelogPhase3.containsKey(emptySet())&& changelogPhase3.get(emptySet()).isEmpty()){
 			changelogPhase3.clear();
+			changelogPhase4.clear();
 		}
 
+	}
+
+	public Map<Set<Delta>, Map<Map<String, Map<String, String>>, Map<String, TraceAnalyser.AnalyserResult>>> performTypeIVAnalysing(
+			Set<String> typeIVCandidates, Map<Set<Delta>, Map<Map<String, Map<String, String>>, List<PersistenceDelta>>> results){
+		return results.entrySet()
+				.stream()
+				.collect(toMap(Map.Entry::getKey, entry -> entry.getValue().entrySet()
+						.stream()
+						.collect(toMap(Map.Entry::getKey,
+								innerEntry -> TraceAnalyser.analyze(typeIVCandidates, innerEntry.getValue(), changelogPhase2.get(entry.getKey()))))));
+	}
+
+	public Map<Map<String, Map<String, String>>, Map<String, TraceAnalyser.AnalyserResult>> performTypeIVAnalysing2(
+			Set<String> typeIVCandidates, Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result){
+
+		return result.entrySet()
+				.stream()
+				.collect(toMap(Map.Entry::getKey,
+						innerEntry -> TraceAnalyser.analyze(typeIVCandidates, innerEntry.getValue(), getLastChange())));
 	}
 
 	public List<PersistentTransition> changeAllElementsWithName(String name, Map<String, String> inputParameter,
@@ -275,6 +308,11 @@ public class TraceModifier {
 	public Map<Set<Delta>, Map<Map<String, Map<String, String>>, List<PersistenceDelta>>> getChangelogPhase3II() {
 		return changelogPhase3;
 	}
+
+	public Map<Set<Delta>, Map<Map<String, Map<String, String>>, Map<String, TraceAnalyser.AnalyserResult>>> getChangelogPhase4() {
+		return changelogPhase4;
+	}
+
 
 
 }

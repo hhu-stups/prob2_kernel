@@ -60,6 +60,7 @@ public class TraceExplorerIntegrationTest {
 								stateSpace,
 								stateSpace.getLoadedMachine().getOperations(),
 								Stream.of("inc", "dec", "getfloors").collect(Collectors.toSet()),
+								emptySet(),
 								Stream.of("floors").collect(Collectors.toSet()),
 								emptySet(),
 								emptySet());
@@ -170,6 +171,7 @@ public class TraceExplorerIntegrationTest {
 								stateSpace,
 								stateSpace.getLoadedMachine().getOperations(),
 								Stream.of("inc", "dec").collect(Collectors.toSet()),
+								emptySet(),
 								Stream.of("levels").collect(Collectors.toSet()),
 								emptySet(),
 								emptySet());
@@ -293,6 +295,7 @@ public class TraceExplorerIntegrationTest {
 								stateSpace,
 								stateSpace.getLoadedMachine().getOperations(),
 						Stream.of("inc", "dec").collect(Collectors.toSet()),
+								emptySet(),
 								Stream.of("levels").collect(Collectors.toSet()),
 								emptySet(),
 								emptySet());
@@ -332,6 +335,7 @@ public class TraceExplorerIntegrationTest {
 								Stream.of(init,first,second).collect(toList()),
 								stateSpace,
 								stateSpace.getLoadedMachine().getOperations(),
+								emptySet(),
 								emptySet(),
 								emptySet(),
 								emptySet(),
@@ -436,6 +440,7 @@ public class TraceExplorerIntegrationTest {
 								stateSpace,
 								stateSpace.getLoadedMachine().getOperations(),
 								singleton("inc"),
+								emptySet(),
 								singleton("levels"),
 								emptySet(),
 								emptySet());
@@ -537,6 +542,7 @@ public class TraceExplorerIntegrationTest {
 								stateSpace,
 								stateSpace.getLoadedMachine().getOperations(),
 								singleton("inc"),
+								emptySet(),
 								singleton("levels"),
 								emptySet(),
 								emptySet());
@@ -569,6 +575,7 @@ public class TraceExplorerIntegrationTest {
 						Stream.of(init,first,second).collect(toList()),
 						stateSpace,
 						stateSpace.getLoadedMachine().getOperations(),
+						emptySet(),
 						emptySet(),
 						emptySet(),
 						emptySet(),
@@ -614,6 +621,7 @@ public class TraceExplorerIntegrationTest {
 								emptySet(),
 								emptySet(),
 								emptySet(),
+								emptySet(),
 								emptySet());
 
 
@@ -634,6 +642,7 @@ public class TraceExplorerIntegrationTest {
 								stateSpace,
 								jsonFile.getMachineOperationInfos(),
 								singleton("inc"),
+								emptySet(),
 								emptySet(),
 								emptySet(),
 								emptySet());

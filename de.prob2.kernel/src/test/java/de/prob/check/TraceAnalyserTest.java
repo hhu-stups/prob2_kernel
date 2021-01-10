@@ -52,7 +52,7 @@ public class TraceAnalyserTest {
 
 		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result =
 				new TraceExplorer(false, new TestUtils.StubFactoryImplementation())
-						.replayTrace_2(
+						.replayTrace(
 								jsonFile.getTrace().getTransitionList(),
 								stateSpace,
 								jsonFile.getMachineOperationInfos(),
@@ -78,7 +78,7 @@ public class TraceAnalyserTest {
 
 		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result =
 				new TraceExplorer(false, new TestUtils.StubFactoryImplementation())
-						.replayTrace_2(
+						.replayTrace(
 								jsonFile.getTrace().getTransitionList(),
 								stateSpace,
 								jsonFile.getMachineOperationInfos(),
@@ -104,7 +104,7 @@ public class TraceAnalyserTest {
 
 		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result =
 				new TraceExplorer(false, new TestUtils.StubFactoryImplementation())
-						.replayTrace_2(
+						.replayTrace(
 								jsonFile.getTrace().getTransitionList(),
 								stateSpace,
 								jsonFile.getMachineOperationInfos(),

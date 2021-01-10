@@ -17,6 +17,7 @@ import de.prob.statespace.Transition;
 
 import java.util.*;
 
+import static de.prob.check.tracereplay.check.TraceCheckerUtils.firstOrEmpty;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 
@@ -25,6 +26,7 @@ public class TraceExplorer {
 
 	private final boolean initWasSet;
 	private final MappingFactoryInterface mappingFactory;
+	private final Set<String> updatedTypeIV = new HashSet<>();
 
 	public TraceExplorer(boolean initWasSet, MappingFactoryInterface mappingFactory) {
 		this.initWasSet = initWasSet;
@@ -248,18 +250,14 @@ public class TraceExplorer {
 		List<List<Transition>> result = enabledOperations.stream()
 				.map(entry -> replayTransition(t, entry, new PredicateBuilderFactory(true, false, false, emptySet())
 						.createPredicateBuilder(current)))
+				.filter(entry -> !entry.isEmpty())
 				.collect(toList());
 
 
 		return firstOrEmpty(result);
 	}
 
-	public static <U> List<U>  firstOrEmpty(List<List<U>> list){
-		if(list.isEmpty()){
-			return emptyList();
-		}
-		return list.get(0);
-	}
+
 
 	/**
 	 * Attempts to replay the transition with the given name
@@ -420,36 +418,6 @@ public class TraceExplorer {
 	}
 
 	public Map<Map<String, Map<String, String>>, List<PersistenceDelta>> replayTrace(List<PersistentTransition> transitionList,
-																					 StateSpace stateSpace,
-																					 Map<String, OperationInfo> operationInfo,
-																					 Set<String> typeIIICandidates,
-																					 Set<String> usedVars,
-																					 Set<String> usedSets,
-																					 Set<String> usedConst) {
-
-		Trace trace = new Trace(stateSpace);
-		trace.setExploreStateByDefault(true);
-
-		Set<Map<String, Map<MappingNames, Map<String, String>>>> selectedMappingsToResultsKeys =
-				generateAllPossibleMappingVariations(transitionList, operationInfo, typeIIICandidates, usedVars, usedSets, usedConst);
-
-		Map<Map<String, Map<MappingNames, Map<String, String>>>, List<PersistenceDelta>> result = selectedMappingsToResultsKeys.stream()
-				.map(mapping -> {
-					List<PersistentTransition> newTransitions = transformTransitionList(mapping, transitionList);
-					List<PersistenceDelta> preparedDelta = TraceCheckerUtils.zipPreserveOrder(transitionList, newTransitions)
-							.entrySet().stream()
-							.map(entry -> new PersistenceDelta(entry.getKey(), singletonList(entry.getValue())))
-							.collect(toList());
-					return new AbstractMap.SimpleEntry<>(mapping, createNewTransitionList(preparedDelta, trace));
-				})
-				.filter(entry -> !entry.getValue().isEmpty())
-				.collect(toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
-
-
-		return removeHelperVariableMappings(result);
-	}
-
-	public Map<Map<String, Map<String, String>>, List<PersistenceDelta>> replayTrace_2(List<PersistentTransition> transitionList,
 																					   StateSpace stateSpace,
 																					   Map<String, OperationInfo> operationInfo,
 																					   Set<String> typeIIICandidates,
@@ -471,7 +439,7 @@ public class TraceExplorer {
 							.entrySet().stream()
 							.map(entry -> new PersistenceDelta(entry.getKey(), singletonList(entry.getValue())))
 							.collect(toList());
-					return new AbstractMap.SimpleEntry<>(mapping, createNewTransitionList_1(preparedDelta, trace, typeIVCandidates));
+					return new AbstractMap.SimpleEntry<>(mapping, createNewTransitionList(preparedDelta, trace, typeIVCandidates));
 				})
 				.filter(entry -> !entry.getValue().isEmpty())
 				.collect(toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
@@ -480,31 +448,25 @@ public class TraceExplorer {
 		return removeHelperVariableMappings(result);
 	}
 
-	public List<PersistenceDelta> createNewTransitionList(List<PersistenceDelta> persistentTransitions, Trace oldState) {
-		Trace currentState = oldState;
-		List<PersistenceDelta> newTransitions = new ArrayList<>();
-		for (PersistenceDelta oldTPersistentTransition : persistentTransitions) {
-			try {
-				Transition oldTransition = oldState.getCurrentTransition();
-				Transition newTransition = replayPersistentTransition(currentState, oldTPersistentTransition.getNewTransitions().get(0));
-				currentState = currentState.add(newTransition);
-				PersistentTransition newPersistentTransition = generateNewTransition(oldTransition, newTransition);
-				newTransitions.add(new PersistenceDelta(oldTPersistentTransition.getOldTransition(), singletonList(newPersistentTransition)));
-			} catch (TransitionHasNoSuccessorException exception) {
-				return emptyList();
-			}
-		}
-		return newTransitions;
-	}
 
-	public List<PersistenceDelta> createNewTransitionList_1(List<PersistenceDelta> persistentTransitions, Trace oldState, Set<String> typeIV){
-		Trace currentState = oldState;
+	/**
+	 * Gets a prepared transition list and tries to replay the trace. Eventual problems are caught and it will be tried
+	 * to find a new path to replay the trace with search depth 1. Errors when replaying are caught and a empty list of
+	 * as new transition lists is returned
+	 * @param persistentTransitions the prepared transition list
+	 * @param t the initial state of the loaded machine
+	 * @param typeIV all operations that are identified as type IV
+	 * @return the new transition list either containing a correct pathing or is empty when no pathing was found
+	 */
+	public List<PersistenceDelta> createNewTransitionList(List<PersistenceDelta> persistentTransitions, Trace t, Set<String> typeIV){
+		Trace currentState = t;
 		List<PersistenceDelta> newTransitions = new ArrayList<>();
 
+		updatedTypeIV.addAll(typeIV);
 		for (PersistenceDelta oldTPersistentTransition : persistentTransitions) {
-
+			boolean isDirty = false;
 			PersistentTransition oldPTransition = oldTPersistentTransition.getOldTransition();
-			if (!typeIV.contains(oldPTransition.getOperationName())) {
+			if (!updatedTypeIV.contains(oldPTransition.getOperationName())) {
 				try {
 					Transition oldTransition = currentState.getCurrentTransition();
 					Transition newTransition = replayPersistentTransition(currentState, oldTPersistentTransition.getNewTransitions().get(0));
@@ -512,15 +474,22 @@ public class TraceExplorer {
 					PersistentTransition newPersistentTransition = generateNewTransition(oldTransition, newTransition);
 					newTransitions.add(new PersistenceDelta(oldTPersistentTransition.getOldTransition(), singletonList(newPersistentTransition)));
 
-				} catch (TransitionHasNoSuccessorException ignored) { return emptyList();}
-			} else {
+				} catch (TransitionHasNoSuccessorException ignored) {
+					isDirty = true;
+					//return emptyList();
+				}
+			}
+			if(updatedTypeIV.contains(oldPTransition.getOperationName()) || isDirty){
 				List<Transition> result = findPath(currentState, oldPTransition);
 				if(result.isEmpty()) {
-					return newTransitions;
+					//return newTransitions;
+					return emptyList();
 				}else {
 					currentState = currentState.addTransitions(result);
 					newTransitions.add(new PersistenceDelta(oldPTransition, PersistentTransition.createFromList(result, currentState.getCurrentTransition())));
+					updatedTypeIV.add(oldPTransition.getOperationName()); //Careful! pass by reference, the global state is a reference to the passed parameter in the top function, better rework this
 				}
+
 			}
 
 		}
@@ -586,6 +555,10 @@ public class TraceExplorer {
 	 */
 	public enum MappingNames {
 		INPUT_PARAMETERS, OUTPUT_PARAMETERS, VARIABLES_MODIFIED, VARIABLES_READ
+	}
+
+	public Set<String> getUpdatedTypeIV(){
+		return updatedTypeIV;
 	}
 
 

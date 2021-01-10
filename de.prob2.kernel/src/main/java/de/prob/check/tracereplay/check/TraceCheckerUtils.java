@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toMap;
 
 public class TraceCheckerUtils {
@@ -230,5 +231,12 @@ public class TraceCheckerUtils {
 		return result;
 	}
 
+
+	public static <U> List<U>  firstOrEmpty(List<List<U>> list){
+		if(list.isEmpty()){
+			return emptyList();
+		}
+		return list.get(0);
+	}
 
 }
