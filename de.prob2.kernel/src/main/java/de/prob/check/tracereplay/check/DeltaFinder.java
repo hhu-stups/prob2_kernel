@@ -140,6 +140,7 @@ public class DeltaFinder implements IDeltaFinder {
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 	}
 
+
 	/**
 	 * Same idea as in checkDeterministicPairs with the limitation that we now make the calculation over a map of sets
 	 * rather then only over sets

@@ -120,4 +120,6 @@ public class TraceAnalyserTest {
 		Assert.assertEquals(TraceAnalyser.AnalyserResult.Straight, bla.get("on"));
 	}
 
+
+
 }

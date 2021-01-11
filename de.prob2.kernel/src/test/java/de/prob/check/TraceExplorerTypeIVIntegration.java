@@ -202,4 +202,73 @@ public class TraceExplorerTypeIVIntegration {
 		Assert.assertEquals(expected1, result);
 
 	}
+
+
+	@Test
+	public void integration_test_with_completely_renamed_operation() throws IOException, ModelTranslationError {
+		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("/home", "sebastian",  "master-thesis", "examples", "typeIV", "complete_renamed_operation", "ISLAND2.mch"));
+
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("/home", "sebastian",  "master-thesis", "examples", "typeIV", "complete_renamed_operation", "island.prob2trace"));
+
+
+		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> evaluated =
+				new TraceExplorer(false, new TestUtils.StubFactoryImplementation())
+						.replayTrace(
+								jsonFile.getTrace().getTransitionList(),
+								stateSpace,
+								jsonFile.getMachineOperationInfos(),
+								emptySet(),
+								emptySet(),
+								emptySet(),
+								emptySet(),
+								emptySet());
+
+		Map<String, List<String>> expected1 = singletonMap("on", singletonList("drive_on"));
+		Map<String, TraceAnalyser.AnalyserResult> expected2 = singletonMap("on", TraceAnalyser.AnalyserResult.Straight);
+
+
+
+		Map<String, TraceAnalyser.AnalyserResult> resultCleaned = TraceAnalyser.analyze(singleton("on"), new ArrayList<>(evaluated.values()).get(0), jsonFile.getTrace().getTransitionList());
+		Map<String, List<String>> result = TraceAnalyser.calculateIntermediate(singleton("on"), new ArrayList<>(evaluated.values()).get(0));
+
+		Assert.assertEquals(expected2, resultCleaned);
+		Assert.assertEquals(expected1, result);
+
+	}
+
+
+	@Test
+	public void integration_test_with_one_time_intermediate_operation() throws IOException, ModelTranslationError {
+		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("/home", "sebastian",  "master-thesis", "examples", "typeIV", "one_time_intermediate_operation", "ISLAND2.mch"));
+
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("/home", "sebastian",  "master-thesis", "examples", "typeIV", "one_time_intermediate_operation", "island.prob2trace"));
+
+
+		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> evaluated =
+				new TraceExplorer(false, new TestUtils.StubFactoryImplementation())
+						.replayTrace(
+								jsonFile.getTrace().getTransitionList(),
+								stateSpace,
+								jsonFile.getMachineOperationInfos(),
+								emptySet(),
+								emptySet(),
+								emptySet(),
+								emptySet(),
+								emptySet());
+
+		Map<String, List<String>> expected1 = singletonMap("on", Arrays.asList("openBark", "on"));
+		Map<String, TraceAnalyser.AnalyserResult> expected2 = singletonMap("on", TraceAnalyser.AnalyserResult.Mixed);
+
+
+
+		Map<String, TraceAnalyser.AnalyserResult> resultCleaned = TraceAnalyser.analyze(singleton("on"), new ArrayList<>(evaluated.values()).get(0), jsonFile.getTrace().getTransitionList());
+		Map<String, List<String>> result = TraceAnalyser.calculateIntermediate(singleton("on"), new ArrayList<>(evaluated.values()).get(0));
+
+		Assert.assertEquals(expected2, resultCleaned);
+		Assert.assertEquals(expected1, result);
+
+	}
+
+
+
 }

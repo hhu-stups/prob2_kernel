@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 import de.prob.animator.command.GetMachineIdentifiersCommand;
 import de.prob.animator.command.GetMachineOperationInfos;
+import de.prob.animator.command.GetMachineOperationInfosWithTypes;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 
@@ -21,6 +22,7 @@ public class LoadedMachine {
 
 	private final StateSpace stateSpace;
 	private Map<String, OperationInfo> machineOperationInfos;
+	private Map<String, TypedOperationInfo> typedMachineOperationInfos;
 	private List<String> variableNames;
 	private List<String> constantNames;
 	private List<String> setNames;
@@ -46,18 +48,22 @@ public class LoadedMachine {
 		}, LinkedHashMap::new);
 	}
 
+	@Deprecated
 	public boolean containsOperations(String name) {
 		return getOperations().containsKey(name);
 	}
 
+	@Deprecated
 	public Set<String> getOperationNames() {
 		return new LinkedHashSet<>(getOperations().keySet());
 	}
 
+	@Deprecated
 	public OperationInfo getMachineOperationInfo(String operationName) {
 		return getOperations().get(operationName);
 	}
 
+	@Deprecated
 	public Map<String, OperationInfo> getOperations() {
 		if (this.machineOperationInfos == null) {
 			GetMachineOperationInfos command = new GetMachineOperationInfos();
@@ -66,6 +72,31 @@ public class LoadedMachine {
 					.collect(toOrderedMap(OperationInfo::getOperationName, i -> i));
 		}
 		return this.machineOperationInfos;
+	}
+
+
+	public boolean containsTypeOperations(String name) {
+		return getTypeOperations().containsKey(name);
+	}
+
+	public Set<String> getTypedOperationNames() {
+		return new LinkedHashSet<>(getTypeOperations().keySet());
+	}
+
+	public TypedOperationInfo getTypeMachineOperationInfo(String operationName) {
+		return getTypeOperations().get(operationName);
+	}
+
+
+	public Map<String, TypedOperationInfo> getTypeOperations() {
+		if (this.typedMachineOperationInfos == null) {
+			GetMachineOperationInfosWithTypes command = new GetMachineOperationInfosWithTypes();
+			this.stateSpace.execute(command);
+
+			this.typedMachineOperationInfos = command.getOperationInfos().stream()
+					.collect(toOrderedMap(TypedOperationInfo::getOperationName, i -> i));
+		}
+		return this.typedMachineOperationInfos;
 	}
 
 	private List<IEvalElement> namesToEvalElements(final List<String> names, final FormulaExpand expand) {
