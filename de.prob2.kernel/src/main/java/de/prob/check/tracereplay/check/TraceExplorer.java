@@ -10,12 +10,10 @@ import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.exceptions.MappingFactoryInterface;
 import de.prob.check.tracereplay.check.exceptions.TransitionHasNoSuccessorException;
 import de.prob.formula.PredicateBuilder;
-import de.prob.statespace.OperationInfo;
-import de.prob.statespace.StateSpace;
-import de.prob.statespace.Trace;
-import de.prob.statespace.Transition;
+import de.prob.statespace.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static de.prob.check.tracereplay.check.TraceCheckerUtils.firstOrEmpty;
 import static java.util.Collections.*;
@@ -145,10 +143,8 @@ public class TraceExplorer {
 
 		PredicateBuilder predicateBuilder = new PredicateBuilder();
 
-
 		predicateBuilder.addMap(persistentTransition.getParameters());
 		predicateBuilder.addMap(persistentTransition.getDestinationStateVariables());
-
 
 		final IEvalElement pred = stateSpace.getModel().parseFormula(predicateBuilder.toString(), FormulaExpand.EXPAND);
 
@@ -257,8 +253,6 @@ public class TraceExplorer {
 		return firstOrEmpty(result);
 	}
 
-
-
 	/**
 	 * Attempts to replay the transition with the given name
 	 *
@@ -281,9 +275,21 @@ public class TraceExplorer {
 		return command.getNewTransitions();
 	}
 
-	public Set<Map<String, Map<MappingNames, Map<String, String>>>> generateAllPossibleMappingVariations(
-			List<PersistentTransition> transitionList, Map<String, OperationInfo> operationInfo, Set<String> typeIIICandidates,
-			Set<String> usedVars, Set<String> usedSets, Set<String> usedConstants) {
+	/**
+	 * Gets a trace and the operation information from new and old machine. for every operation used in the trace and
+	 * destined as type III this method will calculate all possible coconstellationsf the identifiers used in the operation
+	 * and then build the co product over all operations
+	 * @param transitionList the trace
+	 * @param operationInfoNew the infos from the current machine
+	 * @param operationInfoOld the infos from the machine which generated the trace
+	 * @param typeIIICandidates the operations filterd as type 3
+	 * @return the co product from all operations
+	 */
+	public static Set<Map<String, Map<MappingNames, Map<String, String>>>> generateAllPossibleMappingVariations(
+			List<PersistentTransition> transitionList,
+			Map<String, OperationInfo> operationInfoNew,
+			Map<String, OperationInfo> operationInfoOld,
+			Set<String> typeIIICandidates) {
 
 		if (typeIIICandidates.isEmpty()) {
 			Set<Map<String, Map<MappingNames, Map<String, String>>>> result = new HashSet<>();
@@ -301,7 +307,7 @@ public class TraceExplorer {
 
 		List<List<HashMap<String, Map<MappingNames, Map<String, String>>>>> listOfMappings = selectionOfTypeIIITransitions
 				.stream()
-				.map(transition -> calculateVarMappings(transition, operationInfo.get(transition.getOperationName()), usedVars, usedSets, usedConstants)
+				.map(transition -> calculateVarMappings(transition.getOperationName(), operationInfoNew.get(transition.getOperationName()), operationInfoOld.get(transition.getOperationName()))
 						.stream()
 						.map(mapping -> {
 							HashMap<String, Map<MappingNames, Map<String, String>>> result = new HashMap<>();
@@ -320,19 +326,35 @@ public class TraceExplorer {
 
 	}
 
-	/**
-	 * Creates all possible pairs between two maps e.g.
-	 * [a,b,c] + [x,z]
-	 * -> [[a:x, b:z], [a:z, b:x], [a:x, c:z], [a:z, c:x], [c:x, b:z], [b:x, c:z]]
-	 *
-	 * @param oldVars the "old" variables of a persistent transition
-	 * @param newVars the "new" variables extracted from the operation info
-	 * @return a set of mappings
-	 */
-	public Set<Map<String, String>> createAllPossiblePairs(List<String> oldVars, List<String> newVars, MappingNames currentMapping, String name) {
-		if (oldVars.isEmpty() && newVars.isEmpty()) return emptySet();
+
+	public static Set<Map<String, String>> createAllPossiblePairs(Map<String, String> newTypes, Map<String, String> oldTypes,
+														   MappingNames currentMapping,
+														   String name) {
 
 
+		if(oldTypes.isEmpty() || newTypes.isEmpty()) return emptySet();
+
+		Map<String, List<String>> oldTypesSorted = sortByValue(oldTypes);
+		Map<String, List<String>> newTypesSorted = sortByValue(newTypes);
+
+		Map<String, Integer> minMap = oldTypesSorted.entrySet()
+				.stream()
+				.collect(toMap(Map.Entry::getKey, entry -> Math.min(entry.getValue().size(), newTypesSorted.getOrDefault(entry.getKey(), emptyList()).size())));
+
+		
+		
+		
+		
+		Map<String, List<String>> newSortedCleansed = cleanse(newTypesSorted, oldTypesSorted.keySet());
+		Map<String, List<String>> oldSortedCleansed = cleanse(oldTypesSorted, newTypesSorted.keySet());
+		
+		Map<String, List<List<String>>> oldPermuted = permutedMap(oldSortedCleansed, minMap);
+		Map<String, List<List<String>>> newPermuted = permutedMap(newSortedCleansed, minMap);
+
+		Map<String, Set<Map<String, String>>> molten = melt(oldPermuted, newPermuted);
+
+		return reduceSet(molten);
+/*
 		int size = Math.min(oldVars.size(), newVars.size());
 
 		if (oldVars.size() > 9 || newVars.size() > 9 || oldVars.size() + newVars.size() > 9) {
@@ -345,45 +367,122 @@ public class TraceExplorer {
 					TraceCheckerUtils.zip(permutationOld, permutationNew))).collect(toSet());
 
 		}
-
-
+		*/
 	}
 
 	/**
-	 * Calculates the new all possible mappings for a variable
-	 *
-	 * @param transition       the transition to calculate the mappings for
-	 * @param operationMapping the corresponding operation
-	 * @return a set with all mappings each mapping name represents either input/output/variables and maps to the corresponding
-	 * identifiers in the schema old -> new
+	 * Removes all entries from the map not given in the set
+	 * @param map the map to cleanse
+	 * @param key the set to lookup
+	 * @return the cleansed map
 	 */
-	public Set<Map<MappingNames, Map<String, String>>> calculateVarMappings(PersistentTransition transition,
-																			OperationInfo operationMapping,
-																			Set<String> usedVars,
-																			Set<String> usedSets,
-																			Set<String> usedConstants) {
+	public static Map<String, List<String>> cleanse(Map<String, List<String>> map, Set<String> key){
+		return map.entrySet()
+				.stream()
+				.filter(entry -> key.contains(entry.getKey()))
+				.collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+	}
+
+	/**
+	 * Removes all entries from the map not given in the set
+	 * @param map the map to cleanse
+	 * @param key the set to lookup
+	 * @return the cleansed map
+	 */
+	public static Map<String, String> cleansePlain(Map<String, String> map, Set<String> key){
+		return map.entrySet()
+				.stream()
+				.filter(entry -> key.contains(entry.getKey()))
+				.collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+	}
+
+	/**
+	 * Gets a map containing a set of mappings and unifies these set of mappings to one map
+	 * @param map the map to reduce
+	 * @return the reduced map
+	 */
+	public static Set<Map<String, String>> reduceSet(Map<String, Set<Map<String, String>>> map){
+		return map.values()
+				.stream()
+				.reduce(emptySet(), TraceExplorer::applyProduct);
+	}
+
+	/**
+	 * Gets to sets of maps and creates the co product of both together with @see reduceSet a x b x c ....
+	 * @param current the current set
+	 * @param acc the already evaluated sets
+	 * @return the coproduct
+	 */
+	public static Set<Map<String, String>> applyProduct(Set<Map<String, String>> acc, Set<Map<String, String>> current) {
+		if(acc.isEmpty() ) return current;
+		return current.stream().flatMap(currentEntry -> acc.stream()
+				.map(accEntry -> {
+					Map<String, String> result = new HashMap<>();
+					result.putAll(accEntry);
+					result.putAll(currentEntry);
+					return result;
+				}))
+				.collect(toSet());
+	}
+	
+	/**
+	 * create the coproduct over the "vectors" of lists
+	 * @param permutationsOld the first "vector"
+	 * @param permutationsNew the second "vector"
+	 * @return the coproduct
+	 */
+	public static Set<Map<String, String>> productCombination(List<List<String>> permutationsOld, List<List<String>> permutationsNew){
+		return permutationsOld.stream().flatMap(permutationOld -> permutationsNew.stream().map(permutationNew ->
+				TraceCheckerUtils.zip(permutationOld, permutationNew))).collect(toSet());
+	}
+
+	/**
+	 * Gets two maps of equal making and unifies them
+	 * @param oldMap the first map
+	 * @param newMap the second map
+	 * @return the unified map containing a mapping from first to second value
+	 */
+	public static Map<String, Set<Map<String, String>>> melt(Map<String, List<List<String>>> oldMap, Map<String, List<List<String>>> newMap){
+		return oldMap.entrySet()
+				.stream()
+				.collect(toMap(Map.Entry::getKey, entry -> productCombination(entry.getValue(), newMap.getOrDefault(entry.getKey(), emptyList()))));
+	}
+
+	/**
+	 * Gets a list which is mapping data types to identifiers and a map mapping data types to the maximum length they are permuted to
+	 * @param map the map where the entries have to be permuted
+	 * @param maxsize the max size for each entry
+	 * @return a map which contains all permutations of the given length per entry
+	 */
+	public static Map<String, List<List<String>>> permutedMap(Map<String, List<String>> map, Map<String, Integer> maxsize){
+		return map.entrySet().stream()
+				.collect(toMap(Map.Entry::getKey, entry -> TraceCheckerUtils.generatePerm(new ArrayList<>(entry.getValue()), 0, maxsize.get(entry.getKey()), emptyList())));
+	}
+
+	/**
+	 * Gets a map and reverses keys and values
+	 * @param map the input map, mapping identifiers to types
+	 * @return the output mapping a type to a list of identifiers
+	 */
+	public static Map<String, List<String>> sortByValue(Map<String, String> map){
+		Set<String> newKeys = new HashSet<>(map.values());
+		return newKeys.stream()
+				.collect(toMap(entry -> entry, entry -> map.entrySet()
+				.stream()
+				.filter(innerEntry -> innerEntry.getValue().equals(entry))
+				.map(Map.Entry::getKey)
+				.collect(toList())));
+	}
 
 
-		Map<MappingNames, List<String>> operationInfos = new HashMap<>();
+	
+	public static Set<Map<MappingNames, Map<String, String>>> calculateVarMappings(String name,
+																			OperationInfo operationMappingNew,
+																			OperationInfo operationMappingOld) {
 
-		operationInfos.put(MappingNames.VARIABLES_MODIFIED, new ArrayList<>(operationMapping.getNonDetWrittenVariables()));
-		operationInfos.put(MappingNames.VARIABLES_READ, new ArrayList<>(operationMapping.getReadVariables()));
-
-		operationInfos.get(MappingNames.VARIABLES_MODIFIED).addAll(usedVars);
-		operationInfos.get(MappingNames.VARIABLES_READ).addAll(usedVars);
-		operationInfos.get(MappingNames.VARIABLES_READ).addAll(usedConstants);
-		operationInfos.get(MappingNames.VARIABLES_READ).addAll(usedSets);
-
-		operationInfos.put(MappingNames.INPUT_PARAMETERS, new ArrayList<>(operationMapping.getParameterNames()));
-		operationInfos.put(MappingNames.OUTPUT_PARAMETERS, new ArrayList<>(operationMapping.getOutputParameterNames()));
-
-		Map<MappingNames, List<String>> transitionInfos = new HashMap<>();
-		transitionInfos.put(MappingNames.VARIABLES_MODIFIED, new ArrayList<>(transition.getDestinationStateVariables().keySet()));
-		transitionInfos.put(MappingNames.VARIABLES_READ, new ArrayList<>(transition.getDestStateNotChanged()));
-		transitionInfos.put(MappingNames.INPUT_PARAMETERS, new ArrayList<>(transition.getParameters().keySet()));
-		transitionInfos.put(MappingNames.OUTPUT_PARAMETERS, new ArrayList<>(transition.getOutputParameters().keySet()));
-
-
+		Map<MappingNames, List<String>> newOperationInfos = fillMapping(operationMappingNew);
+		Map<MappingNames, List<String>> oldOperationInfos = fillMapping(operationMappingOld);
+				
 		HashMap<MappingNames, Map<String, String>> mappingsHelper = new HashMap<>();
 
 		mappingsHelper.put(MappingNames.VARIABLES_MODIFIED, emptyMap());
@@ -394,15 +493,20 @@ public class TraceExplorer {
 		Set<Map<MappingNames, Map<String, String>>> mappings = new HashSet<>();
 		mappings.add(mappingsHelper);
 
-		for (MappingNames name : MappingNames.values()) {
+		for (MappingNames mappingName : MappingNames.values()) {
 
 			Set<Map<MappingNames, Map<String, String>>> mappingsCopy = mappings;
+
+			Map<String, String> preparedMapOld = cleansePlain(operationMappingOld.getTypeMap(), new HashSet<>(oldOperationInfos.get(mappingName)));
+			Map<String, String> preparedMapNew = cleansePlain(operationMappingNew.getTypeMap(), new HashSet<>(newOperationInfos.get(mappingName)));
+
+			
 			Set<Map<MappingNames, Map<String, String>>> mappingsAppliedToExistingCopy =
-					createAllPossiblePairs((new ArrayList<>(transitionInfos.get(name))), operationInfos.get(name), name, transition.getOperationName())
+					createAllPossiblePairs(preparedMapNew, preparedMapOld, mappingName, name)
 							.stream()
 							.flatMap(possiblePair -> mappingsCopy.stream().map(mapping -> {
 								Map<MappingNames, Map<String, String>> alteredInnerMapping = new HashMap<>(mapping);
-								alteredInnerMapping.put(name, possiblePair);
+								alteredInnerMapping.put(mappingName, possiblePair);
 								return alteredInnerMapping;
 							}))
 							.collect(toSet());
@@ -410,16 +514,26 @@ public class TraceExplorer {
 				mappings = mappingsAppliedToExistingCopy;
 			}
 		}
-
-
+		
 		return mappings;
-
+	}
+	
+	public static Map<MappingNames, List<String>> fillMapping(OperationInfo info){
+		Map<MappingNames, List<String>> operationInfos = new HashMap<>();
+		ArrayList<String> variablesModified = new ArrayList<>(info.getNonDetWrittenVariables());
+		variablesModified.addAll(info.getWrittenVariables());
+		operationInfos.put(MappingNames.VARIABLES_MODIFIED, variablesModified);
+		operationInfos.put(MappingNames.VARIABLES_READ, new ArrayList<>(info.getReadVariables()));
+		operationInfos.put(MappingNames.INPUT_PARAMETERS, new ArrayList<>(info.getParameterNames()));
+		operationInfos.put(MappingNames.OUTPUT_PARAMETERS, new ArrayList<>(info.getOutputParameterNames()));
+		return operationInfos;
 
 	}
 
 	public Map<Map<String, Map<String, String>>, List<PersistenceDelta>> replayTrace(List<PersistentTransition> transitionList,
 																					   StateSpace stateSpace,
-																					   Map<String, OperationInfo> operationInfo,
+																					   Map<String, OperationInfo> operationInfoNew,
+																					   Map<String, OperationInfo> operationInfoOld,
 																					   Set<String> typeIIICandidates,
 																					   Set<String> typeIVCandidates,
 																					   Set<String> usedVars,
@@ -430,7 +544,7 @@ public class TraceExplorer {
 		trace.setExploreStateByDefault(true);
 
 		Set<Map<String, Map<MappingNames, Map<String, String>>>> selectedMappingsToResultsKeys =
-				generateAllPossibleMappingVariations(transitionList, operationInfo, typeIIICandidates, usedVars, usedSets, usedConst);
+				generateAllPossibleMappingVariations(transitionList, operationInfoNew, operationInfoOld, typeIIICandidates);
 
 		Map<Map<String, Map<MappingNames, Map<String, String>>>, List<PersistenceDelta>> result = selectedMappingsToResultsKeys.stream()
 				.map(mapping -> {

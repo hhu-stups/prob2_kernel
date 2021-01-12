@@ -42,7 +42,7 @@ public class TraceChecker {
 
 		TraceExplorer traceExplorer = new TraceExplorer(false, mappingFactory);
 
-		traceModifier.makeTypeIII(typeFinder.getTypeIII(), typeFinder.getTypeIV(), newInfos, newVars, newSets, newConst, traceExplorer);
+		traceModifier.makeTypeIII(typeFinder.getTypeIII(), typeFinder.getTypeIV(), newInfos, oldInfos, newVars, newSets, newConst, traceExplorer);
 
 		this.deltaFinder = new IDeltaFinder() {
 			@Override
@@ -109,7 +109,7 @@ public class TraceChecker {
 		}
 
 
-		traceModifier.makeTypeIII(typeFinder.getTypeIII(), typeFinder.getTypeIV(), newInfos, newVars, newSets, newConst, traceExplorer);
+		traceModifier.makeTypeIII(typeFinder.getTypeIII(), typeFinder.getTypeIV(), newInfos, oldInfos, newVars, newSets, newConst, traceExplorer);
 
 		this.deltaFinder = deltaFinder;
 

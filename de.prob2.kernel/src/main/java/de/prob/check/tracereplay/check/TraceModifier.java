@@ -208,7 +208,7 @@ public class TraceModifier {
 	}
 
 	public void makeTypeIII(Set<String> typeIIICandidates, Set<String> typeIVCandidates,
-							Map<String, OperationInfo> newInfos, Set<String> newVars, Set<String> newSets, Set<String> newConst, TraceExplorer traceExplorer) {
+							Map<String, OperationInfo> newInfos, Map<String, OperationInfo> oldInfos, Set<String> newVars, Set<String> newSets, Set<String> newConst, TraceExplorer traceExplorer) {
 
 		//No type II change?
 		if (!changelogPhase2.isEmpty()) {
@@ -219,7 +219,7 @@ public class TraceModifier {
 					.map(entry ->
 					{
 						Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result =
-								traceExplorer.replayTrace(entry.getValue(), stateSpace, newInfos, typeIIICandidates, typeIVCandidates, newVars, newSets, newConst);
+								traceExplorer.replayTrace(entry.getValue(), stateSpace, newInfos, oldInfos, typeIIICandidates, typeIVCandidates, newVars, newSets, newConst);
 						if (result.values().isEmpty()) {
 							new AbstractMap.SimpleEntry<>(emptySet(), emptyMap());
 						}
@@ -234,7 +234,7 @@ public class TraceModifier {
 			changelogPhase4.putAll(typeIVResults);
 
 		} else {
-			Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result = traceExplorer.replayTrace(getLastChange(), stateSpace, newInfos, typeIIICandidates, typeIVCandidates, newVars, newSets, newConst);
+			Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result = traceExplorer.replayTrace(getLastChange(), stateSpace, newInfos, oldInfos,  typeIIICandidates, typeIVCandidates, newVars, newSets, newConst);
 			Map<Map<String, Map<String, String>>, Map<String, TraceAnalyser.AnalyserResult>> typeIVResults =
 					performTypeIVAnalysing2(traceExplorer.getUpdatedTypeIV(), result);
 			changelogPhase3.put(Collections.emptySet(), result);
