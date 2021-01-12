@@ -13,7 +13,7 @@ import de.prob.statespace.StateSpace;
 
 public final class ExpandedFormula {
 
-	public enum FormulaType {
+	public static enum FormulaType {
 		EXPRESSION, PREDICATE, OTHER
 	}
 
