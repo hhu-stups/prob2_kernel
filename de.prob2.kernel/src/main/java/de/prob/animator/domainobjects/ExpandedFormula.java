@@ -12,6 +12,11 @@ import de.prob.statespace.State;
 import de.prob.statespace.StateSpace;
 
 public final class ExpandedFormula {
+
+	public enum FormulaType {
+		EXPRESSION, PREDICATE, OTHER
+	}
+
 	public static class Builder {
 		BVisual2Formula formula;
 		String label;
@@ -19,6 +24,7 @@ public final class ExpandedFormula {
 		String functorSymbol;
 		List<String> rodinLabels;
 		BVisual2Value value;
+		FormulaType type;
 		List<BVisual2Formula> subformulas;
 		List<ExpandedFormula> children;
 		
@@ -27,6 +33,7 @@ public final class ExpandedFormula {
 			this.label = null;
 			this.description = null;
 			this.value = null;
+			this.type = null;
 			this.subformulas = null;
 			this.children = null;
 		}
@@ -78,6 +85,20 @@ public final class ExpandedFormula {
 			this.value = value;
 			return this;
 		}
+
+		public ExpandedFormula.Builder type(final String type) {
+			if (this.type != null) {
+				throw new IllegalStateException("type already set");
+			}
+			if("predicate".equals(type)) {
+				this.type = FormulaType.PREDICATE;
+			} else if("expression".equals(type)) {
+				this.type = FormulaType.EXPRESSION;
+			} else {
+				this.type = FormulaType.OTHER;
+			}
+			return this;
+		}
 		
 		public ExpandedFormula.Builder subformulas(final List<BVisual2Formula> subformulas) {
 			if (this.subformulas != null) {
@@ -110,6 +131,7 @@ public final class ExpandedFormula {
 	private final String functorSymbol;
 	private final List<String> rodinLabels;
 	private final BVisual2Value value;
+	private final FormulaType type;
 	private final List<BVisual2Formula> subformulas;
 	private final List<ExpandedFormula> children;
 	
@@ -130,6 +152,7 @@ public final class ExpandedFormula {
 		this.functorSymbol = builder.functorSymbol;
 		this.rodinLabels = builder.rodinLabels;
 		this.value = builder.value;
+		this.type = builder.type;
 		
 		if (builder.children != null) {
 			assert builder.subformulas == null;
@@ -181,7 +204,9 @@ public final class ExpandedFormula {
 				case "value":
 					builder.value(BVisual2Value.fromPrologTerm(arg));
 					break;
-				
+				case "type":
+					builder.type(PrologTerm.atomicString(arg));
+					break;
 				case "children_ids":
 					builder.subformulas(BindingGenerator.getList(arg).stream()
 						.map(id -> BVisual2Formula.fromFormulaId(stateSpace, id.getFunctor()))
@@ -226,7 +251,11 @@ public final class ExpandedFormula {
 	public BVisual2Value getValue() {
 		return value;
 	}
-	
+
+	public FormulaType getType() {
+		return type;
+	}
+
 	/**
 	 * Get the subformulas of this formula. Unlike {@link #getChildren()}, the formulas are returned as unevaluated {@link BVisual2Formula} objects.
 	 * 
@@ -254,6 +283,7 @@ public final class ExpandedFormula {
 			.add("functorSymbol", this.getFunctorSymbol())
 			.add("rodinLabels", this.getRodinLabels())
 			.add("value", this.getValue())
+			.add("type", this.getType())
 			.add("subformulas", this.getSubformulas())
 			.add("children", this.getChildren())
 			.toString();
