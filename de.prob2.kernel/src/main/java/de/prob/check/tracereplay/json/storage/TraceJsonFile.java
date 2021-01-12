@@ -3,7 +3,6 @@ package de.prob.check.tracereplay.json.storage;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.prob.check.tracereplay.PersistentTrace;
-import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.statespace.LoadedMachine;
 import de.prob.statespace.OperationInfo;
 

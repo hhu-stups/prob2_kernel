@@ -13,13 +13,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class GetMachineOperationInfosWithTypes extends AbstractCommand {
 	private static final String PROLOG_COMMAND_NAME = "get_machine_operation_infos_typed";
 	private static final String RESULT_VARIABLE = "MachineOperationInfosWithTypes";
 
-	private final List<TypedOperationInfo> operationInfos = new ArrayList<>();
+	private final List<OperationInfo> operationInfos = new ArrayList<>();
 
 	public GetMachineOperationInfosWithTypes() {
 		super();
@@ -35,7 +36,7 @@ public class GetMachineOperationInfosWithTypes extends AbstractCommand {
 		}
 	}
 
-	private static TypedOperationInfo operationInfoFromPrologTerm(final PrologTerm prologTerm) {
+	private static OperationInfo operationInfoFromPrologTerm(final PrologTerm prologTerm) {
 		final CompoundPrologTerm cpt = BindingGenerator.getCompoundTerm(prologTerm, "operation_info", 9);
 		final String opName = PrologTerm.atomicString(cpt.getArgument(1));
 		final List<String> outputParameterNames = PrologTerm.atomicStrings(BindingGenerator.getList(cpt.getArgument(2)));
@@ -46,12 +47,12 @@ public class GetMachineOperationInfosWithTypes extends AbstractCommand {
 		final List<String> writtenVariables = convertPossiblyUnknownAtomicStringList(cpt.getArgument(7));
 		final List<String> nonDetWrittenVariables = convertPossiblyUnknownAtomicStringList(cpt.getArgument(8));
 		final Map<String, String> identifierTypes = convertPrologTermIntoMap(cpt.getArgument(9));
-		return new TypedOperationInfo(opName, parameterNames, outputParameterNames, topLevel, type, readVariables, writtenVariables, nonDetWrittenVariables, identifierTypes);
+		return new OperationInfo(opName, parameterNames, outputParameterNames, topLevel, type, readVariables, writtenVariables, nonDetWrittenVariables, identifierTypes);
 	}
 
 	private static Map<String, String> convertPrologTermIntoMap(PrologTerm argument) {
-		List<String> split = BindingGenerator.getList(argument).stream().map(entry -> entry.getArgument(1)+ "-"+entry.getArgument(2)).collect(Collectors.toList());
-		return split.stream().collect(Collectors.toMap(entry -> entry.substring(0, entry.indexOf("-")), entry -> entry.substring(entry.indexOf("-")+1)));
+		Set<String> split = BindingGenerator.getList(argument).stream().map(entry -> entry.getArgument(1)+ "-"+entry.getArgument(2)).collect(Collectors.toSet());
+		return split.stream().collect(Collectors.toMap(entry -> entry.substring(0, entry.indexOf("-")), entry -> entry.substring(entry.indexOf("-")+1 )));
 	}
 
 
@@ -62,7 +63,7 @@ public class GetMachineOperationInfosWithTypes extends AbstractCommand {
 				.collect(Collectors.toCollection(() -> this.operationInfos));
 	}
 
-	public List<TypedOperationInfo> getOperationInfos() {
+	public List<OperationInfo> getOperationInfos() {
 		return new ArrayList<>(this.operationInfos);
 	}
 

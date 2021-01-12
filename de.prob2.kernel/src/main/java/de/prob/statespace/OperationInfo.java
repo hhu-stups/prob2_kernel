@@ -1,8 +1,6 @@
 package de.prob.statespace;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -38,6 +36,7 @@ public class OperationInfo {
 	private final List<String> readVariables;
 	private final List<String> writtenVariables;
 	private final List<String> nonDetWrittenVariables;
+	private final Map<String, String> typeMap;
 
 	/**
 	 * Annotation is used by jackson to construct objects
@@ -58,6 +57,40 @@ public class OperationInfo {
 			@JsonProperty("type") final OperationInfo.Type type,
 			@JsonProperty("readVariables") final List<String> readVariables,
 			@JsonProperty("writtenVariables") final List<String> writtenVariables,
+			@JsonProperty("nonDetWrittenVariables") final List<String> nonDetWrittenVariables,
+			@JsonProperty("typeMap") final Map<String, String> typeMap
+	) {
+		this.operationName = operationName;
+		this.parameterNames = parameterNames;
+		this.outputParameterNames = outputParameterNames;
+		this.topLevel = topLevel;
+		this.type = type;
+		this.readVariables = readVariables;
+		this.writtenVariables = writtenVariables;
+		this.nonDetWrittenVariables = nonDetWrittenVariables;
+		this.typeMap = typeMap;
+	}
+
+	/**
+	 * Annotation is used by jackson to construct objects
+	 * @param operationName teh name of the operation
+	 * @param parameterNames name of the parameters
+	 * @param outputParameterNames name of the output parameters
+	 * @param topLevel operation is toplevel
+	 * @param type type of the operation
+	 * @param readVariables read variables
+	 * @param writtenVariables written variables
+	 * @param nonDetWrittenVariables non deterministic written variables
+	 */
+	@Deprecated
+	public OperationInfo(
+			@JsonProperty("operationName") final String operationName,
+			@JsonProperty("parameterNames") final List<String> parameterNames,
+			@JsonProperty("outputParameterNames") final List<String> outputParameterNames,
+			@JsonProperty("topLevel") final boolean topLevel,
+			@JsonProperty("type") final OperationInfo.Type type,
+			@JsonProperty("readVariables") final List<String> readVariables,
+			@JsonProperty("writtenVariables") final List<String> writtenVariables,
 			@JsonProperty("nonDetWrittenVariables") final List<String> nonDetWrittenVariables
 	) {
 		this.operationName = operationName;
@@ -68,6 +101,7 @@ public class OperationInfo {
 		this.readVariables = readVariables;
 		this.writtenVariables = writtenVariables;
 		this.nonDetWrittenVariables = nonDetWrittenVariables;
+		this.typeMap = Collections.emptyMap();
 	}
 
 	public String getOperationName() {
@@ -104,6 +138,11 @@ public class OperationInfo {
 
 	public List<String> getAllVariables(){
 		return Stream.of(readVariables, writtenVariables, nonDetWrittenVariables).flatMap(Collection::stream).collect(Collectors.toList());
+	}
+
+
+	public Map<String, String> getTypeMap() {
+		return typeMap;
 	}
 
 	public Set<String> getAllIdentifier(){
