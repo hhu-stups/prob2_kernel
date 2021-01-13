@@ -49,9 +49,9 @@ public class TraceExplorerTypeIVIntegration {
 
 	@Test
 	public void integration_test_new_intermediate_operation_1() throws IOException, ModelTranslationError {
-		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("/home", "sebastian",  "master-thesis", "examples", "typeIV", "one_intermediate_operation", "ISLAND2.mch"));
+		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "one_time_intermediate_operation", "ISLAND2.mch"));
 
-		TraceJsonFile jsonFile = traceManager.load(Paths.get("/home", "sebastian",  "master-thesis", "examples", "typeIV", "one_intermediate_operation", "island.prob2trace"));
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "one_time_intermediate_operation", "island.prob2trace"));
 
 
 		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result =
@@ -59,12 +59,10 @@ public class TraceExplorerTypeIVIntegration {
 						.replayTrace(
 								jsonFile.getTrace().getTransitionList(),
 								stateSpace,
+								stateSpace.getLoadedMachine().getOperations(),
 								jsonFile.getMachineOperationInfos(),
 								emptySet(),
-								singleton("on"),
-								emptySet(),
-								emptySet(),
-								emptySet());
+								singleton("on"));
 
 		PersistenceDelta persistenceDelta = new ArrayList<>(result.values()).get(0).get(3);
 		Assert.assertEquals("on", persistenceDelta.getOldTransition().getOperationName());
@@ -73,9 +71,9 @@ public class TraceExplorerTypeIVIntegration {
 
 	@Test
 	public void integration_test_always_new_intermediate_operation_1() throws IOException, ModelTranslationError {
-		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("/home", "sebastian",  "master-thesis", "examples", "typeIV", "always_intermediate", "ISLAND2.mch"));
+		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "always_intermediate", "ISLAND2.mch"));
 
-		TraceJsonFile jsonFile = traceManager.load(Paths.get("/home", "sebastian",  "master-thesis", "examples", "typeIV", "always_intermediate", "ISLAND.prob2trace"));
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "always_intermediate", "ISLAND.prob2trace"));
 
 
 		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result =
@@ -83,12 +81,10 @@ public class TraceExplorerTypeIVIntegration {
 						.replayTrace(
 								jsonFile.getTrace().getTransitionList(),
 								stateSpace,
+								stateSpace.getLoadedMachine().getOperations(),
 								jsonFile.getMachineOperationInfos(),
 								emptySet(),
-								singleton("on"),
-								emptySet(),
-								emptySet(),
-								emptySet());
+								singleton("on"));
 
 		List<PersistenceDelta> compareResult = new ArrayList<>(result.values()).get(0)
 				.stream()
@@ -102,9 +98,9 @@ public class TraceExplorerTypeIVIntegration {
 
 	@Test
 	public void integration_test_complete_renamed_operation_1() throws IOException, ModelTranslationError {
-		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("/home", "sebastian",  "master-thesis", "examples", "typeIV", "complete_renamed_operation", "ISLAND2.mch"));
+		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "complete_renamed_operation", "ISLAND2.mch"));
 
-		TraceJsonFile jsonFile = traceManager.load(Paths.get("/home", "sebastian",  "master-thesis", "examples", "typeIV", "complete_renamed_operation", "island.prob2trace"));
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "complete_renamed_operation", "island.prob2trace"));
 
 
 		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result =
@@ -112,12 +108,10 @@ public class TraceExplorerTypeIVIntegration {
 						.replayTrace(
 								jsonFile.getTrace().getTransitionList(),
 								stateSpace,
+								stateSpace.getLoadedMachine().getOperations(),
 								jsonFile.getMachineOperationInfos(),
 								emptySet(),
-								singleton("on"),
-								emptySet(),
-								emptySet(),
-								emptySet());
+								singleton("on"));
 
 		List<PersistenceDelta> resultCleaned = result.values().stream().findFirst().get().stream().filter(entry -> {
 			String name = entry.getOldTransition().getOperationName();
@@ -138,9 +132,9 @@ public class TraceExplorerTypeIVIntegration {
 
 	@Test
 	public void integration_test_splatted_operation() throws IOException, ModelTranslationError {
-		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("/home", "sebastian",  "master-thesis", "examples", "typeIV", "tropical_island", "version_2", "Island2.mch"));
+		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "tropical_island", "version_2", "Island2.mch"));
 
-		TraceJsonFile jsonFile = traceManager.load(Paths.get("/home", "sebastian",  "master-thesis", "examples", "typeIV", "tropical_island", "version_2", "Island.prob2trace"));
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "tropical_island", "version_2", "island_2.prob2trace"));
 
 
 		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> evaluated =
@@ -148,12 +142,10 @@ public class TraceExplorerTypeIVIntegration {
 						.replayTrace(
 								jsonFile.getTrace().getTransitionList(),
 								stateSpace,
+								stateSpace.getLoadedMachine().getOperations(),
 								jsonFile.getMachineOperationInfos(),
 								emptySet(),
-								singleton("leave"),
-								emptySet(),
-								emptySet(),
-								emptySet());
+								singleton("leave"));
 
 		Map<String, List<String>> expected1 = singletonMap("leave", singletonList("leave_with_car"));
 		Map<String, TraceAnalyser.AnalyserResult> expected2 = singletonMap("leave", TraceAnalyser.AnalyserResult.MixedNames);
@@ -173,9 +165,9 @@ public class TraceExplorerTypeIVIntegration {
 
 	@Test
 	public void integration_test_operation_always_intermediate() throws IOException, ModelTranslationError {
-		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("/home", "sebastian",  "master-thesis", "examples", "typeIV", "always_intermediate", "ISLAND2.mch"));
+		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "always_intermediate", "ISLAND2.mch"));
 
-		TraceJsonFile jsonFile = traceManager.load(Paths.get("/home", "sebastian",  "master-thesis", "examples", "typeIV", "always_intermediate", "island.prob2trace"));
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "always_intermediate", "ISLAND.prob2trace"));
 
 
 		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> evaluated =
@@ -183,10 +175,8 @@ public class TraceExplorerTypeIVIntegration {
 						.replayTrace(
 								jsonFile.getTrace().getTransitionList(),
 								stateSpace,
+								stateSpace.getLoadedMachine().getOperations(),
 								jsonFile.getMachineOperationInfos(),
-								emptySet(),
-								emptySet(),
-								emptySet(),
 								emptySet(),
 								emptySet());
 
@@ -206,9 +196,9 @@ public class TraceExplorerTypeIVIntegration {
 
 	@Test
 	public void integration_test_with_completely_renamed_operation() throws IOException, ModelTranslationError {
-		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("/home", "sebastian",  "master-thesis", "examples", "typeIV", "complete_renamed_operation", "ISLAND2.mch"));
+		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV","complete_renamed_operation", "ISLAND2.mch"));
 
-		TraceJsonFile jsonFile = traceManager.load(Paths.get("/home", "sebastian",  "master-thesis", "examples", "typeIV", "complete_renamed_operation", "island.prob2trace"));
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "complete_renamed_operation", "island.prob2trace"));
 
 
 		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> evaluated =
@@ -216,10 +206,8 @@ public class TraceExplorerTypeIVIntegration {
 						.replayTrace(
 								jsonFile.getTrace().getTransitionList(),
 								stateSpace,
+								stateSpace.getLoadedMachine().getOperations(),
 								jsonFile.getMachineOperationInfos(),
-								emptySet(),
-								emptySet(),
-								emptySet(),
 								emptySet(),
 								emptySet());
 
@@ -239,9 +227,9 @@ public class TraceExplorerTypeIVIntegration {
 
 	@Test
 	public void integration_test_with_one_time_intermediate_operation() throws IOException, ModelTranslationError {
-		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("/home", "sebastian",  "master-thesis", "examples", "typeIV", "one_time_intermediate_operation", "ISLAND2.mch"));
+		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "one_time_intermediate_operation", "ISLAND2.mch"));
 
-		TraceJsonFile jsonFile = traceManager.load(Paths.get("/home", "sebastian",  "master-thesis", "examples", "typeIV", "one_time_intermediate_operation", "island.prob2trace"));
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "one_time_intermediate_operation", "island.prob2trace"));
 
 
 		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> evaluated =
@@ -249,10 +237,8 @@ public class TraceExplorerTypeIVIntegration {
 						.replayTrace(
 								jsonFile.getTrace().getTransitionList(),
 								stateSpace,
+								stateSpace.getLoadedMachine().getOperations(),
 								jsonFile.getMachineOperationInfos(),
-								emptySet(),
-								emptySet(),
-								emptySet(),
 								emptySet(),
 								emptySet());
 

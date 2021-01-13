@@ -1,0 +1,46 @@
+{
+  "name": "tropicalIsland",
+  "description": "",
+  "machines": [
+    {
+      "name": "Island",
+      "description": "",
+      "location": "Island.mch",
+      "lastUsedPreferenceName": "default",
+      "ltlFormulas": [],
+      "ltlPatterns": [],
+      "symbolicCheckingFormulas": [],
+      "symbolicAnimationFormulas": [],
+      "testCases": [],
+      "traces": [],
+      "modelcheckingItems": [],
+      "visBVisualisation": null
+    },
+    {
+      "name": "Island2",
+      "description": "",
+      "location": "Island2.mch",
+      "lastUsedPreferenceName": "default",
+      "ltlFormulas": [],
+      "ltlPatterns": [],
+      "symbolicCheckingFormulas": [],
+      "symbolicAnimationFormulas": [],
+      "testCases": [],
+      "traces": [
+        "Island_edited_for_Island2.prob2trace"
+      ],
+      "modelcheckingItems": [],
+      "visBVisualisation": null
+    }
+  ],
+  "preferences": [],
+  "metadata": {
+    "fileType": "Project",
+    "formatVersion": 9,
+    "savedAt": "2021-01-08T13:36:11.188611Z",
+    "creator": "User",
+    "proB2KernelVersion": "4.0.0-SNAPSHOT",
+    "proBCliVersion": null,
+    "modelName": null
+  }
+}

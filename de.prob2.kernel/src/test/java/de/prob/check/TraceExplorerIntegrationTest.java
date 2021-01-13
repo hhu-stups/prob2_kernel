@@ -6,13 +6,18 @@ import com.google.inject.Stage;
 import de.prob.JsonManagerStubModule;
 import de.prob.MainModule;
 import de.prob.ProBKernelStub;
+import de.prob.animator.command.ConstructTraceCommand;
+import de.prob.animator.domainobjects.ClassicalB;
+import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.PersistenceDelta;
 import de.prob.check.tracereplay.check.TraceExplorer;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.scripting.ModelTranslationError;
+import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
+import de.prob.statespace.Trace;
 import de.prob.statespace.Transition;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,13 +50,11 @@ public class TraceExplorerIntegrationTest {
 
 	}
 
-
-
 	@Test
 	public void integration_1() throws IOException, ModelTranslationError {
 
 
-		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "Lift.mch"));
+		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "Lift.mch"));
 
 		Map<Map<String,  Map<String, String>>, List<PersistenceDelta>> result =
 				new TraceExplorer(false, new TestUtils.StubFactoryImplementation())
@@ -59,134 +62,61 @@ public class TraceExplorerIntegrationTest {
 								Collections.emptyList(),
 								stateSpace,
 								stateSpace.getLoadedMachine().getOperations(),
+								stateSpace.getLoadedMachine().getOperations(),
 								Stream.of("inc", "dec", "getfloors").collect(Collectors.toSet()),
-								emptySet(),
-								Stream.of("floors").collect(Collectors.toSet()),
-								emptySet(),
 								emptySet());
 
 		Assert.assertTrue(result.isEmpty());
 	}
 
 	@Test
-	public void integration_1_traceReplay2_three_transitions_with_smaller_signature() throws IOException, ModelTranslationError {
+	public void integration_1_traceReplay_three_transitions_with_smaller_signature() throws IOException, ModelTranslationError {
 
 
-		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "Lift2.mch"));
+		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "reducedSigLength", "OneTypeIIICandidateCounterPart.mch"));
 
-		PersistentTransition init = new PersistentTransition(Transition.INITIALISE_MACHINE_NAME, Collections.emptyMap(),
-				Collections.emptyMap(), singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList());
+		Map<String, OperationInfo> operationInfoOld = stateSpace.getLoadedMachine().getOperations();
 
-		PersistentTransition first = new PersistentTransition("inc", new HashMap<String, String>() {{
-			put("a","1");
-			put("b","0");
-			put("c","0");
-		}},
-				Collections.emptyMap(), singletonMap("floors", "1"), Collections.emptySet(), Collections.emptyList());
+		Trace t = new Trace(stateSpace);
 
-		PersistentTransition second = new PersistentTransition("dec", Collections.emptyMap(),
-				Collections.emptyMap(), singletonMap("floors", "0"), Collections.emptySet(), Collections.emptyList());
+		ConstructTraceCommand constructTraceCommand = new ConstructTraceCommand(stateSpace, t.getCurrentState(), Arrays.asList(
+				Transition.INITIALISE_MACHINE_NAME, "inc", "dec"),
+				Arrays.asList(
+						new ClassicalB("levels=0", FormulaExpand.EXPAND),
+						new ClassicalB("levels=1&a=1", FormulaExpand.EXPAND),
+						new ClassicalB("levels=0", FormulaExpand.EXPAND)));
 
 
-		PersistentTransition initNew = new PersistentTransition(Transition.INITIALISE_MACHINE_NAME, Collections.emptyMap(),
-				Collections.emptyMap(), singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList());
+		stateSpace.execute(constructTraceCommand);
 
-		PersistentTransition firstNew_var1 = new PersistentTransition("inc", new HashMap<String, String>() {{
-			put("x","1");
-		}},
-				Collections.emptyMap(), singletonMap("levels", "1"), Collections.emptySet(), Collections.emptyList());
+		List<PersistentTransition> persistentTransitions = PersistentTransition.createFromList(constructTraceCommand.getNewTransitions());
 
-		PersistentTransition firstNew_var2 = new PersistentTransition("inc", new HashMap<String, String>() {{
-			put("x","0");
-		}},
-				Collections.emptyMap(), singletonMap("levels", "1"), Collections.emptySet(), Collections.emptyList());
-
-		PersistentTransition firstNew_var3 = new PersistentTransition("inc", new HashMap<String, String>() {{
-			put("x","0");
-		}},
-				Collections.emptyMap(), singletonMap("levels", "1"), Collections.emptySet(), Collections.emptyList());
-
-		PersistentTransition secondNew = new PersistentTransition("dec", Collections.emptyMap(),
-				Collections.emptyMap(), singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList());
-
-
-		//The explorer will find multiple possible solutions, we expect at least 3, because we want to test if the mapping from
-		//old to new parameters is working properly
-
-		PersistenceDelta delta1 = new PersistenceDelta(init, Collections.singletonList(initNew));
-		PersistenceDelta delta2_var1 = new PersistenceDelta(first, Collections.singletonList(firstNew_var1));
-		PersistenceDelta delta2_var2 = new PersistenceDelta(first, Collections.singletonList(firstNew_var2));
-		PersistenceDelta delta2_var3 = new PersistenceDelta(first, Collections.singletonList(firstNew_var3));
-
-		PersistenceDelta delta3 = new PersistenceDelta(second, Collections.singletonList(secondNew));
-
-		List<PersistentTransition> transitionList = Arrays.asList(init, first, second);
-
-		List<PersistenceDelta> expected1 = Arrays.asList(delta1,delta2_var1,delta3);
-		List<PersistenceDelta> expected2 = Arrays.asList(delta1,delta2_var2,delta3);
-		List<PersistenceDelta> expected3 = Arrays.asList(delta1,delta2_var3,delta3);
-
-
-		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> expected = new HashMap<>();
-
-
-		Map<String, String> expectedHelper_dec = new HashMap<>();
-		expectedHelper_dec.put("floors", "levels");
-
-
-		Map<String, String> expectedHelper_1 = new HashMap<>();
-		expectedHelper_1.put("floors", "levels");
-		expectedHelper_1.put("a", "x");
-
-		Map<String, String> expectedHelper_2 = new HashMap<>();
-		expectedHelper_2.put("floors", "levels");
-		expectedHelper_2.put("b", "x");
-
-		Map<String, String> expectedHelper_3 = new HashMap<>();
-		expectedHelper_3.put("floors", "levels");
-		expectedHelper_3.put("c", "x");
-
-
-		Map<String,  Map<String, String>> expected_inner1 = new HashMap<>();
-		expected_inner1.put("inc", expectedHelper_1);
-		expected_inner1.put("dec", expectedHelper_dec);
-
-		Map<String, Map<String, String>> expected_inner2 = new HashMap<>();
-		expected_inner2.put("inc", expectedHelper_2);
-		expected_inner2.put("dec", expectedHelper_dec);
-
-		Map<String, Map<String, String>> expected_inner3 = new HashMap<>();
-		expected_inner3.put("inc", expectedHelper_3);
-		expected_inner3.put("dec", expectedHelper_dec);
-
-
-		expected.put(expected_inner1,  expected1);
-		expected.put(expected_inner2,  expected2);
-		expected.put(expected_inner3,  expected3);
-
+		StateSpace toCompare = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "reducedSigLength", "OneTypeIIICandidate.mch"));
 
 		Map<Map<String,  Map<String, String>>, List<PersistenceDelta>> result =
 				new TraceExplorer(true, new TestUtils.StubFactoryImplementation())
-						.replayTrace(transitionList,
-								stateSpace,
-								stateSpace.getLoadedMachine().getOperations(),
-								Stream.of("inc", "dec").collect(Collectors.toSet()),
-								emptySet(),
-								Stream.of("levels").collect(Collectors.toSet()),
-								emptySet(),
+						.replayTrace(persistentTransitions,
+								toCompare,
+								toCompare.getLoadedMachine().getOperations(),
+								operationInfoOld,
+								Stream.of("inc").collect(Collectors.toSet()),
 								emptySet());
 
+		System.out.println(result);
 
 
-		Assert.assertEquals(expected,result);
+		Assert.assertEquals(3,result.entrySet().size());
+
 	}
 
 	@Test
 	public void integration_2_traceReplay2_three_transitions_with_larger_signature() throws IOException, ModelTranslationError {
 
 
-		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "Lift4.mch"));
+		StateSpace stateSpace1 = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "changedSignature", "Lift4_2.mch"));
+		Map<String, OperationInfo> oldInformation = stateSpace1.getLoadedMachine().getOperations();
 
+		StateSpace stateSpace2 = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "changedSignature", "Lift4.mch"));
 
 
 		PersistentTransition init = new PersistentTransition(Transition.INITIALISE_MACHINE_NAME, Collections.emptyMap(),
@@ -198,10 +128,6 @@ public class TraceExplorerIntegrationTest {
 
 		PersistentTransition second = new PersistentTransition("dec", Collections.emptyMap(),
 				Collections.emptyMap(), singletonMap("floors", "0"), Collections.emptySet(), Collections.emptyList());
-
-
-
-
 
 		PersistentTransition initNew = new PersistentTransition(Transition.INITIALISE_MACHINE_NAME, Collections.emptyMap(),
 				Collections.emptyMap(), singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList());
@@ -292,12 +218,10 @@ public class TraceExplorerIntegrationTest {
 		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result =
 				new TraceExplorer(true, new TestUtils.StubFactoryImplementation())
 						.replayTrace(transitionList,
-								stateSpace,
-								stateSpace.getLoadedMachine().getOperations(),
-						Stream.of("inc", "dec").collect(Collectors.toSet()),
-								emptySet(),
-								Stream.of("levels").collect(Collectors.toSet()),
-								emptySet(),
+								stateSpace2,
+								stateSpace2.getLoadedMachine().getOperations(),
+								oldInformation,
+								Stream.of("inc", "dec").collect(Collectors.toSet()),
 								emptySet());
 
 
@@ -305,12 +229,14 @@ public class TraceExplorerIntegrationTest {
 		Assert.assertEquals(expected,result);
 	}
 
-
 	@Test
 	public void integration_3_traceReplay_no_type_III_candidates() throws IOException, ModelTranslationError {
 
+		StateSpace stateSpace1 = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "Lift", "Lift.mch"));
+		Map<String, OperationInfo> oldInformation = stateSpace1.getLoadedMachine().getOperations();
 
-		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "Lift3.mch"));
+
+		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "LiftWithLevels.mch"));
 
 
 		PersistentTransition init = new PersistentTransition(Transition.INITIALISE_MACHINE_NAME, emptyMap(),
@@ -335,9 +261,7 @@ public class TraceExplorerIntegrationTest {
 								Stream.of(init,first,second).collect(toList()),
 								stateSpace,
 								stateSpace.getLoadedMachine().getOperations(),
-								emptySet(),
-								emptySet(),
-								emptySet(),
+								oldInformation,
 								emptySet(),
 								emptySet());
 
@@ -346,12 +270,15 @@ public class TraceExplorerIntegrationTest {
 		Assert.assertEquals(expected,result);
 	}
 
-
 	@Test
 	public void integration_4_traceReplay_one_combination_is_not_suitable() throws IOException, ModelTranslationError {
 
 
-		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "Lift5.mch"));
+		StateSpace stateSpace1 = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "Lift", "oneWrongParameter",  "OneWrongParameterCounter.mch"));
+		Map<String, OperationInfo> oldInformation = stateSpace1.getLoadedMachine().getOperations();
+
+
+		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "oneWrongParameter",  "OneWrongParameter.mch"));
 
 
 		PersistentTransition init = new PersistentTransition(Transition.INITIALISE_MACHINE_NAME, emptyMap(),
@@ -362,9 +289,6 @@ public class TraceExplorerIntegrationTest {
 
 		PersistentTransition second = new PersistentTransition("dec", Collections.emptyMap(),
 				Collections.emptyMap(), singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList());
-
-
-
 
 		PersistentTransition initNew = new PersistentTransition(Transition.INITIALISE_MACHINE_NAME, Collections.emptyMap(),
 				Collections.emptyMap(), singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList());
@@ -381,10 +305,7 @@ public class TraceExplorerIntegrationTest {
 			put("x","0");
 			put("y","1");
 			put("z","TRUE");
-		}},
-				Collections.emptyMap(), singletonMap("levels", "1"), Collections.emptySet(), Collections.emptyList());
-
-
+		}}, Collections.emptyMap(), singletonMap("levels", "1"), Collections.emptySet(), Collections.emptyList());
 
 
 		PersistentTransition secondNew = new PersistentTransition("dec", Collections.emptyMap(),
@@ -406,8 +327,6 @@ public class TraceExplorerIntegrationTest {
 
 
 		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> expected = new HashMap<>();
-
-
 
 
 		Map<String, String> expectedHelper_1 = new HashMap<>();
@@ -426,12 +345,8 @@ public class TraceExplorerIntegrationTest {
 		expected_inner2.put("inc", expectedHelper_2);
 
 
-
-
 		expected.put(expected_inner1,  expected1);
 		expected.put(expected_inner2,  expected2);
-
-
 
 		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result =
 				new TraceExplorer(true, new TestUtils.StubFactoryImplementation())
@@ -439,10 +354,8 @@ public class TraceExplorerIntegrationTest {
 								Stream.of(init,first,second).collect(toList()),
 								stateSpace,
 								stateSpace.getLoadedMachine().getOperations(),
+								oldInformation,
 								singleton("inc"),
-								emptySet(),
-								singleton("levels"),
-								emptySet(),
 								emptySet());
 
 
@@ -451,200 +364,26 @@ public class TraceExplorerIntegrationTest {
 	}
 
 
-	@Test
-	public void integration_5_traceReplay_empty_changes() throws IOException, ModelTranslationError {
-
-
-		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "Lift5.mch"));
-
-
-		PersistentTransition init = new PersistentTransition(Transition.INITIALISE_MACHINE_NAME, emptyMap(),
-				emptyMap(), singletonMap("levels", "0"), emptySet(), emptyList());
-
-		PersistentTransition first = new PersistentTransition("inc", emptyMap(), emptyMap(),
-				singletonMap("levels", "1"), emptySet(), emptyList());
-
-		PersistentTransition second = new PersistentTransition("dec", Collections.emptyMap(),
-				Collections.emptyMap(), singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList());
-
-
-
-
-		PersistentTransition initNew = new PersistentTransition(Transition.INITIALISE_MACHINE_NAME, Collections.emptyMap(),
-				Collections.emptyMap(), singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList());
-
-		PersistentTransition firstNew_var1 = new PersistentTransition("inc", new HashMap<String, String>() {{
-			put("x","1");
-			put("y","0");
-			put("z","TRUE");
-		}},
-				Collections.emptyMap(), singletonMap("levels", "1"), Collections.emptySet(), Collections.emptyList());
-
-		PersistentTransition firstNew_var2 = new PersistentTransition("inc", new HashMap<String, String>() {{
-
-			put("x","0");
-			put("y","1");
-			put("z","TRUE");
-		}},
-				Collections.emptyMap(), singletonMap("levels", "1"), Collections.emptySet(), Collections.emptyList());
-
-
-
-
-		PersistentTransition secondNew = new PersistentTransition("dec", Collections.emptyMap(),
-				Collections.emptyMap(), singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList());
-
-
-		//The explorer will find multiple possible solutions, we expect at least 3, because we want to test if the mapping from
-		//old to new parameters is working properly
-
-		PersistenceDelta delta1 = new PersistenceDelta(init, Collections.singletonList(initNew));
-		PersistenceDelta delta2_var1 = new PersistenceDelta(first, Collections.singletonList(firstNew_var1));
-		PersistenceDelta delta2_var2 = new PersistenceDelta(first, Collections.singletonList(firstNew_var2));
-
-		PersistenceDelta delta3 = new PersistenceDelta(second, Collections.singletonList(secondNew));
-
-
-		List<PersistenceDelta> expected1 = Arrays.asList(delta1,delta2_var1,delta3);
-		List<PersistenceDelta> expected2 = Arrays.asList(delta1,delta2_var2,delta3);
-
-
-		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> expected = new HashMap<>();
-
-
-
-
-		Map<String, String> expectedHelper_1 = new HashMap<>();
-		expectedHelper_1.put("levels", "levels");
-
-		Map<String, String> expectedHelper_2 = new HashMap<>();
-		expectedHelper_2.put("levels", "levels");
-
-
-		Map<String, Map<String, String>> expected_inner1 = new HashMap<>();
-		expected_inner1.put("inc", expectedHelper_1);
-
-		Map<String, Map<String, String>> expected_inner2 = new HashMap<>();
-		expected_inner2.put("inc", expectedHelper_2);
-
-
-
-
-		expected.put(expected_inner1,  expected1);
-		expected.put(expected_inner2,  expected2);
-
-
-
-		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result =
-				new TraceExplorer(true, new TestUtils.StubFactoryImplementation())
-						.replayTrace(
-								Stream.of(init,first,second).collect(toList()),
-								stateSpace,
-								stateSpace.getLoadedMachine().getOperations(),
-								singleton("inc"),
-								emptySet(),
-								singleton("levels"),
-								emptySet(),
-								emptySet());
-
-
-
-		Assert.assertEquals(expected,result);
-	}
-
-
-	@Test
-	public void integration_5_traceReplay_none_combination_is_not_suitable() throws IOException, ModelTranslationError {
-
-		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "Lift2.mch"));
-
-
-		PersistentTransition init = new PersistentTransition(Transition.INITIALISE_MACHINE_NAME, emptyMap(),
-				emptyMap(), singletonMap("level", "0"), emptySet(), emptyList());
-
-		PersistentTransition first = new PersistentTransition("inc", singletonMap("x", "true"), emptyMap(),
-				singletonMap("level", "1"), emptySet(), emptyList());
-
-		PersistentTransition second = new PersistentTransition("dec", Collections.emptyMap(),
-				Collections.emptyMap(), singletonMap("level", "0"), Collections.emptySet(), Collections.emptyList());
-
-
-
-		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result =
-				new TraceExplorer(true, new TestUtils.StubFactoryImplementation()).replayTrace(
-						Stream.of(init,first,second).collect(toList()),
-						stateSpace,
-						stateSpace.getLoadedMachine().getOperations(),
-						emptySet(),
-						emptySet(),
-						emptySet(),
-						emptySet(),
-						emptySet());
-
-
-		Assert.assertEquals(emptyMap(),result);
-	}
-
-
-	@Test
-	public void integration_5_traceReplay_ini_was_not_set() throws IOException, ModelTranslationError {
-
-		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "Lift2.mch"));
-
-
-		PersistentTransition init = new PersistentTransition(Transition.INITIALISE_MACHINE_NAME, emptyMap(),
-				emptyMap(), singletonMap("floors", "0"), emptySet(), emptyList());
-
-		PersistentTransition first = new PersistentTransition("inc", singletonMap("x", "1"), emptyMap(),
-				singletonMap("levels", "1"), emptySet(), emptyList());
-
-		PersistentTransition second = new PersistentTransition("dec", Collections.emptyMap(),
-				Collections.emptyMap(), singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList());
-
-
-		PersistenceDelta deltaInit = new PersistenceDelta(init, singletonList(
-				new PersistentTransition(Transition.INITIALISE_MACHINE_NAME, emptyMap(),
-						emptyMap(), singletonMap("levels", "0"), emptySet(), emptyList())));
-
-		PersistenceDelta deltaFirst = new PersistenceDelta(first, singletonList(first));
-
-		PersistenceDelta deltaSecond = new PersistenceDelta(second, singletonList(second));
-
-		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> expected = new HashMap<>();
-		expected.put(emptyMap(), Arrays.asList(deltaInit, deltaFirst, deltaSecond));
-
-		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result =
-				new TraceExplorer(false, new TestUtils.StubFactoryImplementation())
-						.replayTrace(Stream.of(init,first,second).collect(toList()),
-								stateSpace,
-								stateSpace.getLoadedMachine().getOperations(),
-								emptySet(),
-								emptySet(),
-								emptySet(),
-								emptySet(),
-								emptySet());
-
-
-		Assert.assertEquals(expected,result);
-	}
-	
-	
 	@Test
 	public void integration_6_realWorldExample() throws IOException, ModelTranslationError {
-		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "LiftProto2.mch"));
 
-		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "LiftProto.prob2trace"));
+
+		StateSpace stateSpace1 = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "changedTypeIIandTypeIII",  "LiftProto.mch"));
+		Map<String, OperationInfo> oldInfos = stateSpace1.getLoadedMachine().getOperations();
+
+		StateSpace stateSpace2 = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "changedTypeIIandTypeIII",  "LiftProto2.mch"));
+		Map<String, OperationInfo> newInfos = stateSpace1.getLoadedMachine().getOperations();
+
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "changedTypeIIandTypeIII", "LiftProto.prob2trace"));
 
 		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result =
 				new TraceExplorer(false, new TestUtils.StubFactoryImplementation())
 						.replayTrace(
 								jsonFile.getTrace().getTransitionList(),
-								stateSpace,
-								jsonFile.getMachineOperationInfos(),
+								stateSpace2,
+								oldInfos,
+								newInfos,
 								singleton("inc"),
-								emptySet(),
-								emptySet(),
-								emptySet(),
 								emptySet());
 
 		System.out.println(result);

@@ -48,7 +48,7 @@ public class TraceCheckerTest {
 	void integration_test1() throws IOException, ModelTranslationError {
 		TraceManager traceManager = new TraceManager(new ObjectMapper());
 		Path machinePath = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift.mch");
-		Path machinePathNew = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift3.mch");
+		Path machinePathNew = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "LiftWithLevels.mch");
 
 		Path tracePath = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift.prob2trace");
 

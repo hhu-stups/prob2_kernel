@@ -42,7 +42,7 @@ public class TraceAnalyserTest {
 
 	}
 
-
+/*
 
 	@Test
 	public void integration_test_new_intermediate_operation_1() throws IOException, ModelTranslationError {
@@ -119,7 +119,7 @@ public class TraceAnalyserTest {
 		Assert.assertEquals(1, bla.entrySet().size());
 		Assert.assertEquals(TraceAnalyser.AnalyserResult.Straight, bla.get("on"));
 	}
-
+*/
 
 
 }

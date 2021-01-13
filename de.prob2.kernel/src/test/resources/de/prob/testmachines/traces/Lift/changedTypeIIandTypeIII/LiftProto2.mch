@@ -15,7 +15,7 @@ OPERATIONS
             
 	dec1 = PRE levels>0 THEN levels := levels - 1 END;
 
-    	dec2 = PRE levels>0 THEN levels := levels - 1 END;
+    dec2 = PRE levels>0 THEN levels := levels - 1 END;
 
 	out <-- getlevels = BEGIN out := levels END
 

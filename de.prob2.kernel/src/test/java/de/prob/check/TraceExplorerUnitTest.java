@@ -7,6 +7,7 @@ import de.prob.JsonManagerStubModule;
 import de.prob.MainModule;
 import de.prob.ProBKernelStub;
 import de.prob.check.tracereplay.PersistentTransition;
+import de.prob.check.tracereplay.check.TraceCheckerUtils;
 import de.prob.check.tracereplay.check.TraceExplorer;
 import de.prob.check.tracereplay.check.exceptions.MappingFactoryInterface;
 import de.prob.check.tracereplay.json.TraceManager;
@@ -22,7 +23,6 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.*;
@@ -48,9 +48,257 @@ public class TraceExplorerUnitTest {
 
 
 	@Test
-	public void product_mapping_test_1(){
-		List<String> oldV = asList("a", "b", "c");
-		List<String> newV = asList("x", "y", "z");
+	public void sortByValue_test_two_data_types(){
+		Map<String, String> input = new HashMap<>();
+		input.put("a", "integer");
+		input.put("b", "integer");
+		input.put("c", "integer");
+		input.put("d", "boolean");
+		input.put("e", "boolean");
+		input.put("f", "boolean");
+
+		Map<String, List<String>> expected = new HashMap<>();
+		expected.put("integer", Arrays.asList("a","b","c"));
+		expected.put("boolean", Arrays.asList("d","e","f"));
+
+		Map<String, List<String>> result = TraceExplorer.sortByValue(input);
+
+		Assert.assertEquals(expected, result);
+	}
+
+	@Test
+	public void permutedMap_test_empty(){
+		Map<String, List<String>> input = new HashMap<>();
+
+		List<String> listA = new ArrayList<>(asList("a", "b", "c"));
+		List<String> listB = new ArrayList<>(asList("d", "e", "f"));
+
+		input.put("integer", new ArrayList<>(listA));
+		input.put("boolean", new ArrayList<>(listB));
+
+		Map<String, Integer> inputLength = new HashMap<>();
+		inputLength.put("integer", 3);
+		inputLength.put("boolean", 3);
+
+
+		Set<List<String>> permA = new HashSet<>(TraceCheckerUtils.generatePerm(listA));
+		Set<List<String>> permB = new HashSet<>(TraceCheckerUtils.generatePerm(listB));
+
+		Map<String, Set<List<String>>> expected = new HashMap<>();
+		expected.put("integer", permA);
+		expected.put("boolean", permB);
+
+		Map<String, Set<List<String>>> result = TraceExplorer.permutedMap(input, inputLength)
+				.entrySet()
+				.stream()
+				.collect(Collectors.toMap(Map.Entry::getKey, entry -> new HashSet<>(entry.getValue())));
+
+		Assert.assertEquals(expected, result);
+	}
+
+	@Test
+	public void productCombination_test(){
+
+		List<String> listA = new ArrayList<>(asList("a", "b", "c"));
+		List<String> listB = new ArrayList<>(asList("x", "y", "z"));
+
+		List<List<String>> permA = TraceCheckerUtils.generatePerm(listA);
+		List<List<String>> permB = TraceCheckerUtils.generatePerm(listB);
+
+
+		Set<Map<String, String>> result = TraceExplorer.productCombination(permA, permB);
+
+
+		Map<String, String> map1 = new HashMap<>();
+		map1.put("a", "z");
+		map1.put("b", "y");
+		map1.put("c", "x");
+		Map<String, String> map2 = new HashMap<>();
+		map2.put("a", "y");
+		map2.put("b", "x");
+		map2.put("c", "z");
+		Map<String, String> map3 = new HashMap<>();
+		map3.put("a", "y");
+		map3.put("b", "z");
+		map3.put("c", "x");
+		Map<String, String> map4 = new HashMap<>();
+		map4.put("a", "x");
+		map4.put("b", "z");
+		map4.put("c", "y");
+		Map<String, String> map5 = new HashMap<>();
+		map5.put("a", "x");
+		map5.put("b", "y");
+		map5.put("c", "z");
+		Map<String, String> map6 = new HashMap<>();
+		map6.put("a", "z");
+		map6.put("b", "x");
+		map6.put("c", "y");
+
+		Set<Map<String, String>> expected = new HashSet<>(Arrays.asList(map1, map2, map3, map4, map5, map6));
+
+		Assert.assertEquals(expected, result);
+	}
+
+	@Test
+	public void melt_test(){
+		List<List<String>> bool1 = Arrays.asList(Arrays.asList("b","a"), Arrays.asList("a", "b"));
+		List<List<String>> bool2 = Arrays.asList(Arrays.asList("x","y"), Arrays.asList("y", "x"));
+		List<List<String>> integer1 = Arrays.asList(Arrays.asList("n","m"), Arrays.asList("m", "n"));
+		List<List<String>> integer2 = Arrays.asList(Arrays.asList("i","j"), Arrays.asList("j", "i"));
+
+		Map<String, List<List<String>>> first = new HashMap<>();
+		first.put("boolean", bool1);
+		first.put("integer", integer1);
+
+
+		Map<String, List<List<String>>> second = new HashMap<>();
+		second.put("boolean", bool2);
+		second.put("integer", integer2);
+
+		Map<String, String> map1 = new HashMap<>();
+		map1.put("a", "y");
+		map1.put("b", "x");
+		Map<String, String> map2 = new HashMap<>();
+		map2.put("a", "x");
+		map2.put("b", "y");
+		Map<String, String> map3 = new HashMap<>();
+		map3.put("m", "i");
+		map3.put("n", "j");
+		Map<String, String> map4 = new HashMap<>();
+		map4.put("m", "j");
+		map4.put("n", "i");
+
+		Map<String, Set<Map<String, String>>> expected = new HashMap<>();
+		expected.put("boolean", new HashSet<>(Arrays.asList(map1, map2)));
+		expected.put("integer", new HashSet<>(Arrays.asList(map3, map4)));
+
+
+
+		Map<String, Set<Map<String, String>>> result = TraceExplorer.melt(first, second);
+
+
+		Assert.assertEquals(expected,result);
+	}
+	
+	@Test
+	public void applyProduct_test(){
+		Map<String, String> map1 = new HashMap<>();
+		map1.put("a", "y");
+		map1.put("b", "x");
+		Map<String, String> map2 = new HashMap<>();
+		map2.put("a", "x");
+		map2.put("b", "y");
+		Map<String, String> map3 = new HashMap<>();
+		map3.put("m", "i");
+		map3.put("n", "j");
+		Map<String, String> map4 = new HashMap<>();
+		map4.put("m", "j");
+		map4.put("n", "i");
+
+		HashSet<Map<String, String>> first = new HashSet<>(asList(map1, map2));
+		HashSet<Map<String, String>> second = new HashSet<>(Arrays.asList(map3, map4));
+
+
+		Map<String, String> map1Expected = new HashMap<>();
+		map1Expected.put("a", "x");
+		map1Expected.put("b", "y");
+		map1Expected.put("m", "i");
+		map1Expected.put("n", "j");
+		Map<String, String> map2Expected = new HashMap<>();
+		map2Expected.put("a", "x");
+		map2Expected.put("b", "y");
+		map2Expected.put("m", "j");
+		map2Expected.put("n", "i");
+		Map<String, String> map3Expected = new HashMap<>();
+		map3Expected.put("a", "y");
+		map3Expected.put("b", "x");
+		map3Expected.put("m", "i");
+		map3Expected.put("n", "j");
+		Map<String, String> map4Expected = new HashMap<>();
+		map4Expected.put("a", "y");
+		map4Expected.put("b", "x");
+		map4Expected.put("m", "j");
+		map4Expected.put("n", "i");
+
+		Set<Map<String, String>> expected = new HashSet<>(asList(map1Expected, map2Expected, map3Expected, map4Expected));
+
+		Set<Map<String, String>> result = TraceExplorer.applyProduct(first, second);
+
+		Assert.assertEquals(expected, result);
+
+	}
+
+	@Test
+	public void reduceSet_test(){
+		Map<String, String> map1 = new HashMap<>();
+		map1.put("a", "y");
+		map1.put("b", "x");
+		Map<String, String> map2 = new HashMap<>();
+		map2.put("a", "x");
+		map2.put("b", "y");
+		Map<String, String> map3 = new HashMap<>();
+		map3.put("m", "i");
+		map3.put("n", "j");
+		Map<String, String> map4 = new HashMap<>();
+		map4.put("m", "j");
+		map4.put("n", "i");
+
+		HashSet<Map<String, String>> first = new HashSet<>(asList(map1, map2));
+		HashMap<String, Set<Map<String, String>>> ready = new HashMap<>();
+		ready.put("integer", first);
+		HashSet<Map<String, String>> second = new HashSet<>(Arrays.asList(map3, map4));
+		ready.put("boolean", second);
+
+		Map<String, String> map1Expected = new HashMap<>();
+		map1Expected.put("a", "x");
+		map1Expected.put("b", "y");
+		map1Expected.put("m", "i");
+		map1Expected.put("n", "j");
+		Map<String, String> map2Expected = new HashMap<>();
+		map2Expected.put("a", "x");
+		map2Expected.put("b", "y");
+		map2Expected.put("m", "j");
+		map2Expected.put("n", "i");
+		Map<String, String> map3Expected = new HashMap<>();
+		map3Expected.put("a", "y");
+		map3Expected.put("b", "x");
+		map3Expected.put("m", "i");
+		map3Expected.put("n", "j");
+		Map<String, String> map4Expected = new HashMap<>();
+		map4Expected.put("a", "y");
+		map4Expected.put("b", "x");
+		map4Expected.put("m", "j");
+		map4Expected.put("n", "i");
+
+		Set<Map<String, String>> expected = new HashSet<>(asList(map1Expected, map2Expected, map3Expected, map4Expected));
+
+		Set<Map<String, String>> result = TraceExplorer.reduceSet(ready);
+
+		Assert.assertEquals(expected, result);
+
+	}
+
+	@Test
+	public void cleanse_test(){
+		Map<String, List<String>> input = new HashMap<>();
+
+		List<String> listA = new ArrayList<>(asList("a", "b", "c"));
+		List<String> listB = new ArrayList<>(asList("d", "e", "f"));
+
+		input.put("integer", new ArrayList<>(listA));
+		input.put("boolean", new ArrayList<>(listB));
+
+		Map<String, List<String>> expected = new HashMap<>();
+
+		expected.put("boolean", new ArrayList<>(listB));
+
+		Map<String, List<String>> result = TraceExplorer.cleanse(input, singleton("boolean"));
+
+		Assert.assertEquals(expected, result);
+	}
+
+	@Test
+	public void createAllPossiblePairs_test_1(){
 
 		Map<String, String> result1 = new HashMap<>();
 		result1.put("a", "z");
@@ -90,19 +338,23 @@ public class TraceExplorerUnitTest {
 		expected.add(result5);
 		expected.add(result6);
 
+		Map<String, String> oldMapping = new HashMap<>();
+		oldMapping.put("a", "integer");
+		oldMapping.put("b", "integer");
+		oldMapping.put("c", "integer");
 
+		Map<String, String> newMapping = new HashMap<>();
+		newMapping.put("x", "integer");
+		newMapping.put("y", "integer");
+		newMapping.put("z", "integer");
 
-		MappingFactoryInterface mappingFactoryInterface = new TestUtils.StubFactoryImplementation();
-		TraceExplorer traceExplorer = new TraceExplorer(false, mappingFactoryInterface);
+		Set<Map<String, String>> result = TraceExplorer.createAllPossiblePairs(newMapping, oldMapping, TraceExplorer.MappingNames.VARIABLES_MODIFIED, "inc");
 
-		Assert.assertEquals(expected, traceExplorer.createAllPossiblePairs(oldV, newV, TraceExplorer.MappingNames.VARIABLES_MODIFIED, "inc"));
+		Assert.assertEquals(expected, result);
 	}
 
-
 	@Test
-	public void product_mapping_test_2(){
-		List<String> oldV = asList("a", "b", "c");
-		List<String> newV = asList("x", "y");
+	public void createAllPossiblePairs_test_2(){
 
 		Map<String, String> result1 = new HashMap<>();
 		result1.put("b", "y");
@@ -136,17 +388,21 @@ public class TraceExplorerUnitTest {
 		expected.add(result5);
 		expected.add(result6);
 
-		MappingFactoryInterface mappingFactoryInterface = new TestUtils.StubFactoryImplementation();
-		TraceExplorer traceExplorer = new TraceExplorer(false, mappingFactoryInterface);
+		Map<String, String> oldMapping = new HashMap<>();
+		oldMapping.put("a", "integer");
+		oldMapping.put("b", "integer");
+		oldMapping.put("c", "integer");
+
+		Map<String, String> newMapping = new HashMap<>();
+		newMapping.put("x", "integer");
+		newMapping.put("y", "integer");
 
 
-		Assert.assertEquals(expected, traceExplorer.createAllPossiblePairs(oldV, newV, TraceExplorer.MappingNames.VARIABLES_MODIFIED, ""));
+		Assert.assertEquals(expected, TraceExplorer.createAllPossiblePairs(newMapping, oldMapping, TraceExplorer.MappingNames.VARIABLES_MODIFIED, ""));
 	}
 
 	@Test
-	public void product_mapping_test_3(){
-		List<String> oldV = asList("a", "b");
-		List<String> newV = asList("x", "y", "z");
+	public void createAllPossiblePairs_test_3(){
 
 		Map<String, String> result1 = new HashMap<>();
 		result1.put("a", "z");
@@ -180,32 +436,96 @@ public class TraceExplorerUnitTest {
 		expected.add(result5);
 		expected.add(result6);
 
-		MappingFactoryInterface mappingFactoryInterface = new TestUtils.StubFactoryImplementation();
-		TraceExplorer traceExplorer = new TraceExplorer(false, mappingFactoryInterface);
+		Map<String, String> oldMapping = new HashMap<>();
+		oldMapping.put("a", "integer");
+		oldMapping.put("b", "integer");
+
+		Map<String, String> newMapping = new HashMap<>();
+		newMapping.put("x", "integer");
+		newMapping.put("y", "integer");
+		newMapping.put("z", "integer");
 
 
-		Assert.assertEquals(expected, traceExplorer.createAllPossiblePairs(oldV, newV, TraceExplorer.MappingNames.VARIABLES_MODIFIED, ""));
+		Assert.assertEquals(expected, TraceExplorer.createAllPossiblePairs(newMapping, oldMapping, TraceExplorer.MappingNames.VARIABLES_MODIFIED, ""));
 	}
 
+	@Test
+	public void createAllPossiblePairs_test_4(){
+
+		Map<String, String> result3 = new HashMap<>();
+		result3.put("a", "x");
+		result3.put("b", "z");
+
+		Map<String, String> result6 = new HashMap<>();
+		result6.put("a", "y");
+		result6.put("b", "z");
+
+		Set<Map<String, String>> expected = new HashSet<>();
+		expected.add(result3);
+		expected.add(result6);
+
+		Map<String, String> oldMapping = new HashMap<>();
+		oldMapping.put("a", "integer");
+		oldMapping.put("b", "boolean");
+
+		Map<String, String> newMapping = new HashMap<>();
+		newMapping.put("x", "integer");
+		newMapping.put("y", "integer");
+		newMapping.put("z", "boolean");
 
 
+		Assert.assertEquals(expected, TraceExplorer.createAllPossiblePairs(newMapping, oldMapping, TraceExplorer.MappingNames.VARIABLES_MODIFIED, ""));
+	}
+
+	@Test
+	public void createAllPossiblePairs_test_5(){
+
+		Map<String, String> result4 = new HashMap<>();
+		result4.put("a", "x");
+		result4.put("b", "y");
+
+
+		Set<Map<String, String>> expected = new HashSet<>();
+
+		expected.add(result4);
+
+		Map<String, String> oldMapping = new HashMap<>();
+		oldMapping.put("a", "integer");
+		oldMapping.put("b", "boolean");
+		oldMapping.put("c", "POW(integer)");
+
+		Map<String, String> newMapping = new HashMap<>();
+		newMapping.put("x", "integer");
+		newMapping.put("y", "boolean");
+
+
+		Assert.assertEquals(expected, TraceExplorer.createAllPossiblePairs(newMapping, oldMapping, TraceExplorer.MappingNames.VARIABLES_MODIFIED, ""));
+	}
 
 	@Test
 	public void calculateMappings_test_1(){
-		PersistentTransition floors = new PersistentTransition("floors", Collections.singletonMap("x", "4"),
-				emptyMap(), Collections.singletonMap("floors", "0"), Collections.emptySet(), Collections.emptyList());
+
+		Map<String, String> varMapping1 = new HashMap<>();
+		varMapping1.put("floors", "integer");
+		varMapping1.put("x", "integer");
+
+		OperationInfo operationInfoOld = new OperationInfo("floors", Collections.singletonList("x"),
+				Collections.emptyList(),true, OperationInfo.Type.CLASSICAL_B, Collections.emptyList(), Collections.singletonList("floors"),
+				Collections.emptyList(), varMapping1);
+
+		Map<String, String> varMapping2 = new HashMap<>();
+		varMapping2.put("levels", "integer");
+		varMapping2.put("y", "integer");
 
 
-		OperationInfo operationInfo = new OperationInfo("floors", Collections.singletonList("y"),
+		OperationInfo operationInfoNew = new OperationInfo("floors", Collections.singletonList("y"),
 				Collections.emptyList(),true, OperationInfo.Type.CLASSICAL_B, Collections.emptyList(), Collections.singletonList("levels"),
-				Collections.emptyList());
-
-		MappingFactoryInterface mappingFactoryInterface = new TestUtils.StubFactoryImplementation();
-		TraceExplorer traceExplorer = new TraceExplorer(false, mappingFactoryInterface);
+				Collections.emptyList(), varMapping2);
 
 
-		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> result = traceExplorer
-				.calculateVarMappings(floors, operationInfo, singleton("levels"), emptySet(), emptySet());
+
+		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> result = TraceExplorer
+				.calculateVarMappings("floors", operationInfoNew, operationInfoOld);
 
 
 		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> expected = new HashSet<>();
@@ -222,33 +542,30 @@ public class TraceExplorerUnitTest {
 		expectedHelper.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
 
 		expected.add(expectedHelper);
-		System.out.println(expected);
-		System.out.println(result);
 		Assert.assertTrue(expected.containsAll(result));
 	}
 
-
-
 	@Test
 	public void calculateMappings_test_2(){
-		PersistentTransition floors = new PersistentTransition("floors", new HashMap<String, String>() {{
-			put("x","1");
-			put("y","0");
-			put("z","0");
-		}},
-				emptyMap(), Collections.singletonMap("floors", "0"), Collections.emptySet(), Collections.emptyList());
+
+		Map<String, String> varMapping1 = new HashMap<>();
+		varMapping1.put("floors", "integer");
+		varMapping1.put("x", "integer");
+		varMapping1.put("y", "integer");
+		varMapping1.put("z", "integer");
+
+		OperationInfo operationInfoOld = new OperationInfo("floors", Arrays.asList("x","y","z"),
+				Collections.emptyList(),true, OperationInfo.Type.CLASSICAL_B, Collections.emptyList(), Collections.singletonList("floors"),
+				Collections.emptyList(), varMapping1);
+
+		Map<String, String> varMapping2 = new HashMap<>();
+		varMapping2.put("levels", "integer");
+		varMapping2.put("a", "integer");
 
 
 		OperationInfo operationInfo = new OperationInfo("floors", Collections.singletonList("a"),
 				Collections.emptyList(),true, OperationInfo.Type.CLASSICAL_B, Collections.emptyList(), Collections.singletonList("levels"),
-				Collections.emptyList());
-
-
-		MappingFactoryInterface mappingFactoryInterface = new TestUtils.StubFactoryImplementation();
-		TraceExplorer traceExplorer = new TraceExplorer(false, mappingFactoryInterface);
-
-		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> result =
-				traceExplorer.calculateVarMappings(floors, operationInfo, singleton("levels"), emptySet(), emptySet());
+				Collections.emptyList(), varMapping2);
 
 
 		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> expected = new HashSet<>();
@@ -288,33 +605,37 @@ public class TraceExplorerUnitTest {
 		expectedHelper3.put(TraceExplorer.MappingNames.VARIABLES_READ, emptyMap());
 		expectedHelper3.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
 
-
-
 		expected.add(expectedHelper1);
 		expected.add(expectedHelper2);
 		expected.add(expectedHelper3);
 
+		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> result = TraceExplorer.calculateVarMappings("floors",  operationInfo, operationInfoOld);
 
-     	Assert.assertTrue(expected.containsAll(result));
+
+		Assert.assertTrue(expected.containsAll(result));
 	}
-
 
 	@Test
 	public void calculateMappings_test_3(){
 
-		PersistentTransition floors = new PersistentTransition("floors", Collections.singletonMap("x", "4"),
-				emptyMap(), Collections.singletonMap("floors", "0"), Collections.emptySet(), Collections.emptyList());
+		Map<String, String> varMapping1 = new HashMap<>();
+		varMapping1.put("floors", "integer");
+		varMapping1.put("x", "integer");
 
+		OperationInfo operationInfoOld = new OperationInfo("floors", Collections.singletonList("x"),
+				Collections.emptyList(),true, OperationInfo.Type.CLASSICAL_B, Collections.emptyList(), Collections.singletonList("floors"),
+				Collections.emptyList(), varMapping1);
+
+		Map<String, String> varMapping2 = new HashMap<>();
+		varMapping2.put("levels", "integer");
+		varMapping2.put("x", "integer");
+		varMapping2.put("y", "integer");
+		varMapping2.put("z", "integer");
 
 
 		OperationInfo operationInfo = new OperationInfo("floors", asList("x", "y", "z"),
 				Collections.emptyList(),true, OperationInfo.Type.CLASSICAL_B, Collections.emptyList(), Collections.singletonList("levels"),
-				Collections.emptyList());
-
-		MappingFactoryInterface mappingFactoryInterface = new TestUtils.StubFactoryImplementation();
-		TraceExplorer traceExplorer = new TraceExplorer(false, mappingFactoryInterface);
-
-		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> result = traceExplorer.calculateVarMappings(floors, operationInfo, singleton("levels"), emptySet(), emptySet());
+				Collections.emptyList(), varMapping2);
 
 
 		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> expected = new HashSet<>();
@@ -358,10 +679,11 @@ public class TraceExplorerUnitTest {
 		expectedHelper3.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
 
 
-
 		expected.add(expectedHelper1);
 		expected.add(expectedHelper2);
 		expected.add(expectedHelper3);
+
+		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> result = TraceExplorer.calculateVarMappings("floors", operationInfo, operationInfoOld);
 
 
 		Assert.assertTrue(expected.containsAll(result));
@@ -370,12 +692,20 @@ public class TraceExplorerUnitTest {
 	@Test
 	public void calculateMappings_test_4_removed_output_and_unchanged_state(){
 
-		PersistentTransition floors = new PersistentTransition("getfloors", emptyMap(),
-				Collections.singletonMap("out", "0"), emptyMap(), singleton("floors"), emptyList());
+		Map<String, String> varMapping1 = new HashMap<>();
+		varMapping1.put("floors", "integer");
+		varMapping1.put("out", "integer");
+
+		OperationInfo operationInfoOld = new OperationInfo("floors", emptyList(),
+				singletonList("out"),true, OperationInfo.Type.CLASSICAL_B, Collections.singletonList("floors"), Collections.emptyList(),
+				Collections.emptyList(), varMapping1);
+
+		Map<String, String> varMapping2 = new HashMap<>();
+		varMapping2.put("levels", "integer");
 
 
 		OperationInfo operationInfo = new OperationInfo("getlevels", emptyList(), emptyList(),true,
-				OperationInfo.Type.CLASSICAL_B, singletonList("levels"), emptyList(), emptyList());
+				OperationInfo.Type.CLASSICAL_B, singletonList("levels"), emptyList(), emptyList(), varMapping2);
 
 
 		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> expected = new HashSet<>();
@@ -392,11 +722,9 @@ public class TraceExplorerUnitTest {
 
 
 		expected.add(expectedHelper1);
-		MappingFactoryInterface mappingFactoryInterface = new TestUtils.StubFactoryImplementation();
-		TraceExplorer traceExplorer = new TraceExplorer(false, mappingFactoryInterface);
 
 
-		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> result = traceExplorer.calculateVarMappings(floors, operationInfo, emptySet(), emptySet(), emptySet());
+		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> result = TraceExplorer.calculateVarMappings("getfloors", operationInfo, operationInfoOld);
 
 
 		Assert.assertTrue(expected.containsAll(result));
@@ -405,12 +733,20 @@ public class TraceExplorerUnitTest {
 	@Test
 	public void calculateMappings_test_5_added_output_and_unchanged_state(){
 
-		PersistentTransition floors = new PersistentTransition("getfloors", emptyMap(),
-				emptyMap(), emptyMap(), singleton("floors"), emptyList());
+		Map<String, String> varMapping1 = new HashMap<>();
+		varMapping1.put("floors", "integer");
+
+		OperationInfo operationInfoOld = new OperationInfo("floors", emptyList(), emptyList(), true,
+				OperationInfo.Type.CLASSICAL_B, Collections.singletonList("floors"), Collections.emptyList(),
+				Collections.emptyList(), varMapping1);
+
+		Map<String, String> varMapping2 = new HashMap<>();
+		varMapping2.put("levels", "integer");
+		varMapping2.put("out", "integer");
 
 
 		OperationInfo operationInfo = new OperationInfo("getlevels", emptyList(), singletonList("out"),true,
-				OperationInfo.Type.CLASSICAL_B, singletonList("levels"), emptyList(), emptyList());
+				OperationInfo.Type.CLASSICAL_B, singletonList("levels"), emptyList(), emptyList(), varMapping2);
 
 
 		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> expected = new HashSet<>();
@@ -430,14 +766,14 @@ public class TraceExplorerUnitTest {
 
 		expected.add(expectedHelper1);
 
-		MappingFactoryInterface mappingFactoryInterface = new TestUtils.StubFactoryImplementation();
-		TraceExplorer traceExplorer = new TraceExplorer(false, mappingFactoryInterface);
 
-		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> result = traceExplorer.calculateVarMappings(floors, operationInfo, emptySet(), emptySet(), emptySet());
+		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> result = TraceExplorer.calculateVarMappings("floors", operationInfo, operationInfoOld);
+
+		System.out.println(expected);
+		System.out.println(result);
 
 		Assert.assertTrue(expected.containsAll(result));
 	}
-
 
 	@Test
 	public void createPersistentTransitionFromMapping_test_1(){
@@ -499,7 +835,6 @@ public class TraceExplorerUnitTest {
 		Assert.assertEquals(expected, result);
 	}
 
-
 	@Test
 	public void createPersistentTransitionFromMapping_test_3(){
 
@@ -534,7 +869,6 @@ public class TraceExplorerUnitTest {
 
 		Assert.assertEquals(expected, result);
 	}
-
 
 	@Test
 	public void createPersistentTransitionFromMapping_test_4(){
@@ -571,7 +905,6 @@ public class TraceExplorerUnitTest {
 		Assert.assertEquals(expected, result);
 	}
 
-
 	@Test
 	public void createPersistentTransitionFromMapping_test_5(){
 
@@ -606,7 +939,6 @@ public class TraceExplorerUnitTest {
 
 		Assert.assertEquals(expected, result);
 	}
-
 
 	@Test
 	public void createPersistentTransitionFromMapping_test_7(){
@@ -678,8 +1010,6 @@ public class TraceExplorerUnitTest {
 		Assert.assertEquals(expected, result);
 	}
 
-
-
 	@Test
 	public void generateAllPossibleMappingVariations_test() throws IOException, ModelTranslationError {
 		PersistentTransition init = new PersistentTransition(Transition.INITIALISE_MACHINE_NAME, emptyMap(),
@@ -695,7 +1025,11 @@ public class TraceExplorerUnitTest {
 		PersistentTransition second = new PersistentTransition("dec", emptyMap(),
 				emptyMap(), Collections.singletonMap("floors", "0"), Collections.emptySet(), Collections.emptyList());
 
-		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "Lift2.mch"));
+		StateSpace stateSpace1 = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "reducedSigLengthAndRenamedVariable",  "OneTypeIIICandidateCounterPart.mch"));
+		Map<String, OperationInfo> oldInfos = stateSpace1.getLoadedMachine().getOperations();
+
+		StateSpace stateSpace2 = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "reducedSigLengthAndRenamedVariable", "OneTypeIIICandidate.mch"));
+		Map<String, OperationInfo> newInfos = stateSpace2.getLoadedMachine().getOperations();
 
 
 		Set<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>> expected = new HashSet<>();
@@ -708,9 +1042,9 @@ public class TraceExplorerUnitTest {
 		mapping_dec.put("floors", "levels");
 
 		expectedHelper_dec.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, emptyMap());
-		expectedHelper_dec.put(TraceExplorer.MappingNames.VARIABLES_MODIFIED, mapping_dec);
-		expectedHelper_dec.put(TraceExplorer.MappingNames.VARIABLES_READ, emptyMap());
 		expectedHelper_dec.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
+		expectedHelper_dec.put(TraceExplorer.MappingNames.VARIABLES_MODIFIED, mapping_dec);
+		expectedHelper_dec.put(TraceExplorer.MappingNames.VARIABLES_READ, mapping_dec);
 
 
 
@@ -722,9 +1056,9 @@ public class TraceExplorerUnitTest {
 		mapping2_1.put("floors", "levels");
 
 		expectedHelper1.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, mapping1_1);
-		expectedHelper1.put(TraceExplorer.MappingNames.VARIABLES_MODIFIED, mapping2_1);
-		expectedHelper1.put(TraceExplorer.MappingNames.VARIABLES_READ, emptyMap());
 		expectedHelper1.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
+		expectedHelper1.put(TraceExplorer.MappingNames.VARIABLES_MODIFIED, mapping2_1);
+		expectedHelper1.put(TraceExplorer.MappingNames.VARIABLES_READ, mapping2_1);
 
 		expectedHelper1_1.put("inc", expectedHelper1);
 		expectedHelper1_1.put("dec", expectedHelper_dec);
@@ -739,9 +1073,9 @@ public class TraceExplorerUnitTest {
 		mapping2_2.put("floors", "levels");
 
 		expectedHelper2.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, mapping1_2);
-		expectedHelper2.put(TraceExplorer.MappingNames.VARIABLES_MODIFIED, mapping2_2);
-		expectedHelper2.put(TraceExplorer.MappingNames.VARIABLES_READ, emptyMap());
 		expectedHelper2.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
+		expectedHelper2.put(TraceExplorer.MappingNames.VARIABLES_READ, mapping2_2);
+		expectedHelper2.put(TraceExplorer.MappingNames.VARIABLES_MODIFIED, mapping2_2);
 
 		expectedHelper1_2.put("inc", expectedHelper2);
 		expectedHelper1_2.put("dec", expectedHelper_dec);
@@ -757,7 +1091,7 @@ public class TraceExplorerUnitTest {
 
 		expectedHelper3.put(TraceExplorer.MappingNames.INPUT_PARAMETERS, mapping1_3);
 		expectedHelper3.put(TraceExplorer.MappingNames.VARIABLES_MODIFIED, mapping2_3);
-		expectedHelper3.put(TraceExplorer.MappingNames.VARIABLES_READ, emptyMap());
+		expectedHelper3.put(TraceExplorer.MappingNames.VARIABLES_READ, mapping2_3);
 		expectedHelper3.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
 
 
@@ -770,25 +1104,15 @@ public class TraceExplorerUnitTest {
 		expected.add(expectedHelper1_2);
 		expected.add(expectedHelper1_1);
 
-		MappingFactoryInterface mappingFactoryInterface = new TestUtils.StubFactoryImplementation();
-		TraceExplorer traceExplorer = new TraceExplorer(false, mappingFactoryInterface);
 
 
 
-
-		Set<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>> result = traceExplorer
-				.generateAllPossibleMappingVariations(
-						asList(init, first, second),
-						stateSpace.getLoadedMachine().getOperations(),
-						Stream.of("inc", "dec").collect(Collectors.toSet()),
-						singleton("levels"),
-						emptySet(),
-						emptySet());
+		Set<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>> result = TraceExplorer
+				.generateAllPossibleMappingVariations(asList(init, first, second), newInfos, oldInfos, new HashSet<>(Arrays.asList("inc", "dec")));
 
 		Assert.assertEquals(expected, result);
 
 	}
-
 
 	@Test
 	public void generateAllPossibleMappingVariations_empty_typeIII_test() throws IOException, ModelTranslationError {
@@ -803,232 +1127,23 @@ public class TraceExplorerUnitTest {
 		PersistentTransition second = new PersistentTransition("dec", emptyMap(),
 				emptyMap(), Collections.singletonMap("leves", "0"), Collections.emptySet(), Collections.emptyList());
 
-		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "Lift2.mch"));
+
+		StateSpace stateSpace1 = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "reducedSigLengthAndRenamedVariable",  "OneTypeIIICandidateCounterPart.mch"));
+		Map<String, OperationInfo> newInfos = stateSpace1.getLoadedMachine().getOperations();
 
 
-		MappingFactoryInterface mappingFactoryInterface = new TestUtils.StubFactoryImplementation();
-		TraceExplorer traceExplorer = new TraceExplorer(false, mappingFactoryInterface);
+		StateSpace stateSpace2 = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "reducedSigLengthAndRenamedVariable", "OneTypeIIICandidate.mch"));
+		Map<String, OperationInfo> oldInfos = stateSpace2.getLoadedMachine().getOperations();
 
 
 
 		Set<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>> result =
-				traceExplorer.generateAllPossibleMappingVariations(
-						asList(init, first, second),
-						stateSpace.getLoadedMachine().getOperations(),
-						emptySet(),
-						emptySet(),
-						emptySet(),
-						emptySet());
+				TraceExplorer.generateAllPossibleMappingVariations(asList(init, first, second), newInfos, oldInfos, emptySet());
 
 		Assert.assertEquals(singleton(emptyMap()), result);
 
 	}
 
-/*
-	@Test
-	public void removeEntriesWithEmptyValues_test_return_all(){
-		PersistentTransition init = new PersistentTransition(Transition.INITIALISE_MACHINE_NAME, emptyMap(),
-				emptyMap(), singletonMap("levels", "0"), emptySet(), emptyList());
 
-		PersistentTransition first = new PersistentTransition("inc", singletonMap("a", "1"), emptyMap(),
-				singletonMap("floors", "1"), emptySet(), emptyList());
-
-		PersistentTransition second = new PersistentTransition("dec", Collections.emptyMap(),
-				Collections.emptyMap(), singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList());
-
-
-
-
-		PersistentTransition initNew = new PersistentTransition(Transition.INITIALISE_MACHINE_NAME, Collections.emptyMap(),
-				Collections.emptyMap(), singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList());
-
-		PersistentTransition firstNew_var1 = new PersistentTransition("inc", new HashMap<String, String>() {{
-			put("x","1");
-			put("y","0");
-			put("z","TRUE");
-		}},
-				Collections.emptyMap(), singletonMap("levels", "1"), Collections.emptySet(), Collections.emptyList());
-
-		PersistentTransition firstNew_var2 = new PersistentTransition("inc", new HashMap<String, String>() {{
-
-			put("x","0");
-			put("y","1");
-			put("z","TRUE");
-		}},
-				Collections.emptyMap(), singletonMap("levels", "1"), Collections.emptySet(), Collections.emptyList());
-
-
-
-
-		PersistentTransition secondNew = new PersistentTransition("dec", Collections.emptyMap(),
-				Collections.emptyMap(), singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList());
-
-
-		//The explorer will find multiple possible solutions, we expect at least 3, because we want to test if the mapping from
-		//old to new parameters is working properly
-
-		PersistenceDelta delta1 = new PersistenceDelta(init, Collections.singletonList(initNew));
-		PersistenceDelta delta2_var1 = new PersistenceDelta(first, Collections.singletonList(firstNew_var1));
-		PersistenceDelta delta2_var2 = new PersistenceDelta(first, Collections.singletonList(firstNew_var2));
-
-		PersistenceDelta delta3 = new PersistenceDelta(second, Collections.singletonList(secondNew));
-
-
-		List<PersistenceDelta> expected1 = Arrays.asList(delta1,delta2_var1,delta3);
-		List<PersistenceDelta> expected2 = Arrays.asList(delta1,delta2_var2,delta3);
-
-
-		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> expected = new HashMap<>();
-
-
-
-
-		Map<String, String> expectedHelper_1 = new HashMap<>();
-		expectedHelper_1.put("floors", "levels");
-		expectedHelper_1.put("a", "x");
-
-		Map<String, String> expectedHelper_2 = new HashMap<>();
-		expectedHelper_2.put("floors", "levels");
-		expectedHelper_2.put("a", "y");
-
-
-		Map<String, Map<String, String>> expected_inner1 = new HashMap<>();
-		expected_inner1.put("inc", expectedHelper_1);
-
-		Map<String, Map<String, String>> expected_inner2 = new HashMap<>();
-		expected_inner2.put("inc", expectedHelper_2);
-
-
-
-
-		expected.put(expected_inner1,  expected1);
-		expected.put(expected_inner2,  expected2);
-
-		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result = TraceExplorer.removeEntriesWithEmptyValues(expected);
-
-		Assert.assertEquals(expected, result);
-	}
-
-	@Test
-	public void removeEntriesWithEmptyValues_test_return_empty_map(){
-		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> prepared = new HashMap<>();
-
-
-		Map<String, String> preparedHelper_1 = new HashMap<>();
-		preparedHelper_1.put("floors", "levels");
-		preparedHelper_1.put("a", "x");
-
-		Map<String, String> preparedHelper_2 = new HashMap<>();
-		preparedHelper_2.put("floors", "levels");
-		preparedHelper_2.put("a", "y");
-
-
-		Map<String, Map<String, String>> prepared_inner1 = new HashMap<>();
-		prepared_inner1.put("inc", preparedHelper_1);
-
-		Map<String, Map<String, String>> prepared_inner2 = new HashMap<>();
-		prepared_inner2.put("inc", preparedHelper_2);
-
-
-		prepared.put(prepared_inner1,  emptyList());
-		prepared.put(prepared_inner2,  emptyList());
-
-
-
-		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result = TraceExplorer.removeEntriesWithEmptyValues(prepared);
-
-
-		Assert.assertEquals(emptyMap(), result);
-
-	}
-
-	@Test
-	public void removeEntriesWithEmptyValues_test_return_clean_one(){
-		PersistentTransition init = new PersistentTransition(Transition.INITIALISE_MACHINE_NAME, emptyMap(),
-				emptyMap(), singletonMap("levels", "0"), emptySet(), emptyList());
-
-		PersistentTransition first = new PersistentTransition("inc", singletonMap("a", "1"), emptyMap(),
-				singletonMap("floors", "1"), emptySet(), emptyList());
-
-		PersistentTransition second = new PersistentTransition("dec", Collections.emptyMap(),
-				Collections.emptyMap(), singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList());
-
-
-
-
-		PersistentTransition initNew = new PersistentTransition(Transition.INITIALISE_MACHINE_NAME, Collections.emptyMap(),
-				Collections.emptyMap(), singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList());
-
-		PersistentTransition firstNew_var1 = new PersistentTransition("inc", new HashMap<String, String>() {{
-			put("x","1");
-			put("y","0");
-			put("z","TRUE");
-		}},
-				Collections.emptyMap(), singletonMap("levels", "1"), Collections.emptySet(), Collections.emptyList());
-
-
-
-		PersistentTransition secondNew = new PersistentTransition("dec", Collections.emptyMap(),
-				Collections.emptyMap(), singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList());
-
-
-		//The explorer will find multiple possible solutions, we expect at least 3, because we want to test if the mapping from
-		//old to new parameters is working properly
-
-		PersistenceDelta delta1 = new PersistenceDelta(init, Collections.singletonList(initNew));
-		PersistenceDelta delta2_var1 = new PersistenceDelta(first, Collections.singletonList(firstNew_var1));
-
-		PersistenceDelta delta3 = new PersistenceDelta(second, Collections.singletonList(secondNew));
-
-
-		List<PersistenceDelta> prepared1 = Arrays.asList(delta1,delta2_var1,delta3);
-
-
-		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> prepared = new HashMap<>();
-
-
-		Map<String, String> preparedHelper_1 = new HashMap<>();
-		preparedHelper_1.put("floors", "levels");
-		preparedHelper_1.put("a", "x");
-
-		Map<String, String> preparedHelper_2 = new HashMap<>();
-		preparedHelper_2.put("floors", "levels");
-		preparedHelper_2.put("a", "y");
-
-
-		Map<String, Map<String, String>> prepared_inner1 = new HashMap<>();
-		prepared_inner1.put("inc", preparedHelper_1);
-
-		Map<String, Map<String, String>> prepared_inner2 = new HashMap<>();
-		prepared_inner2.put("inc", preparedHelper_2);
-
-
-		prepared.put(prepared_inner1,  prepared1);
-		prepared.put(prepared_inner2,  emptyList());
-
-
-		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> expected = new HashMap<>();
-
-
-		Map<String, String> expectedHelper = new HashMap<>();
-		expectedHelper.put("floors", "levels");
-		expectedHelper.put("a", "x");
-
-
-
-		Map<String, Map<String, String>> expected_inner = new HashMap<>();
-		expected_inner.put("inc", expectedHelper);
-
-
-		expected.put(expected_inner,  prepared1);
-
-
-
-		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result = TraceExplorer.removeEntriesWithEmptyValues(prepared);
-
-
-		Assert.assertEquals(expected, result);
-	}
-	*/
 
 }

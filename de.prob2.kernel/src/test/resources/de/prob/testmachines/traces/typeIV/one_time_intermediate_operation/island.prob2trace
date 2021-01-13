@@ -1,0 +1,138 @@
+{
+  "type" : "Trace",
+  "name" : "ISLAND",
+  "description" : "",
+  "trace" : {
+    "description" : "",
+    "transitionList" : [ {
+      "operationName" : "$setup_constants",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "maxCars" : "5"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "$initialise_machine",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "cars" : "0"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "on",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "cars" : "1"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "on",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "cars" : "2"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "on",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "cars" : "3"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "on",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "cars" : "4"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "off",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "cars" : "3"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "off",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "cars" : "2"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "off",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "cars" : "1"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "off",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "cars" : "0"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    } ]
+  },
+  "variableNames" : [ "cars" ],
+  "machineOperationInfos" : {
+    "on" : {
+      "operationName" : "on",
+      "parameterNames" : [ ],
+      "outputParameterNames" : [ ],
+      "topLevel" : true,
+      "type" : "CLASSICAL_B",
+      "readVariables" : [ "cars", "maxCars" ],
+      "writtenVariables" : [ "cars" ],
+      "nonDetWrittenVariables" : [ ],
+      "allVariables" : [ "cars", "maxCars", "cars" ],
+      "allIdentifier" : [ "cars", "maxCars" ]
+    },
+    "off" : {
+      "operationName" : "off",
+      "parameterNames" : [ ],
+      "outputParameterNames" : [ ],
+      "topLevel" : true,
+      "type" : "CLASSICAL_B",
+      "readVariables" : [ "cars" ],
+      "writtenVariables" : [ "cars" ],
+      "nonDetWrittenVariables" : [ ],
+      "allVariables" : [ "cars", "cars" ],
+      "allIdentifier" : [ "cars" ]
+    }
+  },
+  "constantNames" : [ "maxCars" ],
+  "setNames" : [ ],
+  "metaData" : {
+    "type" : "TraceMetaData",
+    "formatVersion" : 1,
+    "savedAt" : [ 2021, 1, 3, 10, 31, 8, 436667000 ],
+    "creator" : "USER",
+    "proBCliVersion" : "1.10.0-nightly",
+    "name" : "HALLO",
+    "path" : "ISLAND.mch",
+    "proB2KernelVersion" : "4.0.0-SNAPSHOT"
+  }
+}

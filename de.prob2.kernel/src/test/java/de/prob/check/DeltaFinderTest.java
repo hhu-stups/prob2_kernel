@@ -277,7 +277,7 @@ public class DeltaFinderTest {
 		String pathAsStringOld = pathOld.toAbsolutePath().toString();
 
 
-		Path path = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift3.mch");
+		Path path = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "LiftWithLevels.mch");
 		String pathAsString = path.toAbsolutePath().toString();
 
 		Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
@@ -332,7 +332,7 @@ public class DeltaFinderTest {
 		String pathAsStringOld = pathOld.toAbsolutePath().toString();
 
 
-		Path path = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift3.mch");
+		Path path = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "LiftWithLevels.mch");
 		String pathAsString = path.toAbsolutePath().toString();
 
 		Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());

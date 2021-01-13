@@ -91,7 +91,7 @@ public class TraceExplorer {
 
 		Map<String, String> destChangedVariables =
 				mapping.get(MappingNames.VARIABLES_MODIFIED).entrySet().stream()
-						.filter(entry -> !current.getDestStateNotChanged().contains(entry.getKey()))
+						.filter(entry -> current.getDestinationStateVariables().containsKey(entry.getKey()))
 						.collect(toMap(Map.Entry::getValue, entry -> current.getDestinationStateVariables().get(entry.getKey())));
 
 
@@ -535,10 +535,7 @@ public class TraceExplorer {
 																					   Map<String, OperationInfo> operationInfoNew,
 																					   Map<String, OperationInfo> operationInfoOld,
 																					   Set<String> typeIIICandidates,
-																					   Set<String> typeIVCandidates,
-																					   Set<String> usedVars,
-																					   Set<String> usedSets,
-																					   Set<String> usedConst) {
+																					   Set<String> typeIVCandidates) {
 
 		Trace trace = new Trace(stateSpace);
 		trace.setExploreStateByDefault(true);

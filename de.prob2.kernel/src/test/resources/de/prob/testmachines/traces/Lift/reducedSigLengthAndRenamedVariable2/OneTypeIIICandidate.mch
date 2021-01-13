@@ -1,4 +1,4 @@
-MACHINE Lift
+MACHINE OneTypeIIICandidate
 
 VARIABLES  floors
 
@@ -8,7 +8,8 @@ INITIALISATION floors := 0
 
 OPERATIONS
 
-	inccc = PRE floors<2 THEN floors := floors + 1 END ;
+	inc(a) = PRE a < 100 - floors & floors<100 THEN floors := floors + 1 END ;
 	dec = PRE floors>0 THEN floors := floors - 1 END;
 	out <-- getfloors = BEGIN out := floors END
+
 END

@@ -1,4 +1,4 @@
-MACHINE Lift9
+MACHINE Lift4
 
 VARIABLES  levels
 
@@ -8,7 +8,7 @@ INITIALISATION levels := 0
 
 OPERATIONS
 
-	inc(x) = PRE x < 100 - levels & levels<100 THEN levels := levels + 1 END ;
+	inc(x, y, z) = PRE x < 100 - levels & y >= 0 & z >= 0 & levels<100 THEN levels := levels + x+y+z END ;
 	dec = PRE levels>0 THEN levels := levels - 1 END;
 	out <-- getlevels = BEGIN out := levels END
 

@@ -1,4 +1,4 @@
-MACHINE Lift3
+MACHINE LiftWithLevels
 
 VARIABLES  level
 

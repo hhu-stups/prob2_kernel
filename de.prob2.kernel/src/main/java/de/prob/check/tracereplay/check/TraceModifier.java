@@ -219,7 +219,7 @@ public class TraceModifier {
 					.map(entry ->
 					{
 						Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result =
-								traceExplorer.replayTrace(entry.getValue(), stateSpace, newInfos, oldInfos, typeIIICandidates, typeIVCandidates, newVars, newSets, newConst);
+								traceExplorer.replayTrace(entry.getValue(), stateSpace, newInfos, oldInfos, typeIIICandidates, typeIVCandidates);
 						if (result.values().isEmpty()) {
 							new AbstractMap.SimpleEntry<>(emptySet(), emptyMap());
 						}
@@ -234,7 +234,7 @@ public class TraceModifier {
 			changelogPhase4.putAll(typeIVResults);
 
 		} else {
-			Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result = traceExplorer.replayTrace(getLastChange(), stateSpace, newInfos, oldInfos,  typeIIICandidates, typeIVCandidates, newVars, newSets, newConst);
+			Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result = traceExplorer.replayTrace(getLastChange(), stateSpace, newInfos, oldInfos,  typeIIICandidates, typeIVCandidates);
 			Map<Map<String, Map<String, String>>, Map<String, TraceAnalyser.AnalyserResult>> typeIVResults =
 					performTypeIVAnalysing2(traceExplorer.getUpdatedTypeIV(), result);
 			changelogPhase3.put(Collections.emptySet(), result);
