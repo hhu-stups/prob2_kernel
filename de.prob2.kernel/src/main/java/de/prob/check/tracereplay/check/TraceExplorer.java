@@ -13,7 +13,6 @@ import de.prob.formula.PredicateBuilder;
 import de.prob.statespace.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static de.prob.check.tracereplay.check.TraceCheckerUtils.firstOrEmpty;
 import static java.util.Collections.*;
@@ -31,6 +30,12 @@ public class TraceExplorer {
 		this.mappingFactory = mappingFactory;
 	}
 
+	/**
+	 * Gets a list of transition and a variable mapping and applies the mapping to all transitions in the list
+	 * @param mapping the mapping to be applied
+	 * @param transitionList the list to apply to
+	 * @return the changed transition list
+	 */
 	public static List<PersistentTransition> transformTransitionList(Map<String, Map<MappingNames, Map<String, String>>> mapping,
 																	 List<PersistentTransition> transitionList) {
 		return transitionList.stream().map(transition ->
@@ -42,6 +47,11 @@ public class TraceExplorer {
 		}).collect(toList());
 	}
 
+	/**
+	 * Removes the Enum Constans that were used to reduce the overhead for calculations by splitting the work in smaller pieces
+	 * @param mappings the mapping to clean up
+	 * @return the cleansed mapping
+	 */
 	public static Map<Map<String, Map<String, String>>, List<PersistenceDelta>> removeHelperVariableMappings(
 			Map<Map<String, Map<MappingNames, Map<String, String>>>, List<PersistenceDelta>> mappings) {
 		return mappings.entrySet().stream().collect(toMap(variationToDelta ->
@@ -54,6 +64,12 @@ public class TraceExplorer {
 						}))), Map.Entry::getValue));
 	}
 
+	/**
+	 * Creates a new persistent transition with the help of two transition
+	 * @param oldTransition the last seen transition or null when none was last
+	 * @param newTransition the current transition from which the persistent transition should be created from
+	 * @return the persistent transition
+	 */
 	public static PersistentTransition generateNewTransition(Transition oldTransition, Transition newTransition) {
 		if (oldTransition == null) {
 			return new PersistentTransition(newTransition, null);
@@ -138,6 +154,7 @@ public class TraceExplorer {
 		return resultSet;
 	}
 
+
 	public static GetOperationByPredicateCommand buildTransition(StateSpace stateSpace, PersistentTransition persistentTransition,
 																 Trace t) {
 
@@ -150,6 +167,16 @@ public class TraceExplorer {
 
 		return new GetOperationByPredicateCommand(stateSpace, t.getCurrentState().getId(),
 				persistentTransition.getOperationName(), pred, 1);
+	}
+
+	public static ConstructTraceCommand buildTransitions(String name, Trace t, PersistentTransition current) {
+		return new ConstructTraceCommand(
+				t.getStateSpace(),
+				t.getCurrentState(),
+				Arrays.asList(name, current.getOperationName()),
+				Arrays.asList(
+						new ClassicalB("1=1", FormulaExpand.EXPAND),
+						new ClassicalB(new PredicateBuilderFactory().createPredicateBuilder(current).toString(), FormulaExpand.EXPAND)));
 	}
 
 	/**
@@ -195,13 +222,7 @@ public class TraceExplorer {
 
 		List<ConstructTraceCommand> commands = possibleTransitions
 				.stream()
-				.map(name -> new ConstructTraceCommand(
-						t.getStateSpace(),
-						t.getCurrentState(),
-						Arrays.asList(name, current.getOperationName()),
-						Arrays.asList(
-								new ClassicalB("1=1", FormulaExpand.EXPAND),
-								new ClassicalB(new PredicateBuilderFactory().createPredicateBuilder(current).toString(), FormulaExpand.EXPAND))))
+				.map(name -> buildTransitions(name, t, current))
 				.collect(toList());
 
 		StateSpace stateSpace = t.getStateSpace();
@@ -285,7 +306,7 @@ public class TraceExplorer {
 	 * @param typeIIICandidates the operations filterd as type 3
 	 * @return the co product from all operations
 	 */
-	public static Set<Map<String, Map<MappingNames, Map<String, String>>>> generateAllPossibleMappingVariations(
+	public Set<Map<String, Map<MappingNames, Map<String, String>>>> generateAllPossibleMappingVariations(
 			List<PersistentTransition> transitionList,
 			Map<String, OperationInfo> operationInfoNew,
 			Map<String, OperationInfo> operationInfoOld,
@@ -327,7 +348,16 @@ public class TraceExplorer {
 	}
 
 
-	public static Set<Map<String, String>> createAllPossiblePairs(Map<String, String> newTypes, Map<String, String> oldTypes,
+	/**
+	 * Gets identifiers an their types for a certain section of the operation represented as current mapping.
+	 * calculates all possible possible (type is correct) constellations from old to new
+	 * @param newTypes the current identifiers with types
+	 * @param oldTypes the old identifiers with types
+	 * @param currentMapping the section under work
+	 * @param name the name of the operation under work
+	 * @return all possible mappings for this section
+	 */
+	public Set<Map<String, String>> createAllPossiblePairs(Map<String, String> newTypes, Map<String, String> oldTypes,
 														   MappingNames currentMapping,
 														   String name) {
 
@@ -341,33 +371,39 @@ public class TraceExplorer {
 				.stream()
 				.collect(toMap(Map.Entry::getKey, entry -> Math.min(entry.getValue().size(), newTypesSorted.getOrDefault(entry.getKey(), emptyList()).size())));
 
+
+		Map<String, Integer> manualCandidates = minMap.entrySet()
+				.stream()
+				.filter(entry -> entry.getValue() > 9)
+				.collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+		Map<String, Set<Map<String, String>>> manualCandidatesDecided = manualCandidates.entrySet()
+				.stream()
+				.collect(toMap(Map.Entry::getKey, entry -> {
+					String key = entry.getKey();
+					Map<String, String> result = mappingFactory.produceMappingManager().askForMapping(oldTypesSorted.get(key), newTypesSorted.get(key), name, currentMapping);
+					HashSet<Map<String, String>> set = new HashSet<>();
+					set.add(result);
+					return set;
+				}));
+
+		Map<String, List<String>> oldTypesSortedAutomatic = removeKeys(oldTypesSorted, manualCandidates.keySet());
+		Map<String, List<String>> newTypesSortedAutomatic = removeKeys(newTypesSorted, manualCandidates.keySet());
 		
-		
-		
-		
-		Map<String, List<String>> newSortedCleansed = cleanse(newTypesSorted, oldTypesSorted.keySet());
-		Map<String, List<String>> oldSortedCleansed = cleanse(oldTypesSorted, newTypesSorted.keySet());
+		Map<String, List<String>> newSortedCleansed = cleanse(newTypesSorted, oldTypesSortedAutomatic.keySet());
+		Map<String, List<String>> oldSortedCleansed = cleanse(oldTypesSorted, newTypesSortedAutomatic.keySet());
 		
 		Map<String, List<List<String>>> oldPermuted = permutedMap(oldSortedCleansed, minMap);
 		Map<String, List<List<String>>> newPermuted = permutedMap(newSortedCleansed, minMap);
 
 		Map<String, Set<Map<String, String>>> molten = melt(oldPermuted, newPermuted);
+		molten.putAll(manualCandidatesDecided);
 
 		return reduceSet(molten);
-/*
-		int size = Math.min(oldVars.size(), newVars.size());
+	}
 
-		if (oldVars.size() > 9 || newVars.size() > 9 || oldVars.size() + newVars.size() > 9) {
-			return singleton(mappingFactory.produceMappingManager().askForMapping(oldVars, newVars, name, currentMapping));
-		} else {
-			List<List<String>> permutationsOld = TraceCheckerUtils.generatePerm(new ArrayList<>(oldVars), 0, size, emptyList());
-			List<List<String>> permutationsNew = TraceCheckerUtils.generatePerm(new ArrayList<>(newVars), 0, size, emptyList());
-
-			return permutationsOld.stream().flatMap(permutationOld -> permutationsNew.stream().map(permutationNew ->
-					TraceCheckerUtils.zip(permutationOld, permutationNew))).collect(toSet());
-
-		}
-		*/
+	public static Map<String, List<String>> removeKeys(Map<String, List<String>> map, Set<String> set){
+		return map.entrySet().stream().filter(entry -> !set.contains(entry.getKey())).collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
 	}
 
 	/**
@@ -475,8 +511,20 @@ public class TraceExplorer {
 	}
 
 
-	
-	public static Set<Map<MappingNames, Map<String, String>>> calculateVarMappings(String name,
+	/**
+	 * Gets two versions of the same operation a and b. a is from the machine that created the trace file b is from the
+	 * current machine (old and new). Create a mapping of all identifiers in a to b. Will dismiss all identifiers with no
+	 * counterpart.
+	 *
+	 * First the operation infos will be divided in their four main parts to reduce overhead, for each part the
+	 * identifier constellations will be calculated independent and the results are then apllied to each other
+	 *
+	 * @param name the name of the operation
+	 * @param operationMappingNew the operation infos of the currently loaded machine
+	 * @param operationMappingOld the infos from the trace file
+	 * @return a set containing all possible mappings for each section of the machine
+	 */
+	public Set<Map<MappingNames, Map<String, String>>> calculateVarMappings(String name,
 																			OperationInfo operationMappingNew,
 																			OperationInfo operationMappingOld) {
 
@@ -517,7 +565,12 @@ public class TraceExplorer {
 		
 		return mappings;
 	}
-	
+
+	/**
+	 * helper for @see caluclateVarMappings, splits a operation info in four parts
+	 * @param info the operation info to be splitted
+	 * @return the splitted operation info
+	 */
 	public static Map<MappingNames, List<String>> fillMapping(OperationInfo info){
 		Map<MappingNames, List<String>> operationInfos = new HashMap<>();
 		ArrayList<String> variablesModified = new ArrayList<>(info.getNonDetWrittenVariables());
@@ -530,6 +583,17 @@ public class TraceExplorer {
 
 	}
 
+	/**
+	 * The main logic component of this class. Gets a trace and information extracted previously and tries to run the
+	 * trace under the current conditions. Problems will be caught and "fixed" on the fly if sensebill and logical.
+	 * @param transitionList the trace to be replayed
+	 * @param stateSpace the statesman where the current machine lives in
+	 * @param operationInfoNew the infos of the current machine
+	 * @param operationInfoOld the infos of the machine that created the trace
+	 * @param typeIIICandidates candidates where the signature might have changed
+	 * @param typeIVCandidates candidates that may not accessible, removed, or renamed...
+	 * @return the replayed trace in dependence to the identifier selection regariding typeIIICandidates
+	 */
 	public Map<Map<String, Map<String, String>>, List<PersistenceDelta>> replayTrace(List<PersistentTransition> transitionList,
 																					   StateSpace stateSpace,
 																					   Map<String, OperationInfo> operationInfoNew,
@@ -608,7 +672,6 @@ public class TraceExplorer {
 	}
 
 
-
 	//Evtl. Return map<PersistentTransition, Transition>
 	private Transition replayPersistentTransition(Trace t, PersistentTransition persistentTransition) throws TransitionHasNoSuccessorException {
 
@@ -647,7 +710,7 @@ public class TraceExplorer {
 				persistentTransition.getOperationName(), pred, 1);
 	}
 
-	public GetOperationByPredicateCommand buildSC(StateSpace stateSpace, PersistentTransition persistentTransition,
+	public static GetOperationByPredicateCommand buildSC(StateSpace stateSpace, PersistentTransition persistentTransition,
 												  Trace t) {
 
 		PredicateBuilder predicateBuilder = new PredicateBuilder();
@@ -662,7 +725,7 @@ public class TraceExplorer {
 
 
 	/**
-	 * An helper datatype to better group maps of the form Map<\String, String>
+	 * An helper datatype to better split operation infos
 	 */
 	public enum MappingNames {
 		INPUT_PARAMETERS, OUTPUT_PARAMETERS, VARIABLES_MODIFIED, VARIABLES_READ
