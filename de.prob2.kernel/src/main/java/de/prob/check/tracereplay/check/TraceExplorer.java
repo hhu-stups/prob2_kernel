@@ -23,7 +23,10 @@ public class TraceExplorer {
 
 	private final boolean initWasSet;
 	private final MappingFactoryInterface mappingFactory;
-	private final Set<String> updatedTypeIV = new HashSet<>();
+
+
+
+	private final Map< Map<String, Map<MappingNames, Map<String, String>>>, Set<String>> updatedTypeIV = new HashMap<>();
 
 	public TraceExplorer(boolean initWasSet, MappingFactoryInterface mappingFactory) {
 		this.initWasSet = initWasSet;
@@ -614,7 +617,7 @@ public class TraceExplorer {
 							.entrySet().stream()
 							.map(entry -> new PersistenceDelta(entry.getKey(), singletonList(entry.getValue())))
 							.collect(toList());
-					return new AbstractMap.SimpleEntry<>(mapping, createNewTransitionList(preparedDelta, trace, typeIVCandidates));
+					return new AbstractMap.SimpleEntry<>(mapping, createNewTransitionList(preparedDelta, trace, typeIVCandidates, mapping));
 				})
 				.filter(entry -> !entry.getValue().isEmpty())
 				.collect(toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
@@ -631,17 +634,19 @@ public class TraceExplorer {
 	 * @param persistentTransitions the prepared transition list
 	 * @param t the initial state of the loaded machine
 	 * @param typeIV all operations that are identified as type IV
+	 * @param currentTypeIIIMapping the currently used variable mapping
 	 * @return the new transition list either containing a correct pathing or is empty when no pathing was found
 	 */
-	public List<PersistenceDelta> createNewTransitionList(List<PersistenceDelta> persistentTransitions, Trace t, Set<String> typeIV){
+	public List<PersistenceDelta> createNewTransitionList(List<PersistenceDelta> persistentTransitions, Trace t, Set<String> typeIV, Map<String, Map<MappingNames, Map<String, String>>> currentTypeIIIMapping){
 		Trace currentState = t;
 		List<PersistenceDelta> newTransitions = new ArrayList<>();
 
-		updatedTypeIV.addAll(typeIV);
+
+		Set<String> usedTypeIV = new HashSet<>(typeIV);
 		for (PersistenceDelta oldTPersistentTransition : persistentTransitions) {
 			boolean isDirty = false;
 			PersistentTransition oldPTransition = oldTPersistentTransition.getOldTransition();
-			if (!updatedTypeIV.contains(oldPTransition.getOperationName())) {
+			if (!usedTypeIV.contains(oldPTransition.getOperationName())) {
 				try {
 					Transition oldTransition = currentState.getCurrentTransition();
 					Transition newTransition = replayPersistentTransition(currentState, oldTPersistentTransition.getNewTransitions().get(0));
@@ -654,7 +659,7 @@ public class TraceExplorer {
 					//return emptyList();
 				}
 			}
-			if(updatedTypeIV.contains(oldPTransition.getOperationName()) || isDirty){
+			if(usedTypeIV.contains(oldPTransition.getOperationName()) || isDirty){
 				List<Transition> result = findPath(currentState, oldPTransition);
 				if(result.isEmpty()) {
 					//return newTransitions;
@@ -662,12 +667,14 @@ public class TraceExplorer {
 				}else {
 					currentState = currentState.addTransitions(result);
 					newTransitions.add(new PersistenceDelta(oldPTransition, PersistentTransition.createFromList(result, currentState.getCurrentTransition())));
-					updatedTypeIV.add(oldPTransition.getOperationName()); //Careful! pass by reference, the global state is a reference to the passed parameter in the top function, better rework this
+					usedTypeIV.add(oldPTransition.getOperationName()); //Careful! pass by reference, the global state is a reference to the passed parameter in the top function, better rework this
 				}
 
 			}
 
 		}
+		updatedTypeIV.put(currentTypeIIIMapping, usedTypeIV);
+
 		return newTransitions;
 	}
 
@@ -687,6 +694,7 @@ public class TraceExplorer {
 			command = buildTransition(stateSpace, persistentTransition, t);
 		}
 
+		Map<String, OperationInfo> ga = stateSpace.getLoadedMachine().getOperations();
 		stateSpace.execute(command);
 
 		if (command.getNewTransitions().size() >= 1) {
@@ -731,9 +739,10 @@ public class TraceExplorer {
 		INPUT_PARAMETERS, OUTPUT_PARAMETERS, VARIABLES_MODIFIED, VARIABLES_READ
 	}
 
-	public Set<String> getUpdatedTypeIV(){
+
+
+	public Map<Map<String, Map<MappingNames, Map<String, String>>>, Set<String>> getUpdatedTypeIV() {
 		return updatedTypeIV;
 	}
-
 
 }

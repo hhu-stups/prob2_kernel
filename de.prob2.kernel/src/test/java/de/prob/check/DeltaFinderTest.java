@@ -9,6 +9,7 @@ import de.prob.check.tracereplay.check.CheckerInterface;
 import de.prob.check.tracereplay.check.DeltaFinder;
 import de.prob.check.tracereplay.check.PrepareOperationsInterface;
 import de.prob.check.tracereplay.check.Triple;
+import de.prob.check.tracereplay.check.exceptions.PrologTermNotDefinedException;
 import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.scripting.FactoryProvider;
@@ -32,7 +33,7 @@ public class DeltaFinderTest {
 
 
 	@Test
-	void checkDeterministicPairs_test(){
+	void checkDeterministicPairs_test() throws PrologTermNotDefinedException {
 		CheckerInterface fakeCheckerInterface = (prepareOperations, candidate) -> new HashMap<>();
 
 
@@ -55,7 +56,7 @@ public class DeltaFinderTest {
 
 
 	@Test
-	void checkDeterministicPairs_test_one_gets_removed(){
+	void checkDeterministicPairs_test_one_gets_removed() throws PrologTermNotDefinedException {
 
 		CheckerInterface fakeCheckerInterface = (prepareOperations, candidate) -> {
 			if(prepareOperations.getThird().equals(new CompoundPrologTerm("inc"))){
@@ -98,7 +99,7 @@ public class DeltaFinderTest {
 
 
 	@Test
-	void checkNondeterministicPairs_test_one_gets_removed(){
+	void checkNondeterministicPairs_test_one_gets_removed() throws PrologTermNotDefinedException {
 
 		CheckerInterface fakeCheckerInterface = (prepareOperations, candidate) -> {
 
@@ -200,7 +201,7 @@ public class DeltaFinderTest {
 
 
 	@Test
-	public void prepareOperationsInterface_test() throws IOException, ModelTranslationError {
+	public void prepareOperationsInterface_test() throws IOException, ModelTranslationError, PrologTermNotDefinedException {
 		System.setProperty("prob.home", "/home/sebastian/prob_prolog");
 
 		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift.mch");
@@ -235,7 +236,7 @@ public class DeltaFinderTest {
 
 
 	@Test
-	public void checkerInterface_test() throws IOException, ModelTranslationError {
+	public void checkerInterface_test() throws IOException, ModelTranslationError, PrologTermNotDefinedException {
 		System.setProperty("prob.home", "/home/sebastian/prob_prolog");
 
 		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift.mch");
@@ -270,7 +271,7 @@ public class DeltaFinderTest {
 
 
 	@Test
-	public void integration_test() throws IOException, ModelTranslationError {
+	public void integration_test() throws IOException, ModelTranslationError, PrologTermNotDefinedException {
 		System.setProperty("prob.home", "/home/sebastian/prob_prolog");
 
 		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift.mch");
@@ -325,7 +326,7 @@ public class DeltaFinderTest {
 
 
 	@Test
-	public void deltaFinder_initialisation_test() throws IOException, ModelTranslationError {
+	public void deltaFinder_initialisation_test() throws IOException, ModelTranslationError, PrologTermNotDefinedException {
 		System.setProperty("prob.home", "/home/sebastian/prob_prolog");
 
 		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift.mch");
@@ -360,7 +361,7 @@ public class DeltaFinderTest {
 
 
 	@Test
-	public void deltaFinder_correction_of_the_categorization() throws IOException, ModelTranslationError {
+	public void deltaFinder_correction_of_the_categorization() throws IOException, ModelTranslationError, PrologTermNotDefinedException {
 		System.setProperty("prob.home", "/home/sebastian/prob_prolog");
 
 		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "LiftProto.mch");

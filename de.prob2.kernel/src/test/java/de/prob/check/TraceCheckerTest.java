@@ -8,6 +8,7 @@ import de.prob.JsonManagerStubModule;
 import de.prob.MainModule;
 import de.prob.ProBKernelStub;
 import de.prob.check.tracereplay.check.TraceChecker;
+import de.prob.check.tracereplay.check.exceptions.PrologTermNotDefinedException;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.scripting.ModelTranslationError;
@@ -71,7 +72,7 @@ public class TraceCheckerTest {
 
 
 	@Test
-	void integration_test3() throws IOException, ModelTranslationError {
+	void integration_test3() throws IOException, ModelTranslationError, PrologTermNotDefinedException {
 		TraceManager traceManager = new TraceManager(new ObjectMapper());
 		Path machinePath = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "ABZ.mch");
 		Path machinePathNew = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "ABZ.mch");

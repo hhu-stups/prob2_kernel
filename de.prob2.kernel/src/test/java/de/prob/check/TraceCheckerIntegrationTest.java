@@ -46,10 +46,10 @@ public class TraceCheckerIntegrationTest {
 
 	@Test
 	public void integration_1_realWorldExample() throws IOException, ModelTranslationError {
-		Path newPath = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "LiftProto2.mch");
-		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "LiftProto2.mch"));
+		Path newPath = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "Lift", "changedTypeIIandType", "LiftProto2.mch");
+		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "Lift", "changedTypeIIandType", "LiftProto2.mch"));
 
-		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "LiftProto.prob2trace"));
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "Lift", "changedTypeIIandType", "LiftProto.prob2trace"));
 
 		TraceChecker traceChecker = new TraceChecker(
 				jsonFile.getTrace().getTransitionList(),
@@ -67,6 +67,32 @@ public class TraceCheckerIntegrationTest {
 		System.out.println(traceChecker.getTraceModifier().getLastChange());
 		System.out.println(traceChecker.getTraceModifier().getChangelogPhase3II());
 		System.out.println(traceChecker.getTraceModifier().getChangelogPhase3II());
+	}
+
+	@Test
+	public void integration_2_realWorldExample() throws IOException, ModelTranslationError {
+		Path newPath = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "typeIV", "tropical_island", "version_2", "Island2.mch");
+		
+		StateSpace stateSpace = proBKernelStub.createStateSpace(newPath);
+
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "typeIV", "tropical_island", "version_2", "Island2.prob2trace"));
+
+		TraceChecker traceChecker = new TraceChecker(
+				jsonFile.getTrace().getTransitionList(),
+				jsonFile.getMachineOperationInfos(),
+				stateSpace.getLoadedMachine().getOperations(),
+				new HashSet<>(jsonFile.getVariableNames()),
+				new HashSet<>(stateSpace.getLoadedMachine().getVariableNames()),
+				new HashSet<>(stateSpace.getLoadedMachine().getSetNames()),
+				new HashSet<>(stateSpace.getLoadedMachine().getConstantNames()),
+				newPath.toString(),
+				injector,
+				new TestUtils.StubFactoryImplementation()
+		);
+
+		System.out.println(traceChecker.getTraceModifier().getChangelogPhase3II().size());
+		System.out.println(traceChecker.getTraceModifier().getChangelogPhase3II());
+
 	}
 
 }

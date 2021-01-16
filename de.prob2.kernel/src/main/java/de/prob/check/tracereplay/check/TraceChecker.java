@@ -3,6 +3,7 @@ package de.prob.check.tracereplay.check;
 import com.google.inject.Injector;
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.exceptions.MappingFactoryInterface;
+import de.prob.check.tracereplay.check.exceptions.PrologTermNotDefinedException;
 import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.OperationInfo;
 
@@ -75,7 +76,7 @@ public class TraceChecker {
 						String newPath,
 						Injector injector,
 						MappingFactoryInterface mappingFactory)
-			throws IOException, ModelTranslationError {
+			throws IOException, ModelTranslationError, PrologTermNotDefinedException {
 
 		this.oldOperationInfos = oldInfos;
 		this.newOperationInfos = newInfos;

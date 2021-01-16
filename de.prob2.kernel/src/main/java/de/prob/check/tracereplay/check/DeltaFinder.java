@@ -6,6 +6,7 @@ import de.prob.animator.ReusableAnimator;
 import de.prob.animator.command.CompareTwoOperations;
 import de.prob.animator.command.GetMachineOperationsFull;
 import de.prob.animator.command.PrepareOperations;
+import de.prob.check.tracereplay.check.exceptions.PrologTermNotDefinedException;
 import de.prob.exception.ProBError;
 import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
@@ -62,6 +63,7 @@ public class DeltaFinder implements IDeltaFinder {
 	public final PrepareOperationsInterface prepareOperationsInterface = (operation) -> {
 		PrepareOperations prepareOperations = new PrepareOperations(operation);
 		animator.execute(prepareOperations);
+		if(!prepareOperations.getNotReachableNodes().isEmpty()) throw new PrologTermNotDefinedException(prepareOperations.getNotReachableNodes());
 		return prepareOperations.asTriple();
 	};
 
@@ -87,7 +89,7 @@ public class DeltaFinder implements IDeltaFinder {
 	 * @throws IOException something went wrong when reading machine files
 	 * @throws ModelTranslationError the machine files contain errors
 	 */
-	public void calculateDelta() throws IOException, ModelTranslationError {
+	public void calculateDelta() throws IOException, ModelTranslationError, PrologTermNotDefinedException {
 		Map<String, CompoundPrologTerm> newOperations = getOperations(newMachine);
 		Map<String, CompoundPrologTerm> oldOperations = getOperations(oldMachine);
 
@@ -130,12 +132,20 @@ public class DeltaFinder implements IDeltaFinder {
 															 Map<String, CompoundPrologTerm> newOperation,
 															 Set<String> candidates,
 															 CheckerInterface checkFunction,
-															 PrepareOperationsInterface prepareOperationsInterface) {
+															 PrepareOperationsInterface prepareOperationsInterface) throws PrologTermNotDefinedException {
 
-		return candidates.stream().collect(Collectors.toMap(operation -> operation, operation -> {
-			Triple<ListPrologTerm, ListPrologTerm, CompoundPrologTerm> result = prepareOperationsInterface.prepareOperation(oldOperation.get(operation));
-			return checkFunction.checkTypeII(result, newOperation.get(operation));
-		})).entrySet().stream()
+		Map<String,  Map<String, String>> sideResult = new HashMap<>();
+
+		for(String entry : candidates) {
+
+			Triple<ListPrologTerm, ListPrologTerm, CompoundPrologTerm> result = prepareOperationsInterface.prepareOperation(oldOperation.get(entry));
+
+			sideResult.put(entry, checkFunction.checkTypeII(result, newOperation.get(entry)));
+
+		}
+
+
+		return sideResult.entrySet().stream()
 				.filter(stringMapEntry -> !stringMapEntry.getValue().isEmpty())
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 	}
@@ -155,15 +165,28 @@ public class DeltaFinder implements IDeltaFinder {
 																			 Map<String, CompoundPrologTerm> newOperation,
 																			 Map<String, Set<String>> candidates,
 																			 CheckerInterface checkFunction,
-																			 PrepareOperationsInterface prepareOperationsInterface) {
+																			 PrepareOperationsInterface prepareOperationsInterface) throws PrologTermNotDefinedException {
 
-		return candidates.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> {
-			Triple<ListPrologTerm, ListPrologTerm, CompoundPrologTerm> preparedTerm = prepareOperationsInterface.prepareOperation(oldOperation.get(entry.getKey()));
-			return entry.getValue().stream().collect(Collectors.toMap(value -> value,
-					value -> checkFunction.checkTypeII(preparedTerm, newOperation.get(value))))
-					.entrySet().stream().filter(stringMapEntry -> !stringMapEntry.getValue().isEmpty())
-					.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-		})).entrySet().stream().filter(higherMapEntry -> !higherMapEntry.getValue().isEmpty())
+		Map<String, Map<String, Map<String, String>>> sideResult = new HashMap<>();
+
+		for(Map.Entry<String, Set<String>> entry : candidates.entrySet()){
+			Triple<ListPrologTerm, ListPrologTerm, CompoundPrologTerm> preparedTerm =  prepareOperationsInterface
+					.prepareOperation(oldOperation.get(entry.getKey()));
+			Map<String, Map<String, String>> newValue = entry.getValue()
+					.stream()
+					.collect(toMap(value -> value, value -> checkFunction
+							.checkTypeII(preparedTerm, newOperation.get(value))))
+					.entrySet()
+					.stream()
+					.filter(stringMapEntry -> !stringMapEntry.getValue().isEmpty())
+					.collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+			sideResult.put(entry.getKey(), newValue);
+		}
+
+		return sideResult.entrySet()
+				.stream()
+				.filter(higherMapEntry -> !higherMapEntry.getValue().isEmpty())
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 	}
 
@@ -215,7 +238,7 @@ public class DeltaFinder implements IDeltaFinder {
 	public static Map<String, String> createInitMapping(Map<String, CompoundPrologTerm> oldOperations,
 														Map<String, CompoundPrologTerm> newOperations, boolean typeIOrIICandidate,
 														CheckerInterface checkerInterface,
-														PrepareOperationsInterface prepareOperationsInterface){
+														PrepareOperationsInterface prepareOperationsInterface) throws PrologTermNotDefinedException {
 		Map<String, CompoundPrologTerm> initOld = extractInitTerm(oldOperations);
 		Map<String, CompoundPrologTerm> initNew = extractInitTerm(newOperations);
 
