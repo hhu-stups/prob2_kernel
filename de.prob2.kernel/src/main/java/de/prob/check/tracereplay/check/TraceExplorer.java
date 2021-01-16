@@ -597,12 +597,12 @@ public class TraceExplorer {
 	 * @param typeIVCandidates candidates that may not accessible, removed, or renamed...
 	 * @return the replayed trace in dependence to the identifier selection regariding typeIIICandidates
 	 */
-	public Map<Map<String, Map<String, String>>, List<PersistenceDelta>> replayTrace(List<PersistentTransition> transitionList,
-																					   StateSpace stateSpace,
-																					   Map<String, OperationInfo> operationInfoNew,
-																					   Map<String, OperationInfo> operationInfoOld,
-																					   Set<String> typeIIICandidates,
-																					   Set<String> typeIVCandidates) {
+	public Map<Map<String, Map<MappingNames, Map<String, String>>>, List<PersistenceDelta>> replayTrace(List<PersistentTransition> transitionList,
+																										StateSpace stateSpace,
+																										Map<String, OperationInfo> operationInfoNew,
+																										Map<String, OperationInfo> operationInfoOld,
+																										Set<String> typeIIICandidates,
+																										Set<String> typeIVCandidates) {
 
 		Trace trace = new Trace(stateSpace);
 		trace.setExploreStateByDefault(true);
@@ -623,7 +623,7 @@ public class TraceExplorer {
 				.collect(toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
 
 
-		return removeHelperVariableMappings(result);
+		return result;
 	}
 
 

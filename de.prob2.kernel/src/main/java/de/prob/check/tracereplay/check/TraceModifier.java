@@ -8,7 +8,6 @@ import de.prob.statespace.Transition;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static de.prob.check.tracereplay.check.TraceCheckerUtils.firstOrEmpty;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 
@@ -17,8 +16,8 @@ public class TraceModifier {
 
 	private final List<List<PersistentTransition>> changelogPhase1 = new LinkedList<>();
 	private final Map<Set<Delta>, List<PersistentTransition>> changelogPhase2 = new HashMap<>();
-	private final Map<Set<Delta>, Map<Map<String, Map<String, String>>, List<PersistenceDelta>>> changelogPhase3 = new HashMap<>();
-	private final Map<Set<Delta>, Map<Map<String, Map<String, String>>, Map<String, TraceAnalyser.AnalyserResult>>> changelogPhase4 = new HashMap<>();
+	private final Map<Set<Delta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>>> changelogPhase3 = new HashMap<>();
+	private final Map<Set<Delta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Map<String, TraceAnalyser.AnalyserResult>>> changelogPhase4 = new HashMap<>();
 	private final StateSpace stateSpace;
 
 
@@ -213,12 +212,12 @@ public class TraceModifier {
 		//No type II change?
 		if (!changelogPhase2.isEmpty()) {
 
-			Map<Set<Delta>, Map<Map<String, Map<String, String>>, List<PersistenceDelta>>> results = changelogPhase2
+			Map<Set<Delta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>>> results = changelogPhase2
 					.entrySet()
 					.stream()
 					.map(entry ->
 					{
-						Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result =
+						Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result =
 								traceExplorer.replayTrace(entry.getValue(), stateSpace, newInfos, oldInfos, typeIIICandidates, typeIVCandidates);
 						if (result.values().isEmpty()) {
 							new AbstractMap.SimpleEntry<>(emptySet(), emptyMap());
@@ -229,13 +228,14 @@ public class TraceModifier {
 
 
 			changelogPhase3.putAll(results);
-			Map<Set<Delta>, Map<Map<String, Map<String, String>>, Map<String, TraceAnalyser.AnalyserResult>>> typeIVResults =
+			Map<Set<Delta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Map<String, TraceAnalyser.AnalyserResult>>> typeIVResults =
 					performTypeIVAnalysing(traceExplorer.getUpdatedTypeIV(), results);
 			changelogPhase4.putAll(typeIVResults);
 
 		} else {
-			Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result = traceExplorer.replayTrace(getLastChange(), stateSpace, newInfos, oldInfos,  typeIIICandidates, typeIVCandidates);
-			Map<Map<String, Map<String, String>>, Map<String, TraceAnalyser.AnalyserResult>> typeIVResults =
+			Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result =
+					traceExplorer.replayTrace(getLastChange(), stateSpace, newInfos, oldInfos,  typeIIICandidates, typeIVCandidates);
+			Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Map<String, TraceAnalyser.AnalyserResult>> typeIVResults =
 					performTypeIVAnalysing2(traceExplorer.getUpdatedTypeIV(), result);
 			changelogPhase3.put(Collections.emptySet(), result);
 
@@ -254,23 +254,26 @@ public class TraceModifier {
 
 	}
 
-	public Map<Set<Delta>, Map<Map<String, Map<String, String>>, Map<String, TraceAnalyser.AnalyserResult>>> performTypeIVAnalysing(
-			Set<String> typeIVCandidates, Map<Set<Delta>, Map<Map<String, Map<String, String>>, List<PersistenceDelta>>> results){
+	public Map<Set<Delta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Map<String, TraceAnalyser.AnalyserResult>>> performTypeIVAnalysing(
+			Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Set<String>> typeIVCandidates,
+			Map<Set<Delta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>>> results){
+
 		return results.entrySet()
 				.stream()
 				.collect(toMap(Map.Entry::getKey, entry -> entry.getValue().entrySet()
 						.stream()
 						.collect(toMap(Map.Entry::getKey,
-								innerEntry -> TraceAnalyser.analyze(typeIVCandidates, innerEntry.getValue(), changelogPhase2.get(entry.getKey()))))));
+								innerEntry -> TraceAnalyser.analyze(typeIVCandidates.get(innerEntry.getKey()), innerEntry.getValue(), changelogPhase2.get(entry.getKey()))))));
 	}
 
-	public Map<Map<String, Map<String, String>>, Map<String, TraceAnalyser.AnalyserResult>> performTypeIVAnalysing2(
-			Set<String> typeIVCandidates, Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result){
+	public Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Map<String, TraceAnalyser.AnalyserResult>> performTypeIVAnalysing2(
+			Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Set<String>> typeIVCandidates,
+			Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result){
 
 		return result.entrySet()
 				.stream()
 				.collect(toMap(Map.Entry::getKey,
-						innerEntry -> TraceAnalyser.analyze(typeIVCandidates, innerEntry.getValue(), getLastChange())));
+						innerEntry -> TraceAnalyser.analyze(typeIVCandidates.get(innerEntry.getKey()), innerEntry.getValue(), getLastChange())));
 	}
 
 	public List<PersistentTransition> changeAllElementsWithName(String name, Map<String, String> inputParameter,
@@ -305,11 +308,11 @@ public class TraceModifier {
 		return changelogPhase2;
 	}
 
-	public Map<Set<Delta>, Map<Map<String, Map<String, String>>, List<PersistenceDelta>>> getChangelogPhase3II() {
+	public Map<Set<Delta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>>> getChangelogPhase3II() {
 		return changelogPhase3;
 	}
 
-	public Map<Set<Delta>, Map<Map<String, Map<String, String>>, Map<String, TraceAnalyser.AnalyserResult>>> getChangelogPhase4() {
+	public Map<Set<Delta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Map<String, TraceAnalyser.AnalyserResult>>> getChangelogPhase4() {
 		return changelogPhase4;
 	}
 
