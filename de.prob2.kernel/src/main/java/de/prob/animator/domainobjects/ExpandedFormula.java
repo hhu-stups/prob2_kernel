@@ -14,7 +14,20 @@ import de.prob.statespace.StateSpace;
 public final class ExpandedFormula {
 
 	public static enum FormulaType {
-		EXPRESSION, PREDICATE, OTHER
+		EXPRESSION, PREDICATE, OTHER;
+		
+		public static ExpandedFormula.FormulaType fromProlog(final String prologTypeName) {
+			switch (prologTypeName) {
+				case "predicate":
+					return ExpandedFormula.FormulaType.PREDICATE;
+				
+				case "expression":
+					return ExpandedFormula.FormulaType.EXPRESSION;
+				
+				default:
+					return ExpandedFormula.FormulaType.OTHER;
+			}
+		}
 	}
 
 	public static class Builder {
@@ -86,17 +99,11 @@ public final class ExpandedFormula {
 			return this;
 		}
 
-		public ExpandedFormula.Builder type(final String type) {
+		public ExpandedFormula.Builder type(final ExpandedFormula.FormulaType type) {
 			if (this.type != null) {
 				throw new IllegalStateException("type already set");
 			}
-			if("predicate".equals(type)) {
-				this.type = FormulaType.PREDICATE;
-			} else if("expression".equals(type)) {
-				this.type = FormulaType.EXPRESSION;
-			} else {
-				this.type = FormulaType.OTHER;
-			}
+			this.type = type;
 			return this;
 		}
 		
@@ -205,7 +212,7 @@ public final class ExpandedFormula {
 					builder.value(BVisual2Value.fromPrologTerm(arg));
 					break;
 				case "type":
-					builder.type(PrologTerm.atomicString(arg));
+					builder.type(ExpandedFormula.FormulaType.fromProlog(PrologTerm.atomicString(arg)));
 					break;
 				case "children_ids":
 					builder.subformulas(BindingGenerator.getList(arg).stream()
