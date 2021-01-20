@@ -23,9 +23,6 @@ public class TraceExplorer {
 
 	private final boolean initWasSet;
 	private final MappingFactoryInterface mappingFactory;
-
-
-
 	private final Map< Map<String, Map<MappingNames, Map<String, String>>>, Set<String>> updatedTypeIV = new HashMap<>();
 
 	public TraceExplorer(boolean initWasSet, MappingFactoryInterface mappingFactory) {

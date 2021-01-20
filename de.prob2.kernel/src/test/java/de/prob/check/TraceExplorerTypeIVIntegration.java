@@ -54,17 +54,19 @@ public class TraceExplorerTypeIVIntegration {
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "one_time_intermediate_operation", "island.prob2trace"));
 
 
-		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result =
-				new TraceExplorer(false, new TestUtils.StubFactoryImplementation())
-						.replayTrace(
-								jsonFile.getTrace().getTransitionList(),
-								stateSpace,
-								stateSpace.getLoadedMachine().getOperations(),
-								jsonFile.getMachineOperationInfos(),
-								emptySet(),
-								singleton("on"));
+		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result = new TraceExplorer(false, new TestUtils.StubFactoryImplementation())
+				.replayTrace(
+						jsonFile.getTrace().getTransitionList(),
+						stateSpace,
+						stateSpace.getLoadedMachine().getOperations(),
+						jsonFile.getMachineOperationInfos(),
+						emptySet(),
+						singleton("on"));
 
-		PersistenceDelta persistenceDelta = new ArrayList<>(result.values()).get(0).get(3);
+		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> resultCleaned = TraceExplorer.removeHelperVariableMappings(result);
+
+
+		PersistenceDelta persistenceDelta = new ArrayList<>(resultCleaned.values()).get(0).get(3);
 		Assert.assertEquals("on", persistenceDelta.getOldTransition().getOperationName());
 		Assert.assertEquals(1, persistenceDelta.getNewTransitions().size());
 	}
@@ -76,17 +78,19 @@ public class TraceExplorerTypeIVIntegration {
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "always_intermediate", "ISLAND.prob2trace"));
 
 
-		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result =
-				new TraceExplorer(false, new TestUtils.StubFactoryImplementation())
-						.replayTrace(
-								jsonFile.getTrace().getTransitionList(),
-								stateSpace,
-								stateSpace.getLoadedMachine().getOperations(),
-								jsonFile.getMachineOperationInfos(),
-								emptySet(),
-								singleton("on"));
+		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result = new TraceExplorer(false, new TestUtils.StubFactoryImplementation())
+				.replayTrace(
+						jsonFile.getTrace().getTransitionList(),
+						stateSpace,
+						stateSpace.getLoadedMachine().getOperations(),
+						jsonFile.getMachineOperationInfos(),
+						emptySet(),
+						singleton("on"));
 
-		List<PersistenceDelta> compareResult = new ArrayList<>(result.values()).get(0)
+		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> resultCleaned = TraceExplorer.removeHelperVariableMappings(result);
+
+
+		List<PersistenceDelta> compareResult = new ArrayList<>(resultCleaned.values()).get(0)
 				.stream()
 				.filter(entry -> entry.getOldTransition().getOperationName().equals("on"))
 				.filter(entry -> entry.getNewTransitions().size() == 2)
@@ -103,17 +107,19 @@ public class TraceExplorerTypeIVIntegration {
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "complete_renamed_operation", "island.prob2trace"));
 
 
-		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result =
-				new TraceExplorer(false, new TestUtils.StubFactoryImplementation())
-						.replayTrace(
-								jsonFile.getTrace().getTransitionList(),
-								stateSpace,
-								stateSpace.getLoadedMachine().getOperations(),
-								jsonFile.getMachineOperationInfos(),
-								emptySet(),
-								singleton("on"));
+		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result = new TraceExplorer(false, new TestUtils.StubFactoryImplementation())
+				.replayTrace(
+						jsonFile.getTrace().getTransitionList(),
+						stateSpace,
+						stateSpace.getLoadedMachine().getOperations(),
+						jsonFile.getMachineOperationInfos(),
+						emptySet(),
+						singleton("on"));
 
-		List<PersistenceDelta> resultCleaned = result.values().stream().findFirst().get().stream().filter(entry -> {
+		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> resultPre = TraceExplorer.removeHelperVariableMappings(result);
+
+
+		List<PersistenceDelta> resultCleaned = resultPre.values().stream().findFirst().get().stream().filter(entry -> {
 			String name = entry.getOldTransition().getOperationName();
 			if(name.equals("on")){
 				PersistentTransition persistentTransition = entry.getNewTransitions().get(0);
@@ -137,15 +143,16 @@ public class TraceExplorerTypeIVIntegration {
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "tropical_island", "version_2", "island_2.prob2trace"));
 
 
-		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> evaluated =
-				new TraceExplorer(false, new TestUtils.StubFactoryImplementation())
-						.replayTrace(
-								jsonFile.getTrace().getTransitionList(),
-								stateSpace,
-								stateSpace.getLoadedMachine().getOperations(),
-								jsonFile.getMachineOperationInfos(),
-								emptySet(),
-								singleton("leave"));
+		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> evaluated = new TraceExplorer(false, new TestUtils.StubFactoryImplementation())
+				.replayTrace(
+						jsonFile.getTrace().getTransitionList(),
+						stateSpace,
+						stateSpace.getLoadedMachine().getOperations(),
+						jsonFile.getMachineOperationInfos(),
+						emptySet(),
+						singleton("leave"));
+
+
 
 		Map<String, List<String>> expected1 = singletonMap("leave", singletonList("leave_with_car"));
 		Map<String, TraceAnalyser.AnalyserResult> expected2 = singletonMap("leave", TraceAnalyser.AnalyserResult.MixedNames);
@@ -170,15 +177,14 @@ public class TraceExplorerTypeIVIntegration {
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "always_intermediate", "ISLAND.prob2trace"));
 
 
-		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> evaluated =
-				new TraceExplorer(false, new TestUtils.StubFactoryImplementation())
-						.replayTrace(
-								jsonFile.getTrace().getTransitionList(),
-								stateSpace,
-								stateSpace.getLoadedMachine().getOperations(),
-								jsonFile.getMachineOperationInfos(),
-								emptySet(),
-								emptySet());
+		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> evaluated = new TraceExplorer(false, new TestUtils.StubFactoryImplementation())
+				.replayTrace(
+						jsonFile.getTrace().getTransitionList(),
+						stateSpace,
+						stateSpace.getLoadedMachine().getOperations(),
+						jsonFile.getMachineOperationInfos(),
+						emptySet(),
+						emptySet());
 
 		Map<String, List<String>> expected1 = singletonMap("on", Arrays.asList("openBark", "on"));
 		Map<String, TraceAnalyser.AnalyserResult> expected2 = singletonMap("on", TraceAnalyser.AnalyserResult.Intermediate);
@@ -201,15 +207,14 @@ public class TraceExplorerTypeIVIntegration {
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "complete_renamed_operation", "island.prob2trace"));
 
 
-		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> evaluated =
-				new TraceExplorer(false, new TestUtils.StubFactoryImplementation())
-						.replayTrace(
-								jsonFile.getTrace().getTransitionList(),
-								stateSpace,
-								stateSpace.getLoadedMachine().getOperations(),
-								jsonFile.getMachineOperationInfos(),
-								emptySet(),
-								emptySet());
+		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> evaluated = new TraceExplorer(false, new TestUtils.StubFactoryImplementation())
+				.replayTrace(
+						jsonFile.getTrace().getTransitionList(),
+						stateSpace,
+						stateSpace.getLoadedMachine().getOperations(),
+						jsonFile.getMachineOperationInfos(),
+						emptySet(),
+						emptySet());
 
 		Map<String, List<String>> expected1 = singletonMap("on", singletonList("drive_on"));
 		Map<String, TraceAnalyser.AnalyserResult> expected2 = singletonMap("on", TraceAnalyser.AnalyserResult.Straight);
@@ -232,15 +237,14 @@ public class TraceExplorerTypeIVIntegration {
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "one_time_intermediate_operation", "island.prob2trace"));
 
 
-		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> evaluated =
-				new TraceExplorer(false, new TestUtils.StubFactoryImplementation())
-						.replayTrace(
-								jsonFile.getTrace().getTransitionList(),
-								stateSpace,
-								stateSpace.getLoadedMachine().getOperations(),
-								jsonFile.getMachineOperationInfos(),
-								emptySet(),
-								emptySet());
+		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> evaluated = new TraceExplorer(false, new TestUtils.StubFactoryImplementation())
+				.replayTrace(
+						jsonFile.getTrace().getTransitionList(),
+						stateSpace,
+						stateSpace.getLoadedMachine().getOperations(),
+						jsonFile.getMachineOperationInfos(),
+						emptySet(),
+						emptySet());
 
 		Map<String, List<String>> expected1 = singletonMap("on", Arrays.asList("openBark", "on"));
 		Map<String, TraceAnalyser.AnalyserResult> expected2 = singletonMap("on", TraceAnalyser.AnalyserResult.Mixed);
