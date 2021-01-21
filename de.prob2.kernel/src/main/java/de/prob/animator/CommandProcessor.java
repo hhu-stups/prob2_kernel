@@ -12,6 +12,7 @@ import de.prob.core.sablecc.node.AYesResult;
 import de.prob.core.sablecc.node.PResult;
 import de.prob.core.sablecc.node.Start;
 import de.prob.exception.ProBError;
+import de.prob.exception.PrologException;
 import de.prob.parser.BindingGenerator;
 import de.prob.parser.ProBResultParser;
 import de.prob.prolog.output.PrologTermStringOutput;
@@ -67,7 +68,7 @@ class CommandProcessor {
 		} else if (topnode instanceof AExceptionResult) {
 			AExceptionResult r = (AExceptionResult) topnode;
 			String message = r.getString().getText();
-			throw new ProBError(message);
+			throw new PrologException(message);
 		} else {
 			throw new ProBError("unknown prolog result " + ast);
 		}
