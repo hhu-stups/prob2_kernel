@@ -1,8 +1,7 @@
 package de.prob.formula;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import de.prob.animator.domainobjects.Join;
 
@@ -48,5 +47,15 @@ public class PredicateBuilder {
 		} else {
 			return String.join(" & ", predicates);
 		}
+	}
+
+	public Set<String> predicatesAsSet(){
+		return new HashSet<>(predicates);
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		return obj instanceof PredicateBuilder && predicatesAsSet().containsAll(((PredicateBuilder) obj).predicatesAsSet()) && ((PredicateBuilder) obj).predicatesAsSet().containsAll(predicatesAsSet());
 	}
 }
