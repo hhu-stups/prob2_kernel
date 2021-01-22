@@ -5,15 +5,15 @@ import de.prob.formula.PredicateBuilder;
 
 import java.util.*;
 
-import static java.util.Collections.emptyMap;
+import static java.util.Collections.*;
 
 public class ReplayOptions {
 
 
-	Set<OptionFlags> globalOptions;
-	List<String> identifierBlacklist;
-	Map<String, Set<OptionFlags>> operationOptions;
-	Map<String, List<String>> operationBlacklist;
+	private final Set<OptionFlags> globalOptions;
+	private final List<String> identifierBlacklist;
+	private final Map<String, Set<OptionFlags>> operationOptions;
+	private final Map<String, List<String>> operationBlacklist;
 
 
 	public ReplayOptions(Set<OptionFlags> globalOptions, List<String> identifierBlacklist, Map<String, Set<OptionFlags>> operationOptions,
@@ -51,7 +51,7 @@ public class ReplayOptions {
 		return predicateBuilder;
 	}
 
-	public Map<OptionFlags, Map<String, String>> cleanMap(Map<OptionFlags, Map<String, String>> currentStatus, List<String> blackList, Set<OptionFlags> options){
+	public static Map<OptionFlags, Map<String, String>> cleanMap(Map<OptionFlags, Map<String, String>> currentStatus, List<String> blackList, Set<OptionFlags> options){
 		for(OptionFlags value : OptionFlags.values()){
 			if(options.contains(value)){
 				currentStatus.remove(value);
@@ -63,6 +63,10 @@ public class ReplayOptions {
 		}
 
 		return currentStatus;
+	}
+
+	public static ReplayOptions allowAll(){
+		return new ReplayOptions(emptySet(), emptyList(), emptyMap(), emptyMap());
 	}
 
 	public enum OptionFlags{
