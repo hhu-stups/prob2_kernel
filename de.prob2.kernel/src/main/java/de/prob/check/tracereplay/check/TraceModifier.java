@@ -207,7 +207,7 @@ public class TraceModifier {
 	}
 
 	public void makeTypeIII(Set<String> typeIIICandidates, Set<String> typeIVCandidates,
-							Map<String, OperationInfo> newInfos, Map<String, OperationInfo> oldInfos, Set<String> newVars, Set<String> newSets, Set<String> newConst, TraceExplorer traceExplorer) {
+							Map<String, OperationInfo> newInfos, Map<String, OperationInfo> oldInfos, TraceExplorer traceExplorer) {
 
 		//No type II change?
 		if (!changelogPhase2.isEmpty()) {

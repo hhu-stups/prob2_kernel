@@ -26,11 +26,10 @@ public class TraceChecker {
 						Map<String, OperationInfo> newInfos,
 						Set<String> newVars,
 						Set<String> oldVars,
-						Set<String> newSets,
-						Set<String> newConst,
 						String newPath,
 						Injector injector,
-						MappingFactoryInterface mappingFactory) throws IOException, ModelTranslationError {
+						MappingFactoryInterface mappingFactory,
+						ReplayOptions replayOptions) throws IOException, ModelTranslationError {
 
 		this.newOperationInfos = newInfos;
 		this.oldOperationInfos = oldInfos;
@@ -41,9 +40,9 @@ public class TraceChecker {
 
 		traceModifier = new TraceModifier(transitionList, TraceCheckerUtils.createStateSpace(newPath, injector));
 
-		TraceExplorer traceExplorer = new TraceExplorer(false, mappingFactory);
+		TraceExplorer traceExplorer = new TraceExplorer(false, mappingFactory, replayOptions);
 
-		traceModifier.makeTypeIII(typeFinder.getTypeIII(), typeFinder.getTypeIV(), newInfos, oldInfos, newVars, newSets, newConst, traceExplorer);
+		traceModifier.makeTypeIII(typeFinder.getTypeIII(), typeFinder.getTypeIV(), newInfos, oldInfos,  traceExplorer);
 
 		this.deltaFinder = new IDeltaFinder() {
 			@Override
@@ -70,12 +69,11 @@ public class TraceChecker {
 						Map<String, OperationInfo> newInfos,
 						Set<String> oldVars,
 						Set<String> newVars,
-						Set<String> newSets,
-						Set<String> newConst,
 						String oldPath,
 						String newPath,
 						Injector injector,
-						MappingFactoryInterface mappingFactory)
+						MappingFactoryInterface mappingFactory,
+						ReplayOptions replayOptions)
 			throws IOException, ModelTranslationError, PrologTermNotDefinedException {
 
 		this.oldOperationInfos = oldInfos;
@@ -102,15 +100,11 @@ public class TraceChecker {
 		traceModifier.insertAmbiguousChanges(deltasTypeIIWithCandidates);
 
 		TraceExplorer traceExplorer;
-		if(!deltaFinder.getResultTypeIIInit().isEmpty())
-		{
-			traceExplorer = new TraceExplorer(true, mappingFactory);
-		}else{
-			traceExplorer = new TraceExplorer(false, mappingFactory);
-		}
+
+		traceExplorer = new TraceExplorer(!deltaFinder.getResultTypeIIInit().isEmpty(), mappingFactory, replayOptions);
 
 
-		traceModifier.makeTypeIII(typeFinder.getTypeIII(), typeFinder.getTypeIV(), newInfos, oldInfos, newVars, newSets, newConst, traceExplorer);
+		traceModifier.makeTypeIII(typeFinder.getTypeIII(), typeFinder.getTypeIV(), newInfos, oldInfos, traceExplorer);
 
 		this.deltaFinder = deltaFinder;
 
