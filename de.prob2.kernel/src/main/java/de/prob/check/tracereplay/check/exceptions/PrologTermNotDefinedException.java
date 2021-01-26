@@ -9,4 +9,15 @@ public class PrologTermNotDefinedException extends Exception {
 	public PrologTermNotDefinedException(PrologTerm term){
 		this.prologTerm = term;
 	}
+
+
+	@Override
+	public String getMessage() {
+		return "A part of the prolog syntax is not yet implemented.";
+	}
+
+	@Override
+	public String toString() {
+		return "Missing implementation of: " +  prologTerm.toString();
+	}
 }
