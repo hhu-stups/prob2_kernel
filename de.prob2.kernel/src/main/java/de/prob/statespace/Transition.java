@@ -232,18 +232,8 @@ public class Transition {
 		}
 		evaluate(FormulaExpand.EXPAND);
 		List<String> predicates = new ArrayList<>();
-		// TODO: Is getMainComponent correct? NPE might occur for machines extending other machines
-		AbstractElement mainComponent = stateSpace.getMainComponent();
-		List<String> paramNames = new ArrayList<>();
-		if (mainComponent instanceof ClassicalBMachine) {
-			Operation op = ((ClassicalBMachine) mainComponent).getOperation(getName());
-			paramNames = op.getParameters();
-		} else if (mainComponent instanceof EventBMachine) {
-			Event event = ((EventBMachine) mainComponent).getEvent(getName());
-			for (EventParameter eventParameter : event.getParameters()) {
-				paramNames.add(eventParameter.getName());
-			}
-		}
+		OperationInfo operationInfo = stateSpace.getLoadedMachine().getMachineOperationInfo(getName());
+		List<String> paramNames = operationInfo.getParameterNames();
 		if (paramNames.size() == this.params.size()) {
 			for (int i = 0; i < paramNames.size(); i++) {
 				predicates.add(paramNames.get(i) + " = " + this.params.get(i));
