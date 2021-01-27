@@ -232,14 +232,18 @@ public class Transition {
 		}
 		evaluate(FormulaExpand.EXPAND);
 		List<String> predicates = new ArrayList<>();
-		OperationInfo operationInfo = stateSpace.getLoadedMachine().getMachineOperationInfo(getName());
-		List<String> paramNames = operationInfo.getParameterNames();
+		List<String> paramNames = getParameterNames();
 		if (paramNames.size() == this.params.size()) {
 			for (int i = 0; i < paramNames.size(); i++) {
 				predicates.add(paramNames.get(i) + " = " + this.params.get(i));
 			}
 		}
 		return predicates;
+	}
+
+	public List<String> getParameterNames() {
+		OperationInfo operationInfo = stateSpace.getLoadedMachine().getMachineOperationInfo(getName());
+		return operationInfo.getParameterNames();
 	}
 
 	private String createRep(final String name, final List<String> params, final List<String> returnVals) {
