@@ -232,6 +232,7 @@ public class Transition {
 		}
 		evaluate(FormulaExpand.EXPAND);
 		List<String> predicates = new ArrayList<>();
+		// TODO: Is getMainComponent correct? NPE might occur for machines extending other machines
 		AbstractElement mainComponent = stateSpace.getMainComponent();
 		List<String> paramNames = new ArrayList<>();
 		if (mainComponent instanceof ClassicalBMachine) {
