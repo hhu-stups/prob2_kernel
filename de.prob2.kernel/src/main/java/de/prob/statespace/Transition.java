@@ -243,7 +243,7 @@ public class Transition {
 
 	public List<String> getParameterNames() {
 		OperationInfo operationInfo = stateSpace.getLoadedMachine().getMachineOperationInfo(getName());
-		return operationInfo.getParameterNames();
+		return operationInfo == null ? new ArrayList<>() : operationInfo.getParameterNames();
 	}
 
 	private String createRep(final String name, final List<String> params, final List<String> returnVals) {
