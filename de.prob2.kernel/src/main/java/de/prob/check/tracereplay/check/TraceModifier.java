@@ -309,10 +309,16 @@ public class TraceModifier {
 		return changelogPhase1.size() > 1 || !changelogPhase2.values().isEmpty() || typeIIIDirty() || typeIVDirty();
 	}
 
+	public boolean typeIIDetDirty() {
+		return changelogPhase1.size() >1;
+	}
+
+	public boolean typeIINonDetDirty(){
+		return !changelogPhase2.values().isEmpty();
+	}
 
 	public boolean typeIVDirty(){
-		boolean ru = changelogPhase4.values().stream().flatMap(entry -> entry.values().stream().flatMap(innerValues -> innerValues.values().stream())).count() > 0;
-		return ru;
+		return changelogPhase4.values().stream().flatMap(entry -> entry.values().stream().flatMap(innerValues -> innerValues.values().stream())).count() > 0;
 	}
 
 	public boolean typeIIIDirty(){
