@@ -131,4 +131,24 @@ public class ReplayOptionsTest {
 
 		Assert.assertEquals(expected, result);
 	}
+
+	@Test
+	public void replayOptions_integration_test(){
+		Set<ReplayOptions.OptionFlags> options = emptySet();
+		ReplayOptions replayOptions = new ReplayOptions(options, singletonList("a"), singletonMap("inc", singleton(ReplayOptions.OptionFlags.Output)), singletonMap("inc", singletonList("b")));
+
+		Map<String, String> input = singletonMap("b", "1=1");
+		Map<String, String> output = singletonMap("c", "1=1");
+		Map<String, String> variables = singletonMap("a", "1=1");
+
+		PersistentTransition persistentTransition = new PersistentTransition("inc", input,
+				output, variables, emptySet(), emptyList());
+
+		PredicateBuilder expected = new PredicateBuilder();
+
+
+		PredicateBuilder result = replayOptions.createMapping(persistentTransition);
+
+		Assert.assertEquals(expected, result);
+	}
 }

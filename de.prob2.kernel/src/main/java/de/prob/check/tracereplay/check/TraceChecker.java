@@ -29,18 +29,21 @@ public class TraceChecker {
 						String newPath,
 						Injector injector,
 						MappingFactoryInterface mappingFactory,
-						ReplayOptions replayOptions) throws IOException, ModelTranslationError {
+						ReplayOptions replayOptions,
+						ProgressMemoryInterface progressMemoryInterface) throws IOException, ModelTranslationError {
 
 		this.newOperationInfos = newInfos;
 		this.oldOperationInfos = oldInfos;
 
 		typeFinder = new TypeFinder(transitionList, oldInfos, newInfos, oldVars, newVars);
 		typeFinder.check();
+		progressMemoryInterface.nextStep();
+		progressMemoryInterface.nextStep();
 
 
-		traceModifier = new TraceModifier(transitionList, TraceCheckerUtils.createStateSpace(newPath, injector));
+		traceModifier = new TraceModifier(transitionList, TraceCheckerUtils.createStateSpace(newPath, injector), progressMemoryInterface);
 
-		TraceExplorer traceExplorer = new TraceExplorer(false, mappingFactory, replayOptions);
+		TraceExplorer traceExplorer = new TraceExplorer(false, mappingFactory, replayOptions, progressMemoryInterface);
 
 		traceModifier.makeTypeIII(typeFinder.getTypeIII(), typeFinder.getTypeIV(), newInfos, oldInfos,  traceExplorer);
 
@@ -73,7 +76,8 @@ public class TraceChecker {
 						String newPath,
 						Injector injector,
 						MappingFactoryInterface mappingFactory,
-						ReplayOptions replayOptions)
+						ReplayOptions replayOptions,
+						ProgressMemoryInterface progressMemoryInterface)
 			throws IOException, ModelTranslationError, PrologTermNotDefinedException {
 
 		this.oldOperationInfos = oldInfos;
@@ -82,14 +86,15 @@ public class TraceChecker {
 
 		typeFinder = new TypeFinder(transitionList, oldInfos, newInfos, oldVars, newVars);
 		typeFinder.check();
-
+		progressMemoryInterface.nextStep();
 
 		DeltaFinder deltaFinder = new DeltaFinder(typeFinder.getTypeIorII(), typeFinder.getTypeIIPermutation(),
 				typeFinder.getInitIsTypeIorIICandidate(), oldPath, newPath, injector, oldInfos);
 		deltaFinder.calculateDelta();
+		progressMemoryInterface.nextStep();
 
 
-		traceModifier = new TraceModifier(transitionList, TraceCheckerUtils.createStateSpace(newPath, injector));
+		traceModifier = new TraceModifier(transitionList, TraceCheckerUtils.createStateSpace(newPath, injector), progressMemoryInterface);
 
 		List<Delta> deltasTypeII = deltaFinder.getResultTypeIIAsDeltaList();
 
@@ -101,7 +106,7 @@ public class TraceChecker {
 
 		TraceExplorer traceExplorer;
 
-		traceExplorer = new TraceExplorer(!deltaFinder.getResultTypeIIInit().isEmpty(), mappingFactory, replayOptions);
+		traceExplorer = new TraceExplorer(!deltaFinder.getResultTypeIIInit().isEmpty(), mappingFactory, replayOptions, progressMemoryInterface);
 
 
 		traceModifier.makeTypeIII(typeFinder.getTypeIII(), typeFinder.getTypeIV(), newInfos, oldInfos, traceExplorer);

@@ -246,10 +246,17 @@ public class DeltaFinder implements IDeltaFinder {
 			Map<String, String> initMapping = checkDeterministicPairs(initOld, initNew,
 					Collections.singleton(Transition.INITIALISE_MACHINE_NAME), checkerInterface,
 					prepareOperationsInterface)
-					.get(Transition.INITIALISE_MACHINE_NAME)
 					.entrySet()
 					.stream()
-					.collect(toMap(Map.Entry::getValue, Map.Entry::getKey))	;
+					.filter(entry -> entry.getKey().equals(Transition.INITIALISE_MACHINE_NAME)) //Fancy way of checking if INIT was set
+					.map(Map.Entry::getValue)
+					.reduce(new HashMap<>(), (id, acc) -> {
+								Map<String, String> toReturn = new HashMap<>();
+								toReturn.putAll(id);
+								toReturn.putAll(acc);
+								return toReturn;
+							});
+
 			boolean initIsTypeI = initMapping
 					.entrySet()
 					.stream()

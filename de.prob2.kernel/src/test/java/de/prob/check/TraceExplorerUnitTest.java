@@ -16,6 +16,7 @@ import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
 import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -177,7 +178,7 @@ public class TraceExplorerUnitTest {
 		Map<String, Set<Map<String, String>>> result = TraceExplorer.melt(first, second);
 
 
-		Assert.assertEquals(expected,result);
+		Assertions.assertEquals(expected,result);
 	}
 	
 	@Test
@@ -328,7 +329,7 @@ public class TraceExplorerUnitTest {
 		newMapping.put("j", "integer");
 
 		MappingFactoryInterface mappingFactoryInterface = new TestUtils.StubFactoryImplementation();
-		Set<Map<String, String>> result = new TraceExplorer(true, mappingFactoryInterface).createAllPossiblePairs(newMapping, oldMapping, TraceExplorer.MappingNames.VARIABLES_MODIFIED, "inc");
+		Set<Map<String, String>> result = new TraceExplorer(true, mappingFactoryInterface, new TestUtils.ProgressStubFactory()).createAllPossiblePairs(newMapping, oldMapping, TraceExplorer.MappingNames.VARIABLES_MODIFIED, "inc");
 
 		Map<String, String> inner = TraceCheckerUtils.zip(new ArrayList<>(oldMapping.keySet()), new ArrayList<>(newMapping.keySet()));
 		Set<Map<String, String>> expected = new HashSet<>();
@@ -388,7 +389,7 @@ public class TraceExplorerUnitTest {
 		newMapping.put("z", "integer");
 
 		MappingFactoryInterface mappingFactoryInterface = new TestUtils.StubFactoryImplementation();
-		Set<Map<String, String>> result = new TraceExplorer(true, mappingFactoryInterface).createAllPossiblePairs(newMapping, oldMapping, TraceExplorer.MappingNames.VARIABLES_MODIFIED, "inc");
+		Set<Map<String, String>> result = new TraceExplorer(true, mappingFactoryInterface, new TestUtils.ProgressStubFactory()).createAllPossiblePairs(newMapping, oldMapping, TraceExplorer.MappingNames.VARIABLES_MODIFIED, "inc");
 
 		Assert.assertEquals(expected, result);
 	}
@@ -438,7 +439,7 @@ public class TraceExplorerUnitTest {
 		newMapping.put("y", "integer");
 
 		MappingFactoryInterface mappingFactoryInterface = new TestUtils.StubFactoryImplementation();
-		Set<Map<String, String>> result = new TraceExplorer(true, mappingFactoryInterface).createAllPossiblePairs(newMapping, oldMapping, TraceExplorer.MappingNames.VARIABLES_MODIFIED, "");
+		Set<Map<String, String>> result = new TraceExplorer(true, mappingFactoryInterface, new TestUtils.ProgressStubFactory()).createAllPossiblePairs(newMapping, oldMapping, TraceExplorer.MappingNames.VARIABLES_MODIFIED, "");
 
 		Assert.assertEquals(expected, result);
 	}
@@ -488,7 +489,7 @@ public class TraceExplorerUnitTest {
 		newMapping.put("z", "integer");
 
 		MappingFactoryInterface mappingFactoryInterface = new TestUtils.StubFactoryImplementation();
-		Set<Map<String, String>> result = new TraceExplorer(true, mappingFactoryInterface).createAllPossiblePairs(newMapping, oldMapping, TraceExplorer.MappingNames.VARIABLES_MODIFIED, "");
+		Set<Map<String, String>> result = new TraceExplorer(true, mappingFactoryInterface, new TestUtils.ProgressStubFactory()).createAllPossiblePairs(newMapping, oldMapping, TraceExplorer.MappingNames.VARIABLES_MODIFIED, "");
 
 		Assert.assertEquals(expected, result);
 	}
@@ -518,7 +519,7 @@ public class TraceExplorerUnitTest {
 		newMapping.put("z", "boolean");
 
 		MappingFactoryInterface mappingFactoryInterface = new TestUtils.StubFactoryImplementation();
-		Set<Map<String, String>> result = new TraceExplorer(true, mappingFactoryInterface).createAllPossiblePairs(newMapping, oldMapping, TraceExplorer.MappingNames.VARIABLES_MODIFIED, "");
+		Set<Map<String, String>> result = new TraceExplorer(true, mappingFactoryInterface, new TestUtils.ProgressStubFactory()).createAllPossiblePairs(newMapping, oldMapping, TraceExplorer.MappingNames.VARIABLES_MODIFIED, "");
 
 
 		Assert.assertEquals(expected, result);
@@ -546,7 +547,7 @@ public class TraceExplorerUnitTest {
 		newMapping.put("y", "boolean");
 
 		MappingFactoryInterface mappingFactoryInterface = new TestUtils.StubFactoryImplementation();
-		Set<Map<String, String>> result = new TraceExplorer(true, mappingFactoryInterface).createAllPossiblePairs(newMapping, oldMapping, TraceExplorer.MappingNames.VARIABLES_MODIFIED, "");
+		Set<Map<String, String>> result = new TraceExplorer(true, mappingFactoryInterface, new TestUtils.ProgressStubFactory()).createAllPossiblePairs(newMapping, oldMapping, TraceExplorer.MappingNames.VARIABLES_MODIFIED, "");
 
 
 		Assert.assertEquals(expected, result);
@@ -578,7 +579,7 @@ public class TraceExplorerUnitTest {
 
 
 
-		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> result = new TraceExplorer(true, mappingFactoryInterface)
+		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> result = new TraceExplorer(true, mappingFactoryInterface, new TestUtils.ProgressStubFactory())
 				.calculateVarMappings("floors", operationInfoNew, operationInfoOld);
 
 
@@ -666,7 +667,7 @@ public class TraceExplorerUnitTest {
 
 		MappingFactoryInterface mappingFactoryInterface = new TestUtils.StubFactoryImplementation();
 
-		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> result = new TraceExplorer(true, mappingFactoryInterface).calculateVarMappings("floors",  operationInfo, operationInfoOld);
+		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> result = new TraceExplorer(true, mappingFactoryInterface, new TestUtils.ProgressStubFactory()).calculateVarMappings("floors",  operationInfo, operationInfoOld);
 
 
 		Assert.assertTrue(expected.containsAll(result));
@@ -744,7 +745,7 @@ public class TraceExplorerUnitTest {
 		MappingFactoryInterface mappingFactoryInterface = new TestUtils.StubFactoryImplementation();
 
 
-		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> result = new TraceExplorer(true, mappingFactoryInterface).calculateVarMappings("floors", operationInfo, operationInfoOld);
+		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> result = new TraceExplorer(true, mappingFactoryInterface, new TestUtils.ProgressStubFactory()).calculateVarMappings("floors", operationInfo, operationInfoOld);
 
 
 		Assert.assertTrue(expected.containsAll(result));
@@ -787,7 +788,7 @@ public class TraceExplorerUnitTest {
 
 		MappingFactoryInterface mappingFactoryInterface = new TestUtils.StubFactoryImplementation();
 
-		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> result = new TraceExplorer(true, mappingFactoryInterface).calculateVarMappings("getfloors", operationInfo, operationInfoOld);
+		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> result = new TraceExplorer(true, mappingFactoryInterface, new TestUtils.ProgressStubFactory()).calculateVarMappings("getfloors", operationInfo, operationInfoOld);
 
 
 		Assert.assertTrue(expected.containsAll(result));
@@ -831,7 +832,7 @@ public class TraceExplorerUnitTest {
 
 		MappingFactoryInterface mappingFactoryInterface = new TestUtils.StubFactoryImplementation();
 
-		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> result = new TraceExplorer(true, mappingFactoryInterface).calculateVarMappings("floors", operationInfo, operationInfoOld);
+		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> result = new TraceExplorer(true, mappingFactoryInterface, new TestUtils.ProgressStubFactory()).calculateVarMappings("floors", operationInfo, operationInfoOld);
 
 		System.out.println(expected);
 		System.out.println(result);
@@ -1172,7 +1173,7 @@ public class TraceExplorerUnitTest {
 
 		MappingFactoryInterface mappingFactoryInterface = new TestUtils.StubFactoryImplementation();
 
-		Set<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>> result = new TraceExplorer(true, mappingFactoryInterface)
+		Set<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>> result = new TraceExplorer(true, mappingFactoryInterface, new TestUtils.ProgressStubFactory())
 				.generateAllPossibleMappingVariations(asList(init, first, second), newInfos, oldInfos, new HashSet<>(Arrays.asList("inc", "dec")));
 
 		Assert.assertEquals(expected, result);
@@ -1206,7 +1207,7 @@ public class TraceExplorerUnitTest {
 
 
 		Set<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>> result =
-				new TraceExplorer(true, mappingFactoryInterface).generateAllPossibleMappingVariations(asList(init, first, second), newInfos, oldInfos, emptySet());
+				new TraceExplorer(true, mappingFactoryInterface, new TestUtils.ProgressStubFactory()).generateAllPossibleMappingVariations(asList(init, first, second), newInfos, oldInfos, emptySet());
 
 		Assert.assertEquals(singleton(emptyMap()), result);
 

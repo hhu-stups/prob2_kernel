@@ -28,17 +28,20 @@ public class TraceExplorer {
 	private final MappingFactoryInterface mappingFactory;
 	private final Map<Map<String, Map<MappingNames, Map<String, String>>>, Set<String>> updatedTypeIV = new HashMap<>();
 	private final ReplayOptions replayOptions;
+	private final ProgressMemoryInterface progressMemoryInterface;
 
-	public TraceExplorer(boolean initWasSet, MappingFactoryInterface mappingFactory, ReplayOptions replayOptions) {
+	public TraceExplorer(boolean initWasSet, MappingFactoryInterface mappingFactory, ReplayOptions replayOptions, ProgressMemoryInterface progressMemoryInterface) {
 		this.initWasSet = initWasSet;
 		this.mappingFactory = mappingFactory;
 		this.replayOptions = replayOptions;
+		this.progressMemoryInterface = progressMemoryInterface;
 	}
 
-	public TraceExplorer(boolean initWasSet, MappingFactoryInterface mappingFactory) {
+	public TraceExplorer(boolean initWasSet, MappingFactoryInterface mappingFactory, ProgressMemoryInterface progressMemoryInterface) {
 		this.initWasSet = initWasSet;
 		this.mappingFactory = mappingFactory;
 		this.replayOptions = ReplayOptions.allowAll();
+		this.progressMemoryInterface = progressMemoryInterface;
 	}
 
 	/**
@@ -636,6 +639,9 @@ public class TraceExplorer {
 		Set<Map<String, Map<MappingNames, Map<String, String>>>> selectedMappingsToResultsKeys =
 				generateAllPossibleMappingVariations(transitionList, operationInfoNew, operationInfoOld, typeIIICandidates);
 
+		progressMemoryInterface.nextStep();
+		progressMemoryInterface.addTasks(selectedMappingsToResultsKeys.size()*transitionList.size());
+
 
 		return selectedMappingsToResultsKeys.stream()
 				.map(mapping -> {
@@ -696,7 +702,7 @@ public class TraceExplorer {
 				}
 
 			}
-
+			progressMemoryInterface.fulfillTask();
 		}
 		updatedTypeIV.put(currentTypeIIIMapping, usedTypeIV);
 

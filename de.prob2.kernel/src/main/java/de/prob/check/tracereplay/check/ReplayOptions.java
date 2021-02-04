@@ -25,6 +25,14 @@ public class ReplayOptions {
 		if(!operationOptions.keySet().equals(operationBlacklist.keySet())) throw new IllegalStateException("Key set of operationOptions and operationBlacklist needs to be equal");
 	}
 
+	public ReplayOptions(){
+		this.globalOptions = emptySet();
+		this.identifierBlacklist = emptyList();
+		this.operationOptions = emptyMap();
+		this.operationBlacklist = emptyMap();
+		if(!operationOptions.keySet().equals(operationBlacklist.keySet())) throw new IllegalStateException("Key set of operationOptions and operationBlacklist needs to be equal");
+	}
+
 	public PredicateBuilder createMapping(PersistentTransition persistentTransition) {
 		String name = persistentTransition.getOperationName();
 		PredicateBuilder predicateBuilder = new PredicateBuilder();
@@ -68,6 +76,12 @@ public class ReplayOptions {
 	public static ReplayOptions allowAll(){
 		return new ReplayOptions(emptySet(), emptyList(), emptyMap(), emptyMap());
 	}
+
+	//public static ReplayOptions replayJustNames(){ return new ReplayOptions()}
+
+	//createReplayOptionsWithIgnoredOperations
+
+	//createReplayOptionsWithIgnoredVariables
 
 	public enum OptionFlags{
 		Variables, Input, Output

@@ -6,10 +6,8 @@ import com.google.inject.Stage;
 import de.prob.JsonManagerStubModule;
 import de.prob.MainModule;
 import de.prob.ProBKernelStub;
+import de.prob.check.tracereplay.check.ReplayOptions;
 import de.prob.check.tracereplay.check.TraceChecker;
-import de.prob.check.tracereplay.check.TraceCheckerUtils;
-import de.prob.check.tracereplay.check.exceptions.MappingFactoryInterface;
-import de.prob.check.tracereplay.check.exceptions.ToManyOptionsIdentifierMapping;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.scripting.ModelTranslationError;
@@ -57,12 +55,11 @@ public class TraceCheckerIntegrationTest {
 				stateSpace.getLoadedMachine().getOperations(),
 				new HashSet<>(jsonFile.getVariableNames()),
 				new HashSet<>(stateSpace.getLoadedMachine().getVariableNames()),
-				new HashSet<>(stateSpace.getLoadedMachine().getSetNames()),
-				new HashSet<>(stateSpace.getLoadedMachine().getConstantNames()),
 				newPath.toString(),
 				injector,
-				new TestUtils.StubFactoryImplementation()
-				);
+				new TestUtils.StubFactoryImplementation(),
+				new ReplayOptions(),
+				new TestUtils.ProgressStubFactory());
 
 		System.out.println(traceChecker.getTraceModifier().getLastChange());
 		System.out.println(traceChecker.getTraceModifier().getChangelogPhase3II());
@@ -83,16 +80,18 @@ public class TraceCheckerIntegrationTest {
 				stateSpace.getLoadedMachine().getOperations(),
 				new HashSet<>(jsonFile.getVariableNames()),
 				new HashSet<>(stateSpace.getLoadedMachine().getVariableNames()),
-				new HashSet<>(stateSpace.getLoadedMachine().getSetNames()),
-				new HashSet<>(stateSpace.getLoadedMachine().getConstantNames()),
 				newPath.toString(),
 				injector,
-				new TestUtils.StubFactoryImplementation()
+				new TestUtils.StubFactoryImplementation(),
+				new ReplayOptions(),
+				new TestUtils.ProgressStubFactory()
 		);
 
 		System.out.println(traceChecker.getTraceModifier().getChangelogPhase3II().size());
 		System.out.println(traceChecker.getTraceModifier().getChangelogPhase3II());
 
 	}
+	
+
 
 }

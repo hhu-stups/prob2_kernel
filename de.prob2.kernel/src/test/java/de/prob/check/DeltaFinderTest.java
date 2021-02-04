@@ -25,7 +25,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
-import static java.util.Collections.singleton;
+import static java.util.Collections.*;
 
 
 public class DeltaFinderTest {
@@ -396,6 +396,46 @@ public class DeltaFinderTest {
 		helper.put("floors", "levels");
 		expected.put("getfloors", helper);
 		Assert.assertEquals(expected, result);
+
+	}
+
+
+	@Test
+	public void deltaFinder_correction_refinment() throws IOException, ModelTranslationError, PrologTermNotDefinedException {
+		System.setProperty("prob.home", "/home/sebastian/prob_prolog");
+
+		//resources/de/prob/testmachines/traces/refinements/TrafficLightRef.ref
+		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "refinements", "TrafficLightRef.ref");
+		String pathAsStringOld = pathOld.toAbsolutePath().toString();
+
+		System.out.println(pathAsStringOld);
+
+
+		Path path = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "refinements", "TrafficLight.mch");
+		String pathAsString = path.toAbsolutePath().toString();
+
+		Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
+		ReusableAnimator reusableAnimator = injector.getInstance(ReusableAnimator.class);
+		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension(pathAsStringOld.substring(pathAsStringOld.lastIndexOf(".")+1)));
+		StateSpace stateSpace = reusableAnimator.createStateSpace();
+		factory.extract(pathAsString).loadIntoStateSpace(stateSpace);
+
+		Set<String> typeIorIICandidates = new HashSet<>();
+		typeIorIICandidates.add("set_peds_go");
+		typeIorIICandidates.add("set_peds_stop");
+		typeIorIICandidates.add("set_cars");
+
+		DeltaFinder deltaFinder = new DeltaFinder(typeIorIICandidates, emptyMap(), true,
+				pathAsStringOld, pathAsString, injector, stateSpace.getLoadedMachine().getOperations());
+
+
+		deltaFinder.calculateDelta();
+
+		Map<String, Map<String, String>> result = deltaFinder.getResultTypeII();
+		Map<String, String> initResult = deltaFinder.getResultTypeIIInit();
+
+		Assert.assertEquals(emptyMap(), result);
+		Assert.assertEquals(emptyMap(), initResult);
 
 	}
 

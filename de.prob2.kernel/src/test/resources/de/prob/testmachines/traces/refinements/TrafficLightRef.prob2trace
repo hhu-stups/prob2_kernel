@@ -1,0 +1,163 @@
+{
+  "type" : "Trace",
+  "name" : "TrafficLightRef",
+  "description" : "",
+  "trace" : {
+    "description" : "",
+    "transitionList" : [ {
+      "operationName" : "$initialise_machine",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "cars_color" : "{red}",
+        "peds_color" : "red"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "set_cars",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "cars_color" : "{red,yellow}"
+      },
+      "destStateNotChanged" : [ "peds_color" ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "set_cars",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "cars_color" : "{green}"
+      },
+      "destStateNotChanged" : [ "peds_color" ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "set_cars",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "cars_color" : "{yellow}"
+      },
+      "destStateNotChanged" : [ "peds_color" ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "set_cars",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "cars_color" : "{red}"
+      },
+      "destStateNotChanged" : [ "peds_color" ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "set_peds_go",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "peds_color" : "green"
+      },
+      "destStateNotChanged" : [ "cars_color" ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "set_peds_stop",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "peds_color" : "red"
+      },
+      "destStateNotChanged" : [ "cars_color" ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "set_cars",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "cars_color" : "{red,yellow}"
+      },
+      "destStateNotChanged" : [ "peds_color" ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "set_peds_go",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "peds_color" : "green"
+      },
+      "destStateNotChanged" : [ "cars_color" ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "set_peds_go",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : { },
+      "destStateNotChanged" : [ "cars_color", "peds_color" ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "set_peds_stop",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "peds_color" : "red"
+      },
+      "destStateNotChanged" : [ "cars_color" ],
+      "additionalPredicates" : [ ]
+    } ]
+  },
+  "variableNames" : [ "peds_color", "cars_color" ],
+  "machineOperationInfos" : {
+    "set_cars" : {
+      "operationName" : "set_cars",
+      "parameterNames" : [ ],
+      "outputParameterNames" : [ ],
+      "topLevel" : true,
+      "type" : "CLASSICAL_B",
+      "readVariables" : [ "cars_color", "peds_color" ],
+      "writtenVariables" : [ "cars_color" ],
+      "nonDetWrittenVariables" : [ "cars_color" ],
+      "typeMap" : {
+        "cars_color" : "set(global(colors))",
+        "peds_color" : "global(colors)"
+      }
+    },
+    "set_peds_stop" : {
+      "operationName" : "set_peds_stop",
+      "parameterNames" : [ ],
+      "outputParameterNames" : [ ],
+      "topLevel" : true,
+      "type" : "CLASSICAL_B",
+      "readVariables" : [ ],
+      "writtenVariables" : [ "peds_color" ],
+      "nonDetWrittenVariables" : [ ],
+      "typeMap" : {
+        "peds_color" : "global(colors)"
+      }
+    },
+    "set_peds_go" : {
+      "operationName" : "set_peds_go",
+      "parameterNames" : [ ],
+      "outputParameterNames" : [ ],
+      "topLevel" : true,
+      "type" : "CLASSICAL_B",
+      "readVariables" : [ "cars_color" ],
+      "writtenVariables" : [ "peds_color" ],
+      "nonDetWrittenVariables" : [ ],
+      "typeMap" : {
+        "cars_color" : "set(global(colors))",
+        "peds_color" : "global(colors)"
+      }
+    }
+  },
+  "constantNames" : [ ],
+  "setNames" : [ "colors" ],
+  "metaData" : {
+    "type" : "TraceMetaData",
+    "formatVersion" : 1,
+    "savedAt" : [ 2021, 1, 29, 11, 31, 6, 702995000 ],
+    "creator" : "USER",
+    "proBCliVersion" : "1.10.0-nightly",
+    "name" : "HALLO",
+    "path" : "TrafficLightRef.ref",
+    "proB2KernelVersion" : "4.0.0-SNAPSHOT"
+  }
+}

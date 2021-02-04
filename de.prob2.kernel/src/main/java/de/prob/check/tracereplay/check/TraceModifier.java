@@ -19,12 +19,14 @@ public class TraceModifier {
 	private final Map<Set<Delta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>>> changelogPhase3 = new HashMap<>();
 	private final Map<Set<Delta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Map<String, TraceAnalyser.AnalyserResult>>> changelogPhase4 = new HashMap<>();
 	private final StateSpace stateSpace;
+	private final ProgressMemoryInterface progressMemoryInterface;
 
 
-	public TraceModifier(List<PersistentTransition> transitionList, StateSpace stateSpace) {
+	public TraceModifier(List<PersistentTransition> transitionList, StateSpace stateSpace, ProgressMemoryInterface progressMemoryInterface) {
 
 		changelogPhase1.add(transitionList);
 		this.stateSpace = stateSpace;
+		this.progressMemoryInterface = progressMemoryInterface;
 	}
 
 	/**
@@ -228,15 +230,19 @@ public class TraceModifier {
 
 
 			changelogPhase3.putAll(results);
+			progressMemoryInterface.nextStep();
 			Map<Set<Delta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Map<String, TraceAnalyser.AnalyserResult>>> typeIVResults =
 					performTypeIVAnalysing(traceExplorer.getUpdatedTypeIV(), results);
+			progressMemoryInterface.nextStep();
 			changelogPhase4.putAll(typeIVResults);
 
 		} else {
 			Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result =
 					traceExplorer.replayTrace(getLastChange(), stateSpace, newInfos, oldInfos,  typeIIICandidates, typeIVCandidates);
+			progressMemoryInterface.nextStep();
 			Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Map<String, TraceAnalyser.AnalyserResult>> typeIVResults =
 					performTypeIVAnalysing2(traceExplorer.getUpdatedTypeIV(), result);
+			progressMemoryInterface.nextStep();
 			changelogPhase3.put(Collections.emptySet(), result);
 
 			if(!result.containsValue(emptyList()))

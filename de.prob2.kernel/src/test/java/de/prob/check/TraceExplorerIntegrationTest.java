@@ -20,6 +20,7 @@ import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
 import de.prob.statespace.Transition;
 import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -56,7 +57,7 @@ public class TraceExplorerIntegrationTest {
 
 		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "Lift.mch"));
 
-		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result = new TraceExplorer(false, new TestUtils.StubFactoryImplementation())
+		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result = new TraceExplorer(false, new TestUtils.StubFactoryImplementation(), new TestUtils.ProgressStubFactory())
 				.replayTrace(
 						emptyList(),
 						stateSpace,
@@ -67,7 +68,7 @@ public class TraceExplorerIntegrationTest {
 
 
 
-		Assert.assertTrue(result.isEmpty());
+		Assertions.assertTrue(result.isEmpty());
 	}
 
 	@Test
@@ -94,7 +95,7 @@ public class TraceExplorerIntegrationTest {
 
 		StateSpace toCompare = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "reducedSigLength", "OneTypeIIICandidate.mch"));
 
-		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result = new TraceExplorer(true, new TestUtils.StubFactoryImplementation())
+		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result = new TraceExplorer(true, new TestUtils.StubFactoryImplementation(), new TestUtils.ProgressStubFactory())
 				.replayTrace(persistentTransitions,
 						toCompare,
 						toCompare.getLoadedMachine().getOperations(),
@@ -105,7 +106,7 @@ public class TraceExplorerIntegrationTest {
 
 		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> resultCleaned = TraceExplorer.removeHelperVariableMappings(result);
 
-		Assert.assertEquals(3,resultCleaned.entrySet().size());
+		Assertions.assertEquals(3,resultCleaned.entrySet().size());
 
 	}
 
@@ -214,7 +215,7 @@ public class TraceExplorerIntegrationTest {
 		expected.put(expected_inner3,  expected3);
 
 
-		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result = new TraceExplorer(true, new TestUtils.StubFactoryImplementation())
+		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result = new TraceExplorer(true, new TestUtils.StubFactoryImplementation(), new TestUtils.ProgressStubFactory())
 				.replayTrace(transitionList,
 						stateSpace2,
 						stateSpace2.getLoadedMachine().getOperations(),
@@ -224,7 +225,7 @@ public class TraceExplorerIntegrationTest {
 
 		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> resultCleaned = TraceExplorer.removeHelperVariableMappings(result);
 
-		Assert.assertEquals(expected,resultCleaned);
+		Assertions.assertEquals(expected,resultCleaned);
 	}
 
 	@Test
@@ -253,7 +254,7 @@ public class TraceExplorerIntegrationTest {
 				new PersistenceDelta(first, singletonList(first)),new PersistenceDelta(second, singletonList(second))).collect(toList()));
 
 
-		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result = new TraceExplorer(true, new TestUtils.StubFactoryImplementation())
+		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result = new TraceExplorer(true, new TestUtils.StubFactoryImplementation(), new TestUtils.ProgressStubFactory())
 				.replayTrace(
 						Stream.of(init, first, second).collect(toList()),
 						stateSpace,
@@ -265,7 +266,7 @@ public class TraceExplorerIntegrationTest {
 
 		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> resultCleaned = TraceExplorer.removeHelperVariableMappings(result);
 
-		Assert.assertEquals(expected,resultCleaned);
+		Assertions.assertEquals(expected,resultCleaned);
 	}
 
 	@Test
@@ -346,7 +347,7 @@ public class TraceExplorerIntegrationTest {
 		expected.put(expected_inner1,  expected1);
 		expected.put(expected_inner2,  expected2);
 
-		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result = new TraceExplorer(true, new TestUtils.StubFactoryImplementation())
+		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result = new TraceExplorer(true, new TestUtils.StubFactoryImplementation(), new TestUtils.ProgressStubFactory())
 				.replayTrace(
 						Stream.of(init, first, second).collect(toList()),
 						stateSpace,
@@ -373,7 +374,7 @@ public class TraceExplorerIntegrationTest {
 
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "changedTypeIIandTypeIII", "LiftProto.prob2trace"));
 
-		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result = new TraceExplorer(false, new TestUtils.StubFactoryImplementation())
+		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result = new TraceExplorer(false, new TestUtils.StubFactoryImplementation(), new TestUtils.ProgressStubFactory())
 				.replayTrace(
 						jsonFile.getTrace().getTransitionList(),
 						stateSpace2,

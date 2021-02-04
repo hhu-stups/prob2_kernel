@@ -1,0 +1,46 @@
+REFINEMENT TrafficLightRef
+REFINES TrafficLight
+
+
+SETS
+    colors = {red, green, yellow}
+
+VARIABLES
+    peds_color, cars_color
+
+INVARIANT
+    peds_color : {red, green} & 
+    cars_color <: colors &
+    (peds_go = TRUE <=> peds_color = green) & 
+    (cars_go = TRUE <=> green : cars_color)
+
+
+INITIALISATION
+    peds_color := red ||
+    cars_color := {red}
+
+
+OPERATIONS
+set_peds_go = PRE green /: cars_color 
+                THEN 
+                    peds_color := green 
+                END;
+
+
+set_peds_stop = peds_color := red;
+
+
+set_cars = ANY new_color WHERE 
+                                new_color <: colors & 
+                                (green : new_color  => peds_color = red) &
+                                (cars_color = {yellow} => new_color = {red}) &
+                                (cars_color = {red} => new_color = {red, yellow}) &
+                                (cars_color = {red, yellow} => new_color = {green}) &
+                                (cars_color = {green} => new_color = {yellow}) 
+                                THEN    
+                                    cars_color := new_color
+                                END
+                                
+
+
+END

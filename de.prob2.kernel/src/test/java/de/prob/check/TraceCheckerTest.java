@@ -7,6 +7,7 @@ import com.google.inject.Stage;
 import de.prob.JsonManagerStubModule;
 import de.prob.MainModule;
 import de.prob.ProBKernelStub;
+import de.prob.check.tracereplay.check.ReplayOptions;
 import de.prob.check.tracereplay.check.TraceChecker;
 import de.prob.check.tracereplay.check.exceptions.PrologTermNotDefinedException;
 import de.prob.check.tracereplay.json.TraceManager;
@@ -96,12 +97,12 @@ public class TraceCheckerTest {
 				newOld.getOperations(),
 				new HashSet<>(oldVars),
 				new HashSet<>(newOld.getVariableNames()),
-				new HashSet<>(newOld.getSetNames()),
-				new HashSet<>(newOld.getConstantNames()),
 				machinePath.toString(),
 				machinePathNew.toString(),
 				injector,
-				new TestUtils.StubFactoryImplementation());
+				new TestUtils.StubFactoryImplementation(),
+				new ReplayOptions(),
+				new TestUtils.ProgressStubFactory());
 
 
 		System.out.println(traceChecker.getTraceModifier().getChangelogPhase3II());

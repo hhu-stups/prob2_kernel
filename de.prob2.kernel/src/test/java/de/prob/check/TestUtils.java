@@ -1,5 +1,6 @@
 package de.prob.check;
 
+import de.prob.check.tracereplay.check.ProgressMemoryInterface;
 import de.prob.check.tracereplay.check.TraceCheckerUtils;
 import de.prob.check.tracereplay.check.exceptions.MappingFactoryInterface;
 import de.prob.check.tracereplay.check.exceptions.ToManyOptionsIdentifierMapping;
@@ -12,5 +13,36 @@ public class TestUtils {
 		public ToManyOptionsIdentifierMapping produceMappingManager() {
 			return (oldInfo, newInfo, name, section) -> TraceCheckerUtils.zipPreserveOrder(oldInfo, newInfo);
 		}
+	}
+
+	public static class ProgressStubFactory implements ProgressMemoryInterface{
+
+
+		@Override
+		public void addTask() {
+
+		}
+
+		@Override
+		public void addTasks(int count) {
+
+		}
+
+		@Override
+		public void fulfillTask() {
+
+		}
+
+		@Override
+		public void fulfillTasks(int count) {
+
+		}
+
+		@Override
+		public void nextStep() {
+
+		}
+
+
 	}
 }
