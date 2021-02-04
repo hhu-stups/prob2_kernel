@@ -17,7 +17,7 @@ import de.prob.scripting.ModelFactory;
 import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -49,7 +49,7 @@ public class DeltaFinderTest {
 				fakeCheckerInterface, fakePrepareOperationsInterface);
 
 
-		Assert.assertEquals(new HashMap<>(), result);
+		Assertions.assertEquals(new HashMap<>(), result);
 
 
 	}
@@ -94,7 +94,7 @@ public class DeltaFinderTest {
 		expectedOuter.put("dec", expectedInner);
 		expectedOuter.put("getFloors", expectedInner);
 
-		Assert.assertEquals(expectedOuter, result);
+		Assertions.assertEquals(expectedOuter, result);
 	}
 
 
@@ -161,7 +161,7 @@ public class DeltaFinderTest {
 		expectedResult.put("inc", expectedOuter2);
 
 
-		Assert.assertEquals(expectedResult, result);
+		Assertions.assertEquals(expectedResult, result);
 
 	}
 
@@ -171,19 +171,19 @@ public class DeltaFinderTest {
 	void test_getOldNewOperations() throws IOException, ModelTranslationError {
 		System.setProperty("prob.home", "/home/sebastian/prob_prolog");
 
-		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "machineWithOneOperation.mch");
+		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "examplesForOperations", "machineWithOneOperation.mch");
 		String pathAsStringOld = pathOld.toAbsolutePath().toString();
 
 
-		Path path = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "testTraceMachine.mch");
+		Path path = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "examplesForOperations", "machineWithOneOperation.mch");
 		String pathAsString = path.toAbsolutePath().toString();
 
 
 		Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
 		ReusableAnimator reusableAnimator = injector.getInstance(ReusableAnimator.class);
-		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension(pathAsString.substring(pathAsStringOld.lastIndexOf(".")+1)));
+		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension(pathAsStringOld.substring(pathAsStringOld.lastIndexOf(".")+1)));
 		StateSpace stateSpace = reusableAnimator.createStateSpace();
-		factory.extract(pathAsString).loadIntoStateSpace(stateSpace);
+		factory.extract(pathAsStringOld).loadIntoStateSpace(stateSpace);
 
 
 
@@ -195,8 +195,8 @@ public class DeltaFinderTest {
 		Map<String, CompoundPrologTerm> oldOperations = deltaFinder.getOperations(pathAsStringOld);
 
 
-		Assert.assertTrue(newOperations.containsKey("inccc"));
-		Assert.assertTrue(oldOperations.containsKey("inccc"));
+		Assertions.assertTrue(newOperations.containsKey("on"));
+		Assertions.assertTrue(oldOperations.containsKey("on"));
 	}
 
 
@@ -204,18 +204,18 @@ public class DeltaFinderTest {
 	public void prepareOperationsInterface_test() throws IOException, ModelTranslationError, PrologTermNotDefinedException {
 		System.setProperty("prob.home", "/home/sebastian/prob_prolog");
 
-		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift.mch");
+		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "Lift.mch");
 		String pathAsStringOld = pathOld.toAbsolutePath().toString();
 
 
-		Path path = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift.mch");
+		Path path = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "Lift.mch");
 		String pathAsString = path.toAbsolutePath().toString();
 
 		Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
 		ReusableAnimator reusableAnimator = injector.getInstance(ReusableAnimator.class);
-		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension(pathAsString.substring(pathAsStringOld.lastIndexOf(".")+1)));
+		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension(pathAsStringOld.substring(pathAsStringOld.lastIndexOf(".")+1)));
 		StateSpace stateSpace = reusableAnimator.createStateSpace();
-		factory.extract(pathAsString).loadIntoStateSpace(stateSpace);
+		factory.extract(pathAsStringOld).loadIntoStateSpace(stateSpace);
 
 
 
@@ -228,7 +228,7 @@ public class DeltaFinderTest {
 				deltaFinder.prepareOperationsInterface.prepareOperation(newOperations.get("getfloors"));
 
 
-		Assert.assertEquals(new ListPrologTerm(new CompoundPrologTerm("floors"),
+		Assertions.assertEquals(new ListPrologTerm(new CompoundPrologTerm("floors"),
 				new CompoundPrologTerm("getfloors"),
 				new CompoundPrologTerm("out")), result.getFirst());
 
@@ -239,18 +239,18 @@ public class DeltaFinderTest {
 	public void checkerInterface_test() throws IOException, ModelTranslationError, PrologTermNotDefinedException {
 		System.setProperty("prob.home", "/home/sebastian/prob_prolog");
 
-		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift.mch");
+		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "Lift.mch");
 		String pathAsStringOld = pathOld.toAbsolutePath().toString();
 
 
-		Path path = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift.mch");
+		Path path = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "Lift.mch");
 		String pathAsString = path.toAbsolutePath().toString();
 
 		Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
 		ReusableAnimator reusableAnimator = injector.getInstance(ReusableAnimator.class);
-		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension(pathAsString.substring(pathAsStringOld.lastIndexOf(".")+1)));
+		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension(pathAsStringOld.substring(pathAsStringOld.lastIndexOf(".")+1)));
 		StateSpace stateSpace = reusableAnimator.createStateSpace();
-		factory.extract(pathAsString).loadIntoStateSpace(stateSpace);
+		factory.extract(pathAsStringOld).loadIntoStateSpace(stateSpace);
 
 
 		DeltaFinder deltaFinder = new DeltaFinder(Collections.emptySet(), Collections.emptyMap(), false,
@@ -265,7 +265,7 @@ public class DeltaFinderTest {
 
 		Map<String, String> result = deltaFinder.checkerInterface.checkTypeII(oldInc, newOperations.get("inc"));
 
-		Assert.assertEquals("inc", result.get("inc"));
+		Assertions.assertEquals("inc", result.get("inc"));
 
 	}
 
@@ -274,18 +274,18 @@ public class DeltaFinderTest {
 	public void integration_test() throws IOException, ModelTranslationError, PrologTermNotDefinedException {
 		System.setProperty("prob.home", "/home/sebastian/prob_prolog");
 
-		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift.mch");
+		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "Lift.mch");
 		String pathAsStringOld = pathOld.toAbsolutePath().toString();
 
 
-		Path path = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "LiftWithLevels.mch");
+		Path path = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "LiftWithLevels.mch");
 		String pathAsString = path.toAbsolutePath().toString();
 
 		Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
 		ReusableAnimator reusableAnimator = injector.getInstance(ReusableAnimator.class);
-		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension(pathAsString.substring(pathAsStringOld.lastIndexOf(".")+1)));
+		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension(pathAsStringOld.substring(pathAsStringOld.lastIndexOf(".")+1)));
 		StateSpace stateSpace = reusableAnimator.createStateSpace();
-		factory.extract(pathAsString).loadIntoStateSpace(stateSpace);
+		factory.extract(pathAsStringOld).loadIntoStateSpace(stateSpace);
 
 
 		DeltaFinder deltaFinder = new DeltaFinder(Collections.emptySet(), Collections.emptyMap(), false,
@@ -320,7 +320,7 @@ public class DeltaFinderTest {
 		opMap3.put("inc", "inc");
 		expected.put("inc", opMap3);
 
-		Assert.assertEquals(expected, result);
+		Assertions.assertEquals(expected, result);
 
 	}
 
@@ -328,19 +328,18 @@ public class DeltaFinderTest {
 	@Test
 	public void deltaFinder_initialisation_test() throws IOException, ModelTranslationError, PrologTermNotDefinedException {
 		System.setProperty("prob.home", "/home/sebastian/prob_prolog");
-
-		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift.mch");
+		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "Lift.mch");
 		String pathAsStringOld = pathOld.toAbsolutePath().toString();
 
 
-		Path path = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "LiftWithLevels.mch");
+		Path path = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "Lift","LiftWithLevels.mch");
 		String pathAsString = path.toAbsolutePath().toString();
 
 		Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
 		ReusableAnimator reusableAnimator = injector.getInstance(ReusableAnimator.class);
-		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension(pathAsString.substring(pathAsStringOld.lastIndexOf(".")+1)));
+		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension(pathAsStringOld.substring(pathAsStringOld.lastIndexOf(".")+1)));
 		StateSpace stateSpace = reusableAnimator.createStateSpace();
-		factory.extract(pathAsString).loadIntoStateSpace(stateSpace);
+		factory.extract(pathAsStringOld).loadIntoStateSpace(stateSpace);
 
 
 		DeltaFinder deltaFinder = new DeltaFinder(Collections.emptySet(), Collections.emptyMap(), true,
@@ -352,9 +351,9 @@ public class DeltaFinderTest {
 		Map<String, String> result = deltaFinder.getResultTypeIIInit();
 
 		Map<String, String> expected = new HashMap<>();
-		expected.put("floors", "level");
+		expected.put("level", "floors");
 
-		Assert.assertEquals(expected, result);
+		Assertions.assertEquals(expected, result);
 
 	}
 
@@ -364,18 +363,18 @@ public class DeltaFinderTest {
 	public void deltaFinder_correction_of_the_categorization() throws IOException, ModelTranslationError, PrologTermNotDefinedException {
 		System.setProperty("prob.home", "/home/sebastian/prob_prolog");
 
-		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "LiftProto.mch");
+		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "changedTypeIIandTypeIII", "LiftProto.mch");
 		String pathAsStringOld = pathOld.toAbsolutePath().toString();
 
 
-		Path path = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "LiftProto2.mch");
+		Path path = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "changedTypeIIandTypeIII", "LiftProto2.mch");
 		String pathAsString = path.toAbsolutePath().toString();
 
 		Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
 		ReusableAnimator reusableAnimator = injector.getInstance(ReusableAnimator.class);
-		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension(pathAsString.substring(pathAsStringOld.lastIndexOf(".")+1)));
+		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension(pathAsStringOld.substring(pathAsStringOld.lastIndexOf(".")+1)));
 		StateSpace stateSpace = reusableAnimator.createStateSpace();
-		factory.extract(pathAsString).loadIntoStateSpace(stateSpace);
+		factory.extract(pathAsStringOld).loadIntoStateSpace(stateSpace);
 
 
 		Map<String, Set<String>> typeIICandidates = new HashMap<>();
@@ -395,13 +394,13 @@ public class DeltaFinderTest {
 		helper.put("out", "out");
 		helper.put("floors", "levels");
 		expected.put("getfloors", helper);
-		Assert.assertEquals(expected, result);
+		Assertions.assertEquals(expected, result);
 
 	}
 
 
 	@Test
-	public void deltaFinder_correction_refinment() throws IOException, ModelTranslationError, PrologTermNotDefinedException {
+	public void deltaFinder_correction_refinement() throws IOException, ModelTranslationError, PrologTermNotDefinedException {
 		System.setProperty("prob.home", "/home/sebastian/prob_prolog");
 
 		//resources/de/prob/testmachines/traces/refinements/TrafficLightRef.ref
@@ -434,8 +433,47 @@ public class DeltaFinderTest {
 		Map<String, Map<String, String>> result = deltaFinder.getResultTypeII();
 		Map<String, String> initResult = deltaFinder.getResultTypeIIInit();
 
-		Assert.assertEquals(emptyMap(), result);
-		Assert.assertEquals(emptyMap(), initResult);
+		Assertions.assertEquals(emptyMap(), result);
+		Assertions.assertEquals(emptyMap(), initResult);
+
+	}
+
+	@Test
+	public void deltaFinder_typeII_with_candidates() throws IOException, ModelTranslationError, PrologTermNotDefinedException {
+		System.setProperty("prob.home", "/home/sebastian/prob_prolog");
+
+		//resources/de/prob/testmachines/traces/refinements/TrafficLightRef.ref
+		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "complexExample", "PitmanController_v6.mch");
+		String pathAsStringOld = pathOld.toAbsolutePath().toString();
+
+		System.out.println(pathAsStringOld);
+
+
+		Path path = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "complexExample", "PitmanController_v6_v2.mch");
+		String pathAsString = path.toAbsolutePath().toString();
+
+		Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
+		ReusableAnimator reusableAnimator = injector.getInstance(ReusableAnimator.class);
+		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension(pathAsStringOld.substring(pathAsStringOld.lastIndexOf(".")+1)));
+		StateSpace stateSpace = reusableAnimator.createStateSpace();
+		factory.extract(pathAsStringOld).loadIntoStateSpace(stateSpace);
+
+		Map<String, Set<String>> typeIorIICandidates = new HashMap<>();
+		typeIorIICandidates.put("ENV_Turn_EngineOn",singleton("ENV_Turn_Engine_On") );
+		typeIorIICandidates.put("ENV_Turn_EngineOff", singleton("ENV_Turn_Engine_Off"));
+
+		DeltaFinder deltaFinder = new DeltaFinder(emptySet(), typeIorIICandidates, true,
+				pathAsStringOld, pathAsString, injector, stateSpace.getLoadedMachine().getOperations());
+
+
+		deltaFinder.calculateDelta();
+
+
+		String expected1 = "ENV_Turn_EngineOff";
+		String expected2 = "ENV_Turn_EngineOn";
+		Set<String> expected = new HashSet<>(Arrays.asList(expected1, expected2));
+
+		Assertions.assertEquals(expected, deltaFinder.getResultTypeII().keySet());
 
 	}
 

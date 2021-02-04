@@ -62,8 +62,11 @@ public class DeltaFinder implements IDeltaFinder {
 	 */
 	public final PrepareOperationsInterface prepareOperationsInterface = (operation) -> {
 		PrepareOperations prepareOperations = new PrepareOperations(operation);
+
 		animator.execute(prepareOperations);
-		if(!prepareOperations.getNotReachableNodes().isEmpty()) throw new PrologTermNotDefinedException(prepareOperations.getNotReachableNodes());
+		if(!prepareOperations.getNotReachableNodes().isEmpty()) {
+			throw new PrologTermNotDefinedException(prepareOperations.getNotReachableNodes());
+		}
 		return prepareOperations.asTriple();
 	};
 

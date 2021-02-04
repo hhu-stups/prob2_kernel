@@ -9,11 +9,8 @@ import de.prob.ProBKernelStub;
 import de.prob.check.tracereplay.check.TypeFinder;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
-import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.OperationInfo;
-import de.prob.statespace.Transition;
-import org.codehaus.groovy.classgen.asm.OperandStack;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -22,6 +19,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 import static de.prob.statespace.OperationInfo.Type.CLASSICAL_B;
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.singleton;
 
 public class TypeFinderTest {
@@ -59,31 +57,31 @@ public class TypeFinderTest {
 
 		// Expected
 		OperationInfo operationInfo1 = new OperationInfo("inc", inputParas, outputParas, true,
-				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars);
+				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars, emptyMap());
 
 		OperationInfo operationInfo2 = new OperationInfo("inc1", inputParas, outputParas, true,
-				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars);
+				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars, emptyMap());
 
 		OperationInfo operationInfo3 = new OperationInfo("inc2", inputParas, outputParas, true,
-				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars);
+				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars, emptyMap());
 
 		//Unexpected
 		OperationInfo operationInfo4 = new OperationInfo("inc3", inputParas2, outputParas, true,
-				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars);
+				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars, emptyMap());
 
 		OperationInfo operationInfo5 = new OperationInfo("inc4", inputParas, outputParas2, true,
-				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars);
+				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars, emptyMap());
 
 
 		OperationInfo operationInfo6 = new OperationInfo("inc5", inputParas, outputParas, true,
-				CLASSICAL_B, readVariables2, detModifiedVars, nonDetModifiedVars);
+				CLASSICAL_B, readVariables2, detModifiedVars, nonDetModifiedVars, emptyMap());
 
 
 		OperationInfo operationInfo8 = new OperationInfo("inc7", inputParas, outputParas, true,
-				CLASSICAL_B, readVariables, detModifiedVars2, nonDetModifiedVars);
+				CLASSICAL_B, readVariables, detModifiedVars2, nonDetModifiedVars, emptyMap());
 
 		OperationInfo operationInfo9 = new OperationInfo("inc8", inputParas, outputParas, true,
-				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars2);
+				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars2, emptyMap());
 
 		Map<String, OperationInfo> operations = new HashMap<>();
 		operations.put(operationInfo1.getOperationName(), operationInfo1);
@@ -104,7 +102,7 @@ public class TypeFinderTest {
 				0, 0, operations);
 
 
-		Assert.assertEquals(expectedResult, candidates);
+		Assertions.assertEquals(expectedResult, candidates);
 	}
 
 	@Test
@@ -125,28 +123,28 @@ public class TypeFinderTest {
 
 		// Expected
 		OperationInfo operationInfo1 = new OperationInfo("inc", inputParas, outputParas, true,
-				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars);
+				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars, emptyMap());
 
 		OperationInfo operationInfo2 = new OperationInfo("inc1", inputParas, outputParas, true,
-				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars);
+				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars, emptyMap());
 
 		OperationInfo operationInfo3 = new OperationInfo("inc2", inputParas, outputParas, true,
-				CLASSICAL_B, readVariables2, detModifiedVars, nonDetModifiedVars);
+				CLASSICAL_B, readVariables2, detModifiedVars, nonDetModifiedVars, emptyMap());
 
 		//Unexpected
 		OperationInfo operationInfo4 = new OperationInfo("inc3", inputParas2, outputParas, true,
-				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars);
+				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars, emptyMap());
 
 		OperationInfo operationInfo5 = new OperationInfo("inc4", inputParas, outputParas2, true,
-				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars);
+				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars, emptyMap());
 
 
 
 		OperationInfo operationInfo8 = new OperationInfo("inc7", inputParas, outputParas, true,
-				CLASSICAL_B, readVariables, detModifiedVars2, nonDetModifiedVars);
+				CLASSICAL_B, readVariables, detModifiedVars2, nonDetModifiedVars, emptyMap());
 
 		OperationInfo operationInfo9 = new OperationInfo("inc8", inputParas, outputParas, true,
-				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars2);
+				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars2, emptyMap());
 
 		Map<String, OperationInfo> oldOperations = new HashMap<>();
 		oldOperations.put(operationInfo1.getOperationName(), operationInfo1);
@@ -184,21 +182,21 @@ public class TypeFinderTest {
 
 		// Expected
 		OperationInfo operationInfo1 = new OperationInfo("inc", inputParas, outputParas, true,
-				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars);
+				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars, emptyMap());
 
 		OperationInfo operationInfo2 = new OperationInfo("inc1", inputParas, outputParas, true,
-				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars);
+				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars, emptyMap());
 
 		OperationInfo operationInfo3 = new OperationInfo("inc2", inputParas, outputParas, true,
-				CLASSICAL_B, readVariables2, detModifiedVars, nonDetModifiedVars);
+				CLASSICAL_B, readVariables2, detModifiedVars, nonDetModifiedVars, emptyMap());
 
 		//Unexpected
 		OperationInfo operationInfo4 = new OperationInfo("inc2", inputParas2, outputParas, true,
-				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars);
+				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars, emptyMap());
 
 
 		OperationInfo operationInfo9 = new OperationInfo("inc1", inputParas, outputParas, true,
-				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars);
+				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars, emptyMap());
 
 
 		Map<String, OperationInfo> oldOperations = new HashMap<>();
@@ -216,7 +214,7 @@ public class TypeFinderTest {
 
 		Set<String> expected = new HashSet<>(Arrays.asList("inc", "inc1"));
 
-		Assert.assertEquals(expected, result);
+		Assertions.assertEquals(expected, result);
 
 	}
 
@@ -230,7 +228,7 @@ public class TypeFinderTest {
 
 		Set<String> expected = new HashSet<>(Arrays.asList("dec", "getfloors", "inc"));
 
-		Assert.assertEquals(expected, result);
+		Assertions.assertEquals(expected, result);
 
 	}
 
@@ -248,13 +246,13 @@ public class TypeFinderTest {
 
 		// Expected
 		OperationInfo operationInfo1 = new OperationInfo("inc", inputParas, outputParas, true,
-				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars);
+				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars, emptyMap());
 
 		OperationInfo operationInfo2 = new OperationInfo("dec", inputParas, outputParas, true,
-				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars);
+				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars, emptyMap());
 
 		OperationInfo operationInfo3 = new OperationInfo("getFloor", inputParas, outputParas, true,
-				CLASSICAL_B, readVariables2, detModifiedVars, nonDetModifiedVars);
+				CLASSICAL_B, readVariables2, detModifiedVars, nonDetModifiedVars, emptyMap());
 
 
 		Map<String, OperationInfo> oldOperations = new HashMap<>();
@@ -263,14 +261,14 @@ public class TypeFinderTest {
 		oldOperations.put(operationInfo3.getOperationName(), operationInfo3);
 
 		OperationInfo operationInfo4 = new OperationInfo("inc2", inputParas2, outputParas, true,
-				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars);
+				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars, emptyMap());
 
 		OperationInfo operationInfo5 = new OperationInfo("dec", inputParas2, outputParas, true,
-				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars);
+				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars, emptyMap());
 
 
 		OperationInfo operationInfo9 = new OperationInfo("inc", inputParas, outputParas, true,
-				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars);
+				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars, emptyMap());
 
 
 		Map<String, OperationInfo> newOperations = new HashMap<>();
@@ -292,9 +290,9 @@ public class TypeFinderTest {
 		Set<String> typeIV = new HashSet<>(Collections.singletonList("getfloors"));
 
 
-		Assert.assertEquals(typeI, typeFinder.getTypeIorII());
-		Assert.assertEquals(typeIII, typeFinder.getTypeIII());
-		Assert.assertEquals(typeIV, typeFinder.getTypeIV());
+		Assertions.assertEquals(typeI, typeFinder.getTypeIorII());
+		Assertions.assertEquals(typeIII, typeFinder.getTypeIII());
+		Assertions.assertEquals(typeIV, typeFinder.getTypeIV());
 	}
 
 
@@ -312,13 +310,13 @@ public class TypeFinderTest {
 
 		// Expected
 		OperationInfo operationInfo1 = new OperationInfo("inc", inputParas, outputParas, true,
-				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars);
+				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars, emptyMap());
 
 		OperationInfo operationInfo2 = new OperationInfo("dec", inputParas, outputParas, true,
-				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars);
+				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars, emptyMap());
 
 		OperationInfo operationInfo3 = new OperationInfo("getFloor", inputParas, outputParas, true,
-				CLASSICAL_B, readVariables2, detModifiedVars, nonDetModifiedVars);
+				CLASSICAL_B, readVariables2, detModifiedVars, nonDetModifiedVars, emptyMap());
 
 
 		Map<String, OperationInfo> oldOperations = new HashMap<>();
@@ -327,14 +325,14 @@ public class TypeFinderTest {
 		oldOperations.put(operationInfo3.getOperationName(), operationInfo3);
 
 		OperationInfo operationInfo4 = new OperationInfo("inc2", inputParas2, outputParas, true,
-				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars);
+				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars, emptyMap());
 
 		OperationInfo operationInfo5 = new OperationInfo("dec", inputParas2, outputParas, true,
-				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars);
+				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars, emptyMap());
 
 
 		OperationInfo operationInfo9 = new OperationInfo("inc1", inputParas, outputParas, true,
-				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars);
+				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars, emptyMap());
 
 
 		Map<String, OperationInfo> newOperations = new HashMap<>();
@@ -353,7 +351,7 @@ public class TypeFinderTest {
 
 		Map<String,Set<String>> typeII_per = Collections.singletonMap("inc", singleton("inc1"));
 
-		Assert.assertEquals(typeII_per, typeFinder.getTypeIIPermutation());
+		Assertions.assertEquals(typeII_per, typeFinder.getTypeIIPermutation());
 
 	}
 
@@ -375,7 +373,7 @@ public class TypeFinderTest {
 
 
 
-		Assert.assertFalse(typeFinder.getInitIsTypeIorIICandidate());
+		Assertions.assertFalse(typeFinder.getInitIsTypeIorIICandidate());
 
 	}
 
@@ -399,10 +397,14 @@ public class TypeFinderTest {
 
 
 
-		Assert.assertTrue(typeFinder.getInitIsTypeIorIICandidate());
+		Assertions.assertTrue(typeFinder.getInitIsTypeIorIICandidate());
 
 	}
 
+	@Test
+	public void put_similar_operations_in_typeII(){
+
+	}
 
 	
 }
