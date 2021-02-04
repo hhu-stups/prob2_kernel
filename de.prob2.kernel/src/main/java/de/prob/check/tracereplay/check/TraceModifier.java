@@ -306,9 +306,18 @@ public class TraceModifier {
 	 * @return the original trace was modified
 	 */
 	public boolean isDirty() {
-		return changelogPhase1.size() > 1 || !changelogPhase2.isEmpty() || !changelogPhase3.isEmpty();
+		return changelogPhase1.size() > 1 || !changelogPhase2.values().isEmpty() || typeIIIDirty() || typeIVDirty();
 	}
 
+
+	public boolean typeIVDirty(){
+		boolean ru = changelogPhase4.values().stream().flatMap(entry -> entry.values().stream().flatMap(innerValues -> innerValues.values().stream())).count() > 0;
+		return ru;
+	}
+
+	public boolean typeIIIDirty(){
+		return !changelogPhase3.containsKey(emptySet());
+	}
 
 	public Map<Set<Delta>, List<PersistentTransition>> getChangelogPhase2() {
 		return changelogPhase2;
