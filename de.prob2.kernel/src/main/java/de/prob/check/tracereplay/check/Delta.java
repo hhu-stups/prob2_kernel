@@ -26,29 +26,31 @@ public class Delta {
 		originalName = operationInfo.getOperationName();
 		List<String> oldInput = operationInfo.getParameterNames();
 		List<String> oldOutput = operationInfo.getOutputParameterNames();
+		List<String> oldVariables = operationInfo.getAllVariables();
+
 
 		inputParameters = changes.entrySet().stream()
 				.filter(stringStringEntry -> oldInput.contains(stringStringEntry.getKey()))
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
 		outputParameters = changes.entrySet().stream()
 				.filter(stringStringEntry -> oldOutput.contains(stringStringEntry.getKey()))
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-
-		List<String> oldVariables = operationInfo.getReadVariables();
-		oldVariables.addAll(operationInfo.getWrittenVariables());
-		oldVariables.addAll(operationInfo.getNonDetWrittenVariables());
 
 		variables = changes.entrySet().stream()
 				.filter(stringStringEntry -> oldVariables.contains(stringStringEntry.getKey()))
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
+		deltaName = changes.get(originalName);
+	/*
 		deltaName = changes.entrySet().stream().filter(stringStringEntry ->
 						!oldVariables.contains(stringStringEntry.getKey()) &&
 								!oldInput.contains(stringStringEntry.getKey()) &&
-								!oldOutput.contains(stringStringEntry.getKey()))
+								!oldOutput.contains(stringStringEntry.getKey()) &&
+								)
 				.map(Map.Entry::getValue)
 				.collect(Collectors.toList()).get(0);
-
+*/
 	}
 
 	/**

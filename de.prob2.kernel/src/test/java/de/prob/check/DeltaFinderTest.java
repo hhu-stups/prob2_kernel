@@ -5,10 +5,7 @@ import com.google.inject.Injector;
 import com.google.inject.Stage;
 import de.prob.MainModule;
 import de.prob.animator.ReusableAnimator;
-import de.prob.check.tracereplay.check.CheckerInterface;
-import de.prob.check.tracereplay.check.DeltaFinder;
-import de.prob.check.tracereplay.check.PrepareOperationsInterface;
-import de.prob.check.tracereplay.check.Triple;
+import de.prob.check.tracereplay.check.*;
 import de.prob.check.tracereplay.check.exceptions.PrologTermNotDefinedException;
 import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
@@ -24,6 +21,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Collections.*;
 
@@ -469,11 +467,15 @@ public class DeltaFinderTest {
 		deltaFinder.calculateDelta();
 
 
-		String expected1 = "ENV_Turn_EngineOff";
-		String expected2 = "ENV_Turn_EngineOn";
+		String expected1 = "ENV_Turn_Engine_Off";
+		String expected2 = "ENV_Turn_Engine_On";
 		Set<String> expected = new HashSet<>(Arrays.asList(expected1, expected2));
 
-		Assertions.assertEquals(expected, deltaFinder.getResultTypeII().keySet());
+		List<Delta> expectedDelta = deltaFinder.getResultTypeIIAsDeltaList();
+		Set<String> resultNames = expectedDelta.stream().map(Delta::getDeltaName).collect(Collectors.toSet());
+
+		Assertions.assertEquals(2, expectedDelta.size());
+		Assertions.assertEquals(expected, resultNames);
 
 	}
 

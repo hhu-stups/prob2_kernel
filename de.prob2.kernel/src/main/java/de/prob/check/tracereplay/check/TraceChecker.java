@@ -104,9 +104,7 @@ public class TraceChecker {
 		Map<String, List<Delta>> deltasTypeIIWithCandidates = deltaFinder.getResultTypeIIWithCandidatesAsDeltaMap();
 		traceModifier.insertAmbiguousChanges(deltasTypeIIWithCandidates);
 
-		TraceExplorer traceExplorer;
-
-		traceExplorer = new TraceExplorer(!deltaFinder.getResultTypeIIInit().isEmpty(), mappingFactory, replayOptions, progressMemoryInterface);
+		TraceExplorer traceExplorer  = new TraceExplorer(!deltaFinder.getResultTypeIIInit().isEmpty(), mappingFactory, replayOptions, progressMemoryInterface);
 
 
 		traceModifier.makeTypeIII(typeFinder.getTypeIII(), typeFinder.getTypeIV(), newInfos, oldInfos, traceExplorer);
