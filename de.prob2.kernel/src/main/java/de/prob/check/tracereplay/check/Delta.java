@@ -42,15 +42,7 @@ public class Delta {
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
 		deltaName = changes.get(originalName);
-	/*
-		deltaName = changes.entrySet().stream().filter(stringStringEntry ->
-						!oldVariables.contains(stringStringEntry.getKey()) &&
-								!oldInput.contains(stringStringEntry.getKey()) &&
-								!oldOutput.contains(stringStringEntry.getKey()) &&
-								)
-				.map(Map.Entry::getValue)
-				.collect(Collectors.toList()).get(0);
-*/
+
 	}
 
 	/**
