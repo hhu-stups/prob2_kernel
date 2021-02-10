@@ -521,8 +521,11 @@ public class TraceExplorer {
 
 		if (oldTypes.isEmpty() || newTypes.isEmpty()) return emptySet();
 
+		//if(oldTypes.equals(newTypes)) return singleton(createIdentity(oldTypes)); //apparently there were no renaming
+
 		Map<String, List<String>> oldTypesSorted = sortByValue(oldTypes);
 		Map<String, List<String>> newTypesSorted = sortByValue(newTypes);
+
 
 		Map<String, Integer> minMap = oldTypesSorted.entrySet()
 				.stream()
@@ -550,13 +553,39 @@ public class TraceExplorer {
 		Map<String, List<String>> newSortedCleansed = cleanse(newTypesSorted, oldTypesSortedAutomatic.keySet());
 		Map<String, List<String>> oldSortedCleansed = cleanse(oldTypesSorted, newTypesSortedAutomatic.keySet());
 
-		Map<String, List<List<String>>> oldPermuted = permutedMap(oldSortedCleansed, minMap);
-		Map<String, List<List<String>>> newPermuted = permutedMap(newSortedCleansed, minMap);
+		Map<String, Set<Map<String, String>>> allPairs = newSortedCleansed.entrySet().stream()
+				.map(entry -> {
+					List<String> oldSorted = oldSortedCleansed.get(entry.getKey());
+					List<String> newSorted = entry.getValue();
+					if(oldSorted.containsAll(newSorted) && newSorted.containsAll(oldSorted)){
+						return new AbstractMap.SimpleEntry<>(entry.getKey(), singleton(createIdentity(oldSorted))); //Shortcut if there are no apparent renmaings
+					}else {
+						return new AbstractMap.SimpleEntry<>(entry.getKey(), TraceCheckerUtils.allDiagonals(oldSortedCleansed.get(entry.getKey()), entry.getValue()));
+					}
+				})
+				.collect(toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
 
-		Map<String, Set<Map<String, String>>> molten = melt(oldPermuted, newPermuted);
-		molten.putAll(manualCandidatesDecided);
+		allPairs.putAll(manualCandidatesDecided);
 
-		return reduceSet(molten);
+		return reduceSet(allPairs);
+	}
+
+
+
+	/**
+	 * @param oldTypes the mapping of the old machine
+	 * @return return the keys of both maps mapped to each other
+	 */
+	public static Map<String, String> createIdentity(List<String> oldTypes){
+		return oldTypes.stream().collect(toMap(entry -> entry, entry -> entry));
+	}
+
+	/**
+	 * @param oldTypes the mapping of the old machine
+	 * @return return the keys of both maps mapped to each other
+	 */
+	public static Map<String, String> createIdentity(Map<String, String> oldTypes){
+		return oldTypes.entrySet().stream().collect(toMap(Map.Entry::getKey, Map.Entry::getKey));
 	}
 
 	/**
@@ -675,6 +704,7 @@ public class TraceExplorer {
 
 		Set<String> usedTypeIV = new HashSet<>(typeIV);
 		for (PersistenceDelta oldTPersistentTransition : persistentTransitions) {
+			System.out.println(persistentTransitions.indexOf(oldTPersistentTransition));
 			boolean isDirty = false;
 			PersistentTransition oldPTransition = oldTPersistentTransition.getOldTransition();
 			if (!usedTypeIV.contains(oldPTransition.getOperationName())) {

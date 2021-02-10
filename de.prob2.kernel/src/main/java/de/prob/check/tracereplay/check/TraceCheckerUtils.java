@@ -1,5 +1,6 @@
 package de.prob.check.tracereplay.check;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Injector;
 import de.prob.animator.ReusableAnimator;
 import de.prob.scripting.FactoryProvider;
@@ -11,6 +12,7 @@ import de.prob.statespace.StateSpace;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toMap;
@@ -238,5 +240,59 @@ public class TraceCheckerUtils {
 		}
 		return list.get(0);
 	}
+
+
+	/**
+	 * Extract diagonals and anti diagonals of a matrix, preserves order
+	 * @param m the first vector
+	 * @param n the second vector
+	 * @return all diagonals
+	 */
+	public static Set<Map<String, String>> allDiagonals(List<String> m, List<String> n){
+		Set<Map<String, String>> first = extractDiagonals(m,n);
+		Set<Map<String, String>> second = extractDiagonals(Lists.reverse(m), n);
+		return Stream.of(first, second).flatMap(Collection::stream).collect(Collectors.toSet());
+
+	}
+
+	/**
+	 * Extracts all diagonals of a matrix, preserves order
+	 * @param m the first vector
+	 * @param n the second vector
+	 * @return all diagonals
+	 */
+	public static Set<Map<String, String>> extractDiagonals(List<String> m, List<String> n){
+
+		int sizeM = m.size();
+		int sizeN = n.size();
+		int offSetX = 0;
+		int offSetY = 0;
+		Set<Map<String, String>> result = new HashSet<>();
+		while( offSetX < sizeM && offSetY < sizeN) {
+			Map<String, String> sideResult = new HashMap<>();
+
+			int x = 0;
+			int y = 0;
+			while (x < sizeM && y < sizeN) {
+				sideResult.put(m.get((x + offSetX)% sizeM), n.get((y +offSetY) %sizeN));
+				x++;
+				y++;
+
+			}
+
+			if(sizeM > sizeN){
+				offSetX ++;
+			}else{
+				offSetY++;
+			}
+			result.add(sideResult);
+		}
+
+		return result;
+	}
+
+
+
+
 
 }

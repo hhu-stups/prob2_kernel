@@ -358,7 +358,7 @@ public class TraceExplorerIntegrationTest {
 
 		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> resultCleaned = TraceExplorer.removeHelperVariableMappings(result);
 
-		Assert.assertEquals(expected,resultCleaned);
+		Assertions.assertEquals(expected,resultCleaned);
 	}
 
 
@@ -381,6 +381,34 @@ public class TraceExplorerIntegrationTest {
 						oldInfos,
 						newInfos,
 						singleton("inc"),
+						emptySet());
+
+		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> resultCleaned = TraceExplorer.removeHelperVariableMappings(result);
+
+
+		System.out.println(resultCleaned);
+	}
+
+
+	@Test
+	public void integration_skip_obvious_when_matching_variables() throws IOException, ModelTranslationError {
+
+
+		StateSpace stateSpace1 = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "complexExample", "PitmanController_v6.mch"));
+		Map<String, OperationInfo> oldInfos = stateSpace1.getLoadedMachine().getOperations();
+
+		StateSpace stateSpace2 = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "complexExample", "PitmanController_v6_v4.mch"));
+		Map<String, OperationInfo> newInfos = stateSpace1.getLoadedMachine().getOperations();
+
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "complexExample", "large5000Steps.prob2trace"));
+
+		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result = new TraceExplorer(false, new TestUtils.StubFactoryImplementation(), new TestUtils.ProgressStubFactory())
+				.replayTrace(
+						jsonFile.getTrace().getTransitionList(),
+						stateSpace2,
+						oldInfos,
+						newInfos,
+						singleton("ENV_Hazard_blinking"),
 						emptySet());
 
 		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> resultCleaned = TraceExplorer.removeHelperVariableMappings(result);
