@@ -521,7 +521,6 @@ public class TraceExplorer {
 
 		if (oldTypes.isEmpty() || newTypes.isEmpty()) return emptySet();
 
-		//if(oldTypes.equals(newTypes)) return singleton(createIdentity(oldTypes)); //apparently there were no renaming
 
 		Map<String, List<String>> oldTypesSorted = sortByValue(oldTypes);
 		Map<String, List<String>> newTypesSorted = sortByValue(newTypes);
@@ -704,7 +703,6 @@ public class TraceExplorer {
 
 		Set<String> usedTypeIV = new HashSet<>(typeIV);
 		for (PersistenceDelta oldTPersistentTransition : persistentTransitions) {
-			System.out.println(persistentTransitions.indexOf(oldTPersistentTransition));
 			boolean isDirty = false;
 			PersistentTransition oldPTransition = oldTPersistentTransition.getOldTransition();
 			if (!usedTypeIV.contains(oldPTransition.getOperationName())) {

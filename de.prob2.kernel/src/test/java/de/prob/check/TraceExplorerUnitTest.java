@@ -15,7 +15,6 @@ import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
-import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
