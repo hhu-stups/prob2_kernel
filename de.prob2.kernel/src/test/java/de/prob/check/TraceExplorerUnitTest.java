@@ -909,8 +909,6 @@ public class TraceExplorerUnitTest {
 
 		Set<Map<TraceExplorer.MappingNames, Map<String, String>>> result = new TraceExplorer(true, mappingFactoryInterface, new TestUtils.ProgressStubFactory()).calculateVarMappings("floors", operationInfo, operationInfoOld);
 
-		System.out.println(expected);
-		System.out.println(result);
 
 		Assertions.assertTrue(expected.containsAll(result));
 	}
