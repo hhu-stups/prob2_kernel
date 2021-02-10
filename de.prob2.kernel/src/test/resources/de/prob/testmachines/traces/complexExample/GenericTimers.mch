@@ -24,31 +24,30 @@ OPERATIONS
   END;
   
   // Increase time without exceeding a deadline
-  IncreaseTime(delta) = SELECT delta:NATURAL & 
-      (curDeadlines/={} => curTime+delta <= min(ran(curDeadlines))) THEN
-     curTime := curTime + delta
+  IncreaseTime(renamingDelta) = SELECT renamingDelta:NATURAL &
+      (curDeadlines/={} => curTime+renamingDelta <= min(ran(curDeadlines))) THEN
+     curTime := curTime + renamingDelta
   END;
   
-  IncreaseTimeUntilDeadline(timer,delta) =
-   SELECT delta:NATURAL & 
+  IncreaseTimeUntilDeadline(timer,renamingDelta) =
+   SELECT renamingDelta:NATURAL &
           timer : dom(curDeadlines) &
-          curTime + delta = min(ran(curDeadlines)) & 
-          curTime + delta = curDeadlines(timer) THEN
-     curTime := curTime + delta ||
+          curTime + renamingDelta = min(ran(curDeadlines)) &
+          curTime + renamingDelta = curDeadlines(timer) THEN
+     curTime := curTime + renamingDelta ||
      curDeadlines :=  {timer} <<| curDeadlines
   END;
   
-  IncreaseTimeUntilCyclicDeadline(timer,delta,newDelta) =
-   SELECT delta:NATURAL & 
+  IncreaseTimeUntilCyclicDeadline(timer,renamingDelta,newDelta) =
+   SELECT renamingDelta:NATURAL &
           timer : dom(curDeadlines) & 
-          curTime+delta = curDeadlines(timer)  &
-          curTime+delta = min(ran(curDeadlines)) &
+          curTime+renamingDelta = curDeadlines(timer)  &
+          curTime+renamingDelta = min(ran(curDeadlines)) &
           newDelta : NATURAL
   THEN
-     curTime := curTime + delta ||
-     curDeadlines(timer) :=  curTime+delta+newDelta
+     curTime := curTime + renamingDelta ||
+     curDeadlines(timer) :=  curTime+renamingDelta+newDelta
   END
 
 END
-  
   

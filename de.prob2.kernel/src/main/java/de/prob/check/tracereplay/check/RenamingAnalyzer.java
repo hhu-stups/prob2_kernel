@@ -25,8 +25,7 @@ import static java.util.stream.Collectors.*;
 /**
  * Finds a operation if it is renamed or contains renamed variables/parameter
  */
-//Todo RenamingAnalyzer
-public class DeltaFinder implements IDeltaFinder {
+public class RenamingAnalyzer implements RenamingAnalyzerInterface {
 
 	private final Set<String> typeIorII;
 	private final Map<String, Set<String>> typeIICandidates;
@@ -37,8 +36,8 @@ public class DeltaFinder implements IDeltaFinder {
 	private final boolean typeIOrIICandidate;
 	private final Map<String, OperationInfo> oldMachineInfos;
 
-	private Map<String, List<Delta>> typeIIWithCandidatesAsDeltaMap;
-	private List<Delta> typeIIAsDeltaList;
+	private Map<String, List<RenamingDelta>> typeIIWithCandidatesAsDeltaMap;
+	private List<RenamingDelta> typeIIAsRenamingDeltaList;
 	private Map<String, Map<String, String>> resultTypeII;
 	private Map<String, String> resultInitTypeII;
 
@@ -71,11 +70,11 @@ public class DeltaFinder implements IDeltaFinder {
 	};
 
 
-	public DeltaFinder(Set<String> typeIorII, Map<String, Set<String>> typeIICandidates, boolean typeIorIICandidate,
-					   String oldMachine,
-					   String newMachine,
-					   Injector injector,
-					   Map<String, OperationInfo> oldMachineInfos) {
+	public RenamingAnalyzer(Set<String> typeIorII, Map<String, Set<String>> typeIICandidates, boolean typeIorIICandidate,
+							String oldMachine,
+							String newMachine,
+							Injector injector,
+							Map<String, OperationInfo> oldMachineInfos) {
 		this.typeIorII = typeIorII;
 		this.typeIICandidates = typeIICandidates;
 		this.oldMachine = oldMachine;
@@ -111,7 +110,7 @@ public class DeltaFinder implements IDeltaFinder {
 
 		resultTypeII.putAll(trueTypeIINonAmbiguous);
 
-		typeIIAsDeltaList = transformResultTypeIIToDeltaList(resultTypeII);
+		typeIIAsRenamingDeltaList = transformResultTypeIIToDeltaList(resultTypeII);
 
 		Map<String, Map<String, Map<String, String>>> resultTypeIIWithCandidates = filterTrueNonDeterministic(typeIIWithCandidates);
 
@@ -288,37 +287,37 @@ public class DeltaFinder implements IDeltaFinder {
 	}
 
 
-	public List<Delta> transformResultTypeIIToDeltaList(Map<String, Map<String, String>> resultTypeII){
-		 List<Delta> transitionsWithoutInit = resultTypeII.entrySet().stream()
-				.map(entry -> new Delta(entry.getValue(), oldMachineInfos.get(entry.getKey()))).collect(Collectors.toList());
+	public List<RenamingDelta> transformResultTypeIIToDeltaList(Map<String, Map<String, String>> resultTypeII){
+		 List<RenamingDelta> transitionsWithoutInit = resultTypeII.entrySet().stream()
+				.map(entry -> new RenamingDelta(entry.getValue(), oldMachineInfos.get(entry.getKey()))).collect(Collectors.toList());
 
 		if(!getResultTypeIIInit().isEmpty())
 		{
-			transitionsWithoutInit.add(new Delta(Transition.INITIALISE_MACHINE_NAME, Transition.INITIALISE_MACHINE_NAME,
+			transitionsWithoutInit.add(new RenamingDelta(Transition.INITIALISE_MACHINE_NAME, Transition.INITIALISE_MACHINE_NAME,
 					emptyMap(), emptyMap(), getResultTypeIIInit()));
 		}
 
 		return transitionsWithoutInit;
 	}
 
-	public List<Delta> getResultTypeIIAsDeltaList(){
-		return typeIIAsDeltaList;
+	public List<RenamingDelta> getResultTypeIIAsDeltaList(){
+		return typeIIAsRenamingDeltaList;
 	}
 
 
-	public Map<String, List<Delta>> transformToDeltaMap(Map<String, Map<String, Map<String, String>>> resultsToCandidates){
+	public Map<String, List<RenamingDelta>> transformToDeltaMap(Map<String, Map<String, Map<String, String>>> resultsToCandidates){
 		return resultsToCandidates.entrySet().stream()
 				.collect(Collectors.toMap(Map.Entry::getKey, entry ->
 				{
 					Map<String, Map<String, String>> candidate = entry.getValue();
 					return candidate.values().stream()
-							.map(stringStringMap -> new Delta(stringStringMap, oldMachineInfos.get(entry.getKey())))
+							.map(stringStringMap -> new RenamingDelta(stringStringMap, oldMachineInfos.get(entry.getKey())))
 							.collect(Collectors.toList());
 				}));
 	}
 
 
-	public Map<String, List<Delta>> getResultTypeIIWithCandidatesAsDeltaMap(){
+	public Map<String, List<RenamingDelta>> getResultTypeIIWithCandidatesAsDeltaMap(){
 		return typeIIWithCandidatesAsDeltaMap;
 	}
 

@@ -1,10 +1,8 @@
 package de.prob.check;
 
 import de.prob.check.tracereplay.PersistentTransition;
-import de.prob.check.tracereplay.check.Delta;
-import de.prob.check.tracereplay.check.TraceCheckerUtils;
+import de.prob.check.tracereplay.check.RenamingDelta;
 import de.prob.check.tracereplay.check.TraceModifier;
-import org.apache.groovy.util.Maps;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
@@ -34,11 +32,11 @@ public class TraceModifierTest {
 				Collections.emptyList());
 
 
-		Delta delta = new Delta("hallo", "hallihallo", Collections.singletonMap("x", "b"), Collections.emptyMap(), Collections.emptyMap());
+		RenamingDelta renamingDelta = new RenamingDelta("hallo", "hallihallo", Collections.singletonMap("x", "b"), Collections.emptyMap(), Collections.emptyMap());
 
 		expected = Arrays.asList(expectedTransition, persistentTransition2, expectedTransition);
 
-		List<PersistentTransition> result = TraceModifier.changeAll(delta, currentState);
+		List<PersistentTransition> result = TraceModifier.changeAll(renamingDelta, currentState);
 
 
 		Assert.assertEquals(expected, result);
@@ -66,13 +64,13 @@ public class TraceModifierTest {
 				Collections.emptyList());
 
 
-		Delta delta = new Delta("hallo", "hallihallo", Collections.singletonMap("x", "b"),
+		RenamingDelta renamingDelta = new RenamingDelta("hallo", "hallihallo", Collections.singletonMap("x", "b"),
 				Collections.singletonMap("y", "g"),
 				Collections.singletonMap("z", "f"));
 
 		expected = Arrays.asList(expectedTransition, persistentTransition2, expectedTransition);
 
-		List<PersistentTransition> result = TraceModifier.changeAll(delta, currentState);
+		List<PersistentTransition> result = TraceModifier.changeAll(renamingDelta, currentState);
 
 
 		Assert.assertEquals(expected, result);
@@ -96,11 +94,11 @@ public class TraceModifierTest {
 
 
 
-		Delta delta = new Delta("hallo", "hallo", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
+		RenamingDelta renamingDelta = new RenamingDelta("hallo", "hallo", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
 
 		expected = Arrays.asList(persistentTransition, persistentTransition2, persistentTransition);
 
-		List<PersistentTransition> result = TraceModifier.changeAll( delta, currentState);
+		List<PersistentTransition> result = TraceModifier.changeAll(renamingDelta, currentState);
 
 
 		Assert.assertEquals(expected, result);
@@ -172,17 +170,17 @@ public class TraceModifierTest {
 
 	@Test
 	void changeAmbiguous_test(){
-		Delta delta1 = new Delta("eins", "hallo", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
-		Delta delta2 = new Delta("eins", "welt", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
-		Delta delta3 = new Delta("eins", "wie", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
+		RenamingDelta delta1 = new RenamingDelta("eins", "hallo", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
+		RenamingDelta delta2 = new RenamingDelta("eins", "welt", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
+		RenamingDelta delta3 = new RenamingDelta("eins", "wie", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
 
 
-		Delta delta4 = new Delta("drei", "mir", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
-		Delta delta5 = new Delta("drei", "gehts", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
-		Delta delta6 = new Delta("drei", "gut", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
+		RenamingDelta delta4 = new RenamingDelta("drei", "mir", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
+		RenamingDelta delta5 = new RenamingDelta("drei", "gehts", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
+		RenamingDelta delta6 = new RenamingDelta("drei", "gut", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
 
 
-		Map<String, List<Delta>> change = new HashMap<>();
+		Map<String, List<RenamingDelta>> change = new HashMap<>();
 
 		change.put("eins", Arrays.asList(delta1, delta2 ,delta3));
 		change.put("drei", Arrays.asList(delta4, delta5 ,delta6));
@@ -245,7 +243,7 @@ public class TraceModifierTest {
 	@Test
 	void changeAmbiguous_empty_delta_test(){
 
-		Map<String, List<Delta>> change = new HashMap<>();
+		Map<String, List<RenamingDelta>> change = new HashMap<>();
 
 
 		PersistentTransition persistentTransition = new PersistentTransition("eins", Collections.singletonMap("x", "1"),
@@ -283,66 +281,66 @@ public class TraceModifierTest {
 
 	@Test
 	public void deltaPermutation_test_1(){
-		Delta delta1 = new Delta("inc", "binc", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
-		Delta delta2 = new Delta("inc", "inc1", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
-		Delta delta3 = new Delta("inc", "inc2", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
-		Delta delta4 = new Delta("dec", "binc", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
-		Delta delta5 = new Delta("dec", "dec1", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
-		Delta delta6 = new Delta("dec", "dec2", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
+		RenamingDelta renamingDelta1 = new RenamingDelta("inc", "binc", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
+		RenamingDelta renamingDelta2 = new RenamingDelta("inc", "inc1", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
+		RenamingDelta renamingDelta3 = new RenamingDelta("inc", "inc2", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
+		RenamingDelta renamingDelta4 = new RenamingDelta("dec", "binc", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
+		RenamingDelta renamingDelta5 = new RenamingDelta("dec", "dec1", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
+		RenamingDelta renamingDelta6 = new RenamingDelta("dec", "dec2", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
 		
-		List<Delta> list1 = new ArrayList<>();
-		list1.add(delta1);
-		list1.add(delta2);
-		list1.add(delta3);
-		List<Delta> list2 = new ArrayList<>();
-		list2.add(delta4);
-		list2.add(delta5);
-		list2.add(delta6);
+		List<RenamingDelta> list1 = new ArrayList<>();
+		list1.add(renamingDelta1);
+		list1.add(renamingDelta2);
+		list1.add(renamingDelta3);
+		List<RenamingDelta> list2 = new ArrayList<>();
+		list2.add(renamingDelta4);
+		list2.add(renamingDelta5);
+		list2.add(renamingDelta6);
 		
-		Set<List<Delta>> delta = new HashSet<>();
+		Set<List<RenamingDelta>> delta = new HashSet<>();
 		delta.add(list1);
 		delta.add(list2);
 		
-		List<Set<Delta>> result = TraceModifier.deltaPermutation(delta);
+		List<Set<RenamingDelta>> result = TraceModifier.deltaPermutation(delta);
 		Assert.assertEquals(9, result.size());
 
 	}
 
 	@Test
 	public void deltaPermutation_test_2(){
-		Delta delta1 = new Delta("inc", "binc", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
-		Delta delta2 = new Delta("inc", "inc1", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
-		Delta delta3 = new Delta("inc", "inc2", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
-		Delta delta4 = new Delta("dec", "binc", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
-		Delta delta5 = new Delta("dec", "dec1", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
-		Delta delta6 = new Delta("dec", "dec2", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
-		Delta delta7 = new Delta("get", "binc", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
-		Delta delta8 = new Delta("get", "get1", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
-		Delta delta9 = new Delta("get", "get2", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
+		RenamingDelta renamingDelta1 = new RenamingDelta("inc", "binc", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
+		RenamingDelta renamingDelta2 = new RenamingDelta("inc", "inc1", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
+		RenamingDelta renamingDelta3 = new RenamingDelta("inc", "inc2", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
+		RenamingDelta renamingDelta4 = new RenamingDelta("dec", "binc", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
+		RenamingDelta renamingDelta5 = new RenamingDelta("dec", "dec1", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
+		RenamingDelta renamingDelta6 = new RenamingDelta("dec", "dec2", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
+		RenamingDelta renamingDelta7 = new RenamingDelta("get", "binc", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
+		RenamingDelta renamingDelta8 = new RenamingDelta("get", "get1", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
+		RenamingDelta renamingDelta9 = new RenamingDelta("get", "get2", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
 
 
-		List<Delta> list1 = new ArrayList<>();
-		list1.add(delta1);
-		list1.add(delta2);
-		list1.add(delta3);
+		List<RenamingDelta> list1 = new ArrayList<>();
+		list1.add(renamingDelta1);
+		list1.add(renamingDelta2);
+		list1.add(renamingDelta3);
 
-		List<Delta> list2 = new ArrayList<>();
-		list2.add(delta4);
-		list2.add(delta5);
-		list2.add(delta6);
+		List<RenamingDelta> list2 = new ArrayList<>();
+		list2.add(renamingDelta4);
+		list2.add(renamingDelta5);
+		list2.add(renamingDelta6);
 
-		List<Delta> list3 = new ArrayList<>();
-		list3.add(delta7);
-		list3.add(delta8);
-		list3.add(delta9);
+		List<RenamingDelta> list3 = new ArrayList<>();
+		list3.add(renamingDelta7);
+		list3.add(renamingDelta8);
+		list3.add(renamingDelta9);
 
-		Set<List<Delta>> delta = new HashSet<>();
+		Set<List<RenamingDelta>> delta = new HashSet<>();
 		delta.add(list1);
 		delta.add(list2);
 		delta.add(list3);
 
 
-		List<Set<Delta>> result = TraceModifier.deltaPermutation(delta);
+		List<Set<RenamingDelta>> result = TraceModifier.deltaPermutation(delta);
 		Assert.assertEquals(27, result.size());
 
 	}
@@ -350,7 +348,7 @@ public class TraceModifierTest {
 
 	@Test
 	public void deltaPermutation_test_empty_parameter(){
-		List<Set<Delta>> result = TraceModifier.deltaPermutation(Collections.emptySet());
+		List<Set<RenamingDelta>> result = TraceModifier.deltaPermutation(Collections.emptySet());
 		Assert.assertEquals(Collections.emptyList(), result);
 
 	}
@@ -393,10 +391,10 @@ public class TraceModifierTest {
 
 	@Test
 	public void applyMultipleChanges_test(){
-		Set<Delta> changes = new HashSet<>();
+		Set<RenamingDelta> changes = new HashSet<>();
 
-		changes.add(new Delta("eins", "zwei", Collections.singletonMap("x", "a"), Collections.emptyMap(), Collections.emptyMap()));
-		changes.add(new Delta("fuenf", "sieben", Collections.singletonMap("x", "a"), Collections.emptyMap(), Collections.emptyMap()));
+		changes.add(new RenamingDelta("eins", "zwei", Collections.singletonMap("x", "a"), Collections.emptyMap(), Collections.emptyMap()));
+		changes.add(new RenamingDelta("fuenf", "sieben", Collections.singletonMap("x", "a"), Collections.emptyMap(), Collections.emptyMap()));
 
 
 		PersistentTransition persistentTransition = new PersistentTransition("eins", Collections.singletonMap("x", "1"),
@@ -476,18 +474,18 @@ public class TraceModifierTest {
 
 	@Test
 	public void changelog_test(){
-		Delta delta1 = new Delta("eins", "hallo", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
-		Delta delta2 = new Delta("eins", "welt", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
+		RenamingDelta renamingDelta1 = new RenamingDelta("eins", "hallo", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
+		RenamingDelta renamingDelta2 = new RenamingDelta("eins", "welt", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
 
 
-		Delta delta4 = new Delta("drei", "mir", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
-		Delta delta5 = new Delta("drei", "gehts", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
+		RenamingDelta renamingDelta4 = new RenamingDelta("drei", "mir", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
+		RenamingDelta renamingDelta5 = new RenamingDelta("drei", "gehts", Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
 
 
-		Set<List<Delta>> change = new HashSet<>();
+		Set<List<RenamingDelta>> change = new HashSet<>();
 
-		change.add( Arrays.asList(delta1, delta2));
-		change.add( Arrays.asList(delta4, delta5));
+		change.add( Arrays.asList(renamingDelta1, renamingDelta2));
+		change.add( Arrays.asList(renamingDelta4, renamingDelta5));
 
 
 		PersistentTransition persistentTransition = new PersistentTransition("eins", Collections.singletonMap("x", "1"),
@@ -516,43 +514,43 @@ public class TraceModifierTest {
 				persistentTransition, persistentTransition6);
 
 
-		List<PersistentTransition> firstPart = TraceModifier.changeAll(delta1, original);
-		List<PersistentTransition> secondPart = TraceModifier.changeAll(delta2, original);
+		List<PersistentTransition> firstPart = TraceModifier.changeAll(renamingDelta1, original);
+		List<PersistentTransition> secondPart = TraceModifier.changeAll(renamingDelta2, original);
 
-		List<PersistentTransition> expected1 = TraceModifier.changeAll( delta4, firstPart);
-		List<PersistentTransition> expected2 = TraceModifier.changeAll( delta5, firstPart);
+		List<PersistentTransition> expected1 = TraceModifier.changeAll(renamingDelta4, firstPart);
+		List<PersistentTransition> expected2 = TraceModifier.changeAll(renamingDelta5, firstPart);
 
-		List<PersistentTransition> expected4 = TraceModifier.changeAll( delta4, secondPart);
-		List<PersistentTransition> expected5 = TraceModifier.changeAll( delta5, secondPart);
+		List<PersistentTransition> expected4 = TraceModifier.changeAll(renamingDelta4, secondPart);
+		List<PersistentTransition> expected5 = TraceModifier.changeAll(renamingDelta5, secondPart);
 
 
 
-		Set<Delta> key1 = new HashSet<>();
-		key1.add(delta1);
-		key1.add(delta4);
-		Map<Set<Delta>, List<PersistentTransition>> expected = new HashMap<>() ;
+		Set<RenamingDelta> key1 = new HashSet<>();
+		key1.add(renamingDelta1);
+		key1.add(renamingDelta4);
+		Map<Set<RenamingDelta>, List<PersistentTransition>> expected = new HashMap<>() ;
 		expected.put(key1, expected1);
 
 
-		Set<Delta> key2 = new HashSet<>();
-		key2.add(delta1);
-		key2.add(delta5);
+		Set<RenamingDelta> key2 = new HashSet<>();
+		key2.add(renamingDelta1);
+		key2.add(renamingDelta5);
 		expected.put(key2, expected2);
 
-		Set<Delta> key3 = new HashSet<>();
-		key3.add(delta2);
-		key3.add(delta4);
+		Set<RenamingDelta> key3 = new HashSet<>();
+		key3.add(renamingDelta2);
+		key3.add(renamingDelta4);
 		expected.put(key3, expected4);
 
 
-		Set<Delta> key4 = new HashSet<>();
-		key4.add(delta2);
-		key4.add(delta5);
+		Set<RenamingDelta> key4 = new HashSet<>();
+		key4.add(renamingDelta2);
+		key4.add(renamingDelta5);
 		expected.put(key4, expected5);
 
 
 
-		Map<Set<Delta>, List<PersistentTransition>> result = TraceModifier.changeLog(change, original);
+		Map<Set<RenamingDelta>, List<PersistentTransition>> result = TraceModifier.changeLog(change, original);
 
 
 		Assert.assertEquals(expected, result);
@@ -563,7 +561,7 @@ public class TraceModifierTest {
 	@Test
 	public void changelog_empty_test(){
 
-		Map<Set<Delta>, List<PersistentTransition>> result = TraceModifier.changeLog(Collections.emptySet(), Collections.emptyList());
+		Map<Set<RenamingDelta>, List<PersistentTransition>> result = TraceModifier.changeLog(Collections.emptySet(), Collections.emptyList());
 
 
 		Assert.assertEquals(Collections.emptyMap(), result);

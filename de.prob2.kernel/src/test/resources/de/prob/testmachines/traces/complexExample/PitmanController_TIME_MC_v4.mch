@@ -30,44 +30,44 @@ OPERATIONS
   END;
   
 
-  RTIME_Tip_blinking_Timeout(delta) =
+  RTIME_Tip_blinking_Timeout(renamingDelta) =
    SELECT
-     /*@label "grdTip" */ delta ∈ 0‥500
+     /*@label "grdTip" */ renamingDelta ∈ 0‥500
    THEN
      IF pitmanArmUpDown : PITMAN_TIP_BLINKING & remaining_blinks > 1 &
         active_blinkers = {pitman_direction(pitmanArmUpDown)} THEN
        TIME_Tip_blinking_Timeout 
      END ||
-     IncreaseTimeUntilDeadline(tip_deadline,delta)
+     IncreaseTimeUntilDeadline(tip_deadline,renamingDelta)
   END;
   
-  RTIME_BlinkerOn(delta) =
+  RTIME_BlinkerOn(renamingDelta) =
    SELECT
-     /*@label "grdTip" */ delta ∈ 0‥500
+     /*@label "grdTip" */ renamingDelta ∈ 0‥500
    THEN
      TIME_BlinkerOn ||
-     IncreaseTimeUntilCyclicDeadline(blink_deadline,delta,500)
+     IncreaseTimeUntilCyclicDeadline(blink_deadline,renamingDelta,500)
   END;
   
-  RTIME_BlinkerOff(delta) =
+  RTIME_BlinkerOff(renamingDelta) =
    SELECT
-     /*@label "grdTip" */ delta ∈ 0‥500
+     /*@label "grdTip" */ renamingDelta ∈ 0‥500
    THEN
      TIME_BlinkerOff ||
-     IncreaseTimeUntilCyclicDeadline(blink_deadline,delta,500)
+     IncreaseTimeUntilCyclicDeadline(blink_deadline,renamingDelta,500)
   END;
   
-  RTIME_Nothing(delta,newOnCycle) =
+  RTIME_Nothing(renamingDelta,newOnCycle) =
    SELECT
-     /*@label "grdDelta" */ delta ∈ 0‥500 &
+     /*@label "grdDelta" */ renamingDelta ∈ 0‥500 &
      newOnCycle : BOOL
    THEN
      TIME_Nothing(newOnCycle) ||
-     IncreaseTimeUntilCyclicDeadline(blink_deadline,delta,100)
+     IncreaseTimeUntilCyclicDeadline(blink_deadline,renamingDelta,100)
   END;
   
-  RTIME_Passes(delta) = SELECT delta : {100}
+  RTIME_Passes(renamingDelta) = SELECT renamingDelta : {100}
    THEN
-    IncreaseTime(delta)
+    IncreaseTime(renamingDelta)
   END
 END

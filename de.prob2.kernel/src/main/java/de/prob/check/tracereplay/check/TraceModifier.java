@@ -15,9 +15,9 @@ public class TraceModifier {
 
 
 	private final List<List<PersistentTransition>> changelogPhase1 = new LinkedList<>();
-	private final Map<Set<Delta>, List<PersistentTransition>> changelogPhase2 = new HashMap<>();
-	private final Map<Set<Delta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>>> changelogPhase3 = new HashMap<>();
-	private final Map<Set<Delta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Map<String, TraceAnalyser.AnalyserResult>>> changelogPhase4 = new HashMap<>();
+	private final Map<Set<RenamingDelta>, List<PersistentTransition>> changelogPhase2 = new HashMap<>();
+	private final Map<Set<RenamingDelta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>>> changelogPhase3 = new HashMap<>();
+	private final Map<Set<RenamingDelta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Map<String, TraceAnalyser.AnalyserResult>>> changelogPhase4 = new HashMap<>();
 	private final StateSpace stateSpace;
 	private final ProgressMemoryInterface progressMemoryInterface;
 
@@ -30,31 +30,31 @@ public class TraceModifier {
 	}
 
 	/**
-	 * Takes a delta and applies it to all PersistentTransitions of g given Transition list
+	 * Takes a renamingDelta and applies it to all PersistentTransitions of g given Transition list
 	 *
-	 * @param delta        the delta to apply
+	 * @param renamingDelta        the renamingDelta to apply
 	 * @param currentState the list of transition to apply it to
 	 * @return the modified list, a copy of the original
 	 */
-	public static List<PersistentTransition> changeAll(Delta delta, List<PersistentTransition> currentState) {
+	public static List<PersistentTransition> changeAll(RenamingDelta renamingDelta, List<PersistentTransition> currentState) {
 		return currentState.stream().map(persistentTransition -> {
-			if (persistentTransition.getOperationName().equals(delta.originalName)) {
+			if (persistentTransition.getOperationName().equals(renamingDelta.originalName)) {
 
 				Map<String, String> newDestState = persistentTransition.getDestinationStateVariables().entrySet().stream()
-						.collect(Collectors.toMap(entry -> delta.variables.getOrDefault(entry.getKey(), entry.getKey()), Map.Entry::getValue));
+						.collect(Collectors.toMap(entry -> renamingDelta.variables.getOrDefault(entry.getKey(), entry.getKey()), Map.Entry::getValue));
 
 				Map<String, String> newParameters = persistentTransition.getParameters().entrySet().stream()
-						.collect(Collectors.toMap(entry -> delta.inputParameters.getOrDefault(entry.getKey(), entry.getKey()), Map.Entry::getValue));
+						.collect(Collectors.toMap(entry -> renamingDelta.inputParameters.getOrDefault(entry.getKey(), entry.getKey()), Map.Entry::getValue));
 
 
 				Map<String, String> newOutputParameters = persistentTransition.getOutputParameters().entrySet().stream()
-						.collect(Collectors.toMap(entry -> delta.outputParameters.getOrDefault(entry.getKey(), entry.getKey()), Map.Entry::getValue));
+						.collect(Collectors.toMap(entry -> renamingDelta.outputParameters.getOrDefault(entry.getKey(), entry.getKey()), Map.Entry::getValue));
 
 
 				Set<String> destStateNotChanged = persistentTransition.getDestStateNotChanged().stream()
-						.map(entry -> delta.variables.getOrDefault(entry, entry)).collect(toSet());
+						.map(entry -> renamingDelta.variables.getOrDefault(entry, entry)).collect(toSet());
 
-				return new PersistentTransition(delta.deltaName, newParameters, newOutputParameters, newDestState,
+				return new PersistentTransition(renamingDelta.deltaName, newParameters, newOutputParameters, newDestState,
 						destStateNotChanged, Collections.emptyList());
 			} else {
 				return persistentTransition;
@@ -69,12 +69,12 @@ public class TraceModifier {
 	 * @param change a set where each element represents one operation from the original trace. Each list inside represents a collection of possible deltas
 	 * @return a list where each element represents a possible permutation
 	 */
-	public static List<Set<Delta>> deltaPermutation(Set<List<Delta>> change) {
+	public static List<Set<RenamingDelta>> deltaPermutation(Set<List<RenamingDelta>> change) {
 
-		List<List<Set<Delta>>> bla = change.stream().map(set -> set.stream().map(delta -> {
-			Set<Delta> deltaList = new HashSet<>();
-			deltaList.add(delta);
-			return deltaList;
+		List<List<Set<RenamingDelta>>> bla = change.stream().map(set -> set.stream().map(delta -> {
+			Set<RenamingDelta> renamingDeltaList = new HashSet<>();
+			renamingDeltaList.add(delta);
+			return renamingDeltaList;
 		}).collect(toList())).collect(toList());
 
 		return bla.stream().reduce(Collections.emptyList(), (acc, current) -> {
@@ -112,9 +112,9 @@ public class TraceModifier {
 	 * @param currentState a list of persistent transitions representing the trace
 	 * @return a map containing a mapping between all possible combinations of deltas to their corresponding Transition list
 	 */
-	public static Map<Set<Delta>, List<PersistentTransition>> changeLog(Set<List<Delta>> change, List<PersistentTransition> currentState) {
+	public static Map<Set<RenamingDelta>, List<PersistentTransition>> changeLog(Set<List<RenamingDelta>> change, List<PersistentTransition> currentState) {
 		if (!change.isEmpty()) {
-			List<Set<Delta>> deltaPermutation = deltaPermutation(change);
+			List<Set<RenamingDelta>> deltaPermutation = deltaPermutation(change);
 
 			List<List<PersistentTransition>> transformed = deltaPermutation.stream()
 					.map(set -> applyMultipleChanges(set, new ArrayList<>(currentState))).collect(toList());
@@ -126,17 +126,17 @@ public class TraceModifier {
 	}
 
 	/**
-	 * applies multiple deltas to a given transition list
+	 * applies multiple renamingDeltas to a given transition list
 	 *
-	 * @param deltas       a set of changes to be applied
+	 * @param renamingDeltas       a set of changes to be applied
 	 * @param currentState the state from where to start
 	 * @return a transition list with all changes applied
 	 */
-	public static List<PersistentTransition> applyMultipleChanges(Set<Delta> deltas, List<PersistentTransition> currentState) {
+	public static List<PersistentTransition> applyMultipleChanges(Set<RenamingDelta> renamingDeltas, List<PersistentTransition> currentState) {
 
-		if (deltas.isEmpty()) return currentState;
+		if (renamingDeltas.isEmpty()) return currentState;
 
-		return deltas.stream()
+		return renamingDeltas.stream()
 				.map(delta -> changeAll(delta, new ArrayList<>(currentState)))
 				.reduce(Collections.emptyList(), (acc, current) -> {
 					if (acc.isEmpty()) return current;
@@ -190,17 +190,20 @@ public class TraceModifier {
 		return list.get(searchList.indexOf(element)).equals(element);
 	}
 
-	public void insertMultipleUnambiguousChanges(List<Delta> delta) {
-		delta.forEach(value -> changelogPhase1.add(changeAll(value, getLastChange())));
+	public void insertMultipleUnambiguousChanges(List<RenamingDelta> renamingDelta) {
+		renamingDelta.forEach(value -> changelogPhase1.add(changeAll(value, getLastChange())));
 	}
 
 	/**
+	 * Inserts changes with multiple choices. Ensures the data structure is filled at least with an empty element
 	 * @param typeIICandidates the found deltas to insert
 	 */
-	public void insertAmbiguousChanges(Map<String, List<Delta>> typeIICandidates) {
-
-
-		changelogPhase2.putAll(changeLog(new HashSet<>(typeIICandidates.values()), getLastChange()));
+	public void insertAmbiguousChanges(Map<String, List<RenamingDelta>> typeIICandidates) {
+		if(typeIICandidates.isEmpty()){
+			changelogPhase2.put(emptySet(), getLastChange());
+		}else {
+			changelogPhase2.putAll(changeLog(new HashSet<>(typeIICandidates.values()), getLastChange()));
+		}
 	}
 
 	public void applyTypeIVInitChangesDeterministic(Map<String, String> variables) {
@@ -214,7 +217,7 @@ public class TraceModifier {
 		//No type II change?
 		if (!changelogPhase2.isEmpty()) {
 
-			Map<Set<Delta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>>> results = changelogPhase2
+			Map<Set<RenamingDelta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>>> results = changelogPhase2
 					.entrySet()
 					.stream()
 					.map(entry ->
@@ -225,13 +228,13 @@ public class TraceModifier {
 							new AbstractMap.SimpleEntry<>(emptySet(), emptyMap());
 						}
 						return new AbstractMap.SimpleEntry<>(entry.getKey(), result);
-					}).filter(entry -> !entry.getKey().isEmpty())
+					}).filter(entry -> !entry.getValue().isEmpty())
 					.collect(toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
 
 
 			changelogPhase3.putAll(results);
 			progressMemoryInterface.nextStep();
-			Map<Set<Delta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Map<String, TraceAnalyser.AnalyserResult>>> typeIVResults =
+			Map<Set<RenamingDelta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Map<String, TraceAnalyser.AnalyserResult>>> typeIVResults =
 					performTypeIVAnalysing(traceExplorer.getUpdatedTypeIV(), results);
 			progressMemoryInterface.nextStep();
 			changelogPhase4.putAll(typeIVResults);
@@ -260,9 +263,9 @@ public class TraceModifier {
 
 	}
 
-	public Map<Set<Delta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Map<String, TraceAnalyser.AnalyserResult>>> performTypeIVAnalysing(
+	public Map<Set<RenamingDelta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Map<String, TraceAnalyser.AnalyserResult>>> performTypeIVAnalysing(
 			Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Set<String>> typeIVCandidates,
-			Map<Set<Delta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>>> results){
+			Map<Set<RenamingDelta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>>> results){
 
 		return results.entrySet()
 				.stream()
@@ -306,7 +309,7 @@ public class TraceModifier {
 	 * @return the original trace was modified
 	 */
 	public boolean isDirty() {
-		return changelogPhase1.size() > 1 || !changelogPhase2.values().isEmpty() || typeIIIDirty() || typeIVDirty();
+		return changelogPhase1.size() > 1 || typeIINonDetDirty() || typeIIIDirty() || typeIVDirty();
 	}
 
 	public boolean typeIIDetDirty() {
@@ -314,7 +317,9 @@ public class TraceModifier {
 	}
 
 	public boolean typeIINonDetDirty(){
-		return !changelogPhase2.values().isEmpty();
+		Set<Set<RenamingDelta>> keySet = changelogPhase2.keySet();
+
+		return keySet.size() > 1;
 	}
 
 	public boolean typeIVDirty(){
@@ -322,19 +327,40 @@ public class TraceModifier {
 	}
 
 	public boolean typeIIIDirty(){
-		return !changelogPhase3.containsKey(emptySet());
+		if(changelogPhase3.keySet().isEmpty()) return false;
+		if(changelogPhase3.keySet().size()>1)return true;
+		if(changelogPhase3.keySet().stream().findFirst().get().equals(new HashSet<>())) return false;
+
+		return true;
 	}
 
-	public Map<Set<Delta>, List<PersistentTransition>> getChangelogPhase2() {
+	public Map<Set<RenamingDelta>, List<PersistentTransition>> getChangelogPhase2() {
 		return changelogPhase2;
 	}
 
-	public Map<Set<Delta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>>> getChangelogPhase3II() {
+	public Map<Set<RenamingDelta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>>> getChangelogPhase3II() {
 		return changelogPhase3;
 	}
 
-	public Map<Set<Delta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Map<String, TraceAnalyser.AnalyserResult>>> getChangelogPhase4() {
+	public Map<Set<RenamingDelta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Map<String, TraceAnalyser.AnalyserResult>>> getChangelogPhase4() {
 		return changelogPhase4;
+	}
+
+
+	public int getSizeTypeDetII(){
+		return changelogPhase1.size() - 1;
+	}
+
+	public int getSizeTypeNonDetII(){
+		return changelogPhase2.values().size() - 1;
+	}
+
+	public int getSizeTypeIII(){
+		return changelogPhase3.values().size() - 1;
+	}
+
+	public int getSizeTypeIV(){
+		return changelogPhase4.values().size() - 1;
 	}
 
 

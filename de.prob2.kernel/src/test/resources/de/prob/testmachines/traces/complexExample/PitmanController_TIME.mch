@@ -42,39 +42,39 @@ OPERATIONS
      TIME_Tip_blinking_Timeout
   END;
   
-  RTIME_BlinkerOn(delta) =
+  RTIME_BlinkerOn(renamingDelta) =
    SELECT
-     /*@label "grdTip" */ delta ∈ 1‥500 &
-     /*@label "grdTm" */  (curTime+delta) mod 500 = 0
+     /*@label "grdTip" */ renamingDelta ∈ 1‥500 &
+     /*@label "grdTm" */  (curTime+renamingDelta) mod 500 = 0
    THEN
      TIME_BlinkerOn ||
-     curTime ≔ curTime+delta
+     curTime ≔ curTime+renamingDelta
   END;
   
-  RTIME_BlinkerOff(delta) =
+  RTIME_BlinkerOff(renamingDelta) =
    SELECT
-     /*@label "grdTip" */ delta ∈ 1‥500 &
-     /*@label "grdTm" */  (curTime+delta) mod 500 = 0
+     /*@label "grdTip" */ renamingDelta ∈ 1‥500 &
+     /*@label "grdTm" */  (curTime+renamingDelta) mod 500 = 0
    THEN
      TIME_BlinkerOff ||
-     curTime ≔ curTime+delta
+     curTime ≔ curTime+renamingDelta
   END;
   
-  RTIME_Nothing(delta,newOnCycle) =
+  RTIME_Nothing(renamingDelta,newOnCycle) =
    SELECT
-     /*@label "grdTip" */ delta ∈ 1‥500 &
-     /*@label "grdTm" */  (curTime+delta) mod 500 = 0 &
+     /*@label "grdTip" */ renamingDelta ∈ 1‥500 &
+     /*@label "grdTm" */  (curTime+renamingDelta) mod 500 = 0 &
     newOnCycle /= onCycle
    THEN
      TIME_Nothing(newOnCycle) ||
-     curTime ≔ curTime+delta
+     curTime ≔ curTime+renamingDelta
   END;
   
-  RTIME_Passes(delta) =
+  RTIME_Passes(renamingDelta) =
    SELECT
-     /*@label "grdTip" */ delta ∈ {100} &
-     /*@label "grdTm" */  ∀d·(d∈1‥delta ⇒ (curTime+d) mod 500 ≠ 0)
+     /*@label "grdTip" */ renamingDelta ∈ {100} &
+     /*@label "grdTm" */  ∀d·(d∈1‥renamingDelta ⇒ (curTime+d) mod 500 ≠ 0)
    THEN
-     curTime ≔ curTime+delta
+     curTime ≔ curTime+renamingDelta
   END
 END

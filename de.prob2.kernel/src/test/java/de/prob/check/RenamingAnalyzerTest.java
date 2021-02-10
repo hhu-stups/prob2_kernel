@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 import static java.util.Collections.*;
 
 
-public class DeltaFinderTest {
+public class RenamingAnalyzerTest {
 
 
 
@@ -43,7 +43,7 @@ public class DeltaFinderTest {
 		Map<String, CompoundPrologTerm> newOperation = new HashMap<>();
 		Set<String> candidates = new HashSet<>();
 
-		Map<String, Map<String, String>> result = DeltaFinder.checkDeterministicPairs(oldOperation, newOperation, candidates,
+		Map<String, Map<String, String>> result = RenamingAnalyzer.checkDeterministicPairs(oldOperation, newOperation, candidates,
 				fakeCheckerInterface, fakePrepareOperationsInterface);
 
 
@@ -82,7 +82,7 @@ public class DeltaFinderTest {
 
 		Set<String> candidates = new HashSet<>(Arrays.asList("inc", "dec", "getFloors"));
 
-		Map<String, Map<String, String>> result = DeltaFinder.checkDeterministicPairs(oldOperation, newOperation, candidates,
+		Map<String, Map<String, String>> result = RenamingAnalyzer.checkDeterministicPairs(oldOperation, newOperation, candidates,
 				fakeCheckerInterface, fakePrepareOperationsInterface);
 
 		Map<String, String> expectedInner = new HashMap<>();
@@ -136,7 +136,7 @@ public class DeltaFinderTest {
 		candidates.put("getFloors", new HashSet<>(Arrays.asList("GetFloors", "getFloor", "currentFloors")));
 
 
-		Map<String, Map<String, Map<String, String>>> result = DeltaFinder.checkNondeterministicPairs(oldOperation, newOperation, candidates,
+		Map<String, Map<String, Map<String, String>>> result = RenamingAnalyzer.checkNondeterministicPairs(oldOperation, newOperation, candidates,
 				fakeCheckerInterface, fakePrepareOperationsInterface);
 
 		Map<String, String> expectedInner = new HashMap<>();
@@ -185,12 +185,12 @@ public class DeltaFinderTest {
 
 
 
-		DeltaFinder deltaFinder = new DeltaFinder(Collections.emptySet(), Collections.emptyMap(), false,
+		RenamingAnalyzer renamingAnalyzer = new RenamingAnalyzer(Collections.emptySet(), Collections.emptyMap(), false,
 				 "", "", injector, stateSpace.getLoadedMachine().getOperations());
 
 
-		Map<String, CompoundPrologTerm> newOperations = deltaFinder.getOperations(pathAsString);
-		Map<String, CompoundPrologTerm> oldOperations = deltaFinder.getOperations(pathAsStringOld);
+		Map<String, CompoundPrologTerm> newOperations = renamingAnalyzer.getOperations(pathAsString);
+		Map<String, CompoundPrologTerm> oldOperations = renamingAnalyzer.getOperations(pathAsStringOld);
 
 
 		Assertions.assertTrue(newOperations.containsKey("on"));
@@ -217,13 +217,13 @@ public class DeltaFinderTest {
 
 
 
-		DeltaFinder deltaFinder = new DeltaFinder(Collections.emptySet(), Collections.emptyMap(), false,
+		RenamingAnalyzer renamingAnalyzer = new RenamingAnalyzer(Collections.emptySet(), Collections.emptyMap(), false,
 				pathAsStringOld, pathAsString, injector, stateSpace.getLoadedMachine().getOperations());
 
-		Map<String, CompoundPrologTerm> newOperations = deltaFinder.getOperations(pathAsString);
+		Map<String, CompoundPrologTerm> newOperations = renamingAnalyzer.getOperations(pathAsString);
 
 		Triple<ListPrologTerm, ListPrologTerm, CompoundPrologTerm> result =
-				deltaFinder.prepareOperationsInterface.prepareOperation(newOperations.get("getfloors"));
+				renamingAnalyzer.prepareOperationsInterface.prepareOperation(newOperations.get("getfloors"));
 
 
 		Assertions.assertEquals(new ListPrologTerm(new CompoundPrologTerm("floors"),
@@ -251,17 +251,17 @@ public class DeltaFinderTest {
 		factory.extract(pathAsStringOld).loadIntoStateSpace(stateSpace);
 
 
-		DeltaFinder deltaFinder = new DeltaFinder(Collections.emptySet(), Collections.emptyMap(), false,
+		RenamingAnalyzer renamingAnalyzer = new RenamingAnalyzer(Collections.emptySet(), Collections.emptyMap(), false,
 				pathAsStringOld, pathAsString, injector, stateSpace.getLoadedMachine().getOperations());
 
-		Map<String, CompoundPrologTerm> oldOperations = deltaFinder.getOperations(pathAsStringOld);
-		Map<String, CompoundPrologTerm> newOperations = deltaFinder.getOperations(pathAsString);
+		Map<String, CompoundPrologTerm> oldOperations = renamingAnalyzer.getOperations(pathAsStringOld);
+		Map<String, CompoundPrologTerm> newOperations = renamingAnalyzer.getOperations(pathAsString);
 
 		Triple<ListPrologTerm, ListPrologTerm, CompoundPrologTerm> oldInc =
-				deltaFinder.prepareOperationsInterface.prepareOperation(oldOperations.get("inc"));
+				renamingAnalyzer.prepareOperationsInterface.prepareOperation(oldOperations.get("inc"));
 
 
-		Map<String, String> result = deltaFinder.checkerInterface.checkTypeII(oldInc, newOperations.get("inc"));
+		Map<String, String> result = renamingAnalyzer.checkerInterface.checkTypeII(oldInc, newOperations.get("inc"));
 
 		Assertions.assertEquals("inc", result.get("inc"));
 
@@ -286,16 +286,16 @@ public class DeltaFinderTest {
 		factory.extract(pathAsStringOld).loadIntoStateSpace(stateSpace);
 
 
-		DeltaFinder deltaFinder = new DeltaFinder(Collections.emptySet(), Collections.emptyMap(), false,
+		RenamingAnalyzer renamingAnalyzer = new RenamingAnalyzer(Collections.emptySet(), Collections.emptyMap(), false,
 				pathAsStringOld, pathAsString, injector, stateSpace.getLoadedMachine().getOperations());
 
 		Set<String> candidates = new HashSet<>(Arrays.asList("inc", "dec", "getfloors", "$initialise_machine"));
-		Map<String, CompoundPrologTerm> newOperations = deltaFinder.getOperations(pathAsString);
-		Map<String, CompoundPrologTerm> oldOperations = deltaFinder.getOperations(pathAsStringOld);
+		Map<String, CompoundPrologTerm> newOperations = renamingAnalyzer.getOperations(pathAsString);
+		Map<String, CompoundPrologTerm> oldOperations = renamingAnalyzer.getOperations(pathAsStringOld);
 
 
-		Map<String, Map<String, String>> result = DeltaFinder.checkDeterministicPairs(oldOperations, newOperations,
-				candidates, deltaFinder.checkerInterface, deltaFinder.prepareOperationsInterface);
+		Map<String, Map<String, String>> result = RenamingAnalyzer.checkDeterministicPairs(oldOperations, newOperations,
+				candidates, renamingAnalyzer.checkerInterface, renamingAnalyzer.prepareOperationsInterface);
 
 		Map<String, Map<String, String>> expected = new HashMap<>();
 		Map<String, String> initMap = new HashMap<>();
@@ -340,13 +340,13 @@ public class DeltaFinderTest {
 		factory.extract(pathAsStringOld).loadIntoStateSpace(stateSpace);
 
 
-		DeltaFinder deltaFinder = new DeltaFinder(Collections.emptySet(), Collections.emptyMap(), true,
+		RenamingAnalyzer renamingAnalyzer = new RenamingAnalyzer(Collections.emptySet(), Collections.emptyMap(), true,
 				pathAsStringOld, pathAsString, injector, stateSpace.getLoadedMachine().getOperations());
 
 
-		deltaFinder.calculateDelta();
+		renamingAnalyzer.calculateDelta();
 
-		Map<String, String> result = deltaFinder.getResultTypeIIInit();
+		Map<String, String> result = renamingAnalyzer.getResultTypeIIInit();
 
 		Map<String, String> expected = new HashMap<>();
 		expected.put("level", "floors");
@@ -378,13 +378,13 @@ public class DeltaFinderTest {
 		Map<String, Set<String>> typeIICandidates = new HashMap<>();
 		typeIICandidates.put("getfloors", singleton("getlevels"));
 
-		DeltaFinder deltaFinder = new DeltaFinder(Collections.emptySet(), typeIICandidates, true,
+		RenamingAnalyzer renamingAnalyzer = new RenamingAnalyzer(Collections.emptySet(), typeIICandidates, true,
 				pathAsStringOld, pathAsString, injector, stateSpace.getLoadedMachine().getOperations());
 
 
-		deltaFinder.calculateDelta();
+		renamingAnalyzer.calculateDelta();
 
-		Map<String, Map<String, String>> result = deltaFinder.getResultTypeII();
+		Map<String, Map<String, String>> result = renamingAnalyzer.getResultTypeII();
 
 		Map<String, Map<String, String>> expected = new HashMap<>();
 		Map<String, String> helper = new HashMap<>();
@@ -422,14 +422,14 @@ public class DeltaFinderTest {
 		typeIorIICandidates.add("set_peds_stop");
 		typeIorIICandidates.add("set_cars");
 
-		DeltaFinder deltaFinder = new DeltaFinder(typeIorIICandidates, emptyMap(), true,
+		RenamingAnalyzer renamingAnalyzer = new RenamingAnalyzer(typeIorIICandidates, emptyMap(), true,
 				pathAsStringOld, pathAsString, injector, stateSpace.getLoadedMachine().getOperations());
 
 
-		deltaFinder.calculateDelta();
+		renamingAnalyzer.calculateDelta();
 
-		Map<String, Map<String, String>> result = deltaFinder.getResultTypeII();
-		Map<String, String> initResult = deltaFinder.getResultTypeIIInit();
+		Map<String, Map<String, String>> result = renamingAnalyzer.getResultTypeII();
+		Map<String, String> initResult = renamingAnalyzer.getResultTypeIIInit();
 
 		Assertions.assertEquals(emptyMap(), result);
 		Assertions.assertEquals(emptyMap(), initResult);
@@ -460,21 +460,21 @@ public class DeltaFinderTest {
 		typeIorIICandidates.put("ENV_Turn_EngineOn",singleton("ENV_Turn_Engine_On") );
 		typeIorIICandidates.put("ENV_Turn_EngineOff", singleton("ENV_Turn_Engine_Off"));
 
-		DeltaFinder deltaFinder = new DeltaFinder(emptySet(), typeIorIICandidates, true,
+		RenamingAnalyzer renamingAnalyzer = new RenamingAnalyzer(emptySet(), typeIorIICandidates, true,
 				pathAsStringOld, pathAsString, injector, stateSpace.getLoadedMachine().getOperations());
 
 
-		deltaFinder.calculateDelta();
+		renamingAnalyzer.calculateDelta();
 
 
 		String expected1 = "ENV_Turn_Engine_Off";
 		String expected2 = "ENV_Turn_Engine_On";
 		Set<String> expected = new HashSet<>(Arrays.asList(expected1, expected2));
 
-		List<Delta> expectedDelta = deltaFinder.getResultTypeIIAsDeltaList();
-		Set<String> resultNames = expectedDelta.stream().map(Delta::getDeltaName).collect(Collectors.toSet());
+		List<RenamingDelta> expectedRenamingDelta = renamingAnalyzer.getResultTypeIIAsDeltaList();
+		Set<String> resultNames = expectedRenamingDelta.stream().map(RenamingDelta::getDeltaName).collect(Collectors.toSet());
 
-		Assertions.assertEquals(2, expectedDelta.size());
+		Assertions.assertEquals(2, expectedRenamingDelta.size());
 		Assertions.assertEquals(expected, resultNames);
 
 	}

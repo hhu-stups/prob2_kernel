@@ -18,7 +18,7 @@ public class TraceChecker {
 	private final TraceModifier traceModifier;
 	private final Map<String, OperationInfo> oldOperationInfos;
 	private final Map<String, OperationInfo> newOperationInfos;
-	private final IDeltaFinder deltaFinder;
+	private final RenamingAnalyzerInterface renamingAnalyzer;
 
 
 	public TraceChecker(List<PersistentTransition> transitionList,
@@ -47,7 +47,7 @@ public class TraceChecker {
 
 		traceModifier.makeTypeIII(typeFinder.getTypeIII(), typeFinder.getTypeIV(), newInfos, oldInfos,  traceExplorer);
 
-		this.deltaFinder = new IDeltaFinder() {
+		this.renamingAnalyzer = new RenamingAnalyzerInterface() {
 			@Override
 			public Map<String, Map<String, String>> getResultTypeII() {
 				return emptyMap();
@@ -59,7 +59,7 @@ public class TraceChecker {
 			}
 
 			@Override
-			public Map<String, List<Delta>> getResultTypeIIWithCandidatesAsDeltaMap() {
+			public Map<String, List<RenamingDelta>> getResultTypeIIWithCandidatesAsDeltaMap() {
 				return emptyMap();
 			}
 		};
@@ -88,28 +88,28 @@ public class TraceChecker {
 		typeFinder.check();
 		progressMemoryInterface.nextStep();
 
-		DeltaFinder deltaFinder = new DeltaFinder(typeFinder.getTypeIorII(), typeFinder.getTypeIIPermutation(),
+		RenamingAnalyzer renamingAnalyzer = new RenamingAnalyzer(typeFinder.getTypeIorII(), typeFinder.getTypeIIPermutation(),
 				typeFinder.getInitIsTypeIorIICandidate(), oldPath, newPath, injector, oldInfos);
-		deltaFinder.calculateDelta();
+		renamingAnalyzer.calculateDelta();
 		progressMemoryInterface.nextStep();
 
 
 		traceModifier = new TraceModifier(transitionList, TraceCheckerUtils.createStateSpace(newPath, injector), progressMemoryInterface);
 
-		List<Delta> deltasTypeII = deltaFinder.getResultTypeIIAsDeltaList();
+		List<RenamingDelta> deltasTypeII = renamingAnalyzer.getResultTypeIIAsDeltaList();
 
 		traceModifier.insertMultipleUnambiguousChanges(deltasTypeII);
 
 
-		Map<String, List<Delta>> deltasTypeIIWithCandidates = deltaFinder.getResultTypeIIWithCandidatesAsDeltaMap();
+		Map<String, List<RenamingDelta>> deltasTypeIIWithCandidates = renamingAnalyzer.getResultTypeIIWithCandidatesAsDeltaMap();
 		traceModifier.insertAmbiguousChanges(deltasTypeIIWithCandidates);
 
-		TraceExplorer traceExplorer  = new TraceExplorer(!deltaFinder.getResultTypeIIInit().isEmpty(), mappingFactory, replayOptions, progressMemoryInterface);
+		TraceExplorer traceExplorer  = new TraceExplorer(!renamingAnalyzer.getResultTypeIIInit().isEmpty(), mappingFactory, replayOptions, progressMemoryInterface);
 
 
 		traceModifier.makeTypeIII(typeFinder.getTypeIII(), typeFinder.getTypeIV(), newInfos, oldInfos, traceExplorer);
 
-		this.deltaFinder = deltaFinder;
+		this.renamingAnalyzer = renamingAnalyzer;
 
 	}
 
@@ -129,8 +129,8 @@ public class TraceChecker {
 		return newOperationInfos;
 	}
 
-	public IDeltaFinder getDeltaFinder(){
-		return deltaFinder;
+	public RenamingAnalyzerInterface getRenamingAnalyzer(){
+		return renamingAnalyzer;
 	}
 
 

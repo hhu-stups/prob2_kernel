@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyMap;
 
-public class Delta {
+public class RenamingDelta {
 
 	final String originalName;
 	final String deltaName;
@@ -19,10 +19,10 @@ public class Delta {
 
 	/**
 	 * Extracts tbe delta from the calculated changes
-	 * @param changes the changes calculated by the Delta Finder
+	 * @param changes the changes calculated by the RenamingDelta Finder
 	 * @param operationInfo the old operation
 	 */
-	public Delta(Map<String, String> changes, OperationInfo operationInfo){
+	public RenamingDelta(Map<String, String> changes, OperationInfo operationInfo){
 		originalName = operationInfo.getOperationName();
 		List<String> oldInput = operationInfo.getParameterNames();
 		List<String> oldOutput = operationInfo.getOutputParameterNames();
@@ -53,8 +53,8 @@ public class Delta {
 	 * @param outputParameters a map, mapping new to old output variables
 	 * @param variables a map, mapping new to old variables
 	 */
-	public Delta(String originalName, String deltaName, Map<String, String> inputParameters, Map<String, String> outputParameters,
-				 Map<String, String> variables){
+	public RenamingDelta(String originalName, String deltaName, Map<String, String> inputParameters, Map<String, String> outputParameters,
+						 Map<String, String> variables){
 		this.originalName = originalName;
 		this.deltaName = deltaName;
 		this.inputParameters = inputParameters;
@@ -67,7 +67,7 @@ public class Delta {
 	 * @param name
 	 * @param variables
 	 */
-	public Delta(String name, Map<String, String> variables){
+	public RenamingDelta(String name, Map<String, String> variables){
 		this.originalName = name;
 		this.deltaName = name;
 		this.inputParameters = emptyMap();
@@ -97,7 +97,7 @@ public class Delta {
 
 	@Override
 	public String toString() {
-		return "Original Name <" + originalName + "> Delta Name <" + deltaName+ "> Output Parameter: " +
+		return "Original Name <" + originalName + "> RenamingDelta Name <" + deltaName+ "> Output Parameter: " +
 				outputParameters + " Input Parameter: " + inputParameters + " Variables " + variables;
 	}
 }
