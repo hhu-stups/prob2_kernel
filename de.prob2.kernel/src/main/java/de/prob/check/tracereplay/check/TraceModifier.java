@@ -327,9 +327,7 @@ public class TraceModifier {
 	}
 
 	public boolean typeIIIDirty(){
-		if(changelogPhase3.keySet().isEmpty()) return false;
-		if(changelogPhase3.keySet().size()>1) return true;
-		return changelogPhase3.values().stream().mapToLong(entry -> entry.values().size()).sum() > 0;
+		return getSizeTypeIII() > 0;
 
 	}
 
@@ -355,11 +353,12 @@ public class TraceModifier {
 	}
 
 	public long getSizeTypeIII(){
-		return changelogPhase3.values().stream().mapToLong(entry -> entry.values().size()).sum();
+		return getSizeTypeDetII() +
+		changelogPhase2.keySet().stream().flatMap(entry -> changelogPhase3.get(entry).entrySet().stream().filter(innerEntry -> !innerEntry.getKey().isEmpty())).count();
 	}
 
-	public int getSizeTypeIV(){
-		return changelogPhase4.values().size() - 1;
+	public long getSizeTypeIV(){
+		return getSizeTypeIII() + changelogPhase3.keySet().stream().map(changelogPhase4::get).count();
 	}
 
 
