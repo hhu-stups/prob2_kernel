@@ -227,7 +227,7 @@ public class TraceModifier {
 						if (result.values().isEmpty()) {
 							new AbstractMap.SimpleEntry<>(emptySet(), emptyMap());
 						}
-						return new AbstractMap.SimpleEntry<>(entry.getKey(), result);
+							return new AbstractMap.SimpleEntry<>(entry.getKey(), result);
 					}).filter(entry -> !entry.getValue().isEmpty())
 					.collect(toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
 
@@ -328,10 +328,9 @@ public class TraceModifier {
 
 	public boolean typeIIIDirty(){
 		if(changelogPhase3.keySet().isEmpty()) return false;
-		if(changelogPhase3.keySet().size()>1)return true;
-		if(changelogPhase3.keySet().stream().findFirst().get().equals(new HashSet<>())) return false;
+		if(changelogPhase3.keySet().size()>1) return true;
+		return changelogPhase3.values().stream().mapToLong(entry -> entry.values().size()).sum() > 0;
 
-		return true;
 	}
 
 	public Map<Set<RenamingDelta>, List<PersistentTransition>> getChangelogPhase2() {
@@ -355,8 +354,8 @@ public class TraceModifier {
 		return changelogPhase2.values().size() - 1;
 	}
 
-	public int getSizeTypeIII(){
-		return changelogPhase3.values().size() - 1;
+	public long getSizeTypeIII(){
+		return changelogPhase3.values().stream().mapToLong(entry -> entry.values().size()).sum();
 	}
 
 	public int getSizeTypeIV(){

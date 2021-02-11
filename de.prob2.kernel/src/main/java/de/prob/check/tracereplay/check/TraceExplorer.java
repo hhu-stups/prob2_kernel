@@ -194,12 +194,11 @@ public class TraceExplorer {
 	 * @param current the current transition
 	 * @return a list of transitions that satisfy the privilige
 	 */
-	public static List<Transition> renamedTransition(Trace t, PersistentTransition current) {
+	public  List<Transition> renamedTransition(Trace t, PersistentTransition current) {
 		List<String> enabledOperations = enabledOperations(t);
 
 		List<List<Transition>> result = enabledOperations.stream()
-				.map(entry -> replayTransition(t, entry, new PredicateBuilderFactory(true, false, false, emptySet())
-						.createPredicateBuilder(current)))
+				.map(entry -> executeOperation(t, entry))
 				.filter(entry -> !entry.isEmpty())
 				.collect(toList());
 
@@ -211,15 +210,33 @@ public class TraceExplorer {
 	 * Attempts to replay the transition with the given name
 	 *
 	 * @param t                the trace
-	 * @param name             the name of the transition to be replayed
-	 * @param predicateBuilder the predicates to be enforced onto the the replay
+	 * @param p the transition to be replayed
 	 * @return a successful transition
 	 */
-	public static List<Transition> replayTransition(Trace t, String name, PredicateBuilder predicateBuilder) {
+	public List<Transition> replayTransition(Trace t, PersistentTransition p) {
 
 		StateSpace stateSpace = t.getStateSpace();
 
-		final IEvalElement pred = stateSpace.getModel().parseFormula(predicateBuilder.toString(), FormulaExpand.EXPAND);
+		final IEvalElement pred = stateSpace.getModel().parseFormula(replayOptions.createMapping(p).toString(), FormulaExpand.EXPAND);
+
+		GetOperationByPredicateCommand command =
+				new GetOperationByPredicateCommand(stateSpace, t.getCurrentState().getId(), p.getOperationName(), pred, 1);
+
+		stateSpace.execute(command);
+
+		return command.getNewTransitions();
+	}
+
+	/**
+	 * Execute a operation with this name without further constraints
+	 * @param t the current trace
+	 * @param name the name of the operation to be executed
+	 * @return the results
+	 */
+	public List<Transition> executeOperation(Trace t, String name){
+		StateSpace stateSpace = t.getStateSpace();
+
+		final IEvalElement pred = stateSpace.getModel().parseFormula(new PredicateBuilder().toString(), FormulaExpand.EXPAND);
 
 		GetOperationByPredicateCommand command =
 				new GetOperationByPredicateCommand(stateSpace, t.getCurrentState().getId(), name, pred, 1);
@@ -412,7 +429,7 @@ public class TraceExplorer {
 
 		List<String> possibleTransitions = enabledOperations(t);
 		if (possibleTransitions.contains(transition.getOperationName())) {
-			return replayTransition(t, transition.getOperationName(), new PredicateBuilder());
+			return replayTransition(t, transition);
 		}
 
 		List<Transition> lookAheadResult = lookAhead(t, transition);
@@ -671,7 +688,7 @@ public class TraceExplorer {
 		progressMemoryInterface.addTasks(selectedMappingsToResultsKeys.size()*transitionList.size());
 
 
-		return selectedMappingsToResultsKeys.stream()
+		Map<Map<String, Map<MappingNames, Map<String, String>>>, List<PersistenceDelta>> da = selectedMappingsToResultsKeys.stream()
 				.map(mapping -> {
 					List<PersistentTransition> newTransitions = transformTransitionList(mapping, transitionList);
 					List<PersistenceDelta> preparedDelta = TraceCheckerUtils.zipPreserveOrder(transitionList, newTransitions)
@@ -682,6 +699,8 @@ public class TraceExplorer {
 				})
 				.filter(entry -> !entry.getValue().isEmpty())
 				.collect(toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
+		
+		return da;
 	}
 
 
@@ -724,8 +743,10 @@ public class TraceExplorer {
 					//return newTransitions;
 					return emptyList();
 				} else {
-					currentState = currentState.addTransitions(result);
-					newTransitions.add(new PersistenceDelta(oldPTransition, PersistentTransition.createFromList(result, currentState.getCurrentTransition())));
+					PersistentTransition lastTransition = newTransitions.get(newTransitions.size()-1).getLast();
+					currentState = currentState.addTransitions(new ArrayList<>(result));
+
+					newTransitions.add(new PersistenceDelta(oldPTransition, PersistentTransition.createFromList(result, lastTransition)));
 					usedTypeIV.add(oldPTransition.getOperationName()); //Careful! pass by reference, the global state is a reference to the passed parameter in the top function, better rework this
 				}
 

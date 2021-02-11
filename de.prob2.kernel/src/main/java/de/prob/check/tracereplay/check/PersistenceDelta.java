@@ -42,4 +42,9 @@ public class PersistenceDelta {
 	public String toString() {
 		return "{" +oldTransition + " : " + newTransitions + "}";
 	}
+
+
+	public PersistentTransition getLast(){
+		return newTransitions.get(newTransitions.size()-1);
+	}
 }
