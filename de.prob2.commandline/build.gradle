@@ -11,7 +11,7 @@ dependencies {
 }
 
 application {
-	mainClassName = "de.prob2.commandline.CommandLineMain"
+	mainClass = "de.prob2.commandline.CommandLineMain"
 }
 
 publishing.publications.mavenJava.pom.description = "The ProB 2.0 Kernel command-line interface"
