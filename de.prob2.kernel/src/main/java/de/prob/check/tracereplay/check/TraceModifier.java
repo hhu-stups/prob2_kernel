@@ -206,16 +206,18 @@ public class TraceModifier {
 		}
 	}
 
-	public void applyTypeIVInitChangesDeterministic(Map<String, String> variables) {
-		changelogPhase1.add(changeAllElementsWithName(Transition.INITIALISE_MACHINE_NAME, emptyMap(),
-				emptyMap(), variables, Collections.emptySet(), getLastChange()));
-	}
 
+	/**
+	 * Manages the exploration and analyzes phase and storing it results, produces results for type III and type IV
+	 * @param typeIIICandidates the candidate assumed to be type III
+	 * @param typeIVCandidates the candidates assumed to be type IV
+	 * @param newInfos new operation infos
+	 * @param oldInfos old operations infos
+	 * @param traceExplorer the trace explorer
+	 */
 	public void makeTypeIII(Set<String> typeIIICandidates, Set<String> typeIVCandidates,
 							Map<String, OperationInfo> newInfos, Map<String, OperationInfo> oldInfos, TraceExplorer traceExplorer) {
 
-		//No type II change?
-		if (!changelogPhase2.isEmpty()) {
 
 			Map<Set<RenamingDelta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>>> results = changelogPhase2
 					.entrySet()
@@ -239,30 +241,15 @@ public class TraceModifier {
 			progressMemoryInterface.nextStep();
 			changelogPhase4.putAll(typeIVResults);
 
-		} else {
-			Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result =
-					traceExplorer.replayTrace(getLastChange(), stateSpace, newInfos, oldInfos,  typeIIICandidates, typeIVCandidates);
-			progressMemoryInterface.nextStep();
-			Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Map<String, TraceAnalyser.AnalyserResult>> typeIVResults =
-					performTypeIVAnalysing2(traceExplorer.getUpdatedTypeIV(), result);
-			progressMemoryInterface.nextStep();
-			changelogPhase3.put(Collections.emptySet(), result);
-
-			if(!result.containsValue(emptyList()))
-			{
-				changelogPhase4.put(Collections.emptySet(), typeIVResults);
-			}
-
-		}
-
-
-		if(changelogPhase3.containsKey(emptySet())&& changelogPhase3.get(emptySet()).isEmpty()){
-			changelogPhase3.clear();
-			changelogPhase4.clear();
-		}
 
 	}
 
+	/**
+	 * Helper to perform type IV analyzes for all candidates
+	 * @param typeIVCandidates the candidates to be type IV
+	 * @param results the results of the trace explorer
+	 * @return the analysis for each type IV under the impression of the explored traces
+	 */
 	public Map<Set<RenamingDelta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Map<String, TraceAnalyser.AnalyserResult>>> performTypeIVAnalysing(
 			Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Set<String>> typeIVCandidates,
 			Map<Set<RenamingDelta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>>> results){
@@ -275,30 +262,6 @@ public class TraceModifier {
 								innerEntry -> TraceAnalyser.analyze(typeIVCandidates.get(innerEntry.getKey()), innerEntry.getValue(), changelogPhase2.get(entry.getKey()))))));
 	}
 
-	public Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Map<String, TraceAnalyser.AnalyserResult>> performTypeIVAnalysing2(
-			Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Set<String>> typeIVCandidates,
-			Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result){
-
-		return result.entrySet()
-				.stream()
-				.collect(toMap(Map.Entry::getKey,
-						innerEntry -> TraceAnalyser.analyze(typeIVCandidates.get(innerEntry.getKey()), innerEntry.getValue(), getLastChange())));
-	}
-
-	public List<PersistentTransition> changeAllElementsWithName(String name, Map<String, String> inputParameter,
-																Map<String, String> outputParameter, Map<String, String> variablesChangingState,
-																Set<String> variablesNotChangingState,
-																List<PersistentTransition> toChange) {
-
-		return toChange.stream().map(transition -> {
-			if (transition.getOperationName().equals(name)) {
-				return new PersistentTransition(name, inputParameter, outputParameter, variablesChangingState,
-						variablesNotChangingState, Collections.emptyList());
-			} else {
-				return transition;
-			}
-		}).collect(toList());
-	}
 
 
 	public List<PersistentTransition> getLastChange() {
@@ -309,21 +272,19 @@ public class TraceModifier {
 	 * @return the original trace was modified
 	 */
 	public boolean isDirty() {
-		return changelogPhase1.size() > 1 || typeIINonDetDirty() || typeIIIDirty() || typeIVDirty();
+		return typeIIDetDirty() || typeIINonDetDirty() || typeIIIDirty() || typeIVDirty();
 	}
 
 	public boolean typeIIDetDirty() {
-		return changelogPhase1.size() >1;
+		return getSizeTypeDetII() > 0;
 	}
 
 	public boolean typeIINonDetDirty(){
-		Set<Set<RenamingDelta>> keySet = changelogPhase2.keySet();
-
-		return keySet.size() > 1;
+		return getSizeTypeNonDetII() > 0;
 	}
 
 	public boolean typeIVDirty(){
-		return changelogPhase4.values().stream().flatMap(entry -> entry.values().stream().flatMap(innerValues -> innerValues.values().stream())).count() > 0;
+		return getSizeTypeIV() > 0;
 	}
 
 	public boolean typeIIIDirty(){
@@ -344,12 +305,12 @@ public class TraceModifier {
 	}
 
 
-	public int getSizeTypeDetII(){
+	public long getSizeTypeDetII(){
 		return changelogPhase1.size() - 1;
 	}
 
-	public int getSizeTypeNonDetII(){
-		return changelogPhase2.values().size() - 1;
+	public long getSizeTypeNonDetII(){
+		return changelogPhase2.keySet().stream().filter(entry -> !entry.equals(emptySet())).count();
 	}
 
 	public long getSizeTypeIII(){
