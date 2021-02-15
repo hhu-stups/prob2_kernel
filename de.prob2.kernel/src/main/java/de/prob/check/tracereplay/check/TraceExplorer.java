@@ -17,7 +17,6 @@ import de.prob.statespace.Transition;
 
 import java.util.*;
 
-import static de.prob.check.tracereplay.check.TraceCheckerUtils.firstOrEmpty;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 
@@ -148,28 +147,6 @@ public class TraceExplorer {
 				.copyWithNewOutputParameters(resultOutputParameters).copyWithDestStateNotChanged(destNotChangedVariables);
 	}
 
-	/**
-	 * helper for @possibleConstellations
-	 *
-	 * @param permutations a list with all permutations
-	 * @param values       the values to map onto
-	 * @return a set of mappings with the new constellations
-	 */
-	public static Set<Map<String, String>> permuted(List<List<String>> permutations, List<String> values) {
-		Set<Map<String, String>> resultSet = new HashSet<>();
-		for (List<String> option : permutations) {
-			Map<String, String> resultMap = new HashMap<>();
-			for (int i = 0; i < option.size(); i++) {
-				if (i < values.size()) {
-					resultMap.put(values.get(i), option.get(i));
-				}
-				//Else the values are not for direct interest when building the predicate
-			}
-			resultSet.add(resultMap);
-		}
-
-		return resultSet;
-	}
 
 	/**
 	 * Returns a list with all transitions enabled
@@ -202,8 +179,10 @@ public class TraceExplorer {
 				.filter(entry -> !entry.isEmpty())
 				.collect(toList());
 
+		Map<List<Transition>, Integer> scoredPaths = scorePaths(current, result);
 
-		return firstOrEmpty(result);
+		return extractMaxScore(scoredPaths);
+
 	}
 
 	/**
@@ -334,17 +313,6 @@ public class TraceExplorer {
 				.collect(toMap(Map.Entry::getKey, entry -> productCombination(entry.getValue(), newMap.getOrDefault(entry.getKey(), emptyList()))));
 	}
 
-	/**
-	 * Gets a list which is mapping data types to identifiers and a map mapping data types to the maximum length they are permuted to
-	 *
-	 * @param map     the map where the entries have to be permuted
-	 * @param maxsize the max size for each entry
-	 * @return a map which contains all permutations of the given length per entry
-	 */
-	public static Map<String, List<List<String>>> permutedMap(Map<String, List<String>> map, Map<String, Integer> maxsize) {
-		return map.entrySet().stream()
-				.collect(toMap(Map.Entry::getKey, entry -> TraceCheckerUtils.generatePerm(new ArrayList<>(entry.getValue()), 0, maxsize.get(entry.getKey()), emptyList())));
-	}
 
 	/**
 	 * Gets a map and reverses keys and values
@@ -459,15 +427,82 @@ public class TraceExplorer {
 
 		StateSpace stateSpace = t.getStateSpace();
 
-		for (ConstructTraceCommand command : commands) {
-			stateSpace.execute(command);
-			if (!command.getNewTransitions().isEmpty() && command.getErrors().isEmpty()) {
-				return command.getNewTransitions();
+		commands.forEach(stateSpace::execute);
+
+		return selectBestMatch(commands, current);
+	}
+
+
+	/**
+	 * Gets a list of commands and extracts the command that contains the best result
+	 * @param commands the list of EXECUTED commands
+	 * @param current the persistent transition to compare against
+	 * @return the best match or an empty list
+	 */
+	public static List<Transition> selectBestMatch(List<ConstructTraceCommand> commands, PersistentTransition current){
+
+		List<List<Transition>> validTraces = commands.stream()
+				.filter(entry -> !entry.hasErrors() && entry.getNewTransitions().size() > 0)
+				.map(entry -> new ArrayList<>(entry.getNewTransitions()))
+				.collect(toList());
+
+		Map<List<Transition>, Integer> scoredPaths = scorePaths(current, validTraces);
+
+		return extractMaxScore(scoredPaths);
+	}
+
+
+	/**
+	 * Gets a map of transition lists to which a score is assigned and extracts the one with the maximum score
+	 * @param scoredPaths the map with paths and scores assigned to
+	 * @return the path with the highest score
+	 */
+	public static List<Transition> extractMaxScore(Map<List<Transition>, Integer> scoredPaths){
+		Map.Entry<List<Transition>, Integer> maxEntry = null;
+
+		for (Map.Entry<List<Transition>, Integer> entry : scoredPaths.entrySet())
+		{
+			if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0)
+			{
+				maxEntry = entry;
 			}
 		}
 
-		return emptyList();
+		if(maxEntry==null){
+			return emptyList();
+		}else{
+			return maxEntry.getKey();
+		}
+
 	}
+
+	/**
+	 * gets a list of transition lists and scores each one of them
+	 * @param original the goal the scores is calculated with
+	 * @param toScore the lists to score
+	 * @return the scored lists
+	 */
+	public static Map<List<Transition>, Integer> scorePaths(PersistentTransition original, List<List<Transition>> toScore){
+		return toScore.stream().collect(toMap(entry -> entry, entry -> {
+			List<PersistentTransition> list = PersistentTransition.createFromList(new ArrayList<>(entry));
+			return (int) mapContainsMatchingElements(original.getAllPredicates(), list.get(list.size()-1).getAllPredicates());
+		}));
+	}
+
+	/**
+	 * Takes to maps with predicates assigned to variables. Will calculate a score representing how many variables and their
+	 * predicates are matching in bot maps
+	 * @param a first map
+	 * @param b second map
+	 * @return the score
+	 */
+	public static long mapContainsMatchingElements(Map<String, String> a, Map<String, String> b){
+		return  b.entrySet().stream()
+				.filter(entry -> a.containsKey(entry.getKey()))
+				.map(entry -> a.get(entry.getKey()).equals(entry.getValue()))
+				.filter(entry -> entry).count();
+	}
+
 
 	/**
 	 * Gets a trace and the operation information from new and old machine. for every operation used in the trace and
@@ -688,7 +723,7 @@ public class TraceExplorer {
 		progressMemoryInterface.addTasks(selectedMappingsToResultsKeys.size()*transitionList.size());
 
 
-		Map<Map<String, Map<MappingNames, Map<String, String>>>, List<PersistenceDelta>> da = selectedMappingsToResultsKeys.stream()
+		return selectedMappingsToResultsKeys.stream()
 				.map(mapping -> {
 					List<PersistentTransition> newTransitions = transformTransitionList(mapping, transitionList);
 					List<PersistenceDelta> preparedDelta = TraceCheckerUtils.zipPreserveOrder(transitionList, newTransitions)
@@ -699,8 +734,6 @@ public class TraceExplorer {
 				})
 				.filter(entry -> !entry.getValue().isEmpty())
 				.collect(toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
-		
-		return da;
 	}
 
 
@@ -746,7 +779,7 @@ public class TraceExplorer {
 					PersistentTransition lastTransition = newTransitions.get(newTransitions.size()-1).getLast();
 					currentState = currentState.addTransitions(new ArrayList<>(result));
 
-					newTransitions.add(new PersistenceDelta(oldPTransition, PersistentTransition.createFromList(result, lastTransition)));
+					newTransitions.add(new PersistenceDelta(oldPTransition, PersistentTransition.createFromList(new ArrayList<>(result), lastTransition)));
 					usedTypeIV.add(oldPTransition.getOperationName()); //Careful! pass by reference, the global state is a reference to the passed parameter in the top function, better rework this
 				}
 
