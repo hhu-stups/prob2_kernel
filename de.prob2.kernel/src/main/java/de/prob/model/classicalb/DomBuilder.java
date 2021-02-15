@@ -67,7 +67,7 @@ public class DomBuilder extends DepthFirstAdapter {
 	}
 
 	public ClassicalBMachine build(final Start ast) {
-		((Start) ast.clone()).apply(this);
+		ast.apply(this);
 		if (this.machineId == null) {
 			// Special case for when a definition file is loaded as the main file.
 			// In that case the file doesn't contain a machine header,
