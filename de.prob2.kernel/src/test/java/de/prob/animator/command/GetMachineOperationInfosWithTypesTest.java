@@ -10,6 +10,7 @@ import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
 import org.apache.groovy.util.Maps;
 import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +31,6 @@ public class GetMachineOperationInfosWithTypesTest {
 	@BeforeEach
 	public void createJsonManager() {
 		if (proBKernelStub == null) {
-			System.setProperty("prob.home", "/home/sebastian/prob_prolog");
 			Injector injector1 = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
 			this.proBKernelStub = injector1.getInstance(ProBKernelStub.class);
 		}
@@ -39,16 +39,16 @@ public class GetMachineOperationInfosWithTypesTest {
 
 	@Test
 	public void get_prepared_operation_test_1() throws IOException, ModelTranslationError {
-		proBKernelStub.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "OneOperationMachine.mch"));
+		proBKernelStub.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "examplesForOperations", "machineWithOneOperation.mch"));
 
 		GetMachineOperationInfosWithTypes getMachineOperationsFull = new GetMachineOperationInfosWithTypes();
 
 		proBKernelStub.executeCommand(getMachineOperationsFull);
 
-		Map<String, String> expected = Maps.of("x" , "integer", "y", "integer", "z", "boolean", "out", "integer");
+		Map<String, String> expected = Maps.of("cars" , "integer", "maxCars", "integer");
 
-		Assert.assertEquals(1, getMachineOperationsFull.getOperationInfos().size());
-		Assert.assertEquals(expected, getMachineOperationsFull.getOperationInfos().get(0).getTypeMap());
+		Assertions.assertEquals(1, getMachineOperationsFull.getOperationInfos().size());
+		Assertions.assertEquals(expected, getMachineOperationsFull.getOperationInfos().get(0).getTypeMap());
 
 	}
 
@@ -58,7 +58,7 @@ public class GetMachineOperationInfosWithTypesTest {
 	public void get_prepared_operation_test_2() throws IOException, ModelTranslationError {
 		//StateSpace statespace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "Lift.mch"));
 
-		StateSpace statespace = proBKernelStub.createStateSpace(Paths.get("/home", "sebastian", "master-thesis", "examples", "typeIV", "tropical_island", "Island.mch"));
+		StateSpace statespace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "tropical_island", "version_1", "Island.mch"));
 
 		GetMachineOperationInfosWithTypes getMachineOperationsFull = new GetMachineOperationInfosWithTypes();
 
@@ -105,9 +105,9 @@ public class GetMachineOperationInfosWithTypesTest {
 				leaveMap);
 
 
-		Assert.assertEquals(leave, statespace.getLoadedMachine().getMachineOperationInfo("leave"));
-		Assert.assertEquals(arriveByBoat, statespace.getLoadedMachine().getMachineOperationInfo("arrive_by_boat"));
-		Assert.assertEquals(arriveByFoot, statespace.getLoadedMachine().getMachineOperationInfo("arrive_by_foot"));
+		Assertions.assertEquals(leave, statespace.getLoadedMachine().getMachineOperationInfo("leave"));
+		Assertions.assertEquals(arriveByBoat, statespace.getLoadedMachine().getMachineOperationInfo("arrive_by_boat"));
+		Assertions.assertEquals(arriveByFoot, statespace.getLoadedMachine().getMachineOperationInfo("arrive_by_foot"));
 
 	}
 }

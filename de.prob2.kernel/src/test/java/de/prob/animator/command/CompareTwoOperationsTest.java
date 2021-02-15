@@ -10,12 +10,14 @@ import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.scripting.ModelTranslationError;
 import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 public class CompareTwoOperationsTest {
@@ -26,7 +28,6 @@ public class CompareTwoOperationsTest {
 	@BeforeEach
 	public void createJsonManager(){
 		if(proBKernelStub==null) {
-			System.setProperty("prob.home", "/home/sebastian/prob_prolog");
 			Injector injector1 = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
 			this.proBKernelStub = injector1.getInstance(ProBKernelStub.class);
 		}
@@ -35,7 +36,7 @@ public class CompareTwoOperationsTest {
 	
 	@Test
 	public void two_identical_operations_test() throws IOException, ModelTranslationError {
-		proBKernelStub.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "machineWithOneOperation.mch"));
+		proBKernelStub.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "examplesForOperations", "machineWithOneOperation.mch"));
 
 		CompoundPrologTerm compoundPrologTerm1 = new CompoundPrologTerm("b",
 				new CompoundPrologTerm("operation", new CompoundPrologTerm("inccc"), new ListPrologTerm(), new ListPrologTerm(),
@@ -57,15 +58,16 @@ public class CompareTwoOperationsTest {
 		CompareTwoOperations compareTwoOperations =
 				new CompareTwoOperations(prepareOperations1.getPreparedOperation(), compoundPrologTerm1, prepareOperations1.getFoundVars(), prepareOperations1.getFreeVars(), new ObjectMapper());
 		proBKernelStub.executeCommand(compareTwoOperations);
-		Assert.assertEquals(1, compareTwoOperations.getDelta().size());
-		Map<String, String> expected = Collections.singletonMap("inccc", "inccc");
-		Assert.assertEquals(expected, compareTwoOperations.getDelta());
+		Map<String, String> expected = new HashMap<>();
+		expected.put("inccc", "inccc");
+		expected.put("floors", "floors");
+		Assertions.assertEquals(expected, compareTwoOperations.getDelta());
 	}
 
 
 	@Test
 	public void renamed_operations_test() throws IOException, ModelTranslationError {
-		proBKernelStub.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "machineWithOneOperation.mch"));
+		proBKernelStub.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "examplesForOperations", "machineWithOneOperation.mch"));
 
 		CompoundPrologTerm compoundPrologTerm1 = new CompoundPrologTerm("b",
 				new CompoundPrologTerm("operation", new CompoundPrologTerm("inccc"), new ListPrologTerm(), new ListPrologTerm(),
@@ -100,9 +102,10 @@ public class CompareTwoOperationsTest {
 		CompareTwoOperations compareTwoOperations =
 				new CompareTwoOperations(prepareOperations1.getPreparedOperation(), compoundPrologTerm2, prepareOperations1.getFoundVars(), prepareOperations1.getFreeVars(), new ObjectMapper());
 		proBKernelStub.executeCommand(compareTwoOperations);
-		Assert.assertEquals(1, compareTwoOperations.getDelta().size());
-		Map<String, String> expected = Collections.singletonMap("inccc", "dinccc");
-		Assert.assertEquals(expected, compareTwoOperations.getDelta());
+		Map<String, String> expected = new HashMap<>();
+		expected.put("inccc", "dinccc");
+		expected.put("floors", "floors");
+		Assertions.assertEquals(expected, compareTwoOperations.getDelta());
 	}
 	
 }

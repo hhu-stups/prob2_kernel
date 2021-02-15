@@ -14,7 +14,6 @@ import de.prob.statespace.AnimationSelector;
 import de.prob.statespace.LoadedMachine;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
-import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -65,7 +64,7 @@ public class ProBKernelStub {
 
 
 	public StateSpace createStateSpace(Path path) throws IOException, ModelTranslationError {
-		killCurrent();
+		killCurrentStateSpace();
 		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension("mch"));
 		ClassicalBModel bla = (ClassicalBModel) factory.extract(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "ExampleMachine.mch").toString()).getModel();
 		StateSpace stateSpace = reusableAnimator.createStateSpace();
@@ -77,11 +76,16 @@ public class ProBKernelStub {
 		reusableAnimator.execute(command);
 	}
 
-	public void killCurrent(){
+	public void killCurrentStateSpace(){
 		if(reusableAnimator.getCurrentStateSpace()!=null)
 		{
 			reusableAnimator.getCurrentStateSpace().kill();
+
 		}
+	}
+
+	public void killCurrentAnimator(){
+		reusableAnimator.kill();
 	}
 
 	public PersistentTrace getATrace(){

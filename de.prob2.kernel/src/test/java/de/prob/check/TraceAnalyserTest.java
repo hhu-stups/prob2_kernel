@@ -33,7 +33,6 @@ public class TraceAnalyserTest {
 	@BeforeEach
 	public void createJsonManager(){
 		if(traceManager==null && proBKernelStub==null) {
-			System.setProperty("prob.home", "/home/sebastian/prob_prolog");
 			Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new JsonManagerStubModule());
 			this.traceManager = injector.getInstance(TraceManager.class);
 			Injector injector1 = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());

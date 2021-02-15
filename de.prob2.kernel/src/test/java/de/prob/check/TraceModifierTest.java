@@ -1,15 +1,50 @@
 package de.prob.check;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Stage;
+import de.prob.JsonManagerStubModule;
+import de.prob.MainModule;
+import de.prob.ProBKernelStub;
 import de.prob.check.tracereplay.PersistentTransition;
-import de.prob.check.tracereplay.check.RenamingDelta;
-import de.prob.check.tracereplay.check.TraceModifier;
-import org.junit.Assert;
+import de.prob.check.tracereplay.check.*;
+import de.prob.check.tracereplay.check.exceptions.PrologTermNotDefinedException;
+import de.prob.check.tracereplay.json.TraceManager;
+import de.prob.check.tracereplay.json.storage.TraceJsonFile;
+import de.prob.scripting.ModelTranslationError;
+import de.prob.statespace.OperationInfo;
+import de.prob.statespace.StateSpace;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class TraceModifierTest {
 
+
+	TraceManager traceManager = null;
+	ProBKernelStub proBKernelStub = null;
+
+	@BeforeEach
+	public void createJsonManager(){
+		if(traceManager==null && proBKernelStub==null) {
+			Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new JsonManagerStubModule());
+			this.traceManager = injector.getInstance(TraceManager.class);
+			Injector injector1 = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
+			this.proBKernelStub = injector1.getInstance(ProBKernelStub.class);
+		}
+
+	}
+
+	@AfterEach
+	public void cleanUp(){
+		proBKernelStub.killCurrentAnimator();
+	}
 
 	@Test
 	public void changeAll_test_changed_parameter_names(){
@@ -39,7 +74,7 @@ public class TraceModifierTest {
 		List<PersistentTransition> result = TraceModifier.changeAll(renamingDelta, currentState);
 
 
-		Assert.assertEquals(expected, result);
+		Assertions.assertEquals(expected, result);
 	}
 
 
@@ -73,7 +108,7 @@ public class TraceModifierTest {
 		List<PersistentTransition> result = TraceModifier.changeAll(renamingDelta, currentState);
 
 
-		Assert.assertEquals(expected, result);
+		Assertions.assertEquals(expected, result);
 	}
 
 	@Test
@@ -101,7 +136,7 @@ public class TraceModifierTest {
 		List<PersistentTransition> result = TraceModifier.changeAll(renamingDelta, currentState);
 
 
-		Assert.assertEquals(expected, result);
+		Assertions.assertEquals(expected, result);
 	}
 
 	@Test
@@ -163,7 +198,7 @@ public class TraceModifierTest {
 				persistentTransition, persistentTransition6);
 
 
-		Assert.assertEquals(expected, result);
+		Assertions.assertEquals(expected, result);
 
 	}
 /*
@@ -302,7 +337,7 @@ public class TraceModifierTest {
 		delta.add(list2);
 		
 		List<Set<RenamingDelta>> result = TraceModifier.deltaPermutation(delta);
-		Assert.assertEquals(9, result.size());
+		Assertions.assertEquals(9, result.size());
 
 	}
 
@@ -341,7 +376,7 @@ public class TraceModifierTest {
 
 
 		List<Set<RenamingDelta>> result = TraceModifier.deltaPermutation(delta);
-		Assert.assertEquals(27, result.size());
+		Assertions.assertEquals(27, result.size());
 
 	}
 
@@ -349,7 +384,7 @@ public class TraceModifierTest {
 	@Test
 	public void deltaPermutation_test_empty_parameter(){
 		List<Set<RenamingDelta>> result = TraceModifier.deltaPermutation(Collections.emptySet());
-		Assert.assertEquals(Collections.emptyList(), result);
+		Assertions.assertEquals(Collections.emptyList(), result);
 
 	}
 
@@ -383,7 +418,7 @@ public class TraceModifierTest {
 
 		List<PersistentTransition> result = TraceModifier.applyMultipleChanges(Collections.emptySet(), original);
 
-		Assert.assertEquals(original, result);
+		Assertions.assertEquals(original, result);
 
 
 	}
@@ -440,7 +475,7 @@ public class TraceModifierTest {
 		List<PersistentTransition> result = TraceModifier.applyMultipleChanges(changes, original);
 
 
-		Assert.assertEquals(expected, result);
+		Assertions.assertEquals(expected, result);
 	}
 
 
@@ -454,7 +489,7 @@ public class TraceModifierTest {
 
 		List<String> expected = Arrays.asList("a","b", "c", "1", "2", "3");
 
-		Assert.assertEquals(expected, result);
+		Assertions.assertEquals(expected, result);
 
 	}
 
@@ -468,7 +503,7 @@ public class TraceModifierTest {
 
 		List<String> expected = Collections.emptyList();
 
-		Assert.assertEquals(expected, result);
+		Assertions.assertEquals(expected, result);
 	}
 
 
@@ -553,7 +588,7 @@ public class TraceModifierTest {
 		Map<Set<RenamingDelta>, List<PersistentTransition>> result = TraceModifier.changeLog(change, original);
 
 
-		Assert.assertEquals(expected, result);
+		Assertions.assertEquals(expected, result);
 
 	}
 
@@ -564,7 +599,42 @@ public class TraceModifierTest {
 		Map<Set<RenamingDelta>, List<PersistentTransition>> result = TraceModifier.changeLog(Collections.emptySet(), Collections.emptyList());
 
 
-		Assert.assertEquals(Collections.emptyMap(), result);
+		Assertions.assertEquals(Collections.emptyMap(), result);
+
+	}
+
+	@Test
+	public void is_dirty_type_III_test_1() throws IOException, ModelTranslationError, PrologTermNotDefinedException {
+
+		Path oldPath = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "complexExample", "PitmanController_v6.mch");
+		StateSpace stateSpace1 = proBKernelStub.createStateSpace(oldPath);
+		Map<String, OperationInfo> oldInfos = stateSpace1.getLoadedMachine().getOperations();
+		List<String> oldVars = stateSpace1.getLoadedMachine().getVariableNames();
+
+		Path newPath = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "complexExample", "PitmanController_v6_v5.mch");
+		StateSpace stateSpace2 = proBKernelStub.createStateSpace(newPath);
+		Map<String, OperationInfo> newInfos = stateSpace2.getLoadedMachine().getOperations();
+
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "complexExample", "traceShort.prob2trace"));
+
+		Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
+
+		TraceChecker traceChecker = new TraceChecker(
+				jsonFile.getTrace().getTransitionList(),
+				jsonFile.getMachineOperationInfos(),
+				newInfos, new HashSet<>(oldVars),
+				new HashSet<>(stateSpace2.getLoadedMachine().getVariableNames()),
+				oldPath.toString(),
+				newPath.toString(),
+				injector,
+				new TestUtils.StubFactoryImplementation(),
+				new ReplayOptions(),
+				new TestUtils.ProgressStubFactory());
+
+		TraceModifier bla = traceChecker.getTraceModifier();
+
+		Assertions.assertTrue(bla.typeIIIDirty());
+		Assertions.assertEquals(2, bla.getSizeTypeIII());
 
 	}
 }

@@ -226,11 +226,8 @@ public class TraceModifier {
 					{
 						Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result =
 								traceExplorer.replayTrace(entry.getValue(), stateSpace, newInfos, oldInfos, typeIIICandidates, typeIVCandidates);
-						if (result.values().isEmpty()) {
-							new AbstractMap.SimpleEntry<>(emptySet(), emptyMap());
-						}
-							return new AbstractMap.SimpleEntry<>(entry.getKey(), result);
-					}).filter(entry -> !entry.getValue().isEmpty())
+						return new AbstractMap.SimpleEntry<>(entry.getKey(), result);
+					})
 					.collect(toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
 
 
@@ -319,7 +316,7 @@ public class TraceModifier {
 	}
 
 	public long getSizeTypeIV(){
-		return getSizeTypeIII() + changelogPhase3.keySet().stream().map(changelogPhase4::get).count();
+		return changelogPhase3.keySet().stream().map(entry -> changelogPhase4.get(entry).values().stream().filter(inner -> !inner.isEmpty())).count();
 	}
 
 

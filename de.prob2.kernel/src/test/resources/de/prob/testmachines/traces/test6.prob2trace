@@ -1,0 +1,41 @@
+{
+  "type" : "Trace",
+  "name" : "testFile",
+  "description" : "description",
+  "trace" : {
+    "description" : "",
+    "transitionList" : [ ]
+  },
+  "variableNames" : [ "x" ],
+  "machineOperationInfos" : {
+    "Foo" : {
+      "operationName" : "Foo",
+      "parameterNames" : [ "p1", "p2" ],
+      "outputParameterNames" : [ "out1", "out2" ],
+      "topLevel" : true,
+      "type" : "CLASSICAL_B",
+      "readVariables" : [ "x" ],
+      "writtenVariables" : [ "x" ],
+      "nonDetWrittenVariables" : [ ],
+      "typeMap" : {
+        "out2" : "boolean",
+        "p1" : "integer",
+        "p2" : "boolean",
+        "out1" : "integer",
+        "x" : "integer"
+      }
+    }
+  },
+  "constantNames" : [ ],
+  "setNames" : [ ],
+  "metaData" : {
+    "type" : "TraceMetaData",
+    "formatVersion" : 1,
+    "savedAt" : [ 2021, 2, 15, 11, 5, 32, 923475000 ],
+    "creator" : "User",
+    "proBCliVersion" : "version",
+    "name" : "bla",
+    "path" : "",
+    "proB2KernelVersion" : "4.0.0-SNAPSHOT"
+  }
+}

@@ -236,11 +236,20 @@ public class PersistentTransition {
 
 
 	public Map<String, String> getOutputParameters() {
-		return outputParameters;
+		return new HashMap<>(outputParameters);
 	}
 
 	public Map<String, String> getDestinationStateVariables() {
 		return new HashMap<>(this.destState);
+	}
+
+
+	public Map<String, String> getAllPredicates(){
+		Map<String, String> result = new HashMap<>();
+		result.putAll(getDestinationStateVariables());
+		result.putAll(getOutputParameters());
+		result.putAll(getParameters());
+		return result;
 	}
 
 

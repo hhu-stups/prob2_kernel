@@ -10,6 +10,8 @@ import de.prob.check.tracereplay.check.TypeFinder;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.statespace.OperationInfo;
+import de.prob.statespace.Transition;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,13 +33,17 @@ public class TypeFinderTest {
 	@BeforeEach
 	public void createJsonManager(){
 		if(traceManager==null && proBKernelStub==null) {
-			System.setProperty("prob.home", "/home/sebastian/prob_prolog");
 			Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new JsonManagerStubModule());
 			this.traceManager = injector.getInstance(TraceManager.class);
 			Injector injector1 = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
 			this.proBKernelStub = injector1.getInstance(ProBKernelStub.class);
 		}
 
+	}
+
+	@AfterEach
+	public void cleanUp(){
+		proBKernelStub.killCurrentAnimator();
 	}
 
 	@Test
@@ -222,11 +228,11 @@ public class TypeFinderTest {
 	@Test
 	public void usedOperation_test() throws IOException {
 
-		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "traces", "testTraceMachine10Steps.prob2trace"));
+		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "testTraceMachine10Steps.prob2trace"));
 
 		Set<String> result = TypeFinder.usedOperations(bla.getTrace().getTransitionList());
 
-		Set<String> expected = new HashSet<>(Arrays.asList("dec", "getfloors", "inc"));
+		Set<String> expected = new HashSet<>(Arrays.asList("dec", "getfloors", "inc", Transition.INITIALISE_MACHINE_NAME));
 
 		Assertions.assertEquals(expected, result);
 
@@ -277,7 +283,7 @@ public class TypeFinderTest {
 		newOperations.put(operationInfo9.getOperationName(), operationInfo9);
 
 
-		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "traces", "testTraceMachine10Steps.prob2trace"));
+		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "testTraceMachine10Steps.prob2trace"));
 
 
 		TypeFinder typeFinder = new TypeFinder(bla.getTrace().getTransitionList(), oldOperations, newOperations, Collections.emptySet(), Collections.emptySet());
@@ -341,7 +347,7 @@ public class TypeFinderTest {
 		newOperations.put(operationInfo9.getOperationName(), operationInfo9);
 
 
-		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "traces", "testTraceMachine10Steps.prob2trace"));
+		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "testTraceMachine10Steps.prob2trace"));
 
 
 		TypeFinder typeFinder = new TypeFinder(bla.getTrace().getTransitionList(), oldOperations, newOperations, Collections.emptySet(), Collections.emptySet());
@@ -360,7 +366,7 @@ public class TypeFinderTest {
 	public void check_init_type_test() throws IOException {
 
 
-		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "traces", "testTraceMachine10Steps.prob2trace"));
+		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines","traces", "testTraceMachine10Steps.prob2trace"));
 
 
 		Set<String> oldVars = singleton("world");
@@ -382,7 +388,7 @@ public class TypeFinderTest {
 	public void check_init_type_test_2() throws IOException {
 
 
-		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "traces", "testTraceMachine10Steps.prob2trace"));
+		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines","traces", "testTraceMachine10Steps.prob2trace"));
 
 
 		Set<String> oldVars = singleton("world");

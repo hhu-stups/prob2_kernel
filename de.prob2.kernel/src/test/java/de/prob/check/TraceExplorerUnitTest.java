@@ -15,6 +15,7 @@ import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,7 +23,6 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.*;
@@ -37,7 +37,6 @@ public class TraceExplorerUnitTest {
 	@BeforeEach
 	public void createStub(){
 		if(traceManager==null && proBKernelStub==null) {
-			System.setProperty("prob.home", "/home/sebastian/prob_prolog");
 			Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new JsonManagerStubModule());
 			this.traceManager = injector.getInstance(TraceManager.class);
 			Injector injector1 = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
@@ -46,6 +45,10 @@ public class TraceExplorerUnitTest {
 
 	}
 
+	@AfterEach
+	public void cleanUp(){
+		proBKernelStub.killCurrentAnimator();
+	}
 
 	@Test
 	public void sortByValue_test_two_data_types(){
@@ -66,78 +69,6 @@ public class TraceExplorerUnitTest {
 		Assertions.assertEquals(expected, result);
 	}
 
-	@Test
-	public void permutedMap_test_empty(){
-		Map<String, List<String>> input = new HashMap<>();
-
-		List<String> listA = new ArrayList<>(asList("a", "b", "c"));
-		List<String> listB = new ArrayList<>(asList("d", "e", "f"));
-
-		input.put("integer", new ArrayList<>(listA));
-		input.put("boolean", new ArrayList<>(listB));
-
-		Map<String, Integer> inputLength = new HashMap<>();
-		inputLength.put("integer", 3);
-		inputLength.put("boolean", 3);
-
-
-		Set<List<String>> permA = new HashSet<>(TraceCheckerUtils.generatePerm(listA));
-		Set<List<String>> permB = new HashSet<>(TraceCheckerUtils.generatePerm(listB));
-
-		Map<String, Set<List<String>>> expected = new HashMap<>();
-		expected.put("integer", permA);
-		expected.put("boolean", permB);
-
-		Map<String, Set<List<String>>> result = TraceExplorer.permutedMap(input, inputLength)
-				.entrySet()
-				.stream()
-				.collect(Collectors.toMap(Map.Entry::getKey, entry -> new HashSet<>(entry.getValue())));
-
-		Assertions.assertEquals(expected, result);
-	}
-
-	@Test
-	public void productCombination_test(){
-
-		List<String> listA = new ArrayList<>(asList("a", "b", "c"));
-		List<String> listB = new ArrayList<>(asList("x", "y", "z"));
-
-		List<List<String>> permA = TraceCheckerUtils.generatePerm(listA);
-		List<List<String>> permB = TraceCheckerUtils.generatePerm(listB);
-
-
-		Set<Map<String, String>> result = TraceExplorer.productCombination(permA, permB);
-
-
-		Map<String, String> map1 = new HashMap<>();
-		map1.put("a", "z");
-		map1.put("b", "y");
-		map1.put("c", "x");
-		Map<String, String> map2 = new HashMap<>();
-		map2.put("a", "y");
-		map2.put("b", "x");
-		map2.put("c", "z");
-		Map<String, String> map3 = new HashMap<>();
-		map3.put("a", "y");
-		map3.put("b", "z");
-		map3.put("c", "x");
-		Map<String, String> map4 = new HashMap<>();
-		map4.put("a", "x");
-		map4.put("b", "z");
-		map4.put("c", "y");
-		Map<String, String> map5 = new HashMap<>();
-		map5.put("a", "x");
-		map5.put("b", "y");
-		map5.put("c", "z");
-		Map<String, String> map6 = new HashMap<>();
-		map6.put("a", "z");
-		map6.put("b", "x");
-		map6.put("c", "y");
-
-		Set<Map<String, String>> expected = new HashSet<>(Arrays.asList(map1, map2, map3, map4, map5, map6));
-
-		Assertions.assertEquals(expected, result);
-	}
 
 	@Test
 	public void melt_test(){
@@ -1284,6 +1215,7 @@ public class TraceExplorerUnitTest {
 		Assertions.assertEquals(singleton(emptyMap()), result);
 
 	}
+
 
 
 

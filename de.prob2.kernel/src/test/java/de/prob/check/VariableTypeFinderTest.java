@@ -9,7 +9,8 @@ import de.prob.ProBKernelStub;
 import de.prob.check.tracereplay.check.VariableTypeFinder;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
-import org.junit.Assert;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +27,6 @@ public class VariableTypeFinderTest {
 	@BeforeEach
 	public void createJsonManager(){
 		if(traceManager==null && proBKernelStub==null) {
-			System.setProperty("prob.home", "/home/sebastian/prob_prolog");
 			Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new JsonManagerStubModule());
 			this.traceManager = injector.getInstance(TraceManager.class);
 			Injector injector1 = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
@@ -35,17 +35,22 @@ public class VariableTypeFinderTest {
 
 	}
 
+	@AfterEach
+	public void cleanUp(){
+		proBKernelStub.killCurrentAnimator();
+	}
+
 	@Test
 	public void usedVariables_test() throws IOException {
 
 
-		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift.prob2trace"));
+		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "changedTypeIIandTypeIII", "LiftProto.prob2trace"));
 
 		Set<String> result = VariableTypeFinder.usedVariables(bla.getTrace());
 
 		Set<String> expected = new HashSet<>();
 		expected.add("floors");
-		Assert.assertEquals(expected, result);
+		Assertions.assertEquals(expected, result);
 	}
 
 
@@ -53,20 +58,20 @@ public class VariableTypeFinderTest {
 	public void getUsedVarsOfTransition_test() throws IOException {
 
 
-		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift.prob2trace"));
+		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "changedTypeIIandTypeIII", "LiftProto.prob2trace"));
 
 		Set<String> result = VariableTypeFinder.getUsedVarsOfTransition(bla.getTrace().getTransitionList().get(0));
 
 		Set<String> expected = new HashSet<>();
 		expected.add("floors");
-		Assert.assertEquals(expected, result);
+		Assertions.assertEquals(expected, result);
 	}
 
 	@Test
 	public void integration_test_1() throws IOException {
 
 
-		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift.prob2trace"));
+		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "changedTypeIIandTypeIII", "LiftProto.prob2trace"));
 
 		Set<String> first = new HashSet<>();
 		first.add("floors");
@@ -81,8 +86,8 @@ public class VariableTypeFinderTest {
 		expected.add("floors");
 
 
-		Assert.assertEquals(expected, variableTypeFinder.getTypeIIorIVCandidates());
-		Assert.assertEquals(new HashSet<String>(), variableTypeFinder.getTypeICandidates());
+		Assertions.assertEquals(expected, variableTypeFinder.getTypeIIorIVCandidates());
+		Assertions.assertEquals(new HashSet<String>(), variableTypeFinder.getTypeICandidates());
 	}
 
 
@@ -90,7 +95,7 @@ public class VariableTypeFinderTest {
 	public void integration_test_2() throws IOException {
 
 
-		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift.prob2trace"));
+		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "changedTypeIIandTypeIII", "LiftProto.prob2trace"));
 
 		Set<String> first = new HashSet<>();
 		first.add("floors");
@@ -105,8 +110,8 @@ public class VariableTypeFinderTest {
 		expected.add("floors");
 
 
-		Assert.assertEquals(expected, variableTypeFinder.getTypeICandidates());
-		Assert.assertEquals(new HashSet<String>(), variableTypeFinder.getTypeIIorIVCandidates());
+		Assertions.assertEquals(expected, variableTypeFinder.getTypeICandidates());
+		Assertions.assertEquals(new HashSet<String>(), variableTypeFinder.getTypeIIorIVCandidates());
 	}
 
 

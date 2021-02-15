@@ -1,0 +1,98 @@
+{
+  "type" : "Trace",
+  "name" : "testFile",
+  "description" : "description",
+  "metaData" : {
+    "type" : "TraceMetaData",
+    "formatVersion" : 1,
+    "savedAt" : {
+      "nano" : 908006000,
+      "year" : 2020,
+      "monthValue" : 9,
+      "dayOfMonth" : 28,
+      "hour" : 8,
+      "minute" : 42,
+      "second" : 37,
+      "month" : "SEPTEMBER",
+      "dayOfWeek" : "MONDAY",
+      "dayOfYear" : 272,
+      "chronology" : {
+        "calendarType" : "iso8601",
+        "id" : "ISO"
+      }
+    },
+    "creator" : "User",
+    "proB2KernelVersion" : "4.0.0-SNAPSHOT",
+    "proBCliVersion" : "version",
+    "name" : "bla"
+  },
+  "trace" : {
+    "description" : "",
+    "transitionList" : [ ]
+  },
+  "machine" : {
+    "variableNames" : [ "x" ],
+    "constantNames" : [ ],
+    "setNames" : [ ],
+    "variableEvalElements" : [ {
+      "code" : "x",
+      "ast" : {
+        "startPos" : null,
+        "endPos" : null,
+        "pparseUnit" : {
+          "startPos" : {
+            "line" : 1,
+            "pos" : 1
+          },
+          "endPos" : {
+            "line" : 2,
+            "pos" : 2
+          },
+          "expression" : {
+            "startPos" : {
+              "line" : 2,
+              "pos" : 1
+            },
+            "endPos" : {
+              "line" : 2,
+              "pos" : 2
+            },
+            "identifier" : [ {
+              "startPos" : {
+                "line" : 2,
+                "pos" : 1
+              },
+              "endPos" : {
+                "line" : 2,
+                "pos" : 2
+              },
+              "text" : "x",
+              "line" : 2,
+              "pos" : 1
+            } ]
+          }
+        },
+        "eof" : {
+          "startPos" : {
+            "line" : 2,
+            "pos" : 2
+          },
+          "endPos" : {
+            "line" : 2,
+            "pos" : 2
+          },
+          "text" : "",
+          "line" : 2,
+          "pos" : 2
+        }
+      },
+      "kind" : "EXPRESSION",
+      "formulaId" : {
+        "uuid" : "formula_6"
+      }
+    } ],
+    "setEvalElements" : [ ],
+    "operationNames" : [ "Foo" ],
+    "constatsEvalElements" : [ ]
+  }
+}

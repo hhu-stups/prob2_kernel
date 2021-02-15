@@ -17,6 +17,7 @@ import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.check.tracereplay.json.storage.TraceMetaData;
 import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.LoadedMachine;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -34,13 +35,17 @@ public class TraceManagerTest {
 	@BeforeEach
 	public void createJsonManager(){
 		if(traceManager==null && proBKernelStub==null) {
-			System.setProperty("prob.home", "/home/sebastian/prob_prolog");
 			Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new JsonManagerStubModule());
 			this.traceManager = injector.getInstance(TraceManager.class);
 			Injector injector1 = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
 			this.proBKernelStub = injector1.getInstance(ProBKernelStub.class);
 		}
 		
+	}
+
+	@AfterEach
+	public void cleanUp(){
+		proBKernelStub.killCurrentAnimator();
 	}
 
 	@Test
@@ -53,51 +58,38 @@ public class TraceManagerTest {
 		AbstractMetaData abstractMetaData = new TraceMetaData(1, LocalDateTime.now(), "User", "version", "bla", "");
 		PersistentTrace persistentTrace = proBKernelStub.getATrace();
 		AbstractJsonFile abstractJsonFile = new TraceJsonFile("testFile", "description", persistentTrace, loadedMachine, abstractMetaData);
-		traceManager.save(Paths.get("src", "test", "resources", "de", "prob", "traces", "test6.prob2trace"), abstractJsonFile);
-	}
-
-
-	@Test
-	public void mega() throws IOException, ModelTranslationError {
-
-
-		LoadedMachine loadedMachine = proBKernelStub.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "testTraceMachine.mch"));
-
-		AbstractMetaData abstractMetaData = new TraceMetaData(1, LocalDateTime.now(), "User", "version", "bla", "");
-		PersistentTrace persistentTrace = proBKernelStub.getATrace();
-		AbstractJsonFile abstractJsonFile = new TraceJsonFile("testFile", "description", persistentTrace, loadedMachine, abstractMetaData);
-		traceManager.save(Paths.get("src", "test", "resources", "de", "prob", "traces", "test6.prob2trace"), abstractJsonFile);
+		traceManager.save(Paths.get("src", "test", "resources", "de", "prob", "testmachines","traces",  "test6.prob2trace"), abstractJsonFile);
 	}
 
 
 	@Test
 	public void deserialize_correct_file_test() throws IOException {
-		traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "traces", "trace6.prob2trace"));
+		traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "trace6.prob2trace"));
 	}
 
 
 	@Test
 	public void deserialize_file_wrong_value_test()  {
 		assertThrows(JsonMappingException.class,() ->
-		traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "traces", "test1.prob2trace")));
+		traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "test1.prob2trace")));
 	}
 
 	@Test
 	public void deserialize_file_wrong_field_test() {
 		assertThrows(UnrecognizedPropertyException.class, () ->
-		traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "traces", "test2.prob2trace")));
+		traceManager.load(Paths.get("src", "test", "resources", "de", "prob","testmachines", "traces",  "test2.prob2trace")));
 	}
 
 	@Test
 	public void deserialize_file_missing_field_test() {
 		assertThrows(ValueInstantiationException.class, () ->
-		traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "traces", "test4.prob2trace")));
+		traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines","traces", "test4.prob2trace")));
 	}
 
 
 	@Test
 	public void deserialize_10_steps_test() throws IOException {
-		traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "traces", "testTraceMachine10Steps.prob2trace"));
+		traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "testTraceMachine10Steps.prob2trace"));
 	}
 
 

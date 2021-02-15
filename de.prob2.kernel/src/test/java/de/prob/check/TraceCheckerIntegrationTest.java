@@ -8,12 +8,12 @@ import de.prob.MainModule;
 import de.prob.ProBKernelStub;
 import de.prob.check.tracereplay.check.ReplayOptions;
 import de.prob.check.tracereplay.check.TraceChecker;
+import de.prob.check.tracereplay.check.TraceModifier;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.StateSpace;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -30,7 +30,6 @@ public class TraceCheckerIntegrationTest {
 	@BeforeEach
 	public void createJsonManager(){
 		if(traceManager==null && proBKernelStub==null && injector == null) {
-			System.setProperty("prob.home", "/home/sebastian/prob_prolog");
 			injector = Guice.createInjector(Stage.DEVELOPMENT, new JsonManagerStubModule());
 			this.traceManager = injector.getInstance(TraceManager.class);
 			Injector injector1 = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
@@ -40,14 +39,18 @@ public class TraceCheckerIntegrationTest {
 	}
 
 
+	@AfterEach
+	public void cleanUp(){
+		proBKernelStub.killCurrentAnimator();
+	}
 
 
 	@Test
 	public void integration_1_realWorldExample() throws IOException, ModelTranslationError {
-		Path newPath = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "Lift", "changedTypeIIandType", "LiftProto2.mch");
-		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "Lift", "changedTypeIIandType", "LiftProto2.mch"));
+		Path newPath = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "Lift", "changedTypeIIandTypeIII", "LiftProto2.mch");
+		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "Lift", "changedTypeIIandTypeIII", "LiftProto2.mch"));
 
-		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "Lift", "changedTypeIIandType", "LiftProto.prob2trace"));
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "Lift", "changedTypeIIandTypeIII", "LiftProto.prob2trace"));
 
 		TraceChecker traceChecker = new TraceChecker(
 				jsonFile.getTrace().getTransitionList(),
@@ -61,9 +64,9 @@ public class TraceCheckerIntegrationTest {
 				new ReplayOptions(),
 				new TestUtils.ProgressStubFactory());
 
-		System.out.println(traceChecker.getTraceModifier().getLastChange());
-		System.out.println(traceChecker.getTraceModifier().getChangelogPhase3II());
-		System.out.println(traceChecker.getTraceModifier().getChangelogPhase3II());
+		TraceModifier traceModifier = traceChecker.getTraceModifier();
+
+		Assertions.assertEquals(0, traceModifier.getSizeTypeDetII());
 	}
 
 	@Test
@@ -87,8 +90,11 @@ public class TraceCheckerIntegrationTest {
 				new TestUtils.ProgressStubFactory()
 		);
 
-		System.out.println(traceChecker.getTraceModifier().getChangelogPhase3II().size());
-		System.out.println(traceChecker.getTraceModifier().getChangelogPhase3II());
+		TraceModifier traceModifier = traceChecker.getTraceModifier();
+
+
+		Assertions.assertEquals(0, traceModifier.getSizeTypeDetII());
+
 
 	}
 	

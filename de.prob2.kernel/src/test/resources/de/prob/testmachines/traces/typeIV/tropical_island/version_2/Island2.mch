@@ -1,4 +1,4 @@
-MACHINE Island2
+MACHINE Island
 
 
 CONSTANTS maxPerson

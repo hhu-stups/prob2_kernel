@@ -11,6 +11,7 @@ import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.PersistenceDelta;
+import de.prob.check.tracereplay.check.TraceCheckerUtils;
 import de.prob.check.tracereplay.check.TraceExplorer;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
@@ -19,7 +20,7 @@ import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
 import de.prob.statespace.Transition;
-import org.junit.Assert;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Collections.*;
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.*;
 
 public class TraceExplorerIntegrationTest {
 
@@ -42,7 +43,6 @@ public class TraceExplorerIntegrationTest {
 	@BeforeEach
 	public void createJsonManager(){
 		if(traceManager==null && proBKernelStub==null) {
-			System.setProperty("prob.home", "/home/sebastian/prob_prolog");
 			Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new JsonManagerStubModule());
 			this.traceManager = injector.getInstance(TraceManager.class);
 			Injector injector1 = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
@@ -50,6 +50,12 @@ public class TraceExplorerIntegrationTest {
 		}
 
 	}
+
+	@AfterEach
+	public void cleanUp(){
+		proBKernelStub.killCurrentAnimator();
+	}
+
 
 	@Test
 	public void integration_1() throws IOException, ModelTranslationError {
@@ -370,7 +376,7 @@ public class TraceExplorerIntegrationTest {
 		Map<String, OperationInfo> oldInfos = stateSpace1.getLoadedMachine().getOperations();
 
 		StateSpace stateSpace2 = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "changedTypeIIandTypeIII",  "LiftProto2.mch"));
-		Map<String, OperationInfo> newInfos = stateSpace1.getLoadedMachine().getOperations();
+		Map<String, OperationInfo> newInfos = stateSpace2.getLoadedMachine().getOperations();
 
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "changedTypeIIandTypeIII", "LiftProto.prob2trace"));
 
@@ -378,16 +384,21 @@ public class TraceExplorerIntegrationTest {
 				.replayTrace(
 						jsonFile.getTrace().getTransitionList(),
 						stateSpace2,
-						oldInfos,
 						newInfos,
+						oldInfos,
 						singleton("inc"),
 						emptySet());
 
 		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> resultCleaned = TraceExplorer.removeHelperVariableMappings(result);
 
+		Set<Map<String, String>> resultToCompare = resultCleaned.keySet().stream().flatMap(entry -> entry.values().stream()).collect(toSet());
 
-		Assertions.assertEquals(emptyMap(), resultCleaned);
+		Set<Map<String, String>> expectedHelper = TraceCheckerUtils.allDiagonals(Arrays.asList("x", "y"), Arrays.asList("x", "y", "z"));
+		Set<Map<String, String>> expected = expectedHelper.stream().peek(entry -> entry.put("floors", "levels")).collect(toSet());
+		Assertions.assertEquals(expected, resultToCompare);
 	}
+
+
 
 
 }

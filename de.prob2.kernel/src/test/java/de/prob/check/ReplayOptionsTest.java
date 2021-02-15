@@ -4,6 +4,7 @@ import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.ReplayOptions;
 import de.prob.formula.PredicateBuilder;
 import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -22,7 +23,7 @@ public class ReplayOptionsTest {
 
 		PredicateBuilder result = replayOptions.createMapping(persistentTransition);
 
-		Assert.assertEquals(new PredicateBuilder(), result);
+		Assertions.assertEquals(new PredicateBuilder(), result);
 	}
 
 	@Test
@@ -44,7 +45,7 @@ public class ReplayOptionsTest {
 
 		PredicateBuilder result = replayOptions.createMapping(persistentTransition);
 
-		Assert.assertEquals(expected, result);
+		Assertions.assertEquals(expected, result);
 	}
 
 	@Test
@@ -64,7 +65,7 @@ public class ReplayOptionsTest {
 
 		PredicateBuilder result = replayOptions.createMapping(persistentTransition);
 
-		Assert.assertEquals(expected, result);
+		Assertions.assertEquals(expected, result);
 	}
 
 
@@ -87,7 +88,7 @@ public class ReplayOptionsTest {
 
 		PredicateBuilder result = replayOptions.createMapping(persistentTransition);
 
-		Assert.assertEquals(expected, result);
+		Assertions.assertEquals(expected, result);
 	}
 
 	@Test
@@ -108,7 +109,7 @@ public class ReplayOptionsTest {
 
 		PredicateBuilder result = replayOptions.createMapping(persistentTransition);
 
-		Assert.assertEquals(expected, result);
+		Assertions.assertEquals(expected, result);
 	}
 
 
@@ -129,7 +130,7 @@ public class ReplayOptionsTest {
 
 		PredicateBuilder result = replayOptions.createMapping(persistentTransition);
 
-		Assert.assertEquals(expected, result);
+		Assertions.assertEquals(expected, result);
 	}
 
 	@Test
@@ -149,6 +150,6 @@ public class ReplayOptionsTest {
 
 		PredicateBuilder result = replayOptions.createMapping(persistentTransition);
 
-		Assert.assertEquals(expected, result);
+		Assertions.assertEquals(expected, result);
 	}
 }
