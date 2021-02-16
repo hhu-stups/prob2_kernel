@@ -6,17 +6,23 @@ import com.google.inject.Stage;
 import de.prob.JsonManagerStubModule;
 import de.prob.MainModule;
 import de.prob.ProBKernelStub;
-import de.prob.check.tracereplay.check.VariableTypeFinder;
+import de.prob.check.tracereplay.check.*;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
+import de.prob.scripting.ModelTranslationError;
+import de.prob.statespace.OperationInfo;
+import de.prob.statespace.StateSpace;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class VariableTypeFinderTest {
@@ -113,6 +119,7 @@ public class VariableTypeFinderTest {
 		Assertions.assertEquals(expected, variableTypeFinder.getTypeICandidates());
 		Assertions.assertEquals(new HashSet<String>(), variableTypeFinder.getTypeIIorIVCandidates());
 	}
+
 
 
 }

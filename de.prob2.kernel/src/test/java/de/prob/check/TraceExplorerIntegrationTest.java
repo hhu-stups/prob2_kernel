@@ -368,37 +368,4 @@ public class TraceExplorerIntegrationTest {
 	}
 
 
-	@Test
-	public void integration_6_realWorldExample() throws IOException, ModelTranslationError {
-
-
-		StateSpace stateSpace1 = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "changedTypeIIandTypeIII",  "LiftProto.mch"));
-		Map<String, OperationInfo> oldInfos = stateSpace1.getLoadedMachine().getOperations();
-
-		StateSpace stateSpace2 = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "changedTypeIIandTypeIII",  "LiftProto2.mch"));
-		Map<String, OperationInfo> newInfos = stateSpace2.getLoadedMachine().getOperations();
-
-		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "changedTypeIIandTypeIII", "LiftProto.prob2trace"));
-
-		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result = new TraceExplorer(false, new TestUtils.StubFactoryImplementation(), new TestUtils.ProgressStubFactory())
-				.replayTrace(
-						jsonFile.getTrace().getTransitionList(),
-						stateSpace2,
-						newInfos,
-						oldInfos,
-						singleton("inc"),
-						emptySet());
-
-		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> resultCleaned = TraceExplorer.removeHelperVariableMappings(result);
-
-		Set<Map<String, String>> resultToCompare = resultCleaned.keySet().stream().flatMap(entry -> entry.values().stream()).collect(toSet());
-
-		Set<Map<String, String>> expectedHelper = TraceCheckerUtils.allDiagonals(Arrays.asList("x", "y"), Arrays.asList("x", "y", "z"));
-		Set<Map<String, String>> expected = expectedHelper.stream().peek(entry -> entry.put("floors", "levels")).collect(toSet());
-		Assertions.assertEquals(expected, resultToCompare);
-	}
-
-
-
-
 }

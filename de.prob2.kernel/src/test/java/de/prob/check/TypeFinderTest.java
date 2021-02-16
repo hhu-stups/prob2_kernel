@@ -6,10 +6,12 @@ import com.google.inject.Stage;
 import de.prob.JsonManagerStubModule;
 import de.prob.MainModule;
 import de.prob.ProBKernelStub;
-import de.prob.check.tracereplay.check.TypeFinder;
+import de.prob.check.tracereplay.check.*;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
+import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.OperationInfo;
+import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -17,6 +19,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
@@ -408,8 +411,32 @@ public class TypeFinderTest {
 	}
 
 	@Test
-	public void put_similar_operations_in_typeII(){
+	public void lift_with_no_old_file() throws IOException, ModelTranslationError {
 
+
+
+		Path newPath = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "changedTypeIIandTypeIII",  "LiftProto2.mch");
+		StateSpace stateSpace2 = proBKernelStub.createStateSpace(newPath);
+		Map<String, OperationInfo> newInfos = stateSpace2.getLoadedMachine().getOperations();
+		List<String> newVars = stateSpace2.getLoadedMachine().getVariableNames();
+
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "changedTypeIIandTypeIII", "LiftProto.prob2trace"));
+
+
+		TypeFinder typeFinder = new TypeFinder(jsonFile.getTrace().getTransitionList(), jsonFile.getMachineOperationInfos(), newInfos, new HashSet<>(jsonFile.getVariableNames()), new HashSet<>(newVars));
+
+
+		typeFinder.check();
+
+
+		Set<String> expected2 = new HashSet<>();
+		expected2.add("getfloors");
+		expected2.add("dec");
+		Set<String> expected3 = singleton("inc");
+
+
+		Assertions.assertEquals(expected2, typeFinder.getTypeIIPermutation().keySet());
+		Assertions.assertEquals(expected3, typeFinder.getTypeIII());
 	}
 
 	

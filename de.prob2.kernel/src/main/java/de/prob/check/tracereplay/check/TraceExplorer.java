@@ -114,7 +114,7 @@ public class TraceExplorer {
 	/**
 	 * Creates a PersistentTransition with an existing mapping
 	 *
-	 * @param mapping the mapping to create the PT from
+	 * @param mapping the mapping to create the PT from. Old -> New
 	 * @param current the current (old) transition
 	 * @return the new transition
 	 */
@@ -458,22 +458,14 @@ public class TraceExplorer {
 	 * @return the path with the highest score
 	 */
 	public static List<Transition> extractMaxScore(Map<List<Transition>, Integer> scoredPaths){
-		Map.Entry<List<Transition>, Integer> maxEntry = null;
 
-		for (Map.Entry<List<Transition>, Integer> entry : scoredPaths.entrySet())
-		{
-			if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0)
-			{
-				maxEntry = entry;
+		return scoredPaths.entrySet().stream().reduce(new AbstractMap.SimpleEntry<>(emptyList(), 0), (acc, current ) ->{
+			if(acc.getValue().compareTo(current.getValue())> 0){
+				return acc;
+			}else{
+				return current;
 			}
-		}
-
-		if(maxEntry==null){
-			return emptyList();
-		}else{
-			return maxEntry.getKey();
-		}
-
+		}).getKey();
 	}
 
 	/**

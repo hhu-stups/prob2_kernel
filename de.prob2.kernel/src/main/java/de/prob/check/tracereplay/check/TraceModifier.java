@@ -89,6 +89,8 @@ public class TraceModifier {
 		);
 	}
 
+
+
 	/**
 	 * Concatenates two collections
 	 *
@@ -311,7 +313,7 @@ public class TraceModifier {
 	}
 
 	public long getSizeTypeIII(){
-		return getSizeTypeDetII() +
+		return //getSizeTypeDetII() +
 		changelogPhase2.keySet().stream().flatMap(entry -> changelogPhase3.get(entry).entrySet().stream().filter(innerEntry -> !innerEntry.getKey().isEmpty())).count();
 	}
 

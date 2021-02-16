@@ -95,7 +95,7 @@ public class RenamingAnalyzer implements RenamingAnalyzerInterface {
 		Map<String, CompoundPrologTerm> newOperations = getOperations(newMachine);
 		Map<String, CompoundPrologTerm> oldOperations = getOperations(oldMachine);
 
-		resultInitTypeII = createInitMapping(newOperations, oldOperations, typeIOrIICandidate, checkerInterface, prepareOperationsInterface);
+		resultInitTypeII = createInitMapping(oldOperations, newOperations, typeIOrIICandidate, checkerInterface, prepareOperationsInterface);
 
 		Map<String, Map<String, String>> resultTypeIorII =
 				checkDeterministicPairs(oldOperations, newOperations, typeIorII, checkerInterface, prepareOperationsInterface);
@@ -277,14 +277,15 @@ public class RenamingAnalyzer implements RenamingAnalyzerInterface {
 
 	}
 
-/*
-	public Map<String, Map<String, Map<String, String>>> getResultTypeIIWithCandidates() {
-		return resultTypeIIWithCandidates;
-	}
-*/
+
 	public Map<String, String> getResultTypeIIInit() {
 		return resultInitTypeII;
 	}
+
+	public RenamingDelta getResultTypeIIInitAsDelta() {
+		return new RenamingDelta(Transition.INITIALISE_MACHINE_NAME, Transition.INITIALISE_MACHINE_NAME, emptyMap(), emptyMap(), resultInitTypeII);
+	}
+
 
 
 	public List<RenamingDelta> transformResultTypeIIToDeltaList(Map<String, Map<String, String>> resultTypeII){
