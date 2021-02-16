@@ -3,6 +3,7 @@ package de.prob.check.tracereplay.check;
 import de.prob.statespace.OperationInfo;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -43,6 +44,18 @@ public class RenamingDelta {
 
 		deltaName = changes.get(originalName);
 
+	}
+
+
+	public RenamingDelta(String originalName, String deltaName, Map<TraceExplorer.MappingNames, Map<String, String>> mappings){
+		this(originalName, deltaName, mappings.get(TraceExplorer.MappingNames.INPUT_PARAMETERS), mappings.get(TraceExplorer.MappingNames.OUTPUT_PARAMETERS),
+				mappings.entrySet().stream()
+				.filter(entry -> entry.getKey().equals(TraceExplorer.MappingNames.VARIABLES_MODIFIED) ||
+						entry.getKey().equals(TraceExplorer.MappingNames.VARIABLES_READ))
+				.flatMap(entry -> entry.getValue().entrySet().stream())
+						.collect(Collectors.toSet())//through the split earlier there are entries with the same value, that would lead to a map execpetion, so we get rid of double elements
+						.stream()
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
 	}
 
 	/**

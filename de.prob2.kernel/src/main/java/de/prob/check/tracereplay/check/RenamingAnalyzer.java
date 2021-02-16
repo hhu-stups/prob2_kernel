@@ -6,6 +6,7 @@ import de.prob.animator.ReusableAnimator;
 import de.prob.animator.command.CompareTwoOperations;
 import de.prob.animator.command.GetMachineOperationsFull;
 import de.prob.animator.command.PrepareOperations;
+import de.prob.check.tracereplay.check.exceptions.DeltaCalculationException;
 import de.prob.check.tracereplay.check.exceptions.PrologTermNotDefinedException;
 import de.prob.exception.ProBError;
 import de.prob.prolog.term.CompoundPrologTerm;
@@ -88,34 +89,37 @@ public class RenamingAnalyzer implements RenamingAnalyzerInterface {
 
 	/**
 	 * Wraps the steps necessary to calculate the two deltas
-	 * @throws IOException something went wrong when reading machine files
-	 * @throws ModelTranslationError the machine files contain errors
+	 * @throws DeltaCalculationException something went wrong, we wrapped it
 	 */
-	public void calculateDelta() throws IOException, ModelTranslationError, PrologTermNotDefinedException {
-		Map<String, CompoundPrologTerm> newOperations = getOperations(newMachine);
-		Map<String, CompoundPrologTerm> oldOperations = getOperations(oldMachine);
+	public void calculateDelta() throws DeltaCalculationException {
+		try {
+			Map<String, CompoundPrologTerm> newOperations = getOperations(newMachine);
+			Map<String, CompoundPrologTerm> oldOperations = getOperations(oldMachine);
 
-		resultInitTypeII = createInitMapping(oldOperations, newOperations, typeIOrIICandidate, checkerInterface, prepareOperationsInterface);
+			resultInitTypeII = createInitMapping(oldOperations, newOperations, typeIOrIICandidate, checkerInterface, prepareOperationsInterface);
 
-		Map<String, Map<String, String>> resultTypeIorII =
-				checkDeterministicPairs(oldOperations, newOperations, typeIorII, checkerInterface, prepareOperationsInterface);
+			Map<String, Map<String, String>> resultTypeIorII =
+					checkDeterministicPairs(oldOperations, newOperations, typeIorII, checkerInterface, prepareOperationsInterface);
 
-		resultTypeII = getResultTypeII(resultTypeIorII);
+			resultTypeII = getResultTypeII(resultTypeIorII);
 
 
-		Map<String, Map<String, Map<String, String>>> typeIIWithCandidates =
-				checkNondeterministicPairs(oldOperations, newOperations, typeIICandidates, checkerInterface, prepareOperationsInterface);
+			Map<String, Map<String, Map<String, String>>> typeIIWithCandidates =
+					checkNondeterministicPairs(oldOperations, newOperations, typeIICandidates, checkerInterface, prepareOperationsInterface);
 
-		Map<String, Map<String, String>> trueTypeIINonAmbiguous = filterTrueDeterministic(typeIIWithCandidates);
+			Map<String, Map<String, String>> trueTypeIINonAmbiguous = filterTrueDeterministic(typeIIWithCandidates);
 
-		resultTypeII.putAll(trueTypeIINonAmbiguous);
+			resultTypeII.putAll(trueTypeIINonAmbiguous);
 
-		typeIIAsRenamingDeltaList = transformResultTypeIIToDeltaList(resultTypeII);
+			typeIIAsRenamingDeltaList = transformResultTypeIIToDeltaList(resultTypeII);
 
-		Map<String, Map<String, Map<String, String>>> resultTypeIIWithCandidates = filterTrueNonDeterministic(typeIIWithCandidates);
+			Map<String, Map<String, Map<String, String>>> resultTypeIIWithCandidates = filterTrueNonDeterministic(typeIIWithCandidates);
 
-		typeIIWithCandidatesAsDeltaMap = transformToDeltaMap(resultTypeIIWithCandidates);
+			typeIIWithCandidatesAsDeltaMap = transformToDeltaMap(resultTypeIIWithCandidates);
 
+		}catch (IOException | ModelTranslationError | PrologTermNotDefinedException e){
+			throw new DeltaCalculationException(e);
+		}
 
 	}
 

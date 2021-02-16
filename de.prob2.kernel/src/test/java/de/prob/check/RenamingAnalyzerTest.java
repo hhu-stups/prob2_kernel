@@ -6,6 +6,7 @@ import com.google.inject.Stage;
 import de.prob.MainModule;
 import de.prob.animator.ReusableAnimator;
 import de.prob.check.tracereplay.check.*;
+import de.prob.check.tracereplay.check.exceptions.DeltaCalculationException;
 import de.prob.check.tracereplay.check.exceptions.PrologTermNotDefinedException;
 import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
@@ -320,12 +321,12 @@ public class RenamingAnalyzerTest {
 
 
 	@Test
-	public void deltaFinder_initialisation_test() throws IOException, ModelTranslationError, PrologTermNotDefinedException {
+	public void deltaFinder_initialisation_test() throws IOException, ModelTranslationError, PrologTermNotDefinedException, DeltaCalculationException {
 		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "Lift.mch");
 		String pathAsStringOld = pathOld.toAbsolutePath().toString();
 
 
-		Path path = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "Lift","LiftWithLevels.mch");
+		Path path = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "Lift", "LiftWithLevels.mch");
 		String pathAsString = path.toAbsolutePath().toString();
 
 		Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
@@ -344,7 +345,7 @@ public class RenamingAnalyzerTest {
 		Map<String, String> result = renamingAnalyzer.getResultTypeIIInit();
 
 		Map<String, String> expected = new HashMap<>();
-		expected.put("level", "floors");
+		expected.put("floors", "level");
 
 		Assertions.assertEquals(expected, result);
 
@@ -353,7 +354,7 @@ public class RenamingAnalyzerTest {
 
 
 	@Test
-	public void deltaFinder_correction_of_the_categorization() throws IOException, ModelTranslationError, PrologTermNotDefinedException {
+	public void deltaFinder_correction_of_the_categorization() throws IOException, ModelTranslationError, PrologTermNotDefinedException, DeltaCalculationException {
 
 		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "changedTypeIIandTypeIII", "LiftProto.mch");
 		String pathAsStringOld = pathOld.toAbsolutePath().toString();
@@ -392,7 +393,7 @@ public class RenamingAnalyzerTest {
 
 
 	@Test
-	public void deltaFinder_correction_refinement() throws IOException, ModelTranslationError, PrologTermNotDefinedException {
+	public void deltaFinder_correction_refinement() throws IOException, ModelTranslationError, PrologTermNotDefinedException, DeltaCalculationException {
 
 		//resources/de/prob/testmachines/traces/refinements/TrafficLightRef.ref
 		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "refinements", "TrafficLightRef.ref");
@@ -430,7 +431,7 @@ public class RenamingAnalyzerTest {
 	}
 
 	@Test
-	public void deltaFinder_typeII_with_candidates() throws IOException, ModelTranslationError, PrologTermNotDefinedException {
+	public void deltaFinder_typeII_with_candidates() throws IOException, ModelTranslationError, PrologTermNotDefinedException, DeltaCalculationException {
 
 		//resources/de/prob/testmachines/traces/refinements/TrafficLightRef.ref
 		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "complexExample", "PitmanController_v6.mch");

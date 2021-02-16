@@ -698,7 +698,7 @@ public class TraceExplorer {
 	 * @param operationInfoOld  the infos of the machine that created the trace
 	 * @param typeIIICandidates candidates where the signature might have changed
 	 * @param typeIVCandidates  candidates that may not accessible, removed, or renamed...
-	 * @return the replayed trace in dependence to the identifier selection regariding typeIIICandidates
+	 * @return the replayed trace in dependence to the identifier selection regarding typeIIICandidates
 	 */
 	public Map<Map<String, Map<MappingNames, Map<String, String>>>, List<PersistenceDelta>> replayTrace(List<PersistentTransition> transitionList,
 																										StateSpace stateSpace,
