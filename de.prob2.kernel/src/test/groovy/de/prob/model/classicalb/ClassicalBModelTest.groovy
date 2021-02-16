@@ -28,10 +28,8 @@ class ClassicalBModelTest extends Specification {
 		where:
 		a     | b
 		"A"   | true
-		"E"   | true
 		"A"   | true
 		"Foo" | true
-		"B"   | true
 		"C"   | true
 		"Bar" | true
 		"Baz" | false
@@ -45,10 +43,8 @@ class ClassicalBModelTest extends Specification {
 		a     | b     | etype
 		"Foo" | "Bar" | ERefType.REFINES
 		"Foo" | "A"   | ERefType.SEES
-		"Foo" | "B"   | ERefType.USES
 		"Foo" | "C"   | ERefType.INCLUDES
 		"Foo" | "D"   | ERefType.INCLUDES
-		"Foo" | "E"   | ERefType.IMPORTS
 	}
 
 	def "If an edge is not in the graph, null is returned"() {
@@ -57,8 +53,8 @@ class ClassicalBModelTest extends Specification {
 
 		where:
 		a   | b
-		"A" | "B"
-		"B" | "C"
+		"A" | "C"
+		"D" | "C"
 	}
 
 	def "If a vertex is not in the graph, an IllegalArgumentException is thrown"() {
@@ -83,11 +79,9 @@ class ClassicalBModelTest extends Specification {
 		a     | b
 		"Foo" | "Bar"
 		"Foo" | "A"
-		"Foo" | "B"
 		"Foo" | "C"
 		"Foo" | "D"
-		"Foo" | "E"
-		"A"   | "B"
-		"B"   | "C"
+		"A"   | "C"
+		"D"   | "C"
 	}
 }
