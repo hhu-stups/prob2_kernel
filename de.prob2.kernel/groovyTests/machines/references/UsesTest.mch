@@ -1,0 +1,3 @@
+MACHINE UsesTest
+	USES B
+END
