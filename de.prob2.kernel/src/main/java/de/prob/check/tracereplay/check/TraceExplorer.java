@@ -507,11 +507,12 @@ public class TraceExplorer {
 	 * @param typeIIICandidates the operations filterd as type 3
 	 * @return the co product from all operations
 	 */
-	public Set<Map<String, Map<MappingNames, Map<String, String>>>> generateAllPossibleMappingVariations(
+	public static Set<Map<String, Map<MappingNames, Map<String, String>>>> generateAllPossibleMappingVariations(
 			List<PersistentTransition> transitionList,
 			Map<String, OperationInfo> operationInfoNew,
 			Map<String, OperationInfo> operationInfoOld,
-			Set<String> typeIIICandidates) {
+			Set<String> typeIIICandidates,
+			MappingFactoryInterface mappingFactory) {
 
 		if (typeIIICandidates.isEmpty()) {
 			Set<Map<String, Map<MappingNames, Map<String, String>>>> result = new HashSet<>();
@@ -529,7 +530,7 @@ public class TraceExplorer {
 
 		List<List<HashMap<String, Map<MappingNames, Map<String, String>>>>> listOfMappings = selectionOfTypeIIITransitions
 				.stream()
-				.map(transition -> calculateVarMappings(transition.getOperationName(), operationInfoNew.get(transition.getOperationName()), operationInfoOld.get(transition.getOperationName()))
+				.map(transition -> calculateVarMappings(transition.getOperationName(), operationInfoNew.get(transition.getOperationName()), operationInfoOld.get(transition.getOperationName()), mappingFactory)
 						.stream()
 						.map(mapping -> {
 							HashMap<String, Map<MappingNames, Map<String, String>>> result = new HashMap<>();
@@ -558,9 +559,9 @@ public class TraceExplorer {
 	 * @param name           the name of the operation under work
 	 * @return all possible mappings for this section
 	 */
-	public Set<Map<String, String>> createAllPossiblePairs(Map<String, String> newTypes, Map<String, String> oldTypes,
+	public static Set<Map<String, String>> createAllPossiblePairs(Map<String, String> newTypes, Map<String, String> oldTypes,
 														   MappingNames currentMapping,
-														   String name) {
+														   String name, MappingFactoryInterface mappingFactory) {
 
 
 		if (oldTypes.isEmpty() || newTypes.isEmpty()) return emptySet();
@@ -644,9 +645,10 @@ public class TraceExplorer {
 	 * @param operationMappingOld the infos from the trace file
 	 * @return a set containing all possible mappings for each section of the machine
 	 */
-	public Set<Map<MappingNames, Map<String, String>>> calculateVarMappings(String name,
+	public static Set<Map<MappingNames, Map<String, String>>> calculateVarMappings(String name,
 																			OperationInfo operationMappingNew,
-																			OperationInfo operationMappingOld) {
+																			OperationInfo operationMappingOld,
+																				   MappingFactoryInterface mappingFactory) {
 
 		Map<MappingNames, List<String>> newOperationInfos = fillMapping(operationMappingNew);
 		Map<MappingNames, List<String>> oldOperationInfos = fillMapping(operationMappingOld);
@@ -670,7 +672,7 @@ public class TraceExplorer {
 
 
 			Set<Map<MappingNames, Map<String, String>>> mappingsAppliedToExistingCopy =
-					createAllPossiblePairs(preparedMapNew, preparedMapOld, mappingName, name)
+					createAllPossiblePairs(preparedMapNew, preparedMapOld, mappingName, name, mappingFactory)
 							.stream()
 							.flatMap(possiblePair -> mappingsCopy.stream().map(mapping -> {
 								Map<MappingNames, Map<String, String>> alteredInnerMapping = new HashMap<>(mapping);
@@ -709,7 +711,7 @@ public class TraceExplorer {
 		trace.setExploreStateByDefault(true);
 
 		Set<Map<String, Map<MappingNames, Map<String, String>>>> selectedMappingsToResultsKeys =
-				generateAllPossibleMappingVariations(transitionList, operationInfoNew, operationInfoOld, typeIIICandidates);
+				generateAllPossibleMappingVariations(transitionList, operationInfoNew, operationInfoOld, typeIIICandidates, mappingFactory);
 
 		progressMemoryInterface.nextStep();
 		progressMemoryInterface.addTasks(selectedMappingsToResultsKeys.size()*transitionList.size());
