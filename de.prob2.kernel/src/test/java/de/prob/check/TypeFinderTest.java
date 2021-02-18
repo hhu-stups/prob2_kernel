@@ -170,8 +170,15 @@ public class TypeFinderTest {
 		newOperations.put(operationInfo9.getOperationName(), operationInfo9);
 
 
+		Set<String> expectedInner = new HashSet<>(Arrays.asList(operationInfo1.getOperationName(), operationInfo2.getOperationName()));
+		Map<String, Set<String>> expected = new HashMap<>();
+		expected.put(operationInfo1.getOperationName(), expectedInner);
+		expected.put(operationInfo2.getOperationName(), expectedInner);
+
 		Map<String, Set<String>> results = TypeFinder.checkIfOperationCandidatesFulfillSuperficialCriteriaForBeingACloneOrRenamed(functionNamesInQuestion, oldOperations, newOperations);
-		System.out.println(results);
+
+		Assertions.assertEquals(expected, results);
+
 	}
 
 

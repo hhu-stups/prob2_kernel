@@ -9,7 +9,6 @@ import de.prob.ProBKernelStub;
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.*;
 import de.prob.check.tracereplay.check.exceptions.DeltaCalculationException;
-import de.prob.check.tracereplay.check.exceptions.PrologTermNotDefinedException;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.scripting.ModelTranslationError;
@@ -264,11 +263,10 @@ public class TraceExplorerTypeIVIntegration {
 
 
 	@Test
-	public void is_dirty_type_III_test_1() throws IOException, ModelTranslationError, PrologTermNotDefinedException, DeltaCalculationException {
+	public void large_type_IV_test() throws IOException, ModelTranslationError, DeltaCalculationException {
 
 		Path oldPath = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "complexExample", "PitmanController_v6.mch");
 		StateSpace stateSpace1 = proBKernelStub.createStateSpace(oldPath);
-		Map<String, OperationInfo> oldInfos = stateSpace1.getLoadedMachine().getOperations();
 		List<String> oldVars = stateSpace1.getLoadedMachine().getVariableNames();
 
 		Path newPath = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "complexExample", "PitmanController_v6_v6.mch");
@@ -285,9 +283,11 @@ public class TraceExplorerTypeIVIntegration {
 
 		TraceModifier bla = traceChecker.getTraceModifier();
 
-		Map<Set<RenamingDelta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Map<String, TraceAnalyser.AnalyserResult>>> gna = bla.getChangelogPhase4();
+		Map<Set<RenamingDelta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Map<String, TraceAnalyser.AnalyserResult>>> phase4 = bla.getChangelogPhase4();
 
-		System.out.println(gna);
+		TraceAnalyser.AnalyserResult result = phase4.get(emptySet()).get(emptyMap()).get("ENV_Pitman_DirectionBlinking");
+
+		Assertions.assertEquals(TraceAnalyser.AnalyserResult.Mixed, result);
 	}
 
 
