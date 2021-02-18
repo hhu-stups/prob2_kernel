@@ -399,7 +399,6 @@ public class RenamingAnalyzerTest {
 		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "refinements", "TrafficLightRef.ref");
 		String pathAsStringOld = pathOld.toAbsolutePath().toString();
 
-		System.out.println(pathAsStringOld);
 
 
 		Path path = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "refinements", "TrafficLight.mch");
@@ -437,7 +436,6 @@ public class RenamingAnalyzerTest {
 		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "complexExample", "PitmanController_v6.mch");
 		String pathAsStringOld = pathOld.toAbsolutePath().toString();
 
-		System.out.println(pathAsStringOld);
 
 
 		Path path = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "complexExample", "PitmanController_v6_v2.mch");
