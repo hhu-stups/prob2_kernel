@@ -1,0 +1,195 @@
+{
+  "type" : "Trace",
+  "name" : "Island",
+  "description" : "",
+  "trace" : {
+    "description" : "",
+    "transitionList" : [ {
+      "operationName" : "$setup_constants",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "maxPerson" : "20"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "$initialise_machine",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "currentPersons" : "0"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "arrive_by_foot",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "currentPersons" : "1"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "arrive_by_foot",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "currentPersons" : "2"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "arrive_by_foot",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "currentPersons" : "3"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "arrive_by_foot",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "currentPersons" : "4"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "arrive_by_foot",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "currentPersons" : "5"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "arrive_by_foot",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "currentPersons" : "6"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "leave_with_car",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "currentPersons" : "1"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "arrive_by_foot",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "currentPersons" : "2"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "arrive_by_foot",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "currentPersons" : "3"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "arrive_by_foot",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "currentPersons" : "4"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "arrive_by_foot",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "currentPersons" : "5"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "arrive_by_foot",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "currentPersons" : "6"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    }, {
+      "operationName" : "leave_by_foot",
+      "parameters" : { },
+      "outputParameters" : { },
+      "destinationStateVariables" : {
+        "currentPersons" : "5"
+      },
+      "destStateNotChanged" : [ ],
+      "additionalPredicates" : [ ]
+    } ]
+  },
+  "variableNames" : [ "currentPersons" ],
+  "machineOperationInfos" : {
+    "arrive_by_boat" : {
+      "operationName" : "arrive_by_boat",
+      "parameterNames" : [ "persons" ],
+      "outputParameterNames" : [ ],
+      "topLevel" : true,
+      "type" : "CLASSICAL_B",
+      "readVariables" : [ "currentPersons", "maxPerson" ],
+      "writtenVariables" : [ "currentPersons" ],
+      "nonDetWrittenVariables" : [ ],
+      "allVariables" : [ "currentPersons", "maxPerson", "currentPersons" ],
+      "allIdentifier" : [ "maxPerson", "persons", "currentPersons" ]
+    },
+    "arrive_by_foot" : {
+      "operationName" : "arrive_by_foot",
+      "parameterNames" : [ ],
+      "outputParameterNames" : [ ],
+      "topLevel" : true,
+      "type" : "CLASSICAL_B",
+      "readVariables" : [ "currentPersons", "maxPerson" ],
+      "writtenVariables" : [ "currentPersons" ],
+      "nonDetWrittenVariables" : [ ],
+      "allVariables" : [ "currentPersons", "maxPerson", "currentPersons" ],
+      "allIdentifier" : [ "maxPerson", "currentPersons" ]
+    },
+    "leave" : {
+      "operationName" : "leave",
+      "parameterNames" : [ "persons" ],
+      "outputParameterNames" : [ ],
+      "topLevel" : true,
+      "type" : "CLASSICAL_B",
+      "readVariables" : [ "currentPersons" ],
+      "writtenVariables" : [ "currentPersons" ],
+      "nonDetWrittenVariables" : [ ],
+      "allVariables" : [ "currentPersons", "currentPersons" ],
+      "allIdentifier" : [ "persons", "currentPersons" ]
+    }
+  },
+  "constantNames" : [ "maxPerson" ],
+  "setNames" : [ ],
+  "metaData" : {
+    "type" : "TraceMetaData",
+    "formatVersion" : 1,
+    "savedAt" : [ 2021, 1, 8, 8, 50, 48, 316010000 ],
+    "creator" : "USER",
+    "proBCliVersion" : "1.10.0-nightly",
+    "name" : "HALLO",
+    "path" : "Island.mch",
+    "proB2KernelVersion" : "4.0.0-SNAPSHOT"
+  }
+}

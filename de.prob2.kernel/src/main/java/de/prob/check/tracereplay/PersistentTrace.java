@@ -3,6 +3,7 @@ package de.prob.check.tracereplay;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.prob.statespace.Trace;
 import de.prob.statespace.Transition;
 
@@ -27,6 +28,16 @@ public class PersistentTrace {
 
 	public PersistentTrace(Trace trace) {
 		this(trace, trace.getTransitionList().size());
+	}
+
+	/**
+	 * Jackson constructor
+	 * @param description the description of the trace
+	 * @param transitionList the transition kist
+	 */
+	public PersistentTrace(@JsonProperty("description") String description, @JsonProperty("transitionList") List<PersistentTransition> transitionList){
+		this.description = description;
+		this.transitionList.addAll(transitionList);
 	}
 
 	public List<PersistentTransition> getTransitionList() {

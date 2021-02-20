@@ -1,4 +1,4 @@
-package de.prob.json;
+package de.prob;
 
 import com.google.inject.AbstractModule;
 import de.prob.MainModule;

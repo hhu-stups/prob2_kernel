@@ -175,11 +175,17 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
 	implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
 
+	// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+	compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.0.1'
+	// https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310
+	compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.11.2'
+
 
 	// Test dependencies
 	testImplementation group: "ch.qos.logback", name: "logback-classic", version: "1.2.3" // Eclipse Public License 1.0
-	testImplementation group: "junit", name: "junit", version: "4.13.1" // Eclipse Public License 1.0
-	testImplementation group: "org.spockframework", name: "spock-core", version: "2.0-M4-groovy-3.0" // Apache License 2.0
+	testImplementation(platform('org.junit:junit-bom:5.7.0'))
+	testImplementation('org.junit.jupiter:junit-jupiter')
+	testImplementation group: "org.spockframework", name: "spock-core", version: "2.0-M2-groovy-3.0" // Apache License 2.0
 	// Byte Buddy and Objenesis are needed by Spock to mock classes
 	testRuntimeOnly group: "net.bytebuddy", name: "byte-buddy", version: "1.10.20" // Apache License 2.0
 	testRuntimeOnly group: "org.objenesis", name: "objenesis", version: "3.1" // Apache License 2.0

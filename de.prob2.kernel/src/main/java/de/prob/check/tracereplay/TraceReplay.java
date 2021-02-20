@@ -23,22 +23,30 @@ public class TraceReplay {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TraceReplay.class);
 
 	public enum TraceReplayError {
-		COMMAND, NO_OPERATION_POSSIBLE, TRACE_REPLAY, MISMATCH_OUTPUT;
+		COMMAND, NO_OPERATION_POSSIBLE, TRACE_REPLAY, MISMATCH_OUTPUT
 	}
 
 	public static Trace replayTrace(PersistentTrace persistentTrace, StateSpace stateSpace) {
 		return replayTrace(persistentTrace, stateSpace, true, new HashMap<>(), new DefaultTraceChecker());
 	}
 
-	public static Trace replayTrace(PersistentTrace persistentTrace, StateSpace stateSpace, final boolean setCurrentAnimation, Map<String, Object> replayInformation,
-									ITraceChecker traceChecker) {
+	/**
+	 * Iterate through a transition list and tries to replay every transition contained
+	 * @param persistentTrace the trace to replay
+	 * @param stateSpace the current stateSpace - will be used to execute commands and replay trace
+	 * @param setCurrentAnimation if true the replayed trace will be set as the current animation
+	 * @param replayInformation a reference to an map in which additional results will be stored
+	 * @param traceChecker an interface implementation for processing results
+	 * @return A Trace when the replay was successful else return null
+	 */
+	public static Trace replayTrace(PersistentTrace persistentTrace, StateSpace stateSpace, final boolean setCurrentAnimation,
+									 Map<String, Object> replayInformation, ITraceChecker traceChecker) {
 		Trace trace = new Trace(stateSpace);
 		trace.setExploreStateByDefault(false);
 		boolean success = true;
 		final List<PersistentTransition> transitionList = persistentTrace.getTransitionList();
 		for (int i = 0; i < transitionList.size(); i++) {
-			final int finalI = i;
-			traceChecker.updateProgress((double) finalI / transitionList.size(), replayInformation);
+			traceChecker.updateProgress((double) i / transitionList.size(), replayInformation);
 			Transition trans = replayPersistentTransition(trace, transitionList.get(i), setCurrentAnimation, replayInformation, traceChecker);
 			if (trans != null) {
 				trace = trace.add(trans);
@@ -61,7 +69,9 @@ public class TraceReplay {
 	}
 
 
-	private static Transition replayPersistentTransition(Trace t, PersistentTransition persistentTransition, boolean setCurrentAnimation, Map<String, Object> replayInformation, ITraceChecker traceChecker) {
+	private static Transition replayPersistentTransition(Trace t, PersistentTransition persistentTransition,
+														 boolean setCurrentAnimation, Map<String, Object> replayInformation,
+														 ITraceChecker traceChecker) {
 		StateSpace stateSpace = t.getStateSpace();
 		PredicateBuilder predicateBuilder = new PredicateBuilder();
 		if (persistentTransition.getParameters() != null) {

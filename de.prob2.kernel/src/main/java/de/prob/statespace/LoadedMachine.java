@@ -1,5 +1,6 @@
 package de.prob.statespace;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
@@ -12,7 +13,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import de.prob.animator.command.GetMachineIdentifiersCommand;
-import de.prob.animator.command.GetMachineOperationInfos;
+import de.prob.animator.command.GetMachineOperationInfosWithTypes;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 
@@ -27,6 +28,7 @@ public class LoadedMachine {
 	private final Map<FormulaExpand, List<IEvalElement>> variableEvalElements;
 	private final Map<FormulaExpand, List<IEvalElement>> constantEvalElements;
 	private final Map<FormulaExpand, List<IEvalElement>> setEvalElements;
+
 
 	public LoadedMachine(StateSpace stateSpace) {
 		this.stateSpace = stateSpace;
@@ -56,15 +58,20 @@ public class LoadedMachine {
 		return getOperations().get(operationName);
 	}
 
-	private Map<String, OperationInfo> getOperations() {
+	public Map<String, OperationInfo> getOperations() {
 		if (this.machineOperationInfos == null) {
-			GetMachineOperationInfos command = new GetMachineOperationInfos();
+			GetMachineOperationInfosWithTypes command = new GetMachineOperationInfosWithTypes();
 			this.stateSpace.execute(command);
 			this.machineOperationInfos = command.getOperationInfos().stream()
 					.collect(toOrderedMap(OperationInfo::getOperationName, i -> i));
 		}
 		return this.machineOperationInfos;
 	}
+
+	public Map<String, String> getOperationIdentifierTypeMap(String operationName){
+		return getOperations().get(operationName).getTypeMap();
+	}
+
 
 	private List<IEvalElement> namesToEvalElements(final List<String> names, final FormulaExpand expand) {
 		return names.stream()
