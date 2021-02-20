@@ -69,7 +69,7 @@ public class StaticRenamingAnalyzer implements RenamingAnalyzerInterface{
 	}
 
 	@Override
-	public Map<String, List<RenamingDelta>> getResultTypeIIWithCandidatesAsDeltaMap() {
+	public Map<String, List<RenamingDelta>> getResultTypeIIWithCandidates() {
 		return resultsWithCandidates;
 	}
 

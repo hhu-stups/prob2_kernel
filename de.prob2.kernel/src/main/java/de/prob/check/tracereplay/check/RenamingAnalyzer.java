@@ -286,6 +286,10 @@ public class RenamingAnalyzer implements RenamingAnalyzerInterface {
 		return resultInitTypeII;
 	}
 
+	public Map<String, List<RenamingDelta>> getResultTypeIIp() {
+		return null;
+	}
+
 	public RenamingDelta getResultTypeIIInitAsDelta() {
 		return new RenamingDelta(Transition.INITIALISE_MACHINE_NAME, Transition.INITIALISE_MACHINE_NAME, emptyMap(), emptyMap(), resultInitTypeII);
 	}
@@ -305,6 +309,7 @@ public class RenamingAnalyzer implements RenamingAnalyzerInterface {
 		return transitionsWithoutInit;
 	}
 
+	@Override
 	public List<RenamingDelta> getResultTypeIIAsDeltaList(){
 		return typeIIAsRenamingDeltaList;
 	}
@@ -322,7 +327,7 @@ public class RenamingAnalyzer implements RenamingAnalyzerInterface {
 	}
 
 
-	public Map<String, List<RenamingDelta>> getResultTypeIIWithCandidatesAsDeltaMap(){
+	public Map<String, List<RenamingDelta>> getResultTypeIIWithCandidates(){
 		return typeIIWithCandidatesAsDeltaMap;
 	}
 

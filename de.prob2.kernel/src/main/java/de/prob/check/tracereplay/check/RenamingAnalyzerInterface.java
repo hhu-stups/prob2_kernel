@@ -10,6 +10,6 @@ public interface RenamingAnalyzerInterface {
 
 	void calculateDelta() throws DeltaCalculationException;
 	Map<String, String> getResultTypeIIInit();
-	Map<String, List<RenamingDelta>> getResultTypeIIWithCandidatesAsDeltaMap();
+	Map<String, List<RenamingDelta>> getResultTypeIIWithCandidates();
 	List<RenamingDelta> getResultTypeIIAsDeltaList();
 }

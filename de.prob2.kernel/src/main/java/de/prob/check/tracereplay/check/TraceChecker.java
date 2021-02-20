@@ -4,7 +4,6 @@ import com.google.inject.Injector;
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.exceptions.DeltaCalculationException;
 import de.prob.check.tracereplay.check.exceptions.MappingFactoryInterface;
-import de.prob.check.tracereplay.check.exceptions.PrologTermNotDefinedException;
 import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.OperationInfo;
 
@@ -47,7 +46,7 @@ public class TraceChecker {
 		traceModifier = new TraceModifier(transitionList, TraceCheckerUtils.createStateSpace(newPath, injector), progressMemoryInterface);
 
 		traceModifier.insertMultipleUnambiguousChanges(renamingAnalyzer.getResultTypeIIAsDeltaList());
-		traceModifier.insertAmbiguousChanges(renamingAnalyzer.getResultTypeIIWithCandidatesAsDeltaMap());
+		traceModifier.insertAmbiguousChanges(renamingAnalyzer.getResultTypeIIWithCandidates());
 
 		TraceExplorer traceExplorer = new TraceExplorer(false, mappingFactory, replayOptions, progressMemoryInterface);
 
@@ -92,7 +91,7 @@ public class TraceChecker {
 		traceModifier.insertMultipleUnambiguousChanges(deltasTypeII);
 
 
-		Map<String, List<RenamingDelta>> deltasTypeIIWithCandidates = renamingAnalyzer.getResultTypeIIWithCandidatesAsDeltaMap();
+		Map<String, List<RenamingDelta>> deltasTypeIIWithCandidates = renamingAnalyzer.getResultTypeIIWithCandidates();
 		traceModifier.insertAmbiguousChanges(deltasTypeIIWithCandidates);
 
 
