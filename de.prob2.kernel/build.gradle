@@ -185,7 +185,7 @@ dependencies {
 	testImplementation group: "ch.qos.logback", name: "logback-classic", version: "1.2.3" // Eclipse Public License 1.0
 	testImplementation(platform('org.junit:junit-bom:5.7.0'))
 	testImplementation('org.junit.jupiter:junit-jupiter')
-	testImplementation group: "org.spockframework", name: "spock-core", version: "2.0-M2-groovy-3.0" // Apache License 2.0
+	testImplementation group: "org.spockframework", name: "spock-core", version: "2.0-M4-groovy-3.0" // Apache License 2.0
 	// Byte Buddy and Objenesis are needed by Spock to mock classes
 	testRuntimeOnly group: "net.bytebuddy", name: "byte-buddy", version: "1.10.20" // Apache License 2.0
 	testRuntimeOnly group: "org.objenesis", name: "objenesis", version: "3.1" // Apache License 2.0
