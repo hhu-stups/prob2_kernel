@@ -26,7 +26,7 @@ public class TraceCheckerUtils {
 	 * @param list2 the second list
 	 * @param <T> Type of the first List
 	 * @param <U> Type of the second list
-	 * @return a Map of the Type <T, U>
+	 * @return a Map of the Type {@code <T, U>}
 	 */
 	public static <T, U> Map<T, U> zip(List<T> list1, List<U> list2){
 		Map<T, U> sideResult = new HashMap<>();
@@ -51,7 +51,7 @@ public class TraceCheckerUtils {
 	 * @param list2 the second list
 	 * @param <T> Type of the first List
 	 * @param <U> Type of the second list
-	 * @return a Map of the Type <T, U>
+	 * @return a Map of the Type {@code <T, U>}
 	 */
 	public static <T, U> LinkedHashMap<T, U> zipPreserveOrder(List<T> list1, List<U> list2){
 		LinkedHashMap<T, U> sideResult = new LinkedHashMap<>();
@@ -93,7 +93,7 @@ public class TraceCheckerUtils {
 	/**
 	 * Wild cards are those where in the old operation the identifier did not exist - those don't show up in the mapping
 	 * @param newInfo the operation infos from the new operation
-	 * @param currentMappings the current mapping old -> new
+	 * @param currentMappings the current mapping old -&gt; new
 	 */
 	public static Set<String> calculateAllWildCards(OperationInfo newInfo, Map<String, String> currentMappings){
 		Set<String> result = newInfo.getAllIdentifier();
@@ -105,7 +105,7 @@ public class TraceCheckerUtils {
 	/**
 	 * Void cards are those where in the new operation the identifier did not exist - those don't show up in the mapping
 	 * @param oldInfo the operation infos from the old operation
-	 * @param currentMappings the current mapping old -> new
+	 * @param currentMappings the current mapping old -&gt; new
 	 */
 	public static Set<String> calculateAllVoidCards(OperationInfo oldInfo, Map<String, String> currentMappings){
 		Set<String> result = oldInfo.getAllIdentifier();
@@ -117,7 +117,7 @@ public class TraceCheckerUtils {
 	/**
 	 * Wild cards are those where in the old operation the identifier did not exist - those don't show up in the mapping
 	 * @param newInfo the operation infos from the new operation
-	 * @param currentMappings the current mapping old -> new
+	 * @param currentMappings the current mapping old -&gt; new
 	 */
 	public static Set<String> calculateVarWildCards(OperationInfo newInfo, Map<String, String> currentMappings){
 		Set<String> result = new HashSet<>(newInfo.getAllVariables());
@@ -129,7 +129,7 @@ public class TraceCheckerUtils {
 	/**
 	 * Void cards are those where in the new operation the identifier did not exist - those don't show up in the mapping
 	 * @param oldInfo the operation infos from the old operation
-	 * @param currentMappings the current mapping old -> new
+	 * @param currentMappings the current mapping old -&gt; new
 	 */
 	public static Set<String> calculateVarVoidCards(OperationInfo oldInfo, Map<String, String> currentMappings){
 		Set<String> result = new HashSet<>(oldInfo.getAllVariables());
@@ -141,7 +141,7 @@ public class TraceCheckerUtils {
 	/**
 	 * Wild cards are those where in the old operation the identifier did not exist - those don't show up in the mapping
 	 * @param newInfo the operation infos from the new operation
-	 * @param currentMappings the current mapping old -> new
+	 * @param currentMappings the current mapping old -&gt; new
 	 */
 	public static Set<String> calculateInWildCards(OperationInfo newInfo, Map<String, String> currentMappings){
 		Set<String> result = new HashSet<>(newInfo.getParameterNames());
@@ -153,7 +153,7 @@ public class TraceCheckerUtils {
 	/**
 	 * Void cards are those where in the new operation the identifier did not exist - those don't show up in the mapping
 	 * @param oldInfo the operation infos from the old operation
-	 * @param currentMappings the current mapping old -> new
+	 * @param currentMappings the current mapping old -&gt; new
 	 */
 	public static Set<String> calculateInVoidCards(OperationInfo oldInfo, Map<String, String> currentMappings){
 		Set<String> result = new HashSet<>(oldInfo.getParameterNames());
@@ -165,7 +165,7 @@ public class TraceCheckerUtils {
 	/**
 	 * Wild cards are those where in the old operation the identifier did not exist - those don't show up in the mapping
 	 * @param newInfo the operation infos from the new operation
-	 * @param currentMappings the current mapping old -> new
+	 * @param currentMappings the current mapping old -&gt; new
 	 */
 	public static Set<String> calculateOutWildCards(OperationInfo newInfo, Map<String, String> currentMappings){
 		Set<String> result = new HashSet<>(newInfo.getOutputParameterNames());
@@ -177,7 +177,7 @@ public class TraceCheckerUtils {
 	/**
 	 * Void cards are those where in the new operation the identifier did not exist - those don't show up in the mapping
 	 * @param oldInfo the operation infos from the old operation
-	 * @param currentMappings the current mapping old -> new
+	 * @param currentMappings the current mapping old -&gt; new
 	 */
 	public static Set<String> calculateOutVoidCards(OperationInfo oldInfo, Map<String, String> currentMappings){
 		Set<String> result = new HashSet<>(oldInfo.getOutputParameterNames());

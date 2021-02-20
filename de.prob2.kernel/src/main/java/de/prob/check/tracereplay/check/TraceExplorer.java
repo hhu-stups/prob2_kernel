@@ -114,7 +114,7 @@ public class TraceExplorer {
 	/**
 	 * Creates a PersistentTransition with an existing mapping
 	 *
-	 * @param mapping the mapping to create the PT from. Old -> New
+	 * @param mapping the mapping to create the PT from. Old -&gt; New
 	 * @param current the current (old) transition
 	 * @return the new transition
 	 */

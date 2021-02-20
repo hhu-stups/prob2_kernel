@@ -104,11 +104,11 @@ public class TraceAnalyser {
 	}
 
 	/**
-	 * straight -> operations are mapped 1:1 there are differences in the state tho
-	 * intermediate -> operations are mapped 1:2 there was a new operation inserted in before for all executions of the original operation
-	 * mixed -> operation were mixed 1:2 sometimes. An intermediate operation was inserted but is not always necessary
-	 * mixedNames -> the operation was mapped 1:1 but there are differences on which target operation the original was mapped, there are different solutions for mapping
-	 * Removed -> the operation was removed (only if last operation)
+	 * straight -&gt; operations are mapped 1:1 there are differences in the state tho
+	 * intermediate -&gt; operations are mapped 1:2 there was a new operation inserted in before for all executions of the original operation
+	 * mixed -&gt; operation were mixed 1:2 sometimes. An intermediate operation was inserted but is not always necessary
+	 * mixedNames -&gt; the operation was mapped 1:1 but there are differences on which target operation the original was mapped, there are different solutions for mapping
+	 * Removed -&gt; the operation was removed (only if last operation)
 	 */
 	public enum AnalyserResult {
 		Straight, Intermediate, Mixed, MixedNames, Removed
