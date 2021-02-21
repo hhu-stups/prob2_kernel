@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.prob.check.tracereplay.PersistentTrace;
 import de.prob.statespace.LoadedMachine;
 import de.prob.statespace.OperationInfo;
+import de.prob.statespace.Trace;
 
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,24 @@ public class TraceJsonFile extends AbstractJsonFile{
 	private final List<String> constantNames;
 	private final List<String> setNames;
 	private final Map<String, OperationInfo> machineOperationInfos;
+
+
+	/**
+	 *
+	 * @param name name of the file
+	 * @param description description of the file
+	 * @param trace the trace to be stored
+	 * @param metaData the meta data
+	 */
+	public TraceJsonFile(String name, String description, Trace trace, AbstractMetaData metaData) {
+		super(name, description, metaData);
+		this.trace = new PersistentTrace(trace);
+		variableNames = trace.getStateSpace().getLoadedMachine().getVariableNames();
+		constantNames = trace.getStateSpace().getLoadedMachine().getConstantNames();
+		setNames = trace.getStateSpace().getLoadedMachine().getSetNames();
+		machineOperationInfos = trace.getStateSpace().getLoadedMachine().getOperations();
+	}
+
 
 
 	/**
