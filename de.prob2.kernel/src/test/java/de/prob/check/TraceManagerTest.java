@@ -20,8 +20,10 @@ import de.prob.statespace.LoadedMachine;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 
@@ -49,16 +51,15 @@ public class TraceManagerTest {
 	}
 
 	@Test
-	public void serialize_correct_data_structure_test() throws IOException, ModelTranslationError {
+	public void serialize_correct_data_structure_test(@TempDir Path tempDir) throws IOException, ModelTranslationError {
 
-
-
+		Path tempDirPath = tempDir.resolve("testFile.txt");
 		LoadedMachine loadedMachine = proBKernelStub.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "ExampleMachine.mch"));
 
 		AbstractMetaData abstractMetaData = new TraceMetaData(1, LocalDateTime.now(), "User", "version", "bla", "");
 		PersistentTrace persistentTrace = proBKernelStub.getATrace();
 		AbstractJsonFile abstractJsonFile = new TraceJsonFile("testFile", "description", persistentTrace, loadedMachine, abstractMetaData);
-		traceManager.save(Paths.get("src", "test", "resources", "de", "prob", "testmachines","traces",  "test6.prob2trace"), abstractJsonFile);
+		traceManager.save(tempDirPath, abstractJsonFile);
 	}
 
 
