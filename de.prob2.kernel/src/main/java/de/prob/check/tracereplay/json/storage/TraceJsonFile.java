@@ -3,6 +3,7 @@ package de.prob.check.tracereplay.json.storage;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.prob.check.tracereplay.PersistentTrace;
+import de.prob.json.JsonMetadata;
 import de.prob.statespace.LoadedMachine;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.Trace;
@@ -13,7 +14,7 @@ import java.util.Map;
 /**
  * Represents the trace file
  */
-@JsonPropertyOrder({"name", "description", "path", "trace", "variableNames", "machineOperationInfos", "constantNames", "setNames", "metaData"})
+@JsonPropertyOrder({"name", "description", "path", "trace", "variableNames", "machineOperationInfos", "constantNames", "setNames", "metadata"})
 public class TraceJsonFile extends AbstractJsonFile{
 
 	private final PersistentTrace trace;
@@ -28,10 +29,10 @@ public class TraceJsonFile extends AbstractJsonFile{
 	 * @param name name of the file
 	 * @param description description of the file
 	 * @param trace the trace to be stored
-	 * @param metaData the meta data
+	 * @param metadata the metadata
 	 */
-	public TraceJsonFile(String name, String description, Trace trace, AbstractMetaData metaData) {
-		super(name, description, metaData);
+	public TraceJsonFile(String name, String description, Trace trace, JsonMetadata metadata) {
+		super(name, description, metadata);
 		this.trace = new PersistentTrace(trace);
 		variableNames = trace.getStateSpace().getLoadedMachine().getVariableNames();
 		constantNames = trace.getStateSpace().getLoadedMachine().getConstantNames();
@@ -47,10 +48,10 @@ public class TraceJsonFile extends AbstractJsonFile{
 	 * @param description description of the file
 	 * @param trace the trace to be stored
 	 * @param machine the machine corresponding to the trace when it was created
-	 * @param metaData the meta data
+	 * @param metadata the metadata
 	 */
-	public TraceJsonFile(String name, String description, PersistentTrace trace, LoadedMachine machine, AbstractMetaData metaData) {
-		super(name, description, metaData);
+	public TraceJsonFile(String name, String description, PersistentTrace trace, LoadedMachine machine, JsonMetadata metadata) {
+		super(name, description, metadata);
 		this.trace = trace;
 		variableNames = machine.getVariableNames();
 		constantNames = machine.getConstantNames();
@@ -68,7 +69,7 @@ public class TraceJsonFile extends AbstractJsonFile{
 	 * @param machineOperationInfos machine operation infos of the corresponding machine
 	 * @param constantNames name of constants infos of the corresponding machine
 	 * @param setNames name of sets operation infos of the corresponding machine
-	 * @param metaData meta data
+	 * @param metadata metadata
 	 */
 	public TraceJsonFile(@JsonProperty("name") String name,
 						 @JsonProperty("description") String description,
@@ -77,9 +78,9 @@ public class TraceJsonFile extends AbstractJsonFile{
 						 @JsonProperty("machineOperationInfos") Map<String, OperationInfo> machineOperationInfos,
 						 @JsonProperty("constantNames") List<String> constantNames,
 						 @JsonProperty("setNames") List<String> setNames,
-						 @JsonProperty("metaData") AbstractMetaData metaData) {
+						 @JsonProperty("metadata") JsonMetadata metadata) {
 
-		super(name, description, metaData);
+		super(name, description, metadata);
 		this.trace = trace;
 		this.variableNames = variableNames;
 		this.constantNames = constantNames;
@@ -111,7 +112,7 @@ public class TraceJsonFile extends AbstractJsonFile{
 
 
 	public TraceJsonFile changeTrace(PersistentTrace trace){
-		return new TraceJsonFile(super.getName(), getDescription(), trace, variableNames, machineOperationInfos, constantNames, setNames, getMetaData());
+		return new TraceJsonFile(super.getName(), getDescription(), trace, variableNames, machineOperationInfos, constantNames, setNames, getMetadata());
 	}
 
 }

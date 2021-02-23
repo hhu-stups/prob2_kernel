@@ -131,14 +131,13 @@
   },
   "constantNames" : [ ],
   "setNames" : [ ],
-  "metaData" : {
-    "type" : "TraceMetaData",
-    "formatVersion" : 1,
-    "savedAt" : [ 2020, 11, 16, 11, 17, 11, 576955000 ],
-    "creator" : "USER",
+  "metadata" : {
+    "fileType" : "Trace",
+    "formatVersion" : 2,
+    "savedAt" : "2020-11-16T10:17:11.577Z",
+    "creator" : "User",
+    "proB2KernelVersion" : "4.0.0-SNAPSHOT",
     "proBCliVersion" : "1.10.0-nightly",
-    "name" : "HALLO",
-    "path" : "Lift.mch",
-    "proB2KernelVersion" : "4.0.0-SNAPSHOT"
+    "modelName" : "Lift"
   }
 }

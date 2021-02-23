@@ -1,5 +1,6 @@
 package de.prob.json;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 
 import java.io.Reader;
@@ -61,13 +62,13 @@ public final class JsonMetadata {
 	private final String modelName;
 
 	public JsonMetadata(
-			final String fileType,
-			final int formatVersion,
-			final Instant savedAt,
-			final String creator,
-			final String proB2KernelVersion,
-			final String proBCliVersion,
-			final String modelName
+		@JsonProperty("fileType") final String fileType,
+		@JsonProperty("formatVersion") final int formatVersion,
+		@JsonProperty("savedAt") final Instant savedAt,
+		@JsonProperty("creator") final String creator,
+		@JsonProperty("proB2KernelVersion") final String proB2KernelVersion,
+		@JsonProperty("proBCliVersion") final String proBCliVersion,
+		@JsonProperty("modelName") final String modelName
 	) {
 		this.fileType = fileType;
 		this.formatVersion = formatVersion;

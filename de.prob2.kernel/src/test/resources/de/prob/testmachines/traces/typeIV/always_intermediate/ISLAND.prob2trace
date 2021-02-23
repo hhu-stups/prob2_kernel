@@ -89,14 +89,13 @@
   },
   "constantNames" : [ "maxCars" ],
   "setNames" : [ ],
-  "metaData" : {
-    "type" : "TraceMetaData",
-    "formatVersion" : 1,
-    "savedAt" : [ 2021, 1, 8, 14, 45, 26, 831712000 ],
-    "creator" : "USER",
+  "metadata" : {
+    "fileType" : "Trace",
+    "formatVersion" : 2,
+    "savedAt" : "2021-01-08T13:45:26.832Z",
+    "creator" : "User",
+    "proB2KernelVersion" : "4.0.0-SNAPSHOT",
     "proBCliVersion" : "1.10.0-nightly",
-    "name" : "HALLO",
-    "path" : "ISLAND.mch",
-    "proB2KernelVersion" : "4.0.0-SNAPSHOT"
+    "modelName" : "ISLAND"
   }
 }

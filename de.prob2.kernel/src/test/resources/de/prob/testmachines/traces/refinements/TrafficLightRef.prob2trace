@@ -150,14 +150,13 @@
   },
   "constantNames" : [ ],
   "setNames" : [ "colors" ],
-  "metaData" : {
-    "type" : "TraceMetaData",
-    "formatVersion" : 1,
-    "savedAt" : [ 2021, 1, 29, 11, 31, 6, 702995000 ],
-    "creator" : "USER",
+  "metadata" : {
+    "fileType" : "Trace",
+    "formatVersion" : 2,
+    "savedAt" : "2021-01-29T10:31:06.703Z",
+    "creator" : "User",
+    "proB2KernelVersion" : "4.0.0-SNAPSHOT",
     "proBCliVersion" : "1.10.0-nightly",
-    "name" : "HALLO",
-    "path" : "TrafficLightRef.ref",
-    "proB2KernelVersion" : "4.0.0-SNAPSHOT"
+    "modelName" : "TrafficLightRef"
   }
 }

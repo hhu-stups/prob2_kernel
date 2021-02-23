@@ -191,14 +191,13 @@
   },
   "constantNames" : [ "maxPerson" ],
   "setNames" : [ ],
-  "metaData" : {
-    "type" : "TraceMetaData",
-    "formatVersion" : 1,
-    "savedAt" : [ 2021, 1, 15, 13, 19, 1, 106811000 ],
-    "creator" : "USER",
+  "metadata" : {
+    "fileType" : "Trace",
+    "formatVersion" : 2,
+    "savedAt" : "2021-01-15T12:19:01.107Z",
+    "creator" : "User",
+    "proB2KernelVersion" : "4.0.0-SNAPSHOT",
     "proBCliVersion" : "1.10.0-nightly",
-    "name" : "HALLO",
-    "path" : "Island.mch",
-    "proB2KernelVersion" : "4.0.0-SNAPSHOT"
+    "modelName" : "Island"
   }
 }

@@ -189,14 +189,13 @@
   },
   "constantNames" : [ ],
   "setNames" : [ ],
-  "metaData" : {
-    "type" : "TraceMetaData",
-    "formatVersion" : 1,
-    "savedAt" : [ 2020, 12, 1, 16, 58, 51, 961544000 ],
-    "creator" : "USER",
+  "metadata" : {
+    "fileType" : "Trace",
+    "formatVersion" : 2,
+    "savedAt" : "2020-12-01T15:58:51.962Z",
+    "creator" : "User",
+    "proB2KernelVersion" : "4.0.0-SNAPSHOT",
     "proBCliVersion" : "1.10.0-nightly",
-    "name" : "HALLO",
-    "path" : "LiftProto.mch",
-    "proB2KernelVersion" : "4.0.0-SNAPSHOT"
+    "modelName" : "LiftProto"
   }
 }

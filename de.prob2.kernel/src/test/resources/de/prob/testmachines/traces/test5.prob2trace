@@ -20,14 +20,14 @@
   },
   "constantNames" : [ ],
   "setNames" : [ ],
-  "metaData" : {
-    "type" : "TraceMetaData",
-    "formatVersion" : 1,
-    "savedAt" : [ 2020, 10, 2, 9, 43, 20, 8146000 ],
+  "variableNames" : [ "x" ],
+  "metadata" : {
+    "fileType" : "Trace",
+    "formatVersion" : 2,
+    "savedAt" : "2020-10-02T07:43:20.008Z",
     "creator" : "User",
+    "proB2KernelVersion" : "4.0.0-SNAPSHOT",
     "proBCliVersion" : "version",
-    "name" : "bla",
-    "proB2KernelVersion" : "4.0.0-SNAPSHOT"
-  },
-  "variableNames" : [ "x" ]
+    "modelName" : "Lift"
+  }
 }

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+import de.prob.json.JsonMetadata;
+
 /**
  * Represents a abstract json file
  * More detailed information about the payload are defined in subclasses
@@ -20,19 +22,19 @@ public abstract class AbstractJsonFile {
 
 	private final String name;
 	private final String description;
-	private final AbstractMetaData metaData;
+	private final JsonMetadata metadata;
 
 
 	/**
 	 *
 	 * @param name the name of the json file
 	 * @param description a description of the json file
-	 * @param metaData the meta data
+	 * @param metadata the metadata
 	 */
-	public AbstractJsonFile(@JsonProperty("name") String name, @JsonProperty("description") String description, @JsonProperty("metaData") AbstractMetaData metaData) {
+	public AbstractJsonFile(@JsonProperty("name") String name, @JsonProperty("description") String description, @JsonProperty("metadata") JsonMetadata metadata) {
 		this.name = name;
 		this.description = description;
-		this.metaData = metaData;
+		this.metadata = metadata;
 	}
 
 	public String getName() {
@@ -43,8 +45,8 @@ public abstract class AbstractJsonFile {
 		return description;
 	}
 
-	public AbstractMetaData getMetaData() {
-		return metaData;
+	public JsonMetadata getMetadata() {
+		return metadata;
 	}
 
 

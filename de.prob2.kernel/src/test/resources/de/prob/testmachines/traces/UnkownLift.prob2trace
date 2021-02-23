@@ -2,30 +2,6 @@
   "type" : "Trace",
   "name" : "testFile",
   "description" : "description",
-  "metaData" : {
-    "type" : "TraceMetaData",
-    "formatVersion" : 1,
-    "savedAt" : {
-      "nano" : 908006000,
-      "year" : 2020,
-      "monthValue" : 9,
-      "dayOfMonth" : 28,
-      "hour" : 8,
-      "minute" : 42,
-      "second" : 37,
-      "month" : "SEPTEMBER",
-      "dayOfWeek" : "MONDAY",
-      "dayOfYear" : 272,
-      "chronology" : {
-        "calendarType" : "iso8601",
-        "id" : "ISO"
-      }
-    },
-    "creator" : "User",
-    "proB2KernelVersion" : "4.0.0-SNAPSHOT",
-    "proBCliVersion" : "version",
-    "name" : "bla"
-  },
   "trace" : {
     "description" : "",
     "transitionList" : [ ]
@@ -94,5 +70,14 @@
     "setEvalElements" : [ ],
     "operationNames" : [ "Foo" ],
     "constatsEvalElements" : [ ]
+  },
+  "metaData" : {
+    "fileType" : "Trace",
+    "formatVersion" : 2,
+    "savedAt" : "2020-09-28T06:42:37.908Z",
+    "creator" : "User",
+    "proB2KernelVersion" : "4.0.0-SNAPSHOT",
+    "proBCliVersion" : "version",
+    "modelName" : "Lift"
   }
 }

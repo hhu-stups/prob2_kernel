@@ -1,31 +1,32 @@
 package de.prob.check;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Stage;
+
 import de.prob.JsonManagerStubModule;
 import de.prob.MainModule;
 import de.prob.ProBKernelStub;
 import de.prob.check.tracereplay.PersistentTrace;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.AbstractJsonFile;
-import de.prob.check.tracereplay.json.storage.AbstractMetaData;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
-import de.prob.check.tracereplay.json.storage.TraceMetaData;
+import de.prob.json.JsonMetadata;
+import de.prob.json.JsonMetadataBuilder;
 import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.LoadedMachine;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -56,9 +57,14 @@ public class TraceManagerTest {
 		Path tempDirPath = tempDir.resolve("testFile.txt");
 		LoadedMachine loadedMachine = proBKernelStub.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "ExampleMachine.mch"));
 
-		AbstractMetaData abstractMetaData = new TraceMetaData(1, LocalDateTime.now(), "User", "version", "bla", "");
+		JsonMetadata metadata = new JsonMetadataBuilder("Trace", 2)
+			.withSavedNow()
+			.withUserCreator()
+			.withProBCliVersion("version")
+			.withModelName("Lift")
+			.build();
 		PersistentTrace persistentTrace = proBKernelStub.getATrace();
-		AbstractJsonFile abstractJsonFile = new TraceJsonFile("testFile", "description", persistentTrace, loadedMachine, abstractMetaData);
+		AbstractJsonFile abstractJsonFile = new TraceJsonFile("testFile", "description", persistentTrace, loadedMachine, metadata);
 		traceManager.save(tempDirPath, abstractJsonFile);
 	}
 

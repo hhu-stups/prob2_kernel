@@ -55831,14 +55831,13 @@
   },
   "constantNames" : [ "pitman_direction", "BLINK_DIRECTION", "LAMP_STATUS", "lamp_on", "lamp_off", "BLINK_CYCLE_COUNTER", "cycleMaxLampStatus", "PITMAN_DIRECTION_BLINKING", "PITMAN_TIP_BLINKING" ],
   "setNames" : [ "DIRECTIONS", "SWITCH_STATUS", "PITMAN_POSITION", "KEY_STATE" ],
-  "metaData" : {
-    "type" : "TraceMetaData",
-    "formatVersion" : 1,
-    "savedAt" : [ 2021, 2, 2, 8, 7, 40, 751294000 ],
-    "creator" : "USER",
+  "metadata" : {
+    "fileType" : "Trace",
+    "formatVersion" : 2,
+    "savedAt" : "2021-02-02T07:07:40.751Z",
+    "creator" : "User",
+    "proB2KernelVersion" : "4.0.0-SNAPSHOT",
     "proBCliVersion" : "1.10.0-nightly",
-    "name" : "HALLO",
-    "path" : "PitmanController_v6.mch",
-    "proB2KernelVersion" : "4.0.0-SNAPSHOT"
+    "modelName" : "PitmanController_V6"
   }
 }
