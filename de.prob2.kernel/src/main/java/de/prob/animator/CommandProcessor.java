@@ -9,11 +9,13 @@ import de.prob.core.sablecc.node.AExceptionResult;
 import de.prob.core.sablecc.node.AInterruptedResult;
 import de.prob.core.sablecc.node.ANoResult;
 import de.prob.core.sablecc.node.AYesResult;
+import de.prob.core.sablecc.node.AProgressResult;
 import de.prob.core.sablecc.node.PResult;
 import de.prob.core.sablecc.node.Start;
 import de.prob.exception.ProBError;
 import de.prob.exception.PrologException;
 import de.prob.parser.BindingGenerator;
+import de.prob.parser.PrologTermGenerator;
 import de.prob.parser.ProBResultParser;
 import de.prob.prolog.output.PrologTermStringOutput;
 import de.prob.prolog.term.PrologTerm;
@@ -46,18 +48,27 @@ class CommandProcessor {
 			pto.printAtom("true");
 			query = pto.fullstop().toString();
 		}
-		String result = cli.send(query);
+		String result = cli.send(query); // send the query and get Prolog's response
 
-		final Start ast = parseResult(result);
-		IPrologResult extractResult = extractResult(ast);
+		Start ast = parseResult(result);
+		PResult topnode = ast.getPResult();
+		while (topnode instanceof AProgressResult ) {
+		     System.out.println("Progress Info from Prolog: " + result);
+		     // enable the command to respond to the progress information (e.g., update progress bar)
+		     command.processProgressResult(PrologTermGenerator.toPrologTerm(ast));
+		     result = cli.receive(); // receive next term by Prolog
+		     ast = parseResult(result);
+		     topnode = ast.getPResult();
+		     // TO DO: also deal with ACallBackResult
+		}
+		IPrologResult extractResult = extractResult(ast,topnode);
 		if (logger.isDebugEnabled()) {
 			logger.debug(shorten(extractResult.toString()));
 		}
 		return extractResult;
 	}
 
-	private IPrologResult extractResult(final Start ast) {
-		PResult topnode = ast.getPResult();
+	private IPrologResult extractResult(final Start ast, final PResult topnode) {
 		if (topnode instanceof ANoResult) {
 			return new NoResult();
 		} else if (topnode instanceof AInterruptedResult) {

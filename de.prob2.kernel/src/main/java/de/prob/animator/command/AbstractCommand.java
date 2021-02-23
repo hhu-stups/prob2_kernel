@@ -113,4 +113,12 @@ public abstract class AbstractCommand {
 			throw new ProBError("Errors were", errors);
 		}
 	}
+	
+	/**
+	 * This code is called when the Prolog process sends a progress term
+	   but hasn't finished computation yet
+	*/
+	public void processProgressResult(final PrologTerm progressInfo) {
+	   System.out.println("Progress info: " + progressInfo);
+	}
 }

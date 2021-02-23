@@ -72,6 +72,7 @@ public class ProBInstance {
 		}
 	}
 
+	// a method to send a string to Prolog and return the response provided by Prolog
 	public String send(final String term) {
 		try {
 			return connection.send(term);
@@ -79,6 +80,16 @@ public class ProBInstance {
 			throw new CliError("Error during communication with Prolog core.", e);
 		}
 	}
+	// a method to just receive input from Prolog, without sending a string first
+	public String receive() {
+		try {
+			return connection.getAnswer();
+		} catch (IOException e) {
+			throw new CliError("Error receiving from Prolog core.", e);
+		}
+	}
+	
+	
 
 	public boolean isShuttingDown() {
 		return shuttingDown;

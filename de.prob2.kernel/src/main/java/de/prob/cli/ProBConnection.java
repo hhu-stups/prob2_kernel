@@ -65,7 +65,6 @@ public class ProBConnection {
 			outputStream.flush();
 		}
 		String answer = getAnswer();
-		logger.trace(answer);
 		return answer;
 	}
 
@@ -73,13 +72,14 @@ public class ProBConnection {
 		return busy;
 	}
 
-	private String getAnswer() throws IOException {
+	public String getAnswer() throws IOException {
 		String input;
 		input = readAnswer();
 		if (input == null) {
 			throw new IOException(
 					"ProB binary returned nothing - it might have crashed");
 		}
+		logger.trace(input);
 		return input;
 	}
 
