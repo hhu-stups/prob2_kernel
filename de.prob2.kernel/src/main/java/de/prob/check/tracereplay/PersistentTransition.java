@@ -23,14 +23,12 @@ import static java.util.Collections.*;
 public class PersistentTransition {
 
 	private final String name;
-	private final Map<String, String> results = new HashMap<>();
-	private final List<String> preds = new ArrayList<>();
 
 	private final Map<String, String> params = new HashMap<>();
-	//private final Map<String, String> results = new HashMap<>();
+	private final Map<String, String> results = new HashMap<>();
 	private final Map<String, String> destState = new HashMap<>();
 	private final Set<String> destStateNotChanged = new HashSet<>();
-	//private final List<String> preds = new ArrayList<>();
+	private final List<String> preds = new ArrayList<>();
 
 
 	public PersistentTransition(Transition transition) {
