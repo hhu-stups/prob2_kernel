@@ -150,12 +150,11 @@ dependencies {
 	api group: "de.hhu.stups", name: "value-translator", version: "0.1.2"
 
 	// Groovy (Apache License 2.0)
-	final groovyVersion = "3.0.7"
-	api group: "org.codehaus.groovy", name: "groovy", version: groovyVersion
-	api group: "org.codehaus.groovy", name: "groovy-all", version: groovyVersion
-	api group: "org.codehaus.groovy", name: "groovy-jsr223", version: groovyVersion
-	api group: "org.codehaus.groovy", name: "groovy-nio", version: groovyVersion
-	api group: "org.codehaus.groovy", name: "groovy-xml", version: groovyVersion
+	api(platform(group: "org.codehaus.groovy", name: "groovy-bom", version: "3.0.7"))
+	api group: "org.codehaus.groovy", name: "groovy"
+	api group: "org.codehaus.groovy", name: "groovy-jsr223"
+	api group: "org.codehaus.groovy", name: "groovy-nio"
+	api group: "org.codehaus.groovy", name: "groovy-xml"
 
 	// Logging
 	api group: "org.slf4j", name: "slf4j-api", version: "1.7.30" // MIT License
