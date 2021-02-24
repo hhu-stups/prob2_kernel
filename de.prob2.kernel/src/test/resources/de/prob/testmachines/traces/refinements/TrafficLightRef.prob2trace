@@ -5,103 +5,103 @@
   "trace" : {
     "description" : "",
     "transitionList" : [ {
-      "operationName" : "$initialise_machine",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "$initialise_machine",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "cars_color" : "{red}",
         "peds_color" : "red"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "set_cars",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "set_cars",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "cars_color" : "{red,yellow}"
       },
       "destStateNotChanged" : [ "peds_color" ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "set_cars",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "set_cars",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "cars_color" : "{green}"
       },
       "destStateNotChanged" : [ "peds_color" ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "set_cars",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "set_cars",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "cars_color" : "{yellow}"
       },
       "destStateNotChanged" : [ "peds_color" ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "set_cars",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "set_cars",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "cars_color" : "{red}"
       },
       "destStateNotChanged" : [ "peds_color" ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "set_peds_go",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "set_peds_go",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "peds_color" : "green"
       },
       "destStateNotChanged" : [ "cars_color" ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "set_peds_stop",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "set_peds_stop",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "peds_color" : "red"
       },
       "destStateNotChanged" : [ "cars_color" ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "set_cars",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "set_cars",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "cars_color" : "{red,yellow}"
       },
       "destStateNotChanged" : [ "peds_color" ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "set_peds_go",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "set_peds_go",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "peds_color" : "green"
       },
       "destStateNotChanged" : [ "cars_color" ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "set_peds_go",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : { },
+      "name" : "set_peds_go",
+      "params" : { },
+      "results" : { },
+      "destState" : { },
       "destStateNotChanged" : [ "cars_color", "peds_color" ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "set_peds_stop",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "set_peds_stop",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "peds_color" : "red"
       },
       "destStateNotChanged" : [ "cars_color" ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     } ]
   },
   "variableNames" : [ "peds_color", "cars_color" ],

@@ -5,153 +5,153 @@
   "trace" : {
     "description" : "",
     "transitionList" : [ {
-      "operationName" : "$initialise_machine",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "$initialise_machine",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "floors" : "0"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "inc",
-      "parameters" : {
+      "name" : "inc",
+      "params" : {
         "x" : "2",
         "y" : "1"
       },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "results" : { },
+      "destState" : {
         "floors" : "3"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "inc",
-      "parameters" : {
+      "name" : "inc",
+      "params" : {
         "x" : "0",
         "y" : "0"
       },
-      "outputParameters" : { },
-      "destinationStateVariables" : { },
+      "results" : { },
+      "destState" : { },
       "destStateNotChanged" : [ "floors" ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "dec",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "dec",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "floors" : "2"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "inc",
-      "parameters" : {
+      "name" : "inc",
+      "params" : {
         "x" : "2",
         "y" : "0"
       },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "results" : { },
+      "destState" : {
         "floors" : "4"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "inc",
-      "parameters" : {
+      "name" : "inc",
+      "params" : {
         "x" : "1",
         "y" : "2"
       },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "results" : { },
+      "destState" : {
         "floors" : "7"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "inc",
-      "parameters" : {
+      "name" : "inc",
+      "params" : {
         "x" : "0",
         "y" : "2"
       },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "results" : { },
+      "destState" : {
         "floors" : "9"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "inc",
-      "parameters" : {
+      "name" : "inc",
+      "params" : {
         "x" : "0",
         "y" : "1"
       },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "results" : { },
+      "destState" : {
         "floors" : "10"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "inc",
-      "parameters" : {
+      "name" : "inc",
+      "params" : {
         "x" : "2",
         "y" : "0"
       },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "results" : { },
+      "destState" : {
         "floors" : "12"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "inc",
-      "parameters" : {
+      "name" : "inc",
+      "params" : {
         "x" : "0",
         "y" : "2"
       },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "results" : { },
+      "destState" : {
         "floors" : "14"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "getfloors",
-      "parameters" : { },
-      "outputParameters" : {
+      "name" : "getfloors",
+      "params" : { },
+      "results" : {
         "out" : "14"
       },
-      "destinationStateVariables" : { },
+      "destState" : { },
       "destStateNotChanged" : [ "floors" ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "dec",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "dec",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "floors" : "13"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "dec",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "dec",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "floors" : "12"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "getfloors",
-      "parameters" : { },
-      "outputParameters" : {
+      "name" : "getfloors",
+      "params" : { },
+      "results" : {
         "out" : "12"
       },
-      "destinationStateVariables" : { },
+      "destState" : { },
       "destStateNotChanged" : [ "floors" ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     } ]
   },
   "variableNames" : [ "floors" ],

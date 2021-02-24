@@ -102,33 +102,33 @@ public class PersistentTransition {
 	 * Jackson constructor, only called by jackson deserializer
 	 * @param name the name of the transition
 	 * @param params parameters of the transition
-	 * @param outputParameters result of the transition
+	 * @param results result of the transition
 	 * @param destState target state of the transition
 	 * @param destStateNotChanged target state is no change
-	 * @param additionalPredicates predicates
+	 * @param preds predicates
 	 */
-	public PersistentTransition(@JsonProperty("operationName") String name,
-								@JsonProperty("parameters") Map<String, String> params,
-								@JsonProperty("outputParameters") Map<String, String> outputParameters,
-								@JsonProperty("destinationStateVariables") Map<String, String> destState,
+	public PersistentTransition(@JsonProperty("name") String name,
+								@JsonProperty("params") Map<String, String> params,
+								@JsonProperty("results") Map<String, String> results,
+								@JsonProperty("destState") Map<String, String> destState,
 								@JsonProperty("destStateNotChanged") Set<String> destStateNotChanged,
-								@JsonProperty("additionalPredicates") List<String> additionalPredicates){
+								@JsonProperty("preds") List<String> preds){
 		if(name.equals(Transition.INITIALISE_MACHINE_NAME)){
 			params = Collections.emptyMap();
-			outputParameters = Collections.emptyMap();
+			results = Collections.emptyMap();
 			name = Transition.INITIALISE_MACHINE_NAME;
 		}
 
-		if(additionalPredicates==null){
-			additionalPredicates = emptyList();
+		if(preds==null){
+			preds = emptyList();
 		}
 
 		this.name = name;
 		this.params.putAll(params);
-		this.results.putAll(outputParameters);
+		this.results.putAll(results);
 		this.destState.putAll(destState);
 		this.destStateNotChanged.addAll(destStateNotChanged);
-		this.preds.addAll(additionalPredicates);
+		this.preds.addAll(preds);
 
 	}
 

@@ -5,10 +5,10 @@
   "trace" : {
     "description" : "",
     "transitionList" : [ {
-      "operationName" : "$setup_constants",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "$setup_constants",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "pitman_direction" : "{(Neutral↦neutral_blink),(Downward5↦left_blink),(Downward7↦left_blink),(Upward5↦right_blink),(Upward7↦right_blink)}",
         "BLINK_DIRECTION" : "{left_blink,right_blink}",
         "PITMAN_TIP_BLINKING" : "{Downward5,Upward5}",
@@ -20,12 +20,12 @@
         "PITMAN_DIRECTION_BLINKING" : "{Downward7,Upward7}"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "$initialise_machine",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "$initialise_machine",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "blinkRight" : "0",
         "engineOn" : "FALSE",
         "onCycle" : "FALSE",
@@ -37,27 +37,27 @@
         "blinkLeft" : "0"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "ENV_Pitman_Tip_blinking_short",
-      "parameters" : {
+      "name" : "ENV_Pitman_Tip_blinking_short",
+      "params" : {
         "newPos" : "Upward5"
       },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "results" : { },
+      "destState" : {
         "pitmanArmUpDown" : "Upward5"
       },
       "destStateNotChanged" : [ "blinkRight", "engineOn", "onCycle", "keyState", "remaining_blinks", "active_blinkers", "hazardWarningSwitchOn", "blinkLeft" ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "ENV_Pitman_Reset_to_Neutral",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "ENV_Pitman_Reset_to_Neutral",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "pitmanArmUpDown" : "Neutral"
       },
       "destStateNotChanged" : [ "blinkRight", "engineOn", "onCycle", "keyState", "remaining_blinks", "active_blinkers", "hazardWarningSwitchOn", "blinkLeft" ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     } ]
   },
   "variableNames" : [ "active_blinkers", "remaining_blinks", "onCycle", "blinkLeft", "blinkRight", "hazardWarningSwitchOn", "pitmanArmUpDown", "keyState", "engineOn" ],

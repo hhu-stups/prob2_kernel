@@ -5,144 +5,144 @@
   "trace" : {
     "description" : "",
     "transitionList" : [ {
-      "operationName" : "$setup_constants",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "$setup_constants",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "maxPerson" : "20"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "$initialise_machine",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "$initialise_machine",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "currentPersons" : "0"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "arrive_by_foot",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "arrive_by_foot",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "currentPersons" : "1"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "arrive_by_foot",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "arrive_by_foot",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "currentPersons" : "2"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "arrive_by_foot",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "arrive_by_foot",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "currentPersons" : "3"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "arrive_by_foot",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "arrive_by_foot",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "currentPersons" : "4"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "arrive_by_foot",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "arrive_by_foot",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "currentPersons" : "5"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "arrive_by_foot",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "arrive_by_foot",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "currentPersons" : "6"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "leave",
-      "parameters" : {
+      "name" : "leave",
+      "params" : {
         "persons" : "5"
       },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "results" : { },
+      "destState" : {
         "currentPersons" : "1"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "arrive_by_foot",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "arrive_by_foot",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "currentPersons" : "2"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "arrive_by_foot",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "arrive_by_foot",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "currentPersons" : "3"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "arrive_by_foot",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "arrive_by_foot",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "currentPersons" : "4"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "arrive_by_foot",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "arrive_by_foot",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "currentPersons" : "5"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "arrive_by_foot",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "arrive_by_foot",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "currentPersons" : "6"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "leave",
-      "parameters" : {
+      "name" : "leave",
+      "params" : {
         "persons" : "1"
       },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "results" : { },
+      "destState" : {
         "currentPersons" : "5"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     } ]
   },
   "variableNames" : [ "currentPersons" ],

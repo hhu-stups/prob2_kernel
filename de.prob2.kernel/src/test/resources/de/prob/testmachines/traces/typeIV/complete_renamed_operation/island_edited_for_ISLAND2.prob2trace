@@ -5,113 +5,113 @@
   "trace" : {
     "description" : "",
     "transitionList" : [ {
-      "operationName" : "$setup_constants",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "$setup_constants",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "maxCars" : "5"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "$initialise_machine",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "$initialise_machine",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "cars" : "0"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "drive_on",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "drive_on",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "cars" : "1"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "drive_on",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "drive_on",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "cars" : "2"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "drive_on",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "drive_on",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "cars" : "3"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "drive_on",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "drive_on",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "cars" : "4"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "drive_on",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "drive_on",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "cars" : "5"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "off",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "off",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "cars" : "4"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "off",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "off",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "cars" : "3"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "off",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "off",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "cars" : "2"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "off",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "off",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "cars" : "1"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     }, {
-      "operationName" : "off",
-      "parameters" : { },
-      "outputParameters" : { },
-      "destinationStateVariables" : {
+      "name" : "off",
+      "params" : { },
+      "results" : { },
+      "destState" : {
         "cars" : "0"
       },
       "destStateNotChanged" : [ ],
-      "additionalPredicates" : [ ]
+      "preds" : [ ]
     } ]
   },
   "variableNames" : [ "cars" ],
