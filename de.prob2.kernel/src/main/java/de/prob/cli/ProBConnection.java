@@ -1,6 +1,6 @@
 package de.prob.cli;
 
-import java.io.BufferedInputStream;
+import java.util.Scanner;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -19,7 +19,7 @@ public class ProBConnection {
 	private static final int BUFFER_SIZE = 1024;
 
 	private Socket socket;
-	private BufferedInputStream inputStream;
+	private Scanner inputScanner;
 	private PrintWriter outputStream;
 	private final Logger logger = LoggerFactory.getLogger(ProBConnection.class);
 	private volatile boolean shutingDown;
@@ -41,7 +41,7 @@ public class ProBConnection {
 	public void connect() throws IOException {
 		logger.debug("Connecting to port {} using key {}", port, key);
 		socket = new Socket(InetAddress.getByName(null), port);
-		inputStream = new BufferedInputStream(socket.getInputStream());
+		inputScanner = new Scanner(socket.getInputStream()).useDelimiter("\u0001"); // Prolog sends character 1 to terminate its outputs
 		OutputStream outstream = socket.getOutputStream();
 		outputStream = new PrintWriter(new OutputStreamWriter(outstream, StandardCharsets.UTF_8));
 		logger.debug("Connected");
@@ -73,8 +73,9 @@ public class ProBConnection {
 	}
 
 	public String getAnswer() throws IOException {
-		String input;
-		input = readAnswer();
+		String input = inputScanner.next();
+	   // no need to do this anymore?: treated as ignore token in answerparser:
+	   //          input.replace("\r", "").replace("\n", ""); // were two traversals !
 		if (input == null) {
 			throw new IOException(
 					"ProB binary returned nothing - it might have crashed");
@@ -83,46 +84,8 @@ public class ProBConnection {
 		return input;
 	}
 
-	protected String readAnswer() throws IOException {
-		final StringBuilder result = new StringBuilder();
-		final byte[] buffer = new byte[BUFFER_SIZE];
-		boolean done = false;
-
-		while (!done) {
-			/*
-			 * It might be necessary to check for inputStream.available() > 0.
-			 * Or add some kind of timer to prevent the thread blocks forever.
-			 * See task#102
-			 */
-			busy = true;
-			int count = inputStream.read(buffer);
-			busy = false; // as soon as we read something, we know that the
-							// Prolog has been processed and we do not want to
-							// allow interruption
-			if (count > 0) {
-				final byte length = 1;
-
-				// check for end of transmission (i.e. last byte is 1)
-				if (buffer[count - length] == 1) {
-					done = true;
-					count--; // remove end of transmission marker
-				}
-
-				// trim white spaces and append
-				// instead of removing the last byte trim is used, because on
-				// windows prob uses \r\n as new line.
-				String s = new String(buffer, 0, count, StandardCharsets.UTF_8);
-				result.append(s.replace("\r", "").replace("\n", ""));
-			} else {
-				done = true;
-			}
-		}
-
-		return result.length() > 0 ? result.toString() : null;
-	}
-
 	private boolean isStreamReady() {
-		if (inputStream == null || outputStream == null) {
+		if (inputScanner == null || outputStream == null) {
 			logger.warn("Stream to ProB server not ready");
 			return false;
 		}
