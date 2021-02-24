@@ -152,6 +152,7 @@ dependencies {
 	// Groovy (Apache License 2.0)
 	final groovyVersion = "3.0.7"
 	api group: "org.codehaus.groovy", name: "groovy", version: groovyVersion
+	api group: "org.codehaus.groovy", name: "groovy-all", version: groovyVersion
 	api group: "org.codehaus.groovy", name: "groovy-jsr223", version: groovyVersion
 	api group: "org.codehaus.groovy", name: "groovy-nio", version: groovyVersion
 	api group: "org.codehaus.groovy", name: "groovy-xml", version: groovyVersion
