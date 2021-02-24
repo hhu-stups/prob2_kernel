@@ -119,6 +119,6 @@ public abstract class AbstractCommand {
 	   but hasn't finished computation yet
 	*/
 	public void processProgressResult(final PrologTerm progressInfo) {
-	   System.out.println("Progress info: " + progressInfo);
+	   System.out.println("Progress info: " + progressInfo); // TO DO: replace by something more useful
 	}
 }

@@ -10,6 +10,7 @@ import de.prob.core.sablecc.node.AInterruptedResult;
 import de.prob.core.sablecc.node.ANoResult;
 import de.prob.core.sablecc.node.AYesResult;
 import de.prob.core.sablecc.node.AProgressResult;
+import de.prob.core.sablecc.node.ACallBackResult;
 import de.prob.core.sablecc.node.PResult;
 import de.prob.core.sablecc.node.Start;
 import de.prob.exception.ProBError;
@@ -52,15 +53,24 @@ class CommandProcessor {
 
 		Start ast = parseResult(result);
 		PResult topnode = ast.getPResult();
-		while (topnode instanceof AProgressResult ) {
-		     System.out.println("Progress Info from Prolog: " + result);
-		     // enable the command to respond to the progress information (e.g., update progress bar)
-		     command.processProgressResult(PrologTermGenerator.toPrologTerm(ast));
-		     result = cli.receive(); // receive next term by Prolog
+		while (topnode instanceof AProgressResult || topnode instanceof ACallBackResult) {
+		     if (topnode instanceof AProgressResult ) {
+		     // enable the command to respond to the progress information (e.g., by updating progress bar)
+		         command.processProgressResult(PrologTermGenerator.toPrologTerm(ast));
+		         result = cli.receive(); // receive next term by Prolog
+		     } else {
+		         System.out.println("Callback request: " + result);
+			     PrologTermStringOutput callbackres = new PrologTermStringOutput();
+			     // TO DO: provide way to deal with some call-backs: 
+			     //  - parsing formulas, 
+			     //  - inspecting if command should be interrupted
+			     callbackres.printAtom("call_back_not_supported");
+		         result = cli.send(callbackres.fullstop().toString());
+		     }
 		     ast = parseResult(result);
 		     topnode = ast.getPResult();
-		     // TO DO: also deal with ACallBackResult
 		}
+		// command is finished, we can extract the result:
 		IPrologResult extractResult = extractResult(ast,topnode);
 		if (logger.isDebugEnabled()) {
 			logger.debug(shorten(extractResult.toString()));
