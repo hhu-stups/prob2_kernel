@@ -18,14 +18,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static java.util.Collections.*;
+
 public class PersistentTransition {
 
 	private final String name;
+	private final Map<String, String> results = new HashMap<>();
+	private final List<String> preds = new ArrayList<>();
+
 	private final Map<String, String> params = new HashMap<>();
-	private final Map<String, String> outputParameters = new HashMap<>();
+	//private final Map<String, String> results = new HashMap<>();
 	private final Map<String, String> destState = new HashMap<>();
 	private final Set<String> destStateNotChanged = new HashSet<>();
-	private final List<String> additionalPredicates = new ArrayList<>();
+	//private final List<String> preds = new ArrayList<>();
+
 
 	public PersistentTransition(Transition transition) {
 		this(transition, false, null);
@@ -54,7 +60,7 @@ public class PersistentTransition {
 				}
 
 				for (int i = 0; i < machineOperationInfo.getOutputParameterNames().size(); i++) {
-					outputParameters.put(machineOperationInfo.getOutputParameterNames().get(i),
+					results.put(machineOperationInfo.getOutputParameterNames().get(i),
 							transition.getReturnValues().get(i));
 				}
 			}
@@ -82,7 +88,7 @@ public class PersistentTransition {
 				}
 
 				for (int i = 0; i < machineOperationInfo.getOutputParameterNames().size(); i++) {
-					outputParameters.put(machineOperationInfo.getOutputParameterNames().get(i),
+					results.put(machineOperationInfo.getOutputParameterNames().get(i),
 							transition.getReturnValues().get(i));
 				}
 			}
@@ -116,21 +122,23 @@ public class PersistentTransition {
 		}
 
 		if(additionalPredicates==null){
-			additionalPredicates = Collections.emptyList();
+			additionalPredicates = emptyList();
 		}
 
 		this.name = name;
 		this.params.putAll(params);
-		this.outputParameters.putAll(outputParameters);
+		this.results.putAll(outputParameters);
 		this.destState.putAll(destState);
 		this.destStateNotChanged.addAll(destStateNotChanged);
-		this.additionalPredicates.addAll(additionalPredicates);
+		this.preds.addAll(additionalPredicates);
 
 	}
 
 
+
+
 	public static List<PersistentTransition> createFromList(final List<Transition> transitions){
-		if(transitions.isEmpty()) return Collections.emptyList();
+		if(transitions.isEmpty()) return emptyList();
 		PersistentTransition first = new PersistentTransition(transitions.get(0), null);
 		transitions.remove(0);
 		List<PersistentTransition> result = new ArrayList<>();
@@ -143,7 +151,7 @@ public class PersistentTransition {
 	}
 
 	public static List<PersistentTransition> createFromList(final List<Transition> transitions, Transition before){
-		if(transitions.isEmpty()) return Collections.emptyList();
+		if(transitions.isEmpty()) return emptyList();
 		PersistentTransition first = new PersistentTransition(transitions.get(0), new PersistentTransition(before));
 		transitions.remove(0);
 		List<PersistentTransition> result = new ArrayList<>();
@@ -156,7 +164,7 @@ public class PersistentTransition {
 	}
 
 	public static List<PersistentTransition> createFromList(final List<Transition> transitions, PersistentTransition before){
-		if(transitions.isEmpty()) return Collections.emptyList();
+		if(transitions.isEmpty()) return emptyList();
 		PersistentTransition first = new PersistentTransition(transitions.get(0), before);
 		transitions.remove(0);
 		List<PersistentTransition> result = new ArrayList<>();
@@ -170,19 +178,19 @@ public class PersistentTransition {
 
 
 	public PersistentTransition copyWithNewDestState(Map<String, String> destState){
-		return  new PersistentTransition(name, params, outputParameters, destState, destStateNotChanged, additionalPredicates);
+		return  new PersistentTransition(name, params, results, destState, destStateNotChanged, preds);
 	}
 
 	public PersistentTransition copyWithNewParameters(Map<String, String> params){
-		return  new PersistentTransition(name, params, outputParameters, destState, destStateNotChanged, additionalPredicates);
+		return  new PersistentTransition(name, params, results, destState, destStateNotChanged, preds);
 	}
 
 	public PersistentTransition copyWithNewOutputParameters(Map<String, String> outputParameters){
-		return  new PersistentTransition(name, params, outputParameters, destState, destStateNotChanged, additionalPredicates);
+		return  new PersistentTransition(name, params, outputParameters, destState, destStateNotChanged, preds);
 	}
 
 	public PersistentTransition copyWithDestStateNotChanged(Set<String> destStateNotChanged){
-		return  new PersistentTransition(name, params, outputParameters, destState, destStateNotChanged, additionalPredicates);
+		return  new PersistentTransition(name, params, results, destState, destStateNotChanged, preds);
 	}
 
 	private void addValuesToDestState2(Map<IEvalElement, AbstractEvalResult> map,  PersistentTransition transitionBefore) {
@@ -223,23 +231,42 @@ public class PersistentTransition {
 
 
 	public Set<String> getDestStateNotChanged() {
+		if(destStateNotChanged==null){
+			return emptySet();
+		}
 		return new HashSet<>(this.destStateNotChanged);
+
+
 	}
 
 	public List<String> getAdditionalPredicates() {
-		return new ArrayList<>(this.additionalPredicates);
+		if(preds == null){
+			return emptyList();
+		}
+		return new ArrayList<>(this.preds);
 	}
 
 	public Map<String, String> getParameters() {
+		if(params == null){
+			return emptyMap();
+		}
 		return new HashMap<>(this.params);
 	}
 
 
 	public Map<String, String> getOutputParameters() {
-		return new HashMap<>(outputParameters);
+		if(results == null){
+			return emptyMap();
+		}
+		return new HashMap<>(results);
 	}
 
 	public Map<String, String> getDestinationStateVariables() {
+
+		if(destState == null){
+			return emptyMap();
+		}
+
 		return new HashMap<>(this.destState);
 	}
 
@@ -261,8 +288,8 @@ public class PersistentTransition {
 				if(((PersistentTransition) obj).params.equals(this.params)){
 					if(((PersistentTransition) obj).destState.equals(this.destState)){
 						if(((PersistentTransition) obj).destStateNotChanged.equals(this.destStateNotChanged)){
-							if(((PersistentTransition) obj).outputParameters.equals(this.outputParameters)){
-								return ((PersistentTransition) obj).additionalPredicates.equals(this.additionalPredicates);
+							if(((PersistentTransition) obj).results.equals(this.results)){
+								return ((PersistentTransition) obj).preds.equals(this.preds);
 							}
 						}
 					}
@@ -277,6 +304,6 @@ public class PersistentTransition {
 	@Override
 	public String toString() {
 		return "PersistentTransition:" + name +  params.toString()  + destState.toString()
-				+ outputParameters.toString()  +destStateNotChanged.toString() ;
+				+ results.toString()  +destStateNotChanged.toString() ;
 	}
 }
