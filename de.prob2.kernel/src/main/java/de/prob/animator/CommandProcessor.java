@@ -62,8 +62,8 @@ class CommandProcessor {
 		         System.out.println("Callback request: " + result);
 			     PrologTermStringOutput callbackres = new PrologTermStringOutput();
 			     // TO DO: provide way to deal with some call-backs: 
-			     //  - parsing formulas, 
-			     //  - inspecting if command should be interrupted
+			     //  - parsing formulas (new ClassicalB(formulaToEval, FormulaExpand.EXPAND) ?)
+			     //  - inspecting if command should be interrupted (Thread.interrupted() ?)
 			     callbackres.printAtom("call_back_not_supported");
 		         result = cli.send(callbackres.fullstop().toString());
 		     }
