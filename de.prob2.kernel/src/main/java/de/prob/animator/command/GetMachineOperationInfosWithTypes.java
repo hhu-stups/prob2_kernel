@@ -7,7 +7,6 @@ import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.OperationInfo;
-import de.prob.statespace.TypedOperationInfo;
 
 import java.util.ArrayList;
 import java.util.Collections;
