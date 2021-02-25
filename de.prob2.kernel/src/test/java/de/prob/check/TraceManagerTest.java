@@ -12,12 +12,12 @@ import com.google.inject.Injector;
 import com.google.inject.Stage;
 
 import de.prob.JsonManagerStubModule;
-import de.prob.MainModule;
 import de.prob.ProBKernelStub;
 import de.prob.check.tracereplay.PersistentTrace;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.AbstractJsonFile;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
+import de.prob.cli.CliTestCommon;
 import de.prob.json.JsonMetadata;
 import de.prob.json.JsonMetadataBuilder;
 import de.prob.scripting.ModelTranslationError;
@@ -40,8 +40,7 @@ public class TraceManagerTest {
 		if(traceManager==null && proBKernelStub==null) {
 			Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new JsonManagerStubModule());
 			this.traceManager = injector.getInstance(TraceManager.class);
-			Injector injector1 = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
-			this.proBKernelStub = injector1.getInstance(ProBKernelStub.class);
+			this.proBKernelStub = CliTestCommon.getInjector().getInstance(ProBKernelStub.class);
 		}
 		
 	}

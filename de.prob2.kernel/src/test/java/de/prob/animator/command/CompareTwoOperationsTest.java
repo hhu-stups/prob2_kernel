@@ -1,24 +1,21 @@
 package de.prob.animator.command;
 
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Stage;
-import de.prob.MainModule;
+
 import de.prob.ProBKernelStub;
+import de.prob.cli.CliTestCommon;
 import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.scripting.ModelTranslationError;
-import org.junit.Assert;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 public class CompareTwoOperationsTest {
 
@@ -28,8 +25,7 @@ public class CompareTwoOperationsTest {
 	@BeforeEach
 	public void createJsonManager(){
 		if(proBKernelStub==null) {
-			Injector injector1 = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
-			this.proBKernelStub = injector1.getInstance(ProBKernelStub.class);
+			this.proBKernelStub = CliTestCommon.getInjector().getInstance(ProBKernelStub.class);
 		}
 	}
 	

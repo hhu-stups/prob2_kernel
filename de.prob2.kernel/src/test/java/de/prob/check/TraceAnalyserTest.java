@@ -11,6 +11,7 @@ import de.prob.check.tracereplay.check.TraceAnalyser;
 import de.prob.check.tracereplay.check.TraceExplorer;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
+import de.prob.cli.CliTestCommon;
 import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.StateSpace;
 import org.junit.Assert;
@@ -35,8 +36,7 @@ public class TraceAnalyserTest {
 		if(traceManager==null && proBKernelStub==null) {
 			Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new JsonManagerStubModule());
 			this.traceManager = injector.getInstance(TraceManager.class);
-			Injector injector1 = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
-			this.proBKernelStub = injector1.getInstance(ProBKernelStub.class);
+			this.proBKernelStub = CliTestCommon.getInjector().getInstance(ProBKernelStub.class);
 		}
 
 	}

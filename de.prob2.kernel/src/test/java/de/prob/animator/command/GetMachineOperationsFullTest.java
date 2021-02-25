@@ -1,21 +1,20 @@
 package de.prob.animator.command;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Stage;
-import de.prob.MainModule;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+
 import de.prob.ProBKernelStub;
+import de.prob.cli.CliTestCommon;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.scripting.ModelTranslationError;
-import org.junit.Assert;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -26,8 +25,7 @@ public class GetMachineOperationsFullTest {
 	@BeforeEach
 	public void createJsonManager(){
 		if(proBKernelStub==null) {
-			Injector injector1 = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
-			this.proBKernelStub = injector1.getInstance(ProBKernelStub.class);
+			this.proBKernelStub = CliTestCommon.getInjector().getInstance(ProBKernelStub.class);
 		}
 	}
 	

@@ -1,29 +1,42 @@
 package de.prob.check;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Stage;
+
 import de.prob.JsonManagerStubModule;
-import de.prob.MainModule;
 import de.prob.ProBKernelStub;
 import de.prob.check.tracereplay.PersistentTransition;
-import de.prob.check.tracereplay.check.*;
+import de.prob.check.tracereplay.check.PersistenceDelta;
+import de.prob.check.tracereplay.check.RenamingDelta;
+import de.prob.check.tracereplay.check.ReplayOptions;
+import de.prob.check.tracereplay.check.TraceAnalyser;
+import de.prob.check.tracereplay.check.TraceChecker;
+import de.prob.check.tracereplay.check.TraceExplorer;
+import de.prob.check.tracereplay.check.TraceModifier;
 import de.prob.check.tracereplay.check.exceptions.DeltaCalculationException;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
+import de.prob.cli.CliTestCommon;
 import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.Collections.*;
 
@@ -37,8 +50,7 @@ public class TraceExplorerTypeIVIntegration {
 		if(traceManager==null && proBKernelStub==null) {
 			Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new JsonManagerStubModule());
 			this.traceManager = injector.getInstance(TraceManager.class);
-			Injector injector1 = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
-			this.proBKernelStub = injector1.getInstance(ProBKernelStub.class);
+			this.proBKernelStub = CliTestCommon.getInjector().getInstance(ProBKernelStub.class);
 		}
 
 	}
@@ -275,9 +287,7 @@ public class TraceExplorerTypeIVIntegration {
 
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "complexExample", "large5000Steps.prob2trace"));
 
-		Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
-
-		TraceChecker traceChecker = new TraceChecker(jsonFile.getTrace().getTransitionList(), jsonFile.getMachineOperationInfos(), newInfos, new HashSet<>(oldVars), new HashSet<>(stateSpace2.getLoadedMachine().getVariableNames()), oldPath.toString(), newPath.toString(), injector, new TestUtils.StubFactoryImplementation(),
+		TraceChecker traceChecker = new TraceChecker(jsonFile.getTrace().getTransitionList(), jsonFile.getMachineOperationInfos(), newInfos, new HashSet<>(oldVars), new HashSet<>(stateSpace2.getLoadedMachine().getVariableNames()), oldPath.toString(), newPath.toString(), CliTestCommon.getInjector(), new TestUtils.StubFactoryImplementation(),
 				new ReplayOptions(),
 				new TestUtils.ProgressStubFactory());
 

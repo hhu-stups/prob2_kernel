@@ -1,35 +1,39 @@
 package de.prob.check;
 
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Stage;
+
 import de.prob.JsonManagerStubModule;
-import de.prob.MainModule;
 import de.prob.ProBKernelStub;
 import de.prob.animator.command.ConstructTraceCommand;
 import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.PersistenceDelta;
-import de.prob.check.tracereplay.check.TraceCheckerUtils;
 import de.prob.check.tracereplay.check.TraceExplorer;
 import de.prob.check.tracereplay.json.TraceManager;
-import de.prob.check.tracereplay.json.storage.TraceJsonFile;
+import de.prob.cli.CliTestCommon;
 import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
 import de.prob.statespace.Transition;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
@@ -45,8 +49,7 @@ public class TraceExplorerIntegrationTest {
 		if(traceManager==null && proBKernelStub==null) {
 			Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new JsonManagerStubModule());
 			this.traceManager = injector.getInstance(TraceManager.class);
-			Injector injector1 = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
-			this.proBKernelStub = injector1.getInstance(ProBKernelStub.class);
+			this.proBKernelStub = CliTestCommon.getInjector().getInstance(ProBKernelStub.class);
 		}
 
 	}

@@ -1,25 +1,21 @@
 package de.prob.animator.command;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Stage;
-import de.prob.MainModule;
-import de.prob.ProBKernelStub;
-import de.prob.scripting.ModelTranslationError;
-import de.prob.statespace.OperationInfo;
-import de.prob.statespace.StateSpace;
-import org.apache.groovy.util.Maps;
-import org.junit.Assert;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import de.prob.ProBKernelStub;
+import de.prob.cli.CliTestCommon;
+import de.prob.scripting.ModelTranslationError;
+import de.prob.statespace.OperationInfo;
+import de.prob.statespace.StateSpace;
+
+import org.apache.groovy.util.Maps;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -31,8 +27,7 @@ public class GetMachineOperationInfosWithTypesTest {
 	@BeforeEach
 	public void createJsonManager() {
 		if (proBKernelStub == null) {
-			Injector injector1 = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
-			this.proBKernelStub = injector1.getInstance(ProBKernelStub.class);
+			this.proBKernelStub = CliTestCommon.getInjector().getInstance(ProBKernelStub.class);
 		}
 	}
 

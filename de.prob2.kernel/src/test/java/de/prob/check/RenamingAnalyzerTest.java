@@ -1,13 +1,28 @@
 package de.prob.check;
 
-import com.google.inject.Guice;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import com.google.inject.Injector;
-import com.google.inject.Stage;
-import de.prob.MainModule;
+
 import de.prob.animator.ReusableAnimator;
-import de.prob.check.tracereplay.check.*;
+import de.prob.check.tracereplay.check.CheckerInterface;
+import de.prob.check.tracereplay.check.PrepareOperationsInterface;
+import de.prob.check.tracereplay.check.RenamingAnalyzer;
+import de.prob.check.tracereplay.check.RenamingDelta;
+import de.prob.check.tracereplay.check.Triple;
 import de.prob.check.tracereplay.check.exceptions.DeltaCalculationException;
 import de.prob.check.tracereplay.check.exceptions.PrologTermNotDefinedException;
+import de.prob.cli.CliTestCommon;
 import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.scripting.FactoryProvider;
@@ -15,14 +30,9 @@ import de.prob.scripting.ModelFactory;
 import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.Collections.*;
 
@@ -177,7 +187,7 @@ public class RenamingAnalyzerTest {
 		String pathAsString = path.toAbsolutePath().toString();
 
 
-		Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
+		Injector injector = CliTestCommon.getInjector();
 		ReusableAnimator reusableAnimator = injector.getInstance(ReusableAnimator.class);
 		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension(pathAsStringOld.substring(pathAsStringOld.lastIndexOf(".")+1)));
 		StateSpace stateSpace = reusableAnimator.createStateSpace();
@@ -208,7 +218,7 @@ public class RenamingAnalyzerTest {
 		Path path = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "Lift.mch");
 		String pathAsString = path.toAbsolutePath().toString();
 
-		Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
+		Injector injector = CliTestCommon.getInjector();
 		ReusableAnimator reusableAnimator = injector.getInstance(ReusableAnimator.class);
 		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension(pathAsStringOld.substring(pathAsStringOld.lastIndexOf(".")+1)));
 		StateSpace stateSpace = reusableAnimator.createStateSpace();
@@ -242,7 +252,7 @@ public class RenamingAnalyzerTest {
 		Path path = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "Lift.mch");
 		String pathAsString = path.toAbsolutePath().toString();
 
-		Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
+		Injector injector = CliTestCommon.getInjector();
 		ReusableAnimator reusableAnimator = injector.getInstance(ReusableAnimator.class);
 		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension(pathAsStringOld.substring(pathAsStringOld.lastIndexOf(".")+1)));
 		StateSpace stateSpace = reusableAnimator.createStateSpace();
@@ -276,7 +286,7 @@ public class RenamingAnalyzerTest {
 		Path path = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "LiftWithLevels.mch");
 		String pathAsString = path.toAbsolutePath().toString();
 
-		Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
+		Injector injector = CliTestCommon.getInjector();
 		ReusableAnimator reusableAnimator = injector.getInstance(ReusableAnimator.class);
 		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension(pathAsStringOld.substring(pathAsStringOld.lastIndexOf(".")+1)));
 		StateSpace stateSpace = reusableAnimator.createStateSpace();
@@ -329,7 +339,7 @@ public class RenamingAnalyzerTest {
 		Path path = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "Lift", "LiftWithLevels.mch");
 		String pathAsString = path.toAbsolutePath().toString();
 
-		Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
+		Injector injector = CliTestCommon.getInjector();
 		ReusableAnimator reusableAnimator = injector.getInstance(ReusableAnimator.class);
 		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension(pathAsStringOld.substring(pathAsStringOld.lastIndexOf(".")+1)));
 		StateSpace stateSpace = reusableAnimator.createStateSpace();
@@ -363,7 +373,7 @@ public class RenamingAnalyzerTest {
 		Path path = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "changedTypeIIandTypeIII", "LiftProto2.mch");
 		String pathAsString = path.toAbsolutePath().toString();
 
-		Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
+		Injector injector = CliTestCommon.getInjector();
 		ReusableAnimator reusableAnimator = injector.getInstance(ReusableAnimator.class);
 		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension(pathAsStringOld.substring(pathAsStringOld.lastIndexOf(".")+1)));
 		StateSpace stateSpace = reusableAnimator.createStateSpace();
@@ -404,7 +414,7 @@ public class RenamingAnalyzerTest {
 		Path path = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "refinements", "TrafficLight.mch");
 		String pathAsString = path.toAbsolutePath().toString();
 
-		Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
+		Injector injector = CliTestCommon.getInjector();
 		ReusableAnimator reusableAnimator = injector.getInstance(ReusableAnimator.class);
 		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension(pathAsStringOld.substring(pathAsStringOld.lastIndexOf(".")+1)));
 		StateSpace stateSpace = reusableAnimator.createStateSpace();
@@ -441,7 +451,7 @@ public class RenamingAnalyzerTest {
 		Path path = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "complexExample", "PitmanController_v6_v2.mch");
 		String pathAsString = path.toAbsolutePath().toString();
 
-		Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
+		Injector injector = CliTestCommon.getInjector();
 		ReusableAnimator reusableAnimator = injector.getInstance(ReusableAnimator.class);
 		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension(pathAsStringOld.substring(pathAsStringOld.lastIndexOf(".")+1)));
 		StateSpace stateSpace = reusableAnimator.createStateSpace();
