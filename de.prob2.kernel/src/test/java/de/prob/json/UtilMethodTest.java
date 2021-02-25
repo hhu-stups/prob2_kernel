@@ -9,6 +9,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 
 import de.prob.check.tracereplay.PersistentTrace;
 import de.prob.check.tracereplay.PersistentTransition;
@@ -25,7 +27,7 @@ public class UtilMethodTest {
 	@Before
 	public void createJsonManager(){
 		if(jsonManager==null) {
-			JsonManager<PersistentTrace> jsonManager = CliTestCommon.getInjector().getInstance(JsonManagerStub.class).jsonManager;
+			JsonManager<PersistentTrace> jsonManager = CliTestCommon.getInjector().getInstance(Key.get(new TypeLiteral<JsonManager<PersistentTrace>>() {}));
 			jsonManager.initContext(new JsonManager.Context<>(new Gson(), PersistentTrace.class, "Trace", 1));
 			this.jsonManager = jsonManager;
 		}
