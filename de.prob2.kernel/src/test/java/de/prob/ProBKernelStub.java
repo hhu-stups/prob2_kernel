@@ -2,7 +2,6 @@ package de.prob;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.function.Function;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -46,17 +45,9 @@ public class ProBKernelStub {
 
 		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension("mch"));
 		StateSpace stateSpace = reusableAnimator.createStateSpace();
-		Function<StateSpace, Trace> function = stateSpace1 -> {
-			try {
-				factory.extract(path.toString()).loadIntoStateSpace(stateSpace);
-			} catch (IOException | ModelTranslationError e) {
-				e.printStackTrace();
-
-			}
-			return new Trace(stateSpace);
-		};
-		animationSelector.changeCurrentAnimation(function.apply(stateSpace));
+		factory.extract(path.toString()).loadIntoStateSpace(stateSpace);
 		trace = new Trace(stateSpace);
+		animationSelector.changeCurrentAnimation(trace);
 		return stateSpace.getLoadedMachine();
 	}
 
