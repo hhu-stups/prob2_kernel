@@ -8,11 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Stage;
-
-import de.prob.JsonManagerStubModule;
 import de.prob.ProBKernelStub;
 import de.prob.check.tracereplay.check.PersistenceDelta;
 import de.prob.check.tracereplay.check.RenamingDelta;
@@ -42,8 +37,7 @@ public class TraceCheckerTest {
 	@BeforeEach
 	public void createJsonManager(){
 		if(traceManager==null && proBKernelStub==null) {
-			Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new JsonManagerStubModule());
-			this.traceManager = injector.getInstance(TraceManager.class);
+			this.traceManager = CliTestCommon.getInjector().getInstance(TraceManager.class);
 			this.proBKernelStub = CliTestCommon.getInjector().getInstance(ProBKernelStub.class);
 		}
 
@@ -78,7 +72,7 @@ public class TraceCheckerTest {
 				new HashSet<>(oldVars),
 				new HashSet<>(newVars), 
 				newPath.toString(),
-				Guice.createInjector(Stage.DEVELOPMENT, new JsonManagerStubModule()),
+				CliTestCommon.getInjector(),
 				new TestUtils.StubFactoryImplementation(),
 				new ReplayOptions(),
 				new TestUtils.ProgressStubFactory());
@@ -111,7 +105,7 @@ public class TraceCheckerTest {
 				new HashSet<>(jsonFile.getVariableNames()),
 				new HashSet<>(stateSpace.getLoadedMachine().getVariableNames()),
 				newPath.toString(),
-				Guice.createInjector(Stage.DEVELOPMENT, new JsonManagerStubModule()),
+				CliTestCommon.getInjector(),
 				new TestUtils.StubFactoryImplementation(),
 				new ReplayOptions(),
 				new TestUtils.ProgressStubFactory()
@@ -151,7 +145,7 @@ public class TraceCheckerTest {
 				new HashSet<>(newVars),
 				oldPath.toString(),
 				newPath.toString(),
-				Guice.createInjector(Stage.DEVELOPMENT, new JsonManagerStubModule()),
+				CliTestCommon.getInjector(),
 				new TestUtils.StubFactoryImplementation(),
 				new ReplayOptions(),
 				new TestUtils.ProgressStubFactory());

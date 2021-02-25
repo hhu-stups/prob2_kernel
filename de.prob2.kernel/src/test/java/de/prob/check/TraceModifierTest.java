@@ -12,11 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Stage;
-
-import de.prob.JsonManagerStubModule;
 import de.prob.ProBKernelStub;
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.RenamingDelta;
@@ -46,8 +41,7 @@ public class TraceModifierTest {
 	@BeforeEach
 	public void createJsonManager(){
 		if(traceManager==null && proBKernelStub==null) {
-			Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new JsonManagerStubModule());
-			this.traceManager = injector.getInstance(TraceManager.class);
+			this.traceManager = CliTestCommon.getInjector().getInstance(TraceManager.class);
 			this.proBKernelStub = CliTestCommon.getInjector().getInstance(ProBKernelStub.class);
 		}
 

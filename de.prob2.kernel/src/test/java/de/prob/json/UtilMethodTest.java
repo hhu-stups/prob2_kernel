@@ -1,23 +1,22 @@
 package de.prob.json;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Stage;
-import de.prob.JsonManagerStubModule;
-import de.prob.check.tracereplay.PersistentTrace;
-import de.prob.check.tracereplay.PersistentTransition;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+
+import de.prob.check.tracereplay.PersistentTrace;
+import de.prob.check.tracereplay.PersistentTransition;
+import de.prob.cli.CliTestCommon;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 public class UtilMethodTest {
 
@@ -26,8 +25,7 @@ public class UtilMethodTest {
 	@Before
 	public void createJsonManager(){
 		if(jsonManager==null) {
-			Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new JsonManagerStubModule());
-			JsonManager<PersistentTrace> jsonManager = injector.getInstance(JsonManagerStub.class).jsonManager;
+			JsonManager<PersistentTrace> jsonManager = CliTestCommon.getInjector().getInstance(JsonManagerStub.class).jsonManager;
 			jsonManager.initContext(new JsonManager.Context<>(new Gson(), PersistentTrace.class, "Trace", 1));
 			this.jsonManager = jsonManager;
 		}
