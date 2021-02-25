@@ -10,21 +10,18 @@ import de.prob.animator.command.AbstractCommand;
 import de.prob.check.tracereplay.PersistentTrace;
 import de.prob.scripting.ClassicalBFactory;
 import de.prob.scripting.ModelTranslationError;
-import de.prob.statespace.AnimationSelector;
 import de.prob.statespace.LoadedMachine;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
 
 public class ProBKernelStub {
 	private final ClassicalBFactory classicalBFactory;
-	private final AnimationSelector animationSelector;
 	private final ReusableAnimator reusableAnimator;
 	private Trace trace;
 
 	@Inject
-	public ProBKernelStub(ClassicalBFactory classicalBFactory, AnimationSelector animationSelector, ReusableAnimator reusableAnimator){
+	public ProBKernelStub(ClassicalBFactory classicalBFactory, ReusableAnimator reusableAnimator){
 		this.classicalBFactory = classicalBFactory;
-		this.animationSelector = animationSelector;
 		this.reusableAnimator = reusableAnimator;
 	}
 
@@ -39,7 +36,6 @@ public class ProBKernelStub {
 		StateSpace stateSpace = reusableAnimator.createStateSpace();
 		classicalBFactory.extract(path.toString()).loadIntoStateSpace(stateSpace);
 		trace = new Trace(stateSpace);
-		animationSelector.changeCurrentAnimation(trace);
 		return stateSpace.getLoadedMachine();
 	}
 
