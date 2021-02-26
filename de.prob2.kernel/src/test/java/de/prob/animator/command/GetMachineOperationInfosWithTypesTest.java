@@ -13,24 +13,26 @@ import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
 
 import org.apache.groovy.util.Maps;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
 public class GetMachineOperationInfosWithTypesTest {
+	private static ProBKernelStub proBKernelStub;
 
-	ProBKernelStub proBKernelStub = null;
-
-	@BeforeEach
-	public void createJsonManager() {
-		if (proBKernelStub == null) {
-			this.proBKernelStub = CliTestCommon.getInjector().getInstance(ProBKernelStub.class);
-		}
+	@BeforeAll
+	static void beforeAll() {
+		proBKernelStub = CliTestCommon.getInjector().getInstance(ProBKernelStub.class);
 	}
 
+	@AfterAll
+	static void afterAll() {
+		proBKernelStub.killCurrentAnimator();
+	}
 
 	@Test
 	public void get_prepared_operation_test_1() throws IOException, ModelTranslationError {

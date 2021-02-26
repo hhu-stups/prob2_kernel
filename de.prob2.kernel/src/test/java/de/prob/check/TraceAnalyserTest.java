@@ -10,7 +10,8 @@ import de.prob.cli.CliTestCommon;
 import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.StateSpace;
 import org.junit.Assert;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -22,17 +23,18 @@ import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 
 public class TraceAnalyserTest {
+	private static TraceManager traceManager;
+	private static ProBKernelStub proBKernelStub;
 
-	TraceManager traceManager = null;
-	ProBKernelStub proBKernelStub = null;
+	@BeforeAll
+	static void beforeAll() {
+		traceManager = CliTestCommon.getInjector().getInstance(TraceManager.class);
+		proBKernelStub = CliTestCommon.getInjector().getInstance(ProBKernelStub.class);
+	}
 
-	@BeforeEach
-	public void createJsonManager(){
-		if(traceManager==null && proBKernelStub==null) {
-			this.traceManager = CliTestCommon.getInjector().getInstance(TraceManager.class);
-			this.proBKernelStub = CliTestCommon.getInjector().getInstance(ProBKernelStub.class);
-		}
-
+	@AfterAll
+	static void afterAll() {
+		proBKernelStub.killCurrentAnimator();
 	}
 
 /*

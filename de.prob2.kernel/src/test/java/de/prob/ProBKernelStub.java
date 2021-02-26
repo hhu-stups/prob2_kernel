@@ -33,6 +33,7 @@ public class ProBKernelStub {
 	 * @throws ModelTranslationError exceptions thrown from prob
 	 */
 	public LoadedMachine load(Path path) throws IOException, ModelTranslationError {
+		killCurrentStateSpace();
 		StateSpace stateSpace = reusableAnimator.createStateSpace();
 		classicalBFactory.extract(path.toString()).loadIntoStateSpace(stateSpace);
 		trace = new Trace(stateSpace);

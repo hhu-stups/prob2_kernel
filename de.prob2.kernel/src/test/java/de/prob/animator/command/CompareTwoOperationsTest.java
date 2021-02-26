@@ -13,22 +13,23 @@ import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.scripting.ModelTranslationError;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class CompareTwoOperationsTest {
+	private static ProBKernelStub proBKernelStub;
 
-
-	ProBKernelStub proBKernelStub = null;
-
-	@BeforeEach
-	public void createJsonManager(){
-		if(proBKernelStub==null) {
-			this.proBKernelStub = CliTestCommon.getInjector().getInstance(ProBKernelStub.class);
-		}
+	@BeforeAll
+	static void beforeAll() {
+		proBKernelStub = CliTestCommon.getInjector().getInstance(ProBKernelStub.class);
 	}
 	
+	@AfterAll
+	static void afterAll() {
+		proBKernelStub.killCurrentAnimator();
+	}
 	
 	@Test
 	public void two_identical_operations_test() throws IOException, ModelTranslationError {
