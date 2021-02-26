@@ -19,6 +19,7 @@ import de.prob.parser.BindingGenerator;
 import de.prob.parser.PrologTermGenerator;
 import de.prob.parser.ProBResultParser;
 import de.prob.prolog.output.PrologTermStringOutput;
+import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;
 
 import org.slf4j.Logger;
@@ -59,12 +60,7 @@ class CommandProcessor {
 		         command.processProgressResult(PrologTermGenerator.toPrologTerm(ast));
 		         result = cli.receive(); // receive next term by Prolog
 		     } else {
-		         System.out.println("Callback request: " + result);
-			     PrologTermStringOutput callbackres = new PrologTermStringOutput();
-			     // TO DO: provide way to deal with some call-backs: 
-			     //  - parsing formulas (new ClassicalB(formulaToEval, FormulaExpand.EXPAND) ?)
-			     //  - inspecting if command should be interrupted (Thread.interrupted() ?)
-			     callbackres.printAtom("call_back_not_supported");
+			     IPrologTermOutput callbackres = command.processCallBack(PrologTermGenerator.toPrologTerm(ast));
 		         result = cli.send(callbackres.fullstop().toString());
 		     }
 		     ast = parseResult(result);

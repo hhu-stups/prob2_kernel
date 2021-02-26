@@ -14,6 +14,7 @@ import de.prob.parser.ISimplifiedROMap;
 import de.prob.parser.ResultParserException;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;
+import de.prob.prolog.output.PrologTermStringOutput;
 
 /**
  * The {@link AbstractCommand} class is used to implement composable
@@ -120,5 +121,31 @@ public abstract class AbstractCommand {
 	*/
 	public void processProgressResult(final PrologTerm progressInfo) {
 	   System.out.println("Progress info: " + progressInfo); // TO DO: replace by something more useful
+	}
+	
+	
+	/**
+	 * This code is called when the Prolog process sends a call_back term
+	   but hasn't finished computation yet
+	*/
+	public IPrologTermOutput processCallBack(final PrologTerm callBack) {
+	    System.out.println("Callback request from Prolog: " + callBack);
+	    
+	    if (callBack.hasFunctor("interrupt_requested",0)) {
+	       PrologTermStringOutput irq = new PrologTermStringOutput();
+	       if (Thread.interrupted()) {
+	          irq.printAtom("interrupt_is_requested");
+	       } else {
+	          irq.printAtom("not_requested");
+	       }
+	       System.out.println("irq: " + irq);
+		   return irq;
+	    }
+		 // TO DO: provide way to deal with some call-backs: 
+		 //  - parsing formulas (new ClassicalB(formulaToEval, FormulaExpand.EXPAND) ?)
+	   
+		PrologTermStringOutput callbackres = new PrologTermStringOutput();
+		callbackres.printAtom("call_back_not_supported");
+		return callbackres;
 	}
 }
