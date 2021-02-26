@@ -17,7 +17,6 @@ import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.PersistenceDelta;
 import de.prob.check.tracereplay.check.TraceExplorer;
-import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.cli.CliTestCommon;
 import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.OperationInfo;
@@ -34,12 +33,10 @@ import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 
 public class TraceExplorerIntegrationTest {
-	private static TraceManager traceManager;
 	private static ProBKernelStub proBKernelStub;
 
 	@BeforeAll
 	static void beforeAll() {
-		traceManager = CliTestCommon.getInjector().getInstance(TraceManager.class);
 		proBKernelStub = CliTestCommon.getInjector().getInstance(ProBKernelStub.class);
 	}
 
