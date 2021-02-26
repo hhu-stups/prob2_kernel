@@ -16,6 +16,12 @@ import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.prolog.output.PrologTermStringOutput;
 
+// for parse call_back:
+import de.be4.classicalb.core.parser.BParser;
+import de.be4.classicalb.core.parser.node.Start;
+import de.be4.classicalb.core.parser.analysis.prolog.ASTProlog;
+import de.be4.classicalb.core.parser.exceptions.BCompoundException;
+
 /**
  * The {@link AbstractCommand} class is used to implement composable
  * interactions with the ProB core. It defines two callback methods that are
@@ -140,9 +146,25 @@ public abstract class AbstractCommand {
 	       }
 	       System.out.println("irq: " + irq);
 		   return irq;
-	    }
-		 // TO DO: provide way to deal with some call-backs: 
-		 //  - parsing formulas (new ClassicalB(formulaToEval, FormulaExpand.EXPAND) ?)
+	    } else if (callBack.hasFunctor("parse_classical_b",1)) {
+		 // we could use: (new ClassicalB(formulaToEval, FormulaExpand.EXPAND), but
+		 // it will also try parsing as substitution and creates an uncessary UUID
+		 // TO DO : support multiple formulas, support parse_event_b call_back as well
+	        String toParse = PrologTerm.atomicString(callBack.getArgument(1));
+			try {
+			   Start ast = new BParser().parseFormula(toParse);
+			   PrologTermStringOutput pout = new PrologTermStringOutput();
+			   ASTProlog.printFormula(ast, pout);
+	           System.out.println("parse tree: " + pout);
+			   return pout;
+			} catch (BCompoundException e) {
+	            System.out.println("parse error exception: " + e);
+				PrologTermStringOutput perr = new PrologTermStringOutput();
+				perr.printAtom("parse_error"); 
+				// TO DO: return exception; ensure it is in usual format expected by prob_prolog
+				return perr;
+			}
+		}
 	   
 		PrologTermStringOutput callbackres = new PrologTermStringOutput();
 		callbackres.printAtom("call_back_not_supported");
