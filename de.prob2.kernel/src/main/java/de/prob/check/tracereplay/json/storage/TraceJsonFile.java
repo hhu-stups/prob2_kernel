@@ -1,5 +1,6 @@
 package de.prob.check.tracereplay.json.storage;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.prob.check.tracereplay.PersistentTrace;
@@ -8,20 +9,26 @@ import de.prob.statespace.LoadedMachine;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.Trace;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toMap;
 
 /**
  * Represents the trace file
  */
-@JsonPropertyOrder({"name", "description", "path", "trace", "variableNames", "machineOperationInfos", "constantNames", "setNames", "metadata"})
+@JsonPropertyOrder({"name", "description", "path", "trace", "variableNames", "machineOperationInfos", "constantNames", "setNames", "globalIdentifierTypes", "metadata"})
 public class TraceJsonFile extends AbstractJsonFile{
 
 	private final PersistentTrace trace;
 	private final List<String> variableNames;
 	private final List<String> constantNames;
 	private final List<String> setNames;
-	private final Map<String, OperationInfo> machineOperationInfos;
+	@JsonIgnore  private final Map<String, OperationInfo> machineOperationInfos;
+	private final Map<String, OperationInfo> reducedMachineOperationInfos;
+	private final Map<String, String> globalIdentifierTypes;
 
 
 	/**
@@ -38,6 +45,8 @@ public class TraceJsonFile extends AbstractJsonFile{
 		constantNames = trace.getStateSpace().getLoadedMachine().getConstantNames();
 		setNames = trace.getStateSpace().getLoadedMachine().getSetNames();
 		machineOperationInfos = trace.getStateSpace().getLoadedMachine().getOperations();
+		globalIdentifierTypes = createGlobalIdentifierMap(machineOperationInfos);
+		reducedMachineOperationInfos = cleanseOperationInfo(machineOperationInfos, globalIdentifierTypes);
 	}
 
 
@@ -57,6 +66,8 @@ public class TraceJsonFile extends AbstractJsonFile{
 		constantNames = machine.getConstantNames();
 		setNames = machine.getSetNames();
 		machineOperationInfos = machine.getOperations();
+		globalIdentifierTypes = createGlobalIdentifierMap(machineOperationInfos);
+		reducedMachineOperationInfos = cleanseOperationInfo(machineOperationInfos, globalIdentifierTypes);
 	}
 
 
@@ -78,7 +89,24 @@ public class TraceJsonFile extends AbstractJsonFile{
 						 @JsonProperty("machineOperationInfos") Map<String, OperationInfo> machineOperationInfos,
 						 @JsonProperty("constantNames") List<String> constantNames,
 						 @JsonProperty("setNames") List<String> setNames,
+						 @JsonProperty("globalIdentifierTypes") Map<String, String> globalIdentifierTypes,
 						 @JsonProperty("metadata") JsonMetadata metadata) {
+
+
+		super(name, description, metadata);
+		this.trace = trace;
+		this.variableNames = variableNames;
+		this.constantNames = constantNames;
+		this.setNames = setNames;
+		this.reducedMachineOperationInfos = machineOperationInfos;
+		this.globalIdentifierTypes = globalIdentifierTypes;
+		this.machineOperationInfos = reassembleTypeInfo(globalIdentifierTypes, machineOperationInfos);
+	}
+
+	private TraceJsonFile( String name, String description, PersistentTrace trace, List<String> variableNames,
+						   Map<String, OperationInfo> machineOperationInfos, List<String> constantNames, List<String> setNames,
+						   JsonMetadata metadata) {
+
 
 		super(name, description, metadata);
 		this.trace = trace;
@@ -86,7 +114,63 @@ public class TraceJsonFile extends AbstractJsonFile{
 		this.constantNames = constantNames;
 		this.setNames = setNames;
 		this.machineOperationInfos = machineOperationInfos;
+		this.globalIdentifierTypes = createGlobalIdentifierMap(machineOperationInfos);
+		this.reducedMachineOperationInfos = cleanseOperationInfo(machineOperationInfos, globalIdentifierTypes);
 	}
+
+
+	/**
+	 * Gets the global Type Infos, and the OperationInfos and produces new OperationInfos with the global type infos
+	 * worked into
+	 * @param globalTypeInfos the global infos
+	 * @param operationInfoMap the stored OperationInfos
+	 * @return the proper OperationInfos
+	 */
+	public static Map<String, OperationInfo> reassembleTypeInfo(Map<String, String> globalTypeInfos, Map<String, OperationInfo> operationInfoMap){
+		return  operationInfoMap.entrySet()
+				.stream()
+				.collect(toMap(Map.Entry::getKey, entry -> {
+
+					List<String> identifiers = entry.getValue().getAllVariables();
+					Map<String, String> bla = globalTypeInfos.entrySet().stream().filter(innerEntry -> identifiers.contains(innerEntry.getKey()))
+							.collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+					HashMap<String, String> oldMap = new HashMap<>(entry.getValue().getTypeMap());
+					oldMap.putAll(bla);
+
+					return entry.getValue().createOperationInfoWithNewTypeMap(oldMap);
+				}));
+	}
+
+	/**
+	 * Gets a map of OperationInfos and extract the type infos that are used in every operation
+	 * @param infos the map of operationInfos
+	 * @return the map of global type infos
+	 */
+	public static Map<String, String> createGlobalIdentifierMap(Map<String, OperationInfo> infos){
+		return infos.values().stream()
+				.flatMap(entry -> entry.getTypeMap().entrySet().stream()).collect(Collectors.toSet())
+				.stream()
+				.collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+	}
+
+
+	/**
+	 * Removes global identifier typing from operation infos
+	 * @param infos the infos to remove the typing from
+	 * @param globalIdentifierTypes the identifiers to be removed
+	 * @return the cleansed infos
+	 */
+	public static Map<String, OperationInfo> cleanseOperationInfo(Map<String, OperationInfo> infos, Map<String, String> globalIdentifierTypes) {
+		Map<String, OperationInfo> gna = infos.entrySet().stream().collect(toMap(Map.Entry::getKey, entry ->
+				entry.getValue().createOperationInfoWithNewTypeMap(entry.getValue().getTypeMap()
+						.entrySet()
+						.stream()
+						.filter(innerEntry -> !globalIdentifierTypes.containsKey(innerEntry.getKey()))
+						.collect(toMap(Map.Entry::getKey, Map.Entry::getValue)))));
+
+		return gna;
+	}
+
 
 
 	public PersistentTrace getTrace() {

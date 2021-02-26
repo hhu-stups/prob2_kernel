@@ -154,6 +154,11 @@ public class OperationInfo {
 
 	}
 
+	public OperationInfo createOperationInfoWithNewTypeMap(Map<String, String> info){
+		return new OperationInfo(operationName, parameterNames, outputParameterNames, topLevel, type, readVariables, writtenVariables, nonDetWrittenVariables, info);
+	}
+
+
 	@Override
 	public String toString() {
 		return MoreObjects.toStringHelper(this)
