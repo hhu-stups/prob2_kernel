@@ -27,7 +27,7 @@ public class PrepareOperationsTest {
 
 	@Test
 	public void get_prepared_operation_test() throws IOException, ModelTranslationError {
-		proBKernelStub.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "examplesForOperations", "machineWithOneOperation.mch"));
+		proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "examplesForOperations", "machineWithOneOperation.mch"));
 
 		GetMachineOperationsFull getMachineOperationsFull = new GetMachineOperationsFull();
 

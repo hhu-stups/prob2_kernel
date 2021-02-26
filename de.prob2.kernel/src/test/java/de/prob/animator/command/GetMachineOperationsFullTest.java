@@ -34,7 +34,7 @@ public class GetMachineOperationsFullTest {
 	
 	@Test
 	public void machine_with_one_operation() throws IOException, ModelTranslationError {
-		proBKernelStub.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "examplesForOperations", "machineWithOneOperation.mch"));
+		proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "examplesForOperations", "machineWithOneOperation.mch"));
 		GetMachineOperationsFull getMachineOperationsFull = new GetMachineOperationsFull();
 		proBKernelStub.executeCommand(getMachineOperationsFull);
 		String element1 = "b(initialisation(b(assign_single_id(b(identifier(cars),integer,[nodeid(pos(18,1,13,5,13,9)),loc(local,'ISLAND',abstract_variables),not_initialised]),b(integer(0),integer,[nodeid(pos(19,1,13,13,13,14))])),subst,[nodeid(pos(17,1,13,5,13,14))])))";
@@ -44,7 +44,7 @@ public class GetMachineOperationsFullTest {
 	
 	@Test
 	public void machine_with_no_operation() throws IOException, ModelTranslationError {
-		proBKernelStub.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "machineWithNoOperation.mch"));
+		proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "machineWithNoOperation.mch"));
 		GetMachineOperationsFull getMachineOperationsFull = new GetMachineOperationsFull();
 		proBKernelStub.executeCommand(getMachineOperationsFull);
 		List<String> expected = Collections.singletonList("b(initialisation(b(assign_single_id(b(identifier(floors),integer,[nodeid(pos(14,1,7,16,7,22)),loc(local,machineWithNoOperation,abstract_variables),not_initialised]),b(integer(0),integer,[nodeid(pos(15,1,7,26,7,27))])),subst,[nodeid(pos(13,1,7,16,7,27))])))");
@@ -53,7 +53,7 @@ public class GetMachineOperationsFullTest {
 	
 	@Test
 	public void machine_with_many_operations() throws IOException, ModelTranslationError {
-		proBKernelStub.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "testTraceMachine.mch"));
+		proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "testTraceMachine.mch"));
 		GetMachineOperationsFull getMachineOperationsFull = new GetMachineOperationsFull();
 		proBKernelStub.executeCommand(getMachineOperationsFull);
 		String element1 = "b(operation(inccc,[],[],b(precondition(b(less(b(identifier(floors),integer,[nodeid(pos(20,1,11,14,11,20)),loc(local,'Lift',abstract_variables)]),b(integer(2),integer,[nodeid(pos(21,1,11,21,11,22))])),pred,[nodeid(pos(19,1,11,14,11,22))]),b(assign_single_id(b(identifier(floors),integer,[nodeid(pos(23,1,11,28,11,34)),loc(local,'Lift',abstract_variables)]),b(add(b(identifier(floors),integer,[nodeid(pos(25,1,11,38,11,44)),loc(local,'Lift',abstract_variables)]),b(integer(1),integer,[nodeid(pos(26,1,11,47,11,48))])),integer,[nodeid(pos(24,1,11,38,11,48))])),subst,[nodeid(pos(22,1,11,28,11,48))])),subst,[nodeid(pos(18,1,11,10,11,52))])))";
@@ -70,7 +70,7 @@ public class GetMachineOperationsFullTest {
 
 	@Test
 	public void get_full_map() throws IOException, ModelTranslationError {
-		proBKernelStub.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "testTraceMachine.mch"));
+		proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "testTraceMachine.mch"));
 		GetMachineOperationsFull getMachineOperationsFull = new GetMachineOperationsFull();
 		proBKernelStub.executeCommand(getMachineOperationsFull);
 		Assertions.assertEquals(4, getMachineOperationsFull.getOperationsWithNames().size());

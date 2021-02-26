@@ -17,7 +17,8 @@ import de.prob.cli.CliTestCommon;
 import de.prob.json.JsonMetadata;
 import de.prob.json.JsonMetadataBuilder;
 import de.prob.scripting.ModelTranslationError;
-import de.prob.statespace.LoadedMachine;
+import de.prob.statespace.StateSpace;
+import de.prob.statespace.Trace;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -45,7 +46,7 @@ public class TraceManagerTest {
 	public void serialize_correct_data_structure_test(@TempDir Path tempDir) throws IOException, ModelTranslationError {
 
 		Path tempDirPath = tempDir.resolve("testFile.txt");
-		LoadedMachine loadedMachine = proBKernelStub.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "ExampleMachine.mch"));
+		final StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "ExampleMachine.mch"));
 
 		JsonMetadata metadata = new JsonMetadataBuilder("Trace", 2)
 			.withSavedNow()
@@ -53,8 +54,8 @@ public class TraceManagerTest {
 			.withProBCliVersion("version")
 			.withModelName("Lift")
 			.build();
-		PersistentTrace persistentTrace = proBKernelStub.getATrace();
-		AbstractJsonFile abstractJsonFile = new TraceJsonFile("testFile", "description", persistentTrace, loadedMachine, metadata);
+		PersistentTrace persistentTrace = new PersistentTrace(new Trace(stateSpace));
+		AbstractJsonFile abstractJsonFile = new TraceJsonFile("testFile", "description", persistentTrace, stateSpace.getLoadedMachine(), metadata);
 		traceManager.save(tempDirPath, abstractJsonFile);
 	}
 

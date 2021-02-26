@@ -33,7 +33,7 @@ public class CompareTwoOperationsTest {
 	
 	@Test
 	public void two_identical_operations_test() throws IOException, ModelTranslationError {
-		proBKernelStub.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "examplesForOperations", "machineWithOneOperation.mch"));
+		proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "examplesForOperations", "machineWithOneOperation.mch"));
 
 		CompoundPrologTerm compoundPrologTerm1 = new CompoundPrologTerm("b",
 				new CompoundPrologTerm("operation", new CompoundPrologTerm("inccc"), new ListPrologTerm(), new ListPrologTerm(),
@@ -64,7 +64,7 @@ public class CompareTwoOperationsTest {
 
 	@Test
 	public void renamed_operations_test() throws IOException, ModelTranslationError {
-		proBKernelStub.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "examplesForOperations", "machineWithOneOperation.mch"));
+		proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "examplesForOperations", "machineWithOneOperation.mch"));
 
 		CompoundPrologTerm compoundPrologTerm1 = new CompoundPrologTerm("b",
 				new CompoundPrologTerm("operation", new CompoundPrologTerm("inccc"), new ListPrologTerm(), new ListPrologTerm(),
