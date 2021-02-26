@@ -12,6 +12,7 @@ import de.prob.cli.CliTestCommon;
 import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.scripting.ModelTranslationError;
+import de.prob.statespace.StateSpace;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -33,7 +34,7 @@ public class CompareTwoOperationsTest {
 	
 	@Test
 	public void two_identical_operations_test() throws IOException, ModelTranslationError {
-		proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "examplesForOperations", "machineWithOneOperation.mch"));
+		final StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "examplesForOperations", "machineWithOneOperation.mch"));
 
 		CompoundPrologTerm compoundPrologTerm1 = new CompoundPrologTerm("b",
 				new CompoundPrologTerm("operation", new CompoundPrologTerm("inccc"), new ListPrologTerm(), new ListPrologTerm(),
@@ -50,11 +51,11 @@ public class CompareTwoOperationsTest {
 
 		PrepareOperations prepareOperations1 = new PrepareOperations(compoundPrologTerm1);
 
-		proBKernelStub.executeCommand(prepareOperations1);
+		stateSpace.execute(prepareOperations1);
 
 		CompareTwoOperations compareTwoOperations =
 				new CompareTwoOperations(prepareOperations1.getPreparedOperation(), compoundPrologTerm1, prepareOperations1.getFoundVars(), prepareOperations1.getFreeVars(), new ObjectMapper());
-		proBKernelStub.executeCommand(compareTwoOperations);
+		stateSpace.execute(compareTwoOperations);
 		Map<String, String> expected = new HashMap<>();
 		expected.put("inccc", "inccc");
 		expected.put("floors", "floors");
@@ -64,7 +65,7 @@ public class CompareTwoOperationsTest {
 
 	@Test
 	public void renamed_operations_test() throws IOException, ModelTranslationError {
-		proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "examplesForOperations", "machineWithOneOperation.mch"));
+		final StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "examplesForOperations", "machineWithOneOperation.mch"));
 
 		CompoundPrologTerm compoundPrologTerm1 = new CompoundPrologTerm("b",
 				new CompoundPrologTerm("operation", new CompoundPrologTerm("inccc"), new ListPrologTerm(), new ListPrologTerm(),
@@ -94,11 +95,11 @@ public class CompareTwoOperationsTest {
 
 		PrepareOperations prepareOperations1 = new PrepareOperations(compoundPrologTerm1);
 
-		proBKernelStub.executeCommand(prepareOperations1);
+		stateSpace.execute(prepareOperations1);
 
 		CompareTwoOperations compareTwoOperations =
 				new CompareTwoOperations(prepareOperations1.getPreparedOperation(), compoundPrologTerm2, prepareOperations1.getFoundVars(), prepareOperations1.getFreeVars(), new ObjectMapper());
-		proBKernelStub.executeCommand(compareTwoOperations);
+		stateSpace.execute(compareTwoOperations);
 		Map<String, String> expected = new HashMap<>();
 		expected.put("inccc", "dinccc");
 		expected.put("floors", "floors");

@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import com.google.inject.Inject;
 
 import de.prob.animator.ReusableAnimator;
-import de.prob.animator.command.AbstractCommand;
 import de.prob.scripting.ClassicalBFactory;
 import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.StateSpace;
@@ -26,10 +25,6 @@ public class ProBKernelStub {
 		StateSpace stateSpace = reusableAnimator.createStateSpace();
 		classicalBFactory.extract(path.toString()).loadIntoStateSpace(stateSpace);
 		return stateSpace;
-	}
-	
-	public void executeCommand(AbstractCommand command){
-		reusableAnimator.execute(command);
 	}
 
 	public void killCurrentStateSpace(){

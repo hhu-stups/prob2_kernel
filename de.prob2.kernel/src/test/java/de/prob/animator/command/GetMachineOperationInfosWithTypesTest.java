@@ -36,11 +36,11 @@ public class GetMachineOperationInfosWithTypesTest {
 
 	@Test
 	public void get_prepared_operation_test_1() throws IOException, ModelTranslationError {
-		proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "examplesForOperations", "machineWithOneOperation.mch"));
+		final StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "examplesForOperations", "machineWithOneOperation.mch"));
 
 		GetMachineOperationInfosWithTypes getMachineOperationsFull = new GetMachineOperationInfosWithTypes();
 
-		proBKernelStub.executeCommand(getMachineOperationsFull);
+		stateSpace.execute(getMachineOperationsFull);
 
 		Map<String, String> expected = Maps.of("cars" , "integer", "maxCars", "integer");
 

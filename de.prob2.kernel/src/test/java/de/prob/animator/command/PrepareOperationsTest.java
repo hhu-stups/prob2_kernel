@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 import de.prob.ProBKernelStub;
 import de.prob.cli.CliTestCommon;
 import de.prob.scripting.ModelTranslationError;
+import de.prob.statespace.StateSpace;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.AfterAll;
@@ -27,15 +28,15 @@ public class PrepareOperationsTest {
 
 	@Test
 	public void get_prepared_operation_test() throws IOException, ModelTranslationError {
-		proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "examplesForOperations", "machineWithOneOperation.mch"));
+		final StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "examplesForOperations", "machineWithOneOperation.mch"));
 
 		GetMachineOperationsFull getMachineOperationsFull = new GetMachineOperationsFull();
 
-		proBKernelStub.executeCommand(getMachineOperationsFull);
+		stateSpace.execute(getMachineOperationsFull);
 
 		PrepareOperations prepareOperations = new PrepareOperations(getMachineOperationsFull.getOperationsWithNames().get("on"));
 
-		proBKernelStub.executeCommand(prepareOperations);
+		stateSpace.execute(prepareOperations);
 
 
 		Assert.assertEquals(3, prepareOperations.getFreeVars().size());
