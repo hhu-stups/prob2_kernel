@@ -22,6 +22,6 @@ public class EvalElementFactory {
 	}
 
 	private ClassicalB toClassicalB(final String content) {
-		return new ClassicalB(content.substring(content.indexOf(':') + 1), FormulaExpand.EXPAND);
+		return new ClassicalB(content.substring(content.indexOf(':') + 1), FormulaExpand.EXPAND,true); // TODO: check if AllowSubst required
 	}
 }
