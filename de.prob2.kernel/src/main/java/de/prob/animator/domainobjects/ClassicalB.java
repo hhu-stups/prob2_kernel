@@ -54,7 +54,7 @@ public class ClassicalB extends AbstractEvalElement implements IBEvalElement {
 	}
 
 	public ClassicalB(final String formula, final FormulaExpand expansion) {
-		this(parse(formula), expansion);
+		this(parse(formula,true), expansion);
 	}
 
 	/**
@@ -69,15 +69,20 @@ public class ClassicalB extends AbstractEvalElement implements IBEvalElement {
 		this(code, FormulaExpand.EXPAND);
 	}
 
-	private static Start parse(final String formula) {
+	private static Start parse(final String formula, Boolean AllowSubst) {
 		final BParser bParser = new BParser();
 		try {
 			return bParser.parseFormula(formula);
 		} catch (BCompoundException e) {
-			try {
-				return bParser.parseSubstitution(formula);
-			} catch (BCompoundException f) {
-				throw new EvaluationException(f.getMessage(), f);
+		    if (AllowSubst) {
+		       // also try parsing as substitution
+				try {
+					return bParser.parseSubstitution(formula);
+				} catch (BCompoundException f) {
+					throw new EvaluationException(f.getMessage(), f);
+				}
+			} else {
+				throw new EvaluationException(e.getMessage(), e);
 			}
 		}
 	}
