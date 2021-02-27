@@ -1,6 +1,8 @@
 package de.prob.check.tracereplay;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.prob.animator.domainobjects.AbstractEvalResult;
 import de.prob.animator.domainobjects.EvalResult;
 import de.prob.animator.domainobjects.FormulaExpand;
@@ -20,6 +22,7 @@ import java.util.Set;
 
 import static java.util.Collections.*;
 
+@JsonPropertyOrder({"name", "params", "results", "destState", "destStateNotChanged", "preds"})
 public class PersistentTransition {
 
 	private final String name;
@@ -223,11 +226,13 @@ public class PersistentTransition {
 		}
 	}
 
+	@JsonProperty("name")
 	public String getOperationName() {
 		return name;
 	}
 
 
+	@JsonProperty("destStateNotChanged")
 	public Set<String> getDestStateNotChanged() {
 		if(destStateNotChanged==null){
 			return emptySet();
@@ -237,6 +242,7 @@ public class PersistentTransition {
 
 	}
 
+	@JsonProperty("preds")
 	public List<String> getAdditionalPredicates() {
 		if(preds == null){
 			return emptyList();
@@ -244,6 +250,7 @@ public class PersistentTransition {
 		return new ArrayList<>(this.preds);
 	}
 
+	@JsonProperty("params")
 	public Map<String, String> getParameters() {
 		if(params == null){
 			return emptyMap();
@@ -252,6 +259,7 @@ public class PersistentTransition {
 	}
 
 
+	@JsonProperty("results")
 	public Map<String, String> getOutputParameters() {
 		if(results == null){
 			return emptyMap();
@@ -259,6 +267,8 @@ public class PersistentTransition {
 		return new HashMap<>(results);
 	}
 
+
+	@JsonProperty("destState")
 	public Map<String, String> getDestinationStateVariables() {
 
 		if(destState == null){
@@ -268,7 +278,7 @@ public class PersistentTransition {
 		return new HashMap<>(this.destState);
 	}
 
-
+	@JsonIgnore
 	public Map<String, String> getAllPredicates(){
 		Map<String, String> result = new HashMap<>();
 		result.putAll(getDestinationStateVariables());

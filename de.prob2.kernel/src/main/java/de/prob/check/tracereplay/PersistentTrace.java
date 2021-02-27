@@ -17,11 +17,9 @@ public class PersistentTrace {
 			return;
 		}
 		List<Transition> list = trace.getTransitionList();
-		transitionList.add(new PersistentTransition(list.get(count-1), true,
-				null));
+		transitionList.add(new PersistentTransition(list.get(count-1), true, null));
 		for (int i = count-2; i >= 0; i--) {
-			PersistentTransition trans = new PersistentTransition(list.get(i), true,
-					transitionList.get(0));
+			PersistentTransition trans = new PersistentTransition(list.get(i), true, transitionList.get(0));
 			transitionList.add(0,trans);
 		}
 	}

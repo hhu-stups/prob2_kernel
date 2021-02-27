@@ -1,9 +1,11 @@
 package de.prob.check.tracereplay.json.storage;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.prob.check.tracereplay.PersistentTrace;
+import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.json.JsonMetadata;
 import de.prob.statespace.LoadedMachine;
 import de.prob.statespace.OperationInfo;
@@ -19,61 +21,60 @@ import static java.util.stream.Collectors.toMap;
 /**
  * Represents the trace file
  */
-@JsonPropertyOrder({"name", "description", "path", "trace", "variableNames", "machineOperationInfos", "constantNames", "setNames", "globalIdentifierTypes", "metadata"})
-public class TraceJsonFile extends AbstractJsonFile{
+@JsonPropertyOrder({"description", "transitionList",  "variableNames", "constantNames", "setNames", "machineOperationInfos", "globalIdentifierTypes", "metadata"})
+public class TraceJsonFile {
 
-	private final PersistentTrace trace;
+	private final String description;
+	private final List<PersistentTransition> transitionList;
 	private final List<String> variableNames;
 	private final List<String> constantNames;
 	private final List<String> setNames;
-	@JsonIgnore  private final Map<String, OperationInfo> machineOperationInfos;
+	private final Map<String, OperationInfo> machineOperationInfos;
 	private final Map<String, OperationInfo> reducedMachineOperationInfos;
 	private final Map<String, String> globalIdentifierTypes;
-
+	private final JsonMetadata metadata;
 
 	/**
-	 *
-	 * @param name name of the file
-	 * @param description description of the file
 	 * @param trace the trace to be stored
 	 * @param metadata the metadata
 	 */
-	public TraceJsonFile(String name, String description, Trace trace, JsonMetadata metadata) {
-		super(name, description, metadata);
-		this.trace = new PersistentTrace(trace);
+	public TraceJsonFile(Trace trace, JsonMetadata metadata) {
+		PersistentTrace persistentTrace = new PersistentTrace(trace);
+		this.transitionList = persistentTrace.getTransitionList();
+		this.description = persistentTrace.getDescription();
 		variableNames = trace.getStateSpace().getLoadedMachine().getVariableNames();
 		constantNames = trace.getStateSpace().getLoadedMachine().getConstantNames();
 		setNames = trace.getStateSpace().getLoadedMachine().getSetNames();
 		machineOperationInfos = trace.getStateSpace().getLoadedMachine().getOperations();
 		globalIdentifierTypes = createGlobalIdentifierMap(machineOperationInfos);
 		reducedMachineOperationInfos = cleanseOperationInfo(machineOperationInfos, globalIdentifierTypes);
+		this.metadata = metadata;
 	}
 
 
 
 	/**
 	 *
-	 * @param name name of the file
-	 * @param description description of the file
 	 * @param trace the trace to be stored
 	 * @param machine the machine corresponding to the trace when it was created
 	 * @param metadata the metadata
 	 */
-	public TraceJsonFile(String name, String description, PersistentTrace trace, LoadedMachine machine, JsonMetadata metadata) {
-		super(name, description, metadata);
-		this.trace = trace;
+	public TraceJsonFile(PersistentTrace trace, LoadedMachine machine, JsonMetadata metadata) {
+		this.transitionList = trace.getTransitionList();
+		this.description = trace.getDescription();
 		variableNames = machine.getVariableNames();
 		constantNames = machine.getConstantNames();
 		setNames = machine.getSetNames();
 		machineOperationInfos = machine.getOperations();
 		globalIdentifierTypes = createGlobalIdentifierMap(machineOperationInfos);
 		reducedMachineOperationInfos = cleanseOperationInfo(machineOperationInfos, globalIdentifierTypes);
+		this.metadata = metadata;
+
 	}
 
 
 	/**
 	 * The constructor to deserialize files
-	 * @param name the name
 	 * @param description description
 	 * @param trace trace
 	 * @param variableNames variable names of the corresponding machine
@@ -82,9 +83,8 @@ public class TraceJsonFile extends AbstractJsonFile{
 	 * @param setNames name of sets operation infos of the corresponding machine
 	 * @param metadata metadata
 	 */
-	public TraceJsonFile(@JsonProperty("name") String name,
-						 @JsonProperty("description") String description,
-						 @JsonProperty("trace") PersistentTrace trace,
+	public TraceJsonFile(@JsonProperty("description") String description,
+						 @JsonProperty("trace") List<PersistentTransition> trace,
 						 @JsonProperty("variablesNames") List<String> variableNames,
 						 @JsonProperty("machineOperationInfos") Map<String, OperationInfo> machineOperationInfos,
 						 @JsonProperty("constantNames") List<String> constantNames,
@@ -93,29 +93,50 @@ public class TraceJsonFile extends AbstractJsonFile{
 						 @JsonProperty("metadata") JsonMetadata metadata) {
 
 
-		super(name, description, metadata);
-		this.trace = trace;
+		this.transitionList = trace;
+		this.description = description;
 		this.variableNames = variableNames;
 		this.constantNames = constantNames;
 		this.setNames = setNames;
 		this.reducedMachineOperationInfos = machineOperationInfos;
 		this.globalIdentifierTypes = globalIdentifierTypes;
 		this.machineOperationInfos = reassembleTypeInfo(globalIdentifierTypes, machineOperationInfos);
+		this.metadata = metadata;
+
 	}
 
-	private TraceJsonFile( String name, String description, PersistentTrace trace, List<String> variableNames,
+	public TraceJsonFile(PersistentTrace trace, List<String> variableNames,
 						   Map<String, OperationInfo> machineOperationInfos, List<String> constantNames, List<String> setNames,
 						   JsonMetadata metadata) {
 
 
-		super(name, description, metadata);
-		this.trace = trace;
+		this.transitionList = trace.getTransitionList();
+		this.description = trace.getDescription();
 		this.variableNames = variableNames;
 		this.constantNames = constantNames;
 		this.setNames = setNames;
 		this.machineOperationInfos = machineOperationInfos;
 		this.globalIdentifierTypes = createGlobalIdentifierMap(machineOperationInfos);
 		this.reducedMachineOperationInfos = cleanseOperationInfo(machineOperationInfos, globalIdentifierTypes);
+		this.metadata = metadata;
+
+	}
+
+	public TraceJsonFile(String description, List<PersistentTransition> trace, List<String> variableNames,
+						 Map<String, OperationInfo> machineOperationInfos, List<String> constantNames, List<String> setNames,
+						 JsonMetadata metadata) {
+
+
+		this.transitionList = trace;
+		this.description = description;
+		this.variableNames = variableNames;
+		this.constantNames = constantNames;
+		this.setNames = setNames;
+		this.machineOperationInfos = machineOperationInfos;
+		this.globalIdentifierTypes = createGlobalIdentifierMap(machineOperationInfos);
+		this.reducedMachineOperationInfos = cleanseOperationInfo(machineOperationInfos, globalIdentifierTypes);
+		this.metadata = metadata;
+
 	}
 
 
@@ -148,7 +169,8 @@ public class TraceJsonFile extends AbstractJsonFile{
 	 */
 	public static Map<String, String> createGlobalIdentifierMap(Map<String, OperationInfo> infos){
 		return infos.values().stream()
-				.flatMap(entry -> entry.getTypeMap().entrySet().stream()).collect(Collectors.toSet())
+				.flatMap(entry -> entry.getTypeMap().entrySet().stream().filter(innerEntry -> entry.getAllVariables().contains(innerEntry.getKey())))
+				.collect(Collectors.toSet())
 				.stream()
 				.collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
 	}
@@ -173,15 +195,15 @@ public class TraceJsonFile extends AbstractJsonFile{
 
 
 
-	public PersistentTrace getTrace() {
-		return trace;
+	public List<PersistentTransition> getTransitionList() {
+		return transitionList;
 	}
-
 
 	public List<String> getVariableNames() {
 		return variableNames;
 	}
 
+	@JsonIgnore
 	public Map<String, OperationInfo> getMachineOperationInfos() {
 		return machineOperationInfos;
 	}
@@ -194,9 +216,27 @@ public class TraceJsonFile extends AbstractJsonFile{
 		return setNames;
 	}
 
+	@JsonProperty("machineOperationInfos")
+	public Map<String, OperationInfo> getReducedMachineOperationInfos(){return reducedMachineOperationInfos;}
+
+	public Map<String, String> getGlobalIdentifierTypes(){return globalIdentifierTypes;}
+
+	public String getDescription(){
+		return description;
+	}
+
+	public JsonMetadata getMetadata(){
+		return metadata;
+	}
+
+
 
 	public TraceJsonFile changeTrace(PersistentTrace trace){
-		return new TraceJsonFile(super.getName(), getDescription(), trace, variableNames, machineOperationInfos, constantNames, setNames, getMetadata());
+		return new TraceJsonFile(trace, variableNames, machineOperationInfos, constantNames, setNames, getMetadata());
+	}
+
+	public TraceJsonFile changeDescription(String description){
+		return new TraceJsonFile(description, transitionList, variableNames, machineOperationInfos, constantNames, setNames, getMetadata());
 	}
 
 }

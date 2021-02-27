@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.inject.Inject;
-import de.prob.check.tracereplay.json.storage.AbstractJsonFile;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 
 import java.io.IOException;
@@ -14,7 +13,7 @@ import java.nio.file.Path;
 /**
  * Loads and safes traces
  */
-public class TraceManager implements IJsonManager {
+public class TraceManager  {
 
 	private final ObjectMapper objectMapper;
 
@@ -33,7 +32,6 @@ public class TraceManager implements IJsonManager {
 	 * @param path the path to load from
 	 * @return an object of the form AbstractJsonFile
 	 */
-	@Override
 	public TraceJsonFile load(Path path) throws IOException {
 		return objectMapper.readValue(path.toFile(), TraceJsonFile.class);
 	}
@@ -43,8 +41,7 @@ public class TraceManager implements IJsonManager {
 	 * @param location where to save
 	 * @param object   the object to be stored
 	 */
-	@Override
-	public void save(Path location, AbstractJsonFile object) throws IOException {
+	public void save(Path location, TraceJsonFile object) throws IOException {
 		this.objectMapper.writeValue(location.toFile(), object);
 	}
 

@@ -9,16 +9,22 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.inject.Inject;
 
+import de.prob.check.tracereplay.json.TraceManager;
+import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.json.JsonManager;
 import de.prob.json.JsonMetadata;
+import de.prob.json.JsonMetadataBuilder;
 import de.prob.json.ObjectWithMetadata;
+import de.prob.statespace.Trace;
+
+
 
 public class TraceLoaderSaver {
 
 	private final JsonManager<PersistentTrace> jsonManager;
 
 	@Inject
-	public TraceLoaderSaver(JsonManager<PersistentTrace> jsonManager) {
+	public TraceLoaderSaver(JsonManager<PersistentTrace> jsonManager, TraceManager traceManager) {
 		this.jsonManager = jsonManager;
 		final Gson gson = new GsonBuilder()
 			.disableHtmlEscaping()
@@ -54,6 +60,8 @@ public class TraceLoaderSaver {
 	public void save(PersistentTrace trace, Path location) throws IOException {
 		this.jsonManager.writeToFile(location, trace);
 	}
+
+
 
 	public JsonManager<PersistentTrace> getJsonManager() {
 		return jsonManager;

@@ -61,7 +61,7 @@ public class TraceExplorerTypeIVIntegration {
 
 		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result = new TraceExplorer(false, new TestUtils.StubFactoryImplementation(), new TestUtils.ProgressStubFactory())
 				.replayTrace(
-						jsonFile.getTrace().getTransitionList(),
+						jsonFile.getTransitionList().getTransitionList(),
 						stateSpace,
 						stateSpace.getLoadedMachine().getOperations(),
 						jsonFile.getMachineOperationInfos(),
@@ -85,7 +85,7 @@ public class TraceExplorerTypeIVIntegration {
 
 		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result = new TraceExplorer(false, new TestUtils.StubFactoryImplementation(), new TestUtils.ProgressStubFactory())
 				.replayTrace(
-						jsonFile.getTrace().getTransitionList(),
+						jsonFile.getTransitionList().getTransitionList(),
 						stateSpace,
 						stateSpace.getLoadedMachine().getOperations(),
 						jsonFile.getMachineOperationInfos(),
@@ -114,7 +114,7 @@ public class TraceExplorerTypeIVIntegration {
 
 		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result = new TraceExplorer(false, new TestUtils.StubFactoryImplementation(), new TestUtils.ProgressStubFactory())
 				.replayTrace(
-						jsonFile.getTrace().getTransitionList(),
+						jsonFile.getTransitionList().getTransitionList(),
 						stateSpace,
 						stateSpace.getLoadedMachine().getOperations(),
 						jsonFile.getMachineOperationInfos(),
@@ -151,7 +151,7 @@ public class TraceExplorerTypeIVIntegration {
 		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> replayedTrace =
 				new TraceExplorer(false, new TestUtils.StubFactoryImplementation(), new TestUtils.ProgressStubFactory())
 				.replayTrace(
-						jsonFile.getTrace().getTransitionList(),
+						jsonFile.getTransitionList().getTransitionList(),
 						stateSpace,
 						stateSpace.getLoadedMachine().getOperations(),
 						jsonFile.getMachineOperationInfos(),
@@ -163,7 +163,7 @@ public class TraceExplorerTypeIVIntegration {
 		Map<String, List<String>> expected1 = singletonMap("leave", singletonList("leave_with_car"));
 		Map<String, TraceAnalyser.AnalyserResult> expected2 = singletonMap("leave", TraceAnalyser.AnalyserResult.MixedNames);
 
-		Map<String, TraceAnalyser.AnalyserResult> resultCleaned = TraceAnalyser.analyze(singleton("leave"), new ArrayList<>(replayedTrace.values()).get(0), jsonFile.getTrace().getTransitionList());
+		Map<String, TraceAnalyser.AnalyserResult> resultCleaned = TraceAnalyser.analyze(singleton("leave"), new ArrayList<>(replayedTrace.values()).get(0), jsonFile.getTransitionList().getTransitionList());
 
 		Map<String, List<String>> result = TraceAnalyser.calculateIntermediate(singleton("leave"), new ArrayList<>(replayedTrace.values()).get(0));
 
@@ -183,7 +183,7 @@ public class TraceExplorerTypeIVIntegration {
 
 		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> evaluated = new TraceExplorer(false, new TestUtils.StubFactoryImplementation(), new TestUtils.ProgressStubFactory())
 				.replayTrace(
-						jsonFile.getTrace().getTransitionList(),
+						jsonFile.getTransitionList().getTransitionList(),
 						stateSpace,
 						stateSpace.getLoadedMachine().getOperations(),
 						jsonFile.getMachineOperationInfos(),
@@ -195,7 +195,7 @@ public class TraceExplorerTypeIVIntegration {
 
 
 
-		Map<String, TraceAnalyser.AnalyserResult> resultCleaned = TraceAnalyser.analyze(singleton("on"), new ArrayList<>(evaluated.values()).get(0), jsonFile.getTrace().getTransitionList());
+		Map<String, TraceAnalyser.AnalyserResult> resultCleaned = TraceAnalyser.analyze(singleton("on"), new ArrayList<>(evaluated.values()).get(0), jsonFile.getTransitionList().getTransitionList());
 		Map<String, List<String>> result = TraceAnalyser.calculateIntermediate(singleton("on"), new ArrayList<>(evaluated.values()).get(0));
 
 		Assertions.assertEquals(expected2, resultCleaned);
@@ -213,7 +213,7 @@ public class TraceExplorerTypeIVIntegration {
 
 		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> evaluated = new TraceExplorer(false, new TestUtils.StubFactoryImplementation(), new TestUtils.ProgressStubFactory())
 				.replayTrace(
-						jsonFile.getTrace().getTransitionList(),
+						jsonFile.getTransitionList().getTransitionList(),
 						stateSpace,
 						stateSpace.getLoadedMachine().getOperations(),
 						jsonFile.getMachineOperationInfos(),
@@ -225,7 +225,7 @@ public class TraceExplorerTypeIVIntegration {
 
 
 
-		Map<String, TraceAnalyser.AnalyserResult> resultCleaned = TraceAnalyser.analyze(singleton("on"), new ArrayList<>(evaluated.values()).get(0), jsonFile.getTrace().getTransitionList());
+		Map<String, TraceAnalyser.AnalyserResult> resultCleaned = TraceAnalyser.analyze(singleton("on"), new ArrayList<>(evaluated.values()).get(0), jsonFile.getTransitionList().getTransitionList());
 		Map<String, List<String>> result = TraceAnalyser.calculateIntermediate(singleton("on"), new ArrayList<>(evaluated.values()).get(0));
 
 		Assertions.assertEquals(expected2, resultCleaned);
@@ -243,7 +243,7 @@ public class TraceExplorerTypeIVIntegration {
 
 		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> evaluated = new TraceExplorer(false, new TestUtils.StubFactoryImplementation(), new TestUtils.ProgressStubFactory())
 				.replayTrace(
-						jsonFile.getTrace().getTransitionList(),
+						jsonFile.getTransitionList().getTransitionList(),
 						stateSpace,
 						stateSpace.getLoadedMachine().getOperations(),
 						jsonFile.getMachineOperationInfos(),
@@ -255,7 +255,7 @@ public class TraceExplorerTypeIVIntegration {
 
 
 
-		Map<String, TraceAnalyser.AnalyserResult> resultCleaned = TraceAnalyser.analyze(singleton("on"), new ArrayList<>(evaluated.values()).get(0), jsonFile.getTrace().getTransitionList());
+		Map<String, TraceAnalyser.AnalyserResult> resultCleaned = TraceAnalyser.analyze(singleton("on"), new ArrayList<>(evaluated.values()).get(0), jsonFile.getTransitionList().getTransitionList());
 		Map<String, List<String>> result = TraceAnalyser.calculateIntermediate(singleton("on"), new ArrayList<>(evaluated.values()).get(0));
 
 		Assertions.assertEquals(expected2, resultCleaned);
@@ -277,7 +277,9 @@ public class TraceExplorerTypeIVIntegration {
 
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "complexExample", "large5000Steps.prob2trace"));
 
-		TraceChecker traceChecker = new TraceChecker(jsonFile.getTrace().getTransitionList(), jsonFile.getMachineOperationInfos(), newInfos, new HashSet<>(oldVars), new HashSet<>(stateSpace2.getLoadedMachine().getVariableNames()), oldPath.toString(), newPath.toString(), CliTestCommon.getInjector(), new TestUtils.StubFactoryImplementation(),
+		Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new MainModule());
+
+		TraceChecker traceChecker = new TraceChecker(jsonFile.getTransitionList().getTransitionList(), jsonFile.getMachineOperationInfos(), newInfos, new HashSet<>(oldVars), new HashSet<>(stateSpace2.getLoadedMachine().getVariableNames()), oldPath.toString(), newPath.toString(), injector, new TestUtils.StubFactoryImplementation(),
 				new ReplayOptions(),
 				new TestUtils.ProgressStubFactory());
 
