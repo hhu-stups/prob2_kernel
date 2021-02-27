@@ -97,10 +97,6 @@ public class PersistentTransition {
 	}
 
 
-	public void addUnchangedValues(){
-
-	}
-
 	/**
 	 * Jackson constructor, only called by jackson deserializer
 	 * @param name the name of the transition
