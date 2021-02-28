@@ -12,6 +12,8 @@ import de.prob.statespace.StateSpace;
 import org.junit.Assert;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -37,83 +39,74 @@ public class TraceAnalyserTest {
 		proBKernelStub.killCurrentAnimator();
 	}
 
-/*
+
 
 	@Test
 	public void integration_test_new_intermediate_operation_1() throws IOException, ModelTranslationError {
-		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("/home", "sebastian",  "master-thesis", "examples", "typeIV", "one_intermediate_operation", "ISLAND2.mch"));
+		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test","resources", "de" , "prob", "testmachines", "traces", "typeIV" , "one_time_intermediate_operation", "ISLAND2.mch"));
 
-		TraceJsonFile jsonFile = traceManager.load(Paths.get("/home", "sebastian",  "master-thesis", "examples", "typeIV", "one_intermediate_operation", "island.prob2trace"));
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test","resources", "de" , "prob", "testmachines", "traces", "typeIV" , "one_time_intermediate_operation", "ISLAND.prob2trace"));
 
-		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result =
-				new TraceExplorer(false, new TestUtils.StubFactoryImplementation())
-						.replayTrace(
-								jsonFile.getTrace().getTransitionList(),
-								stateSpace,
-								jsonFile.getMachineOperationInfos(),
-								emptySet(),
-								singleton("on"),
-								emptySet(),
-								emptySet(),
-								emptySet());
+		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result = new TraceExplorer(false, new TestUtils.StubFactoryImplementation(), new TestUtils.ProgressStubFactory())
+				.replayTrace(
+						jsonFile.getTransitionList(),
+						stateSpace,
+						stateSpace.getLoadedMachine().getOperations(),
+						jsonFile.getMachineOperationInfos(),
+						emptySet(),
+						singleton("on"));
 
-		Map<String, TraceAnalyser.AnalyserResult> bla = TraceAnalyser.analyze(singleton("on"), result.values().stream().findFirst().get(), jsonFile.getTrace().getTransitionList());
+		Map<String, TraceAnalyser.AnalyserResult> bla = TraceAnalyser.analyze(singleton("on"), result.values().stream().findFirst().get(), jsonFile.getTransitionList());
 
-		Assert.assertEquals(1, bla.entrySet().size());
-		Assert.assertEquals(TraceAnalyser.AnalyserResult.Mixed, bla.get("on"));
+		Assertions.assertEquals(1, bla.entrySet().size());
+		Assertions.assertEquals(TraceAnalyser.AnalyserResult.Mixed, bla.get("on"));
 	}
 
 
 	@Test
 	public void integration_test_always_new_intermediate_operation_1() throws IOException, ModelTranslationError {
-		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("/home", "sebastian",  "master-thesis", "examples", "typeIV", "always_intermediate", "ISLAND2.mch"));
+		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test","resources", "de" , "prob", "testmachines", "traces", "typeIV" , "always_intermediate", "ISLAND2.mch"));
 
-		TraceJsonFile jsonFile = traceManager.load(Paths.get("/home", "sebastian",  "master-thesis", "examples", "typeIV", "always_intermediate", "island.prob2trace"));
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test","resources", "de" , "prob", "testmachines", "traces", "typeIV" , "always_intermediate", "ISLAND.prob2trace"));
 
 
-		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result =
-				new TraceExplorer(false, new TestUtils.StubFactoryImplementation())
-						.replayTrace(
-								jsonFile.getTrace().getTransitionList(),
-								stateSpace,
-								jsonFile.getMachineOperationInfos(),
-								emptySet(),
-								singleton("on"),
-								emptySet(),
-								emptySet(),
-								emptySet());
+		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result = new TraceExplorer(false, new TestUtils.StubFactoryImplementation(), new TestUtils.ProgressStubFactory())
+				.replayTrace(
+						jsonFile.getTransitionList(),
+						stateSpace,
+						stateSpace.getLoadedMachine().getOperations(),
+						jsonFile.getMachineOperationInfos(),
+						emptySet(),
+						singleton("on"));
 
-		Map<String, TraceAnalyser.AnalyserResult> bla = TraceAnalyser.analyze(singleton("on"), result.values().stream().findFirst().get(), jsonFile.getTrace().getTransitionList());
+		Map<String, TraceAnalyser.AnalyserResult> bla = TraceAnalyser.analyze(singleton("on"), result.values().stream().findFirst().get(), jsonFile.getTransitionList());
 
-		Assert.assertEquals(1, bla.entrySet().size());
-		Assert.assertEquals(TraceAnalyser.AnalyserResult.Intermediate, bla.get("on"));
+		Assertions.assertEquals(1, bla.entrySet().size());
+		Assertions.assertEquals(TraceAnalyser.AnalyserResult.Intermediate, bla.get("on"));
 	}
 
 
 	@Test
 	public void integration_test_complete_renamed_operation_1() throws IOException, ModelTranslationError {
-		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("/home", "sebastian",  "master-thesis", "examples", "typeIV", "complete_renamed_operation", "ISLAND2.mch"));
+		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test","resources", "de" , "prob", "testmachines", "traces", "typeIV" , "complete_renamed_operation", "ISLAND2.mch"));
 
-		TraceJsonFile jsonFile = traceManager.load(Paths.get("/home", "sebastian",  "master-thesis", "examples", "typeIV", "complete_renamed_operation", "island.prob2trace"));
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test","resources", "de" , "prob", "testmachines", "traces", "typeIV" , "complete_renamed_operation", "ISLAND.prob2trace"));
 
 
-		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> result =
-				new TraceExplorer(false, new TestUtils.StubFactoryImplementation())
-						.replayTrace(
-								jsonFile.getTrace().getTransitionList(),
-								stateSpace,
-								jsonFile.getMachineOperationInfos(),
-								emptySet(),
-								singleton("on"),
-								emptySet(),
-								emptySet(),
-								emptySet());
+		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result = new TraceExplorer(false, new TestUtils.StubFactoryImplementation(), new TestUtils.ProgressStubFactory())
+				.replayTrace(
+						jsonFile.getTransitionList(),
+						stateSpace,
+						stateSpace.getLoadedMachine().getOperations(),
+						jsonFile.getMachineOperationInfos(),
+						emptySet(),
+						singleton("on"));
 
-		Map<String, TraceAnalyser.AnalyserResult> bla = TraceAnalyser.analyze(singleton("on"), result.values().stream().findFirst().get(), jsonFile.getTrace().getTransitionList());
+		Map<String, TraceAnalyser.AnalyserResult> bla = TraceAnalyser.analyze(singleton("on"), result.values().stream().findFirst().get(), jsonFile.getTransitionList());
 
-		Assert.assertEquals(1, bla.entrySet().size());
-		Assert.assertEquals(TraceAnalyser.AnalyserResult.Straight, bla.get("on"));
+		Assertions.assertEquals(1, bla.entrySet().size());
+		Assertions.assertEquals(TraceAnalyser.AnalyserResult.Straight, bla.get("on"));
 	}
 
-*/
+
 }
