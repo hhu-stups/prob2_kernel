@@ -62,7 +62,7 @@ public class TraceCheckerTest {
 
 
 		
-		TraceChecker traceChecker = new TraceChecker(jsonFile.getTrace().getTransitionList(),
+		TraceChecker traceChecker = new TraceChecker(jsonFile.getTransitionList(),
 				oldInfos,
 				newInfos,
 				new HashSet<>(oldVars),
@@ -80,8 +80,8 @@ public class TraceCheckerTest {
 
 
 
-		Assertions.assertEquals(2, modifier.getChangelogPhase2().size());
-		Assertions.assertEquals(12, modifier.getSizeTypeIII());
+		Assertions.assertEquals(1, modifier.getChangelogPhase2().size());
+		Assertions.assertEquals(6, modifier.getSizeTypeIII());
 
 	}
 
@@ -92,10 +92,10 @@ public class TraceCheckerTest {
 
 		StateSpace stateSpace = proBKernelStub.createStateSpace(newPath);
 
-		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "typeIV", "tropical_island", "version_2", "Island2.prob2trace"));
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "typeIV", "tropical_island", "version_2", "ISLAND.prob2trace"));
 
 		TraceChecker traceChecker = new TraceChecker(
-				jsonFile.getTrace().getTransitionList(),
+				jsonFile.getTransitionList(),
 				jsonFile.getMachineOperationInfos(),
 				stateSpace.getLoadedMachine().getOperations(),
 				new HashSet<>(jsonFile.getVariableNames()),
@@ -134,7 +134,7 @@ public class TraceCheckerTest {
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "changedTypeIIandTypeIII", "LiftProto.prob2trace"));
 
 
-		TraceChecker traceChecker = new TraceChecker(jsonFile.getTrace().getTransitionList(),
+		TraceChecker traceChecker = new TraceChecker(jsonFile.getTransitionList(),
 				oldInfos,
 				newInfos,
 				new HashSet<>(oldVars),
@@ -149,8 +149,8 @@ public class TraceCheckerTest {
 
 		TraceModifier modifier = traceChecker.getTraceModifier();
 
-		Assertions.assertEquals(2, modifier.getChangelogPhase2().size());
-		Assertions.assertEquals(12, modifier.getSizeTypeIII());
+		Assertions.assertEquals(1, modifier.getChangelogPhase2().size());
+		Assertions.assertEquals(6, modifier.getSizeTypeIII());
 
 	}
 

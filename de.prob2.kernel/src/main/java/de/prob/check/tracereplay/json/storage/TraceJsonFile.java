@@ -1,7 +1,6 @@
 package de.prob.check.tracereplay.json.storage;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.prob.check.tracereplay.PersistentTrace;
@@ -183,14 +182,12 @@ public class TraceJsonFile {
 	 * @return the cleansed infos
 	 */
 	public static Map<String, OperationInfo> cleanseOperationInfo(Map<String, OperationInfo> infos, Map<String, String> globalIdentifierTypes) {
-		Map<String, OperationInfo> gna = infos.entrySet().stream().collect(toMap(Map.Entry::getKey, entry ->
+		return infos.entrySet().stream().collect(toMap(Map.Entry::getKey, entry ->
 				entry.getValue().createOperationInfoWithNewTypeMap(entry.getValue().getTypeMap()
 						.entrySet()
 						.stream()
 						.filter(innerEntry -> !globalIdentifierTypes.containsKey(innerEntry.getKey()))
 						.collect(toMap(Map.Entry::getKey, Map.Entry::getValue)))));
-
-		return gna;
 	}
 
 
@@ -228,7 +225,6 @@ public class TraceJsonFile {
 	public JsonMetadata getMetadata(){
 		return metadata;
 	}
-
 
 
 	public TraceJsonFile changeTrace(PersistentTrace trace){

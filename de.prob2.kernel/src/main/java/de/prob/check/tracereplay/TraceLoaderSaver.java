@@ -24,7 +24,7 @@ public class TraceLoaderSaver {
 	private final JsonManager<PersistentTrace> jsonManager;
 
 	@Inject
-	public TraceLoaderSaver(JsonManager<PersistentTrace> jsonManager, TraceManager traceManager) {
+	public TraceLoaderSaver(JsonManager<PersistentTrace> jsonManager) {
 		this.jsonManager = jsonManager;
 		final Gson gson = new GsonBuilder()
 			.disableHtmlEscaping()

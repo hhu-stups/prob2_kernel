@@ -5,161 +5,195 @@
   "trace" : {
     "description" : "",
     "transitionList" : [ {
-      "name" : "$setup_constants",
-      "params" : { },
-      "results" : { },
-      "destState" : {
+      "destStateNotChanged" : [ ],
+      "parameters" : { },
+      "operationName" : "$setup_constants",
+      "destinationStateVariables" : {
         "maxPerson" : "20"
       },
-      "destStateNotChanged" : [ ],
-      "preds" : [ ]
+      "outputParameters" : { },
+      "additionalPredicates" : [ ],
+      "allPredicates" : {
+        "maxPerson" : "20"
+      }
     }, {
-      "name" : "$initialise_machine",
-      "params" : { },
-      "results" : { },
-      "destState" : {
+      "destStateNotChanged" : [ ],
+      "parameters" : { },
+      "operationName" : "$initialise_machine",
+      "destinationStateVariables" : {
         "currentPersons" : "0"
       },
-      "destStateNotChanged" : [ ],
-      "preds" : [ ]
+      "outputParameters" : { },
+      "additionalPredicates" : [ ],
+      "allPredicates" : {
+        "currentPersons" : "0"
+      }
     }, {
-      "name" : "arrive_by_boat",
-      "params" : {
+      "destStateNotChanged" : [ ],
+      "parameters" : {
         "persons" : "1"
       },
-      "results" : { },
-      "destState" : {
+      "operationName" : "arrive_by_boat",
+      "destinationStateVariables" : {
         "currentPersons" : "1"
       },
-      "destStateNotChanged" : [ ],
-      "preds" : [ ]
+      "outputParameters" : { },
+      "additionalPredicates" : [ ],
+      "allPredicates" : {
+        "currentPersons" : "1",
+        "persons" : "1"
+      }
     }, {
-      "name" : "arrive_by_boat",
-      "params" : {
+      "destStateNotChanged" : [ ],
+      "parameters" : {
         "persons" : "2"
       },
-      "results" : { },
-      "destState" : {
+      "operationName" : "arrive_by_boat",
+      "destinationStateVariables" : {
         "currentPersons" : "3"
       },
-      "destStateNotChanged" : [ ],
-      "preds" : [ ]
+      "outputParameters" : { },
+      "additionalPredicates" : [ ],
+      "allPredicates" : {
+        "currentPersons" : "3",
+        "persons" : "2"
+      }
     }, {
-      "name" : "arrive_by_boat",
-      "params" : {
+      "destStateNotChanged" : [ ],
+      "parameters" : {
         "persons" : "3"
       },
-      "results" : { },
-      "destState" : {
+      "operationName" : "arrive_by_boat",
+      "destinationStateVariables" : {
         "currentPersons" : "6"
       },
-      "destStateNotChanged" : [ ],
-      "preds" : [ ]
+      "outputParameters" : { },
+      "additionalPredicates" : [ ],
+      "allPredicates" : {
+        "currentPersons" : "6",
+        "persons" : "3"
+      }
     }, {
-      "name" : "arrive_by_boat",
-      "params" : {
+      "destStateNotChanged" : [ ],
+      "parameters" : {
         "persons" : "2"
       },
-      "results" : { },
-      "destState" : {
+      "operationName" : "arrive_by_boat",
+      "destinationStateVariables" : {
         "currentPersons" : "8"
       },
-      "destStateNotChanged" : [ ],
-      "preds" : [ ]
+      "outputParameters" : { },
+      "additionalPredicates" : [ ],
+      "allPredicates" : {
+        "currentPersons" : "8",
+        "persons" : "2"
+      }
     }, {
-      "name" : "arrive_by_boat",
-      "params" : {
+      "destStateNotChanged" : [ ],
+      "parameters" : {
         "persons" : "1"
       },
-      "results" : { },
-      "destState" : {
+      "operationName" : "arrive_by_boat",
+      "destinationStateVariables" : {
         "currentPersons" : "9"
       },
-      "destStateNotChanged" : [ ],
-      "preds" : [ ]
+      "outputParameters" : { },
+      "additionalPredicates" : [ ],
+      "allPredicates" : {
+        "currentPersons" : "9",
+        "persons" : "1"
+      }
     }, {
-      "name" : "arrive_by_boat",
-      "params" : {
+      "destStateNotChanged" : [ ],
+      "parameters" : {
         "persons" : "1"
       },
-      "results" : { },
-      "destState" : {
+      "operationName" : "arrive_by_boat",
+      "destinationStateVariables" : {
         "currentPersons" : "10"
       },
-      "destStateNotChanged" : [ ],
-      "preds" : [ ]
+      "outputParameters" : { },
+      "additionalPredicates" : [ ],
+      "allPredicates" : {
+        "currentPersons" : "10",
+        "persons" : "1"
+      }
     }, {
-      "name" : "arrive_by_boat",
-      "params" : {
+      "destStateNotChanged" : [ ],
+      "parameters" : {
         "persons" : "1"
       },
-      "results" : { },
-      "destState" : {
+      "operationName" : "arrive_by_boat",
+      "destinationStateVariables" : {
         "currentPersons" : "11"
       },
-      "destStateNotChanged" : [ ],
-      "preds" : [ ]
+      "outputParameters" : { },
+      "additionalPredicates" : [ ],
+      "allPredicates" : {
+        "currentPersons" : "11",
+        "persons" : "1"
+      }
     }, {
-      "name" : "arrive_by_boat",
-      "params" : {
+      "destStateNotChanged" : [ ],
+      "parameters" : {
         "persons" : "2"
       },
-      "results" : { },
-      "destState" : {
+      "operationName" : "arrive_by_boat",
+      "destinationStateVariables" : {
         "currentPersons" : "13"
       },
-      "destStateNotChanged" : [ ],
-      "preds" : [ ]
+      "outputParameters" : { },
+      "additionalPredicates" : [ ],
+      "allPredicates" : {
+        "currentPersons" : "13",
+        "persons" : "2"
+      }
     }, {
-      "name" : "arrive_by_boat",
-      "params" : {
+      "destStateNotChanged" : [ ],
+      "parameters" : {
         "persons" : "3"
       },
-      "results" : { },
-      "destState" : {
+      "operationName" : "arrive_by_boat",
+      "destinationStateVariables" : {
         "currentPersons" : "16"
       },
-      "destStateNotChanged" : [ ],
-      "preds" : [ ]
+      "outputParameters" : { },
+      "additionalPredicates" : [ ],
+      "allPredicates" : {
+        "currentPersons" : "16",
+        "persons" : "3"
+      }
     }, {
-      "name" : "arrive_by_foot",
-      "params" : { },
-      "results" : { },
-      "destState" : {
+      "destStateNotChanged" : [ ],
+      "parameters" : { },
+      "operationName" : "arrive_by_foot",
+      "destinationStateVariables" : {
         "currentPersons" : "17"
       },
-      "destStateNotChanged" : [ ],
-      "preds" : [ ]
+      "outputParameters" : { },
+      "additionalPredicates" : [ ],
+      "allPredicates" : {
+        "currentPersons" : "17"
+      }
     }, {
-      "name" : "leave",
-      "params" : {
+      "destStateNotChanged" : [ ],
+      "parameters" : {
         "persons" : "5"
       },
-      "results" : { },
-      "destState" : {
+      "operationName" : "leave",
+      "destinationStateVariables" : {
         "currentPersons" : "12"
       },
-      "destStateNotChanged" : [ ],
-      "preds" : [ ]
+      "outputParameters" : { },
+      "additionalPredicates" : [ ],
+      "allPredicates" : {
+        "currentPersons" : "12",
+        "persons" : "5"
+      }
     } ]
   },
   "variableNames" : [ "currentPersons" ],
-  "machineOperationInfos" : {
-    "arrive_by_boat" : {
-      "operationName" : "arrive_by_boat",
-      "parameterNames" : [ "persons" ],
-      "outputParameterNames" : [ ],
-      "topLevel" : true,
-      "type" : "CLASSICAL_B",
-      "readVariables" : [ "currentPersons", "maxPerson" ],
-      "writtenVariables" : [ "currentPersons" ],
-      "nonDetWrittenVariables" : [ ],
-      "typeMap" : {
-        "maxPerson" : "integer",
-        "persons" : "integer",
-        "currentPersons" : "integer"
-      }
-    },
+  "reducedMachineOperationInfos" : {
     "arrive_by_foot" : {
       "operationName" : "arrive_by_foot",
       "parameterNames" : [ ],
@@ -169,10 +203,7 @@
       "readVariables" : [ "currentPersons", "maxPerson" ],
       "writtenVariables" : [ "currentPersons" ],
       "nonDetWrittenVariables" : [ ],
-      "typeMap" : {
-        "maxPerson" : "integer",
-        "currentPersons" : "integer"
-      }
+      "typeMap" : { }
     },
     "leave" : {
       "operationName" : "leave",
@@ -184,13 +215,29 @@
       "writtenVariables" : [ "currentPersons" ],
       "nonDetWrittenVariables" : [ ],
       "typeMap" : {
-        "persons" : "integer",
-        "currentPersons" : "integer"
+        "persons" : "integer"
+      }
+    },
+    "arrive_by_boat" : {
+      "operationName" : "arrive_by_boat",
+      "parameterNames" : [ "persons" ],
+      "outputParameterNames" : [ ],
+      "topLevel" : true,
+      "type" : "CLASSICAL_B",
+      "readVariables" : [ "currentPersons", "maxPerson" ],
+      "writtenVariables" : [ "currentPersons" ],
+      "nonDetWrittenVariables" : [ ],
+      "typeMap" : {
+        "persons" : "integer"
       }
     }
   },
   "constantNames" : [ "maxPerson" ],
   "setNames" : [ ],
+  "globalIdentifierTypes" : {
+    "maxPerson" : "integer",
+    "currentPersons" : "integer"
+  },
   "metadata" : {
     "fileType" : "Trace",
     "formatVersion" : 2,

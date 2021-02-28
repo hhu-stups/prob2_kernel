@@ -114,7 +114,6 @@ public class TraceAnalyserTest {
 		Assert.assertEquals(1, bla.entrySet().size());
 		Assert.assertEquals(TraceAnalyser.AnalyserResult.Straight, bla.get("on"));
 	}
+
 */
-
-
 }

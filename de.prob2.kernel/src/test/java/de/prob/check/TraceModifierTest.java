@@ -619,7 +619,7 @@ public class TraceModifierTest {
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "complexExample", "traceShort.prob2trace"));
 
 		TraceChecker traceChecker = new TraceChecker(
-				jsonFile.getTrace().getTransitionList(),
+				jsonFile.getTransitionList(),
 				jsonFile.getMachineOperationInfos(),
 				newInfos, new HashSet<>(oldVars),
 				new HashSet<>(stateSpace2.getLoadedMachine().getVariableNames()),

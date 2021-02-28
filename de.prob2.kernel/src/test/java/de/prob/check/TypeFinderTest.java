@@ -236,7 +236,7 @@ public class TypeFinderTest {
 
 		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "testTraceMachine10Steps.prob2trace"));
 
-		Set<String> result = TypeFinder.usedOperations(bla.getTrace().getTransitionList());
+		Set<String> result = TypeFinder.usedOperations(bla.getTransitionList());
 
 		Set<String> expected = new HashSet<>(Arrays.asList("dec", "getfloors", "inc", Transition.INITIALISE_MACHINE_NAME));
 
@@ -292,7 +292,7 @@ public class TypeFinderTest {
 		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "testTraceMachine10Steps.prob2trace"));
 
 
-		TypeFinder typeFinder = new TypeFinder(bla.getTrace().getTransitionList(), oldOperations, newOperations, Collections.emptySet(), Collections.emptySet());
+		TypeFinder typeFinder = new TypeFinder(bla.getTransitionList(), oldOperations, newOperations, Collections.emptySet(), Collections.emptySet());
 
 		typeFinder.check();
 
@@ -342,7 +342,6 @@ public class TypeFinderTest {
 		OperationInfo operationInfo5 = new OperationInfo("dec", inputParas2, outputParas, true,
 				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars, emptyMap());
 
-
 		OperationInfo operationInfo9 = new OperationInfo("inc1", inputParas, outputParas, true,
 				CLASSICAL_B, readVariables, detModifiedVars, nonDetModifiedVars, emptyMap());
 
@@ -356,7 +355,7 @@ public class TypeFinderTest {
 		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "testTraceMachine10Steps.prob2trace"));
 
 
-		TypeFinder typeFinder = new TypeFinder(bla.getTrace().getTransitionList(), oldOperations, newOperations, Collections.emptySet(), Collections.emptySet());
+		TypeFinder typeFinder = new TypeFinder(bla.getTransitionList(), oldOperations, newOperations, Collections.emptySet(), Collections.emptySet());
 
 		typeFinder.check();
 
@@ -371,22 +370,15 @@ public class TypeFinderTest {
 	@Test
 	public void check_init_type_test() throws IOException {
 
-
 		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines","traces", "testTraceMachine10Steps.prob2trace"));
-
 
 		Set<String> oldVars = singleton("world");
 
-
-
-		TypeFinder typeFinder = new TypeFinder(bla.getTrace().getTransitionList(), Collections.emptyMap(), Collections.emptyMap(), oldVars, Collections.emptySet());
+		TypeFinder typeFinder = new TypeFinder(bla.getTransitionList(), Collections.emptyMap(), Collections.emptyMap(), oldVars, Collections.emptySet());
 
 		typeFinder.check();
 
-
-
 		Assertions.assertFalse(typeFinder.getInitIsTypeIorIICandidate());
-
 	}
 
 
@@ -394,16 +386,14 @@ public class TypeFinderTest {
 	public void check_init_type_test_2() throws IOException {
 
 
-		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines","traces", "testTraceMachine10Steps.prob2trace"));
+		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "testTraceMachine10Steps.prob2trace"));
 
 
 		Set<String> oldVars = singleton("world");
 
 		Set<String> newVars = singleton("hallo");
 
-
-
-		TypeFinder typeFinder = new TypeFinder(bla.getTrace().getTransitionList(), Collections.emptyMap(), Collections.emptyMap(), oldVars, newVars);
+		TypeFinder typeFinder = new TypeFinder(bla.getTransitionList(), Collections.emptyMap(), Collections.emptyMap(), oldVars, newVars);
 
 		typeFinder.check();
 
@@ -426,7 +416,7 @@ public class TypeFinderTest {
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "changedTypeIIandTypeIII", "LiftProto.prob2trace"));
 
 
-		TypeFinder typeFinder = new TypeFinder(jsonFile.getTrace().getTransitionList(), jsonFile.getMachineOperationInfos(), newInfos, new HashSet<>(jsonFile.getVariableNames()), new HashSet<>(newVars));
+		TypeFinder typeFinder = new TypeFinder(jsonFile.getTransitionList(), jsonFile.getMachineOperationInfos(), newInfos, new HashSet<>(jsonFile.getVariableNames()), new HashSet<>(newVars));
 
 
 		typeFinder.check();
@@ -434,7 +424,6 @@ public class TypeFinderTest {
 
 		Set<String> expected2 = new HashSet<>();
 		expected2.add("getfloors");
-		expected2.add("dec");
 		Set<String> expected3 = singleton("inc");
 
 
