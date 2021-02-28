@@ -11,6 +11,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Stage;
+import de.prob.MainModule;
 import de.prob.ProBKernelStub;
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.PersistenceDelta;
@@ -252,7 +256,6 @@ public class TraceExplorerTypeIVIntegration {
 
 		Map<String, List<String>> expected1 = singletonMap("on", Arrays.asList("openBark", "on"));
 		Map<String, TraceAnalyser.AnalyserResult> expected2 = singletonMap("on", TraceAnalyser.AnalyserResult.Mixed);
-
 
 
 		Map<String, TraceAnalyser.AnalyserResult> resultCleaned = TraceAnalyser.analyze(singleton("on"), new ArrayList<>(evaluated.values()).get(0), jsonFile.getTransitionList());
