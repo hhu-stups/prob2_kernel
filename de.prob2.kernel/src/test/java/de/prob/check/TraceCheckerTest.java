@@ -1,12 +1,10 @@
 package de.prob.check;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import de.prob.ProBKernelStub;
 import de.prob.check.tracereplay.check.PersistenceDelta;
@@ -78,8 +76,6 @@ public class TraceCheckerTest {
 
 		Map<Set<RenamingDelta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>>> result = modifier.getChangelogPhase3II();
 
-
-
 		Assertions.assertEquals(1, modifier.getChangelogPhase2().size());
 		Assertions.assertEquals(6, modifier.getSizeTypeIII());
 
@@ -90,6 +86,8 @@ public class TraceCheckerTest {
 	public void integration_short_constructor_2() throws IOException, ModelTranslationError, DeltaCalculationException {
 		Path newPath = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "typeIV", "tropical_island", "version_2", "Island2.mch");
 
+		File file = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "typeIV", "tropical_island", "version_2").toFile();
+		System.out.println(Arrays.toString(file.listFiles()));
 		StateSpace stateSpace = proBKernelStub.createStateSpace(newPath);
 
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "typeIV", "tropical_island", "version_2", "ISLAND.prob2trace"));
