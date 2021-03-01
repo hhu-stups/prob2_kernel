@@ -86,8 +86,6 @@ public class TraceCheckerTest {
 	public void integration_short_constructor_2() throws IOException, ModelTranslationError, DeltaCalculationException {
 		Path newPath = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "typeIV", "tropical_island", "version_2", "Island2.mch");
 
-		File file = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "typeIV", "tropical_island", "version_2").toFile();
-		System.out.println(Arrays.toString(file.listFiles()));
 		StateSpace stateSpace = proBKernelStub.createStateSpace(newPath);
 
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "typeIV", "tropical_island", "version_2", "ISLAND.prob2trace"));
