@@ -7,17 +7,14 @@ import java.nio.file.Paths;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
-import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 
 import de.prob.ProBKernelStub;
-import de.prob.check.tracereplay.PersistentTrace;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.cli.CliTestCommon;
 import de.prob.json.JsonMetadata;
 import de.prob.json.JsonMetadataBuilder;
 import de.prob.scripting.ModelTranslationError;
-import de.prob.statespace.LoadedMachine;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
 
