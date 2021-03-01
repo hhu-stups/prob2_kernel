@@ -4,25 +4,32 @@ import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;
 
-public class LoadVisBCommand extends AbstractCommand {
+public class ReadVisBSvgPathCommand extends AbstractCommand {
 
 	private static final String PROLOG_COMMAND_NAME = "prob2_load_visb_file";
-	private final String path;
+	private static final String SVG_PATH = "SvgFile";
+	private final String jsonPath;
+	private String svgPath;
 
-	public LoadVisBCommand(final String path) {
-		this.path = path;
+	public ReadVisBSvgPathCommand(final String jsonPath) {
+		this.jsonPath = jsonPath;
+		this.svgPath = null;
 	}
 
 	@Override
 	public void writeCommand(final IPrologTermOutput pto) {
 		pto.openTerm(PROLOG_COMMAND_NAME);
-		pto.printAtom(path);
+		pto.printAtom(jsonPath);
+		pto.printVariable(SVG_PATH);
 		pto.closeTerm();
 	}
 
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
-		// There are no output variables.
+		this.svgPath = bindings.get(SVG_PATH).toString();
 	}
 
+	public static String getSvgPath() {
+		return SVG_PATH;
+	}
 }
