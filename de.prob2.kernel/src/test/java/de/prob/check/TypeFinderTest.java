@@ -10,12 +10,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import com.google.inject.Injector;
 import de.prob.ProBKernelStub;
+import de.prob.animator.ReusableAnimator;
+import de.prob.check.tracereplay.check.RenamingDelta;
+import de.prob.check.tracereplay.check.StaticRenamingAnalyzer;
 import de.prob.check.tracereplay.check.TypeFinder;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.cli.CliTestCommon;
+import de.prob.scripting.FactoryProvider;
+import de.prob.scripting.ModelFactory;
 import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
@@ -431,5 +438,28 @@ public class TypeFinderTest {
 		Assertions.assertEquals(expected3, typeFinder.getTypeIII());
 	}
 
-	
+	@Test
+	public void wrong_variable_count_test() throws IOException, ModelTranslationError {
+
+		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "always_intermediate", "ISLAND2.mch");
+		String pathAsStringOld = pathOld.toAbsolutePath().toString();
+
+
+		Path path = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "always_intermediate", "ISLAND.prob2trace");
+		TraceJsonFile traceJsonFile = CliTestCommon.getInjector().getInstance(TraceManager.class).load(path);
+
+
+		Injector injector = CliTestCommon.getInjector();
+		ReusableAnimator reusableAnimator = injector.getInstance(ReusableAnimator.class);
+		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension(pathAsStringOld.substring(pathAsStringOld.lastIndexOf(".") + 1)));
+		StateSpace stateSpace = reusableAnimator.createStateSpace();
+		factory.extract(pathAsStringOld).loadIntoStateSpace(stateSpace);
+
+		TypeFinder typeFinder = new TypeFinder(traceJsonFile.getTransitionList(), traceJsonFile.getMachineOperationInfos(), stateSpace.getLoadedMachine().getOperations(), new HashSet<>(traceJsonFile.getVariableNames()), new HashSet<>(stateSpace.getLoadedMachine().getVariableNames()));
+
+		typeFinder.check();
+		Assertions.assertEquals("off", typeFinder.getTypeIorII().stream().findFirst().get());
+
+
+	}
 }

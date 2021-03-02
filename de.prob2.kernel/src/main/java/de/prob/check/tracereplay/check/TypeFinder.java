@@ -49,15 +49,6 @@ public class TypeFinder {
 	}
 
 
-	public TypeFinder(List<PersistentTransition> trace, Map<String, OperationInfo> newMachine, Set<String> newVars){
-		this.trace = trace;
-		this.newMachine = newMachine;
-		this.oldMachine = emptyMap();
-		this.newVars = newVars;
-		this.oldVars = emptySet();
-	}
-
-
 	public static List<PersistentTransition> stripInitClause(List<PersistentTransition> transitionList){
 		return transitionList.stream()
 				.filter(element -> !element.getOperationName().equals(Transition.INITIALISE_MACHINE_NAME))
@@ -88,7 +79,9 @@ public class TypeFinder {
 
 		//Type I/II candidates
 		Set<String> operationWithSameParameterLength = findOperationsWithSameParameterLength(operationNamesMatch, oldMachine, newMachine);
-		typeIorII = operationWithSameParameterLength;
+	//	typeIorII = operationWithSameParameterLength;
+
+		typeIorII = operationNamesMatch.stream().filter(entry -> operationInfosAreSimilar(oldMachine.get(entry), newMachine.get(entry))).collect(Collectors.toSet());
 
 		//Type III candidates
 		Set<String> operationNotSameParameterLength = new HashSet<>(operationNamesMatch);
@@ -140,7 +133,6 @@ public class TypeFinder {
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 	}
 
-	//TODO Fix that - lol
 	/**
 	 * Gets a set with operation names that exists in the old and the new machine and returns a filtered set with the names
 	 * where the number of input and output parameters from the old machine is the same as in the new machine
@@ -161,6 +153,39 @@ public class TypeFinder {
 						==
 						oldMachine.get(operation).getOutputParameterNames().size() + oldMachine.get(operation).getParameterNames().size()
 		).collect(Collectors.toSet());
+	}
+
+
+	/**
+	 * Gets two operationInfos and return true whenever both operation infos work with the same amount of variables which have the same type
+	 * @param oldInfo the infos of the old operation
+	 * @param newInfo the infos of the new operation
+	 * @return the comparison result
+	 */
+	public static boolean operationInfosAreSimilar(OperationInfo oldInfo, OperationInfo newInfo){
+
+		Map<OperationInfo.ContentType, List<String>> allIdsOld = oldInfo.getIdentifiersAsSortedCollection();
+		Map<OperationInfo.ContentType, List<String>> allIdsNew = newInfo.getIdentifiersAsSortedCollection();
+
+		return Arrays.stream(OperationInfo.ContentType.values())
+				.allMatch(type -> sameLength(allIdsOld.get(type), allIdsNew.get(type)) &&
+						utilizesSameType(allIdsOld.get(type), oldInfo.getTypeMap(), allIdsNew.get(type), newInfo.getTypeMap()));
+
+	}
+
+
+	public static boolean sameLength(List<String> list1, List<String> list2){
+		return list1.size() == list2.size();
+	}
+
+	public static boolean utilizesSameType(List<String> list1, Map<String, String> typeMap1, List<String> list2, Map<String, String> typeMap2){
+		List<String> listR1 = reduceToType(list1, typeMap1);
+		List<String> listR2 = reduceToType(list2, typeMap2);
+		return listR2.containsAll(listR1) && listR1.containsAll(listR2);
+	}
+
+	public static List<String> reduceToType(List<String> list1, Map<String, String> typeMap1){
+		return typeMap1.entrySet().stream().filter(entry -> list1.contains(entry.getKey())).map(Map.Entry::getValue).collect(Collectors.toList());
 	}
 
 	/**
@@ -195,6 +220,9 @@ public class TypeFinder {
 	public static Set<String> usedOperations(List<PersistentTransition> transitionList){
 		return transitionList.stream().map(PersistentTransition::getOperationName).collect(Collectors.toSet());
 	}
+
+
+
 
 	public Set<String> getTypeIorII() {
 		return typeIorII;

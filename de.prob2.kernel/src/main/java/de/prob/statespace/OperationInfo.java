@@ -154,6 +154,18 @@ public class OperationInfo {
 
 	}
 
+	@JsonIgnore
+	public Map<ContentType, List<String>> getIdentifiersAsSortedCollection(){
+		Map<ContentType, List<String>> result = new HashMap<>();
+		result.put(ContentType.INPUT_PARAMETER, new ArrayList<>(parameterNames));
+		result.put(ContentType.OUTPUT_PARAMETERS, new ArrayList<>(outputParameterNames));
+		result.put(ContentType.READ_VARIABLES, new ArrayList<>(readVariables));
+		result.put(ContentType.WRITTEN_VARIABLES, new ArrayList<>(writtenVariables));
+		result.put(ContentType.NON_DET_WRITTEN_VARIABLES, new ArrayList<>(nonDetWrittenVariables));
+
+		return result;
+	}
+
 	public OperationInfo createOperationInfoWithNewTypeMap(Map<String, String> info){
 		return new OperationInfo(operationName, parameterNames, outputParameterNames, topLevel, type, readVariables, writtenVariables, nonDetWrittenVariables, info);
 	}
@@ -174,6 +186,9 @@ public class OperationInfo {
 			.toString();
 	}
 
+	public enum ContentType{
+		INPUT_PARAMETER, OUTPUT_PARAMETERS, READ_VARIABLES, WRITTEN_VARIABLES, NON_DET_WRITTEN_VARIABLES
+	}
 
 
 	@Override

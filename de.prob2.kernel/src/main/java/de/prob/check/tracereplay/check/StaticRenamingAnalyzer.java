@@ -37,7 +37,7 @@ public class StaticRenamingAnalyzer implements RenamingAnalyzerInterface{
 				.collect(toMap(entry -> entry,
 						entry -> TraceExplorer.calculateVarMappings(entry, newInfos.get(entry), oldInfos.get(entry), mappingFactoryInterface).stream()
 								.map(innerEntry -> new RenamingDelta(entry, entry, innerEntry))
-								.filter(innerEntry -> innerEntry.isPointless()).collect(toList())));
+								.filter(RenamingDelta::isPointless).collect(toList())));
 
 		List<RenamingDelta> firstResultsWithOnlyOnePartner = firstResults.values().stream()
 				.filter(renamingDeltas -> renamingDeltas.size() == 1)
@@ -60,13 +60,15 @@ public class StaticRenamingAnalyzer implements RenamingAnalyzerInterface{
 								.flatMap(innerEntry ->
 										TraceExplorer.calculateVarMappings(entry.getKey(), newInfos.get(innerEntry), oldInfos.get(entry.getKey()), mappingFactoryInterface).stream()
 												.map(innermostEntry -> new RenamingDelta(entry.getKey(), innerEntry, innermostEntry))
-								.filter(innerMostEntry -> innerMostEntry.isPointless())).collect(toList())));
+								.filter(RenamingDelta::isPointless)).collect(toList())));
 
 		Map<String, List<RenamingDelta>> cleansed = secondResult.entrySet().stream().filter(entry -> !entry.getValue().isEmpty()).collect(toMap(entry -> entry.getKey(), entry -> entry.getValue()));
 
 		resultsWithCandidates.putAll(cleansed);
 
 	}
+
+
 
 	@Override
 	public Map<String, String> getResultTypeIIInit() {

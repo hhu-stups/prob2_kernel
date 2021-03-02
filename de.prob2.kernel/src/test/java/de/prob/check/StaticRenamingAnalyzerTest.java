@@ -25,7 +25,7 @@ import static java.util.Collections.singleton;
 public class StaticRenamingAnalyzerTest {
 
 	@Test
-	public void test1() throws IOException, ModelTranslationError {
+	public void test_1() throws IOException, ModelTranslationError {
 
 		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "always_intermediate", "ISLAND2.mch");
 		String pathAsStringOld = pathOld.toAbsolutePath().toString();
@@ -43,8 +43,7 @@ public class StaticRenamingAnalyzerTest {
 
 		Set<String> typeIorIICandidates = new HashSet<>();
 		typeIorIICandidates.add("off");
-		Map<String, Set<String>> typeIICandidates = new HashMap<>();
-		typeIICandidates.put("off", singleton("off"));
+		Map<String, Set<String>> typeIICandidates = emptyMap();
 
 		StaticRenamingAnalyzer renamingAnalyzer = new StaticRenamingAnalyzer(typeIorIICandidates, typeIICandidates,
 				traceJsonFile.getMachineOperationInfos(), stateSpace.getLoadedMachine().getOperations(), new TestUtils.StubFactoryImplementation());
@@ -60,4 +59,7 @@ public class StaticRenamingAnalyzerTest {
 
 
 	}
+
+
+
 }
