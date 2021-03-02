@@ -113,4 +113,12 @@ public class RenamingDelta {
 		return "Original Name <" + originalName + "> RenamingDelta Name <" + deltaName+ "> Output Parameter: " +
 				outputParameters + " Input Parameter: " + inputParameters + " Variables " + variables;
 	}
+
+	public boolean isPointless(){
+		return originalName.equals(deltaName) && mapIsEqual(inputParameters) && mapIsEqual(outputParameters) && mapIsEqual(variables);
+	}
+
+	public static boolean mapIsEqual(Map<String, String> input){
+		return input.entrySet().stream().allMatch(entry -> entry.getKey().equals(entry.getValue()));
+	}
 }
