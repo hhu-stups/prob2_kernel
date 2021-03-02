@@ -243,4 +243,8 @@ public class TraceJsonFile {
 		return new TraceJsonFile(description, transitionList, variableNames, machineOperationInfos, constantNames, setNames, getMetadata().changeModelName(name));
 	}
 
+	public TraceJsonFile changeMachineInfos(Map<String, OperationInfo> operationInfoMap){
+		return new TraceJsonFile(description, transitionList, variableNames, operationInfoMap, constantNames, setNames, getMetadata());
+	}
+
 }
