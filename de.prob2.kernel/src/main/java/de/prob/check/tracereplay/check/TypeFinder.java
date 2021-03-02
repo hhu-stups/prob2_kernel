@@ -154,7 +154,8 @@ public class TypeFinder {
 
 		if(oldMachine.isEmpty()) return emptySet();
 		return candidates.stream()
-				.filter(operation -> newMachine.containsKey(operation))
+				.filter(newMachine::containsKey)
+				.filter(oldMachine::containsKey)
 				.filter(operation ->
 				newMachine.get(operation).getOutputParameterNames().size() + newMachine.get(operation).getParameterNames().size()
 						==

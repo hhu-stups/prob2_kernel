@@ -2,8 +2,6 @@ package de.prob.check.tracereplay.check;
 
 import de.prob.statespace.OperationInfo;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -115,10 +113,10 @@ public class RenamingDelta {
 	}
 
 	public boolean isPointless(){
-		return originalName.equals(deltaName) && mapIsEqual(inputParameters) && mapIsEqual(outputParameters) && mapIsEqual(variables);
+		return !originalName.equals(deltaName) || mapIsEqual(inputParameters) || mapIsEqual(outputParameters) || mapIsEqual(variables);
 	}
 
 	public static boolean mapIsEqual(Map<String, String> input){
-		return input.entrySet().stream().allMatch(entry -> entry.getKey().equals(entry.getValue()));
+		return !input.entrySet().stream().allMatch(entry -> entry.getKey().equals(entry.getValue()));
 	}
 }
