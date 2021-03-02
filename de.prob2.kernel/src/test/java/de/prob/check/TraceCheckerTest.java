@@ -6,18 +6,17 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
+import com.google.inject.Injector;
 import de.prob.ProBKernelStub;
-import de.prob.check.tracereplay.check.PersistenceDelta;
-import de.prob.check.tracereplay.check.RenamingDelta;
-import de.prob.check.tracereplay.check.ReplayOptions;
-import de.prob.check.tracereplay.check.TraceChecker;
-import de.prob.check.tracereplay.check.TraceExplorer;
-import de.prob.check.tracereplay.check.TraceModifier;
+import de.prob.animator.ReusableAnimator;
+import de.prob.check.tracereplay.check.*;
 import de.prob.check.tracereplay.check.exceptions.DeltaCalculationException;
 import de.prob.check.tracereplay.check.exceptions.PrologTermNotDefinedException;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.cli.CliTestCommon;
+import de.prob.scripting.FactoryProvider;
+import de.prob.scripting.ModelFactory;
 import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
@@ -26,6 +25,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import static java.util.Collections.singleton;
 
 public class TraceCheckerTest {
 	private static TraceManager traceManager;
@@ -148,6 +149,44 @@ public class TraceCheckerTest {
 		Assertions.assertEquals(1, modifier.getChangelogPhase2().size());
 		Assertions.assertEquals(6, modifier.getSizeTypeIII());
 
+	}
+
+	@Test
+	public void integration_long_constructor_2() throws IOException, ModelTranslationError, DeltaCalculationException {
+
+
+
+		Path oldPath = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "typeIV", "always_intermediate", "ISLAND.mch");
+		StateSpace stateSpace1 = proBKernelStub.createStateSpace(oldPath);
+		Map<String, OperationInfo> oldInfos = stateSpace1.getLoadedMachine().getOperations();
+		List<String> oldVars = stateSpace1.getLoadedMachine().getVariableNames();
+
+		Path newPath = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "typeIV", "always_intermediate", "ISLAND.mch");
+		StateSpace stateSpace2 = proBKernelStub.createStateSpace(newPath);
+		Map<String, OperationInfo> newInfos = stateSpace2.getLoadedMachine().getOperations();
+		List<String> newVars = stateSpace2.getLoadedMachine().getVariableNames();
+
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "typeIV", "always_intermediate", "ISLAND.prob2trace"));
+
+
+		TraceChecker traceChecker = new TraceChecker(jsonFile.getTransitionList(),
+				oldInfos,
+				newInfos,
+				new HashSet<>(oldVars),
+				new HashSet<>(newVars),
+				oldPath.toString(),
+				newPath.toString(),
+				CliTestCommon.getInjector(),
+				new TestUtils.StubFactoryImplementation(),
+				new ReplayOptions(),
+				new TestUtils.ProgressStubFactory());
+
+
+		TraceModifier modifier = traceChecker.getTraceModifier();
+
+		boolean result = traceChecker.getTraceModifier().isDirty();
+
+		Assertions.assertFalse(result);
 	}
 
 

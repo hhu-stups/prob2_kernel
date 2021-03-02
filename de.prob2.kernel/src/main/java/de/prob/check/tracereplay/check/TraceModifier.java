@@ -318,7 +318,7 @@ public class TraceModifier {
 	}
 
 	public long getSizeTypeIV(){
-		return changelogPhase3.keySet().stream().map(entry -> changelogPhase4.get(entry).values().stream().filter(inner -> !inner.isEmpty())).count();
+		return changelogPhase4.values().stream().flatMap(entry -> entry.entrySet().stream().flatMap(innerEntry -> innerEntry.getValue().entrySet().stream())).collect(toSet()).size();
 	}
 
 
