@@ -235,4 +235,12 @@ public class TraceJsonFile {
 		return new TraceJsonFile(description, transitionList, variableNames, machineOperationInfos, constantNames, setNames, getMetadata());
 	}
 
+	public TraceJsonFile changeTransitionList(List<PersistentTransition> trace){
+		return new TraceJsonFile(description, trace, variableNames, machineOperationInfos, constantNames, setNames, getMetadata());
+	}
+
+	public TraceJsonFile changeModelName(String name){
+		return new TraceJsonFile(description, transitionList, variableNames, machineOperationInfos, constantNames, setNames, getMetadata().changeModelName(name));
+	}
+
 }

@@ -150,4 +150,8 @@ public final class JsonMetadata {
 				.add("modelName", this.getModelName())
 				.toString();
 	}
+
+	public JsonMetadata changeModelName(String name){
+		return new JsonMetadata(fileType, formatVersion, savedAt, creator, proB2KernelVersion, proBCliVersion, name);
+	}
 }
