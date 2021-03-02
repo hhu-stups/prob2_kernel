@@ -36,14 +36,6 @@ public final class JsonManager<T> {
 			this.currentFormatVersion = currentFormatVersion;
 		}
 		
-		/**
-		 * @deprecated Use {@link #Context(Gson, Class, String, int)} with an explicit {@link Gson} parameter instead.
-		 */
-		@Deprecated
-		public Context(final Class<T> clazz, final String fileType, final int currentFormatVersion) {
-			this(new Gson(), clazz, fileType, currentFormatVersion);
-		}
-
 		public JsonMetadataBuilder getDefaultMetadataBuilder() {
 			return new JsonMetadataBuilder(this.fileType, this.currentFormatVersion)
 					.withSavedNow()
