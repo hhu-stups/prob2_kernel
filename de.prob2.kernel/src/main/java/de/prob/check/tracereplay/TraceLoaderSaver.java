@@ -9,20 +9,17 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.inject.Inject;
 
-import de.prob.check.tracereplay.json.TraceManager;
-import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.json.JsonManager;
 import de.prob.json.JsonMetadata;
-import de.prob.json.JsonMetadataBuilder;
 import de.prob.json.ObjectWithMetadata;
-import de.prob.statespace.Trace;
 
 
-
+@Deprecated
 public class TraceLoaderSaver {
 
 	private final JsonManager<PersistentTrace> jsonManager;
 
+	@Deprecated
 	@Inject
 	public TraceLoaderSaver(JsonManager<PersistentTrace> jsonManager) {
 		this.jsonManager = jsonManager;
@@ -45,10 +42,12 @@ public class TraceLoaderSaver {
 		});
 	}
 
+	@Deprecated
 	public PersistentTrace load(Path path) throws IOException {
 		return this.jsonManager.readFromFile(path).getObject();
 	}
 
+	@Deprecated
 	public void save(PersistentTrace trace, Path location, String proBCliVersion, String modelName) throws IOException {
 		final JsonMetadata metadata = this.jsonManager.defaultMetadataBuilder()
 			.withProBCliVersion(proBCliVersion)
@@ -57,6 +56,7 @@ public class TraceLoaderSaver {
 		this.jsonManager.writeToFile(location, trace, metadata);
 	}
 
+	@Deprecated
 	public void save(PersistentTrace trace, Path location) throws IOException {
 		this.jsonManager.writeToFile(location, trace);
 	}
