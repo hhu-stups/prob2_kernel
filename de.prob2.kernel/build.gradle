@@ -277,6 +277,14 @@ task groovyIntegrationTests(type: JavaExec) {
 	classpath = project(":de.prob2.commandline").sourceSets.main.runtimeClasspath
 	args = ['-script', 'groovyTests']
 }
+
+// Run a single groovy Testcase
+// Usage: ./gradlew groovyTest --args="-script groovyTests/cbcChecking.groovy"
+task groovyTest(type: JavaExec) {
+    main = "de.prob2.commandline.CommandLineMain"
+	classpath = project(":de.prob2.commandline").sourceSets.main.runtimeClasspath
+}
+
 check.dependsOn(groovyIntegrationTests)
 project.jacoco.applyTo(groovyIntegrationTests)
 
