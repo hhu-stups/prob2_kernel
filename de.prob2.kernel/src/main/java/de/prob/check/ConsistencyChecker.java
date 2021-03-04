@@ -68,7 +68,7 @@ public class ConsistencyChecker extends CheckerBase {
 	public ConsistencyChecker(final StateSpace s, final ModelCheckingOptions options, final IEvalElement goal, final IModelCheckListener ui) {
 		super(s, ui);
 		this.limitConfiguration = new ModelCheckingLimitConfiguration(getStateSpace(), stopwatch, TIMEOUT_MS,-1, -1);
-		this.options = options;
+		this.options = goal == null ? options : options.checkGoal(true);
 		this.goal = goal;
 	}
 
