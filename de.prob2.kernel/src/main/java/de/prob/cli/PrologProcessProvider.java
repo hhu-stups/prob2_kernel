@@ -62,7 +62,7 @@ class PrologProcessProvider implements Provider<ProcessHandle> {
 		pb.redirectErrorStream(true);
 		final Process prologProcess;
 		try {
-			logger.info("Starting ProB's Prolog Core. Path is {}", executable);
+			logger.info("\nStarting ProB's Prolog Core. Path is {}", executable);
 			prologProcess = pb.start();
 			logger.debug("Cli started");
 		} catch (IOException e) {
