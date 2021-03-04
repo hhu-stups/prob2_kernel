@@ -64,7 +64,7 @@ class PrologProcessProvider implements Provider<ProcessHandle> {
 		try {
 			logger.info("\nStarting ProB's Prolog Core. Path is {}", executable);
 			prologProcess = pb.start();
-			logger.debug("Cli started");
+			logger.debug("probcli -sf started");
 		} catch (IOException e) {
 			throw new CliError("Problem while starting up ProB CLI: " + e.getMessage(), e);
 		}
