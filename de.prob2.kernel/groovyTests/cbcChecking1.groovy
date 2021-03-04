@@ -41,15 +41,4 @@ final res4 = modelCheck(new CBCInvariantChecker(s1, ["deadlock"]))
 assert res4 instanceof ModelCheckOk
 assert res4.message == "No Invariant violation was found"
 
-final s2 = api.eventb_load(Paths.get(dir, "Time", "clock.bcm").toString())
-
-final res5 = modelCheck(new CBCInvariantChecker(s2))
-assert res5 instanceof CBCInvariantViolationFound
-final tInvViolation2 = res5.getTrace(s2)
-final ops5 = tInvViolation2.getTransitionList(true, FormulaExpand.EXPAND)
-assert ops5.size() == 2
-assert ops5[0].name == "invariant_check_tock"
-assert ops5[1].name == "tock"
-assert ops5[1].parameterValues[0].toInteger() >= 0
-
 "constraint based deadlock and invariant checking works correctly"
