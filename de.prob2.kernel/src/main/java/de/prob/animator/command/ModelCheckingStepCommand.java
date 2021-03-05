@@ -15,6 +15,7 @@ import de.prob.animator.domainobjects.ErrorItem;
 import de.prob.check.CheckInterrupted;
 import de.prob.check.IModelCheckingResult;
 import de.prob.check.ModelCheckErrorUncovered;
+import de.prob.check.ModelCheckGoalFound;
 import de.prob.check.ModelCheckOk;
 import de.prob.check.ModelCheckingOptions;
 import de.prob.check.NotYetFinished;
@@ -136,7 +137,7 @@ public class ModelCheckingStepCommand extends AbstractCommand implements IStateS
 			return new ModelCheckErrorUncovered("A state error occured.", cpt
 					.getArgument(1).getFunctor());
 		case "goal_found":
-			return new ModelCheckErrorUncovered("Goal found", cpt
+			return new ModelCheckGoalFound("Goal found", cpt
 					.getArgument(1).getFunctor());
 		case "well_definedness_error":
 			return new ModelCheckErrorUncovered(
