@@ -4,7 +4,6 @@ import de.prob.animator.command.SetBGoalCommand
 import de.prob.animator.domainobjects.ClassicalB
 import de.prob.check.CheckError
 import de.prob.check.ConsistencyChecker
-import de.prob.check.ModelCheckErrorUncovered
 import de.prob.check.ModelChecker
 import de.prob.check.ModelCheckingOptions
 import de.prob.exception.ProBError
@@ -31,7 +30,7 @@ try {
 assert thrown
 
 final res1 = modelCheck(new ConsistencyChecker(s, new ModelCheckingOptions().checkGoal(true), "card(waiting) = 2" as ClassicalB))
-assert res1 instanceof ModelCheckErrorUncovered
+assert res1 instanceof ModelCheckGoalFound
 final t = res1.getTrace(s)
 assert t != null
 assert t.evalCurrent("card(waiting) = 2" as ClassicalB).value == "TRUE"
