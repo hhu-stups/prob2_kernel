@@ -33,15 +33,16 @@ public final class TableData {
 	}
 
 	public static TableData fromProlog(PrologTerm tableTerm) {
-		if(tableTerm.hasFunctor("list", 1)) {
-			final List<List<String>> table = getListTermContents(tableTerm).stream()
-					.map(term -> tableRowFromList(getListTermContents(term)))
-					.collect(Collectors.toList());
-			final List<String> header = table.remove(0);
-			return new TableData(header, table);
-		} else {
-			return new TableData(Collections.singletonList("Information"), Collections.singletonList(Collections.singletonList(tableTerm.toString())));
-		}
+		final List<List<String>> table = getListTermContents(tableTerm).stream()
+				.map(term -> {
+					if(term.hasFunctor("list", 1)) {
+						return tableRowFromList(getListTermContents(term));
+					}
+					return Collections.singletonList(term.toString());
+				})
+				.collect(Collectors.toList());
+		final List<String> header = table.remove(0);
+		return new TableData(header, table);
 	}
 
 	private static List<String> tableRowFromList(ListPrologTerm list) {
