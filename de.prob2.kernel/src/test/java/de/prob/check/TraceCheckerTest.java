@@ -181,12 +181,41 @@ public class TraceCheckerTest {
 				new ReplayOptions(),
 				new TestUtils.ProgressStubFactory());
 
+		Assertions.assertTrue(traceChecker.getTraceModifier().originalMatchesProduced());
+		Assertions.assertTrue(traceChecker.getTraceModifier().succesfullTracing());
+	}
+
+
+	@Test
+	public void machine_has_no_operations() throws IOException, ModelTranslationError, DeltaCalculationException {
+
+
+
+		Path newPath = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "machineWithNoOperation.mch");
+
+		StateSpace stateSpace = proBKernelStub.createStateSpace(newPath);
+
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "typeIV", "tropical_island", "version_2", "ISLAND.prob2trace"));
+
+		TraceChecker traceChecker = new TraceChecker(
+				jsonFile.getTransitionList(),
+				jsonFile.getMachineOperationInfos(),
+				stateSpace.getLoadedMachine().getOperations(),
+				new HashSet<>(jsonFile.getVariableNames()),
+				new HashSet<>(stateSpace.getLoadedMachine().getVariableNames()),
+				newPath.toString(),
+				CliTestCommon.getInjector(),
+				new TestUtils.StubFactoryImplementation(),
+				new ReplayOptions(),
+				new TestUtils.ProgressStubFactory()
+		);
+
 
 		TraceModifier modifier = traceChecker.getTraceModifier();
 
-		boolean result = traceChecker.getTraceModifier().isDirty();
+		Assertions.assertFalse(modifier.originalMatchesProduced());
+		Assertions.assertFalse(modifier.succesfullTracing());
 
-		Assertions.assertFalse(result);
 	}
 
 

@@ -632,7 +632,6 @@ public class TraceModifierTest {
 
 		TraceModifier bla = traceChecker.getTraceModifier();
 
-		Assertions.assertTrue(bla.typeIIIDirty());
 		Assertions.assertEquals(2, bla.getSizeTypeIII());
 
 	}

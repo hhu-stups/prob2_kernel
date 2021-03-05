@@ -13,7 +13,7 @@ import static java.util.stream.Collectors.*;
 
 public class TraceModifier {
 
-
+	private final List<PersistentTransition> orginal;
 	private final List<List<PersistentTransition>> changelogPhase1 = new LinkedList<>();
 	private final Map<Set<RenamingDelta>, List<PersistentTransition>> changelogPhase2 = new HashMap<>();
 	private final Map<Set<RenamingDelta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>>> changelogPhase3 = new HashMap<>();
@@ -23,7 +23,7 @@ public class TraceModifier {
 
 
 	public TraceModifier(List<PersistentTransition> transitionList, StateSpace stateSpace, ProgressMemoryInterface progressMemoryInterface) {
-
+		orginal = transitionList;
 		changelogPhase1.add(transitionList);
 		this.stateSpace = stateSpace;
 		this.progressMemoryInterface = progressMemoryInterface;
@@ -267,11 +267,35 @@ public class TraceModifier {
 		return changelogPhase1.get(changelogPhase1.size() - 1);
 	}
 
-	/**
-	 * @return the original trace was modified
-	 */
-	public boolean isDirty() {
-		return typeIIDetDirty() || typeIINonDetDirty() || typeIIIDirty() || typeIVDirty();
+
+
+	public Map<Set<RenamingDelta>, List<PersistentTransition>> getChangelogPhase2() {
+		return changelogPhase2;
+	}
+
+	public Map<Set<RenamingDelta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>>> getChangelogPhase3II() {
+		return changelogPhase3;
+	}
+
+	public Map<Set<RenamingDelta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Map<String, TraceAnalyser.AnalyserResult>>> getChangelogPhase4() {
+		return changelogPhase4;
+	}
+
+
+	public long getSizeTypeDetII(){
+		return changelogPhase1.size();
+	}
+
+	public long getSizeTypeNonDetII(){
+		return changelogPhase2.keySet().stream().filter(entry -> !entry.equals(emptySet())).count();
+	}
+
+	public long getSizeTypeIII(){
+		return changelogPhase3.values().stream().mapToLong(entry -> entry.values().size()).sum();
+	}
+
+	public long getSizeTypeIV(){
+		return changelogPhase4.values().stream().flatMap(entry -> entry.entrySet().stream().flatMap(innerEntry -> innerEntry.getValue().entrySet().stream())).collect(toSet()).size();
 	}
 
 	public boolean typeIIDetDirty() {
@@ -291,36 +315,29 @@ public class TraceModifier {
 
 	}
 
-	public Map<Set<RenamingDelta>, List<PersistentTransition>> getChangelogPhase2() {
-		return changelogPhase2;
+	public boolean originalMatchesProduced(){
+		if(getSizeTypeIII() > 1 || getSizeTypeIII() ==0){
+			return false;
+		}
+		Optional<List<PersistenceDelta>> first = changelogPhase3.values().stream().flatMap(entry -> entry.values().stream()).findFirst();
+		if(first.isPresent()){
+			for(PersistenceDelta persistenceDelta : first.get()){
+				if(persistenceDelta.getNewTransitions().size() != 1){
+					return false;
+				}
+				if(!persistenceDelta.getNewTransitions().stream().findFirst().get().equals(orginal.get(first.get().indexOf(persistenceDelta)))){
+					return false;
+				}
+			}
+			return true;
+		}else{
+			return false;
+		}
+
 	}
 
-	public Map<Set<RenamingDelta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>>> getChangelogPhase3II() {
-		return changelogPhase3;
+	public boolean succesfullTracing(){
+		return orginal.isEmpty() && getSizeTypeIII() == 0 || !orginal.isEmpty() && getSizeTypeIII() > 0;
 	}
-
-	public Map<Set<RenamingDelta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Map<String, TraceAnalyser.AnalyserResult>>> getChangelogPhase4() {
-		return changelogPhase4;
-	}
-
-
-	public long getSizeTypeDetII(){
-		return changelogPhase1.size() - 1;
-	}
-
-	public long getSizeTypeNonDetII(){
-		return changelogPhase2.keySet().stream().filter(entry -> !entry.equals(emptySet())).count();
-	}
-
-	public long getSizeTypeIII(){
-		return //getSizeTypeDetII() +
-		changelogPhase2.keySet().stream().flatMap(entry -> changelogPhase3.get(entry).entrySet().stream().filter(innerEntry -> !innerEntry.getKey().isEmpty())).count();
-	}
-
-	public long getSizeTypeIV(){
-		return changelogPhase4.values().stream().flatMap(entry -> entry.entrySet().stream().flatMap(innerEntry -> innerEntry.getValue().entrySet().stream())).collect(toSet()).size();
-	}
-
-
 
 }

@@ -770,10 +770,13 @@ public class TraceExplorer {
 					//return newTransitions;
 					return emptyList();
 				} else {
-					PersistentTransition lastTransition = newTransitions.get(newTransitions.size()-1).getLast();
+					if(newTransitions.isEmpty()){
+						newTransitions.add(new PersistenceDelta(oldPTransition, PersistentTransition.createFromList(new ArrayList<>(result))));
+					}else{
+						PersistentTransition lastTransition = newTransitions.get(newTransitions.size()-1).getLast();
+						newTransitions.add(new PersistenceDelta(oldPTransition, PersistentTransition.createFromList(new ArrayList<>(result), lastTransition)));
+					}
 					currentState = currentState.addTransitions(new ArrayList<>(result));
-
-					newTransitions.add(new PersistenceDelta(oldPTransition, PersistentTransition.createFromList(new ArrayList<>(result), lastTransition)));
 					usedTypeIV.add(oldPTransition.getOperationName()); //Careful! pass by reference, the global state is a reference to the passed parameter in the top function, better rework this
 				}
 
