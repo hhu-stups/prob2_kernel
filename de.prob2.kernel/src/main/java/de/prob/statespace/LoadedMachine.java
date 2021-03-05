@@ -13,6 +13,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import de.prob.animator.command.GetMachineIdentifiersCommand;
+import de.prob.animator.command.GetMachineOperationInfos;
 import de.prob.animator.command.GetMachineOperationInfosWithTypes;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
@@ -60,10 +61,17 @@ public class LoadedMachine {
 
 	public Map<String, OperationInfo> getOperations() {
 		if (this.machineOperationInfos == null) {
-			GetMachineOperationInfosWithTypes command = new GetMachineOperationInfosWithTypes();
-			this.stateSpace.execute(command);
-			this.machineOperationInfos = command.getOperationInfos().stream()
-					.collect(toOrderedMap(OperationInfo::getOperationName, i -> i));
+			if(stateSpace.getModel().getFormalismType() == FormalismType.CSP) {
+				GetMachineOperationInfos command = new GetMachineOperationInfos();
+				this.stateSpace.execute(command);
+				this.machineOperationInfos = command.getOperationInfos().stream()
+						.collect(toOrderedMap(OperationInfo::getOperationName, i -> i));
+			} else {
+				GetMachineOperationInfosWithTypes command = new GetMachineOperationInfosWithTypes();
+				this.stateSpace.execute(command);
+				this.machineOperationInfos = command.getOperationInfos().stream()
+						.collect(toOrderedMap(OperationInfo::getOperationName, i -> i));
+			}
 		}
 		return this.machineOperationInfos;
 	}

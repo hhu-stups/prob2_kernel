@@ -13,7 +13,6 @@ import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.OperationInfo;
 
-@Deprecated
 public class GetMachineOperationInfos extends AbstractCommand {
 	private static final String PROLOG_COMMAND_NAME = "get_machine_operation_infos";
 	private static final String RESULT_VARIABLE = "MachineOperationInfos";
