@@ -61,6 +61,12 @@ public class LoadedMachine {
 
 	public Map<String, OperationInfo> getOperations() {
 		if (this.machineOperationInfos == null) {
+			/*
+			TODO:
+			1. Always return operation info with 9 arguments from Prolog
+			2. Get rid of GetMachineOperationInfos
+			3. Assume in GetMachineOperationInfosWithTypes that there are always 9 arguments
+			 */
 			if(stateSpace.getModel().getFormalismType() == FormalismType.CSP) {
 				GetMachineOperationInfos command = new GetMachineOperationInfos();
 				this.stateSpace.execute(command);
