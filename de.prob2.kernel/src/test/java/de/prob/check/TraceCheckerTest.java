@@ -1,22 +1,17 @@
 package de.prob.check;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
-import com.google.inject.Injector;
 import de.prob.ProBKernelStub;
-import de.prob.animator.ReusableAnimator;
 import de.prob.check.tracereplay.check.*;
 import de.prob.check.tracereplay.check.exceptions.DeltaCalculationException;
 import de.prob.check.tracereplay.check.exceptions.PrologTermNotDefinedException;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.cli.CliTestCommon;
-import de.prob.scripting.FactoryProvider;
-import de.prob.scripting.ModelFactory;
 import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
@@ -25,8 +20,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static java.util.Collections.singleton;
 
 public class TraceCheckerTest {
 	private static TraceManager traceManager;
@@ -78,7 +71,7 @@ public class TraceCheckerTest {
 		Map<Set<RenamingDelta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>>> result = modifier.getChangelogPhase3II();
 
 		Assertions.assertEquals(1, modifier.getChangelogPhase2().size());
-		Assertions.assertEquals(6, modifier.getSizeTypeIII());
+		Assertions.assertEquals(6, modifier.tracesStoredInTypeIII());
 
 	}
 
@@ -108,7 +101,8 @@ public class TraceCheckerTest {
 		TraceModifier modifier = traceChecker.getTraceModifier();
 
 		Assertions.assertEquals(1, modifier.getChangelogPhase2().size());
-		Assertions.assertEquals(1, modifier.getSizeTypeIII());
+		Assertions.assertEquals(1, modifier.tracesStoredInTypeIII());
+		Assertions.assertTrue(traceChecker.getTraceModifier().tracingFoundResult());
 
 
 	}
@@ -147,7 +141,8 @@ public class TraceCheckerTest {
 		TraceModifier modifier = traceChecker.getTraceModifier();
 
 		Assertions.assertEquals(1, modifier.getChangelogPhase2().size());
-		Assertions.assertEquals(6, modifier.getSizeTypeIII());
+		Assertions.assertEquals(6, modifier.tracesStoredInTypeIII());
+		Assertions.assertTrue(traceChecker.getTraceModifier().tracingFoundResult());
 
 	}
 
@@ -181,8 +176,7 @@ public class TraceCheckerTest {
 				new ReplayOptions(),
 				new TestUtils.ProgressStubFactory());
 
-		Assertions.assertTrue(traceChecker.getTraceModifier().originalMatchesProduced());
-		Assertions.assertTrue(traceChecker.getTraceModifier().succesfullTracing());
+		Assertions.assertTrue(traceChecker.getTraceModifier().traceMatchesExactly());
 	}
 
 
@@ -213,11 +207,117 @@ public class TraceCheckerTest {
 
 		TraceModifier modifier = traceChecker.getTraceModifier();
 
-		Assertions.assertFalse(modifier.originalMatchesProduced());
-		Assertions.assertFalse(modifier.succesfullTracing());
+		Assertions.assertFalse(modifier.tracingFoundResult());
+		Assertions.assertFalse(modifier.traceMatchesExactly());
 
 	}
 
+
+
+	@Test
+	public void test_traceModifier_holds_correct_results_1() throws IOException, ModelTranslationError, DeltaCalculationException {
+
+
+		Path newPath = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "always_intermediate", "ISLAND2.mch");
+
+		StateSpace stateSpace = proBKernelStub.createStateSpace(newPath);
+
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "typeIV", "always_intermediate", "ISLAND.prob2trace"));
+
+		TraceChecker traceChecker = new TraceChecker(
+				jsonFile.getTransitionList(),
+				jsonFile.getMachineOperationInfos(),
+				stateSpace.getLoadedMachine().getOperations(),
+				new HashSet<>(jsonFile.getVariableNames()),
+				new HashSet<>(stateSpace.getLoadedMachine().getVariableNames()),
+				newPath.toString(),
+				CliTestCommon.getInjector(),
+				new TestUtils.StubFactoryImplementation(),
+				new ReplayOptions(),
+				new TestUtils.ProgressStubFactory()
+		);
+
+
+		TraceModifier modifier = traceChecker.getTraceModifier();
+
+		Assertions.assertFalse(modifier.typeIIDetDirty());
+		Assertions.assertFalse(modifier.typeIINonDetDirty());
+		Assertions.assertFalse(modifier.typeIIIDirty());
+		Assertions.assertTrue(modifier.typeIVDirty());
+		Assertions.assertTrue(modifier.isDirty());
+		Assertions.assertTrue(modifier.tracingFoundResult());
+	}
+
+
+
+	@Test
+	public void test_traceModifier_holds_correct_results_2() throws IOException, ModelTranslationError, DeltaCalculationException {
+
+
+		Path newPath = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "always_intermediate", "ISLAND2.mch");
+
+		StateSpace stateSpace = proBKernelStub.createStateSpace(newPath);
+
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "typeIV", "always_intermediate", "ISLAND_edited_for_ISLAND2.prob2trace"));
+
+		TraceChecker traceChecker = new TraceChecker(
+				jsonFile.getTransitionList(),
+				jsonFile.getMachineOperationInfos(),
+				stateSpace.getLoadedMachine().getOperations(),
+				new HashSet<>(jsonFile.getVariableNames()),
+				new HashSet<>(stateSpace.getLoadedMachine().getVariableNames()),
+				newPath.toString(),
+				CliTestCommon.getInjector(),
+				new TestUtils.StubFactoryImplementation(),
+				new ReplayOptions(),
+				new TestUtils.ProgressStubFactory()
+		);
+
+
+		TraceModifier modifier = traceChecker.getTraceModifier();
+
+		Assertions.assertFalse(modifier.typeIIDetDirty());
+		Assertions.assertFalse(modifier.typeIINonDetDirty());
+		Assertions.assertFalse(modifier.typeIIIDirty());
+		Assertions.assertFalse(modifier.typeIVDirty());
+		Assertions.assertFalse(modifier.isDirty());
+		Assertions.assertTrue(modifier.tracingFoundResult());
+	}
+
+
+	@Test
+	public void test_traceModifier_holds_correct_results_3() throws IOException, ModelTranslationError, DeltaCalculationException {
+
+
+		Path newPath = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "always_intermediate", "ISLAND2.mch");
+
+		StateSpace stateSpace = proBKernelStub.createStateSpace(newPath);
+
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "testTraceMachine10Steps.prob2trace"));
+
+		TraceChecker traceChecker = new TraceChecker(
+				jsonFile.getTransitionList(),
+				jsonFile.getMachineOperationInfos(),
+				stateSpace.getLoadedMachine().getOperations(),
+				new HashSet<>(jsonFile.getVariableNames()),
+				new HashSet<>(stateSpace.getLoadedMachine().getVariableNames()),
+				newPath.toString(),
+				CliTestCommon.getInjector(),
+				new TestUtils.StubFactoryImplementation(),
+				new ReplayOptions(),
+				new TestUtils.ProgressStubFactory()
+		);
+
+
+		TraceModifier modifier = traceChecker.getTraceModifier();
+
+		Assertions.assertFalse(modifier.typeIIDetDirty());
+		Assertions.assertTrue(modifier.typeIINonDetDirty());
+		Assertions.assertFalse(modifier.typeIIIDirty());
+		Assertions.assertTrue(modifier.typeIVDirty());
+		Assertions.assertTrue(modifier.isDirty());
+		Assertions.assertTrue(modifier.tracingFoundResult());
+	}
 
 
 }

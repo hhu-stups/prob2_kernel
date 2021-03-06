@@ -282,62 +282,66 @@ public class TraceModifier {
 	}
 
 
-	public long getSizeTypeDetII(){
-		return changelogPhase1.size();
-	}
 
-	public long getSizeTypeNonDetII(){
-		return changelogPhase2.keySet().stream().filter(entry -> !entry.equals(emptySet())).count();
-	}
-
-	public long getSizeTypeIII(){
-		return changelogPhase3.values().stream().mapToLong(entry -> entry.values().size()).sum();
-	}
-
-	public long getSizeTypeIV(){
-		return changelogPhase4.values().stream().flatMap(entry -> entry.entrySet().stream().flatMap(innerEntry -> innerEntry.getValue().entrySet().stream())).collect(toSet()).size();
+	public boolean isDirty(){
+		return typeIIIDirty() || typeIINonDetDirty() || typeIVDirty() || typeIIDetDirty();
 	}
 
 	public boolean typeIIDetDirty() {
-		return getSizeTypeDetII() > 0;
+		return changelogPhase1.size() > 1;
 	}
 
 	public boolean typeIINonDetDirty(){
-		return getSizeTypeNonDetII() > 0;
-	}
-
-	public boolean typeIVDirty(){
-		return getSizeTypeIV() > 0;
+		return changelogPhase2.keySet().stream().mapToLong(Collection::size).sum() > 0;
 	}
 
 	public boolean typeIIIDirty(){
-		return getSizeTypeIII() > 0;
-
+		return changelogPhase3.values().stream().flatMap(entry -> entry.keySet().stream().filter(innerEntry -> !innerEntry.isEmpty())).count() > 0;
 	}
 
-	public boolean originalMatchesProduced(){
-		if(getSizeTypeIII() > 1 || getSizeTypeIII() ==0){
-			return false;
-		}
-		Optional<List<PersistenceDelta>> first = changelogPhase3.values().stream().flatMap(entry -> entry.values().stream()).findFirst();
-		if(first.isPresent()){
-			for(PersistenceDelta persistenceDelta : first.get()){
-				if(persistenceDelta.getNewTransitions().size() != 1){
-					return false;
-				}
-				if(!persistenceDelta.getNewTransitions().stream().findFirst().get().equals(orginal.get(first.get().indexOf(persistenceDelta)))){
-					return false;
-				}
-			}
-			return true;
+	public boolean typeIVDirty(){
+		return changelogPhase4.values().stream().flatMap(entry -> entry.values().stream().flatMap(innerEntry -> innerEntry.entrySet().stream())).count() > 0;
+	}
+
+
+	public long changedTracesTypeIIDet(){
+		return changelogPhase1.size() - 1;
+	}
+
+	public long changedTracesTypeIINonDet(){
+		if(typeIINonDetDirty()){
+			return changelogPhase2.keySet().stream().mapToLong(Collection::size).sum();
 		}else{
-			return false;
+			return 0;
 		}
-
 	}
 
-	public boolean succesfullTracing(){
-		return orginal.isEmpty() && getSizeTypeIII() == 0 || !orginal.isEmpty() && getSizeTypeIII() > 0;
+	public long changedTracesTypeIII(){
+		if(typeIIIDirty()){
+			return changelogPhase3.values().stream().flatMap(entry -> entry.keySet().stream().filter(innerEntry -> !innerEntry.isEmpty())).count();
+		}else{
+			return 0;
+		}
 	}
 
+	public long changedTracesTypeIV(){
+		if(typeIVDirty()){
+			return changelogPhase4.values().stream().flatMap(entry -> entry.values().stream().flatMap(innerEntry -> innerEntry.entrySet().stream())).count();
+		}else{
+			return 0;
+		}
+	}
+
+	public long tracesStoredInTypeIII(){
+		return changelogPhase3.values().stream().mapToLong(entry -> entry.values().size()).sum();
+	}
+
+
+	public boolean tracingFoundResult(){
+		return tracesStoredInTypeIII() > 0;
+	}
+
+	public boolean traceMatchesExactly(){
+		return !isDirty() && tracesStoredInTypeIII() == 1;
+	}
 }
