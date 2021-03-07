@@ -146,16 +146,34 @@ public abstract class AbstractCommand {
 	       }
 	       System.out.println("irq: " + irq);
 		   return irq;
-	    } else if (callBack.hasFunctor("parse_classical_b",1)) {
+	    } else if (callBack.hasFunctor("parse_classical_b",2)) {
 		 // we could use: (new ClassicalB(formulaToEval, FormulaExpand.EXPAND), but
 		 // it will also try parsing as substitution and creates an uncessary UUID
 		 // TO DO : support multiple formulas, support parse_event_b call_back as well
-	        String toParse = PrologTerm.atomicString(callBack.getArgument(1));
+		 // parse_classical_b(Kind,toParse)
+	        String Kind = PrologTerm.atomicString(callBack.getArgument(1));
+	        // Kind is formula, expression, predicate, substitution
+	        String toParse = PrologTerm.atomicString(callBack.getArgument(2));
 			try {
-			   Start ast = new BParser().parseFormula(toParse);
+			   Start ast;
+			   BParser parser = new BParser();
+			   switch (Kind) {
+					 case "formula":
+						 ast = parser.parseFormula(toParse); break;
+					 case "expression":
+						 ast = parser.parseExpression(toParse); break;
+					 case "predicate":
+						 ast = parser.parsePredicate(toParse); break;
+					 case "substitution":
+						 ast = parser.parseSubstitution(toParse); break;
+					 case "transition":
+						 ast = parser.parseTransition(toParse); break;
+					 default:
+						 throw new IllegalArgumentException("Invalid kind for parse_classical_b: " + Kind);
+			   }
 			   PrologTermStringOutput pout = new PrologTermStringOutput();
 			   ASTProlog.printFormula(ast, pout);
-	           System.out.println("parse tree: " + pout);
+			   System.out.println("parse tree: " + pout);
 			   return pout;
 			} catch (BCompoundException e) {
 	            System.out.println("parse error exception: " + e);
