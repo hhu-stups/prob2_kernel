@@ -29,7 +29,7 @@ public class ReadVisBSvgPathCommand extends AbstractCommand {
 		this.svgPath = bindings.get(SVG_PATH).toString();
 	}
 
-	public static String getSvgPath() {
+	public String getSvgPath() {
 		return SVG_PATH;
 	}
 }
