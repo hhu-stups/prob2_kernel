@@ -4,8 +4,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 
 import de.prob.ProBKernelStub;
@@ -95,13 +94,13 @@ public class TraceManagerTest {
 
 	@Test
 	public void deserialize_file_wrong_value_test() {
-		assertThrows(JsonMappingException.class, () ->
+		assertThrows(JsonProcessingException.class, () ->
 				traceManager.load(Paths.get("src", "test", "resources", "de", "prob","testmachines", "traces",  "test3.prob2trace")));
 	}
 
 	@Test
 	public void deserialize_wrong_fields_test() {
-		assertThrows(MismatchedInputException.class, () ->
+		assertThrows(JsonProcessingException.class, () ->
 		traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines","traces", "test4.prob2trace")));
 	}
 
