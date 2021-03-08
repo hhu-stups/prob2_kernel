@@ -5,7 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.prob.check.tracereplay.PersistentTrace;
 import de.prob.check.tracereplay.PersistentTransition;
+import de.prob.json.HasMetadata;
 import de.prob.json.JsonMetadata;
+import de.prob.json.JsonMetadataBuilder;
 import de.prob.statespace.LoadedMachine;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.Trace;
@@ -21,7 +23,9 @@ import static java.util.stream.Collectors.toMap;
  * Represents the trace file
  */
 @JsonPropertyOrder({"description", "transitionList",  "variableNames", "constantNames", "setNames", "machineOperationInfos", "globalIdentifierTypes", "metadata"})
-public class TraceJsonFile {
+public class TraceJsonFile implements HasMetadata {
+	public static final String FILE_TYPE = "Trace";
+	public static final int CURRENT_FORMAT_VERSION = 2;
 
 	private final String description;
 	private final List<PersistentTransition> transitionList;
@@ -138,6 +142,11 @@ public class TraceJsonFile {
 
 	}
 
+	public static JsonMetadataBuilder metadataBuilder() {
+		return new JsonMetadataBuilder(FILE_TYPE, CURRENT_FORMAT_VERSION)
+			.withUserCreator()
+			.withSavedNow();
+	}
 
 	/**
 	 * Gets the global Type Infos, and the OperationInfos and produces new OperationInfos with the global type infos
@@ -222,10 +231,15 @@ public class TraceJsonFile {
 		return description;
 	}
 
+	@Override
 	public JsonMetadata getMetadata(){
 		return metadata;
 	}
 
+	@Override
+	public TraceJsonFile withMetadata(final JsonMetadata metadata) {
+		return new TraceJsonFile(description, transitionList, variableNames, machineOperationInfos, constantNames, setNames, metadata);
+	}
 
 	public TraceJsonFile changeTrace(PersistentTrace trace){
 		return new TraceJsonFile(trace, variableNames, machineOperationInfos, constantNames, setNames, getMetadata());
@@ -240,7 +254,7 @@ public class TraceJsonFile {
 	}
 
 	public TraceJsonFile changeModelName(String name){
-		return new TraceJsonFile(description, transitionList, variableNames, machineOperationInfos, constantNames, setNames, getMetadata().changeModelName(name));
+		return this.withMetadata(getMetadata().changeModelName(name));
 	}
 
 	public TraceJsonFile changeMachineInfos(Map<String, OperationInfo> operationInfoMap){

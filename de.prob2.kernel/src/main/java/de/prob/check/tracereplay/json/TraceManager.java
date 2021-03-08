@@ -1,31 +1,50 @@
 package de.prob.check.tracereplay.json;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.google.inject.Inject;
-import de.prob.check.tracereplay.json.storage.TraceJsonFile;
-
 import java.io.IOException;
 import java.nio.file.Path;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.inject.Inject;
+
+import de.prob.check.tracereplay.json.storage.TraceJsonFile;
+import de.prob.json.JacksonManager;
+import de.prob.json.JsonConversionException;
 
 /**
  * Loads and safes traces
  */
 public class TraceManager  {
-
-	private final ObjectMapper objectMapper;
+	private final JacksonManager<TraceJsonFile> jacksonManager;
 
 	@Inject
-	public TraceManager(ObjectMapper objectMapper){
+	public TraceManager(ObjectMapper objectMapper, final JacksonManager<TraceJsonFile> jacksonManager) {
+		this.jacksonManager = jacksonManager;
+		this.jacksonManager.initContext(new JacksonManager.Context<TraceJsonFile>(objectMapper, TraceJsonFile.class, TraceJsonFile.FILE_TYPE, TraceJsonFile.CURRENT_FORMAT_VERSION, true) {
+			@Override
+			public ObjectNode convertOldData(final ObjectNode oldObject, final int oldVersion) {
+				if (oldVersion <= 0) {
+					if (!oldObject.has("transitionList")) {
+						throw new JsonConversionException("Not a valid trace file - missing required field transitionList");
+					}
+				}
 
-		this.objectMapper = objectMapper;
-		this.objectMapper.enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-		this.objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-		this.objectMapper.disable(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS);
-		this.objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-		this.objectMapper.registerModule(new JavaTimeModule());
+				if (oldVersion <= 1) {
+					for (final String listFieldName : new String[] {"variableNames", "constantNames", "setNames"}) {
+						if (!oldObject.has(listFieldName)) {
+							oldObject.set(listFieldName, oldObject.arrayNode());
+						}
+					}
+					for (final String objectFieldName : new String[] {"machineOperationInfos", "globalIdentifierTypes"}) {
+						if (!oldObject.has(objectFieldName)) {
+							oldObject.set(objectFieldName, oldObject.objectNode());
+						}
+					}
+				}
+
+				return oldObject;
+			}
+		});
 	}
 
 	/**
@@ -33,7 +52,7 @@ public class TraceManager  {
 	 * @return an object of the form AbstractJsonFile
 	 */
 	public TraceJsonFile load(Path path) throws IOException {
-		return objectMapper.readValue(path.toFile(), TraceJsonFile.class);
+		return this.jacksonManager.readFromFile(path);
 	}
 
 
@@ -42,7 +61,7 @@ public class TraceManager  {
 	 * @param object   the object to be stored
 	 */
 	public void save(Path location, TraceJsonFile object) throws IOException {
-		this.objectMapper.writeValue(location.toFile(), object);
+		this.jacksonManager.writeToFile(location, object);
 	}
 
 }
