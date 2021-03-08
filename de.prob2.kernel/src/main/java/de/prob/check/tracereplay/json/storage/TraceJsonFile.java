@@ -79,7 +79,7 @@ public class TraceJsonFile implements HasMetadata {
 	/**
 	 * The constructor to deserialize files
 	 * @param description description
-	 * @param trace trace
+	 * @param transitionList trace
 	 * @param variableNames variable names of the corresponding machine
 	 * @param machineOperationInfos machine operation infos of the corresponding machine
 	 * @param constantNames name of constants infos of the corresponding machine
@@ -87,7 +87,7 @@ public class TraceJsonFile implements HasMetadata {
 	 * @param metadata metadata
 	 */
 	public TraceJsonFile(@JsonProperty("description") String description,
-						 @JsonProperty("trace") List<PersistentTransition> trace,
+						 @JsonProperty("transitionList") List<PersistentTransition> transitionList,
 						 @JsonProperty("variablesNames") List<String> variableNames,
 						 @JsonProperty("machineOperationInfos") Map<String, OperationInfo> machineOperationInfos,
 						 @JsonProperty("constantNames") List<String> constantNames,
@@ -96,7 +96,7 @@ public class TraceJsonFile implements HasMetadata {
 						 @JsonProperty("metadata") JsonMetadata metadata) {
 
 
-		this.transitionList = trace;
+		this.transitionList = transitionList;
 		this.description = description;
 		this.variableNames = variableNames;
 		this.constantNames = constantNames;
