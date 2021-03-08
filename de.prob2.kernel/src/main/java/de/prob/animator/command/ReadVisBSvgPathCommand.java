@@ -19,7 +19,7 @@ public class ReadVisBSvgPathCommand extends AbstractCommand {
 	@Override
 	public void writeCommand(final IPrologTermOutput pto) {
 		pto.openTerm(PROLOG_COMMAND_NAME);
-		pto.printString(jsonPath);
+		pto.printAtom(jsonPath);
 		pto.printVariable(SVG_PATH);
 		pto.closeTerm();
 	}
