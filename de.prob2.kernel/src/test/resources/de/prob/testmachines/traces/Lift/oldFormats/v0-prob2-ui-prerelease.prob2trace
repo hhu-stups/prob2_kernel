@@ -1,0 +1,112 @@
+{
+  "transitionList": [
+    {
+      "name": "$initialise_machine",
+      "params": null,
+      "results": null,
+      "destState": {
+        "floors": "0"
+      },
+      "destStateNotChanged": [],
+      "preds": null
+    },
+    {
+      "name": "inc",
+      "params": {},
+      "results": {},
+      "destState": {
+        "floors": "1"
+      },
+      "destStateNotChanged": [],
+      "preds": null
+    },
+    {
+      "name": "getfloors",
+      "params": {},
+      "results": {
+        "out": "1"
+      },
+      "destState": {},
+      "destStateNotChanged": [
+        "floors"
+      ],
+      "preds": null
+    },
+    {
+      "name": "inc",
+      "params": {},
+      "results": {},
+      "destState": {
+        "floors": "2"
+      },
+      "destStateNotChanged": [],
+      "preds": null
+    },
+    {
+      "name": "getfloors",
+      "params": {},
+      "results": {
+        "out": "2"
+      },
+      "destState": {},
+      "destStateNotChanged": [
+        "floors"
+      ],
+      "preds": null
+    },
+    {
+      "name": "inc",
+      "params": {},
+      "results": {},
+      "destState": {
+        "floors": "3"
+      },
+      "destStateNotChanged": [],
+      "preds": null
+    },
+    {
+      "name": "getfloors",
+      "params": {},
+      "results": {
+        "out": "3"
+      },
+      "destState": {},
+      "destStateNotChanged": [
+        "floors"
+      ],
+      "preds": null
+    },
+    {
+      "name": "getfloors",
+      "params": {},
+      "results": {
+        "out": "3"
+      },
+      "destState": {},
+      "destStateNotChanged": [
+        "floors"
+      ],
+      "preds": null
+    },
+    {
+      "name": "dec",
+      "params": {},
+      "results": {},
+      "destState": {
+        "floors": "2"
+      },
+      "destStateNotChanged": [],
+      "preds": null
+    },
+    {
+      "name": "dec",
+      "params": {},
+      "results": {},
+      "destState": {
+        "floors": "1"
+      },
+      "destStateNotChanged": [],
+      "preds": null
+    }
+  ]
+}
