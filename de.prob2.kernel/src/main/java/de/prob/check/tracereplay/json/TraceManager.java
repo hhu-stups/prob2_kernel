@@ -27,6 +27,9 @@ public class TraceManager  {
 					if (!oldObject.has("transitionList")) {
 						throw new JsonConversionException("Not a valid trace file - missing required field transitionList");
 					}
+					if (!oldObject.has("description")) {
+						oldObject.put("description", "");
+					}
 				}
 
 				if (oldVersion <= 1) {
