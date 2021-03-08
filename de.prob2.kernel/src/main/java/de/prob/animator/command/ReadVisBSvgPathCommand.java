@@ -6,7 +6,7 @@ import de.prob.prolog.term.PrologTerm;
 
 public class ReadVisBSvgPathCommand extends AbstractCommand {
 
-	private static final String PROLOG_COMMAND_NAME = "prob2_load_visb_file";
+	private static final String PROLOG_COMMAND_NAME = "prob2_visb_file_loaded";
 	private static final String SVG_PATH = "SvgFile";
 	private final String jsonPath;
 	private String svgPath;
@@ -19,7 +19,7 @@ public class ReadVisBSvgPathCommand extends AbstractCommand {
 	@Override
 	public void writeCommand(final IPrologTermOutput pto) {
 		pto.openTerm(PROLOG_COMMAND_NAME);
-		pto.printAtom(jsonPath);
+		pto.printString(jsonPath);
 		pto.printVariable(SVG_PATH);
 		pto.closeTerm();
 	}
