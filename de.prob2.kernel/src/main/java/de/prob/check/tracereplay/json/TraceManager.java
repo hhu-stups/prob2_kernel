@@ -3,6 +3,7 @@ package de.prob.check.tracereplay.json;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.inject.Inject;
@@ -41,6 +42,19 @@ public class TraceManager  {
 					for (final String objectFieldName : new String[] {"machineOperationInfos", "globalIdentifierTypes"}) {
 						if (!oldObject.has(objectFieldName)) {
 							oldObject.set(objectFieldName, oldObject.objectNode());
+						}
+					}
+					for (final JsonNode transitionNode : oldObject.get("transitionList")) {
+						final ObjectNode transition = (ObjectNode)transitionNode;
+						for (final String objectFieldName : new String[] {"params", "results", "destState"}) {
+							if (!transition.has(objectFieldName) || transition.get(objectFieldName).isNull()) {
+								transition.set(objectFieldName, transition.objectNode());
+							}
+						}
+						for (final String arrayFieldName : new String[] {"destStateNotChanged", "preds"}) {
+							if (!transition.has(arrayFieldName) || transition.get(arrayFieldName).isNull()) {
+								transition.set(arrayFieldName, transition.arrayNode());
+							}
 						}
 					}
 				}

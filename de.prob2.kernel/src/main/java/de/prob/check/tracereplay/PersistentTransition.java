@@ -106,41 +106,12 @@ public class PersistentTransition {
 								@JsonProperty("destState") Map<String, String> destState,
 								@JsonProperty("destStateNotChanged") Set<String> destStateNotChanged,
 								@JsonProperty("preds") List<String> preds){
-		if(name.equals(Transition.INITIALISE_MACHINE_NAME)){
-			params = Collections.emptyMap();
-			results = Collections.emptyMap();
-			name = Transition.INITIALISE_MACHINE_NAME;
-		}
-
-
-
-		if(params == null){
-			params = emptyMap();
-		}
-
-		if(results == null){
-			results = emptyMap();
-		}
-
-		if(destState == null){
-			destState = emptyMap();
-		}
-
-		if(destStateNotChanged ==null){
-			destStateNotChanged = emptySet();
-		}
-
-		if(preds==null){
-			preds = emptyList();
-		}
-
-		this.name = name;
-		this.params.putAll(params);
-		this.results.putAll(results);
-		this.destState.putAll(destState);
-		this.destStateNotChanged.addAll(destStateNotChanged);
-		this.preds.addAll(preds);
-
+		this.name = Objects.requireNonNull(name, "name");
+		this.params.putAll(Objects.requireNonNull(params, "params"));
+		this.results.putAll(Objects.requireNonNull(results, "results"));
+		this.destState.putAll(Objects.requireNonNull(destState, "destState"));
+		this.destStateNotChanged.addAll(Objects.requireNonNull(destStateNotChanged, "destStateNotChanged"));
+		this.preds.addAll(Objects.requireNonNull(preds, "preds"));
 	}
 
 
