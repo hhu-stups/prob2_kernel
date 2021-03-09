@@ -12,13 +12,7 @@ import de.prob.statespace.OperationInfo;
 import de.prob.statespace.State;
 import de.prob.statespace.Transition;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.Collections.*;
 
@@ -116,6 +110,24 @@ public class PersistentTransition {
 			params = Collections.emptyMap();
 			results = Collections.emptyMap();
 			name = Transition.INITIALISE_MACHINE_NAME;
+		}
+
+
+
+		if(params == null){
+			params = emptyMap();
+		}
+
+		if(results == null){
+			results = emptyMap();
+		}
+
+		if(destState == null){
+			destState = emptyMap();
+		}
+
+		if(destStateNotChanged ==null){
+			destStateNotChanged = emptySet();
 		}
 
 		if(preds==null){
@@ -309,5 +321,20 @@ public class PersistentTransition {
 	public String toString() {
 		return "PersistentTransition:" + name +  params.toString()  + destState.toString()
 				+ results.toString()  +destStateNotChanged.toString() ;
+	}
+
+
+	public static PersistentTransition createEmptyPTransition(){
+
+		return new PersistentTransition("Dummy",new HashMap<>(), new HashMap<>(), new HashMap<>(),new HashSet<>(),
+				new ArrayList<>());
+
+	}
+
+	public static PersistentTransition createEmptyPTransition(String name){
+
+		return new PersistentTransition(name,new HashMap<>(), new HashMap<>(), new HashMap<>(),new HashSet<>(),
+				new ArrayList<>());
+
 	}
 }
