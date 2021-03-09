@@ -107,9 +107,13 @@ public class TraceCheckerTest {
 
 		TraceModifier modifier = traceChecker.getTraceModifier();
 
-		Assertions.assertEquals(1, modifier.getChangelogPhase2().size());
-		Assertions.assertEquals(1, modifier.tracesStoredInTypeIII());
-		Assertions.assertTrue(traceChecker.getTraceModifier().tracingFoundResult());
+		Assertions.assertFalse(modifier.typeIIDetDirty());
+		Assertions.assertFalse(modifier.typeIINonDetDirty());
+		Assertions.assertTrue(modifier.typeIIIDirty());
+		Assertions.assertTrue(modifier.typeIVDirty());
+		Assertions.assertTrue(modifier.isDirty());
+		Assertions.assertTrue(modifier.tracingFoundResult());
+
 
 
 	}
@@ -185,6 +189,99 @@ public class TraceCheckerTest {
 
 		Assertions.assertTrue(traceChecker.getTraceModifier().traceMatchesExactly());
 	}
+
+
+
+	@Test
+	public void integration_long_constructor_3() throws IOException, ModelTranslationError, DeltaCalculationException {
+
+
+
+		Path oldPath = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "complexExample", "PitmanController_v6.mch");
+		StateSpace stateSpace1 = proBKernelStub.createStateSpace(oldPath);
+		Map<String, OperationInfo> oldInfos = stateSpace1.getLoadedMachine().getOperations();
+		List<String> oldVars = stateSpace1.getLoadedMachine().getVariableNames();
+
+		Path newPath = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",   "complexExample", "PitmanController_TIME_v4.mch");
+		StateSpace stateSpace2 = proBKernelStub.createStateSpace(newPath);
+		Map<String, OperationInfo> newInfos = stateSpace2.getLoadedMachine().getOperations();
+		List<String> newVars = stateSpace2.getLoadedMachine().getVariableNames();
+
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "complexExample", "pitman_v6_to_time.prob2trace"));
+
+
+		TraceChecker traceChecker = new TraceChecker(jsonFile.getTransitionList(),
+				oldInfos,
+				newInfos,
+				new HashSet<>(oldVars),
+				new HashSet<>(newVars),
+				oldPath.toString(),
+				newPath.toString(),
+				CliTestCommon.getInjector(),
+				new TestUtils.StubFactoryImplementation(),
+				new ReplayOptions(),
+				new TestUtils.ProgressStubFactory());
+
+
+		TraceModifier modifier = traceChecker.getTraceModifier();
+
+
+		Assertions.assertFalse(modifier.typeIIDetDirty());
+		Assertions.assertFalse(modifier.typeIINonDetDirty());
+		Assertions.assertFalse(modifier.typeIIIDirty());
+		Assertions.assertFalse(modifier.typeIVDirty());
+		Assertions.assertFalse(modifier.isDirty());
+		Assertions.assertFalse(modifier.tracingFoundResult());
+		Assertions.assertTrue(modifier.thereAreIncompleteTraces());
+
+
+	}
+
+
+	@Test
+	public void integration_long_constructor_4() throws IOException, ModelTranslationError, DeltaCalculationException {
+
+
+
+		Path oldPath = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "complexExample", "PitmanController_TIME_v4.mch");
+		StateSpace stateSpace1 = proBKernelStub.createStateSpace(oldPath);
+		Map<String, OperationInfo> oldInfos = stateSpace1.getLoadedMachine().getOperations();
+		List<String> oldVars = stateSpace1.getLoadedMachine().getVariableNames();
+
+		Path newPath = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",   "complexExample", "PitmanController_v6.mch");
+		StateSpace stateSpace2 = proBKernelStub.createStateSpace(newPath);
+		Map<String, OperationInfo> newInfos = stateSpace2.getLoadedMachine().getOperations();
+		List<String> newVars = stateSpace2.getLoadedMachine().getVariableNames();
+
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "complexExample", "PitmanController_TIME_v4_v2.prob2trace"));
+
+
+		TraceChecker traceChecker = new TraceChecker(jsonFile.getTransitionList(),
+				oldInfos,
+				newInfos,
+				new HashSet<>(oldVars),
+				new HashSet<>(newVars),
+				oldPath.toString(),
+				newPath.toString(),
+				CliTestCommon.getInjector(),
+				new TestUtils.StubFactoryImplementation(),
+				new ReplayOptions(),
+				new TestUtils.ProgressStubFactory());
+
+
+		TraceModifier modifier = traceChecker.getTraceModifier();
+
+
+		Assertions.assertFalse(modifier.typeIIDetDirty());
+		Assertions.assertFalse(modifier.typeIINonDetDirty());
+		Assertions.assertFalse(modifier.typeIIIDirty());
+		Assertions.assertFalse(modifier.typeIVDirty());
+		Assertions.assertFalse(modifier.isDirty());
+		Assertions.assertFalse(modifier.tracingFoundResult());
+		Assertions.assertTrue(modifier.thereAreIncompleteTraces());
+
+	}
+
 
 
 	@Test
@@ -286,8 +383,8 @@ public class TraceCheckerTest {
 		Assertions.assertFalse(modifier.typeIIDetDirty());
 		Assertions.assertFalse(modifier.typeIINonDetDirty());
 		Assertions.assertFalse(modifier.typeIIIDirty());
-		Assertions.assertFalse(modifier.typeIVDirty());
-		Assertions.assertFalse(modifier.isDirty());
+		Assertions.assertTrue(modifier.typeIVDirty());
+		Assertions.assertTrue(modifier.isDirty());
 		Assertions.assertTrue(modifier.tracingFoundResult());
 	}
 
@@ -321,9 +418,9 @@ public class TraceCheckerTest {
 		Assertions.assertFalse(modifier.typeIIDetDirty());
 		Assertions.assertTrue(modifier.typeIINonDetDirty());
 		Assertions.assertFalse(modifier.typeIIIDirty());
-		Assertions.assertTrue(modifier.typeIVDirty());
+		Assertions.assertFalse(modifier.typeIVDirty());
 		Assertions.assertTrue(modifier.isDirty());
-		Assertions.assertTrue(modifier.tracingFoundResult());
+		Assertions.assertFalse(modifier.tracingFoundResult());
 	}
 
 

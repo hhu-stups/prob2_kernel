@@ -8,6 +8,7 @@ import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.exceptions.MappingFactoryInterface;
+import de.prob.check.tracereplay.check.exceptions.TraceExplorerExceptions;
 import de.prob.check.tracereplay.check.exceptions.TransitionHasNoSuccessorException;
 import de.prob.formula.PredicateBuilder;
 import de.prob.statespace.OperationInfo;
@@ -16,6 +17,7 @@ import de.prob.statespace.Trace;
 import de.prob.statespace.Transition;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
@@ -28,6 +30,7 @@ public class TraceExplorer {
 	private final Map<Map<String, Map<MappingNames, Map<String, String>>>, Set<String>> updatedTypeIV = new HashMap<>();
 	private final ReplayOptions replayOptions;
 	private final ProgressMemoryInterface progressMemoryInterface;
+	private final List<List<PersistenceDelta>> ungracefulTraces = new ArrayList<>();
 
 	public TraceExplorer(boolean initWasSet, MappingFactoryInterface mappingFactory, ReplayOptions replayOptions, ProgressMemoryInterface progressMemoryInterface) {
 		this.initWasSet = initWasSet;
@@ -155,6 +158,7 @@ public class TraceExplorer {
 	 * @return return a list with all enabled transitions by name
 	 */
 	public static List<String> enabledOperations(Trace t) {
+		
 		return t.getCurrentState().getOutTransitions()
 				.stream()
 				.collect(toCollection(() -> new TreeSet<>(Comparator.comparing(Transition::getName))))
@@ -171,18 +175,17 @@ public class TraceExplorer {
 	 * @param current the current transition
 	 * @return a list of transitions that satisfy the privilige
 	 */
-	public  List<Transition> renamedTransition(Trace t, PersistentTransition current) {
+	public  List<Transition> renamedTransition(Trace t, PersistentTransition current, PersistentTransition last) {
 		List<String> enabledOperations = enabledOperations(t);
 
-		List<List<Transition>> result = enabledOperations.stream()
-				.map(entry -> executeOperation(t, entry))
-				.filter(entry -> !entry.isEmpty())
+		List<Transition> result = enabledOperations.stream()
+				.flatMap(entry -> executeOperation(t, entry).stream())
 				.collect(toList());
 
-		Map<List<Transition>, Integer> scoredPaths = scorePaths(current, result);
+		Map<Transition, Integer> scoredPaths = scorePaths(current, last , result);
 
-		return extractMaxScore(scoredPaths);
 
+		return extractMaxScore(scoredPaths, current, last);
 	}
 
 	/**
@@ -218,7 +221,7 @@ public class TraceExplorer {
 		final IEvalElement pred = stateSpace.getModel().parseFormula(new PredicateBuilder().toString(), FormulaExpand.EXPAND);
 
 		GetOperationByPredicateCommand command =
-				new GetOperationByPredicateCommand(stateSpace, t.getCurrentState().getId(), name, pred, 1);
+				new GetOperationByPredicateCommand(stateSpace, t.getCurrentState().getId(), name, pred, 5);
 
 		stateSpace.execute(command);
 
@@ -393,20 +396,20 @@ public class TraceExplorer {
 	 * @param transition the transition we are looking for
 	 * @return a list of transition showing the way
 	 */
-	private List<Transition> findPath(Trace t, PersistentTransition transition) {
+	private List<Transition> findPath(Trace t, PersistentTransition transition, PersistentTransition last) {
 
 		List<String> possibleTransitions = enabledOperations(t);
 		if (possibleTransitions.contains(transition.getOperationName())) {
 			return replayTransition(t, transition);
 		}
 
-		List<Transition> lookAheadResult = lookAhead(t, transition);
+		List<Transition> lookAheadResult = lookAhead(t, transition, last);
 
 		if (!lookAheadResult.isEmpty()) {
 			return lookAheadResult;
 		}
 
-		return renamedTransition(t, transition);
+		return renamedTransition(t, transition, last);
 
 	}
 
@@ -417,7 +420,7 @@ public class TraceExplorer {
 	 * @param current the current transition
 	 * @return a list of transitions that can be taken to skip the transition
 	 */
-	public List<Transition> lookAhead(Trace t, PersistentTransition current) {
+	public List<Transition> lookAhead(Trace t, PersistentTransition current, PersistentTransition last) {
 		List<String> possibleTransitions = enabledOperations(t);
 
 		List<ConstructTraceCommand> commands = possibleTransitions
@@ -429,7 +432,7 @@ public class TraceExplorer {
 
 		commands.forEach(stateSpace::execute);
 
-		return selectBestMatch(commands, current);
+		return selectBestMatch(commands, current, last);
 	}
 
 
@@ -439,16 +442,29 @@ public class TraceExplorer {
 	 * @param current the persistent transition to compare against
 	 * @return the best match or an empty list
 	 */
-	public static List<Transition> selectBestMatch(List<ConstructTraceCommand> commands, PersistentTransition current){
+	public static List<Transition> selectBestMatch(List<ConstructTraceCommand> commands, PersistentTransition current, PersistentTransition last){
 
 		List<List<Transition>> validTraces = commands.stream()
 				.filter(entry -> !entry.hasErrors() && entry.getNewTransitions().size() > 0)
 				.map(entry -> new ArrayList<>(entry.getNewTransitions()))
 				.collect(toList());
 
-		Map<List<Transition>, Integer> scoredPaths = scorePaths(current, validTraces);
 
-		return extractMaxScore(scoredPaths);
+		Map<Transition, List<Transition>> bla = validTraces.stream().collect(toMap(entry -> entry.get(entry.size() - 1), entry -> entry));
+
+		Map<Transition, Integer> scored = scorePaths(current, last, new ArrayList<>(bla.keySet()));
+
+		List<Transition> max = extractMaxScore(scored, current, last);
+
+		if(max.isEmpty()){
+			return emptyList();
+		}
+		else{
+			return bla.get(max.get(0));
+		}
+
+	//	Map<Transition, Integer> scoredPaths = scorePaths(current, last, validTraces);
+	//	return extractMaxScore(scoredPaths, current, last);
 	}
 
 
@@ -457,15 +473,35 @@ public class TraceExplorer {
 	 * @param scoredPaths the map with paths and scores assigned to
 	 * @return the path with the highest score
 	 */
-	public static List<Transition> extractMaxScore(Map<List<Transition>, Integer> scoredPaths){
+	public static List<Transition> extractMaxScore(Map<Transition, Integer> scoredPaths, PersistentTransition c, PersistentTransition last){
 
-		return scoredPaths.entrySet().stream().reduce(new AbstractMap.SimpleEntry<>(emptyList(), 0), (acc, current ) ->{
-			if(acc.getValue().compareTo(current.getValue())> 0){
-				return acc;
-			}else{
-				return current;
+
+		List<Transition> currentlyCollected = new ArrayList<>();
+		int highestScore = 0;
+		for( Map.Entry<Transition, Integer> entry : scoredPaths.entrySet()){
+			if(entry.getValue() > highestScore){
+				highestScore = entry.getValue();
+				currentlyCollected.clear();
+				currentlyCollected.add(entry.getKey());
+
+			}else if(entry.getValue() == highestScore){
+				currentlyCollected.add(entry.getKey());
 			}
-		}).getKey();
+		}
+
+
+		if(currentlyCollected.size() == 1 ){
+			return singletonList(currentlyCollected.get(0));
+		}
+
+
+
+		if(currentlyCollected.size() > 1 && highestScore != 0){
+			return singletonList( currentlyCollected.get(0));
+		}else{
+			return emptyList();
+		}
+
 	}
 
 	/**
@@ -474,10 +510,10 @@ public class TraceExplorer {
 	 * @param toScore the lists to score
 	 * @return the scored lists
 	 */
-	public static Map<List<Transition>, Integer> scorePaths(PersistentTransition original, List<List<Transition>> toScore){
+	public static Map<Transition, Integer> scorePaths(PersistentTransition original, PersistentTransition last, List<Transition> toScore){
 		return toScore.stream().collect(toMap(entry -> entry, entry -> {
-			List<PersistentTransition> list = PersistentTransition.createFromList(new ArrayList<>(entry));
-			return (int) mapContainsMatchingElements(original.getAllPredicates(), list.get(list.size()-1).getAllPredicates());
+			PersistentTransition persistentTransition = new PersistentTransition(entry, last);
+			return (int) mapContainsMatchingElements(original.getAllPredicates(), persistentTransition.getAllPredicates());
 		}));
 	}
 
@@ -730,6 +766,7 @@ public class TraceExplorer {
 				.collect(toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
 	}
 
+	List<PersistentTransition> newT = new ArrayList<>();
 
 	/**
 	 * Gets a prepared transition list and tries to replay the trace. Eventual problems are caught and it will be tried
@@ -761,19 +798,25 @@ public class TraceExplorer {
 
 				} catch (TransitionHasNoSuccessorException ignored) {
 					isDirty = true;
-					//return emptyList();
 				}
 			}
+
 			if (usedTypeIV.contains(oldPTransition.getOperationName()) || isDirty) {
-				List<Transition> result = findPath(currentState, oldPTransition);
+				List<Transition> result;
+
+				if(newTransitions.size() ==0){
+					result = findPathForInitAndSC(currentState, oldPTransition);
+				}else{
+					result = findPath(currentState, oldPTransition, newTransitions.get(newTransitions.size() - 1).getLast());
+				}
 				if (result.isEmpty()) {
-					//return newTransitions;
+					ungracefulTraces.add(newTransitions);
 					return emptyList();
 				} else {
-					if(newTransitions.isEmpty()){
+					if (newTransitions.isEmpty()) {
 						newTransitions.add(new PersistenceDelta(oldPTransition, PersistentTransition.createFromList(new ArrayList<>(result))));
-					}else{
-						PersistentTransition lastTransition = newTransitions.get(newTransitions.size()-1).getLast();
+					} else {
+						PersistentTransition lastTransition = newTransitions.get(newTransitions.size() - 1).getLast();
 						newTransitions.add(new PersistenceDelta(oldPTransition, PersistentTransition.createFromList(new ArrayList<>(result), lastTransition)));
 					}
 					currentState = currentState.addTransitions(new ArrayList<>(result));
@@ -781,11 +824,34 @@ public class TraceExplorer {
 				}
 
 			}
+
 			progressMemoryInterface.fulfillTask();
 		}
 		updatedTypeIV.put(currentTypeIIIMapping, usedTypeIV);
 
 		return newTransitions;
+	}
+
+
+	/**
+	 * Special case whenever the first operation of the trace exploration is a Type IV - executes init or sc blindly
+	 * without enforcing predicates
+	 * @param t the current trace
+	 * @param transition the current transition
+	 * @return the new transition
+	 */
+	public List<Transition> findPathForInitAndSC(Trace t, PersistentTransition transition){
+		List<String> possibleTransitions = enabledOperations(t);
+		if(transition.getOperationName().equals(Transition.INITIALISE_MACHINE_NAME) && possibleTransitions.contains(Transition.INITIALISE_MACHINE_NAME)){
+
+			return replayTransition(t, PersistentTransition.createEmptyPTransition(Transition.INITIALISE_MACHINE_NAME));
+		}
+		if(transition.getOperationName().equals(Transition.SETUP_CONSTANTS_NAME) && possibleTransitions.contains(Transition.SETUP_CONSTANTS_NAME)){
+
+			return replayTransition(t, PersistentTransition.createEmptyPTransition(Transition.SETUP_CONSTANTS_NAME));
+		}
+
+		return emptyList();
 	}
 
 
@@ -811,7 +877,11 @@ public class TraceExplorer {
 
 		stateSpace.execute(command);
 
-		if (command.getNewTransitions().size() >= 1) {
+		if (command.getNewTransitions().size() > 1) {
+			return command.getNewTransitions().get(0);
+		}
+
+		if(command.getNewTransitions().size() == 1){
 			return command.getNewTransitions().get(0);
 		}
 		throw new TransitionHasNoSuccessorException(persistentTransition);
@@ -846,6 +916,10 @@ public class TraceExplorer {
 		return updatedTypeIV;
 	}
 
+
+	public List<List<PersistenceDelta>> getUngracefulTraces(){
+		return ungracefulTraces;
+	}
 
 	/**
 	 * An helper datatype to better split operation infos

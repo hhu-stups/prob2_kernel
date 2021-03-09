@@ -18,8 +18,10 @@ public class TraceModifier {
 	private final Map<Set<RenamingDelta>, List<PersistentTransition>> changelogPhase2 = new HashMap<>();
 	private final Map<Set<RenamingDelta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>>> changelogPhase3 = new HashMap<>();
 	private final Map<Set<RenamingDelta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Map<String, TraceAnalyser.AnalyserResult>>> changelogPhase4 = new HashMap<>();
+	private final List<PersistenceDelta> incompleteTrace = new ArrayList<>();
 	private final StateSpace stateSpace;
 	private final ProgressMemoryInterface progressMemoryInterface;
+	private List<List<PersistentTransition>> ungracefulTraces = new ArrayList<>();
 
 
 	public TraceModifier(List<PersistentTransition> transitionList, StateSpace stateSpace, ProgressMemoryInterface progressMemoryInterface) {
@@ -233,6 +235,7 @@ public class TraceModifier {
 					.collect(toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
 
 
+
 			changelogPhase3.putAll(results);
 			progressMemoryInterface.nextStep();
 			Map<Set<RenamingDelta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Map<String, TraceAnalyser.AnalyserResult>>> typeIVResults =
@@ -240,8 +243,13 @@ public class TraceModifier {
 			progressMemoryInterface.nextStep();
 			changelogPhase4.putAll(typeIVResults);
 
-
+			ungracefulTraces.addAll(traceExplorer.getUngracefulTraces().stream()
+					.map(entry -> entry.stream()
+							.flatMap(innerEntry -> innerEntry.getNewTransitions().stream())
+							.collect(toList()))
+					.collect(toList()));
 	}
+
 
 	/**
 	 * Helper to perform type IV analyzes for all candidates
@@ -336,6 +344,13 @@ public class TraceModifier {
 		return changelogPhase3.values().stream().mapToLong(entry -> entry.values().size()).sum();
 	}
 
+	public boolean thereAreIncompleteTraces(){
+		return !ungracefulTraces.isEmpty();
+	}
+
+	public List<List<PersistentTransition>> getUngracefulTraces(){
+		return ungracefulTraces;
+	}
 
 	public boolean tracingFoundResult(){
 		return tracesStoredInTypeIII() > 0;
