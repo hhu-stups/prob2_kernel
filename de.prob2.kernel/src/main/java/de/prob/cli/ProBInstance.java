@@ -61,10 +61,17 @@ public class ProBInstance {
 	public void sendInterrupt() {
 		try {
 			logger.info("sending interrupt signal");
-			Runtime.getRuntime().exec(interruptCommand);
 			// calls send_user_interrupt or send_user_interrupt.exe on Windows
+			final int exitCode = new ProcessBuilder(interruptCommand).start().waitFor();
+			if (exitCode != 0) {
+				logger.warn("send_user_interrupt command exited with status code {}", exitCode);
+			} else {
+				logger.trace("send_user_interrupt command exited successfully");
+			}
 		} catch (IOException e) {
 			logger.warn("calling the send_user_interrupt command failed", e);
+		} catch (InterruptedException e) {
+			logger.warn("Thread interrupted while waiting for send_user_interrupt to finish", e);
 		}
 	}
 
