@@ -47,7 +47,7 @@ public class CompareTwoOperations extends AbstractCommand {
 	public void processResult(ISimplifiedROMap<String, PrologTerm> bindings) {
 		TypeReference<Map<String, String>> typeReference = new TypeReference<Map<String, String>>() {};
 		try {
-			delta = objectMapper.readValue(bindings.get(VARIABLE).toString().replace("'", ""), typeReference);
+			delta = objectMapper.readValue(PrologTerm.atomicString(bindings.get(VARIABLE)), typeReference);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
