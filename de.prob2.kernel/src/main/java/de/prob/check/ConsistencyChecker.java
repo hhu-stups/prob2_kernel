@@ -114,41 +114,4 @@ public class ConsistencyChecker extends CheckerBase {
 		}
 		this.isFinished(cmd.getResult(), stats);
 	}
-
-	/**
-	 * Provides a way to generate a {@link ModelChecker} with consistency
-	 * checking capabilities given a {@link StateSpace}. Default options will be
-	 * used.
-	 * 
-	 * @param s
-	 *            {@link StateSpace} for which the consistency checking should
-	 *            take place
-	 * @return {@link ModelChecker} with consistency checking capabilities.
-	 * 
-	 * @deprecated Use {@link #ConsistencyChecker(StateSpace)} directly. See the {@link ModelChecker} deprecation notice for details.
-	 */
-	@Deprecated
-	public static ModelChecker create(final StateSpace s) {
-		return new ModelChecker(new ConsistencyChecker(s));
-	}
-
-	/**
-	 * Provides a way to generate a {@link ModelChecker} with consistency
-	 * checking capabilities given a {@link StateSpace} and user defined
-	 * {@link ModelCheckingOptions}.
-	 * 
-	 * @param s
-	 *            {@link StateSpace} for which the consistency checking should
-	 *            take place
-	 * @param options
-	 *            {@link ModelCheckingOptions} specified by the user
-	 * @return {@link ModelChecker} with consistency checking capabilities
-	 *
-	 * @deprecated Use {@link #ConsistencyChecker(StateSpace, ModelCheckingOptions)} directly. See the {@link ModelChecker} deprecation notice for details.
-	 */
-	@Deprecated
-	public static ModelChecker create(final StateSpace s, final ModelCheckingOptions options) {
-		return new ModelChecker(new ConsistencyChecker(s, options));
-	}
-
 }

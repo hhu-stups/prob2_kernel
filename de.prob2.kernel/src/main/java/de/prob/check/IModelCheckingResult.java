@@ -1,8 +1,8 @@
 package de.prob.check;
 
 /**
- * Classes used to represent the result generated from the ModelChecker should
- * implement this interface
+ * Classes used to represent the result generated from an IModelCheckJob
+ * should implement this interface
  * 
  * @author joy
  * 
