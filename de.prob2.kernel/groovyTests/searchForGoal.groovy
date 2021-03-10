@@ -4,6 +4,7 @@ import de.prob.animator.command.SetBGoalCommand
 import de.prob.animator.domainobjects.ClassicalB
 import de.prob.check.CheckError
 import de.prob.check.ConsistencyChecker
+import de.prob.check.ModelCheckGoalFound
 import de.prob.check.ModelChecker
 import de.prob.check.ModelCheckingOptions
 import de.prob.exception.ProBError
