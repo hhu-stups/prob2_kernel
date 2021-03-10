@@ -60,13 +60,9 @@ public class ProBInstance {
 
 	public void sendInterrupt() {
 		try {
-			if (connection.isBusy()) {
-				logger.info("sending interrupt signal");
-				Runtime.getRuntime().exec(interruptCommand);
-				// calls send_user_interrupt or send_user_interrupt.exe on Windows
-			} else {
-				logger.info("ignoring interrupt signal because the connection is not busy");
-			}
+			logger.info("sending interrupt signal");
+			Runtime.getRuntime().exec(interruptCommand);
+			// calls send_user_interrupt or send_user_interrupt.exe on Windows
 		} catch (IOException e) {
 			logger.warn("calling the send_user_interrupt command failed", e);
 		}

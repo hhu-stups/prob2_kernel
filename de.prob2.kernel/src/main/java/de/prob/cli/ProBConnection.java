@@ -23,7 +23,6 @@ public class ProBConnection {
 	private PrintWriter outputStream;
 	private final Logger logger = LoggerFactory.getLogger(ProBConnection.class);
 	private volatile boolean shutingDown;
-	private volatile boolean busy;
 	private final String key;
 	private final int port;
 
@@ -66,10 +65,6 @@ public class ProBConnection {
 		}
 		String answer = getAnswer();
 		return answer;
-	}
-
-	public boolean isBusy() {
-		return busy;
 	}
 
 	public String getAnswer() throws IOException {
