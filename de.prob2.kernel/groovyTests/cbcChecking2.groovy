@@ -1,25 +1,12 @@
 import java.nio.file.Paths
 
-import de.prob.animator.domainobjects.EventB
 import de.prob.animator.domainobjects.FormulaExpand
-import de.prob.check.CBCDeadlockChecker
-import de.prob.check.CBCDeadlockFound
 import de.prob.check.CBCInvariantChecker
 import de.prob.check.CBCInvariantViolationFound
-import de.prob.check.IModelCheckJob
-import de.prob.check.ModelCheckOk
-import de.prob.check.ModelChecker
-
-final modelCheck = {IModelCheckJob job ->
-	final checker = new ModelChecker(job)
-	checker.start()
-	checker.result
-}
-
 
 final s2 = api.eventb_load(Paths.get(dir, "Time", "clock.bcm").toString())
 
-final res5 = modelCheck(new CBCInvariantChecker(s2))
+final res5 = new CBCInvariantChecker(s2).call()
 assert res5 instanceof CBCInvariantViolationFound
 final tInvViolation2 = res5.getTrace(s2)
 final ops5 = tInvViolation2.getTransitionList(true, FormulaExpand.EXPAND)
