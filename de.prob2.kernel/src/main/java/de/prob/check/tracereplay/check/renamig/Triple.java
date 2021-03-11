@@ -1,4 +1,4 @@
-package de.prob.check.tracereplay.check;
+package de.prob.check.tracereplay.check.renamig;
 
 public class Triple<U,V,W> {
 

@@ -14,8 +14,8 @@ import java.util.Set;
 
 import de.prob.ProBKernelStub;
 import de.prob.check.tracereplay.PersistentTransition;
-import de.prob.check.tracereplay.check.RenamingDelta;
-import de.prob.check.tracereplay.check.ReplayOptions;
+import de.prob.check.tracereplay.check.renamig.RenamingDelta;
+import de.prob.check.tracereplay.check.exploration.ReplayOptions;
 import de.prob.check.tracereplay.check.TraceChecker;
 import de.prob.check.tracereplay.check.TraceModifier;
 import de.prob.check.tracereplay.check.exceptions.DeltaCalculationException;

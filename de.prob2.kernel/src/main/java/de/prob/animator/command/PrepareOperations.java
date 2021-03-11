@@ -1,7 +1,7 @@
 package de.prob.animator.command;
 
 
-import de.prob.check.tracereplay.check.Triple;
+import de.prob.check.tracereplay.check.renamig.Triple;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.CompoundPrologTerm;

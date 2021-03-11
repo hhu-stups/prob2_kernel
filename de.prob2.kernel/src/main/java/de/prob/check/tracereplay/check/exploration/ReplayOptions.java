@@ -1,4 +1,4 @@
-package de.prob.check.tracereplay.check;
+package de.prob.check.tracereplay.check.exploration;
 
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.formula.PredicateBuilder;

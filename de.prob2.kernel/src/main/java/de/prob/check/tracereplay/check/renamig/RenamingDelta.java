@@ -1,5 +1,6 @@
-package de.prob.check.tracereplay.check;
+package de.prob.check.tracereplay.check.renamig;
 
+import de.prob.check.tracereplay.check.exploration.TraceExplorer;
 import de.prob.statespace.OperationInfo;
 
 import java.util.List;
@@ -10,11 +11,11 @@ import static java.util.Collections.emptyMap;
 
 public class RenamingDelta {
 
-	final String originalName;
-	final String deltaName;
-	final Map<String, String> inputParameters;
-	final Map<String, String> outputParameters;
-	final Map<String, String> variables;
+	private final String originalName;
+	private final String deltaName;
+	private final Map<String, String> inputParameters;
+	private final Map<String, String> outputParameters;
+	private final Map<String, String> variables;
 
 	/**
 	 * Extracts tbe delta from the calculated changes

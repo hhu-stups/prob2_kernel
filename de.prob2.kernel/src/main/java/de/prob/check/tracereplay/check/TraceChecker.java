@@ -1,16 +1,25 @@
 package de.prob.check.tracereplay.check;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.google.inject.Injector;
-
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.exceptions.DeltaCalculationException;
 import de.prob.check.tracereplay.check.exceptions.MappingFactoryInterface;
+import de.prob.check.tracereplay.check.exploration.PersistenceDelta;
+import de.prob.check.tracereplay.check.exploration.ReplayOptions;
+import de.prob.check.tracereplay.check.exploration.TraceExplorer;
+import de.prob.check.tracereplay.check.renamig.DynamicRenamingAnalyzer;
+import de.prob.check.tracereplay.check.renamig.RenamingAnalyzerInterface;
+import de.prob.check.tracereplay.check.renamig.RenamingDelta;
+import de.prob.check.tracereplay.check.renamig.StaticRenamingAnalyzer;
+import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.OperationInfo;
+import de.prob.statespace.StateSpace;
+
+import java.io.IOException;
+import java.util.*;
+
+import static java.util.stream.Collectors.toMap;
+
 
 public class TraceChecker {
 
@@ -30,29 +39,9 @@ public class TraceChecker {
 						Injector injector,
 						MappingFactoryInterface mappingFactory,
 						ReplayOptions replayOptions,
-						ProgressMemoryInterface progressMemoryInterface) throws IOException, DeltaCalculationException {
+						ProgressMemoryInterface progressMemoryInterface) throws IOException, ModelTranslationError, DeltaCalculationException {
 
-		this.newOperationInfos = newInfos;
-		this.oldOperationInfos = oldInfos;
-
-		typeFinder = new TypeFinder(transitionList, oldInfos, newInfos, oldVars, newVars);
-		typeFinder.check();
-		progressMemoryInterface.nextStep();
-
-
-		renamingAnalyzer = new StaticRenamingAnalyzer(typeFinder.getTypeIorII(), typeFinder.getTypeIIPermutation(), oldInfos, newInfos, mappingFactory);
-		renamingAnalyzer.calculateDelta();
-		progressMemoryInterface.nextStep();
-
-		traceModifier = new TraceModifier(transitionList, TraceCheckerUtils.createStateSpace(newPath, injector), progressMemoryInterface);
-
-		traceModifier.insertMultipleUnambiguousChanges(renamingAnalyzer.getResultTypeIIAsDeltaList());
-		traceModifier.insertAmbiguousChanges(renamingAnalyzer.getResultTypeIIWithCandidates());
-
-		TraceExplorer traceExplorer = new TraceExplorer(false, mappingFactory, replayOptions, progressMemoryInterface);
-
-
-		traceModifier.makeTypeIII(typeFinder.getTypeIII(), typeFinder.getTypeIV(), newInfos, oldInfos,  traceExplorer);
+			this(transitionList, oldInfos, newInfos, oldVars, newVars, null, newPath, injector, mappingFactory, replayOptions, progressMemoryInterface);
 
 	}
 
@@ -68,43 +57,70 @@ public class TraceChecker {
 						MappingFactoryInterface mappingFactory,
 						ReplayOptions replayOptions,
 						ProgressMemoryInterface progressMemoryInterface)
-			throws IOException, DeltaCalculationException {
+			throws IOException, ModelTranslationError, DeltaCalculationException {
 
 		this.oldOperationInfos = oldInfos;
 		this.newOperationInfos = newInfos;
-
 
 		typeFinder = new TypeFinder(transitionList, oldInfos, newInfos, oldVars, newVars);
 		typeFinder.check();
 		progressMemoryInterface.nextStep();
 
-		renamingAnalyzer = new RenamingAnalyzer(typeFinder.getTypeIorII(), typeFinder.getTypeIIPermutation(),
-				typeFinder.getInitIsTypeIorIICandidate(), oldPath, newPath, injector, oldInfos);
+
+		if(oldPath == null){
+			renamingAnalyzer = new StaticRenamingAnalyzer(typeFinder.getTypeIorII(), typeFinder.getTypeIIPermutation(), oldInfos, newInfos, mappingFactory);
+		}else{
+			renamingAnalyzer = new DynamicRenamingAnalyzer(typeFinder.getTypeIorII(), typeFinder.getTypeIIPermutation(),
+					typeFinder.getInitIsTypeIorIICandidate(), oldPath, newPath, injector, oldInfos);
+
+		}
+
 		renamingAnalyzer.calculateDelta();
 		progressMemoryInterface.nextStep();
 
 
-		traceModifier = new TraceModifier(transitionList, TraceCheckerUtils.createStateSpace(newPath, injector), progressMemoryInterface);
-
-		List<RenamingDelta> deltasTypeII = renamingAnalyzer.getResultTypeIIAsDeltaList();
-
-
-		traceModifier.insertMultipleUnambiguousChanges(deltasTypeII);
-
-
-		Map<String, List<RenamingDelta>> deltasTypeIIWithCandidates = renamingAnalyzer.getResultTypeIIWithCandidates();
-		traceModifier.insertAmbiguousChanges(deltasTypeIIWithCandidates);
+		traceModifier = new TraceModifier(transitionList);
+		traceModifier.insertMultipleUnambiguousChanges(renamingAnalyzer.getResultTypeIIAsDeltaList());
+		traceModifier.insertAmbiguousChanges(renamingAnalyzer.getResultTypeIIWithCandidates());
 
 
 		boolean initSet = !renamingAnalyzer.getResultTypeIIInit().isEmpty();
 		TraceExplorer traceExplorer  = new TraceExplorer(initSet, mappingFactory, replayOptions, progressMemoryInterface);
 
 
-		traceModifier.makeTypeIII(typeFinder.getTypeIII(), typeFinder.getTypeIV(), newInfos, oldInfos, traceExplorer);
+		Set<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>> selectedMappingsToResultsKeys =
+				IdentifierMatcher.generateAllPossibleMappingVariations(transitionList, newOperationInfos, oldOperationInfos, typeFinder.getTypeIII(), mappingFactory);
 
+		StateSpace stateSpace = TraceCheckerUtils.createStateSpace(newPath, injector);
+
+		Map<Set<RenamingDelta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>>> results = traceModifier.getChangelogPhase2()
+				.entrySet()
+				.stream()
+				.map(entry ->
+				{
+					Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result =
+							traceExplorer.replayTrace(entry.getValue(), stateSpace, typeFinder.getTypeIV(), selectedMappingsToResultsKeys);
+					return new AbstractMap.SimpleEntry<>(entry.getKey(), result);
+				})
+				.collect(toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
+
+		traceModifier.setChangelogPhase3(results);
+		progressMemoryInterface.nextStep();
+		Map<Set<RenamingDelta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Map<String, TraceAnalyser.AnalyserResult>>> typeIVResults =
+				TraceAnalyser.performTypeIVAnalysing(traceExplorer.getUpdatedTypeIV(), results, traceModifier.getChangelogPhase2());
+		progressMemoryInterface.nextStep();
+		traceModifier.setChangelogPhase4(typeIVResults);
+
+
+
+		traceModifier.setUngracefulTraces(traceExplorer.getUngracefulTraces());
 
 	}
 
+
+	private void createTypeFinder(){
+
+	}
 
 
 	public TypeFinder getTypeFinder() {

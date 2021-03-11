@@ -1,9 +1,11 @@
 package de.prob.check.tracereplay.check;
 
 import de.prob.check.tracereplay.PersistentTransition;
+import de.prob.check.tracereplay.check.exploration.PersistenceDelta;
+import de.prob.check.tracereplay.check.exploration.TraceExplorer;
+import de.prob.check.tracereplay.check.renamig.RenamingDelta;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
-import de.prob.statespace.Transition;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -13,22 +15,15 @@ import static java.util.stream.Collectors.*;
 
 public class TraceModifier {
 
-	private final List<PersistentTransition> orginal;
 	private final List<List<PersistentTransition>> changelogPhase1 = new LinkedList<>();
 	private final Map<Set<RenamingDelta>, List<PersistentTransition>> changelogPhase2 = new HashMap<>();
 	private final Map<Set<RenamingDelta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>>> changelogPhase3 = new HashMap<>();
 	private final Map<Set<RenamingDelta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Map<String, TraceAnalyser.AnalyserResult>>> changelogPhase4 = new HashMap<>();
-	private final List<PersistenceDelta> incompleteTrace = new ArrayList<>();
-	private final StateSpace stateSpace;
-	private final ProgressMemoryInterface progressMemoryInterface;
 	private List<List<PersistentTransition>> ungracefulTraces = new ArrayList<>();
 
 
-	public TraceModifier(List<PersistentTransition> transitionList, StateSpace stateSpace, ProgressMemoryInterface progressMemoryInterface) {
-		orginal = transitionList;
+	public TraceModifier(List<PersistentTransition> transitionList) {
 		changelogPhase1.add(transitionList);
-		this.stateSpace = stateSpace;
-		this.progressMemoryInterface = progressMemoryInterface;
 	}
 
 	/**
@@ -40,23 +35,23 @@ public class TraceModifier {
 	 */
 	public static List<PersistentTransition> changeAll(RenamingDelta renamingDelta, List<PersistentTransition> currentState) {
 		return currentState.stream().map(persistentTransition -> {
-			if (persistentTransition.getOperationName().equals(renamingDelta.originalName)) {
+			if (persistentTransition.getOperationName().equals(renamingDelta.getOriginalName())) {
 
 				Map<String, String> newDestState = persistentTransition.getDestinationStateVariables().entrySet().stream()
-						.collect(Collectors.toMap(entry -> renamingDelta.variables.getOrDefault(entry.getKey(), entry.getKey()), Map.Entry::getValue));
+						.collect(Collectors.toMap(entry -> renamingDelta.getVariables().getOrDefault(entry.getKey(), entry.getKey()), Map.Entry::getValue));
 
 				Map<String, String> newParameters = persistentTransition.getParameters().entrySet().stream()
-						.collect(Collectors.toMap(entry -> renamingDelta.inputParameters.getOrDefault(entry.getKey(), entry.getKey()), Map.Entry::getValue));
+						.collect(Collectors.toMap(entry -> renamingDelta.getInputParameters().getOrDefault(entry.getKey(), entry.getKey()), Map.Entry::getValue));
 
 
 				Map<String, String> newOutputParameters = persistentTransition.getOutputParameters().entrySet().stream()
-						.collect(Collectors.toMap(entry -> renamingDelta.outputParameters.getOrDefault(entry.getKey(), entry.getKey()), Map.Entry::getValue));
+						.collect(Collectors.toMap(entry -> renamingDelta.getOutputParameters().getOrDefault(entry.getKey(), entry.getKey()), Map.Entry::getValue));
 
 
 				Set<String> destStateNotChanged = persistentTransition.getDestStateNotChanged().stream()
-						.map(entry -> renamingDelta.variables.getOrDefault(entry, entry)).collect(toSet());
+						.map(entry -> renamingDelta.getVariables().getOrDefault(entry, entry)).collect(toSet());
 
-				return new PersistentTransition(renamingDelta.deltaName, newParameters, newOutputParameters, newDestState,
+				return new PersistentTransition(renamingDelta.getDeltaName(), newParameters, newOutputParameters, newDestState,
 						destStateNotChanged, Collections.emptyList());
 			} else {
 				return persistentTransition;
@@ -211,62 +206,22 @@ public class TraceModifier {
 	}
 
 
-	/**
-	 * Manages the exploration and analyzes phase and storing it results, produces results for type III and type IV
-	 * @param typeIIICandidates the candidate assumed to be type III
-	 * @param typeIVCandidates the candidates assumed to be type IV
-	 * @param newInfos new operation infos
-	 * @param oldInfos old operations infos
-	 * @param traceExplorer the trace explorer
-	 */
-	public void makeTypeIII(Set<String> typeIIICandidates, Set<String> typeIVCandidates,
-							Map<String, OperationInfo> newInfos, Map<String, OperationInfo> oldInfos, TraceExplorer traceExplorer) {
 
-
-			Map<Set<RenamingDelta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>>> results = changelogPhase2
-					.entrySet()
-					.stream()
-					.map(entry ->
-					{
-						Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result =
-								traceExplorer.replayTrace(entry.getValue(), stateSpace, newInfos, oldInfos, typeIIICandidates, typeIVCandidates);
-						return new AbstractMap.SimpleEntry<>(entry.getKey(), result);
-					})
-					.collect(toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
-
-
-
-			changelogPhase3.putAll(results);
-			progressMemoryInterface.nextStep();
-			Map<Set<RenamingDelta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Map<String, TraceAnalyser.AnalyserResult>>> typeIVResults =
-					performTypeIVAnalysing(traceExplorer.getUpdatedTypeIV(), results);
-			progressMemoryInterface.nextStep();
-			changelogPhase4.putAll(typeIVResults);
-
-			ungracefulTraces.addAll(traceExplorer.getUngracefulTraces().stream()
-					.map(entry -> entry.stream()
-							.flatMap(innerEntry -> innerEntry.getNewTransitions().stream())
-							.collect(toList()))
-					.collect(toList()));
+	public void setChangelogPhase3(Map<Set<RenamingDelta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>>> results){
+		changelogPhase3.putAll(results);
 	}
 
+	public void setChangelogPhase4(Map<Set<RenamingDelta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Map<String, TraceAnalyser.AnalyserResult>>> result)
+	{
+		changelogPhase4.putAll(result);
+	}
 
-	/**
-	 * Helper to perform type IV analyzes for all candidates
-	 * @param typeIVCandidates the candidates to be type IV
-	 * @param results the results of the trace explorer
-	 * @return the analysis for each type IV under the impression of the explored traces
-	 */
-	public Map<Set<RenamingDelta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Map<String, TraceAnalyser.AnalyserResult>>> performTypeIVAnalysing(
-			Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Set<String>> typeIVCandidates,
-			Map<Set<RenamingDelta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>>> results){
-
-		return results.entrySet()
-				.stream()
-				.collect(toMap(Map.Entry::getKey, entry -> entry.getValue().entrySet()
-						.stream()
-						.collect(toMap(Map.Entry::getKey,
-								innerEntry -> TraceAnalyser.analyze(typeIVCandidates.get(innerEntry.getKey()), innerEntry.getValue(), changelogPhase2.get(entry.getKey()))))));
+	public void setUngracefulTraces(List<List<PersistenceDelta>> result){
+		ungracefulTraces.addAll(result.stream()
+				.map(entry -> entry.stream()
+						.flatMap(innerEntry -> innerEntry.getNewTransitions().stream())
+						.collect(toList()))
+				.collect(toList()));
 	}
 
 
@@ -274,7 +229,6 @@ public class TraceModifier {
 	public List<PersistentTransition> getLastChange() {
 		return changelogPhase1.get(changelogPhase1.size() - 1);
 	}
-
 
 
 	public Map<Set<RenamingDelta>, List<PersistentTransition>> getChangelogPhase2() {

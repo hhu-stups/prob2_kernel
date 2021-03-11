@@ -1,4 +1,4 @@
-package de.prob.check.tracereplay.check;
+package de.prob.check.tracereplay.check.renamig;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Injector;
@@ -6,6 +6,7 @@ import de.prob.animator.ReusableAnimator;
 import de.prob.animator.command.CompareTwoOperations;
 import de.prob.animator.command.GetMachineOperationsFull;
 import de.prob.animator.command.PrepareOperations;
+import de.prob.check.tracereplay.check.TraceCheckerUtils;
 import de.prob.check.tracereplay.check.exceptions.DeltaCalculationException;
 import de.prob.check.tracereplay.check.exceptions.PrologTermNotDefinedException;
 import de.prob.exception.ProBError;
@@ -25,7 +26,7 @@ import static java.util.stream.Collectors.*;
 /**
  * Finds a operation if it is renamed or contains renamed variables/parameter
  */
-public class RenamingAnalyzer implements RenamingAnalyzerInterface {
+public class DynamicRenamingAnalyzer implements RenamingAnalyzerInterface {
 
 	private final Set<String> typeIorII;
 	private final Map<String, Set<String>> typeIICandidates;
@@ -70,11 +71,11 @@ public class RenamingAnalyzer implements RenamingAnalyzerInterface {
 	};
 
 
-	public RenamingAnalyzer(Set<String> typeIorII, Map<String, Set<String>> typeIICandidates, boolean typeIorIICandidate,
-							String oldMachine,
-							String newMachine,
-							Injector injector,
-							Map<String, OperationInfo> oldMachineInfos) {
+	public DynamicRenamingAnalyzer(Set<String> typeIorII, Map<String, Set<String>> typeIICandidates, boolean typeIorIICandidate,
+								   String oldMachine,
+								   String newMachine,
+								   Injector injector,
+								   Map<String, OperationInfo> oldMachineInfos) {
 		this.typeIorII = typeIorII;
 		this.typeIICandidates = typeIICandidates;
 		this.oldMachine = oldMachine;

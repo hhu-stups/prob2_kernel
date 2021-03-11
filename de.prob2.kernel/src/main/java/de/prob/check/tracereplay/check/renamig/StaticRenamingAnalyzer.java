@@ -1,5 +1,7 @@
-package de.prob.check.tracereplay.check;
+package de.prob.check.tracereplay.check.renamig;
 
+import de.prob.check.tracereplay.check.IdentifierMatcher;
+import de.prob.check.tracereplay.check.exploration.TraceExplorer;
 import de.prob.check.tracereplay.check.exceptions.MappingFactoryInterface;
 import de.prob.statespace.OperationInfo;
 
@@ -35,7 +37,7 @@ public class StaticRenamingAnalyzer implements RenamingAnalyzerInterface{
 
 		Map<String, List<RenamingDelta>> firstResults = simpleCandidates.stream()
 				.collect(toMap(entry -> entry,
-						entry -> TraceExplorer.calculateVarMappings(entry, newInfos.get(entry), oldInfos.get(entry), mappingFactoryInterface).stream()
+						entry -> IdentifierMatcher.calculateVarMappings(entry, newInfos.get(entry), oldInfos.get(entry), mappingFactoryInterface).stream()
 								.map(innerEntry -> new RenamingDelta(entry, entry, innerEntry))
 								.filter(RenamingDelta::isPointless).collect(toList())));
 
@@ -58,7 +60,7 @@ public class StaticRenamingAnalyzer implements RenamingAnalyzerInterface{
 				.collect(toMap(Map.Entry::getKey, entry ->
 						entry.getValue().stream()
 								.flatMap(innerEntry ->
-										TraceExplorer.calculateVarMappings(entry.getKey(), newInfos.get(innerEntry), oldInfos.get(entry.getKey()), mappingFactoryInterface).stream()
+										IdentifierMatcher.calculateVarMappings(entry.getKey(), newInfos.get(innerEntry), oldInfos.get(entry.getKey()), mappingFactoryInterface).stream()
 												.map(innermostEntry -> new RenamingDelta(entry.getKey(), innerEntry, innermostEntry))
 								.filter(RenamingDelta::isPointless)).collect(toList())));
 

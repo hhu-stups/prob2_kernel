@@ -2,11 +2,7 @@ package de.prob.check;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -15,8 +11,9 @@ import de.prob.animator.command.ConstructTraceCommand;
 import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.check.tracereplay.PersistentTransition;
-import de.prob.check.tracereplay.check.PersistenceDelta;
-import de.prob.check.tracereplay.check.TraceExplorer;
+import de.prob.check.tracereplay.check.IdentifierMatcher;
+import de.prob.check.tracereplay.check.exploration.PersistenceDelta;
+import de.prob.check.tracereplay.check.exploration.TraceExplorer;
 import de.prob.cli.CliTestCommon;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
@@ -51,14 +48,17 @@ public class TraceExplorerIntegrationTest {
 
 		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "Lift.mch"));
 
+
+		Set<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>> selectedMappingsToResultsKeys =
+				IdentifierMatcher.generateAllPossibleMappingVariations(emptyList(), stateSpace.getLoadedMachine().getOperations(), stateSpace.getLoadedMachine().getOperations(), Stream.of("inc", "dec", "getfloors").collect(Collectors.toSet()), new TestUtils.StubFactoryImplementation());
+
+
 		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result = new TraceExplorer(false, new TestUtils.StubFactoryImplementation(), new TestUtils.ProgressStubFactory())
 				.replayTrace(
 						emptyList(),
 						stateSpace,
-						stateSpace.getLoadedMachine().getOperations(),
-						stateSpace.getLoadedMachine().getOperations(),
-						Stream.of("inc", "dec", "getfloors").collect(Collectors.toSet()),
-						emptySet());
+						emptySet(),
+						selectedMappingsToResultsKeys);
 
 
 
@@ -89,13 +89,15 @@ public class TraceExplorerIntegrationTest {
 
 		StateSpace toCompare = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "reducedSigLength", "OneTypeIIICandidate.mch"));
 
+		Set<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>> selectedMappingsToResultsKeys =
+				IdentifierMatcher.generateAllPossibleMappingVariations(persistentTransitions, toCompare.getLoadedMachine().getOperations(), operationInfoOld, Stream.of("inc").collect(Collectors.toSet()), new TestUtils.StubFactoryImplementation());
+
+
 		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result = new TraceExplorer(true, new TestUtils.StubFactoryImplementation(), new TestUtils.ProgressStubFactory())
 				.replayTrace(persistentTransitions,
 						toCompare,
-						toCompare.getLoadedMachine().getOperations(),
-						operationInfoOld,
-						Stream.of("inc").collect(Collectors.toSet()),
-						emptySet());
+						emptySet(),
+						selectedMappingsToResultsKeys);
 
 
 		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> resultCleaned = TraceExplorer.removeHelperVariableMappings(result);
@@ -208,14 +210,15 @@ public class TraceExplorerIntegrationTest {
 		expected.put(expected_inner2,  expected2);
 		expected.put(expected_inner3,  expected3);
 
+		Set<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>> selectedMappingsToResultsKeys =
+				IdentifierMatcher.generateAllPossibleMappingVariations(transitionList, stateSpace2.getLoadedMachine().getOperations(), oldInformation, Stream.of("inc", "dec").collect(Collectors.toSet()), new TestUtils.StubFactoryImplementation());
+
 
 		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result = new TraceExplorer(true, new TestUtils.StubFactoryImplementation(), new TestUtils.ProgressStubFactory())
 				.replayTrace(transitionList,
 						stateSpace2,
-						stateSpace2.getLoadedMachine().getOperations(),
-						oldInformation,
-						Stream.of("inc", "dec").collect(Collectors.toSet()),
-						emptySet());
+						emptySet(),
+						selectedMappingsToResultsKeys);
 
 		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> resultCleaned = TraceExplorer.removeHelperVariableMappings(result);
 
@@ -247,15 +250,16 @@ public class TraceExplorerIntegrationTest {
 		expected.put(emptyMap(), Stream.of(new PersistenceDelta(init, singletonList(init)),
 				new PersistenceDelta(first, singletonList(first)),new PersistenceDelta(second, singletonList(second))).collect(toList()));
 
+		Set<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>> selectedMappingsToResultsKeys =
+				IdentifierMatcher.generateAllPossibleMappingVariations(Stream.of(init, first, second).collect(toList()), stateSpace.getLoadedMachine().getOperations(), oldInformation, emptySet(), new TestUtils.StubFactoryImplementation());
+
 
 		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result = new TraceExplorer(true, new TestUtils.StubFactoryImplementation(), new TestUtils.ProgressStubFactory())
 				.replayTrace(
 						Stream.of(init, first, second).collect(toList()),
 						stateSpace,
-						stateSpace.getLoadedMachine().getOperations(),
-						oldInformation,
 						emptySet(),
-						emptySet());
+						selectedMappingsToResultsKeys);
 
 
 		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> resultCleaned = TraceExplorer.removeHelperVariableMappings(result);
@@ -341,14 +345,16 @@ public class TraceExplorerIntegrationTest {
 		expected.put(expected_inner1,  expected1);
 		expected.put(expected_inner2,  expected2);
 
+		Set<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>> selectedMappingsToResultsKeys =
+				IdentifierMatcher.generateAllPossibleMappingVariations(Stream.of(init, first, second).collect(toList()), stateSpace.getLoadedMachine().getOperations(), oldInformation, singleton("inc"), new TestUtils.StubFactoryImplementation());
+
+
 		Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>> result = new TraceExplorer(true, new TestUtils.StubFactoryImplementation(), new TestUtils.ProgressStubFactory())
 				.replayTrace(
 						Stream.of(init, first, second).collect(toList()),
 						stateSpace,
-						stateSpace.getLoadedMachine().getOperations(),
-						oldInformation,
-						singleton("inc"),
-						emptySet());
+						emptySet(),
+						selectedMappingsToResultsKeys);
 
 		Map<Map<String, Map<String, String>>, List<PersistenceDelta>> resultCleaned = TraceExplorer.removeHelperVariableMappings(result);
 

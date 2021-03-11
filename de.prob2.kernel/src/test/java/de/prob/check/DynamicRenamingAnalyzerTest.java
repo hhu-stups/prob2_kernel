@@ -15,11 +15,11 @@ import java.util.stream.Collectors;
 import com.google.inject.Injector;
 
 import de.prob.animator.ReusableAnimator;
-import de.prob.check.tracereplay.check.CheckerInterface;
-import de.prob.check.tracereplay.check.PrepareOperationsInterface;
-import de.prob.check.tracereplay.check.RenamingAnalyzer;
-import de.prob.check.tracereplay.check.RenamingDelta;
-import de.prob.check.tracereplay.check.Triple;
+import de.prob.check.tracereplay.check.renamig.CheckerInterface;
+import de.prob.check.tracereplay.check.renamig.PrepareOperationsInterface;
+import de.prob.check.tracereplay.check.renamig.DynamicRenamingAnalyzer;
+import de.prob.check.tracereplay.check.renamig.RenamingDelta;
+import de.prob.check.tracereplay.check.renamig.Triple;
 import de.prob.check.tracereplay.check.exceptions.DeltaCalculationException;
 import de.prob.check.tracereplay.check.exceptions.PrologTermNotDefinedException;
 import de.prob.cli.CliTestCommon;
@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test;
 import static java.util.Collections.*;
 
 
-public class RenamingAnalyzerTest {
+public class DynamicRenamingAnalyzerTest {
 
 
 
@@ -53,7 +53,7 @@ public class RenamingAnalyzerTest {
 		Map<String, CompoundPrologTerm> newOperation = new HashMap<>();
 		Set<String> candidates = new HashSet<>();
 
-		Map<String, Map<String, String>> result = RenamingAnalyzer.checkDeterministicPairs(oldOperation, newOperation, candidates,
+		Map<String, Map<String, String>> result = DynamicRenamingAnalyzer.checkDeterministicPairs(oldOperation, newOperation, candidates,
 				fakeCheckerInterface, fakePrepareOperationsInterface);
 
 
@@ -92,7 +92,7 @@ public class RenamingAnalyzerTest {
 
 		Set<String> candidates = new HashSet<>(Arrays.asList("inc", "dec", "getFloors"));
 
-		Map<String, Map<String, String>> result = RenamingAnalyzer.checkDeterministicPairs(oldOperation, newOperation, candidates,
+		Map<String, Map<String, String>> result = DynamicRenamingAnalyzer.checkDeterministicPairs(oldOperation, newOperation, candidates,
 				fakeCheckerInterface, fakePrepareOperationsInterface);
 
 		Map<String, String> expectedInner = new HashMap<>();
@@ -146,7 +146,7 @@ public class RenamingAnalyzerTest {
 		candidates.put("getFloors", new HashSet<>(Arrays.asList("GetFloors", "getFloor", "currentFloors")));
 
 
-		Map<String, Map<String, Map<String, String>>> result = RenamingAnalyzer.checkNondeterministicPairs(oldOperation, newOperation, candidates,
+		Map<String, Map<String, Map<String, String>>> result = DynamicRenamingAnalyzer.checkNondeterministicPairs(oldOperation, newOperation, candidates,
 				fakeCheckerInterface, fakePrepareOperationsInterface);
 
 		Map<String, String> expectedInner = new HashMap<>();
@@ -194,12 +194,12 @@ public class RenamingAnalyzerTest {
 
 
 
-		RenamingAnalyzer renamingAnalyzer = new RenamingAnalyzer(Collections.emptySet(), Collections.emptyMap(), false,
+		DynamicRenamingAnalyzer dynamicRenamingAnalyzer = new DynamicRenamingAnalyzer(Collections.emptySet(), Collections.emptyMap(), false,
 				 "", "", injector, stateSpace.getLoadedMachine().getOperations());
 
 
-		Map<String, CompoundPrologTerm> newOperations = renamingAnalyzer.getOperations(pathAsString);
-		Map<String, CompoundPrologTerm> oldOperations = renamingAnalyzer.getOperations(pathAsStringOld);
+		Map<String, CompoundPrologTerm> newOperations = dynamicRenamingAnalyzer.getOperations(pathAsString);
+		Map<String, CompoundPrologTerm> oldOperations = dynamicRenamingAnalyzer.getOperations(pathAsStringOld);
 
 
 		Assertions.assertTrue(newOperations.containsKey("on"));
@@ -225,13 +225,13 @@ public class RenamingAnalyzerTest {
 
 
 
-		RenamingAnalyzer renamingAnalyzer = new RenamingAnalyzer(Collections.emptySet(), Collections.emptyMap(), false,
+		DynamicRenamingAnalyzer dynamicRenamingAnalyzer = new DynamicRenamingAnalyzer(Collections.emptySet(), Collections.emptyMap(), false,
 				pathAsStringOld, pathAsString, injector, stateSpace.getLoadedMachine().getOperations());
 
-		Map<String, CompoundPrologTerm> newOperations = renamingAnalyzer.getOperations(pathAsString);
+		Map<String, CompoundPrologTerm> newOperations = dynamicRenamingAnalyzer.getOperations(pathAsString);
 
 		Triple<ListPrologTerm, ListPrologTerm, CompoundPrologTerm> result =
-				renamingAnalyzer.prepareOperationsInterface.prepareOperation(newOperations.get("getfloors"));
+				dynamicRenamingAnalyzer.prepareOperationsInterface.prepareOperation(newOperations.get("getfloors"));
 
 
 		Assertions.assertEquals(new ListPrologTerm(new CompoundPrologTerm("floors"),
@@ -258,17 +258,17 @@ public class RenamingAnalyzerTest {
 		factory.extract(pathAsStringOld).loadIntoStateSpace(stateSpace);
 
 
-		RenamingAnalyzer renamingAnalyzer = new RenamingAnalyzer(Collections.emptySet(), Collections.emptyMap(), false,
+		DynamicRenamingAnalyzer dynamicRenamingAnalyzer = new DynamicRenamingAnalyzer(Collections.emptySet(), Collections.emptyMap(), false,
 				pathAsStringOld, pathAsString, injector, stateSpace.getLoadedMachine().getOperations());
 
-		Map<String, CompoundPrologTerm> oldOperations = renamingAnalyzer.getOperations(pathAsStringOld);
-		Map<String, CompoundPrologTerm> newOperations = renamingAnalyzer.getOperations(pathAsString);
+		Map<String, CompoundPrologTerm> oldOperations = dynamicRenamingAnalyzer.getOperations(pathAsStringOld);
+		Map<String, CompoundPrologTerm> newOperations = dynamicRenamingAnalyzer.getOperations(pathAsString);
 
 		Triple<ListPrologTerm, ListPrologTerm, CompoundPrologTerm> oldInc =
-				renamingAnalyzer.prepareOperationsInterface.prepareOperation(oldOperations.get("inc"));
+				dynamicRenamingAnalyzer.prepareOperationsInterface.prepareOperation(oldOperations.get("inc"));
 
 
-		Map<String, String> result = renamingAnalyzer.checkerInterface.checkTypeII(oldInc, newOperations.get("inc"));
+		Map<String, String> result = dynamicRenamingAnalyzer.checkerInterface.checkTypeII(oldInc, newOperations.get("inc"));
 
 		Assertions.assertEquals("inc", result.get("inc"));
 
@@ -292,16 +292,16 @@ public class RenamingAnalyzerTest {
 		factory.extract(pathAsStringOld).loadIntoStateSpace(stateSpace);
 
 
-		RenamingAnalyzer renamingAnalyzer = new RenamingAnalyzer(Collections.emptySet(), Collections.emptyMap(), false,
+		DynamicRenamingAnalyzer dynamicRenamingAnalyzer = new DynamicRenamingAnalyzer(Collections.emptySet(), Collections.emptyMap(), false,
 				pathAsStringOld, pathAsString, injector, stateSpace.getLoadedMachine().getOperations());
 
 		Set<String> candidates = new HashSet<>(Arrays.asList("inc", "dec", "getfloors", "$initialise_machine"));
-		Map<String, CompoundPrologTerm> newOperations = renamingAnalyzer.getOperations(pathAsString);
-		Map<String, CompoundPrologTerm> oldOperations = renamingAnalyzer.getOperations(pathAsStringOld);
+		Map<String, CompoundPrologTerm> newOperations = dynamicRenamingAnalyzer.getOperations(pathAsString);
+		Map<String, CompoundPrologTerm> oldOperations = dynamicRenamingAnalyzer.getOperations(pathAsStringOld);
 
 
-		Map<String, Map<String, String>> result = RenamingAnalyzer.checkDeterministicPairs(oldOperations, newOperations,
-				candidates, renamingAnalyzer.checkerInterface, renamingAnalyzer.prepareOperationsInterface);
+		Map<String, Map<String, String>> result = DynamicRenamingAnalyzer.checkDeterministicPairs(oldOperations, newOperations,
+				candidates, dynamicRenamingAnalyzer.checkerInterface, dynamicRenamingAnalyzer.prepareOperationsInterface);
 
 		Map<String, Map<String, String>> expected = new HashMap<>();
 		Map<String, String> initMap = new HashMap<>();
@@ -345,13 +345,13 @@ public class RenamingAnalyzerTest {
 		factory.extract(pathAsStringOld).loadIntoStateSpace(stateSpace);
 
 
-		RenamingAnalyzer renamingAnalyzer = new RenamingAnalyzer(Collections.emptySet(), Collections.emptyMap(), true,
+		DynamicRenamingAnalyzer dynamicRenamingAnalyzer = new DynamicRenamingAnalyzer(Collections.emptySet(), Collections.emptyMap(), true,
 				pathAsStringOld, pathAsString, injector, stateSpace.getLoadedMachine().getOperations());
 
 
-		renamingAnalyzer.calculateDelta();
+		dynamicRenamingAnalyzer.calculateDelta();
 
-		Map<String, String> result = renamingAnalyzer.getResultTypeIIInit();
+		Map<String, String> result = dynamicRenamingAnalyzer.getResultTypeIIInit();
 
 		Map<String, String> expected = new HashMap<>();
 		expected.put("floors", "level");
@@ -382,13 +382,13 @@ public class RenamingAnalyzerTest {
 		Map<String, Set<String>> typeIICandidates = new HashMap<>();
 		typeIICandidates.put("getfloors", singleton("getlevels"));
 
-		RenamingAnalyzer renamingAnalyzer = new RenamingAnalyzer(Collections.emptySet(), typeIICandidates, true,
+		DynamicRenamingAnalyzer dynamicRenamingAnalyzer = new DynamicRenamingAnalyzer(Collections.emptySet(), typeIICandidates, true,
 				pathAsStringOld, pathAsString, injector, stateSpace.getLoadedMachine().getOperations());
 
 
-		renamingAnalyzer.calculateDelta();
+		dynamicRenamingAnalyzer.calculateDelta();
 
-		Map<String, Map<String, String>> result = renamingAnalyzer.getResultTypeII();
+		Map<String, Map<String, String>> result = dynamicRenamingAnalyzer.getResultTypeII();
 
 		Map<String, Map<String, String>> expected = new HashMap<>();
 		Map<String, String> helper = new HashMap<>();
@@ -424,14 +424,14 @@ public class RenamingAnalyzerTest {
 		typeIorIICandidates.add("set_peds_stop");
 		typeIorIICandidates.add("set_cars");
 
-		RenamingAnalyzer renamingAnalyzer = new RenamingAnalyzer(typeIorIICandidates, emptyMap(), true,
+		DynamicRenamingAnalyzer dynamicRenamingAnalyzer = new DynamicRenamingAnalyzer(typeIorIICandidates, emptyMap(), true,
 				pathAsStringOld, pathAsString, injector, stateSpace.getLoadedMachine().getOperations());
 
 
-		renamingAnalyzer.calculateDelta();
+		dynamicRenamingAnalyzer.calculateDelta();
 
-		Map<String, Map<String, String>> result = renamingAnalyzer.getResultTypeII();
-		Map<String, String> initResult = renamingAnalyzer.getResultTypeIIInit();
+		Map<String, Map<String, String>> result = dynamicRenamingAnalyzer.getResultTypeII();
+		Map<String, String> initResult = dynamicRenamingAnalyzer.getResultTypeIIInit();
 
 		Assertions.assertEquals(emptyMap(), result);
 		Assertions.assertEquals(emptyMap(), initResult);
@@ -460,18 +460,18 @@ public class RenamingAnalyzerTest {
 		typeIorIICandidates.put("ENV_Turn_EngineOn",singleton("ENV_Turn_Engine_On") );
 		typeIorIICandidates.put("ENV_Turn_EngineOff", singleton("ENV_Turn_Engine_Off"));
 
-		RenamingAnalyzer renamingAnalyzer = new RenamingAnalyzer(emptySet(), typeIorIICandidates, true,
+		DynamicRenamingAnalyzer dynamicRenamingAnalyzer = new DynamicRenamingAnalyzer(emptySet(), typeIorIICandidates, true,
 				pathAsStringOld, pathAsString, injector, stateSpace.getLoadedMachine().getOperations());
 
 
-		renamingAnalyzer.calculateDelta();
+		dynamicRenamingAnalyzer.calculateDelta();
 
 
 		String expected1 = "ENV_Turn_Engine_Off";
 		String expected2 = "ENV_Turn_Engine_On";
 		Set<String> expected = new HashSet<>(Arrays.asList(expected1, expected2));
 
-		List<RenamingDelta> expectedRenamingDelta = renamingAnalyzer.getResultTypeIIAsDeltaList();
+		List<RenamingDelta> expectedRenamingDelta = dynamicRenamingAnalyzer.getResultTypeIIAsDeltaList();
 		Set<String> resultNames = expectedRenamingDelta.stream().map(RenamingDelta::getDeltaName).collect(Collectors.toSet());
 
 		Assertions.assertEquals(2, expectedRenamingDelta.size());

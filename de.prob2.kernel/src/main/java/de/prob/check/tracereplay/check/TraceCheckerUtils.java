@@ -1,26 +1,24 @@
 package de.prob.check.tracereplay.check;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.inject.Injector;
-
 import de.prob.animator.ReusableAnimator;
+import de.prob.check.tracereplay.check.exploration.TraceExplorer;
 import de.prob.scripting.FactoryProvider;
 import de.prob.scripting.ModelFactory;
+import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
 
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 public class TraceCheckerUtils {
 
@@ -82,7 +80,7 @@ public class TraceCheckerUtils {
 		return reusableAnimator;
 	}
 
-	public static StateSpace createStateSpace(String path, Injector injector) throws IOException {
+	public static StateSpace createStateSpace(String path, Injector injector) throws IOException, ModelTranslationError {
 		ReusableAnimator animator = getReusableAnimator(injector);
 		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension(path.substring(path.lastIndexOf(".")+1)));
 		if(animator.getCurrentStateSpace()!=null)
@@ -249,7 +247,22 @@ public class TraceCheckerUtils {
 	}
 
 
-
+	/**
+	 * Calculates the cartesian product for the special case of input
+	 *
+	 * @param a the first "vector"
+	 * @param b the second "vector"
+	 * @return the cartesian product
+	 */
+	public static List<HashMap<String, Map<TraceExplorer.MappingNames, Map<String, String>>>> product(
+			List<HashMap<String, Map<TraceExplorer.MappingNames, Map<String, String>>>> a,
+			List<HashMap<String, Map<TraceExplorer.MappingNames, Map<String, String>>>> b) {
+		return a.stream().flatMap(entryA -> b.stream().map(entryB -> {
+			HashMap<String, Map<TraceExplorer.MappingNames, Map<String, String>>> result = Maps.newHashMap(entryA);
+			result.putAll(entryB);
+			return result;
+		})).collect(toList());
+	}
 
 
 }

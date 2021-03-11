@@ -11,8 +11,8 @@ import java.util.Set;
 import com.google.inject.Injector;
 
 import de.prob.animator.ReusableAnimator;
-import de.prob.check.tracereplay.check.RenamingDelta;
-import de.prob.check.tracereplay.check.StaticRenamingAnalyzer;
+import de.prob.check.tracereplay.check.renamig.RenamingDelta;
+import de.prob.check.tracereplay.check.renamig.StaticRenamingAnalyzer;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.cli.CliTestCommon;

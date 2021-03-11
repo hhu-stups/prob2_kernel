@@ -1,9 +1,8 @@
 package de.prob.check;
 
 import de.prob.check.tracereplay.PersistentTransition;
-import de.prob.check.tracereplay.check.ReplayOptions;
+import de.prob.check.tracereplay.check.exploration.ReplayOptions;
 import de.prob.formula.PredicateBuilder;
-import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

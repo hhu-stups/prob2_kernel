@@ -1,4 +1,4 @@
-package de.prob.check.tracereplay.check;
+package de.prob.check.tracereplay.check.renamig;
 
 import de.prob.check.tracereplay.check.exceptions.DeltaCalculationException;
 

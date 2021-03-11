@@ -1,11 +1,15 @@
 package de.prob.check.tracereplay.check;
 
 import de.prob.check.tracereplay.PersistentTransition;
+import de.prob.check.tracereplay.check.exploration.PersistenceDelta;
+import de.prob.check.tracereplay.check.exploration.TraceExplorer;
+import de.prob.check.tracereplay.check.renamig.RenamingDelta;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static de.prob.check.tracereplay.check.TraceAnalyser.AnalyserResult.*;
+import static java.util.stream.Collectors.toMap;
 
 public class TraceAnalyser {
 
@@ -98,6 +102,27 @@ public class TraceAnalyser {
 			return Intermediate;
 		}
 	}
+
+
+	/**
+	 * Helper to perform type IV analyzes for all candidates
+	 * @param typeIVCandidates the candidates to be type IV
+	 * @param results the results of the trace explorer
+	 * @return the analysis for each type IV under the impression of the explored traces
+	 */
+	public static Map<Set<RenamingDelta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Map<String, TraceAnalyser.AnalyserResult>>> performTypeIVAnalysing(
+			Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, Set<String>> typeIVCandidates,
+			Map<Set<RenamingDelta>, Map<Map<String, Map<TraceExplorer.MappingNames, Map<String, String>>>, List<PersistenceDelta>>> results,
+			Map<Set<RenamingDelta>, List<PersistentTransition>> changelogPhase2){
+
+		return results.entrySet()
+				.stream()
+				.collect(toMap(Map.Entry::getKey, entry -> entry.getValue().entrySet()
+						.stream()
+						.collect(toMap(Map.Entry::getKey,
+								innerEntry -> TraceAnalyser.analyze(typeIVCandidates.get(innerEntry.getKey()), innerEntry.getValue(), changelogPhase2.get(entry.getKey()))))));
+	}
+
 
 	public enum NewTransitionsStatus {
 		Straight, Intermediate

@@ -1,7 +1,6 @@
 package de.prob.check.tracereplay.check.exceptions;
 
-import de.prob.check.tracereplay.check.TraceExplorer;
-import de.prob.statespace.OperationInfo;
+import de.prob.check.tracereplay.check.exploration.TraceExplorer;
 
 import java.util.List;
 import java.util.Map;

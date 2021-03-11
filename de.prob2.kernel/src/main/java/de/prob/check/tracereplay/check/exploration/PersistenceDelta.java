@@ -1,20 +1,14 @@
-package de.prob.check.tracereplay.check;
+package de.prob.check.tracereplay.check.exploration;
 
 import de.prob.check.tracereplay.PersistentTransition;
-import de.prob.statespace.OperationInfo;
-import de.prob.statespace.Transition;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class PersistenceDelta {
 
 
 	private final PersistentTransition oldTransition;
 	private final List<PersistentTransition> newTransitions;
-	private PrivilegeLevel privilegeLevel;
 
 
 	public PersistenceDelta(PersistentTransition oldTransition, List<PersistentTransition> newTransitions){

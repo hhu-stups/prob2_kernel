@@ -1,4 +1,4 @@
-package de.prob.check.tracereplay.check;
+package de.prob.check.tracereplay.check.refinement;
 
 import java.io.IOException;
 import java.nio.file.Path;
