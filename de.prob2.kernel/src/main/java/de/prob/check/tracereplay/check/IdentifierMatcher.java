@@ -1,7 +1,7 @@
 package de.prob.check.tracereplay.check;
 
 import de.prob.check.tracereplay.PersistentTransition;
-import de.prob.check.tracereplay.check.exceptions.MappingFactoryInterface;
+import de.prob.check.tracereplay.check.ui.MappingFactoryInterface;
 import de.prob.check.tracereplay.check.exploration.TraceExplorer;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.Transition;

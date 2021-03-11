@@ -7,8 +7,6 @@ import de.prob.animator.command.CompareTwoOperations;
 import de.prob.animator.command.GetMachineOperationsFull;
 import de.prob.animator.command.PrepareOperations;
 import de.prob.check.tracereplay.check.TraceCheckerUtils;
-import de.prob.check.tracereplay.check.exceptions.DeltaCalculationException;
-import de.prob.check.tracereplay.check.exceptions.PrologTermNotDefinedException;
 import de.prob.exception.ProBError;
 import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;

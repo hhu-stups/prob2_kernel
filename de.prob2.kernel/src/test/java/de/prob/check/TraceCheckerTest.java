@@ -3,20 +3,12 @@ package de.prob.check;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import de.prob.ProBKernelStub;
-import de.prob.check.tracereplay.check.PersistenceDelta;
-import de.prob.check.tracereplay.check.RenamingDelta;
-import de.prob.check.tracereplay.check.ReplayOptions;
-import de.prob.check.tracereplay.check.TraceChecker;
-import de.prob.check.tracereplay.check.TraceExplorer;
-import de.prob.check.tracereplay.check.TraceModifier;
-import de.prob.check.tracereplay.check.exceptions.DeltaCalculationException;
-import de.prob.check.tracereplay.check.exceptions.PrologTermNotDefinedException;
+import de.prob.check.tracereplay.check.*;
+import de.prob.check.tracereplay.check.renamig.DeltaCalculationException;
+import de.prob.check.tracereplay.check.renamig.PrologTermNotDefinedException;
 import de.prob.check.tracereplay.check.exploration.PersistenceDelta;
 import de.prob.check.tracereplay.check.exploration.ReplayOptions;
 import de.prob.check.tracereplay.check.exploration.TraceExplorer;
@@ -24,6 +16,7 @@ import de.prob.check.tracereplay.check.renamig.RenamingDelta;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.cli.CliTestCommon;
+import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
 
@@ -49,7 +42,7 @@ public class TraceCheckerTest {
 
 
 	@Test
-	public void integration_short_constructor() throws IOException, DeltaCalculationException {
+	public void integration_short_constructor() throws IOException, ModelTranslationError, DeltaCalculationException {
 
 
 		StateSpace stateSpace1 = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "changedTypeIIandTypeIII",  "LiftProto.mch"));
@@ -88,7 +81,7 @@ public class TraceCheckerTest {
 
 
 	@Test
-	public void integration_short_constructor_2() throws IOException, DeltaCalculationException {
+	public void integration_short_constructor_2() throws IOException, ModelTranslationError, DeltaCalculationException {
 		Path newPath = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "typeIV", "tropical_island", "version_2", "Island2.mch");
 
 		StateSpace stateSpace = proBKernelStub.createStateSpace(newPath);
@@ -124,7 +117,7 @@ public class TraceCheckerTest {
 
 
 	@Test
-	public void integration_long_constructor() throws IOException, PrologTermNotDefinedException, DeltaCalculationException {
+	public void integration_long_constructor() throws IOException, ModelTranslationError, PrologTermNotDefinedException, DeltaCalculationException {
 
 
 		Path oldPath = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "changedTypeIIandTypeIII",  "LiftProto.mch");
@@ -162,7 +155,7 @@ public class TraceCheckerTest {
 	}
 
 	@Test
-	public void integration_long_constructor_2() throws IOException, DeltaCalculationException {
+	public void integration_long_constructor_2() throws IOException, ModelTranslationError, DeltaCalculationException {
 
 
 
@@ -289,7 +282,7 @@ public class TraceCheckerTest {
 
 
 	@Test
-	public void machine_has_no_operations() throws IOException, DeltaCalculationException {
+	public void machine_has_no_operations() throws IOException, ModelTranslationError, DeltaCalculationException {
 
 
 
@@ -323,7 +316,7 @@ public class TraceCheckerTest {
 
 
 	@Test
-	public void test_traceModifier_holds_correct_results_1() throws IOException, DeltaCalculationException {
+	public void test_traceModifier_holds_correct_results_1() throws IOException, ModelTranslationError, DeltaCalculationException {
 
 
 		Path newPath = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "always_intermediate", "ISLAND2.mch");
@@ -359,7 +352,7 @@ public class TraceCheckerTest {
 
 
 	@Test
-	public void test_traceModifier_holds_correct_results_2() throws IOException, DeltaCalculationException {
+	public void test_traceModifier_holds_correct_results_2() throws IOException, ModelTranslationError, DeltaCalculationException {
 
 
 		Path newPath = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "always_intermediate", "ISLAND2.mch");
@@ -394,7 +387,7 @@ public class TraceCheckerTest {
 
 
 	@Test
-	public void test_traceModifier_holds_correct_results_3() throws IOException, DeltaCalculationException {
+	public void test_traceModifier_holds_correct_results_3() throws IOException, ModelTranslationError, DeltaCalculationException {
 
 
 		Path newPath = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "always_intermediate", "ISLAND2.mch");

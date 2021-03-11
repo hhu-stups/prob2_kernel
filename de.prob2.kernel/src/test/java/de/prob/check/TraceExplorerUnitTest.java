@@ -1,34 +1,19 @@
 package de.prob.check;
 
-import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import de.prob.ProBKernelStub;
 import de.prob.check.tracereplay.PersistentTransition;
-import de.prob.check.tracereplay.check.IdentifierMatcher;
-import de.prob.check.tracereplay.check.TraceCheckerUtils;
 import de.prob.check.tracereplay.check.exploration.TraceExplorer;
-import de.prob.check.tracereplay.check.exceptions.MappingFactoryInterface;
 import de.prob.cli.CliTestCommon;
-import de.prob.scripting.ModelTranslationError;
-import de.prob.statespace.OperationInfo;
-import de.prob.statespace.StateSpace;
-import de.prob.statespace.Transition;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static java.util.Arrays.asList;
 import static java.util.Collections.*;
 
 public class TraceExplorerUnitTest {

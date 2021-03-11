@@ -1,6 +1,4 @@
-package de.prob.check.tracereplay.check.exceptions;
-
-import java.lang.invoke.LambdaMetafactory;
+package de.prob.check.tracereplay.check.ui;
 
 public interface MappingFactoryInterface {
 

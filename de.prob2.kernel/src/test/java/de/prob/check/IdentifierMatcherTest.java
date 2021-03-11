@@ -4,7 +4,7 @@ import de.prob.ProBKernelStub;
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.IdentifierMatcher;
 import de.prob.check.tracereplay.check.TraceCheckerUtils;
-import de.prob.check.tracereplay.check.exceptions.MappingFactoryInterface;
+import de.prob.check.tracereplay.check.ui.MappingFactoryInterface;
 import de.prob.check.tracereplay.check.exploration.TraceExplorer;
 import de.prob.cli.CliTestCommon;
 import de.prob.scripting.ModelTranslationError;

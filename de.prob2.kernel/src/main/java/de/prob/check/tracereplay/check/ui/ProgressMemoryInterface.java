@@ -1,4 +1,4 @@
-package de.prob.check.tracereplay.check;
+package de.prob.check.tracereplay.check.ui;
 
 /**
  * Can be used to represent some sort of progress

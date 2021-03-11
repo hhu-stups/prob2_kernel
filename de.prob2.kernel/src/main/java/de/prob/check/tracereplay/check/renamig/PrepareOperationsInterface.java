@@ -1,6 +1,5 @@
 package de.prob.check.tracereplay.check.renamig;
 
-import de.prob.check.tracereplay.check.exceptions.PrologTermNotDefinedException;
 import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
 

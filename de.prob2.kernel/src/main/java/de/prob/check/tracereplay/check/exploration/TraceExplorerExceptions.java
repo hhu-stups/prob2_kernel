@@ -1,4 +1,4 @@
-package de.prob.check.tracereplay.check.exceptions;
+package de.prob.check.tracereplay.check.exploration;
 
 import java.util.List;
 

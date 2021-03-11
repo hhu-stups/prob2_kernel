@@ -1,9 +1,9 @@
 package de.prob.check;
 
-import de.prob.check.tracereplay.check.ProgressMemoryInterface;
+import de.prob.check.tracereplay.check.ui.ProgressMemoryInterface;
 import de.prob.check.tracereplay.check.TraceCheckerUtils;
-import de.prob.check.tracereplay.check.exceptions.MappingFactoryInterface;
-import de.prob.check.tracereplay.check.exceptions.ToManyOptionsIdentifierMapping;
+import de.prob.check.tracereplay.check.ui.MappingFactoryInterface;
+import de.prob.check.tracereplay.check.ui.ToManyOptionsIdentifierMapping;
 
 public class TestUtils {
 

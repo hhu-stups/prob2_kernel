@@ -1,4 +1,4 @@
-package de.prob.check.tracereplay.check.exceptions;
+package de.prob.check.tracereplay.check.ui;
 
 import de.prob.check.tracereplay.check.exploration.TraceExplorer;
 import de.prob.statespace.OperationInfo;

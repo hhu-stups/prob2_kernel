@@ -2,8 +2,8 @@ package de.prob.check.tracereplay.check;
 
 import com.google.inject.Injector;
 import de.prob.check.tracereplay.PersistentTransition;
-import de.prob.check.tracereplay.check.exceptions.DeltaCalculationException;
-import de.prob.check.tracereplay.check.exceptions.MappingFactoryInterface;
+import de.prob.check.tracereplay.check.renamig.DeltaCalculationException;
+import de.prob.check.tracereplay.check.ui.MappingFactoryInterface;
 import de.prob.check.tracereplay.check.exploration.PersistenceDelta;
 import de.prob.check.tracereplay.check.exploration.ReplayOptions;
 import de.prob.check.tracereplay.check.exploration.TraceExplorer;
@@ -11,6 +11,7 @@ import de.prob.check.tracereplay.check.renamig.DynamicRenamingAnalyzer;
 import de.prob.check.tracereplay.check.renamig.RenamingAnalyzerInterface;
 import de.prob.check.tracereplay.check.renamig.RenamingDelta;
 import de.prob.check.tracereplay.check.renamig.StaticRenamingAnalyzer;
+import de.prob.check.tracereplay.check.ui.ProgressMemoryInterface;
 import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;

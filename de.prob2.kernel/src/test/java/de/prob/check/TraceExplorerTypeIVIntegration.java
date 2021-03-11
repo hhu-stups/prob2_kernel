@@ -25,7 +25,7 @@ import de.prob.check.tracereplay.check.TraceAnalyser;
 import de.prob.check.tracereplay.check.TraceChecker;
 import de.prob.check.tracereplay.check.exploration.TraceExplorer;
 import de.prob.check.tracereplay.check.TraceModifier;
-import de.prob.check.tracereplay.check.exceptions.DeltaCalculationException;
+import de.prob.check.tracereplay.check.renamig.DeltaCalculationException;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.cli.CliTestCommon;

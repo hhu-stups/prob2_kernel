@@ -1,7 +1,5 @@
 package de.prob.check.tracereplay.check.renamig;
 
-import de.prob.check.tracereplay.check.exceptions.DeltaCalculationException;
-
 import java.util.List;
 import java.util.Map;
 

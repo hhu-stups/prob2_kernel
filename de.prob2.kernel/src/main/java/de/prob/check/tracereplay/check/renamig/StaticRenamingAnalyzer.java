@@ -1,8 +1,7 @@
 package de.prob.check.tracereplay.check.renamig;
 
 import de.prob.check.tracereplay.check.IdentifierMatcher;
-import de.prob.check.tracereplay.check.exploration.TraceExplorer;
-import de.prob.check.tracereplay.check.exceptions.MappingFactoryInterface;
+import de.prob.check.tracereplay.check.ui.MappingFactoryInterface;
 import de.prob.statespace.OperationInfo;
 
 import java.util.*;
