@@ -20,13 +20,32 @@
     "destStateNotChanged" : [ ],
     "preds" : [ ]
   }, {
+    "name" : "openBark",
+    "params" : { },
+    "results" : { },
+    "destState" : {
+      "bark" : "TRUE"
+    },
+    "destStateNotChanged" : [ "cars" ],
+    "preds" : [ ]
+  }, {
     "name" : "on",
     "params" : { },
     "results" : { },
     "destState" : {
-      "cars" : "1"
+      "cars" : "1",
+      "bark" : "FALSE"
     },
-    "destStateNotChanged" : [ "bark" ],
+    "destStateNotChanged" : [ ],
+    "preds" : [ ]
+  }, {
+    "name" : "openBark",
+    "params" : { },
+    "results" : { },
+    "destState" : {
+      "bark" : "TRUE"
+    },
+    "destStateNotChanged" : [ "cars" ],
     "preds" : [ ]
   }, {
     "name" : "on",
@@ -39,13 +58,23 @@
     "destStateNotChanged" : [ ],
     "preds" : [ ]
   }, {
+    "name" : "openBark",
+    "params" : { },
+    "results" : { },
+    "destState" : {
+      "bark" : "TRUE"
+    },
+    "destStateNotChanged" : [ "cars" ],
+    "preds" : [ ]
+  }, {
     "name" : "on",
     "params" : { },
     "results" : { },
     "destState" : {
-      "cars" : "3"
+      "cars" : "3",
+      "bark" : "FALSE"
     },
-    "destStateNotChanged" : [ "bark" ],
+    "destStateNotChanged" : [ ],
     "preds" : [ ]
   }, {
     "name" : "off",
@@ -55,6 +84,15 @@
       "cars" : "2"
     },
     "destStateNotChanged" : [ "bark" ],
+    "preds" : [ ]
+  }, {
+    "name" : "openBark",
+    "params" : { },
+    "results" : { },
+    "destState" : {
+      "bark" : "TRUE"
+    },
+    "destStateNotChanged" : [ "cars" ],
     "preds" : [ ]
   }, {
     "name" : "on",

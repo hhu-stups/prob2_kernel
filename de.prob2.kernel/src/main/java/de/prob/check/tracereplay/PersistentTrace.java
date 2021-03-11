@@ -49,4 +49,8 @@ public class PersistentTrace {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
+	public PersistentTrace setTrace(List<PersistentTransition> trace){
+		return new PersistentTrace(this.description, trace);
+	}
 }

@@ -352,6 +352,16 @@ public class TraceModifier {
 		return ungracefulTraces;
 	}
 
+	public  List<List<PersistentTransition>> ungracefulTraceWithMinLength(int length){
+
+		List<List<PersistentTransition>> candidates = ungracefulTraces.stream().filter(entry -> entry.size() >= length).collect(toList());
+		if(candidates.isEmpty()){
+			return emptyList();
+		}else{
+			return candidates;
+		}
+	}
+
 	public boolean tracingFoundResult(){
 		return tracesStoredInTypeIII() > 0;
 	}
