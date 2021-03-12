@@ -55,16 +55,16 @@ class CommandProcessor {
 		Start ast = parseResult(result);
 		PResult topnode = ast.getPResult();
 		while (topnode instanceof AProgressResult || topnode instanceof ACallBackResult) {
-		     if (topnode instanceof AProgressResult ) {
-		     // enable the command to respond to the progress information (e.g., by updating progress bar)
-		         command.processProgressResult(PrologTermGenerator.toPrologTerm(ast));
-		         result = cli.receive(); // receive next term by Prolog
-		     } else {
-			     IPrologTermOutput callbackres = command.processCallBack(PrologTermGenerator.toPrologTerm(ast));
-		         result = cli.send(callbackres.fullstop().toString());
-		     }
-		     ast = parseResult(result);
-		     topnode = ast.getPResult();
+			if (topnode instanceof AProgressResult ) {
+				// enable the command to respond to the progress information (e.g., by updating progress bar)
+				command.processProgressResult(PrologTermGenerator.toPrologTerm(ast));
+				result = cli.receive(); // receive next term by Prolog
+			} else {
+				IPrologTermOutput callbackres = command.processCallBack(PrologTermGenerator.toPrologTerm(ast));
+				result = cli.send(callbackres.fullstop().toString());
+			}
+			ast = parseResult(result);
+			topnode = ast.getPResult();
 		}
 		// command is finished, we can extract the result:
 		IPrologResult extractResult = extractResult(ast,topnode);
