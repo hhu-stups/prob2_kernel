@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import de.be4.classicalb.core.parser.MockedDefinitions;
+import de.be4.classicalb.core.parser.analysis.prolog.PrologExceptionPrinter;
 import de.prob.animator.CommandInterruptedException;
 import de.prob.animator.IPrologResult;
 import de.prob.animator.InterruptedResult;
