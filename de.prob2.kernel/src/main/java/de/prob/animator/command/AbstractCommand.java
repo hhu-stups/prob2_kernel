@@ -195,7 +195,7 @@ public abstract class AbstractCommand {
 	            System.out.println("parse error exception: " + e);
 				PrologTermStringOutput perr = new PrologTermStringOutput();
  				perr.openTerm("parse_error");
- 		        perr.printAtom(e.toString()); // TO DO: add position information as first argument
+ 		        perr.printAtom(e.getFirstException().getLocalizedMessage()); // TO DO: add position information as first argument; we could use PrologExceptionPrinter ? but it prints to a stream
  		        perr.closeTerm();
 				return perr;
 			}
