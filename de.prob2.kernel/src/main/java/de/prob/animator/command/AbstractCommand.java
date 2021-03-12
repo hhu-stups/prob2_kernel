@@ -3,6 +3,7 @@ package de.prob.animator.command;
 import java.util.Collections;
 import java.util.List;
 
+import de.be4.classicalb.core.parser.MockedDefinitions;
 import de.prob.animator.CommandInterruptedException;
 import de.prob.animator.IPrologResult;
 import de.prob.animator.InterruptedResult;
@@ -10,9 +11,12 @@ import de.prob.animator.NoResult;
 import de.prob.animator.YesResult;
 import de.prob.animator.domainobjects.ErrorItem;
 import de.prob.exception.ProBError;
+import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.parser.ResultParserException;
 import de.prob.prolog.output.IPrologTermOutput;
+import de.prob.prolog.term.IntegerPrologTerm;
+import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.prolog.output.PrologTermStringOutput;
 
@@ -155,13 +159,20 @@ public abstract class AbstractCommand {
 	        String Kind = PrologTerm.atomicString(callBack.getArgument(1));
 	        // Kind is formula, expression, predicate, substitution
 	        // TO DO: process argument 2 as list ; it contains def(Name,Type,Arity) Terms
+			ListPrologTerm definitions = (ListPrologTerm) callBack.getArgument(2);
 	        String toParse = PrologTerm.atomicString(callBack.getArgument(3));
 			try {
 			   Start ast;
 			   BParser parser = new BParser();
-			   // MockedDefinitions context = new MockedDefinitions();
-			   // context.addMockedDefinition(name, type, parameterCount) // for every def(Name,)
-			   // parser.setDefinitions(context)
+			   MockedDefinitions context = new MockedDefinitions();
+			   for(PrologTerm definition : definitions) {
+				    BindingGenerator.getCompoundTerm(definition, "def", 3);
+					String name = PrologTerm.atomicString(definition.getArgument(1));
+					String type = definition.getArgument(2).toString();
+					String parameterCount = definition.getArgument(3).toString();
+					context.addMockedDefinition(name, type, parameterCount);
+			   }
+			   parser.setDefinitions(context);
 			   switch (Kind) {
 					 case "formula":
 						 ast = parser.parseFormula(toParse); break;
