@@ -121,7 +121,7 @@ public class ClassicalBModel extends AbstractModel {
 			if (cause != null && cause.getCause() instanceof BParseException) {
 				throw new EvaluationException(((BParseException)e.getCause().getCause()).getRealMsg(), e);
 			} else {
-				throw new EvaluationException(e);
+				throw new EvaluationException(e.getFirstException().getLocalizedMessage());
 			}
 		}
 	}
