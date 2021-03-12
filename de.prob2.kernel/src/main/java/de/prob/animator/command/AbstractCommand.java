@@ -146,17 +146,22 @@ public abstract class AbstractCommand {
 	       }
 	       System.out.println("irq: " + irq);
 		   return irq;
-	    } else if (callBack.hasFunctor("parse_classical_b",2)) {
+	    } else if (callBack.hasFunctor("parse_classical_b",3)) {
+	     // parse_classical_b(Kind,DefList,Formula)
 		 // we could use: (new ClassicalB(formulaToEval, FormulaExpand.EXPAND), but
 		 // it will also try parsing as substitution and creates an uncessary UUID
 		 // TO DO : support multiple formulas, support parse_event_b call_back as well
 		 // parse_classical_b(Kind,toParse)
 	        String Kind = PrologTerm.atomicString(callBack.getArgument(1));
 	        // Kind is formula, expression, predicate, substitution
-	        String toParse = PrologTerm.atomicString(callBack.getArgument(2));
+	        // TO DO: process argument 2 as list ; it contains def(Name,Type,Arity) Terms
+	        String toParse = PrologTerm.atomicString(callBack.getArgument(3));
 			try {
 			   Start ast;
 			   BParser parser = new BParser();
+			   // MockedDefinitions context = new MockedDefinitions();
+			   // context.addMockedDefinition(name, type, parameterCount) // for every def(Name,)
+			   // parser.setDefinitions(context)
 			   switch (Kind) {
 					 case "formula":
 						 ast = parser.parseFormula(toParse); break;
@@ -179,6 +184,9 @@ public abstract class AbstractCommand {
 	            System.out.println("parse error exception: " + e);
 				PrologTermStringOutput perr = new PrologTermStringOutput();
 				perr.printAtom("parse_error"); 
+// 				perr.openTerm("parse_error");
+// 		        perr.printString(e); // provide (pos,Msg)
+// 		        perr.closeTerm();
 				// TO DO: return exception; ensure it is in usual format expected by prob_prolog
 				return perr;
 			}
