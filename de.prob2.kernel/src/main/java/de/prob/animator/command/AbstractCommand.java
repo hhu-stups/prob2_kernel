@@ -194,11 +194,9 @@ public abstract class AbstractCommand {
 			} catch (BCompoundException e) {
 	            System.out.println("parse error exception: " + e);
 				PrologTermStringOutput perr = new PrologTermStringOutput();
-				perr.printAtom("parse_error"); 
-// 				perr.openTerm("parse_error");
-// 		        perr.printString(e); // provide (pos,Msg)
-// 		        perr.closeTerm();
-				// TO DO: return exception; ensure it is in usual format expected by prob_prolog
+ 				perr.openTerm("parse_error");
+ 		        perr.printAtom(e.toString()); // TO DO: add position information as first argument
+ 		        perr.closeTerm();
 				return perr;
 			}
 		}
