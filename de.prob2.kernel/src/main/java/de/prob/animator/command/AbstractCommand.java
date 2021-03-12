@@ -3,8 +3,12 @@ package de.prob.animator.command;
 import java.util.Collections;
 import java.util.List;
 
+import de.be4.classicalb.core.parser.BParser;
 import de.be4.classicalb.core.parser.MockedDefinitions;
+import de.be4.classicalb.core.parser.analysis.prolog.ASTProlog;
 import de.be4.classicalb.core.parser.analysis.prolog.PrologExceptionPrinter;
+import de.be4.classicalb.core.parser.exceptions.BCompoundException;
+import de.be4.classicalb.core.parser.node.Start;
 import de.prob.animator.CommandInterruptedException;
 import de.prob.animator.IPrologResult;
 import de.prob.animator.InterruptedResult;
@@ -16,16 +20,9 @@ import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.parser.ResultParserException;
 import de.prob.prolog.output.IPrologTermOutput;
-import de.prob.prolog.term.IntegerPrologTerm;
+import de.prob.prolog.output.PrologTermStringOutput;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
-import de.prob.prolog.output.PrologTermStringOutput;
-
-// for parse call_back:
-import de.be4.classicalb.core.parser.BParser;
-import de.be4.classicalb.core.parser.node.Start;
-import de.be4.classicalb.core.parser.analysis.prolog.ASTProlog;
-import de.be4.classicalb.core.parser.exceptions.BCompoundException;
 
 /**
  * The {@link AbstractCommand} class is used to implement composable
