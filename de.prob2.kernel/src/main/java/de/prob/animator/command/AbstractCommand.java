@@ -193,9 +193,8 @@ public abstract class AbstractCommand {
 				System.out.println("parse error exception: " + e);
 				PrologTermStringOutput perr = new PrologTermStringOutput();
 				perr.openTerm("parse_error");
-				PrologExceptionPrinter.printBException(perr,e.getFirstException(),false,true); 
+				PrologExceptionPrinter.printException(perr,e,false,true); 
 				// indentation=false, lineOneOff=true because we virtually add #FORMULA, ... line
-				// TO DO: can we translate the full compound exception?
 				perr.closeTerm();
 				return perr;
 			}
