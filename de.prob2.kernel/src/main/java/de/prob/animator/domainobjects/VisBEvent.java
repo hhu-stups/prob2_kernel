@@ -48,13 +48,12 @@ public class VisBEvent {
 		return hovers;
 	}
 
-	public static VisBEvent fromPrologTerm(final PrologTerm term, final Map<String, VisBHover> hoverMap) {
+	public static VisBEvent fromPrologTerm(final PrologTerm term, final Map<String, List<VisBHover>> hoverMap) {
 		BindingGenerator.getCompoundTerm(term, "execute_event", 3);
 		final String id = PrologTerm.atomicString(term.getArgument(1));
 		final String event = PrologTerm.atomicString(term.getArgument(2));
 		final List<String> predicates = PrologTerm.atomicStrings(BindingGenerator.getList(term.getArgument(3)));
-		// TODO: Many hovers
-		final List<VisBHover> hovers = hoverMap.get(id) == null ? new ArrayList<>() : Arrays.asList(hoverMap.get(id));
+		final List<VisBHover> hovers = hoverMap.get(id) == null ? new ArrayList<>() : hoverMap.get(id);
 		return new VisBEvent(id, event, predicates, hovers);
 	}
 

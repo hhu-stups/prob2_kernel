@@ -7,6 +7,7 @@ import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,12 +33,16 @@ public class ReadVisBEventsHoversCommand extends AbstractCommand {
 
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
-		Map<String, VisBHover> hoverMap = new HashMap<>();
+		Map<String, List<VisBHover>> hoverMap = new HashMap<>();
 		List<VisBHover> hovers = BindingGenerator.getList(bindings, HOVERS).stream()
 				.map(VisBHover::fromPrologTerm)
 				.collect(Collectors.toList());
 		for(VisBHover hover : hovers) {
-			hoverMap.put(hover.getHoverId(), hover);
+			String svgID = hover.getSVGID();
+			if(!hoverMap.containsKey(svgID)) {
+				hoverMap.put(svgID, new ArrayList<>());
+			}
+			hoverMap.get(svgID).add(hover);
 		}
 
 		this.events = BindingGenerator.getList(bindings, EVENTS).stream()
