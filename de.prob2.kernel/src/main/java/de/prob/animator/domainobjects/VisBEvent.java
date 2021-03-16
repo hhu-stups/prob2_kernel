@@ -2,10 +2,8 @@ package de.prob.animator.domainobjects;
 
 import de.prob.parser.BindingGenerator;
 import de.prob.prolog.term.PrologTerm;
-import de.prob.statespace.State;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 

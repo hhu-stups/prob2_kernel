@@ -7,8 +7,7 @@ import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 public class LoadVisBSetAttributesCommand extends AbstractCommand {
 
@@ -16,13 +15,14 @@ public class LoadVisBSetAttributesCommand extends AbstractCommand {
 
 	private static final String ITEMS = "List";
 
-	private String stateID;
+	private final String stateID;
 
-	private List<VisBItem> items;
+	private final Map<VisBItem.VisBItemKey, VisBItem> items;
 
 
-	public LoadVisBSetAttributesCommand(String stateID) {
+	public LoadVisBSetAttributesCommand(final String stateID, final Map<VisBItem.VisBItemKey, VisBItem> items) {
 		this.stateID = stateID;
+		this.items = items;
 	}
 
 	@Override
@@ -35,12 +35,13 @@ public class LoadVisBSetAttributesCommand extends AbstractCommand {
 
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
-		this.items = BindingGenerator.getList(bindings, ITEMS).stream()
-				.map(VisBItem::fromPrologTerm)
-				.collect(Collectors.toList());
+		for(PrologTerm term : BindingGenerator.getList(bindings, ITEMS)) {
+			BindingGenerator.getCompoundTerm(term, "set_attr", 3);
+			final String id = PrologTerm.atomicString(term.getArgument(1));
+			final String attribute = PrologTerm.atomicString(term.getArgument(2));
+			final String value = PrologTerm.atomicString(term.getArgument(3));
+			this.items.get(new VisBItem.VisBItemKey(id, attribute)).setValue(value);
+		}
 	}
 
-	public List<VisBItem> getItems() {
-		return items;
-	}
 }
