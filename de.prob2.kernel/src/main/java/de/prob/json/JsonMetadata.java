@@ -1,5 +1,6 @@
 package de.prob.json;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 
@@ -12,6 +13,7 @@ import java.util.Objects;
  *
  * <p>Some of the metadata (e. g. {@link #creator}) is not yet used by the UI code, but is included in newly written JSON files for possible future use.</p>
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public final class JsonMetadata {
 	/**
 	 * Special value for {@link #creator} indicating that the data was created manually by the user, rather than generated or otherwise automatically created by the UI code.
