@@ -4,6 +4,7 @@ import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.formula.PredicateBuilder;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Collections.*;
 
@@ -77,7 +78,7 @@ public class ReplayOptions {
 		return new ReplayOptions(emptySet(), emptyList(), emptyMap(), emptyMap());
 	}
 
-	//public static ReplayOptions replayJustNames(){ return new ReplayOptions()}
+	public static ReplayOptions replayJustNames(){ return new ReplayOptions(new HashSet<>(Arrays.stream(OptionFlags.values()).collect(Collectors.toList())), emptyList(), emptyMap(), emptyMap());}
 
 	//createReplayOptionsWithIgnoredOperations
 
