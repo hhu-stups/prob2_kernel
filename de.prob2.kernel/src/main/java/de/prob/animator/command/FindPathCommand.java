@@ -1,0 +1,127 @@
+package de.prob.animator.command;
+
+import de.be4.classicalb.core.parser.analysis.prolog.ASTProlog;
+import de.prob.animator.domainobjects.ClassicalB;
+import de.prob.animator.domainobjects.EvalElementType;
+import de.prob.parser.BindingGenerator;
+import de.prob.parser.ISimplifiedROMap;
+import de.prob.prolog.output.IPrologTermOutput;
+import de.prob.prolog.term.CompoundPrologTerm;
+import de.prob.prolog.term.ListPrologTerm;
+import de.prob.prolog.term.PrologTerm;
+import de.prob.statespace.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class FindPathCommand extends AbstractCommand implements
+		IStateSpaceModifier, ITraceDescription {
+
+
+	private static final String PROLOG_COMMAND_NAME = "prob2_find_trace";
+	Logger logger = LoggerFactory.getLogger(ConstructTraceCommand.class);
+	private static final String RESULT_VARIABLE = "Res";
+	private static final String ERRORS_VARIABLE = "Errors";
+
+	private final List<ClassicalB> evalElement;
+	private final State stateId;
+	private final List<String> name;
+	private final StateSpace stateSpace;
+	private final List<Transition> resultTrace = new ArrayList<>();
+	private final List<String> errors = new ArrayList<>();
+
+	public FindPathCommand(final StateSpace s, final State stateId,
+								 final List<String> name, final List<ClassicalB> predicate) {
+		this.stateSpace = s;
+		this.stateId = stateId;
+		this.name = name;
+		this.evalElement = predicate;
+		if (name.size() != predicate.size()) {
+			throw new IllegalArgumentException(
+					"Must provide the same number of names and predicates.");
+		}
+		for (ClassicalB classicalB : predicate) {
+			if (!EvalElementType.PREDICATE.equals(classicalB.getKind())) {
+				throw new IllegalArgumentException(
+						"Formula must be a predicate: " + predicate);
+			}
+		}
+		int size = this.name.size();
+
+	}
+
+
+	/**
+	 * This method is called when the command is prepared for sending. The
+	 * method is called by the Animator class, most likely it is not interesting
+	 * for other classes.
+	 *
+	 * @see de.prob.animator.command.AbstractCommand#writeCommand(de.prob.prolog.output.IPrologTermOutput)
+	 */
+	@Override
+	public void writeCommand(final IPrologTermOutput pto) {
+		pto.openTerm(PROLOG_COMMAND_NAME)
+				.printAtomOrNumber(stateId.getId());
+		pto.openList();
+		for (String n : name) {
+			pto.printAtom(n);
+		}
+		pto.closeList();
+		final ASTProlog prolog = new ASTProlog(pto, null);
+		pto.openList();
+		for (ClassicalB cb : evalElement) {
+			cb.getAst().apply(prolog);
+		}
+		pto.closeList();
+
+		pto.printVariable(RESULT_VARIABLE);
+		pto.printVariable(ERRORS_VARIABLE);
+		pto.closeTerm();
+	}
+
+	@Override
+	public void processResult(
+			final ISimplifiedROMap<String, PrologTerm> bindings) {
+		ListPrologTerm trace = BindingGenerator.getList(bindings
+				.get(RESULT_VARIABLE));
+
+		for (PrologTerm term : trace) {
+			CompoundPrologTerm t = BindingGenerator.getCompoundTerm(term, 4);
+			Transition operation = Transition.createTransitionFromCompoundPrologTerm(
+					stateSpace, t);
+			resultTrace.add(operation);
+		}
+
+		ListPrologTerm reportedErrors = BindingGenerator.getList(bindings.get(ERRORS_VARIABLE));
+		for (PrologTerm prologTerm : reportedErrors) {
+			this.errors.add(prologTerm.toString());
+		}
+	}
+
+	@Override
+	public List<Transition> getNewTransitions() {
+		return resultTrace;
+	}
+
+	public State getFinalState() {
+		return resultTrace.get(resultTrace.size() - 1).getDestination();
+	}
+
+	@Override
+	public Trace getTrace(final StateSpace s) {
+		Trace t = s.getTrace(stateId.getId());
+		return t.addTransitions(resultTrace);
+	}
+
+	public List<String> getErrors() {
+		return errors;
+	}
+
+	public boolean hasErrors() {
+		return !errors.isEmpty();
+	}
+
+
+}
