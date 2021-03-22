@@ -1,124 +1,179 @@
 {
-  "type" : "Trace",
-  "name" : "TrafficLightRef",
   "description" : "",
-  "trace" : {
-    "description" : "",
-    "transitionList" : [ {
-      "name" : "$initialise_machine",
-      "params" : { },
-      "results" : { },
-      "destState" : {
-        "cars_color" : "{red}",
-        "peds_color" : "red"
-      },
-      "destStateNotChanged" : [ ],
-      "preds" : [ ]
-    }, {
-      "name" : "set_cars",
-      "params" : { },
-      "results" : { },
-      "destState" : {
-        "cars_color" : "{red,yellow}"
-      },
-      "destStateNotChanged" : [ "peds_color" ],
-      "preds" : [ ]
-    }, {
-      "name" : "set_cars",
-      "params" : { },
-      "results" : { },
-      "destState" : {
-        "cars_color" : "{green}"
-      },
-      "destStateNotChanged" : [ "peds_color" ],
-      "preds" : [ ]
-    }, {
-      "name" : "set_cars",
-      "params" : { },
-      "results" : { },
-      "destState" : {
-        "cars_color" : "{yellow}"
-      },
-      "destStateNotChanged" : [ "peds_color" ],
-      "preds" : [ ]
-    }, {
-      "name" : "set_cars",
-      "params" : { },
-      "results" : { },
-      "destState" : {
-        "cars_color" : "{red}"
-      },
-      "destStateNotChanged" : [ "peds_color" ],
-      "preds" : [ ]
-    }, {
-      "name" : "set_peds_go",
-      "params" : { },
-      "results" : { },
-      "destState" : {
-        "peds_color" : "green"
-      },
-      "destStateNotChanged" : [ "cars_color" ],
-      "preds" : [ ]
-    }, {
-      "name" : "set_peds_stop",
-      "params" : { },
-      "results" : { },
-      "destState" : {
-        "peds_color" : "red"
-      },
-      "destStateNotChanged" : [ "cars_color" ],
-      "preds" : [ ]
-    }, {
-      "name" : "set_cars",
-      "params" : { },
-      "results" : { },
-      "destState" : {
-        "cars_color" : "{red,yellow}"
-      },
-      "destStateNotChanged" : [ "peds_color" ],
-      "preds" : [ ]
-    }, {
-      "name" : "set_peds_go",
-      "params" : { },
-      "results" : { },
-      "destState" : {
-        "peds_color" : "green"
-      },
-      "destStateNotChanged" : [ "cars_color" ],
-      "preds" : [ ]
-    }, {
-      "name" : "set_peds_go",
-      "params" : { },
-      "results" : { },
-      "destState" : { },
-      "destStateNotChanged" : [ "cars_color", "peds_color" ],
-      "preds" : [ ]
-    }, {
-      "name" : "set_peds_stop",
-      "params" : { },
-      "results" : { },
-      "destState" : {
-        "peds_color" : "red"
-      },
-      "destStateNotChanged" : [ "cars_color" ],
-      "preds" : [ ]
-    } ]
-  },
+  "transitionList" : [ {
+    "name" : "$initialise_machine",
+    "params" : { },
+    "results" : { },
+    "destState" : {
+      "cars_color" : "{red}",
+      "peds_color" : "red"
+    },
+    "destStateNotChanged" : [ ],
+    "preds" : [ ]
+  }, {
+    "name" : "set_peds_go",
+    "params" : { },
+    "results" : { },
+    "destState" : {
+      "peds_color" : "green"
+    },
+    "destStateNotChanged" : [ "cars_color" ],
+    "preds" : [ ]
+  }, {
+    "name" : "set_peds_stop",
+    "params" : { },
+    "results" : { },
+    "destState" : {
+      "peds_color" : "red"
+    },
+    "destStateNotChanged" : [ "cars_color" ],
+    "preds" : [ ]
+  }, {
+    "name" : "set_peds_stop",
+    "params" : { },
+    "results" : { },
+    "destState" : { },
+    "destStateNotChanged" : [ "cars_color", "peds_color" ],
+    "preds" : [ ]
+  }, {
+    "name" : "set_cars",
+    "params" : { },
+    "results" : { },
+    "destState" : {
+      "cars_color" : "{red,yellow}"
+    },
+    "destStateNotChanged" : [ "peds_color" ],
+    "preds" : [ ]
+  }, {
+    "name" : "set_peds_go",
+    "params" : { },
+    "results" : { },
+    "destState" : {
+      "peds_color" : "green"
+    },
+    "destStateNotChanged" : [ "cars_color" ],
+    "preds" : [ ]
+  }, {
+    "name" : "set_peds_stop",
+    "params" : { },
+    "results" : { },
+    "destState" : {
+      "peds_color" : "red"
+    },
+    "destStateNotChanged" : [ "cars_color" ],
+    "preds" : [ ]
+  }, {
+    "name" : "set_peds_go",
+    "params" : { },
+    "results" : { },
+    "destState" : {
+      "peds_color" : "green"
+    },
+    "destStateNotChanged" : [ "cars_color" ],
+    "preds" : [ ]
+  }, {
+    "name" : "set_peds_go",
+    "params" : { },
+    "results" : { },
+    "destState" : { },
+    "destStateNotChanged" : [ "cars_color", "peds_color" ],
+    "preds" : [ ]
+  }, {
+    "name" : "set_peds_go",
+    "params" : { },
+    "results" : { },
+    "destState" : { },
+    "destStateNotChanged" : [ "cars_color", "peds_color" ],
+    "preds" : [ ]
+  }, {
+    "name" : "set_peds_go",
+    "params" : { },
+    "results" : { },
+    "destState" : { },
+    "destStateNotChanged" : [ "cars_color", "peds_color" ],
+    "preds" : [ ]
+  }, {
+    "name" : "set_peds_go",
+    "params" : { },
+    "results" : { },
+    "destState" : { },
+    "destStateNotChanged" : [ "cars_color", "peds_color" ],
+    "preds" : [ ]
+  }, {
+    "name" : "set_peds_go",
+    "params" : { },
+    "results" : { },
+    "destState" : { },
+    "destStateNotChanged" : [ "cars_color", "peds_color" ],
+    "preds" : [ ]
+  }, {
+    "name" : "set_peds_go",
+    "params" : { },
+    "results" : { },
+    "destState" : { },
+    "destStateNotChanged" : [ "cars_color", "peds_color" ],
+    "preds" : [ ]
+  }, {
+    "name" : "set_peds_go",
+    "params" : { },
+    "results" : { },
+    "destState" : { },
+    "destStateNotChanged" : [ "cars_color", "peds_color" ],
+    "preds" : [ ]
+  }, {
+    "name" : "set_peds_stop",
+    "params" : { },
+    "results" : { },
+    "destState" : {
+      "peds_color" : "red"
+    },
+    "destStateNotChanged" : [ "cars_color" ],
+    "preds" : [ ]
+  }, {
+    "name" : "set_peds_go",
+    "params" : { },
+    "results" : { },
+    "destState" : {
+      "peds_color" : "green"
+    },
+    "destStateNotChanged" : [ "cars_color" ],
+    "preds" : [ ]
+  }, {
+    "name" : "set_peds_go",
+    "params" : { },
+    "results" : { },
+    "destState" : { },
+    "destStateNotChanged" : [ "cars_color", "peds_color" ],
+    "preds" : [ ]
+  }, {
+    "name" : "set_peds_go",
+    "params" : { },
+    "results" : { },
+    "destState" : { },
+    "destStateNotChanged" : [ "cars_color", "peds_color" ],
+    "preds" : [ ]
+  }, {
+    "name" : "set_peds_go",
+    "params" : { },
+    "results" : { },
+    "destState" : { },
+    "destStateNotChanged" : [ "cars_color", "peds_color" ],
+    "preds" : [ ]
+  } ],
   "variableNames" : [ "peds_color", "cars_color" ],
+  "constantNames" : [ ],
+  "setNames" : [ "colors" ],
   "machineOperationInfos" : {
-    "set_cars" : {
-      "operationName" : "set_cars",
+    "set_peds_go" : {
+      "operationName" : "set_peds_go",
       "parameterNames" : [ ],
       "outputParameterNames" : [ ],
       "topLevel" : true,
       "type" : "CLASSICAL_B",
-      "readVariables" : [ "cars_color", "peds_color" ],
-      "writtenVariables" : [ "cars_color" ],
-      "nonDetWrittenVariables" : [ "cars_color" ],
-      "typeMap" : {
-        "cars_color" : "set(global(colors))",
-        "peds_color" : "global(colors)"
-      }
+      "readVariables" : [ "cars_color" ],
+      "writtenVariables" : [ "peds_color" ],
+      "nonDetWrittenVariables" : [ ],
+      "typeMap" : { }
     },
     "set_peds_stop" : {
       "operationName" : "set_peds_stop",
@@ -129,34 +184,31 @@
       "readVariables" : [ ],
       "writtenVariables" : [ "peds_color" ],
       "nonDetWrittenVariables" : [ ],
-      "typeMap" : {
-        "peds_color" : "global(colors)"
-      }
+      "typeMap" : { }
     },
-    "set_peds_go" : {
-      "operationName" : "set_peds_go",
+    "set_cars" : {
+      "operationName" : "set_cars",
       "parameterNames" : [ ],
       "outputParameterNames" : [ ],
       "topLevel" : true,
       "type" : "CLASSICAL_B",
-      "readVariables" : [ "cars_color" ],
-      "writtenVariables" : [ "peds_color" ],
-      "nonDetWrittenVariables" : [ ],
-      "typeMap" : {
-        "cars_color" : "set(global(colors))",
-        "peds_color" : "global(colors)"
-      }
+      "readVariables" : [ "cars_color", "peds_color" ],
+      "writtenVariables" : [ "cars_color" ],
+      "nonDetWrittenVariables" : [ "cars_color" ],
+      "typeMap" : { }
     }
   },
-  "constantNames" : [ ],
-  "setNames" : [ "colors" ],
+  "globalIdentifierTypes" : {
+    "cars_color" : "set(global(colors))",
+    "peds_color" : "global(colors)"
+  },
   "metadata" : {
     "fileType" : "Trace",
     "formatVersion" : 2,
-    "savedAt" : "2021-01-29T10:31:06.703Z",
-    "creator" : "User",
+    "savedAt" : null,
+    "creator" : "traceReplay",
     "proB2KernelVersion" : "4.0.0-SNAPSHOT",
-    "proBCliVersion" : "1.10.0-nightly",
+    "proBCliVersion" : "1.11.0-nightly",
     "modelName" : "TrafficLightRef"
   }
 }
