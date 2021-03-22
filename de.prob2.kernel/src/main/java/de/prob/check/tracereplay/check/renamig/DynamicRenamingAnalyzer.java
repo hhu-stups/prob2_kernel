@@ -238,6 +238,16 @@ public class DynamicRenamingAnalyzer implements RenamingAnalyzerInterface {
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 	}
 
+	/**
+	 * Checks wherever the Initialisation clause is an Type I/II candidate
+	 * @param oldOperations the operations of the old machines
+	 * @param newOperations the operations of the new machines
+	 * @param typeIOrIICandidate the flag if  the Init Clause was identified as Type I/II candiate
+	 * @param checkerInterface the prolog abstraction to compare operations
+	 * @param prepareOperationsInterface the prolog abstraction to prepare operations
+	 * @return a mapping for the Init clause
+	 * @throws PrologTermNotDefinedException there was a prolog term that is not defined yet
+	 */
 	public static Map<String, String> createInitMapping(Map<String, CompoundPrologTerm> oldOperations,
 														Map<String, CompoundPrologTerm> newOperations, boolean typeIOrIICandidate,
 														CheckerInterface checkerInterface,
