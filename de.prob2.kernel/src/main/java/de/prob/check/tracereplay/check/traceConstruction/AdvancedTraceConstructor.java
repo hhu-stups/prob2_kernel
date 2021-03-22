@@ -1,6 +1,8 @@
 package de.prob.check.tracereplay.check.traceConstruction;
 
 import de.prob.animator.command.ConstructTraceCommand;
+import de.prob.animator.command.FindPathCommand;
+import de.prob.animator.command.GetOperationByPredicateCommand;
 import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.check.tracereplay.PersistentTransition;
@@ -12,6 +14,7 @@ import de.prob.statespace.Transition;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -20,20 +23,23 @@ public class AdvancedTraceConstructor {
 
 
 	public static List<Transition> constructTraceWithOptions(List<PersistentTransition> persistentTrace, StateSpace stateSpace, ReplayOptions replayOptions) throws TraceConstructionError {
-		Trace trace = new Trace(stateSpace);
 
-		Trace modifiedTrace = prepareTrace(trace, persistentTrace);
+		Trace modifiedTrace = prepareTrace(new Trace(stateSpace), persistentTrace);
+		modifiedTrace.setExploreStateByDefault(true);
 		List<PersistentTransition> modifiedList = prepareTraceList(modifiedTrace, persistentTrace);
 
-		List<String> transitionNames = modifiedList.stream().map(PersistentTransition::getOperationName).collect(toList());
-		List<ClassicalB> predicates = modifiedList.stream().map(entry -> new ClassicalB(replayOptions.createMapping(entry).toString(), FormulaExpand.EXPAND)).collect(toList());
+		List<String> transitionNames = modifiedList.stream()
+				.map(PersistentTransition::getOperationName)
+				.collect(toList());
+		List<ClassicalB> predicates = modifiedList.stream()
+				.map(entry -> new ClassicalB(replayOptions.createMapping(entry).toString(), FormulaExpand.EXPAND))
+				.collect(toList());
 
-		ConstructTraceCommand constructTraceCommand = new ConstructTraceCommand(stateSpace, modifiedTrace.getCurrentState(), transitionNames, predicates);
-
+		FindPathCommand constructTraceCommand = new FindPathCommand(modifiedTrace.getStateSpace(), modifiedTrace.getCurrentState(), transitionNames, predicates);
 		stateSpace.execute(constructTraceCommand);
 
-		if (constructTraceCommand.hasErrors()) {
-			throw new TraceConstructionError(constructTraceCommand.getErrors());
+		if (constructTraceCommand.hasErrors() && constructTraceCommand.getNewTransitions().size() < persistentTrace.size()) { //Te command failed in finding an complete Trace
+			throw new TraceConstructionError(constructTraceCommand.getErrors(), constructTraceCommand.getNewTransitions());
 		} else {
 			return constructTraceCommand.getNewTransitions();
 		}

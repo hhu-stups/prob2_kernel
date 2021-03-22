@@ -1,95 +1,79 @@
 package de.prob.check.tracereplay.check.refinement;
 
+import com.google.inject.Injector;
+import de.be4.classicalb.core.parser.BParser;
+import de.be4.classicalb.core.parser.exceptions.BCompoundException;
+import de.be4.classicalb.core.parser.node.AAbstractMachineParseUnit;
+import de.be4.classicalb.core.parser.node.Start;
+import de.be4.classicalb.core.parser.util.PrettyPrinter;
+import de.prob.check.tracereplay.PersistentTransition;
+import de.prob.check.tracereplay.check.TraceCheckerUtils;
+import de.prob.check.tracereplay.check.traceConstruction.AdvancedTraceConstructor;
+import de.prob.check.tracereplay.check.traceConstruction.TraceConstructionError;
+import de.prob.scripting.*;
+import de.prob.statespace.StateSpace;
+import de.prob.statespace.Transition;
+
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import com.google.inject.Injector;
-
-import de.prob.animator.ReusableAnimator;
-import de.prob.animator.command.GetEnabledOperationsCommand;
-import de.prob.animator.command.GetOperationByPredicateCommand;
-import de.prob.animator.domainobjects.FormulaExpand;
-import de.prob.animator.domainobjects.IEvalElement;
-import de.prob.check.tracereplay.PersistentTransition;
-import de.prob.formula.PredicateBuilder;
-import de.prob.scripting.FactoryProvider;
-import de.prob.scripting.ModelFactory;
-import de.prob.statespace.StateSpace;
-import de.prob.statespace.Trace;
-import de.prob.statespace.Transition;
 
 public class RefinementChecker {
-
 	private final Injector injector;
-	private final StateSpace abstractStateSpace;
-	private final StateSpace refinementStateSpace;
 	private final List<PersistentTransition> transitionList;
+	private final Path alpha;
+	private final Path beta;
 
-	public RefinementChecker(Path abstractMachine, Path refinementMachine, List<PersistentTransition> transitionList, Injector injector) throws IOException {
+	public RefinementChecker(Injector injector, List<PersistentTransition> transitionList, Path alpha, Path beta) {
 		this.injector = injector;
-		this.refinementStateSpace = createStateSpaceWithPath(refinementMachine);
-		this.abstractStateSpace = createStateSpaceWithPath(abstractMachine);
 		this.transitionList = transitionList;
+		this.alpha = alpha;
+		this.beta = beta;
 	}
 
-	public void replay() throws IOException {
+	/**
+	 * Composition method with the task of extracting the nodes from a adding them to b, making b into a abstract machine if
+	 * not, writing the new machine in a file, reparse the file to account for includes/sees/imports, as the recursive machine loader
+	 * is inflexible. Then constructing a trace on the machine.
+	 * @return the trace if it works on the machine
+	 * @throws IOException something went wrong when parsing the file
+	 * @throws BCompoundException something in the file was wrong with the machine
+	 * @throws ModelTranslationError something went wrong with accessing proB
+	 * @throws TraceConstructionError something went wrong when constructing the trace
+	 */
+	public List<PersistentTransition> check() throws IOException, BCompoundException, ModelTranslationError, TraceConstructionError {
+
+		BParser alphaParser = new BParser(alpha.toString());
+		Start alphaStart = alphaParser.parseFile(alpha.toFile(), false);
+
+		BParser betaParser = new BParser(beta.toString());
+		Start betaStart = betaParser.parseFile(beta.toFile(), false);
+
+		NodeCollector nodeCollector = new NodeCollector(alphaStart);
+		ASTManipulator astManipulator = new ASTManipulator(betaStart, nodeCollector);
+
+		AAbstractMachineParseUnit aAbstractMachineParseUnit = (AAbstractMachineParseUnit) astManipulator.getStart().getPParseUnit();
+
+		PrettyPrinter prettyPrinter = new PrettyPrinter();
+		prettyPrinter.caseAAbstractMachineParseUnit(aAbstractMachineParseUnit);
 
 
+		File tempFile = File.createTempFile("machine", ".mch");
+
+		FileWriter writer = new FileWriter(tempFile);
+		writer.write(prettyPrinter.getPrettyPrint());
+		writer.close();
 
 
+		StateSpace stateSpace = TraceCheckerUtils.createStateSpace(tempFile.toPath().toString(), injector);
+
+
+		List<Transition> resultRaw = AdvancedTraceConstructor.constructTraceByName(transitionList, stateSpace);
+
+		return PersistentTransition.createFromList(resultRaw);
 	}
 
-	public void executeParallel(String opName, PersistentTransition transition){
-		Trace t = new Trace(abstractStateSpace);
-
-		Trace t2 = new Trace(refinementStateSpace);
-
-		PredicateBuilder predicateBuilder = new PredicateBuilder();
-		predicateBuilder.addMap(transition.getDestinationStateVariables());
-		predicateBuilder.addMap(transition.getOutputParameters());
-		predicateBuilder.addMap(transition.getParameters());
-
-		final IEvalElement pred = abstractStateSpace.getModel().parseFormula(predicateBuilder.toString(), FormulaExpand.EXPAND);
-
-		GetOperationByPredicateCommand getOperationByPredicateCommand =
-				new GetOperationByPredicateCommand(t.getStateSpace(), t.getCurrentState().getId(), t.getCurrentState().getId(), pred,1 );
-
-		t.getStateSpace().execute(getOperationByPredicateCommand);
-
-		Transition goal = getOperationByPredicateCommand.getNewTransitions().get(0);
-
-
-		GetEnabledOperationsCommand getEnabledOperationsCommand = new GetEnabledOperationsCommand(t2.getStateSpace(), t2.getCurrentState().getId());
-		t2.getStateSpace().execute(getEnabledOperationsCommand);
-
-		List<Transition> enabledOperation = getEnabledOperationsCommand.getEnabledOperations()
-				.stream()
-				.filter(operation -> operation
-						.getName()
-						.equals(transition.getOperationName()))
-				.collect(Collectors.toList());
-
-		List<Trace> traces = enabledOperation.stream().map(t2::add).collect(Collectors.toList());
-/*
-		traces.stream().map(trace -> {
-			PredicateBuilder predicateBuilder = replayOptions.createMapping(persistentTransition);
-
-			final IEvalElement pred = stateSpace.getModel().parseFormula(predicateBuilder.toString(), FormulaExpand.EXPAND);
-
-			EvaluateFormulaCommand evaluateFormulaCommand = new EvaluateFormulaCommand()
-		})
-		*/
-
-	}
-
-	public StateSpace createStateSpaceWithPath(Path path) throws IOException {
-		ReusableAnimator reusableAnimator = injector.getInstance(ReusableAnimator.class);
-		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension("mch"));
-		StateSpace stateSpace = reusableAnimator.createStateSpace();
-		factory.extract(path.toString()).loadIntoStateSpace(stateSpace);
-		return stateSpace;
-	}
 
 }
