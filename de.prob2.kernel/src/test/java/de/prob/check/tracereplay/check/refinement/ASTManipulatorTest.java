@@ -3,7 +3,6 @@ package de.prob.check.tracereplay.check.refinement;
 import de.be4.classicalb.core.parser.BParser;
 import de.be4.classicalb.core.parser.exceptions.BCompoundException;
 import de.be4.classicalb.core.parser.node.*;
-import de.be4.classicalb.core.parser.util.PrettyPrinter;
 import de.prob.statespace.Transition;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,7 +13,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class ASTManipulatorTest {
 
@@ -48,7 +46,6 @@ public class ASTManipulatorTest {
 
 		ASTChecker astCheckerBeta = new ASTChecker();
 		astCheckerBeta.check(betaStart2);
-		System.out.println(astCheckerBeta.childCounter.get(Types.INVARIANT));
 
 		ASTChecker astCheckerCombined = new ASTChecker();
 		astCheckerCombined.check(astManipulator.getStart());
@@ -93,7 +90,6 @@ public class ASTManipulatorTest {
 
 		ASTChecker astCheckerBeta = new ASTChecker();
 		astCheckerBeta.check(betaStart2);
-		System.out.println(astCheckerBeta.childCounter.get(Types.INVARIANT));
 
 		ASTChecker astCheckerCombined = new ASTChecker();
 		astCheckerCombined.check(astManipulator.getStart());
@@ -110,7 +106,6 @@ public class ASTManipulatorTest {
 
 	}
 
-	//Similar to 1 but with inverted machines
 	@Test
 	public void test_correctConstruction_3() throws IOException, BCompoundException {
 
@@ -141,7 +136,6 @@ public class ASTManipulatorTest {
 
 		ASTChecker astCheckerBeta = new ASTChecker();
 		astCheckerBeta.check(betaStart2);
-		System.out.println(astCheckerBeta.childCounter.get(Types.INVARIANT));
 
 		ASTChecker astCheckerCombined = new ASTChecker();
 		astCheckerCombined.check(astManipulator.getStart());
@@ -173,10 +167,6 @@ public class ASTManipulatorTest {
 		Start betaStart1 = betaParser1.parseFile(betaFile.toFile(), false);
 
 		ASTManipulator astManipulator = new ASTManipulator(betaStart1, nodeCollector);
-
-		PrettyPrinter prettyPrinter = new PrettyPrinter();
-		prettyPrinter.caseAAbstractMachineParseUnit((AAbstractMachineParseUnit) astManipulator.getStart().getPParseUnit());
-		System.out.println(prettyPrinter.getPrettyPrint());
 
 		Start alphaStart2 = alphaParser1.parseFile(alphaFile.toFile(), false);
 
@@ -219,9 +209,6 @@ public class ASTManipulatorTest {
 
 		ASTManipulator astManipulator = new ASTManipulator(betaStart1, nodeCollector);
 
-		PrettyPrinter prettyPrinter = new PrettyPrinter();
-		prettyPrinter.caseAAbstractMachineParseUnit((AAbstractMachineParseUnit) astManipulator.getStart().getPParseUnit());
-		System.out.println(prettyPrinter.getPrettyPrint());
 
 		Start alphaStart2 = alphaParser1.parseFile(alphaFile.toFile(), false);
 
@@ -266,10 +253,6 @@ public class ASTManipulatorTest {
 
 		ASTManipulator astManipulator = new ASTManipulator(betaStart1, nodeCollector);
 
-		PrettyPrinter prettyPrinter = new PrettyPrinter();
-		prettyPrinter.caseAAbstractMachineParseUnit((AAbstractMachineParseUnit) astManipulator.getStart().getPParseUnit());
-		System.out.println(prettyPrinter.getPrettyPrint());
-
 		Start alphaStart2 = alphaParser1.parseFile(alphaFile.toFile(), false);
 
 		Start betaStart2 = betaParser1.parseFile(betaFile.toFile(), false);
@@ -311,9 +294,6 @@ public class ASTManipulatorTest {
 
 		ASTManipulator astManipulator = new ASTManipulator(betaStart1, nodeCollector);
 
-		PrettyPrinter prettyPrinter = new PrettyPrinter();
-		prettyPrinter.caseAAbstractMachineParseUnit((AAbstractMachineParseUnit) astManipulator.getStart().getPParseUnit());
-		System.out.println(prettyPrinter.getPrettyPrint());
 
 		Start alphaStart2 = alphaParser1.parseFile(alphaFile.toFile(), false);
 
