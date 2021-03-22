@@ -1,0 +1,10 @@
+REFINEMENT RefRef
+REFINES Abstract
+INCLUDES DummyMachine2
+
+
+
+OPERATIONS
+op = Dec
+
+END

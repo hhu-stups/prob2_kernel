@@ -4,9 +4,7 @@ import de.be4.classicalb.core.parser.analysis.DepthFirstAdapter;
 import de.be4.classicalb.core.parser.node.*;
 import de.prob.statespace.Transition;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 public class NodeCollector extends DepthFirstAdapter{
 
@@ -17,6 +15,13 @@ public class NodeCollector extends DepthFirstAdapter{
 	private final LinkedList<PSet> sets;
 	private final Map<String, PSubstitution> operationMap;
 
+	private final LinkedList<PMachineReference> includesClauses;
+	private final LinkedList<PMachineReference> extendsClauses;
+	private final LinkedList<PMachineReference> importsClauses;
+	private final LinkedList<PExpression> seesClause;
+	private final LinkedList<PExpression> promotesClause;
+	private final LinkedList<PExpression> usesClause;
+
 
 
 	public NodeCollector(Start start){
@@ -24,6 +29,12 @@ public class NodeCollector extends DepthFirstAdapter{
 		constants = new LinkedList<>();
 		sets = new LinkedList<>();
 		operationMap = new HashMap<>();
+		includesClauses = new LinkedList<>();
+		extendsClauses = new LinkedList<>();
+		importsClauses = new LinkedList<>();
+		seesClause = new LinkedList<>();
+		promotesClause = new LinkedList<>();
+		usesClause = new LinkedList<>();
 		start.apply(this);
 	}
 
@@ -68,6 +79,43 @@ public class NodeCollector extends DepthFirstAdapter{
 		sets.addAll(node.getSetDefinitions());
 	}
 
+	@Override
+	public void caseAIncludesMachineClause(AIncludesMachineClause node)
+	{
+		includesClauses.addAll(node.getMachineReferences());
+	}
+
+	@Override
+	public void caseAExtendsMachineClause(AExtendsMachineClause node)
+	{
+		extendsClauses.addAll(node.getMachineReferences());
+	}
+
+	@Override
+	public void caseAImportsMachineClause(AImportsMachineClause node)
+	{
+		importsClauses.addAll(node.getMachineReferences());
+	}
+
+
+	@Override
+	public void caseASeesMachineClause(ASeesMachineClause node)
+	{
+		seesClause.addAll(node.getMachineNames());
+	}
+
+	@Override
+	public void caseAUsesMachineClause(AUsesMachineClause node)
+	{
+		usesClause.addAll(node.getMachineNames());
+	}
+
+	@Override
+	public void caseAPromotesMachineClause(APromotesMachineClause node)
+	{
+		promotesClause.addAll(node.getOperationNames());
+	}
+
 	public PPredicate getInvariant() {
 		return invariant;
 	}
@@ -90,5 +138,29 @@ public class NodeCollector extends DepthFirstAdapter{
 
 	public LinkedList<PSet> getSets() {
 		return sets;
+	}
+
+	public LinkedList<PMachineReference> getIncludesClauses() {
+		return includesClauses;
+	}
+
+	public LinkedList<PMachineReference> getExtendsClauses() {
+		return extendsClauses;
+	}
+
+	public LinkedList<PMachineReference> getImportsClauses() {
+		return importsClauses;
+	}
+
+	public LinkedList<PExpression> getSeesClause() {
+		return seesClause;
+	}
+
+	public LinkedList<PExpression> getPromotesClause() {
+		return promotesClause;
+	}
+
+	public LinkedList<PExpression> getUsesClause() {
+		return usesClause;
 	}
 }

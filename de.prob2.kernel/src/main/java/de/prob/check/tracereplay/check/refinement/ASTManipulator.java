@@ -6,6 +6,10 @@ import de.be4.classicalb.core.parser.node.*;
 import de.prob.statespace.Transition;
 
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
 
 public class ASTManipulator extends DepthFirstAdapter{
 
@@ -49,17 +53,24 @@ public class ASTManipulator extends DepthFirstAdapter{
 		node.replaceBy(aAbstractMachineParseUnit);
 	}
 
-
+	/**
+	 * Looks wherever a node is missing but needed and adds it for later visiting
+	 * @param clauses the nodes to investigate
+	 * @return a modified list
+	 */
 	public List<PMachineClause> dealWithMachineClauses(List<PMachineClause> clauses){
 		List<PMachineClause> result = new ArrayList<>(clauses);
 		boolean hasInvariant = clauses.stream().anyMatch(entry -> entry instanceof AInvariantMachineClause);
 		boolean hasProperties = clauses.stream().anyMatch(entry -> entry instanceof APropertiesMachineClause);
-
 		boolean hasVariables = clauses.stream().anyMatch(entry -> entry instanceof AVariablesMachineClause);
 		boolean hasConstants = clauses.stream().anyMatch(entry -> entry instanceof AConstantsMachineClause);
-
 		boolean hasSets = clauses.stream().anyMatch(entry -> entry instanceof ASetsMachineClause);
-
+		boolean hasSees = clauses.stream().anyMatch(entry -> entry instanceof ASeesMachineClause);
+		boolean hasExtends = clauses.stream().anyMatch(entry -> entry instanceof AExtendsMachineClause);
+		boolean hasUses = clauses.stream().anyMatch(entry -> entry instanceof AUsesMachineClause);
+		boolean hasPromotes = clauses.stream().anyMatch(entry -> entry instanceof APromotesMachineClause);
+		boolean hasIncludes = clauses.stream().anyMatch(entry -> entry instanceof AIncludesMachineClause);
+		boolean hasImports = clauses.stream().anyMatch(entry -> entry instanceof AImportsMachineClause);
 
 		if(!hasSets && !nodeCollector.getSets().isEmpty()){
 			ASetsMachineClause aSetsMachineClause = new ASetsMachineClause();
@@ -86,7 +97,39 @@ public class ASTManipulator extends DepthFirstAdapter{
 			result.add(aConstantsMachineClause);
 		}
 
+		if(!hasSees && !nodeCollector.getSeesClause().isEmpty()){
+			ASeesMachineClause aSeesMachineClause = new ASeesMachineClause();
+			result.add(aSeesMachineClause);
+		}
 
+
+		if(!hasExtends && !nodeCollector.getExtendsClauses().isEmpty()){
+			AExtendsMachineClause aExtendsMachineClause = new AExtendsMachineClause();
+			result.add(aExtendsMachineClause);
+		}
+
+
+		if(!hasUses && !nodeCollector.getUsesClause().isEmpty()){
+			AUsesMachineClause aUsesMachineClause = new AUsesMachineClause();
+			result.add(aUsesMachineClause);
+		}
+
+
+		if(!hasPromotes && !nodeCollector.getPromotesClause().isEmpty()){
+			APromotesMachineClause aPromotesMachineClause = new APromotesMachineClause();
+			result.add(aPromotesMachineClause);
+		}
+
+		if(!hasIncludes && !nodeCollector.getIncludesClauses().isEmpty()){
+			AIncludesMachineClause aIncludesMachineClause = new AIncludesMachineClause();
+			result.add(aIncludesMachineClause);
+		}
+
+
+		if(!hasImports && !nodeCollector.getImportsClauses().isEmpty()){
+			AImportsMachineClause aImportsMachineClause = new AImportsMachineClause();
+			result.add(aImportsMachineClause);
+		}
 
 		return result;
 
@@ -149,6 +192,137 @@ public class ASTManipulator extends DepthFirstAdapter{
 		aParallelSubstitution.getSubstitutions().addAll(Arrays.asList(pSubstitution, node.getSubstitutions()));
 
 		node.setSubstitutions(aParallelSubstitution);
+	}
+
+	@Override
+	public void caseAIncludesMachineClause(AIncludesMachineClause node)
+	{
+		if(!nodeCollector.getIncludesClauses().isEmpty()) {
+			LinkedList<PMachineReference> newList = compareAndEqualizeMachineReferences_PMachineReference(node.getMachineReferences(), nodeCollector.getIncludesClauses());
+			List<PMachineReference> newListCopy = newList.stream().map(entry -> (PMachineReference) entry.clone()).collect(Collectors.toList());
+			node.setMachineReferences(newListCopy);
+
+		}
+
+	}
+
+	@Override
+	public void caseAExtendsMachineClause(AExtendsMachineClause node)
+	{
+		if(!nodeCollector.getExtendsClauses().isEmpty()) {
+			LinkedList<PMachineReference> newList = compareAndEqualizeMachineReferences_PMachineReference(node.getMachineReferences(), nodeCollector.getExtendsClauses());
+			List<PMachineReference> newListCopy = newList.stream().map(entry -> (PMachineReference) entry.clone()).collect(Collectors.toList());
+			node.setMachineReferences(newListCopy);
+		}
+	}
+
+	@Override
+	public void caseAImportsMachineClause(AImportsMachineClause node)
+	{
+		if(!nodeCollector.getImportsClauses().isEmpty()) {
+			LinkedList<PMachineReference> newList = compareAndEqualizeMachineReferences_PMachineReference(node.getMachineReferences(), nodeCollector.getImportsClauses());
+			List<PMachineReference> newListCopy = newList.stream().map(entry -> (PMachineReference) entry.clone()).collect(Collectors.toList());
+			node.setMachineReferences(newListCopy);
+		}
+	}
+
+
+	@Override
+	public void caseASeesMachineClause(ASeesMachineClause node)
+	{
+		if(!nodeCollector.getSeesClause().isEmpty()) {
+			LinkedList<PExpression> expressions = compareAndEqualizeMachineReferences_PExpression(node.getMachineNames(), nodeCollector.getSeesClause());
+			List<PExpression> newListCopy = expressions.stream().map(entry -> (PExpression) entry.clone()).collect(Collectors.toList());
+			node.setMachineNames(newListCopy);
+		}
+	}
+
+	@Override
+	public void caseAUsesMachineClause(AUsesMachineClause node)
+	{
+		if(!nodeCollector.getUsesClause().isEmpty()) {
+			LinkedList<PExpression> expressions = compareAndEqualizeMachineReferences_PExpression(node.getMachineNames(), nodeCollector.getUsesClause());
+			List<PExpression> newListCopy = expressions.stream().map(entry -> (PExpression) entry.clone()).collect(Collectors.toList());
+			node.setMachineNames(newListCopy);
+		}
+	}
+
+	@Override
+	public void caseAPromotesMachineClause(APromotesMachineClause node)
+	{
+		if(!nodeCollector.getPromotesClause().isEmpty()) {
+			LinkedList<PExpression> expressions = compareAndEqualizeMachineReferences_PExpression(node.getOperationNames(), nodeCollector.getPromotesClause());
+			List<PExpression> newListCopy = expressions.stream().map(entry -> (PExpression) entry.clone()).collect(Collectors.toList());
+			node.setOperationNames(newListCopy);
+		}
+
+	}
+
+
+	/**
+	 * For includes, extends, imports - removes double entries between two machines does not respect parameter
+	 * @param left  the entries of the first machine
+	 * @param right the entries of the second machine
+	 * @return the sorted entries
+	 */
+	public static LinkedList<PExpression> compareAndEqualizeMachineReferences_PExpression(LinkedList<PExpression> left, LinkedList<PExpression> right){
+		Map<String, PExpression> mapLeft = left.stream().collect(toMap(Object::toString, entry -> entry));
+		Map<String, PExpression> mapRight = right.stream().collect(toMap(Object::toString, entry -> entry));
+
+
+		Set<String> missing = mapLeft.keySet().stream().filter(entry -> !mapRight.containsKey(entry)).collect(toSet());
+
+		List<PExpression> firstResult = new ArrayList<>(mapRight.values());
+		List<PExpression> secondResult = missing.stream().map(mapLeft::get).collect(Collectors.toList());
+
+
+		LinkedList<PExpression> result = new LinkedList<>();
+		result.addAll(firstResult);
+		result.addAll(secondResult);
+
+		return result;
+	}
+
+
+
+
+	/**
+	 * For includes, extends, imports - removes double entries between two machines does not respect parameter
+	 * @param left  the entries of the first machine
+	 * @param right the entries of the second machine
+	 * @return the sorted entries
+	 */
+	public static LinkedList<PMachineReference> compareAndEqualizeMachineReferences_PMachineReference(LinkedList<PMachineReference> left, LinkedList<PMachineReference> right){
+		Map<Set<String>, PMachineReference> mapLeft = createMap(left);
+		Map<Set<String>, PMachineReference> mapRight = createMap(right);
+
+		Set<Set<String>> leftSet = mapLeft.keySet().stream().map(HashSet::new).collect(toSet());
+		Set<Set<String>> rightSet = mapRight.keySet().stream().map(HashSet::new).collect(toSet());
+
+		Set<Set<String>> missing = leftSet.stream().filter(entry -> !rightSet.contains(entry)).collect(toSet());
+
+		List<PMachineReference> firstResult = new ArrayList<>(mapRight.values());
+		List<PMachineReference> secondResult = missing.stream().map(mapLeft::get).collect(Collectors.toList());
+
+
+		LinkedList<PMachineReference> result = new LinkedList<>();
+		result.addAll(firstResult);
+		result.addAll(secondResult);
+
+		return result;
+	}
+
+	public static Map<Set<String>, PMachineReference> createMap(LinkedList<PMachineReference> left){
+		return left.stream().collect(toMap(entry ->
+				{
+					if (entry instanceof AMachineReference) {
+						return ((AMachineReference) entry).getMachineName().stream().map(Token::getText).collect(toSet());
+					} else {
+						return Collections.singleton(((AFileMachineReference) entry).getFile().getText());
+
+					}
+				}
+		, entry -> entry));
 	}
 
 	public Start getStart() {
