@@ -1,4 +1,4 @@
-package de.prob.check.tracereplay.check.tracereplay.check.renaming;
+package de.prob.check.tracereplay.check.renaming;
 
 import java.io.IOException;
 import java.nio.file.Path;
