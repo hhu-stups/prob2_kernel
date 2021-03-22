@@ -1,4 +1,4 @@
-package de.prob.check;
+package de.prob.check.tracereplay.check.tracereplay.check.renaming;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -11,6 +11,7 @@ import java.util.Set;
 import com.google.inject.Injector;
 
 import de.prob.animator.ReusableAnimator;
+import de.prob.check.tracereplay.check.TestUtils;
 import de.prob.check.tracereplay.check.renamig.RenamingDelta;
 import de.prob.check.tracereplay.check.renamig.StaticRenamingAnalyzer;
 import de.prob.check.tracereplay.json.TraceManager;

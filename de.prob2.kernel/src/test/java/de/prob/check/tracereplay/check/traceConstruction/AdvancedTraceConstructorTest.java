@@ -1,4 +1,4 @@
-package de.prob.check;
+package de.prob.check.tracereplay.check.traceConstruction;
 
 
 import de.prob.ProBKernelStub;

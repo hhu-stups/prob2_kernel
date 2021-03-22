@@ -1,9 +1,7 @@
-package de.prob.check;
+package de.prob.check.tracereplay.check;
 
 import de.prob.ProBKernelStub;
-import de.prob.check.tracereplay.check.IdentifierMatcher;
 import de.prob.check.tracereplay.check.exploration.PersistenceDelta;
-import de.prob.check.tracereplay.check.TraceAnalyser;
 import de.prob.check.tracereplay.check.exploration.TraceExplorer;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;

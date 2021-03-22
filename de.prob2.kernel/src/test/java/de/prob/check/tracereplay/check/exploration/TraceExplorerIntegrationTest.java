@@ -1,4 +1,4 @@
-package de.prob.check;
+package de.prob.check.tracereplay.check.exploration;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -10,10 +10,9 @@ import de.prob.ProBKernelStub;
 import de.prob.animator.command.ConstructTraceCommand;
 import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.FormulaExpand;
+import de.prob.check.tracereplay.check.TestUtils;
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.IdentifierMatcher;
-import de.prob.check.tracereplay.check.exploration.PersistenceDelta;
-import de.prob.check.tracereplay.check.exploration.TraceExplorer;
 import de.prob.cli.CliTestCommon;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;

@@ -1,4 +1,4 @@
-package de.prob.check;
+package de.prob.check.tracereplay.check;
 
 import de.prob.check.tracereplay.check.ui.ProgressMemoryInterface;
 import de.prob.check.tracereplay.check.TraceCheckerUtils;

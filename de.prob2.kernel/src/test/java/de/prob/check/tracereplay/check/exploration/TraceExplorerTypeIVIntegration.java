@@ -1,4 +1,4 @@
-package de.prob.check;
+package de.prob.check.tracereplay.check.exploration;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -16,14 +16,12 @@ import com.google.inject.Injector;
 import com.google.inject.Stage;
 import de.prob.MainModule;
 import de.prob.ProBKernelStub;
+import de.prob.check.tracereplay.check.TestUtils;
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.IdentifierMatcher;
-import de.prob.check.tracereplay.check.exploration.PersistenceDelta;
 import de.prob.check.tracereplay.check.renamig.RenamingDelta;
-import de.prob.check.tracereplay.check.exploration.ReplayOptions;
 import de.prob.check.tracereplay.check.TraceAnalyser;
 import de.prob.check.tracereplay.check.TraceChecker;
-import de.prob.check.tracereplay.check.exploration.TraceExplorer;
 import de.prob.check.tracereplay.check.TraceModifier;
 import de.prob.check.tracereplay.check.renamig.DeltaCalculationException;
 import de.prob.check.tracereplay.json.TraceManager;

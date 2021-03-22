@@ -1,4 +1,4 @@
-package de.prob.check;
+package de.prob.check.tracereplay.check;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -6,7 +6,6 @@ import java.nio.file.Paths;
 import java.util.*;
 
 import de.prob.ProBKernelStub;
-import de.prob.check.tracereplay.check.*;
 import de.prob.check.tracereplay.check.renamig.DeltaCalculationException;
 import de.prob.check.tracereplay.check.renamig.PrologTermNotDefinedException;
 import de.prob.check.tracereplay.check.exploration.PersistenceDelta;

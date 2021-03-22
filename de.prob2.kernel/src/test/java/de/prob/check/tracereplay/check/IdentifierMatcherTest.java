@@ -1,9 +1,7 @@
-package de.prob.check;
+package de.prob.check.tracereplay.check;
 
 import de.prob.ProBKernelStub;
 import de.prob.check.tracereplay.PersistentTransition;
-import de.prob.check.tracereplay.check.IdentifierMatcher;
-import de.prob.check.tracereplay.check.TraceCheckerUtils;
 import de.prob.check.tracereplay.check.ui.MappingFactoryInterface;
 import de.prob.check.tracereplay.check.exploration.TraceExplorer;
 import de.prob.cli.CliTestCommon;

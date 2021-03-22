@@ -1,4 +1,4 @@
-package de.prob.check;
+package de.prob.check.tracereplay.check.exploration;
 
 import java.util.Collections;
 import java.util.HashMap;
