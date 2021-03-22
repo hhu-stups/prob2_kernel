@@ -293,9 +293,6 @@ public class DynamicRenamingAnalyzer implements RenamingAnalyzerInterface {
 		return resultInitTypeII;
 	}
 
-	public Map<String, List<RenamingDelta>> getResultTypeIIp() {
-		return null;
-	}
 
 	public RenamingDelta getResultTypeIIInitAsDelta() {
 		return new RenamingDelta(Transition.INITIALISE_MACHINE_NAME, Transition.INITIALISE_MACHINE_NAME, emptyMap(), emptyMap(), resultInitTypeII);
