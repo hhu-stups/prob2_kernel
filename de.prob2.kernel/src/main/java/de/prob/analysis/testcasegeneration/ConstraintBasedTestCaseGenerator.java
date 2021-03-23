@@ -51,10 +51,7 @@ public class ConstraintBasedTestCaseGenerator {
 		this.settings = settings;
 		this.finalOperations = finalOperations;
 	}
-
-	// Remark: It seems that there is a shift of the depth (greater 1)
-	// So if you apply test case generation with depth 2 and level 2, then it seems to apply it with depth 3 and level 2
-
+	
 	/**
 	 * Performs the test case generation.
 	 *
