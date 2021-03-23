@@ -46,7 +46,7 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 	}
 
 	@Override
-	public ExtractedModel<ClassicalBModel> extract(final String modelPath) throws IOException, ModelTranslationError {
+	public ExtractedModel<ClassicalBModel> extract(final String modelPath) throws IOException {
 		ClassicalBModel classicalBModel = modelCreator.get();
 
 		File f = new File(modelPath);

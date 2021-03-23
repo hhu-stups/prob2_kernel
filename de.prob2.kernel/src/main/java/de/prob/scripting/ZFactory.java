@@ -17,7 +17,7 @@ public class ZFactory implements ModelFactory<ZModel> {
 	}
 
 	@Override
-	public ExtractedModel<ZModel> extract(final String modelPath) throws IOException, ModelTranslationError {
+	public ExtractedModel<ZModel> extract(final String modelPath) throws IOException {
 		final File f = new File(modelPath);
 		final ZModel zModel = modelCreator.get().create(f);
 		return new ExtractedModel<>(zModel, null);

@@ -17,7 +17,7 @@ public class XTLFactory implements ModelFactory<XTLModel> {
 	}
 
 	@Override
-	public ExtractedModel<XTLModel> extract(final String modelPath) throws IOException, ModelTranslationError {
+	public ExtractedModel<XTLModel> extract(final String modelPath) throws IOException {
 		final File f = new File(modelPath);
 		final XTLModel xtlModel = modelCreator.get().create(f);
 		return new ExtractedModel<>(xtlModel, null);

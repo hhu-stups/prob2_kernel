@@ -31,7 +31,7 @@ public class TLAFactory implements ModelFactory<ClassicalBModel> {
 	}
 
 	@Override
-	public ExtractedModel<ClassicalBModel> extract(final String fileName) throws IOException, ModelTranslationError {
+	public ExtractedModel<ClassicalBModel> extract(final String fileName) throws IOException {
 		ClassicalBModel classicalBModel = modelCreator.get();
 		File f = new File(fileName);
 		if (!f.exists()) {

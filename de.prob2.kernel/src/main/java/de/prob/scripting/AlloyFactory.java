@@ -33,7 +33,7 @@ public class AlloyFactory implements ModelFactory<AlloyModel> {
 	}
 
 	@Override
-	public ExtractedModel<AlloyModel> extract(final String modelPath) throws IOException, ModelTranslationError {
+	public ExtractedModel<AlloyModel> extract(final String modelPath) throws IOException {
 		final File f = new File(modelPath);
 		final AlloyModel alloyModel;
 		try {

@@ -11,7 +11,6 @@ import de.prob.ProBKernelStub;
 import de.prob.cli.CliTestCommon;
 import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
-import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.StateSpace;
 
 import org.junit.jupiter.api.AfterAll;
@@ -33,7 +32,7 @@ public class CompareTwoOperationsTest {
 	}
 	
 	@Test
-	public void two_identical_operations_test() throws IOException, ModelTranslationError {
+	public void two_identical_operations_test() throws IOException {
 		final StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "examplesForOperations", "machineWithOneOperation.mch"));
 
 		CompoundPrologTerm compoundPrologTerm1 = new CompoundPrologTerm("b",
@@ -64,7 +63,7 @@ public class CompareTwoOperationsTest {
 
 
 	@Test
-	public void renamed_operations_test() throws IOException, ModelTranslationError {
+	public void renamed_operations_test() throws IOException {
 		final StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "examplesForOperations", "machineWithOneOperation.mch"));
 
 		CompoundPrologTerm compoundPrologTerm1 = new CompoundPrologTerm("b",

@@ -23,7 +23,6 @@ import de.prob.check.tracereplay.check.exceptions.PrologTermNotDefinedException;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.cli.CliTestCommon;
-import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
 
@@ -605,7 +604,7 @@ public class TraceModifierTest {
 	}
 
 	@Test
-	public void is_dirty_type_III_test_1() throws IOException, ModelTranslationError, PrologTermNotDefinedException, DeltaCalculationException {
+	public void is_dirty_type_III_test_1() throws IOException, PrologTermNotDefinedException, DeltaCalculationException {
 
 		Path oldPath = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "complexExample", "PitmanController_v6.mch");
 		StateSpace stateSpace1 = proBKernelStub.createStateSpace(oldPath);

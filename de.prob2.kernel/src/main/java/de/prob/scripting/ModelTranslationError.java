@@ -1,5 +1,11 @@
 package de.prob.scripting;
 
+import de.prob.exception.ProBError;
+
+/**
+ * @deprecated No longer used - replaced by {@link ProBError}.
+ */
+@Deprecated
 public class ModelTranslationError extends Exception {
 	private static final long serialVersionUID = 3192220775081118164L;
 

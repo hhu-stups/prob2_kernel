@@ -8,7 +8,6 @@ import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.cli.CliTestCommon;
 import de.prob.scripting.Api;
-import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.StateSpace;
 
 import org.junit.jupiter.api.AfterAll;
@@ -22,7 +21,7 @@ public final class OldTraceFormatsTest {
 	private static TraceManager traceManager;
 	
 	@BeforeAll
-	public static void beforeAll() throws IOException, ModelTranslationError {
+	public static void beforeAll() throws IOException {
 		stateSpace = CliTestCommon.getInjector().getInstance(Api.class).b_load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "Lift.mch").toString());
 		traceManager = CliTestCommon.getInjector().getInstance(TraceManager.class);
 	}

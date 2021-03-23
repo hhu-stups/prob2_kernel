@@ -28,7 +28,6 @@ import de.prob.check.tracereplay.check.exceptions.DeltaCalculationException;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.cli.CliTestCommon;
-import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
 
@@ -57,7 +56,7 @@ public class TraceExplorerTypeIVIntegration {
 
 
 	@Test
-	public void integration_test_new_intermediate_operation_1() throws IOException, ModelTranslationError {
+	public void integration_test_new_intermediate_operation_1() throws IOException {
 		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "one_time_intermediate_operation", "ISLAND2.mch"));
 
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "one_time_intermediate_operation", "ISLAND.prob2trace"));
@@ -81,7 +80,7 @@ public class TraceExplorerTypeIVIntegration {
 	}
 
 	@Test
-	public void integration_test_always_new_intermediate_operation_1() throws IOException, ModelTranslationError {
+	public void integration_test_always_new_intermediate_operation_1() throws IOException {
 		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "always_intermediate", "ISLAND2.mch"));
 
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "always_intermediate", "ISLAND.prob2trace"));
@@ -110,7 +109,7 @@ public class TraceExplorerTypeIVIntegration {
 
 
 	@Test
-	public void integration_test_complete_renamed_operation_1() throws IOException, ModelTranslationError {
+	public void integration_test_complete_renamed_operation_1() throws IOException {
 		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "complete_renamed_operation", "ISLAND2.mch"));
 
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "complete_renamed_operation", "ISLAND.prob2trace"));
@@ -146,7 +145,7 @@ public class TraceExplorerTypeIVIntegration {
 
 
 	@Test
-	public void integration_test_split_operation() throws IOException, ModelTranslationError {
+	public void integration_test_split_operation() throws IOException {
 		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "tropical_island", "version_2", "Island2.mch"));
 
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "tropical_island", "version_2", "ISLAND.prob2trace"));
@@ -179,7 +178,7 @@ public class TraceExplorerTypeIVIntegration {
 
 
 	@Test
-	public void integration_test_operation_always_intermediate() throws IOException, ModelTranslationError {
+	public void integration_test_operation_always_intermediate() throws IOException {
 		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "always_intermediate", "ISLAND2.mch"));
 
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "always_intermediate", "ISLAND.prob2trace"));
@@ -209,7 +208,7 @@ public class TraceExplorerTypeIVIntegration {
 
 
 	@Test
-	public void integration_test_with_completely_renamed_operation() throws IOException, ModelTranslationError {
+	public void integration_test_with_completely_renamed_operation() throws IOException {
 		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "complete_renamed_operation", "ISLAND2.mch"));
 
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "complete_renamed_operation", "ISLAND.prob2trace"));
@@ -239,7 +238,7 @@ public class TraceExplorerTypeIVIntegration {
 
 
 	@Test
-	public void integration_test_with_one_time_intermediate_operation() throws IOException, ModelTranslationError {
+	public void integration_test_with_one_time_intermediate_operation() throws IOException {
 		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "one_time_intermediate_operation", "ISLAND2.mch"));
 
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "one_time_intermediate_operation", "ISLAND.prob2trace"));
@@ -268,7 +267,7 @@ public class TraceExplorerTypeIVIntegration {
 
 
 	@Test
-	public void large_type_IV_test() throws IOException, ModelTranslationError, DeltaCalculationException {
+	public void large_type_IV_test() throws IOException, DeltaCalculationException {
 
 		Path oldPath = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "complexExample", "PitmanController_v6.mch");
 		StateSpace stateSpace1 = proBKernelStub.createStateSpace(oldPath);

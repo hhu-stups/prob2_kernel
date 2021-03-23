@@ -10,20 +10,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.google.inject.Injector;
+
 import de.prob.ProBKernelStub;
 import de.prob.animator.ReusableAnimator;
-import de.prob.check.tracereplay.check.RenamingDelta;
-import de.prob.check.tracereplay.check.StaticRenamingAnalyzer;
 import de.prob.check.tracereplay.check.TypeFinder;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.cli.CliTestCommon;
 import de.prob.scripting.FactoryProvider;
 import de.prob.scripting.ModelFactory;
-import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
@@ -411,7 +408,7 @@ public class TypeFinderTest {
 	}
 
 	@Test
-	public void lift_with_no_old_file() throws IOException, ModelTranslationError {
+	public void lift_with_no_old_file() throws IOException {
 
 
 
@@ -439,7 +436,7 @@ public class TypeFinderTest {
 	}
 
 	@Test
-	public void wrong_variable_count_test() throws IOException, ModelTranslationError {
+	public void wrong_variable_count_test() throws IOException {
 
 		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "always_intermediate", "ISLAND2.mch");
 		String pathAsStringOld = pathOld.toAbsolutePath().toString();

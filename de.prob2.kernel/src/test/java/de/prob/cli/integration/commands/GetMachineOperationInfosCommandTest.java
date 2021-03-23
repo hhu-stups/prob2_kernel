@@ -6,7 +6,6 @@ import java.nio.file.Paths;
 import de.prob.animator.command.GetMachineOperationInfos;
 import de.prob.cli.CliTestCommon;
 import de.prob.scripting.Api;
-import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
 
@@ -28,7 +27,7 @@ public class GetMachineOperationInfosCommandTest {
 	}
 
 	@Test
-	public void testGetMachineOperationInfosCommand() throws IOException, ModelTranslationError {
+	public void testGetMachineOperationInfosCommand() throws IOException {
 		s = api.b_load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "ExampleMachine.mch").toString());
 		assertNotNull(s);
 		GetMachineOperationInfos command = new GetMachineOperationInfos();

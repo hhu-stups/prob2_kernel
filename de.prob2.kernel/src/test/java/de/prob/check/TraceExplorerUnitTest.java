@@ -17,7 +17,6 @@ import de.prob.check.tracereplay.check.TraceCheckerUtils;
 import de.prob.check.tracereplay.check.TraceExplorer;
 import de.prob.check.tracereplay.check.exceptions.MappingFactoryInterface;
 import de.prob.cli.CliTestCommon;
-import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
@@ -1070,7 +1069,7 @@ public class TraceExplorerUnitTest {
 	}
 
 	@Test
-	public void generateAllPossibleMappingVariations_test() throws IOException, ModelTranslationError {
+	public void generateAllPossibleMappingVariations_test() throws IOException {
 		PersistentTransition init = new PersistentTransition(Transition.INITIALISE_MACHINE_NAME, emptyMap(),
 				emptyMap(), Collections.singletonMap("floors", "0"), Collections.emptySet(), Collections.emptyList());
 
@@ -1175,7 +1174,7 @@ public class TraceExplorerUnitTest {
 	}
 
 	@Test
-	public void generateAllPossibleMappingVariations_empty_typeIII_test() throws IOException, ModelTranslationError {
+	public void generateAllPossibleMappingVariations_empty_typeIII_test() throws IOException {
 		PersistentTransition init = new PersistentTransition(Transition.INITIALISE_MACHINE_NAME, emptyMap(),
 				emptyMap(), Collections.singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList());
 

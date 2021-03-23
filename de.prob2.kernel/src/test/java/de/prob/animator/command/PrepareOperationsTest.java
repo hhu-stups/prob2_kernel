@@ -5,7 +5,6 @@ import java.nio.file.Paths;
 
 import de.prob.ProBKernelStub;
 import de.prob.cli.CliTestCommon;
-import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.StateSpace;
 
 import org.junit.Assert;
@@ -27,7 +26,7 @@ public class PrepareOperationsTest {
 	}
 
 	@Test
-	public void get_prepared_operation_test() throws IOException, ModelTranslationError {
+	public void get_prepared_operation_test() throws IOException {
 		final StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "examplesForOperations", "machineWithOneOperation.mch"));
 
 		GetMachineOperationsFull getMachineOperationsFull = new GetMachineOperationsFull();

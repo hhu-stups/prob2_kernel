@@ -1,15 +1,16 @@
 package de.prob.check.tracereplay.check;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import com.google.inject.Injector;
+
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.exceptions.DeltaCalculationException;
 import de.prob.check.tracereplay.check.exceptions.MappingFactoryInterface;
-import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.OperationInfo;
-
-import java.io.IOException;
-import java.util.*;
-
 
 public class TraceChecker {
 
@@ -29,7 +30,7 @@ public class TraceChecker {
 						Injector injector,
 						MappingFactoryInterface mappingFactory,
 						ReplayOptions replayOptions,
-						ProgressMemoryInterface progressMemoryInterface) throws IOException, ModelTranslationError, DeltaCalculationException {
+						ProgressMemoryInterface progressMemoryInterface) throws IOException, DeltaCalculationException {
 
 		this.newOperationInfos = newInfos;
 		this.oldOperationInfos = oldInfos;
@@ -67,7 +68,7 @@ public class TraceChecker {
 						MappingFactoryInterface mappingFactory,
 						ReplayOptions replayOptions,
 						ProgressMemoryInterface progressMemoryInterface)
-			throws IOException, ModelTranslationError, DeltaCalculationException {
+			throws IOException, DeltaCalculationException {
 
 		this.oldOperationInfos = oldInfos;
 		this.newOperationInfos = newInfos;

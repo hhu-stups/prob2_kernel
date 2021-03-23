@@ -1,8 +1,13 @@
 package de.prob.check.tracereplay.check;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.google.inject.Injector;
+
 import de.prob.animator.ReusableAnimator;
-import de.prob.animator.command.EvaluateFormulaCommand;
 import de.prob.animator.command.GetEnabledOperationsCommand;
 import de.prob.animator.command.GetOperationByPredicateCommand;
 import de.prob.animator.domainobjects.FormulaExpand;
@@ -11,15 +16,9 @@ import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.formula.PredicateBuilder;
 import de.prob.scripting.FactoryProvider;
 import de.prob.scripting.ModelFactory;
-import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
 import de.prob.statespace.Transition;
-
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class RefinementChecker {
 
@@ -28,14 +27,14 @@ public class RefinementChecker {
 	private final StateSpace refinementStateSpace;
 	private final List<PersistentTransition> transitionList;
 
-	public RefinementChecker(Path abstractMachine, Path refinementMachine, List<PersistentTransition> transitionList, Injector injector) throws IOException, ModelTranslationError {
+	public RefinementChecker(Path abstractMachine, Path refinementMachine, List<PersistentTransition> transitionList, Injector injector) throws IOException {
 		this.injector = injector;
 		this.refinementStateSpace = createStateSpaceWithPath(refinementMachine);
 		this.abstractStateSpace = createStateSpaceWithPath(abstractMachine);
 		this.transitionList = transitionList;
 	}
 
-	public void replay() throws IOException, ModelTranslationError {
+	public void replay() throws IOException {
 
 
 
@@ -85,7 +84,7 @@ public class RefinementChecker {
 
 	}
 
-	public StateSpace createStateSpaceWithPath(Path path) throws IOException, ModelTranslationError {
+	public StateSpace createStateSpaceWithPath(Path path) throws IOException {
 		ReusableAnimator reusableAnimator = injector.getInstance(ReusableAnimator.class);
 		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension("mch"));
 		StateSpace stateSpace = reusableAnimator.createStateSpace();

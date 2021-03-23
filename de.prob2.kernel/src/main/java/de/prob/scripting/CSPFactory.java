@@ -21,7 +21,7 @@ public class CSPFactory implements ModelFactory<CSPModel> {
 	}
 
 	@Override
-	public ExtractedModel<CSPModel> extract(final String modelPath) throws IOException, ModelTranslationError {
+	public ExtractedModel<CSPModel> extract(final String modelPath) throws IOException {
 		CSPModel cspModel = modelCreator.get();
 		File f = new File(modelPath);
 		final String text;

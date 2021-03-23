@@ -8,7 +8,6 @@ import java.util.Map;
 
 import de.prob.ProBKernelStub;
 import de.prob.cli.CliTestCommon;
-import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
 
@@ -35,7 +34,7 @@ public class GetMachineOperationInfosWithTypesTest {
 	}
 
 	@Test
-	public void get_prepared_operation_test_1() throws IOException, ModelTranslationError {
+	public void get_prepared_operation_test_1() throws IOException {
 		final StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "examplesForOperations", "machineWithOneOperation.mch"));
 
 		GetMachineOperationInfosWithTypes getMachineOperationsFull = new GetMachineOperationInfosWithTypes();
@@ -52,7 +51,7 @@ public class GetMachineOperationInfosWithTypesTest {
 
 
 	@Test
-	public void get_prepared_operation_test_2() throws IOException, ModelTranslationError {
+	public void get_prepared_operation_test_2() throws IOException {
 		//StateSpace statespace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "Lift.mch"));
 
 		StateSpace statespace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "tropical_island", "version_1", "Island.mch"));

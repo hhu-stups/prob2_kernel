@@ -13,7 +13,6 @@ import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.cli.CliTestCommon;
 import de.prob.json.JsonMetadata;
 import de.prob.json.JsonMetadataBuilder;
-import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
 
@@ -40,7 +39,7 @@ public class TraceManagerTest {
 	}
 
 	@Test
-	public void serialize_correct_data_structure_test(@TempDir Path tempDir) throws IOException, ModelTranslationError {
+	public void serialize_correct_data_structure_test(@TempDir Path tempDir) throws IOException {
 
 		Path tempDirPath = tempDir.resolve("testFile.txt");
 		final StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "ExampleMachine.mch"));
@@ -57,7 +56,7 @@ public class TraceManagerTest {
 
 
 	@Test
-	public void serialize_correct_data_structure_test_2(@TempDir Path tempDir) throws IOException, ModelTranslationError {
+	public void serialize_correct_data_structure_test_2(@TempDir Path tempDir) throws IOException {
 
 		Path tempDirPath = tempDir.resolve("testFile.txt");
 		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "ExampleMachine.mch"));

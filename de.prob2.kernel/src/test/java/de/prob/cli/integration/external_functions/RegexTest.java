@@ -5,7 +5,6 @@ import java.nio.file.Paths;
 
 import de.prob.cli.CliTestCommon;
 import de.prob.scripting.Api;
-import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
 
@@ -25,7 +24,7 @@ public class RegexTest {
 	}
 
 	@Test
-	public void testRegex() throws IOException, ModelTranslationError {
+	public void testRegex() throws IOException {
 		StateSpace s = api.b_load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "external_functions", "Regex.mch").toString());
 		assertNotNull(s);
 		Trace t = new Trace(s);

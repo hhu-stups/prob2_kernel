@@ -18,7 +18,6 @@ import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.PersistenceDelta;
 import de.prob.check.tracereplay.check.TraceExplorer;
 import de.prob.cli.CliTestCommon;
-import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
@@ -47,7 +46,7 @@ public class TraceExplorerIntegrationTest {
 
 
 	@Test
-	public void integration_1() throws IOException, ModelTranslationError {
+	public void integration_1() throws IOException {
 
 
 		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "Lift.mch"));
@@ -67,7 +66,7 @@ public class TraceExplorerIntegrationTest {
 	}
 
 	@Test
-	public void integration_1_traceReplay_three_transitions_with_smaller_signature() throws IOException, ModelTranslationError {
+	public void integration_1_traceReplay_three_transitions_with_smaller_signature() throws IOException {
 
 
 		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "reducedSigLength", "OneTypeIIICandidateCounterPart.mch"));
@@ -106,7 +105,7 @@ public class TraceExplorerIntegrationTest {
 	}
 
 	@Test
-	public void integration_2_traceReplay2_three_transitions_with_larger_signature() throws IOException, ModelTranslationError {
+	public void integration_2_traceReplay2_three_transitions_with_larger_signature() throws IOException {
 
 
 		StateSpace stateSpace1 = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "changedSignature", "Lift4_2.mch"));
@@ -224,7 +223,7 @@ public class TraceExplorerIntegrationTest {
 	}
 
 	@Test
-	public void integration_3_traceReplay_no_type_III_candidates() throws IOException, ModelTranslationError {
+	public void integration_3_traceReplay_no_type_III_candidates() throws IOException {
 
 		StateSpace stateSpace1 = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "Lift", "Lift.mch"));
 		Map<String, OperationInfo> oldInformation = stateSpace1.getLoadedMachine().getOperations();
@@ -265,7 +264,7 @@ public class TraceExplorerIntegrationTest {
 	}
 
 	@Test
-	public void integration_4_traceReplay_one_combination_is_not_suitable() throws IOException, ModelTranslationError {
+	public void integration_4_traceReplay_one_combination_is_not_suitable() throws IOException {
 
 
 		StateSpace stateSpace1 = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",  "Lift", "oneWrongParameter",  "OneWrongParameterCounter.mch"));

@@ -7,7 +7,6 @@ import com.google.inject.Inject;
 
 import de.prob.animator.ReusableAnimator;
 import de.prob.scripting.ClassicalBFactory;
-import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.StateSpace;
 
 public class ProBKernelStub {
@@ -20,7 +19,7 @@ public class ProBKernelStub {
 		this.reusableAnimator = reusableAnimator;
 	}
 
-	public StateSpace createStateSpace(Path path) throws IOException, ModelTranslationError {
+	public StateSpace createStateSpace(Path path) throws IOException {
 		killCurrentStateSpace();
 		StateSpace stateSpace = reusableAnimator.createStateSpace();
 		classicalBFactory.extract(path.toString()).loadIntoStateSpace(stateSpace);

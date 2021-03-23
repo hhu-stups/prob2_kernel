@@ -27,7 +27,6 @@ import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.scripting.FactoryProvider;
 import de.prob.scripting.ModelFactory;
-import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
 
@@ -177,7 +176,7 @@ public class RenamingAnalyzerTest {
 
 
 	@Test
-	void test_getOldNewOperations() throws IOException, ModelTranslationError {
+	void test_getOldNewOperations() throws IOException {
 
 		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "examplesForOperations", "machineWithOneOperation.mch");
 		String pathAsStringOld = pathOld.toAbsolutePath().toString();
@@ -209,7 +208,7 @@ public class RenamingAnalyzerTest {
 
 
 	@Test
-	public void prepareOperationsInterface_test() throws IOException, ModelTranslationError, PrologTermNotDefinedException {
+	public void prepareOperationsInterface_test() throws IOException, PrologTermNotDefinedException {
 
 		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "Lift.mch");
 		String pathAsStringOld = pathOld.toAbsolutePath().toString();
@@ -243,7 +242,7 @@ public class RenamingAnalyzerTest {
 
 
 	@Test
-	public void checkerInterface_test() throws IOException, ModelTranslationError, PrologTermNotDefinedException {
+	public void checkerInterface_test() throws IOException, PrologTermNotDefinedException {
 
 		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "Lift.mch");
 		String pathAsStringOld = pathOld.toAbsolutePath().toString();
@@ -277,7 +276,7 @@ public class RenamingAnalyzerTest {
 
 
 	@Test
-	public void integration_test() throws IOException, ModelTranslationError, PrologTermNotDefinedException {
+	public void integration_test() throws IOException, PrologTermNotDefinedException {
 
 		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "Lift.mch");
 		String pathAsStringOld = pathOld.toAbsolutePath().toString();
@@ -331,7 +330,7 @@ public class RenamingAnalyzerTest {
 
 
 	@Test
-	public void deltaFinder_initialisation_test() throws IOException, ModelTranslationError, PrologTermNotDefinedException, DeltaCalculationException {
+	public void deltaFinder_initialisation_test() throws IOException, PrologTermNotDefinedException, DeltaCalculationException {
 		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "Lift.mch");
 		String pathAsStringOld = pathOld.toAbsolutePath().toString();
 
@@ -364,7 +363,7 @@ public class RenamingAnalyzerTest {
 
 
 	@Test
-	public void deltaFinder_correction_of_the_categorization() throws IOException, ModelTranslationError, PrologTermNotDefinedException, DeltaCalculationException {
+	public void deltaFinder_correction_of_the_categorization() throws IOException, PrologTermNotDefinedException, DeltaCalculationException {
 
 		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "changedTypeIIandTypeIII", "LiftProto.mch");
 		String pathAsStringOld = pathOld.toAbsolutePath().toString();
@@ -403,7 +402,7 @@ public class RenamingAnalyzerTest {
 
 
 	@Test
-	public void deltaFinder_correction_refinement() throws IOException, ModelTranslationError, PrologTermNotDefinedException, DeltaCalculationException {
+	public void deltaFinder_correction_refinement() throws IOException, PrologTermNotDefinedException, DeltaCalculationException {
 
 		//resources/de/prob/testmachines/traces/refinements/TrafficLightRef.ref
 		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "refinements", "TrafficLightRef.ref");
@@ -440,7 +439,7 @@ public class RenamingAnalyzerTest {
 	}
 
 	@Test
-	public void deltaFinder_typeII_with_candidates() throws IOException, ModelTranslationError, PrologTermNotDefinedException, DeltaCalculationException {
+	public void deltaFinder_typeII_with_candidates() throws IOException, PrologTermNotDefinedException, DeltaCalculationException {
 
 		//resources/de/prob/testmachines/traces/refinements/TrafficLightRef.ref
 		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "complexExample", "PitmanController_v6.mch");

@@ -10,7 +10,6 @@ import java.util.List;
 import de.prob.ProBKernelStub;
 import de.prob.cli.CliTestCommon;
 import de.prob.prolog.term.PrologTerm;
-import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.StateSpace;
 
 import org.junit.jupiter.api.AfterAll;
@@ -34,7 +33,7 @@ public class GetMachineOperationsFullTest {
 	}
 	
 	@Test
-	public void machine_with_one_operation() throws IOException, ModelTranslationError {
+	public void machine_with_one_operation() throws IOException {
 		final StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "examplesForOperations", "machineWithOneOperation.mch"));
 		GetMachineOperationsFull getMachineOperationsFull = new GetMachineOperationsFull();
 		stateSpace.execute(getMachineOperationsFull);
@@ -44,7 +43,7 @@ public class GetMachineOperationsFullTest {
 	}
 	
 	@Test
-	public void machine_with_no_operation() throws IOException, ModelTranslationError {
+	public void machine_with_no_operation() throws IOException {
 		final StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "machineWithNoOperation.mch"));
 		GetMachineOperationsFull getMachineOperationsFull = new GetMachineOperationsFull();
 		stateSpace.execute(getMachineOperationsFull);
@@ -53,7 +52,7 @@ public class GetMachineOperationsFullTest {
 	}
 	
 	@Test
-	public void machine_with_many_operations() throws IOException, ModelTranslationError {
+	public void machine_with_many_operations() throws IOException {
 		final StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "testTraceMachine.mch"));
 		GetMachineOperationsFull getMachineOperationsFull = new GetMachineOperationsFull();
 		stateSpace.execute(getMachineOperationsFull);
@@ -70,7 +69,7 @@ public class GetMachineOperationsFullTest {
 
 
 	@Test
-	public void get_full_map() throws IOException, ModelTranslationError {
+	public void get_full_map() throws IOException {
 		final StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "testTraceMachine.mch"));
 		GetMachineOperationsFull getMachineOperationsFull = new GetMachineOperationsFull();
 		stateSpace.execute(getMachineOperationsFull);

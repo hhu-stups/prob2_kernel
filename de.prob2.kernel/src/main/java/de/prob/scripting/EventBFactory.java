@@ -35,7 +35,7 @@ public class EventBFactory implements ModelFactory<EventBModel> {
 	}
 
 	@Override
-	public ExtractedModel<EventBModel> extract(String modelPath) throws IOException, ModelTranslationError {
+	public ExtractedModel<EventBModel> extract(String modelPath) throws IOException {
 		if (modelPath.endsWith(".eventb")) {
 			throw new IllegalArgumentException("This is an EventB package file, it must be loaded using EventBPackageFactory instead of EventBFactory.\nPath: " + modelPath);
 		}
