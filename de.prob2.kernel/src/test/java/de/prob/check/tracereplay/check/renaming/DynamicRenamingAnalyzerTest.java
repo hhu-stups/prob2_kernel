@@ -27,6 +27,7 @@ import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.scripting.FactoryProvider;
 import de.prob.scripting.ModelFactory;
+import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
 
@@ -176,7 +177,7 @@ public class DynamicRenamingAnalyzerTest {
 
 
 	@Test
-	void test_getOldNewOperations() throws IOException {
+	void test_getOldNewOperations() throws IOException, ModelTranslationError {
 
 		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "examplesForOperations", "machineWithOneOperation.mch");
 		String pathAsStringOld = pathOld.toAbsolutePath().toString();
@@ -208,7 +209,7 @@ public class DynamicRenamingAnalyzerTest {
 
 
 	@Test
-	public void prepareOperationsInterface_test() throws IOException, PrologTermNotDefinedException {
+	public void prepareOperationsInterface_test() throws IOException, PrologTermNotDefinedException, ModelTranslationError {
 
 		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "Lift.mch");
 		String pathAsStringOld = pathOld.toAbsolutePath().toString();
@@ -242,7 +243,7 @@ public class DynamicRenamingAnalyzerTest {
 
 
 	@Test
-	public void checkerInterface_test() throws IOException, PrologTermNotDefinedException {
+	public void checkerInterface_test() throws IOException, PrologTermNotDefinedException, ModelTranslationError {
 
 		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "Lift.mch");
 		String pathAsStringOld = pathOld.toAbsolutePath().toString();
@@ -276,7 +277,7 @@ public class DynamicRenamingAnalyzerTest {
 
 
 	@Test
-	public void integration_test() throws IOException, PrologTermNotDefinedException {
+	public void integration_test() throws IOException, PrologTermNotDefinedException, ModelTranslationError {
 
 		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "Lift.mch");
 		String pathAsStringOld = pathOld.toAbsolutePath().toString();

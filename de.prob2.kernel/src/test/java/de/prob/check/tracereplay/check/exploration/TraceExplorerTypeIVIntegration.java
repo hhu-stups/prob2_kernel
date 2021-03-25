@@ -27,6 +27,7 @@ import de.prob.check.tracereplay.check.renamig.DeltaCalculationException;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.cli.CliTestCommon;
+import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
 
@@ -277,7 +278,7 @@ public class TraceExplorerTypeIVIntegration {
 
 
 	@Test
-	public void large_type_IV_test() throws IOException, DeltaCalculationException {
+	public void large_type_IV_test() throws IOException, DeltaCalculationException, ModelTranslationError {
 
 		Path oldPath = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "complexExample", "PitmanController_v6.mch");
 		StateSpace stateSpace1 = proBKernelStub.createStateSpace(oldPath);
