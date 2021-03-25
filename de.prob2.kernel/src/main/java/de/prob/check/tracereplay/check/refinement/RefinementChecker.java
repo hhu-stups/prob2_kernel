@@ -2,6 +2,7 @@ package de.prob.check.tracereplay.check.refinement;
 
 import com.google.inject.Injector;
 import de.be4.classicalb.core.parser.BParser;
+import de.be4.classicalb.core.parser.analysis.prolog.RecursiveMachineLoader;
 import de.be4.classicalb.core.parser.exceptions.BCompoundException;
 import de.be4.classicalb.core.parser.node.AAbstractMachineParseUnit;
 import de.be4.classicalb.core.parser.node.Start;
@@ -25,6 +26,7 @@ public class RefinementChecker {
 	private final List<PersistentTransition> transitionList;
 	private final Path alpha;
 	private final Path beta;
+	private List<PersistentTransition> createTrace;
 
 	public RefinementChecker(Injector injector, List<PersistentTransition> transitionList, Path alpha, Path beta) {
 		this.injector = injector;
@@ -32,6 +34,8 @@ public class RefinementChecker {
 		this.alpha = alpha;
 		this.beta = beta;
 	}
+
+
 
 	/**
 	 * Composition method with the task of extracting the nodes from a adding them to b, making b into a abstract machine if
@@ -59,8 +63,9 @@ public class RefinementChecker {
 		PrettyPrinter prettyPrinter = new PrettyPrinter();
 		prettyPrinter.caseAAbstractMachineParseUnit(aAbstractMachineParseUnit);
 
+		File bla = alpha.getParent().toFile();
+		File tempFile = File.createTempFile("machine", ".mch", alpha.getParent().toFile());
 
-		File tempFile = File.createTempFile("machine", ".mch");
 
 		FileWriter writer = new FileWriter(tempFile);
 		writer.write(prettyPrinter.getPrettyPrint());

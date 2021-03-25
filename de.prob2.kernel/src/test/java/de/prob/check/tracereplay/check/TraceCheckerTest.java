@@ -379,8 +379,8 @@ public class TraceCheckerTest {
 		Assertions.assertFalse(modifier.typeIIDetDirty());
 		Assertions.assertFalse(modifier.typeIINonDetDirty());
 		Assertions.assertFalse(modifier.typeIIIDirty());
-		Assertions.assertTrue(modifier.typeIVDirty());
-		Assertions.assertTrue(modifier.isDirty());
+		Assertions.assertFalse(modifier.typeIVDirty());
+		Assertions.assertFalse(modifier.isDirty());
 		Assertions.assertTrue(modifier.tracingFoundResult());
 	}
 
