@@ -136,7 +136,7 @@ public final class ConstructTraceCommand extends AbstractCommand implements
 
 		ListPrologTerm reportedErrors = BindingGenerator.getList(bindings.get(ERRORS_VARIABLE));
 		for (PrologTerm prologTerm : reportedErrors) {
-			this.errors.add(prologTerm.getFunctor());
+			this.errors.add(prologTerm.toString());
 		}
 	}
 
