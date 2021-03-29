@@ -121,6 +121,7 @@ public final class JacksonManager<T extends HasMetadata> {
 		objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 		objectMapper.disable(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS);
 		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+		objectMapper.setDefaultPrettyPrinter(new GsonStylePrettyPrinter());
 		objectMapper.registerModule(new JavaTimeModule());
 	}
 	
