@@ -1,173 +1,203 @@
 {
-  "description" : "",
-  "transitionList" : [ {
-    "name" : "$initialise_machine",
-    "params" : { },
-    "results" : { },
-    "destState" : {
-      "floors" : "0"
+  "description": "",
+  "transitionList": [
+    {
+      "name": "$initialise_machine",
+      "params": {},
+      "results": {},
+      "destState": {
+        "floors": "0"
+      },
+      "destStateNotChanged": [],
+      "preds": []
     },
-    "destStateNotChanged" : [ ],
-    "preds" : [ ]
-  }, {
-    "name" : "inc",
-    "params" : {
-      "x" : "3",
-      "y" : "0"
+    {
+      "name": "inc",
+      "params": {
+        "x": "3",
+        "y": "0"
+      },
+      "results": {},
+      "destState": {
+        "floors": "3"
+      },
+      "destStateNotChanged": [],
+      "preds": []
     },
-    "results" : { },
-    "destState" : {
-      "floors" : "3"
+    {
+      "name": "inc",
+      "params": {
+        "x": "2",
+        "y": "1"
+      },
+      "results": {},
+      "destState": {
+        "floors": "6"
+      },
+      "destStateNotChanged": [],
+      "preds": []
     },
-    "destStateNotChanged" : [ ],
-    "preds" : [ ]
-  }, {
-    "name" : "inc",
-    "params" : {
-      "x" : "2",
-      "y" : "1"
+    {
+      "name": "inc",
+      "params": {
+        "x": "3",
+        "y": "1"
+      },
+      "results": {},
+      "destState": {
+        "floors": "10"
+      },
+      "destStateNotChanged": [],
+      "preds": []
     },
-    "results" : { },
-    "destState" : {
-      "floors" : "6"
+    {
+      "name": "inc",
+      "params": {
+        "x": "1",
+        "y": "2"
+      },
+      "results": {},
+      "destState": {
+        "floors": "13"
+      },
+      "destStateNotChanged": [],
+      "preds": []
     },
-    "destStateNotChanged" : [ ],
-    "preds" : [ ]
-  }, {
-    "name" : "inc",
-    "params" : {
-      "x" : "3",
-      "y" : "1"
+    {
+      "name": "inc",
+      "params": {
+        "x": "3",
+        "y": "1"
+      },
+      "results": {},
+      "destState": {
+        "floors": "17"
+      },
+      "destStateNotChanged": [],
+      "preds": []
     },
-    "results" : { },
-    "destState" : {
-      "floors" : "10"
+    {
+      "name": "inc",
+      "params": {
+        "x": "0",
+        "y": "2"
+      },
+      "results": {},
+      "destState": {
+        "floors": "19"
+      },
+      "destStateNotChanged": [],
+      "preds": []
     },
-    "destStateNotChanged" : [ ],
-    "preds" : [ ]
-  }, {
-    "name" : "inc",
-    "params" : {
-      "x" : "1",
-      "y" : "2"
+    {
+      "name": "inc",
+      "params": {
+        "x": "3",
+        "y": "0"
+      },
+      "results": {},
+      "destState": {
+        "floors": "22"
+      },
+      "destStateNotChanged": [],
+      "preds": []
     },
-    "results" : { },
-    "destState" : {
-      "floors" : "13"
+    {
+      "name": "inc",
+      "params": {
+        "x": "1",
+        "y": "1"
+      },
+      "results": {},
+      "destState": {
+        "floors": "24"
+      },
+      "destStateNotChanged": [],
+      "preds": []
     },
-    "destStateNotChanged" : [ ],
-    "preds" : [ ]
-  }, {
-    "name" : "inc",
-    "params" : {
-      "x" : "3",
-      "y" : "1"
+    {
+      "name": "getfloors",
+      "params": {},
+      "results": {
+        "out": "24"
+      },
+      "destState": {},
+      "destStateNotChanged": [
+        "floors"
+      ],
+      "preds": []
+    }
+  ],
+  "variableNames": [
+    "floors"
+  ],
+  "constantNames": [],
+  "setNames": [],
+  "machineOperationInfos": {
+    "dec": {
+      "operationName": "dec",
+      "parameterNames": [],
+      "outputParameterNames": [],
+      "topLevel": true,
+      "type": "CLASSICAL_B",
+      "readVariables": [
+        "floors"
+      ],
+      "writtenVariables": [
+        "floors"
+      ],
+      "nonDetWrittenVariables": [],
+      "typeMap": {}
     },
-    "results" : { },
-    "destState" : {
-      "floors" : "17"
-    },
-    "destStateNotChanged" : [ ],
-    "preds" : [ ]
-  }, {
-    "name" : "inc",
-    "params" : {
-      "x" : "0",
-      "y" : "2"
-    },
-    "results" : { },
-    "destState" : {
-      "floors" : "19"
-    },
-    "destStateNotChanged" : [ ],
-    "preds" : [ ]
-  }, {
-    "name" : "inc",
-    "params" : {
-      "x" : "3",
-      "y" : "0"
-    },
-    "results" : { },
-    "destState" : {
-      "floors" : "22"
-    },
-    "destStateNotChanged" : [ ],
-    "preds" : [ ]
-  }, {
-    "name" : "inc",
-    "params" : {
-      "x" : "1",
-      "y" : "1"
-    },
-    "results" : { },
-    "destState" : {
-      "floors" : "24"
-    },
-    "destStateNotChanged" : [ ],
-    "preds" : [ ]
-  }, {
-    "name" : "getfloors",
-    "params" : { },
-    "results" : {
-      "out" : "24"
-    },
-    "destState" : { },
-    "destStateNotChanged" : [ "floors" ],
-    "preds" : [ ]
-  } ],
-  "variableNames" : [ "floors" ],
-  "constantNames" : [ ],
-  "setNames" : [ ],
-  "machineOperationInfos" : {
-    "dec" : {
-      "operationName" : "dec",
-      "parameterNames" : [ ],
-      "outputParameterNames" : [ ],
-      "topLevel" : true,
-      "type" : "CLASSICAL_B",
-      "readVariables" : [ "floors" ],
-      "writtenVariables" : [ "floors" ],
-      "nonDetWrittenVariables" : [ ],
-      "typeMap" : { }
-    },
-    "getfloors" : {
-      "operationName" : "getfloors",
-      "parameterNames" : [ ],
-      "outputParameterNames" : [ "out" ],
-      "topLevel" : true,
-      "type" : "CLASSICAL_B",
-      "readVariables" : [ "floors" ],
-      "writtenVariables" : [ ],
-      "nonDetWrittenVariables" : [ ],
-      "typeMap" : {
-        "out" : "integer"
+    "getfloors": {
+      "operationName": "getfloors",
+      "parameterNames": [],
+      "outputParameterNames": [
+        "out"
+      ],
+      "topLevel": true,
+      "type": "CLASSICAL_B",
+      "readVariables": [
+        "floors"
+      ],
+      "writtenVariables": [],
+      "nonDetWrittenVariables": [],
+      "typeMap": {
+        "out": "integer"
       }
     },
-    "inc" : {
-      "operationName" : "inc",
-      "parameterNames" : [ "x", "y" ],
-      "outputParameterNames" : [ ],
-      "topLevel" : true,
-      "type" : "CLASSICAL_B",
-      "readVariables" : [ "floors" ],
-      "writtenVariables" : [ "floors" ],
-      "nonDetWrittenVariables" : [ ],
-      "typeMap" : {
-        "x" : "integer",
-        "y" : "integer"
+    "inc": {
+      "operationName": "inc",
+      "parameterNames": [
+        "x",
+        "y"
+      ],
+      "outputParameterNames": [],
+      "topLevel": true,
+      "type": "CLASSICAL_B",
+      "readVariables": [
+        "floors"
+      ],
+      "writtenVariables": [
+        "floors"
+      ],
+      "nonDetWrittenVariables": [],
+      "typeMap": {
+        "x": "integer",
+        "y": "integer"
       }
     }
   },
-  "globalIdentifierTypes" : {
-    "floors" : "integer"
+  "globalIdentifierTypes": {
+    "floors": "integer"
   },
-  "metadata" : {
-    "fileType" : "Trace",
-    "formatVersion" : 2,
-    "savedAt" : null,
-    "creator" : "traceReplay",
-    "proB2KernelVersion" : "4.0.0-SNAPSHOT",
-    "proBCliVersion" : "1.11.0-nightly",
-    "modelName" : "LiftProto"
+  "metadata": {
+    "fileType": "Trace",
+    "formatVersion": 2,
+    "savedAt": null,
+    "creator": "traceReplay",
+    "proB2KernelVersion": "4.0.0-SNAPSHOT",
+    "proBCliVersion": "1.11.0-nightly",
+    "modelName": "LiftProto"
   }
 }

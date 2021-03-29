@@ -1,170 +1,214 @@
 {
-  "description" : "",
-  "transitionList" : [ {
-    "name" : "$setup_constants",
-    "params" : { },
-    "results" : { },
-    "destState" : {
-      "maxCars" : "5"
+  "description": "",
+  "transitionList": [
+    {
+      "name": "$setup_constants",
+      "params": {},
+      "results": {},
+      "destState": {
+        "maxCars": "5"
+      },
+      "destStateNotChanged": [],
+      "preds": []
     },
-    "destStateNotChanged" : [ ],
-    "preds" : [ ]
-  }, {
-    "name" : "$initialise_machine",
-    "params" : { },
-    "results" : { },
-    "destState" : {
-      "cars" : "0",
-      "bark" : "FALSE"
+    {
+      "name": "$initialise_machine",
+      "params": {},
+      "results": {},
+      "destState": {
+        "cars": "0",
+        "bark": "FALSE"
+      },
+      "destStateNotChanged": [],
+      "preds": []
     },
-    "destStateNotChanged" : [ ],
-    "preds" : [ ]
-  }, {
-    "name" : "openBark",
-    "params" : { },
-    "results" : { },
-    "destState" : {
-      "bark" : "TRUE"
+    {
+      "name": "openBark",
+      "params": {},
+      "results": {},
+      "destState": {
+        "bark": "TRUE"
+      },
+      "destStateNotChanged": [
+        "cars"
+      ],
+      "preds": []
     },
-    "destStateNotChanged" : [ "cars" ],
-    "preds" : [ ]
-  }, {
-    "name" : "on",
-    "params" : { },
-    "results" : { },
-    "destState" : {
-      "cars" : "1"
+    {
+      "name": "on",
+      "params": {},
+      "results": {},
+      "destState": {
+        "cars": "1"
+      },
+      "destStateNotChanged": [
+        "bark"
+      ],
+      "preds": []
     },
-    "destStateNotChanged" : [ "bark" ],
-    "preds" : [ ]
-  }, {
-    "name" : "off",
-    "params" : { },
-    "results" : { },
-    "destState" : {
-      "cars" : "0"
+    {
+      "name": "off",
+      "params": {},
+      "results": {},
+      "destState": {
+        "cars": "0"
+      },
+      "destStateNotChanged": [
+        "bark"
+      ],
+      "preds": []
     },
-    "destStateNotChanged" : [ "bark" ],
-    "preds" : [ ]
-  }, {
-    "name" : "on",
-    "params" : { },
-    "results" : { },
-    "destState" : {
-      "cars" : "1",
-      "bark" : "TRUE"
+    {
+      "name": "on",
+      "params": {},
+      "results": {},
+      "destState": {
+        "cars": "1",
+        "bark": "TRUE"
+      },
+      "destStateNotChanged": [],
+      "preds": []
     },
-    "destStateNotChanged" : [ ],
-    "preds" : [ ]
-  }, {
-    "name" : "off",
-    "params" : { },
-    "results" : { },
-    "destState" : {
-      "cars" : "0"
+    {
+      "name": "off",
+      "params": {},
+      "results": {},
+      "destState": {
+        "cars": "0"
+      },
+      "destStateNotChanged": [
+        "bark"
+      ],
+      "preds": []
     },
-    "destStateNotChanged" : [ "bark" ],
-    "preds" : [ ]
-  }, {
-    "name" : "on",
-    "params" : { },
-    "results" : { },
-    "destState" : {
-      "cars" : "1",
-      "bark" : "TRUE"
+    {
+      "name": "on",
+      "params": {},
+      "results": {},
+      "destState": {
+        "cars": "1",
+        "bark": "TRUE"
+      },
+      "destStateNotChanged": [],
+      "preds": []
     },
-    "destStateNotChanged" : [ ],
-    "preds" : [ ]
-  }, {
-    "name" : "off",
-    "params" : { },
-    "results" : { },
-    "destState" : {
-      "cars" : "0"
+    {
+      "name": "off",
+      "params": {},
+      "results": {},
+      "destState": {
+        "cars": "0"
+      },
+      "destStateNotChanged": [
+        "bark"
+      ],
+      "preds": []
     },
-    "destStateNotChanged" : [ "bark" ],
-    "preds" : [ ]
-  }, {
-    "name" : "on",
-    "params" : { },
-    "results" : { },
-    "destState" : {
-      "cars" : "1",
-      "bark" : "TRUE"
+    {
+      "name": "on",
+      "params": {},
+      "results": {},
+      "destState": {
+        "cars": "1",
+        "bark": "TRUE"
+      },
+      "destStateNotChanged": [],
+      "preds": []
     },
-    "destStateNotChanged" : [ ],
-    "preds" : [ ]
-  }, {
-    "name" : "off",
-    "params" : { },
-    "results" : { },
-    "destState" : {
-      "cars" : "0"
+    {
+      "name": "off",
+      "params": {},
+      "results": {},
+      "destState": {
+        "cars": "0"
+      },
+      "destStateNotChanged": [
+        "bark"
+      ],
+      "preds": []
+    }
+  ],
+  "variableNames": [
+    "cars"
+  ],
+  "constantNames": [
+    "maxCars"
+  ],
+  "setNames": [],
+  "machineOperationInfos": {
+    "openBark": {
+      "operationName": "openBark",
+      "parameterNames": [],
+      "outputParameterNames": [],
+      "topLevel": true,
+      "type": "CLASSICAL_B",
+      "readVariables": [
+        "cars",
+        "maxCars"
+      ],
+      "writtenVariables": [
+        "bark"
+      ],
+      "nonDetWrittenVariables": [],
+      "typeMap": {}
     },
-    "destStateNotChanged" : [ "bark" ],
-    "preds" : [ ]
-  } ],
-  "variableNames" : [ "cars" ],
-  "constantNames" : [ "maxCars" ],
-  "setNames" : [ ],
-  "machineOperationInfos" : {
-    "openBark" : {
-      "operationName" : "openBark",
-      "parameterNames" : [ ],
-      "outputParameterNames" : [ ],
-      "topLevel" : true,
-      "type" : "CLASSICAL_B",
-      "readVariables" : [ "cars", "maxCars" ],
-      "writtenVariables" : [ "bark" ],
-      "nonDetWrittenVariables" : [ ],
-      "typeMap" : { }
+    "closeBark": {
+      "operationName": "closeBark",
+      "parameterNames": [],
+      "outputParameterNames": [],
+      "topLevel": true,
+      "type": "CLASSICAL_B",
+      "readVariables": [],
+      "writtenVariables": [
+        "bark"
+      ],
+      "nonDetWrittenVariables": [],
+      "typeMap": {}
     },
-    "closeBark" : {
-      "operationName" : "closeBark",
-      "parameterNames" : [ ],
-      "outputParameterNames" : [ ],
-      "topLevel" : true,
-      "type" : "CLASSICAL_B",
-      "readVariables" : [ ],
-      "writtenVariables" : [ "bark" ],
-      "nonDetWrittenVariables" : [ ],
-      "typeMap" : { }
+    "off": {
+      "operationName": "off",
+      "parameterNames": [],
+      "outputParameterNames": [],
+      "topLevel": true,
+      "type": "CLASSICAL_B",
+      "readVariables": [
+        "cars"
+      ],
+      "writtenVariables": [
+        "cars"
+      ],
+      "nonDetWrittenVariables": [],
+      "typeMap": {}
     },
-    "off" : {
-      "operationName" : "off",
-      "parameterNames" : [ ],
-      "outputParameterNames" : [ ],
-      "topLevel" : true,
-      "type" : "CLASSICAL_B",
-      "readVariables" : [ "cars" ],
-      "writtenVariables" : [ "cars" ],
-      "nonDetWrittenVariables" : [ ],
-      "typeMap" : { }
-    },
-    "on" : {
-      "operationName" : "on",
-      "parameterNames" : [ ],
-      "outputParameterNames" : [ ],
-      "topLevel" : true,
-      "type" : "CLASSICAL_B",
-      "readVariables" : [ "bark", "cars" ],
-      "writtenVariables" : [ "cars" ],
-      "nonDetWrittenVariables" : [ ],
-      "typeMap" : { }
+    "on": {
+      "operationName": "on",
+      "parameterNames": [],
+      "outputParameterNames": [],
+      "topLevel": true,
+      "type": "CLASSICAL_B",
+      "readVariables": [
+        "bark",
+        "cars"
+      ],
+      "writtenVariables": [
+        "cars"
+      ],
+      "nonDetWrittenVariables": [],
+      "typeMap": {}
     }
   },
-  "globalIdentifierTypes" : {
-    "cars" : "integer",
-    "bark" : "boolean",
-    "maxCars" : "integer"
+  "globalIdentifierTypes": {
+    "cars": "integer",
+    "bark": "boolean",
+    "maxCars": "integer"
   },
-  "metadata" : {
-    "fileType" : "Trace",
-    "formatVersion" : 2,
-    "savedAt" : null,
-    "creator" : "traceReplay",
-    "proB2KernelVersion" : "4.0.0-SNAPSHOT",
-    "proBCliVersion" : "1.11.0-nightly",
-    "modelName" : "ISLAND2"
+  "metadata": {
+    "fileType": "Trace",
+    "formatVersion": 2,
+    "savedAt": null,
+    "creator": "traceReplay",
+    "proB2KernelVersion": "4.0.0-SNAPSHOT",
+    "proBCliVersion": "1.11.0-nightly",
+    "modelName": "ISLAND2"
   }
 }
