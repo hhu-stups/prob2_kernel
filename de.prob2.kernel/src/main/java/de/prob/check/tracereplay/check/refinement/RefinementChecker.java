@@ -1,8 +1,14 @@
 package de.prob.check.tracereplay.check.refinement;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.List;
+
 import com.google.inject.Injector;
+
 import de.be4.classicalb.core.parser.BParser;
-import de.be4.classicalb.core.parser.analysis.prolog.RecursiveMachineLoader;
 import de.be4.classicalb.core.parser.exceptions.BCompoundException;
 import de.be4.classicalb.core.parser.node.AAbstractMachineParseUnit;
 import de.be4.classicalb.core.parser.node.Start;
@@ -11,15 +17,8 @@ import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.TraceCheckerUtils;
 import de.prob.check.tracereplay.check.traceConstruction.AdvancedTraceConstructor;
 import de.prob.check.tracereplay.check.traceConstruction.TraceConstructionError;
-import de.prob.scripting.*;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.List;
 
 public class RefinementChecker {
 	private final Injector injector;
@@ -44,10 +43,9 @@ public class RefinementChecker {
 	 * @return the trace if it works on the machine
 	 * @throws IOException something went wrong when parsing the file
 	 * @throws BCompoundException something in the file was wrong with the machine
-	 * @throws ModelTranslationError something went wrong with accessing proB
 	 * @throws TraceConstructionError something went wrong when constructing the trace
 	 */
-	public List<PersistentTransition> check() throws IOException, BCompoundException, ModelTranslationError, TraceConstructionError {
+	public List<PersistentTransition> check() throws IOException, BCompoundException, TraceConstructionError {
 
 		BParser alphaParser = new BParser(alpha.toString());
 		Start alphaStart = alphaParser.parseFile(alpha.toFile(), false);

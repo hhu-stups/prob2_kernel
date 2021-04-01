@@ -1,24 +1,29 @@
 package de.prob.check.tracereplay.check;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Injector;
+
 import de.prob.animator.ReusableAnimator;
 import de.prob.check.tracereplay.check.exploration.TraceExplorer;
 import de.prob.scripting.FactoryProvider;
 import de.prob.scripting.ModelFactory;
-import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
 
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 
 public class TraceCheckerUtils {
 
@@ -80,7 +85,7 @@ public class TraceCheckerUtils {
 		return reusableAnimator;
 	}
 
-	public static StateSpace createStateSpace(String path, Injector injector) throws IOException, ModelTranslationError {
+	public static StateSpace createStateSpace(String path, Injector injector) throws IOException {
 		ReusableAnimator animator = getReusableAnimator(injector);
 		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension(path.substring(path.lastIndexOf(".")+1)));
 		if(animator.getCurrentStateSpace()!=null)

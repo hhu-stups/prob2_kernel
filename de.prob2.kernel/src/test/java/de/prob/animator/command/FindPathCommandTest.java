@@ -1,5 +1,15 @@
 package de.prob.animator.command;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import de.be4.classicalb.core.parser.BParser;
 import de.be4.classicalb.core.parser.exceptions.BCompoundException;
 import de.be4.classicalb.core.parser.node.AAbstractMachineParseUnit;
@@ -12,29 +22,17 @@ import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.exploration.ReplayOptions;
 import de.prob.check.tracereplay.check.refinement.ASTManipulator;
 import de.prob.check.tracereplay.check.refinement.NodeCollector;
-import de.prob.check.tracereplay.check.traceConstruction.AdvancedTraceConstructor;
-import de.prob.check.tracereplay.check.traceConstruction.TraceConstructionError;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.cli.CliTestCommon;
-import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
 import de.prob.statespace.Transition;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class FindPathCommandTest {
 
@@ -63,7 +61,7 @@ public class FindPathCommandTest {
 
 
 	@Test
-	public void test_find_path_1_path_exists() throws IOException, ModelTranslationError {
+	public void test_find_path_1_path_exists() throws IOException {
 
 
 		Path file = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "refinements",  "TrafficLight.mch");
@@ -87,7 +85,7 @@ public class FindPathCommandTest {
 
 
 	@Test
-	public void test_find_path_2_fails_but_will_return_longest_match() throws IOException, ModelTranslationError {
+	public void test_find_path_2_fails_but_will_return_longest_match() throws IOException {
 
 
 		Path file = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "refinements",  "TrafficLight.mch");
@@ -115,7 +113,7 @@ public class FindPathCommandTest {
 
 	 //Simple Trace Replay is not enough here, you need to select the right operations in order to archive the goal of replaying the full trace
 	@Test
-	public void test_integration_1_simple_refinement_can_make_right_choices() throws IOException, BCompoundException, ModelTranslationError {
+	public void test_integration_1_simple_refinement_can_make_right_choices() throws IOException, BCompoundException {
 
 
 		Path file = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "refinements",  "TrafficLightRef.ref");

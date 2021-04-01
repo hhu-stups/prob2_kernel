@@ -10,7 +10,6 @@ import de.prob.check.tracereplay.check.TraceCheckerUtils;
 import de.prob.exception.ProBError;
 import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
-import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
@@ -116,7 +115,7 @@ public class DynamicRenamingAnalyzer implements RenamingAnalyzerInterface {
 
 			typeIIWithCandidatesAsDeltaMap = transformToDeltaMap(resultTypeIIWithCandidates);
 
-		}catch (IOException | ProBError | PrologTermNotDefinedException | ModelTranslationError e){
+		}catch (IOException | ProBError | PrologTermNotDefinedException e){
 			throw new DeltaCalculationException(e);
 		}
 
@@ -203,7 +202,7 @@ public class DynamicRenamingAnalyzer implements RenamingAnalyzerInterface {
 	 * @return a map of operations
 	 * @throws IOException file not found
 	 */
-	public Map<String, CompoundPrologTerm> getOperations(String path) throws IOException, ModelTranslationError {
+	public Map<String, CompoundPrologTerm> getOperations(String path) throws IOException {
 		StateSpace stateSpace = TraceCheckerUtils.createStateSpace(path, injector);
 		GetMachineOperationsFull getMachineOperationsFull = new GetMachineOperationsFull();
 		stateSpace.execute(getMachineOperationsFull);

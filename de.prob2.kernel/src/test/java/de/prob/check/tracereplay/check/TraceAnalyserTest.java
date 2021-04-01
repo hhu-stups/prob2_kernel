@@ -1,23 +1,23 @@
 package de.prob.check.tracereplay.check;
 
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import de.prob.ProBKernelStub;
 import de.prob.check.tracereplay.check.exploration.PersistenceDelta;
 import de.prob.check.tracereplay.check.exploration.TraceExplorer;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.cli.CliTestCommon;
-import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.StateSpace;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
@@ -40,7 +40,7 @@ public class TraceAnalyserTest {
 
 
 	@Test
-	public void integration_test_new_intermediate_operation_1() throws IOException, ModelTranslationError {
+	public void integration_test_new_intermediate_operation_1() throws IOException {
 		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test","resources", "de" , "prob", "testmachines", "traces", "typeIV" , "one_time_intermediate_operation", "ISLAND2.mch"));
 
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test","resources", "de" , "prob", "testmachines", "traces", "typeIV" , "one_time_intermediate_operation", "ISLAND.prob2trace"));
@@ -65,7 +65,7 @@ public class TraceAnalyserTest {
 
 
 	@Test
-	public void integration_test_always_new_intermediate_operation_1() throws IOException, ModelTranslationError {
+	public void integration_test_always_new_intermediate_operation_1() throws IOException {
 		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test","resources", "de" , "prob", "testmachines", "traces", "typeIV" , "always_intermediate", "ISLAND2.mch"));
 
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test","resources", "de" , "prob", "testmachines", "traces", "typeIV" , "always_intermediate", "ISLAND.prob2trace"));
@@ -91,7 +91,7 @@ public class TraceAnalyserTest {
 
 
 	@Test
-	public void integration_test_complete_renamed_operation_1() throws IOException, ModelTranslationError {
+	public void integration_test_complete_renamed_operation_1() throws IOException {
 		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test","resources", "de" , "prob", "testmachines", "traces", "typeIV" , "complete_renamed_operation", "ISLAND2.mch"));
 
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test","resources", "de" , "prob", "testmachines", "traces", "typeIV" , "complete_renamed_operation", "ISLAND.prob2trace"));

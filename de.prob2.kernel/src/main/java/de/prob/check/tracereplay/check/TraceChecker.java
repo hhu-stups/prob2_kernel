@@ -1,23 +1,26 @@
 package de.prob.check.tracereplay.check;
 
+import java.io.IOException;
+import java.util.AbstractMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import com.google.inject.Injector;
+
 import de.prob.check.tracereplay.PersistentTransition;
-import de.prob.check.tracereplay.check.renamig.DeltaCalculationException;
-import de.prob.check.tracereplay.check.ui.MappingFactoryInterface;
 import de.prob.check.tracereplay.check.exploration.PersistenceDelta;
 import de.prob.check.tracereplay.check.exploration.ReplayOptions;
 import de.prob.check.tracereplay.check.exploration.TraceExplorer;
+import de.prob.check.tracereplay.check.renamig.DeltaCalculationException;
 import de.prob.check.tracereplay.check.renamig.DynamicRenamingAnalyzer;
 import de.prob.check.tracereplay.check.renamig.RenamingAnalyzerInterface;
 import de.prob.check.tracereplay.check.renamig.RenamingDelta;
 import de.prob.check.tracereplay.check.renamig.StaticRenamingAnalyzer;
+import de.prob.check.tracereplay.check.ui.MappingFactoryInterface;
 import de.prob.check.tracereplay.check.ui.ProgressMemoryInterface;
-import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
-
-import java.io.IOException;
-import java.util.*;
 
 import static java.util.stream.Collectors.toMap;
 
@@ -40,7 +43,7 @@ public class TraceChecker {
 						Injector injector,
 						MappingFactoryInterface mappingFactory,
 						ReplayOptions replayOptions,
-						ProgressMemoryInterface progressMemoryInterface) throws IOException, ModelTranslationError, DeltaCalculationException {
+						ProgressMemoryInterface progressMemoryInterface) throws IOException, DeltaCalculationException {
 
 			this(transitionList, oldInfos, newInfos, oldVars, newVars, null, newPath, injector, mappingFactory, replayOptions, progressMemoryInterface);
 
@@ -58,7 +61,7 @@ public class TraceChecker {
 						MappingFactoryInterface mappingFactory,
 						ReplayOptions replayOptions,
 						ProgressMemoryInterface progressMemoryInterface)
-			throws IOException, ModelTranslationError, DeltaCalculationException {
+			throws IOException, DeltaCalculationException {
 
 		this.oldOperationInfos = oldInfos;
 		this.newOperationInfos = newInfos;

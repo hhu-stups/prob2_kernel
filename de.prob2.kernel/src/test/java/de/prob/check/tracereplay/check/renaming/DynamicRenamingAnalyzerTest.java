@@ -16,18 +16,17 @@ import com.google.inject.Injector;
 
 import de.prob.animator.ReusableAnimator;
 import de.prob.check.tracereplay.check.renamig.CheckerInterface;
-import de.prob.check.tracereplay.check.renamig.PrepareOperationsInterface;
+import de.prob.check.tracereplay.check.renamig.DeltaCalculationException;
 import de.prob.check.tracereplay.check.renamig.DynamicRenamingAnalyzer;
+import de.prob.check.tracereplay.check.renamig.PrepareOperationsInterface;
+import de.prob.check.tracereplay.check.renamig.PrologTermNotDefinedException;
 import de.prob.check.tracereplay.check.renamig.RenamingDelta;
 import de.prob.check.tracereplay.check.renamig.Triple;
-import de.prob.check.tracereplay.check.renamig.DeltaCalculationException;
-import de.prob.check.tracereplay.check.renamig.PrologTermNotDefinedException;
 import de.prob.cli.CliTestCommon;
 import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.scripting.FactoryProvider;
 import de.prob.scripting.ModelFactory;
-import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
 
@@ -177,7 +176,7 @@ public class DynamicRenamingAnalyzerTest {
 
 
 	@Test
-	void test_getOldNewOperations() throws IOException, ModelTranslationError {
+	void test_getOldNewOperations() throws IOException {
 
 		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "examplesForOperations", "machineWithOneOperation.mch");
 		String pathAsStringOld = pathOld.toAbsolutePath().toString();
@@ -209,7 +208,7 @@ public class DynamicRenamingAnalyzerTest {
 
 
 	@Test
-	public void prepareOperationsInterface_test() throws IOException, PrologTermNotDefinedException, ModelTranslationError {
+	public void prepareOperationsInterface_test() throws IOException, PrologTermNotDefinedException {
 
 		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "Lift.mch");
 		String pathAsStringOld = pathOld.toAbsolutePath().toString();
@@ -243,7 +242,7 @@ public class DynamicRenamingAnalyzerTest {
 
 
 	@Test
-	public void checkerInterface_test() throws IOException, PrologTermNotDefinedException, ModelTranslationError {
+	public void checkerInterface_test() throws IOException, PrologTermNotDefinedException {
 
 		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "Lift.mch");
 		String pathAsStringOld = pathOld.toAbsolutePath().toString();
@@ -277,7 +276,7 @@ public class DynamicRenamingAnalyzerTest {
 
 
 	@Test
-	public void integration_test() throws IOException, PrologTermNotDefinedException, ModelTranslationError {
+	public void integration_test() throws IOException, PrologTermNotDefinedException {
 
 		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "Lift.mch");
 		String pathAsStringOld = pathOld.toAbsolutePath().toString();

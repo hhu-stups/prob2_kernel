@@ -14,20 +14,20 @@ import java.util.stream.Collectors;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Stage;
+
 import de.prob.MainModule;
 import de.prob.ProBKernelStub;
-import de.prob.check.tracereplay.check.TestUtils;
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.IdentifierMatcher;
-import de.prob.check.tracereplay.check.renamig.RenamingDelta;
+import de.prob.check.tracereplay.check.TestUtils;
 import de.prob.check.tracereplay.check.TraceAnalyser;
 import de.prob.check.tracereplay.check.TraceChecker;
 import de.prob.check.tracereplay.check.TraceModifier;
 import de.prob.check.tracereplay.check.renamig.DeltaCalculationException;
+import de.prob.check.tracereplay.check.renamig.RenamingDelta;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.cli.CliTestCommon;
-import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
 
@@ -278,7 +278,7 @@ public class TraceExplorerTypeIVIntegration {
 
 
 	@Test
-	public void large_type_IV_test() throws IOException, DeltaCalculationException, ModelTranslationError {
+	public void large_type_IV_test() throws IOException, DeltaCalculationException {
 
 		Path oldPath = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "complexExample", "PitmanController_v6.mch");
 		StateSpace stateSpace1 = proBKernelStub.createStateSpace(oldPath);

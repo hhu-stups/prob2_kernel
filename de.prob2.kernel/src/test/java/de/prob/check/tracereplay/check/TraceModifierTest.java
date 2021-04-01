@@ -14,14 +14,13 @@ import java.util.Set;
 
 import de.prob.ProBKernelStub;
 import de.prob.check.tracereplay.PersistentTransition;
-import de.prob.check.tracereplay.check.renamig.RenamingDelta;
 import de.prob.check.tracereplay.check.exploration.ReplayOptions;
 import de.prob.check.tracereplay.check.renamig.DeltaCalculationException;
 import de.prob.check.tracereplay.check.renamig.PrologTermNotDefinedException;
+import de.prob.check.tracereplay.check.renamig.RenamingDelta;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.cli.CliTestCommon;
-import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
 
@@ -603,7 +602,7 @@ public class TraceModifierTest {
 	}
 
 	@Test
-	public void is_dirty_type_III_test_1() throws IOException, PrologTermNotDefinedException, DeltaCalculationException, ModelTranslationError {
+	public void is_dirty_type_III_test_1() throws IOException, PrologTermNotDefinedException, DeltaCalculationException {
 
 		Path oldPath = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "complexExample", "PitmanController_v6.mch");
 		StateSpace stateSpace1 = proBKernelStub.createStateSpace(oldPath);

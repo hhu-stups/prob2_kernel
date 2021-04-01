@@ -1,27 +1,24 @@
 package de.prob.check.tracereplay.check.traceConstruction;
 
-
-import de.prob.ProBKernelStub;
-import de.prob.check.tracereplay.PersistentTransition;
-import de.prob.check.tracereplay.check.exploration.ReplayOptions;
-import de.prob.check.tracereplay.check.traceConstruction.AdvancedTraceConstructor;
-import de.prob.check.tracereplay.check.traceConstruction.TraceConstructionError;
-import de.prob.check.tracereplay.json.TraceManager;
-import de.prob.check.tracereplay.json.storage.TraceJsonFile;
-import de.prob.cli.CliTestCommon;
-import de.prob.scripting.ModelTranslationError;
-import de.prob.statespace.StateSpace;
-import de.prob.statespace.Trace;
-import de.prob.statespace.Transition;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+
+import de.prob.ProBKernelStub;
+import de.prob.check.tracereplay.PersistentTransition;
+import de.prob.check.tracereplay.check.exploration.ReplayOptions;
+import de.prob.check.tracereplay.json.TraceManager;
+import de.prob.check.tracereplay.json.storage.TraceJsonFile;
+import de.prob.cli.CliTestCommon;
+import de.prob.statespace.StateSpace;
+import de.prob.statespace.Trace;
+import de.prob.statespace.Transition;
+
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.toList;
@@ -48,7 +45,7 @@ public class AdvancedTraceConstructorTest {
 
 
 	@Test
-	public void test_freestyle_replay() throws IOException, ModelTranslationError, TraceConstructionError {
+	public void test_freestyle_replay() throws IOException, TraceConstructionError {
 		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "one_time_intermediate_operation", "ISLAND.mch"));
 
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "one_time_intermediate_operation", "ISLAND.prob2trace"));
@@ -64,7 +61,7 @@ public class AdvancedTraceConstructorTest {
 	}
 
 	@Test
-	public void test_freestyle_replay_fails() throws IOException, ModelTranslationError {
+	public void test_freestyle_replay_fails() throws IOException {
 		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "one_time_intermediate_operation", "ISLAND.mch"));
 
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "one_time_intermediate_operation", "ISLAND.prob2trace"));
@@ -78,7 +75,7 @@ public class AdvancedTraceConstructorTest {
 
 
 	@Test
-	public void test_trace_missing_sc_clause() throws IOException, ModelTranslationError {
+	public void test_trace_missing_sc_clause() throws IOException {
 		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "complexExample", "PitmanController_TIME_v4.mch"));
 
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "complexExample", "pitman_1.prob2trace"));
@@ -94,7 +91,7 @@ public class AdvancedTraceConstructorTest {
 	}
 
 	@Test
-	public void test_transitionList_missing_sc_clause() throws IOException, ModelTranslationError {
+	public void test_transitionList_missing_sc_clause() throws IOException {
 		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "complexExample", "PitmanController_TIME_v4.mch"));
 
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "complexExample", "pitman_1.prob2trace"));
