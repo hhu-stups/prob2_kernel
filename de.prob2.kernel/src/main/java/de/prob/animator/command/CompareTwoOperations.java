@@ -1,15 +1,15 @@
 package de.prob.animator.command;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
-
-import java.util.Map;
+import de.prob.prolog.term.VariablePrologTerm;
 
 /**
  * Hands down two operations to prolog and as a result gets a delta when both operation are similar in name, parameter name
@@ -18,42 +18,35 @@ import java.util.Map;
 public class CompareTwoOperations extends AbstractCommand {
 
 	private static final String PROLOG_COMMAND_NAME = "compare_operations";
-	public static final String VARIABLE = "DELTA";
-	private Map<String, String> delta;
-	
 
 	private final CompoundPrologTerm operationOld;
 	private final CompoundPrologTerm operationNew;
-	private final ObjectMapper objectMapper;
-	private final ListPrologTerm foundVariables;
 	private final ListPrologTerm freeVariables;
 
+	private List<String> identifiers;
 
-	public CompareTwoOperations(CompoundPrologTerm operationOld, CompoundPrologTerm operationNew, ListPrologTerm foundVars, ListPrologTerm freeVars, ObjectMapper objectMapper){
+	public CompareTwoOperations(CompoundPrologTerm operationOld, CompoundPrologTerm operationNew, ListPrologTerm freeVars) {
 		this.operationNew = operationNew;
 		this.operationOld = operationOld;
-		this.objectMapper = objectMapper;
-		this.foundVariables = foundVars;
 		this.freeVariables = freeVars;
 	}
 
 	@Override
 	public void writeCommand(IPrologTermOutput pto) {
-		pto.openTerm(PROLOG_COMMAND_NAME).printTerm(operationOld).printTerm(operationNew).printTerm(foundVariables).printTerm(freeVariables).printVariable(VARIABLE).closeTerm();
+		pto.openTerm(PROLOG_COMMAND_NAME).printTerm(operationOld).printTerm(operationNew).printTerm(freeVariables).closeTerm();
 	}
 
 
 	@Override
 	public void processResult(ISimplifiedROMap<String, PrologTerm> bindings) {
-		TypeReference<Map<String, String>> typeReference = new TypeReference<Map<String, String>>() {};
-		try {
-			delta = objectMapper.readValue(PrologTerm.atomicString(bindings.get(VARIABLE)), typeReference);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
+		this.identifiers = new ArrayList<>();
+		for (final PrologTerm term : this.freeVariables) {
+			final VariablePrologTerm var = (VariablePrologTerm)term;
+			this.identifiers.add(PrologTerm.atomicString(bindings.get(var.getName())));
 		}
 	}
 	
-	public Map<String, String> getDelta(){
-		return delta;
+	public List<String> getIdentifiers() {
+		return Collections.unmodifiableList(this.identifiers);
 	}
 }

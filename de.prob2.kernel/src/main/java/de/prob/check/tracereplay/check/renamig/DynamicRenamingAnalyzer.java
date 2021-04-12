@@ -1,6 +1,5 @@
 package de.prob.check.tracereplay.check.renamig;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Injector;
 import de.prob.animator.ReusableAnimator;
 import de.prob.animator.command.CompareTwoOperations;
@@ -10,6 +9,7 @@ import de.prob.check.tracereplay.check.TraceCheckerUtils;
 import de.prob.exception.ProBError;
 import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
+import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
@@ -46,13 +46,17 @@ public class DynamicRenamingAnalyzer implements RenamingAnalyzerInterface {
 	 */
 	public final CheckerInterface checkerInterface = (prepareOperationTriple, candidate) -> {
 		CompareTwoOperations compareTwoOperations = new CompareTwoOperations(prepareOperationTriple.third,
-				candidate, prepareOperationTriple.first, prepareOperationTriple.second, new ObjectMapper());
+				candidate, prepareOperationTriple.second);
 		try {
 			animator.execute(compareTwoOperations);
-			return compareTwoOperations.getDelta();
 		} catch (ProBError e) {
 			return new HashMap<>();
 		}
+
+		final List<String> oldIdentifiers = PrologTerm.atomicStrings(prepareOperationTriple.first);
+		final List<String> newIdentifiers = compareTwoOperations.getIdentifiers();
+		assert oldIdentifiers.size() == newIdentifiers.size();
+		return TraceCheckerUtils.zip(oldIdentifiers, newIdentifiers);
 	};
 
 	/**

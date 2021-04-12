@@ -5,12 +5,12 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import de.prob.ProBKernelStub;
+import de.prob.check.tracereplay.check.TraceCheckerUtils;
 import de.prob.cli.CliTestCommon;
 import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
+import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.StateSpace;
 
 import org.junit.jupiter.api.AfterAll;
@@ -53,12 +53,13 @@ public class CompareTwoOperationsTest {
 		stateSpace.execute(prepareOperations1);
 
 		CompareTwoOperations compareTwoOperations =
-				new CompareTwoOperations(prepareOperations1.getPreparedOperation(), compoundPrologTerm1, prepareOperations1.getFoundVars(), prepareOperations1.getFreeVars(), new ObjectMapper());
+				new CompareTwoOperations(prepareOperations1.getPreparedOperation(), compoundPrologTerm1, prepareOperations1.getFreeVars());
 		stateSpace.execute(compareTwoOperations);
+		final Map<String, String> delta = TraceCheckerUtils.zip(PrologTerm.atomicStrings(prepareOperations1.getFoundVars()), compareTwoOperations.getIdentifiers());
 		Map<String, String> expected = new HashMap<>();
 		expected.put("inccc", "inccc");
 		expected.put("floors", "floors");
-		Assertions.assertEquals(expected, compareTwoOperations.getDelta());
+		Assertions.assertEquals(expected, delta);
 	}
 
 
@@ -97,12 +98,13 @@ public class CompareTwoOperationsTest {
 		stateSpace.execute(prepareOperations1);
 
 		CompareTwoOperations compareTwoOperations =
-				new CompareTwoOperations(prepareOperations1.getPreparedOperation(), compoundPrologTerm2, prepareOperations1.getFoundVars(), prepareOperations1.getFreeVars(), new ObjectMapper());
+				new CompareTwoOperations(prepareOperations1.getPreparedOperation(), compoundPrologTerm2, prepareOperations1.getFreeVars());
 		stateSpace.execute(compareTwoOperations);
+		final Map<String, String> delta = TraceCheckerUtils.zip(PrologTerm.atomicStrings(prepareOperations1.getFoundVars()), compareTwoOperations.getIdentifiers());
 		Map<String, String> expected = new HashMap<>();
 		expected.put("inccc", "dinccc");
 		expected.put("floors", "floors");
-		Assertions.assertEquals(expected, compareTwoOperations.getDelta());
+		Assertions.assertEquals(expected, delta);
 	}
 	
 }
