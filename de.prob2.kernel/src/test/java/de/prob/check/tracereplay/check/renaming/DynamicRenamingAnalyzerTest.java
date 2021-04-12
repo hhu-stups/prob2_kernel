@@ -19,9 +19,9 @@ import de.prob.check.tracereplay.check.renamig.CheckerInterface;
 import de.prob.check.tracereplay.check.renamig.DeltaCalculationException;
 import de.prob.check.tracereplay.check.renamig.DynamicRenamingAnalyzer;
 import de.prob.check.tracereplay.check.renamig.PrepareOperationsInterface;
+import de.prob.check.tracereplay.check.renamig.PreparedOperation;
 import de.prob.check.tracereplay.check.renamig.PrologTermNotDefinedException;
 import de.prob.check.tracereplay.check.renamig.RenamingDelta;
-import de.prob.check.tracereplay.check.renamig.Triple;
 import de.prob.cli.CliTestCommon;
 import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
@@ -45,7 +45,7 @@ public class DynamicRenamingAnalyzerTest {
 		CheckerInterface fakeCheckerInterface = (prepareOperations, candidate) -> new HashMap<>();
 
 
-		PrepareOperationsInterface fakePrepareOperationsInterface = (operation) -> new Triple<>(new ListPrologTerm(),
+		PrepareOperationsInterface fakePrepareOperationsInterface = (operation) -> new PreparedOperation(new ListPrologTerm(),
 				new ListPrologTerm(), new CompoundPrologTerm("a"));
 
 
@@ -66,8 +66,8 @@ public class DynamicRenamingAnalyzerTest {
 	@Test
 	void checkDeterministicPairs_test_one_gets_removed() throws PrologTermNotDefinedException {
 
-		CheckerInterface fakeCheckerInterface = (prepareOperations, candidate) -> {
-			if(prepareOperations.getThird().equals(new CompoundPrologTerm("inc"))){
+		CheckerInterface fakeCheckerInterface = (preparedOperation, candidate) -> {
+			if(preparedOperation.getPreparedAst().equals(new CompoundPrologTerm("inc"))){
 				return new HashMap<>();
 			}else{
 				Map<String, String> result = new HashMap<>();
@@ -78,7 +78,7 @@ public class DynamicRenamingAnalyzerTest {
 
 
 		PrepareOperationsInterface fakePrepareOperationsInterface = (operation) ->
-				new Triple<>(new ListPrologTerm(), new ListPrologTerm(), operation);
+				new PreparedOperation(new ListPrologTerm(), new ListPrologTerm(), operation);
 
 		Map<String, CompoundPrologTerm> oldOperation = new HashMap<>();
 		oldOperation.put("inc", new CompoundPrologTerm("inc"));
@@ -123,7 +123,7 @@ public class DynamicRenamingAnalyzerTest {
 
 
 		PrepareOperationsInterface fakePrepareOperationsInterface = (operation) ->
-				new Triple<>(new ListPrologTerm(), new ListPrologTerm(), operation);
+				new PreparedOperation(new ListPrologTerm(), new ListPrologTerm(), operation);
 
 		Map<String, CompoundPrologTerm> oldOperation = new HashMap<>();
 		oldOperation.put("inc", new CompoundPrologTerm("inc"));
@@ -230,13 +230,13 @@ public class DynamicRenamingAnalyzerTest {
 
 		Map<String, CompoundPrologTerm> newOperations = dynamicRenamingAnalyzer.getOperations(pathAsString);
 
-		Triple<ListPrologTerm, ListPrologTerm, CompoundPrologTerm> result =
+		PreparedOperation result =
 				dynamicRenamingAnalyzer.prepareOperationsInterface.prepareOperation(newOperations.get("getfloors"));
 
 
 		Assertions.assertEquals(new ListPrologTerm(new CompoundPrologTerm("floors"),
 				new CompoundPrologTerm("getfloors"),
-				new CompoundPrologTerm("out")), result.getFirst());
+				new CompoundPrologTerm("out")), result.getFoundVariables());
 
 	}
 
@@ -264,7 +264,7 @@ public class DynamicRenamingAnalyzerTest {
 		Map<String, CompoundPrologTerm> oldOperations = dynamicRenamingAnalyzer.getOperations(pathAsStringOld);
 		Map<String, CompoundPrologTerm> newOperations = dynamicRenamingAnalyzer.getOperations(pathAsString);
 
-		Triple<ListPrologTerm, ListPrologTerm, CompoundPrologTerm> oldInc =
+		PreparedOperation oldInc =
 				dynamicRenamingAnalyzer.prepareOperationsInterface.prepareOperation(oldOperations.get("inc"));
 
 

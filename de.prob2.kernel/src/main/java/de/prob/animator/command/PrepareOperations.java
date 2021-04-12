@@ -1,7 +1,6 @@
 package de.prob.animator.command;
 
-
-import de.prob.check.tracereplay.check.renamig.Triple;
+import de.prob.check.tracereplay.check.renamig.PreparedOperation;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.CompoundPrologTerm;
@@ -60,8 +59,8 @@ public class PrepareOperations extends AbstractCommand {
 		return preparedOperation;
 	}
 
-	public Triple<ListPrologTerm, ListPrologTerm, CompoundPrologTerm> asTriple(){
-		return new Triple<>(foundVars, freeVars, preparedOperation);
+	public PreparedOperation asPreparedOperation() {
+		return new PreparedOperation(this.getFoundVars(), this.getFreeVars(), this.getPreparedOperation());
 	}
 
 	public ListPrologTerm getNotReachableNodes() {

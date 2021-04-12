@@ -8,7 +8,6 @@ import de.prob.animator.command.PrepareOperations;
 import de.prob.check.tracereplay.check.TraceCheckerUtils;
 import de.prob.exception.ProBError;
 import de.prob.prolog.term.CompoundPrologTerm;
-import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
@@ -44,16 +43,16 @@ public class DynamicRenamingAnalyzer implements RenamingAnalyzerInterface {
 	/**
 	 * Wraps a stateful call and make it replaceable with a stateless call
 	 */
-	public final CheckerInterface checkerInterface = (prepareOperationTriple, candidate) -> {
-		CompareTwoOperations compareTwoOperations = new CompareTwoOperations(prepareOperationTriple.third,
-				candidate, prepareOperationTriple.second);
+	public final CheckerInterface checkerInterface = (preparedOperation, candidate) -> {
+		CompareTwoOperations compareTwoOperations = new CompareTwoOperations(preparedOperation.getPreparedAst(),
+				candidate, preparedOperation.getFreeVariables());
 		try {
 			animator.execute(compareTwoOperations);
 		} catch (ProBError e) {
 			return new HashMap<>();
 		}
 
-		final List<String> oldIdentifiers = PrologTerm.atomicStrings(prepareOperationTriple.first);
+		final List<String> oldIdentifiers = PrologTerm.atomicStrings(preparedOperation.getFoundVariables());
 		final List<String> newIdentifiers = compareTwoOperations.getIdentifiers();
 		assert oldIdentifiers.size() == newIdentifiers.size();
 		return TraceCheckerUtils.zip(oldIdentifiers, newIdentifiers);
@@ -69,7 +68,7 @@ public class DynamicRenamingAnalyzer implements RenamingAnalyzerInterface {
 		if(!prepareOperations.getNotReachableNodes().isEmpty()) {
 			throw new PrologTermNotDefinedException(prepareOperations.getNotReachableNodes());
 		}
-		return prepareOperations.asTriple();
+		return prepareOperations.asPreparedOperation();
 	};
 
 
@@ -146,7 +145,7 @@ public class DynamicRenamingAnalyzer implements RenamingAnalyzerInterface {
 
 		for(String entry : candidates) {
 
-			Triple<ListPrologTerm, ListPrologTerm, CompoundPrologTerm> result = prepareOperationsInterface.prepareOperation(oldOperation.get(entry));
+			PreparedOperation result = prepareOperationsInterface.prepareOperation(oldOperation.get(entry));
 
 			sideResult.put(entry, checkFunction.checkTypeII(result, newOperation.get(entry)));
 
@@ -178,7 +177,7 @@ public class DynamicRenamingAnalyzer implements RenamingAnalyzerInterface {
 		Map<String, Map<String, Map<String, String>>> sideResult = new HashMap<>();
 
 		for(Map.Entry<String, Set<String>> entry : candidates.entrySet()){
-			Triple<ListPrologTerm, ListPrologTerm, CompoundPrologTerm> preparedTerm =  prepareOperationsInterface
+			PreparedOperation preparedTerm =  prepareOperationsInterface
 					.prepareOperation(oldOperation.get(entry.getKey()));
 			Map<String, Map<String, String>> newValue = entry.getValue()
 					.stream()
