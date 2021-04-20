@@ -50,6 +50,11 @@ public class ModelCheckingOptions {
 		this.options = options;
 	}
 
+	public ModelCheckingOptions(final Set<Options> options) {
+		this.options = EnumSet.noneOf(Options.class);
+		this.options.addAll(options);
+	}
+
 	public ModelCheckingOptions breadthFirst(final boolean value) {
 		return changeOption(value, Options.BREADTH_FIRST_SEARCH);
 	}
