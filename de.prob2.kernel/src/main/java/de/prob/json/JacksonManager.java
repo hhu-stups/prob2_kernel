@@ -38,28 +38,6 @@ public final class JacksonManager<T extends HasMetadata> {
 		protected final Class<T> clazz;
 		protected final String fileType;
 		protected final int currentFormatVersion;
-		protected final boolean supportOldMetadata;
-		
-		/**
-		 * Initialize the context's required properties.
-		 * 
-		 * @param objectMapper the Jackson {@link ObjectMapper} to use to parse and serialize the JSON data
-		 * @param clazz the class to which the JSON root object should be mapped
-		 * @param fileType a string uniquely identifying the type of JSON data
-		 * @param currentFormatVersion the version number for the current version of this format - should be incremented whenever the format changes in a way that previous versions of the code cannot read it anymore
-		 * @param supportOldMetadata whether to accept old metadata (produced by ProB 2 UI 1.0 and earlier) - should be set to {@code false} for new file formats
-		 * 
-		 * @deprecated Use {@link #Context(ObjectMapper, Class, String, int)} without the {@code supportOldMetadata} parameter instead. If you need support for old metadata, override {@link #shouldAcceptOldMetadata()} to return {@code true}.
-		 */
-		@Deprecated
-		public Context(final ObjectMapper objectMapper, final Class<T> clazz, final String fileType, final int currentFormatVersion, final boolean supportOldMetadata) {
-			this.objectMapper = Objects.requireNonNull(objectMapper, "objectMapper");
-			initObjectMapper(this.objectMapper);
-			this.clazz = Objects.requireNonNull(clazz, "clazz");
-			this.fileType = Objects.requireNonNull(fileType, "fileType");
-			this.currentFormatVersion = currentFormatVersion;
-			this.supportOldMetadata = supportOldMetadata;
-		}
 		
 		/**
 		 * Initialize the context's required properties.
@@ -75,7 +53,6 @@ public final class JacksonManager<T extends HasMetadata> {
 			this.clazz = Objects.requireNonNull(clazz, "clazz");
 			this.fileType = Objects.requireNonNull(fileType, "fileType");
 			this.currentFormatVersion = currentFormatVersion;
-			this.supportOldMetadata = false;
 		}
 		
 		/**
@@ -90,7 +67,7 @@ public final class JacksonManager<T extends HasMetadata> {
 		 * @return whether to accept JSON data with old or no metadata
 		 */
 		public boolean shouldAcceptOldMetadata() {
-			return this.supportOldMetadata;
+			return false;
 		}
 		
 		/**
