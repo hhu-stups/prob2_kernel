@@ -48,7 +48,10 @@ public final class JacksonManager<T extends HasMetadata> {
 		 * @param fileType a string uniquely identifying the type of JSON data
 		 * @param currentFormatVersion the version number for the current version of this format - should be incremented whenever the format changes in a way that previous versions of the code cannot read it anymore
 		 * @param supportOldMetadata whether to accept old metadata (produced by ProB 2 UI 1.0 and earlier) - should be set to {@code false} for new file formats
+		 * 
+		 * @deprecated Use {@link #Context(ObjectMapper, Class, String, int)} without the {@code supportOldMetadata} parameter instead. If you need support for old metadata, override {@link #shouldAcceptOldMetadata()} to return {@code true}.
 		 */
+		@Deprecated
 		public Context(final ObjectMapper objectMapper, final Class<T> clazz, final String fileType, final int currentFormatVersion, final boolean supportOldMetadata) {
 			this.objectMapper = Objects.requireNonNull(objectMapper, "objectMapper");
 			initObjectMapper(this.objectMapper);
@@ -56,6 +59,38 @@ public final class JacksonManager<T extends HasMetadata> {
 			this.fileType = Objects.requireNonNull(fileType, "fileType");
 			this.currentFormatVersion = currentFormatVersion;
 			this.supportOldMetadata = supportOldMetadata;
+		}
+		
+		/**
+		 * Initialize the context's required properties.
+		 * 
+		 * @param objectMapper the Jackson {@link ObjectMapper} to use to parse and serialize the JSON data
+		 * @param clazz the class to which the JSON root object should be mapped
+		 * @param fileType a string uniquely identifying the type of JSON data
+		 * @param currentFormatVersion the version number for the current version of this format - should be incremented whenever the format changes in a way that previous versions of the code cannot read it anymore
+		 */
+		public Context(final ObjectMapper objectMapper, final Class<T> clazz, final String fileType, final int currentFormatVersion) {
+			this.objectMapper = Objects.requireNonNull(objectMapper, "objectMapper");
+			initObjectMapper(this.objectMapper);
+			this.clazz = Objects.requireNonNull(clazz, "clazz");
+			this.fileType = Objects.requireNonNull(fileType, "fileType");
+			this.currentFormatVersion = currentFormatVersion;
+			this.supportOldMetadata = false;
+		}
+		
+		/**
+		 * Whether to accept JSON data with old or no metadata, as produced by ProB 2 UI 1.0 and earlier.
+		 * Returns {@code false} by default.
+		 * 
+		 * This method only exists to support loading data from old ProB 2 UI versions. 
+		 * For new data formats, this method should <i>not</i> be used.
+		 * For existing data formats that need to support old files with old/no metadata (e. g. trace files),
+		 * this method can be overridden to return {@code true}.
+		 * 
+		 * @return whether to accept JSON data with old or no metadata
+		 */
+		public boolean shouldAcceptOldMetadata() {
+			return this.supportOldMetadata;
 		}
 		
 		/**
@@ -162,7 +197,7 @@ public final class JacksonManager<T extends HasMetadata> {
 			// In this case, there is no explicit file type information in the JSON file.
 			// This means that the file type cannot be checked automatically,
 			// so make sure that the context wants/expects this.
-			if (!this.getContext().supportOldMetadata) {
+			if (!this.getContext().shouldAcceptOldMetadata()) {
 				throw new InvalidJsonFormatException("JSON data of type " + this.getContext().fileType + " requires new metadata format, but the loaded JSON file doesn't contain a \"metadata\" field");
 			}
 			

@@ -21,7 +21,12 @@ public class TraceManager  {
 	@Inject
 	public TraceManager(ObjectMapper objectMapper, final JacksonManager<TraceJsonFile> jacksonManager) {
 		this.jacksonManager = jacksonManager;
-		this.jacksonManager.initContext(new JacksonManager.Context<TraceJsonFile>(objectMapper, TraceJsonFile.class, TraceJsonFile.FILE_TYPE, TraceJsonFile.CURRENT_FORMAT_VERSION, true) {
+		this.jacksonManager.initContext(new JacksonManager.Context<TraceJsonFile>(objectMapper, TraceJsonFile.class, TraceJsonFile.FILE_TYPE, TraceJsonFile.CURRENT_FORMAT_VERSION) {
+			@Override
+			public boolean shouldAcceptOldMetadata() {
+				return true;
+			}
+
 			@Override
 			public ObjectNode convertOldData(final ObjectNode oldObject, final int oldVersion) {
 				if (oldVersion <= 0) {
