@@ -52,6 +52,4 @@ abstract class AbstractCliPattern<T> {
 	 * the command loop is reached.
 	 */
 	public abstract void notifyNotFound();
-
-	public abstract boolean notFoundIsFatal();
 }

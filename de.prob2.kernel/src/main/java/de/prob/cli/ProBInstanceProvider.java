@@ -159,9 +159,7 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 		// todoL also provide actual input (line) above in error message
 		for (AbstractCliPattern<?> p : patternsList) {
 			p.notifyNotFound();
-			if (p.notFoundIsFatal()) {
-				throw new CliError("Missing info from CLI " + p.getClass().getSimpleName());
-			}
+			throw new CliError("Missing info from CLI " + p.getClass().getSimpleName());
 		}
 	}
 

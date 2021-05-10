@@ -39,10 +39,4 @@ class InterruptRefPattern extends AbstractCliPattern<Long> {
 		logger.error("Cannot determine process/thread ID of the Prolog core");
 
 	}
-
-	@Override
-	public boolean notFoundIsFatal() {
-		return true;
-	}
-
 }

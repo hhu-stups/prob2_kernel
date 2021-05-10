@@ -42,10 +42,4 @@ class PortPattern extends AbstractCliPattern<Integer> {
 	public void notifyNotFound() {
 		logger.error("Could not determine port of ProB server");
 	}
-
-	@Override
-	public boolean notFoundIsFatal() {
-		return true;
-	}
-
 }
