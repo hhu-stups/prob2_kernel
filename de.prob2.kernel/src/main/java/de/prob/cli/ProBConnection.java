@@ -1,5 +1,6 @@
 package de.prob.cli;
 
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -68,13 +69,14 @@ public class ProBConnection {
 	}
 
 	public String getAnswer() throws IOException {
-		String input = inputScanner.next();
+		String input;
+		try {
+			input = inputScanner.next();
+		} catch (NoSuchElementException e) {
+			throw new IOException("ProB binary returned nothing - it might have crashed", e);
+		}
 	   // no need to do this anymore?: treated as ignore token in answerparser:
 	   //          input.replace("\r", "").replace("\n", ""); // were two traversals !
-		if (input == null) {
-			throw new IOException(
-					"ProB binary returned nothing - it might have crashed");
-		}
 		logger.trace(input);
 		return input;
 	}
