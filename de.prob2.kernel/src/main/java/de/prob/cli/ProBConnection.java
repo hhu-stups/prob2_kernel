@@ -27,6 +27,8 @@ public class ProBConnection {
 		this.port = port;
 
 		logger.debug("Connecting to port {} using key {}", this.port, this.key);
+		// The socket is closed in .disconnect() by closing its input/output streams.
+		@SuppressWarnings({"resource", "IOResourceOpenedButNotSafelyClosed", "SocketOpenedButNotSafelyClosed"})
 		final Socket socket = new Socket(InetAddress.getByName(null), this.port);
 		inputScanner = new Scanner(socket.getInputStream()).useDelimiter("\u0001"); // Prolog sends character 1 to terminate its outputs
 		outputStream = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8));
@@ -71,6 +73,8 @@ public class ProBConnection {
 
 	public void disconnect() {
 		shutingDown = true;
+		inputScanner.close();
+		outputStream.close();
 	}
 
 	public String getKey() {
