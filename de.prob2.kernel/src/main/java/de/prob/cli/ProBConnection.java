@@ -3,7 +3,6 @@ package de.prob.cli;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetAddress;
@@ -16,32 +15,28 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ProBConnection {
-	private Socket socket;
-	private Scanner inputScanner;
-	private PrintWriter outputStream;
+	private final Scanner inputScanner;
+	private final PrintWriter outputStream;
 	private final Logger logger = LoggerFactory.getLogger(ProBConnection.class);
 	private volatile boolean shutingDown;
 	private final String key;
 	private final int port;
 
-	public ProBConnection(final String key, final int port) {
+	public ProBConnection(final String key, final int port) throws IOException {
 		this.key = key;
 		this.port = port;
+
+		logger.debug("Connecting to port {} using key {}", this.port, this.key);
+		final Socket socket = new Socket(InetAddress.getByName(null), this.port);
+		inputScanner = new Scanner(socket.getInputStream()).useDelimiter("\u0001"); // Prolog sends character 1 to terminate its outputs
+		outputStream = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8));
+		logger.debug("Connected");
 	}
 
 	@Override
 	public String toString() {
 		return MoreObjects.toStringHelper(ProBConnection.class).add("key", key)
 				.add("port", port).toString();
-	}
-
-	public void connect() throws IOException {
-		logger.debug("Connecting to port {} using key {}", port, key);
-		socket = new Socket(InetAddress.getByName(null), port);
-		inputScanner = new Scanner(socket.getInputStream()).useDelimiter("\u0001"); // Prolog sends character 1 to terminate its outputs
-		OutputStream outstream = socket.getOutputStream();
-		outputStream = new PrintWriter(new OutputStreamWriter(outstream, StandardCharsets.UTF_8));
-		logger.debug("Connected");
 	}
 
 	private static String shorten(final String s) {
@@ -57,10 +52,8 @@ public class ProBConnection {
 			logger.error("Cannot send terms while probcli is shutting down: {}", term);
 			throw new IOException("ProB has been shut down. It does not accept messages.");
 		}
-		if (isStreamReady()) {
-			outputStream.println(term);
-			outputStream.flush();
-		}
+		outputStream.println(term);
+		outputStream.flush();
 		String answer = getAnswer();
 		return answer;
 	}
@@ -74,14 +67,6 @@ public class ProBConnection {
 		}
 		logger.trace(input);
 		return input;
-	}
-
-	private boolean isStreamReady() {
-		if (inputScanner == null || outputStream == null) {
-			logger.warn("Stream to ProB server not ready");
-			return false;
-		}
-		return true;
 	}
 
 	public void disconnect() {

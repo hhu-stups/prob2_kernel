@@ -105,10 +105,9 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 		Long userInterruptReference = ((InterruptRefPattern) cliInformation
 				.get(InterruptRefPattern.class)).getValue();
 
-		ProBConnection connection = new ProBConnection(key, port);
-
+		final ProBConnection connection;
 		try {
-			connection.connect();
+			connection = new ProBConnection(key, port);
 		} catch (IOException e) {
 			throw new CliError("Error connecting to Prolog binary.", e);
 		}
