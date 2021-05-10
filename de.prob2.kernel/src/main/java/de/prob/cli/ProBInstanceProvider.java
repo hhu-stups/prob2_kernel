@@ -5,14 +5,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -45,6 +43,9 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 	}
 
 	private static final Logger logger = LoggerFactory.getLogger(ProBInstanceProvider.class);
+
+	static final Pattern CLI_PORT_PATTERN = Pattern.compile("^.*Port: (\\d+)$");
+	static final Pattern CLI_USER_INTERRUPT_REFERENCE_PATTERN = Pattern.compile("^.*user interrupt reference id: *(\\d+) *$");
 
 	private final PrologProcessProvider processProvider;
 	private final String home;
@@ -131,21 +132,16 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 		return cli;
 	}
 
-	CliInformation extractCliInformation(final BufferedReader input) {
-		final PortPattern portPattern = new PortPattern();
-		final InterruptRefPattern intPattern = new InterruptRefPattern();
-		analyseStdout(input, Arrays.asList(portPattern, intPattern));
-		return new CliInformation(portPattern.getValue(), intPattern.getValue());
-	}
-
 	// prob_socketserver.pl prints the following:
 	// format(Stdout,'Port: ~w~n', [Port]),
 	// format(Stdout,'probcli revision: ~w~n',[Revision]),
 	// format(Stdout,'user interrupt reference id: ~w~n',[Ref]),
 	// format(Stdout,'-- starting command loop --~n', []),
 	// The patterns match some of the lines and collect info
-	private static void analyseStdout(final BufferedReader input, final Collection<? extends AbstractCliPattern<?>> patterns) {
-		final List<AbstractCliPattern<?>> patternsList = new ArrayList<>(patterns);
+	CliInformation extractCliInformation(final BufferedReader input) {
+		Integer port = null;
+		Long userInterruptReference = null;
+
 		try {
 			String line;
 			do {
@@ -154,23 +150,32 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 					break;
 				}
 				logger.info("Apply cli detection patterns to {}", line);
-				applyPatterns(patternsList, line);
-			} while (!patternsList.isEmpty() && !line.contains("starting command loop"));
+
+				final Matcher portMatcher = CLI_PORT_PATTERN.matcher(line);
+				if (portMatcher.matches()) {
+					port = Integer.parseInt(portMatcher.group(1));
+					logger.info("Server has started and listens on port {}", port);
+				}
+
+				final Matcher userInterruptReferenceMatcher = CLI_USER_INTERRUPT_REFERENCE_PATTERN.matcher(line);
+				if (userInterruptReferenceMatcher.matches()) {
+					userInterruptReference = Long.parseLong(userInterruptReferenceMatcher.group(1));
+					logger.info("Server can receive user interrupts via reference {}", userInterruptReference);
+				}
+			} while ((port == null || userInterruptReference == null) && !line.contains("starting command loop"));
 		} catch (IOException e) {
 			final String message = "Problem while starting ProB. Cannot read from input stream.";
 			logger.error(message);
 			logger.debug(message, e);
 			throw new CliError(message, e);
 		}
-		// if p is not empty we have failed to find some patterns:
-		// todoL also provide actual input (line) above in error message
-		for (AbstractCliPattern<?> p : patternsList) {
-			p.notifyNotFound();
-			throw new CliError("Missing info from CLI " + p.getClass().getSimpleName());
-		}
-	}
 
-	private static void applyPatterns(final Collection<? extends AbstractCliPattern<?>> patterns, final String line) {
-		patterns.removeIf(p -> p.matchesLine(line));
+		if (port == null) {
+			throw new CliError("Did not receive port number from CLI");
+		}
+		if (userInterruptReference == null) {
+			throw new CliError("Did not receive user interrupt reference from CLI");
+		}
+		return new CliInformation(port, userInterruptReference);
 	}
 }
