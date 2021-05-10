@@ -6,11 +6,10 @@ import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -27,6 +26,24 @@ import org.slf4j.LoggerFactory;
 
 @Singleton
 public final class ProBInstanceProvider implements Provider<ProBInstance> {
+	static final class CliInformation {
+		private final int port;
+		private final long userInterruptReference;
+
+		CliInformation(final int port, final long userInterruptReference) {
+			this.port = port;
+			this.userInterruptReference = userInterruptReference;
+		}
+
+		int getPort() {
+			return port;
+		}
+
+		long getUserInterruptReference() {
+			return userInterruptReference;
+		}
+	}
+
 	private static final Logger logger = LoggerFactory.getLogger(ProBInstanceProvider.class);
 
 	private final PrologProcessProvider processProvider;
@@ -85,7 +102,7 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 		final BufferedReader stream = new BufferedReader(new InputStreamReader(
 				process.getInputStream(), StandardCharsets.UTF_8));
 
-		final Map<Class<? extends AbstractCliPattern<?>>, AbstractCliPattern<?>> cliInformation;
+		final CliInformation cliInformation;
 		try {
 			cliInformation = extractCliInformation(stream);
 		} catch (CliError e) {
@@ -100,35 +117,25 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 			}
 		}
 
-		Integer port = ((PortPattern) cliInformation.get(PortPattern.class))
-				.getValue();
-		Long userInterruptReference = ((InterruptRefPattern) cliInformation
-				.get(InterruptRefPattern.class)).getValue();
-
 		final ProBConnection connection;
 		try {
-			connection = new ProBConnection(key, port);
+			connection = new ProBConnection(key, cliInformation.getPort());
 		} catch (IOException e) {
 			throw new CliError("Error connecting to Prolog binary.", e);
 		}
 		processCounter.incrementAndGet();
 		ProBInstance cli = new ProBInstance(process, stream,
-				userInterruptReference, connection, home, osInfo,
+				cliInformation.getUserInterruptReference(), connection, home, osInfo,
 				processCounter);
 		processes.add(new WeakReference<>(cli));
 		return cli;
 	}
 
-	Map<Class<? extends AbstractCliPattern<?>>, AbstractCliPattern<?>> extractCliInformation(
-			final BufferedReader input) {
+	CliInformation extractCliInformation(final BufferedReader input) {
 		final PortPattern portPattern = new PortPattern();
 		final InterruptRefPattern intPattern = new InterruptRefPattern();
-
-		Map<Class<? extends AbstractCliPattern<?>>, AbstractCliPattern<?>> pattern = new HashMap<>();
-		pattern.put(PortPattern.class, portPattern);
-		pattern.put(InterruptRefPattern.class, intPattern);
-		analyseStdout(input, pattern.values());
-		return pattern;
+		analyseStdout(input, Arrays.asList(portPattern, intPattern));
+		return new CliInformation(portPattern.getValue(), intPattern.getValue());
 	}
 
 	// prob_socketserver.pl prints the following:

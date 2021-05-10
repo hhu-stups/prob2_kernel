@@ -2,11 +2,9 @@ package de.prob.cli;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
-import java.util.Map;
 
+import org.junit.Assert;
 import org.junit.Test;
-
-import static org.junit.Assert.assertNotNull;
 
 public class ProBInstanceProviderTest {
 
@@ -21,12 +19,10 @@ public class ProBInstanceProviderTest {
 
 		BufferedReader reader = new BufferedReader(new StringReader(text));
 
-		Map<Class<? extends AbstractCliPattern<?>>, AbstractCliPattern<?>> info = factory
-				.extractCliInformation(reader);
+		ProBInstanceProvider.CliInformation info = factory.extractCliInformation(reader);
 
-		assertNotNull(info.get(InterruptRefPattern.class));
-
-		assertNotNull(info.get(PortPattern.class));
-
+		Assert.assertNotNull(info);
+		Assert.assertEquals(61013, info.getPort());
+		Assert.assertEquals(57124, info.getUserInterruptReference());
 	}
 }
