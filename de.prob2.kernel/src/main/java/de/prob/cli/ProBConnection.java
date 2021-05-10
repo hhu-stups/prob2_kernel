@@ -72,8 +72,6 @@ public class ProBConnection {
 		} catch (NoSuchElementException e) {
 			throw new IOException("ProB binary returned nothing - it might have crashed", e);
 		}
-	   // no need to do this anymore?: treated as ignore token in answerparser:
-	   //          input.replace("\r", "").replace("\n", ""); // were two traversals !
 		logger.trace(input);
 		return input;
 	}
