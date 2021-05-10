@@ -111,7 +111,7 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 			final Optional<Integer> exitCode = getProcessExitCode(process);
 			if (exitCode.isPresent()) {
 				// CLI exited, report the exit code.
-				throw new CliError("CLI exited with status " + exitCode.get() + " while matching output patterns", e);
+				throw new CliError("CLI exited with status " + exitCode.get() + " before socket connection could be opened", e);
 			} else {
 				// CLI didn't exit, just rethrow the error.
 				throw e;
@@ -122,7 +122,7 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 		try {
 			connection = new ProBConnection(key, cliInformation.getPort());
 		} catch (IOException e) {
-			throw new CliError("Error connecting to Prolog binary.", e);
+			throw new CliError("Error while opening socket connection to CLI", e);
 		}
 		processCounter.incrementAndGet();
 		ProBInstance cli = new ProBInstance(process, stream,
@@ -149,25 +149,22 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 				if (line == null) {
 					break;
 				}
-				logger.info("Apply cli detection patterns to {}", line);
+				logger.info("CLI startup output: {}", line);
 
 				final Matcher portMatcher = CLI_PORT_PATTERN.matcher(line);
 				if (portMatcher.matches()) {
 					port = Integer.parseInt(portMatcher.group(1));
-					logger.info("Server has started and listens on port {}", port);
+					logger.info("Received port number from CLI: {}", port);
 				}
 
 				final Matcher userInterruptReferenceMatcher = CLI_USER_INTERRUPT_REFERENCE_PATTERN.matcher(line);
 				if (userInterruptReferenceMatcher.matches()) {
 					userInterruptReference = Long.parseLong(userInterruptReferenceMatcher.group(1));
-					logger.info("Server can receive user interrupts via reference {}", userInterruptReference);
+					logger.info("Received user interrupt reference from CLI: {}", userInterruptReference);
 				}
 			} while ((port == null || userInterruptReference == null) && !line.contains("starting command loop"));
 		} catch (IOException e) {
-			final String message = "Problem while starting ProB. Cannot read from input stream.";
-			logger.error(message);
-			logger.debug(message, e);
-			throw new CliError(message, e);
+			throw new CliError("Error while reading information from CLI", e);
 		}
 
 		if (port == null) {
