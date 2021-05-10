@@ -142,30 +142,30 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 		Integer port = null;
 		Long userInterruptReference = null;
 
-		try {
-			String line;
-			do {
+		String line;
+		do {
+			try {
 				line = input.readLine();
-				if (line == null) {
-					break;
-				}
-				logger.info("CLI startup output: {}", line);
-
-				final Matcher portMatcher = CLI_PORT_PATTERN.matcher(line);
-				if (portMatcher.matches()) {
-					port = Integer.parseInt(portMatcher.group(1));
-					logger.info("Received port number from CLI: {}", port);
-				}
-
-				final Matcher userInterruptReferenceMatcher = CLI_USER_INTERRUPT_REFERENCE_PATTERN.matcher(line);
-				if (userInterruptReferenceMatcher.matches()) {
-					userInterruptReference = Long.parseLong(userInterruptReferenceMatcher.group(1));
-					logger.info("Received user interrupt reference from CLI: {}", userInterruptReference);
-				}
-			} while ((port == null || userInterruptReference == null) && !line.contains("starting command loop"));
-		} catch (IOException e) {
-			throw new CliError("Error while reading information from CLI", e);
-		}
+			} catch (IOException e) {
+				throw new CliError("Error while reading information from CLI", e);
+			}
+			if (line == null) {
+				break;
+			}
+			logger.info("CLI startup output: {}", line);
+			
+			final Matcher portMatcher = CLI_PORT_PATTERN.matcher(line);
+			if (portMatcher.matches()) {
+				port = Integer.parseInt(portMatcher.group(1));
+				logger.info("Received port number from CLI: {}", port);
+			}
+			
+			final Matcher userInterruptReferenceMatcher = CLI_USER_INTERRUPT_REFERENCE_PATTERN.matcher(line);
+			if (userInterruptReferenceMatcher.matches()) {
+				userInterruptReference = Long.parseLong(userInterruptReferenceMatcher.group(1));
+				logger.info("Received user interrupt reference from CLI: {}", userInterruptReference);
+			}
+		} while ((port == null || userInterruptReference == null) && !line.contains("starting command loop"));
 
 		if (port == null) {
 			throw new CliError("Did not receive port number from CLI");
