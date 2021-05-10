@@ -16,9 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ProBConnection {
-
-	private static final int BUFFER_SIZE = 1024;
-
 	private Socket socket;
 	private Scanner inputScanner;
 	private PrintWriter outputStream;
