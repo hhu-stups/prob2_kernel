@@ -3,6 +3,7 @@ package de.prob.check.tracereplay.check.renamig;
 import de.prob.prolog.term.PrologTerm;
 
 public class PrologTermNotDefinedException extends Exception {
+	private static final long serialVersionUID = 1L;
 
 	final PrologTerm prologTerm;
 

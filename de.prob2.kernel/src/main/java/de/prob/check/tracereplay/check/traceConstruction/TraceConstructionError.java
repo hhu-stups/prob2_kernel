@@ -6,6 +6,7 @@ import de.prob.statespace.Transition;
 import java.util.List;
 
 public class TraceConstructionError extends Exception{
+	private static final long serialVersionUID = 1L;
 
 	final List<String> errors;
 	final List<Transition> trace;
