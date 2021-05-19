@@ -3,8 +3,8 @@ package de.prob.check.tracereplay.check.renamig;
 import de.prob.check.tracereplay.check.exploration.TraceExplorer;
 import de.prob.statespace.OperationInfo;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyMap;
@@ -51,11 +51,26 @@ public class RenamingDelta {
 				mappings.entrySet().stream()
 				.filter(entry -> entry.getKey().equals(TraceExplorer.MappingNames.VARIABLES_MODIFIED) ||
 						entry.getKey().equals(TraceExplorer.MappingNames.VARIABLES_READ))
+
 				.flatMap(entry -> entry.getValue().entrySet().stream())
 						.collect(Collectors.toSet())//through the split earlier there are entries with the same value, that would lead to a map execpetion, so we get rid of double elements
 						.stream()
+				.filter(new Predicate<Map.Entry<String, String>>() {
+					final Set<String>  keySeen = new HashSet<>();
+					@Override
+					public boolean test(Map.Entry<String, String> stringStringEntry) {
+						if(!keySeen.contains(stringStringEntry.getKey())){
+							keySeen.add(stringStringEntry.getKey());
+							return true;
+						}
+						return keySeen.add(stringStringEntry.getKey());
+
+					}
+				})
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
 	}
+
+
 
 	/**
 	 * Like the other constructor - the candidates are splitted
@@ -76,8 +91,8 @@ public class RenamingDelta {
 
 	/**
 	 * Constructor for initialisation
-	 * @param name
-	 * @param variables
+	 * @param name name of init transition
+	 * @param variables the variables initialised
 	 */
 	public RenamingDelta(String name, Map<String, String> variables){
 		this.originalName = name;
@@ -114,10 +129,10 @@ public class RenamingDelta {
 	}
 
 	public boolean isPointless(){
-		return !originalName.equals(deltaName) || mapIsEqual(inputParameters) || mapIsEqual(outputParameters) || mapIsEqual(variables);
+		return originalName.equals(deltaName) && mapIsEqual(inputParameters) && mapIsEqual(outputParameters) && mapIsEqual(variables);
 	}
 
 	public static boolean mapIsEqual(Map<String, String> input){
-		return !input.entrySet().stream().allMatch(entry -> entry.getKey().equals(entry.getValue()));
+		return input.entrySet().stream().allMatch(entry -> entry.getKey().equals(entry.getValue()));
 	}
 }

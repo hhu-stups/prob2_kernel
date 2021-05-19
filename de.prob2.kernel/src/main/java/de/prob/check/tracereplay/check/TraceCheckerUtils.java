@@ -206,7 +206,7 @@ public class TraceCheckerUtils {
 	 * Extract diagonals and anti diagonals of a matrix, preserves order
 	 * @param m the first vector
 	 * @param n the second vector
-	 * @return all diagonals
+	 * @return all diagonals mapping of the form m:n
 	 */
 	public static Set<Map<String, String>> allDiagonals(List<String> m, List<String> n){
 		Set<Map<String, String>> first = extractDiagonals(m,n);

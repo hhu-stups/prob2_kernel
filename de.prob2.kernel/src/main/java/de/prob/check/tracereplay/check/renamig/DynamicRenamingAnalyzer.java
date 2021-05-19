@@ -30,7 +30,6 @@ public class DynamicRenamingAnalyzer implements RenamingAnalyzerInterface {
 	private ReusableAnimator animator;
 	private final String oldMachine;
 	private final String newMachine;
-	private final Injector injector;
 	private final boolean typeIOrIICandidate;
 	private final Map<String, OperationInfo> oldMachineInfos;
 
@@ -40,6 +39,7 @@ public class DynamicRenamingAnalyzer implements RenamingAnalyzerInterface {
 	private Map<String, String> resultInitTypeII;
 
 
+	private final Injector injector;
 	/**
 	 * Wraps a stateful call and make it replaceable with a stateless call
 	 */
@@ -81,10 +81,10 @@ public class DynamicRenamingAnalyzer implements RenamingAnalyzerInterface {
 		this.typeIICandidates = typeIICandidates;
 		this.oldMachine = oldMachine;
 		this.newMachine = newMachine;
-		this.injector = injector;
 		this.animator = injector.getInstance(ReusableAnimator.class);
 		this.typeIOrIICandidate = typeIorIICandidate;
 		this.oldMachineInfos = oldMachineInfos;
+		this.injector = injector;
 	}
 
 
@@ -123,6 +123,7 @@ public class DynamicRenamingAnalyzer implements RenamingAnalyzerInterface {
 		}
 
 	}
+
 
 
 	/**
@@ -198,19 +199,6 @@ public class DynamicRenamingAnalyzer implements RenamingAnalyzerInterface {
 	}
 
 
-	/**
-	 * Loads the old referenced machine into the state space and retracts its operations,
-	 * then loads the current machine back into the animator
-	 * @param path the path of the currently not loaded machine
-	 * @return a map of operations
-	 * @throws IOException file not found
-	 */
-	public Map<String, CompoundPrologTerm> getOperations(String path) throws IOException {
-		StateSpace stateSpace = TraceCheckerUtils.createStateSpace(path, injector);
-		GetMachineOperationsFull getMachineOperationsFull = new GetMachineOperationsFull();
-		stateSpace.execute(getMachineOperationsFull);
-		return getMachineOperationsFull.getOperationsWithNames();
-	}
 
 
 	public Map<String, Map<String, String>> getResultTypeII() {
@@ -235,11 +223,28 @@ public class DynamicRenamingAnalyzer implements RenamingAnalyzerInterface {
 				.filter(stringMapMap -> stringMapMap.getValue().size() > 1).collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
 	}
 
+
+
+	/**
+	 * Loads the old referenced machine into the state space and retracts its operations,
+	 * then loads the current machine back into the animator
+	 * @param path the path of the currently not loaded machine
+	 * @return a map of operations
+	 * @throws IOException file not found
+	 */
+	public Map<String, CompoundPrologTerm> getOperations(String path) throws IOException {
+		StateSpace stateSpace = TraceCheckerUtils.createStateSpace(path, injector);
+		GetMachineOperationsFull getMachineOperationsFull = new GetMachineOperationsFull();
+		stateSpace.execute(getMachineOperationsFull);
+		return getMachineOperationsFull.getOperationsWithNames();
+	}
+
 	public static Map<String, CompoundPrologTerm> extractInitTerm(Map<String, CompoundPrologTerm> allOperations){
 		return allOperations.entrySet().stream()
 				.filter(entry-> entry.getKey().equals(Transition.INITIALISE_MACHINE_NAME))
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 	}
+
 
 	/**
 	 * Checks wherever the Initialisation clause is an Type I/II candidate
@@ -299,6 +304,12 @@ public class DynamicRenamingAnalyzer implements RenamingAnalyzerInterface {
 
 	public RenamingDelta getResultTypeIIInitAsDelta() {
 		return new RenamingDelta(Transition.INITIALISE_MACHINE_NAME, Transition.INITIALISE_MACHINE_NAME, emptyMap(), emptyMap(), resultInitTypeII);
+	}
+
+
+	@Override
+	public boolean initWasSet() {
+		return resultInitTypeII.isEmpty();
 	}
 
 

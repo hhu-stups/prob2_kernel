@@ -72,7 +72,7 @@ public class TraceChecker {
 
 
 		if(oldPath == null){
-			renamingAnalyzer = new StaticRenamingAnalyzer(typeFinder.getTypeIorII(), typeFinder.getTypeIIPermutation(), oldInfos, newInfos, mappingFactory);
+			renamingAnalyzer = new StaticRenamingAnalyzer(typeFinder.getTypeIorII(), typeFinder.getTypeIIPermutation(), typeFinder.getInitIsTypeIorIICandidate(), oldInfos, newInfos, mappingFactory, injector, transitionList , oldVars);
 		}else{
 			renamingAnalyzer = new DynamicRenamingAnalyzer(typeFinder.getTypeIorII(), typeFinder.getTypeIIPermutation(),
 					typeFinder.getInitIsTypeIorIICandidate(), oldPath, newPath, injector, oldInfos);
@@ -88,7 +88,7 @@ public class TraceChecker {
 		traceModifier.insertAmbiguousChanges(renamingAnalyzer.getResultTypeIIWithCandidates());
 
 
-		boolean initSet = !renamingAnalyzer.getResultTypeIIInit().isEmpty();
+		boolean initSet = renamingAnalyzer.initWasSet();
 		TraceExplorer traceExplorer  = new TraceExplorer(initSet, mappingFactory, replayOptions, progressMemoryInterface);
 
 

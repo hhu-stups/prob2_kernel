@@ -308,4 +308,8 @@ public class PersistentTransition {
 				new ArrayList<>());
 
 	}
+
+	public static PersistentTransition copy(PersistentTransition persistentTransition){
+		return new PersistentTransition(persistentTransition.name, persistentTransition.params, persistentTransition.results, persistentTransition.destState, persistentTransition.destStateNotChanged, persistentTransition.preds);
+	}
 }

@@ -9,6 +9,7 @@ import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.ui.ProgressMemoryInterface;
 import de.prob.check.tracereplay.check.TraceCheckerUtils;
 import de.prob.check.tracereplay.check.ui.MappingFactoryInterface;
+import de.prob.exception.ProBError;
 import de.prob.formula.PredicateBuilder;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
@@ -417,7 +418,7 @@ public class TraceExplorer {
 		return selectedMappingsToResultsKeys.stream()
 				.map(mapping -> {
 					List<PersistentTransition> newTransitions = transformTransitionList(mapping, transitionList);
-					List<PersistenceDelta> preparedDelta = TraceCheckerUtils.zipPreserveOrder(transitionList, newTransitions)
+					List<PersistenceDelta> preparedDelta = TraceCheckerUtils.zipPreserveOrder(transitionList.stream().map(PersistentTransition::copy).collect(toList()), newTransitions)//A copy is necessary; Else objects could share the same reference leading to a incorrect zipping
 							.entrySet().stream()
 							.map(entry -> new PersistenceDelta(entry.getKey(), singletonList(entry.getValue())))
 							.collect(toList());
@@ -459,7 +460,7 @@ public class TraceExplorer {
 
 				} catch (TransitionHasNoSuccessorException ignored) {
 					isDirty = true;
-				}
+				} catch (TransitionFailedToExecuteException ignore){}
 			}
 
 			if (usedTypeIV.contains(oldPTransition.getOperationName()) || isDirty) {
@@ -524,7 +525,7 @@ public class TraceExplorer {
 	 * @return the replayed transition
 	 * @throws TransitionHasNoSuccessorException replay has failed
 	 */
-	private Transition replayPersistentTransition(Trace t, PersistentTransition persistentTransition) throws TransitionHasNoSuccessorException {
+	private Transition replayPersistentTransition(Trace t, PersistentTransition persistentTransition) throws TransitionHasNoSuccessorException, TransitionFailedToExecuteException {
 
 		StateSpace stateSpace = t.getStateSpace();
 
@@ -536,7 +537,11 @@ public class TraceExplorer {
 			command = buildTransition(persistentTransition, t);
 		}
 
-		stateSpace.execute(command);
+		try {
+			stateSpace.execute(command);
+		}catch (ProBError e){
+			throw new TransitionFailedToExecuteException(persistentTransition);
+		}
 
 		if (command.getNewTransitions().size() > 1) {
 			return command.getNewTransitions().get(0);
