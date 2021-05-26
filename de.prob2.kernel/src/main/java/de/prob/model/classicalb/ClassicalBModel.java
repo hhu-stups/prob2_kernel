@@ -14,6 +14,7 @@ import com.github.krukow.clj_lang.PersistentHashMap;
 import com.google.inject.Inject;
 
 import de.be4.classicalb.core.parser.BParser;
+import de.be4.classicalb.core.parser.IDefinitions;
 import de.be4.classicalb.core.parser.analysis.prolog.RecursiveMachineLoader;
 import de.be4.classicalb.core.parser.exceptions.BCompoundException;
 import de.be4.classicalb.core.parser.exceptions.BParseException;
@@ -153,5 +154,9 @@ public class ClassicalBModel extends AbstractModel {
 
 	public AbstractElement getAt(final String name) {
 		return getComponent(name);
+	}
+
+	public IDefinitions getDefinitions() {
+		return bparser.getDefinitions();
 	}
 }

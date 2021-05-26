@@ -24,7 +24,7 @@ public class LTL extends AbstractEvalElement {
 	public LTL(final String code) throws LtlParseException {
 		this(code, new ClassicalBParser());
 	}
-	
+
 	public LTL(final String code, ProBParserBase languageSpecificParser)
 			throws LtlParseException {
 		super(code, FormulaExpand.EXPAND);
