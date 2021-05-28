@@ -33,11 +33,15 @@ public class LTLCounterExample extends AbstractEvalResult implements IModelCheck
 
 	}
 
+	public int getLoopEntryPosition() {
+		return this.loopEntry;
+	}
+
 	public Transition getLoopEntry() {
-		if (loopEntry == -1) {
+		if (this.getLoopEntryPosition() == -1) {
 			return null;
 		}
-		return counterExample.get(loopEntry);
+		return counterExample.get(this.getLoopEntryPosition());
 	}
 
 	public PathType getPathType() {
