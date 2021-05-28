@@ -141,16 +141,6 @@ public final class LtlCheckingCommand extends EvaluationCommand implements
 		pto.closeTerm();
 	}
 
-	/**
-	 * @deprecated Use {@link LTLChecker} for a high-level API for LTL checking, or use {@link LtlCheckingCommand} directly.
-	 */
-	@Deprecated
-	public static IModelCheckingResult modelCheck(final StateSpace s, final LTL formula, final int max) {
-		LtlCheckingCommand cmd = new LtlCheckingCommand(s, formula, max);
-		s.execute(cmd);
-		return cmd.getResult();
-	}
-
 	@Override
 	public List<Transition> getNewTransitions() {
 		if (result instanceof LTLCounterExample) {
