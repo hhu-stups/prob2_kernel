@@ -114,7 +114,7 @@ public final class LtlCheckingCommand extends EvaluationCommand implements
 					s, BindingGenerator.getCompoundTerm(pt, 4)))
 				.collect(Collectors.toList());
 			
-			LTLCounterExample res = new LTLCounterExample(ltlFormula, pathToCE, counterExample, loopEntry, pathType);
+			LTLCounterExample res = new LTLCounterExample(ltlFormula, s, pathToCE, counterExample, loopEntry, pathType);
 			result = res;
 			value = res;
 		} else {

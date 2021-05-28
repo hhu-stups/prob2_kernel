@@ -15,17 +15,20 @@ public class LTLCounterExample extends AbstractEvalResult implements IModelCheck
 		ITraceDescription {
 
 	private final LTL formula;
+	private final StateSpace stateSpace;
 	private final List<Transition> pathToCE;
 	private final List<Transition> counterExample;
 	private final int loopEntry;
 	private final PathType pathType;
 
 	public LTLCounterExample(final LTL formula,
+			final StateSpace stateSpace,
 			final List<Transition> pathToCE,
 			final List<Transition> counterExample, final int loopEntry,
 			final PathType pathType) {
 		super();
 		this.formula = formula;
+		this.stateSpace = stateSpace;
 		this.pathToCE = pathToCE;
 		this.counterExample = counterExample;
 		this.loopEntry = loopEntry;
@@ -64,12 +67,19 @@ public class LTLCounterExample extends AbstractEvalResult implements IModelCheck
 		return "LTL counterexample found";
 	}
 
-	@Override
-	public Trace getTrace(final StateSpace s) {
-		Trace t = new Trace(s);
+	public Trace getTrace() {
+		Trace t = new Trace(this.stateSpace);
 		t = t.addTransitions(pathToCE);
 		t = t.addTransitions(counterExample);
 		return t;
+	}
+
+	@Override
+	public Trace getTrace(final StateSpace s) {
+		if (!this.stateSpace.equals(s)) {
+			throw new IllegalArgumentException("This LTL counterexample was found in state space " + this.stateSpace + " and cannot be represented as a trace in a different state space: " + s);
+		}
+		return this.getTrace();
 	}
 
 	@Override
