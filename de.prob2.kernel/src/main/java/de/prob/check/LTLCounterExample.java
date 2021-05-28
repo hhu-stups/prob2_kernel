@@ -82,6 +82,24 @@ public class LTLCounterExample extends AbstractEvalResult implements IModelCheck
 		return this.getTrace();
 	}
 
+	/**
+	 * Same as {@link #getTrace()},
+	 * but if the counterexample contains a loop,
+	 * the current position of the trace is set to the entry point of the loop.
+	 * 
+	 * @return trace to the counterexample, with loop entry point as current position
+	 */
+	public Trace getTraceToLoopEntry() {
+		final Trace t = this.getTrace();
+		if (this.getLoopEntryPosition() != -1) {
+			final Trace t2 = t.gotoPosition(this.pathToCE.size() + this.getLoopEntryPosition());
+			assert t2.getCurrentTransition().equals(this.getLoopEntry());
+			return t2;
+		} else {
+			return t;
+		}
+	}
+
 	@Override
 	public String toString() {
 		return getMessage();
