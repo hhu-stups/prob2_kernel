@@ -107,7 +107,7 @@ public class MachineXmlHandler extends DefaultHandler {
 
 	@Override
 	public void startElement(final String uri, final String localName,
-			final String qName, final Attributes attributes) {
+			final String qName, final Attributes attributes) throws SAXException {
 		switch (qName) {
 			case "org.eventb.core.scRefinesMachine":
 				addRefinedMachine(attributes);
@@ -286,7 +286,7 @@ public class MachineXmlHandler extends DefaultHandler {
 		}
 	}
 
-	private void addRefinedMachine(final Attributes attributes) {
+	private void addRefinedMachine(final Attributes attributes) throws SAXException {
 		String target = attributes.getValue("org.eventb.core.scTarget");
 		String machineName = target.substring(target.lastIndexOf('/') + 1,
 				target.lastIndexOf('.'));
@@ -316,7 +316,7 @@ public class MachineXmlHandler extends DefaultHandler {
 				refines.add(handler.getMachine());
 
 				model = handler.getModel();
-			} catch (IOException | ParserConfigurationException | SAXException e) {
+			} catch (IOException | ParserConfigurationException e) {
 				logger.error("Error parsing XML",e);
 			}
 		}
