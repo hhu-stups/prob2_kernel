@@ -2,6 +2,7 @@ package de.prob.model.eventb.translate;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -316,8 +317,10 @@ public class MachineXmlHandler extends DefaultHandler {
 				refines.add(handler.getMachine());
 
 				model = handler.getModel();
-			} catch (IOException | ParserConfigurationException e) {
-				logger.error("Error parsing XML",e);
+			} catch (IOException e) {
+				throw new UncheckedIOException(e);
+			} catch (ParserConfigurationException e) {
+				throw new SAXException(e);
 			}
 		}
 	}
