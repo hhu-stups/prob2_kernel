@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<org.eventb.core.contextFile org.eventb.core.configuration="org.eventb.core.fwd;de.prob.symbolic.ctxBase;org.animb.valuation.valBase" org.eventb.core.generated="false" org.eventb.texttools.text_lastmodified="1579019141052" org.eventb.texttools.text_representation="context c0&#10;sets&#10; DIRECTIONS&#10;constants&#10; left_blink right_blink neutral_blink&#10; BLINK_DIRECTION&#10; LAMP_STATUS&#10; lamp_off&#10; lamp_on&#10; BLINK_CYCLE_COUNTER&#10; continuousBlink&#10; cycleMaxLampStatus&#10;axioms&#10;@axm1 DIRECTIONS = {left_blink,right_blink,neutral_blink}&#10;@axm2 card(DIRECTIONS)=3&#10;@axm3 BLINK_DIRECTION = {left_blink, right_blink}&#10;@axm4 LAMP_STATUS = {0,100}&#10;@axm5 lamp_off = 0 ∧ lamp_on = 100&#10;@axm6 BLINK_CYCLE_COUNTER = −1‥3&#10;@axm7 continuousBlink=−1&#10;@axm8 cycleMaxLampStatus = {FALSE ↦ lamp_off, TRUE ↦ lamp_on}&#10;theorem @thm0 cycleMaxLampStatus ∈ BOOL → LAMP_STATUS&#10;end&#10;" version="3">
+<org.eventb.core.carrierSet name="_76vYwDYDEeqmRpe4wS5b2g" org.eventb.core.generated="false" org.eventb.core.identifier="DIRECTIONS"/>
+<org.eventb.core.constant name="_76vYwTYDEeqmRpe4wS5b2g" org.eventb.core.generated="false" org.eventb.core.identifier="left_blink"/>
+<org.eventb.core.constant name="_76vYwjYDEeqmRpe4wS5b2g" org.eventb.core.generated="false" org.eventb.core.identifier="right_blink"/>
+<org.eventb.core.constant name="_76vYwzYDEeqmRpe4wS5b2g" org.eventb.core.generated="false" org.eventb.core.identifier="neutral_blink"/>
+<org.eventb.core.axiom name="_76vYxDYDEeqmRpe4wS5b2g" org.eventb.core.generated="false" org.eventb.core.label="axm1" org.eventb.core.predicate="DIRECTIONS = {left_blink,right_blink,neutral_blink}"/>
+<org.eventb.core.axiom name="_76vYxTYDEeqmRpe4wS5b2g" org.eventb.core.generated="false" org.eventb.core.label="axm2" org.eventb.core.predicate="card(DIRECTIONS)=3"/>
+<org.eventb.core.constant name="_FIStcDYEEeqmRpe4wS5b2g" org.eventb.core.generated="false" org.eventb.core.identifier="BLINK_DIRECTION"/>
+<org.eventb.core.constant name="_FIStcTYEEeqmRpe4wS5b2g" org.eventb.core.generated="false" org.eventb.core.identifier="LAMP_STATUS"/>
+<org.eventb.core.constant name="_FIStcjYEEeqmRpe4wS5b2g" org.eventb.core.generated="false" org.eventb.core.identifier="lamp_off"/>
+<org.eventb.core.constant name="_FIStczYEEeqmRpe4wS5b2g" org.eventb.core.generated="false" org.eventb.core.identifier="lamp_on"/>
+<org.eventb.core.constant name="_FIStdDYEEeqmRpe4wS5b2g" org.eventb.core.generated="false" org.eventb.core.identifier="BLINK_CYCLE_COUNTER"/>
+<org.eventb.core.axiom name="_FIStdTYEEeqmRpe4wS5b2g" org.eventb.core.generated="false" org.eventb.core.label="axm3" org.eventb.core.predicate="BLINK_DIRECTION = {left_blink, right_blink}"/>
+<org.eventb.core.axiom name="_FIStdjYEEeqmRpe4wS5b2g" org.eventb.core.generated="false" org.eventb.core.label="axm4" org.eventb.core.predicate="LAMP_STATUS = {0,100}"/>
+<org.eventb.core.axiom name="_FIStdzYEEeqmRpe4wS5b2g" org.eventb.core.generated="false" org.eventb.core.label="axm5" org.eventb.core.predicate="lamp_off = 0 ∧ lamp_on = 100"/>
+<org.eventb.core.axiom name="_FISteDYEEeqmRpe4wS5b2g" org.eventb.core.generated="false" org.eventb.core.label="axm6" org.eventb.core.predicate="BLINK_CYCLE_COUNTER = −1‥3"/>
+<org.eventb.core.constant name="_IePVkDYEEeqmRpe4wS5b2g" org.eventb.core.generated="false" org.eventb.core.identifier="continuousBlink"/>
+<org.eventb.core.axiom name="_IePVkTYEEeqmRpe4wS5b2g" org.eventb.core.generated="false" org.eventb.core.label="axm7" org.eventb.core.predicate="continuousBlink=−1"/>
+<org.eventb.core.constant name="_wtRiQDbpEeqW9sHxErWLyA" org.eventb.core.generated="false" org.eventb.core.identifier="cycleMaxLampStatus"/>
+<org.eventb.core.axiom name="_wtRiQTbpEeqW9sHxErWLyA" org.eventb.core.generated="false" org.eventb.core.label="axm8" org.eventb.core.predicate="cycleMaxLampStatus = {FALSE ↦ lamp_off, TRUE ↦ lamp_on}"/>
+<org.eventb.core.axiom name="_wtRiQjbpEeqW9sHxErWLyA" org.eventb.core.generated="false" org.eventb.core.label="thm0" org.eventb.core.predicate="cycleMaxLampStatus ∈ BOOL → LAMP_STATUS" org.eventb.core.theorem="true"/>
+</org.eventb.core.contextFile>
