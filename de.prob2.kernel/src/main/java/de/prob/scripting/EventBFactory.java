@@ -41,7 +41,7 @@ public class EventBFactory implements ModelFactory<EventBModel> {
 		}
 		File file = new File(modelPath);
 		if(!file.exists()) {
-			throw new EventBFileNotFoundException(file.getAbsolutePath(), "", false);
+			throw new EventBFileNotFoundException(file.getAbsolutePath(), "", false, null);
 		}
 		final EventBModel model = modelCreator.get();
 		final String validFileName = getValidFileName(modelPath);

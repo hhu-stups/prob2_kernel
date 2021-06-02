@@ -67,7 +67,7 @@ public class EventBDatabaseTranslator {
 		} catch (FileNotFoundException e) {
 			String additionalMsg = "Translated .bcm or .bcc file could not be found. Try to clean the Rodin project";
 			logger.error(additionalMsg);
-			throw new EventBFileNotFoundException(fullFileName, additionalMsg, true);
+			throw new EventBFileNotFoundException(fullFileName, additionalMsg, true, e);
 		} catch (IOException | ParserConfigurationException | SAXException e) {
 			logger.error("Error during EventB translation", e);
 		}
