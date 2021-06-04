@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<org.eventb.core.contextFile org.eventb.core.configuration="org.eventb.core.fwd;de.prob.symbolic.ctxBase;org.animb.valuation.valBase" org.eventb.core.generated="false" org.eventb.texttools.text_lastmodified="1578996695193" org.eventb.texttools.text_representation="context c1 extends c0&#10;sets SWITCH_STATUS PITMAN_POSITION KEY_STATE&#10;constants switch_on switch_off&#10;  Neutral Downward5 Downward7 Upward5 Upward7&#10;  NoKeyInserted KeyInserted KeyInsertedOnPosition&#10;  PITMAN_DIRECTION_BLINKING PITMAN_TIP_BLINKING&#10;  pitman_direction&#10;axioms&#10;  @axm1 partition(SWITCH_STATUS,{switch_on},{switch_off})&#10;  @axm2 partition(PITMAN_POSITION,{Neutral},{Downward5},{Downward7},{Upward5},{Upward7})&#10;  @axm3 partition(KEY_STATE,{NoKeyInserted},{KeyInserted},{KeyInsertedOnPosition})&#10;&#10;  @axm4 PITMAN_DIRECTION_BLINKING = {Downward7, Upward7}&#10;  @axm5 PITMAN_TIP_BLINKING = {Downward5, Upward5}&#10;  @axm6 pitman_direction = {Neutral ↦ neutral_blink, Downward5 ↦ left_blink, Downward7 ↦ left_blink,&#10;                      Upward5 ↦ right_blink, Upward7 ↦ right_blink}&#10;  theorem @thm1 pitman_direction∈PITMAN_POSITION → DIRECTIONS&#10;end&#10;" version="3">
+<org.eventb.core.extendsContext name="'" org.eventb.core.target="c0"/>
+<org.eventb.core.carrierSet name="_ih-wwDazEeqW9sHxErWLyA" org.eventb.core.generated="false" org.eventb.core.identifier="SWITCH_STATUS"/>
+<org.eventb.core.constant name="_ih-wwTazEeqW9sHxErWLyA" org.eventb.core.generated="false" org.eventb.core.identifier="switch_on"/>
+<org.eventb.core.constant name="_ih-wwjazEeqW9sHxErWLyA" org.eventb.core.generated="false" org.eventb.core.identifier="switch_off"/>
+<org.eventb.core.axiom name="_ih_X0DazEeqW9sHxErWLyA" org.eventb.core.generated="false" org.eventb.core.label="axm1" org.eventb.core.predicate="partition(SWITCH_STATUS,{switch_on},{switch_off})"/>
+<org.eventb.core.carrierSet name="_kKWcwDazEeqW9sHxErWLyA" org.eventb.core.generated="false" org.eventb.core.identifier="PITMAN_POSITION"/>
+<org.eventb.core.carrierSet name="_kKWcwTazEeqW9sHxErWLyA" org.eventb.core.generated="false" org.eventb.core.identifier="KEY_STATE"/>
+<org.eventb.core.constant name="_snirgDazEeqW9sHxErWLyA" org.eventb.core.generated="false" org.eventb.core.identifier="Neutral"/>
+<org.eventb.core.constant name="_snirgTazEeqW9sHxErWLyA" org.eventb.core.generated="false" org.eventb.core.identifier="Downward5"/>
+<org.eventb.core.constant name="_snirgjazEeqW9sHxErWLyA" org.eventb.core.generated="false" org.eventb.core.identifier="Downward7"/>
+<org.eventb.core.constant name="_u4zjgDazEeqW9sHxErWLyA" org.eventb.core.generated="false" org.eventb.core.identifier="Upward5"/>
+<org.eventb.core.constant name="_u4zjgTazEeqW9sHxErWLyA" org.eventb.core.generated="false" org.eventb.core.identifier="Upward7"/>
+<org.eventb.core.constant name="_pTWW4DazEeqW9sHxErWLyA" org.eventb.core.generated="false" org.eventb.core.identifier="NoKeyInserted"/>
+<org.eventb.core.constant name="_pTWW4TazEeqW9sHxErWLyA" org.eventb.core.generated="false" org.eventb.core.identifier="KeyInserted"/>
+<org.eventb.core.constant name="_pTWW4jazEeqW9sHxErWLyA" org.eventb.core.generated="false" org.eventb.core.identifier="KeyInsertedOnPosition"/>
+<org.eventb.core.axiom name="_vcb1ADazEeqW9sHxErWLyA" org.eventb.core.generated="false" org.eventb.core.label="axm2" org.eventb.core.predicate="partition(PITMAN_POSITION,{Neutral},{Downward5},{Downward7},{Upward5},{Upward7})"/>
+<org.eventb.core.axiom name="_vcb1ATazEeqW9sHxErWLyA" org.eventb.core.generated="false" org.eventb.core.label="axm3" org.eventb.core.predicate="partition(KEY_STATE,{NoKeyInserted},{KeyInserted},{KeyInsertedOnPosition})"/>
+<org.eventb.core.constant name="_16Yv4DazEeqW9sHxErWLyA" org.eventb.core.generated="false" org.eventb.core.identifier="PITMAN_DIRECTION_BLINKING"/>
+<org.eventb.core.axiom name="_16Yv4TazEeqW9sHxErWLyA" org.eventb.core.generated="false" org.eventb.core.label="axm4" org.eventb.core.predicate="PITMAN_DIRECTION_BLINKING = {Downward7, Upward7}"/>
+<org.eventb.core.constant name="_5RAtcDazEeqW9sHxErWLyA" org.eventb.core.generated="false" org.eventb.core.identifier="PITMAN_TIP_BLINKING"/>
+<org.eventb.core.constant name="_5RAtcTazEeqW9sHxErWLyA" org.eventb.core.generated="false" org.eventb.core.identifier="pitman_direction"/>
+<org.eventb.core.axiom name="_5RAtcjazEeqW9sHxErWLyA" org.eventb.core.generated="false" org.eventb.core.label="axm5" org.eventb.core.predicate="PITMAN_TIP_BLINKING = {Downward5, Upward5}"/>
+<org.eventb.core.axiom name="_5RAtczazEeqW9sHxErWLyA" org.eventb.core.generated="false" org.eventb.core.label="axm6" org.eventb.core.predicate="pitman_direction = {Neutral ↦ neutral_blink, Downward5 ↦ left_blink, Downward7 ↦ left_blink,&#10;                      Upward5 ↦ right_blink, Upward7 ↦ right_blink}"/>
+<org.eventb.core.axiom name="_mkpDADa1EeqW9sHxErWLyA" org.eventb.core.generated="false" org.eventb.core.label="thm1" org.eventb.core.predicate="pitman_direction∈PITMAN_POSITION → DIRECTIONS" org.eventb.core.theorem="true"/>
+</org.eventb.core.contextFile>

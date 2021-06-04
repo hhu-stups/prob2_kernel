@@ -88,11 +88,8 @@ public class MachineXmlHandler extends DefaultHandler {
 		this.model = model;
 		this.typeEnv = typeEnv;
 
-		String name = fileName.substring(
-				fileName.lastIndexOf(File.separatorChar) + 1,
-				fileName.lastIndexOf('.'));
-		directoryPath = fileName.substring(0,
-				fileName.lastIndexOf(File.separatorChar));
+		String name = fileName.substring(fileName.lastIndexOf(File.separatorChar) + 1, fileName.lastIndexOf('.'));
+		directoryPath = fileName.substring(0, fileName.lastIndexOf(File.separatorChar));
 		machine = new EventBMachine(name);
 
 		axiomCache.put(name, new HashMap<>());
@@ -181,8 +178,7 @@ public class MachineXmlHandler extends DefaultHandler {
 
 	private void addRefinedEvent(final Attributes attributes) {
 		String target = attributes.getValue("org.eventb.core.scTarget");
-		String internalName = target.substring(target.lastIndexOf('#') + 1,
-				target.length());
+		String internalName = target.substring(target.lastIndexOf('#') + 1);
 
 		if (internalName.endsWith("\\\\")) {
 			internalName = internalName.substring(0, internalName.length() - 1);
@@ -194,8 +190,7 @@ public class MachineXmlHandler extends DefaultHandler {
 
 		String refinedMachineName = fileSource.substring(
 				fileSource.lastIndexOf('/') + 1, fileSource.lastIndexOf('.'));
-		refinesForEvent.add(eventCache.get(refinedMachineName)
-				.get(internalName));
+		refinesForEvent.add(eventCache.get(refinedMachineName).get(internalName));
 	}
 
 	private void addEventParameter(final Attributes attributes) {
@@ -230,7 +225,7 @@ public class MachineXmlHandler extends DefaultHandler {
 		} else {
 			eventType = Event.EventType.ANTICIPATED;
 		}
-		event = new Event(name, eventType, Boolean.valueOf(extended));
+		event = new Event(name, eventType, Boolean.parseBoolean(extended));
 		eventCache.get(machine.getName()).put(crazyRodinInternalName, event);
 
 		extractingEvent = true;
@@ -336,8 +331,7 @@ public class MachineXmlHandler extends DefaultHandler {
 			invariants.add(inv);
 			invariantCache.get(machine.getName()).put(internalName, inv);
 		} else {
-			inheritedInvariants.add(invariantCache.get(machineName).get(
-					internalName));
+			inheritedInvariants.add(invariantCache.get(machineName).get(internalName));
 		}
 	}
 
