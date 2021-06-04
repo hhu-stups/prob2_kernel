@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<org.eventb.core.contextFile org.eventb.core.configuration="org.eventb.core.fwd;de.prob.symbolic.ctxBase;org.animb.valuation.valBase" org.eventb.core.generated="false" org.eventb.texttools.text_lastmodified="1579089531323" org.eventb.texttools.text_representation="context ctimers&#10;sets TIMERS&#10;constants tip_deadline blink_deadline&#10;axioms&#10; @axm1 partition(TIMERS,{tip_deadline},{blink_deadline})&#10;end&#10;" version="3">
+<org.eventb.core.carrierSet name="_ZVYm0DeOEeqtGtGHK80c3Q" org.eventb.core.generated="false" org.eventb.core.identifier="TIMERS"/>
+<org.eventb.core.constant name="_ZVYm0TeOEeqtGtGHK80c3Q" org.eventb.core.generated="false" org.eventb.core.identifier="tip_deadline"/>
+<org.eventb.core.constant name="_ZVYm0jeOEeqtGtGHK80c3Q" org.eventb.core.generated="false" org.eventb.core.identifier="blink_deadline"/>
+<org.eventb.core.axiom name="_ZVYm0zeOEeqtGtGHK80c3Q" org.eventb.core.generated="false" org.eventb.core.label="axm1" org.eventb.core.predicate="partition(TIMERS,{tip_deadline},{blink_deadline})"/>
+</org.eventb.core.contextFile>

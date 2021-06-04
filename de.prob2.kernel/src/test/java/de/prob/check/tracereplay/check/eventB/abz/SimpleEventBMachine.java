@@ -10,6 +10,7 @@ import de.prob.check.tracereplay.check.renamig.RenamingDelta;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.cli.CliTestCommon;
+import de.prob.statespace.LoadedMachine;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
 import org.junit.jupiter.api.AfterAll;
@@ -49,9 +50,10 @@ public class SimpleEventBMachine {
 	public void simple_event_b_no_changes() throws IOException, DeltaCalculationException {
 
 
-		Path pathStateSpace1 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "PitmanController.bum");
+		Path pathStateSpace1 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "pitman_v2_files", "PitmanController.bum");
 		StateSpace stateSpace1 = proBKernelStub.createEventB(pathStateSpace1);
 
+		LoadedMachine loadedMachine = stateSpace1.getLoadedMachine();
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "PitmanController.prob2trace"));
 
 
