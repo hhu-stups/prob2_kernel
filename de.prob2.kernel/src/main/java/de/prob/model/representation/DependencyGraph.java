@@ -131,14 +131,18 @@ public class DependencyGraph {
 	}
 
 	IPersistentMap<String, Node> graph;
+	private String start;
 
 	public DependencyGraph() {
-		this(PersistentHashMap.emptyMap());
+		this(PersistentHashMap.emptyMap(), "");
 	}
 
-	private DependencyGraph(IPersistentMap<String, Node> graph) {
+	private DependencyGraph(IPersistentMap<String, Node> graph, String start) {
 		this.graph = graph;
+		this.start = start;
 	}
+
+
 
 	/**
 	 * @param element
@@ -148,7 +152,11 @@ public class DependencyGraph {
 	 */
 	public DependencyGraph addVertex(final String element) {
 		if (!graph.containsKey(element)) {
-			return new DependencyGraph(graph.assoc(element, new Node(element)));
+			if(graph.count()==0){
+				return new DependencyGraph(graph.assoc(element, new Node(element)), element);
+			}else{
+				return new DependencyGraph(graph.assoc(element, new Node(element)), getStart());
+			}
 		}
 		return this;
 	}
@@ -199,17 +207,15 @@ public class DependencyGraph {
 	 * @return the dependency graph
 	 */
 	public DependencyGraph addEdge(final String from, final String to, final ERefType relationship) {
-		IPersistentMap<String, Node> newgraph = graph;
-		if (!newgraph.containsKey(from)) {
-			newgraph = newgraph.assoc(from, new Node(from));
-		}
-		if (!newgraph.containsKey(to)) {
-			newgraph = newgraph.assoc(to, new Node(to));
-		}
-		Node f = newgraph.valAt(from);
-		Node t = newgraph.valAt(to);
+		DependencyGraph currentWithFrom = this.addVertex(from);
+		DependencyGraph currentWithFromTo = currentWithFrom.addVertex(to);
+		IPersistentMap<String, Node> newGraph = currentWithFromTo.graph;
+
+
+		Node f = newGraph.valAt(from);
+		Node t = newGraph.valAt(to);
 		Edge e = new Edge(f, t, relationship);
-		return new DependencyGraph(newgraph.assoc(from, f.addEdge(e)));
+		return new DependencyGraph(newGraph.assoc(from, f.addEdge(e)), currentWithFromTo.getStart());
 	}
 
 	public DependencyGraph removeEdge(String from, String to, ERefType relationship) {
@@ -218,7 +224,7 @@ public class DependencyGraph {
 		if (f == null || t == null) {
 			throw new IllegalArgumentException("Nodes must be specified in order to be deleted.");
 		}
-		return new DependencyGraph(graph.assoc(from, f.removeEdge(new Edge(f, t, relationship))));
+		return new DependencyGraph(graph.assoc(from, f.removeEdge(new Edge(f, t, relationship))), getStart());
 	}
 
 	/**
@@ -247,6 +253,10 @@ public class DependencyGraph {
 		}
 
 		return relationships;
+	}
+
+	public String getStart(){
+		return start;
 	}
 
 	@Override
