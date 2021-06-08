@@ -1,15 +1,14 @@
 package de.prob.check.tracereplay.check;
 
 
-import de.prob.check.tracereplay.PersistentTrace;
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.statespace.OperationInfo;
-import de.prob.statespace.Transition;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static java.util.Collections.emptyMap;
+import static de.prob.check.tracereplay.check.TraceCheckerUtils.stripNonOpClause;
+import static de.prob.check.tracereplay.check.TraceCheckerUtils.usedOperations;
 import static java.util.Collections.emptySet;
 
 /**
@@ -49,19 +48,6 @@ public class TypeFinder {
 	}
 
 
-	public static List<PersistentTransition> stripInitClause(List<PersistentTransition> transitionList){
-		return transitionList.stream()
-				.filter(element -> !element.getOperationName().equals(Transition.INITIALISE_MACHINE_NAME))
-				.collect(Collectors.toList());
-	}
-
-	public static List<PersistentTransition> stripNonOpClause(List<PersistentTransition> transitionList){
-		return transitionList.stream()
-				.filter(element -> !element.getOperationName().equals(Transition.INITIALISE_MACHINE_NAME))
-				.filter(element -> !element.getOperationName().equals(Transition.SETUP_CONSTANTS_NAME))
-				.filter(element -> !element.getOperationName().equals(Transition.PARTIAL_SETUP_CONSTANTS_NAME))
-				.collect(Collectors.toList());
-	}
 
 	/**
 	 * See master thesis for reference
@@ -210,15 +196,6 @@ public class TypeFinder {
 				.map(OperationInfo::getOperationName)
 				.collect(Collectors.toSet());
 
-	}
-
-	/**
-	 * Returns the operations actually used by the trace
-	 * @param transitionList the trace to analyse
-	 * @return a set of operations used in the trace
-	 */
-	public static Set<String> usedOperations(List<PersistentTransition> transitionList){
-		return transitionList.stream().map(PersistentTransition::getOperationName).collect(Collectors.toSet());
 	}
 
 

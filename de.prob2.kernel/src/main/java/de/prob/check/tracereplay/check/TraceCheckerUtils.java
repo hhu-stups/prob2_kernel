@@ -16,11 +16,13 @@ import com.google.common.collect.Maps;
 import com.google.inject.Injector;
 
 import de.prob.animator.ReusableAnimator;
+import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.exploration.TraceExplorer;
 import de.prob.scripting.FactoryProvider;
 import de.prob.scripting.ModelFactory;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
+import de.prob.statespace.Transition;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
@@ -97,6 +99,30 @@ public class TraceCheckerUtils {
 		return stateSpace;
 	}
 
+
+	/**
+	 * Returns the operations actually used by the trace
+	 * @param transitionList the trace to analyse
+	 * @return a set of operations used in the trace
+	 */
+	public static Set<String> usedOperations(List<PersistentTransition> transitionList){
+		return transitionList.stream().map(PersistentTransition::getOperationName).collect(Collectors.toSet());
+	}
+
+
+
+	/**
+	 * Removes all non Op clauses from a transition List
+	 * @param transitionList the transition list
+	 * @return the stripped list
+	 */
+	public static List<PersistentTransition> stripNonOpClause(List<PersistentTransition> transitionList){
+		return transitionList.stream()
+				.filter(element -> !element.getOperationName().equals(Transition.INITIALISE_MACHINE_NAME))
+				.filter(element -> !element.getOperationName().equals(Transition.SETUP_CONSTANTS_NAME))
+				.filter(element -> !element.getOperationName().equals(Transition.PARTIAL_SETUP_CONSTANTS_NAME))
+				.collect(Collectors.toList());
+	}
 
 	/**
 	 * Wild cards are those where in the old operation the identifier did not exist - those don't show up in the mapping
