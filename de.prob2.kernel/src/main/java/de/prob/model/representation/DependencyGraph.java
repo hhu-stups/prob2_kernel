@@ -1,16 +1,16 @@
 package de.prob.model.representation;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.github.krukow.clj_lang.IPersistentMap;
 import com.github.krukow.clj_lang.PersistentHashMap;
 import com.github.krukow.clj_lang.PersistentHashSet;
+
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
 
 /**
  * A simple graph implementation intended to display the relationships between
@@ -18,6 +18,10 @@ import com.github.krukow.clj_lang.PersistentHashSet;
  * string element name of the component and the edges are the type of
  * relationship as defined by {@link ERefType}. It is a multigraph, which means
  * that there can be multiple edges between two nodes.
+ *
+ *
+ * Only edges can be removed
+ *
  *
  * @author joy
  *
@@ -36,7 +40,7 @@ public class DependencyGraph {
 		SEES, USES, REFINES, INCLUDES, IMPORTS, EXTENDS
 	}
 
-	public class Node {
+	public static class Node {
 		final String elementName;
 		final PersistentHashSet<Edge> outEdges;
 
@@ -85,9 +89,15 @@ public class DependencyGraph {
 		public int hashCode() {
 			return getElementName().hashCode();
 		}
+
+
+		@Override
+		public String toString(){
+			return elementName;
+		}
 	}
 
-	public class Edge {
+	public static class Edge {
 		Node from;
 		Node to;
 		ERefType relationship;
@@ -275,5 +285,36 @@ public class DependencyGraph {
 		}
 		return sb.toString();
 	}
+
+	/**
+	 * Takes the start node and goes the refinement chain up from there. If the start node refines nothing only the
+	 * start node is returned
+	 * @return the refinement chain if there is any
+	 */
+	public List<Node> refinementChain(){
+		if(start.equals("")){
+			return emptyList();
+		}
+		List<Node> acc = new ArrayList<>();
+		acc.add(graph.valAt(start));
+		return refinementChainAux(start, acc);
+	}
+
+	private List<Node> refinementChainAux(String entryPoint, List<Node> acc){
+		List<Node> refinement = graph.valAt(entryPoint).getOutEdges().stream()
+				.filter(entry -> entry.getRelationship().equals(ERefType.REFINES))
+				.map(Edge::getTo)
+				.collect(toList());
+
+		if(refinement.isEmpty()){
+			return acc;
+		}else{
+			return refinementChainAux(refinement.get(0).getElementName(), Stream.of(acc, refinement)
+					.flatMap(Collection::stream)
+					.collect(toList()));
+		}
+
+	}
+
 
 }
