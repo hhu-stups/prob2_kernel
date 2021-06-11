@@ -5,9 +5,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.google.inject.Injector;
 import de.be4.classicalb.core.parser.BParser;
 import de.be4.classicalb.core.parser.exceptions.BCompoundException;
 import de.be4.classicalb.core.parser.node.AAbstractMachineParseUnit;
@@ -15,11 +18,22 @@ import de.be4.classicalb.core.parser.node.Start;
 import de.be4.classicalb.core.parser.util.PrettyPrinter;
 import de.prob.ProBKernelStub;
 import de.prob.check.tracereplay.PersistentTransition;
+import de.prob.check.tracereplay.check.TestUtils;
+import de.prob.check.tracereplay.check.TraceChecker;
+import de.prob.check.tracereplay.check.exploration.ReplayOptions;
+import de.prob.check.tracereplay.check.renamig.DeltaCalculationException;
 import de.prob.check.tracereplay.check.traceConstruction.AdvancedTraceConstructor;
 import de.prob.check.tracereplay.check.traceConstruction.TraceConstructionError;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.cli.CliTestCommon;
+import de.prob.model.eventb.Event;
+import de.prob.model.representation.AbstractElement;
+import de.prob.model.representation.AbstractModel;
+import de.prob.model.representation.Machine;
+import de.prob.model.representation.ModelElementList;
+import de.prob.statespace.LoadedMachine;
+import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
 
@@ -90,4 +104,41 @@ public class RefinementCheckerTest {
 		List<String> expected = jsonFile.getTransitionList().stream().map(PersistentTransition::getOperationName).collect(Collectors.toList());
 		Assertions.assertEquals(expected, result);
 	}
+
+
+
+	@Test
+	public void simple_event_b_no_changes() throws IOException, DeltaCalculationException, TraceConstructionError, BCompoundException {
+
+
+		Path pathStateSpace1 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "pitman_v2_files", "PitmanController.bum");
+		StateSpace stateSpace1 = proBKernelStub.createEventB(pathStateSpace1);
+
+		LoadedMachine loadedMachine = stateSpace1.getLoadedMachine();
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "PitmanController.prob2trace"));
+
+
+		AbstractModel foo = stateSpace1.getModel();
+
+		ModelElementList<Machine> gna = stateSpace1.getModel().getChildrenOfType(Machine.class);
+
+		ModelElementList<? extends AbstractElement> bla = gna.get(0).getChildren().get(Event.class);
+		ModelElementList<? extends AbstractElement> bla2 = gna.get(1).getChildren().get(Event.class);
+
+
+		Map<String, OperationInfo> oldInfos = stateSpace1.getLoadedMachine().getOperations();
+		List<String> oldVars = stateSpace1.getLoadedMachine().getVariableNames();
+
+		StateSpace stateSpace2 = proBKernelStub.createEventB(pathStateSpace1);
+		Map<String, OperationInfo> newInfos = stateSpace2.getLoadedMachine().getOperations();
+		List<String> newVars = stateSpace2.getLoadedMachine().getVariableNames();
+
+
+		new RefinementChecker(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace1).check();
+	}
+
+
+
+
+
 }
