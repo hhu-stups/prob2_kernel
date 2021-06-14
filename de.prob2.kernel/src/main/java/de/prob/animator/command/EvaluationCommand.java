@@ -3,6 +3,10 @@ package de.prob.animator.command;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.animator.domainobjects.AbstractEvalResult;
 
+/**
+ * @deprecated Use {@link EvaluateFormulaCommand} instead.
+ */
+@Deprecated
 public abstract class EvaluationCommand extends AbstractCommand {
 
 	protected AbstractEvalResult value;

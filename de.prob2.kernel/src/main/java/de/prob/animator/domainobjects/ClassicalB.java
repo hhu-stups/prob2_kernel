@@ -9,17 +9,17 @@ package de.prob.animator.domainobjects;
 import de.be4.classicalb.core.parser.BParser;
 import de.be4.classicalb.core.parser.analysis.prolog.ASTProlog;
 import de.be4.classicalb.core.parser.exceptions.BCompoundException;
-import de.be4.classicalb.core.parser.node.*;
+import de.be4.classicalb.core.parser.node.AExpressionParseUnit;
+import de.be4.classicalb.core.parser.node.APredicateParseUnit;
+import de.be4.classicalb.core.parser.node.EOF;
+import de.be4.classicalb.core.parser.node.Node;
+import de.be4.classicalb.core.parser.node.Start;
 import de.be4.classicalb.core.parser.util.PrettyPrinter;
-
 import de.hhu.stups.prob.translator.BValue;
 import de.hhu.stups.prob.translator.TranslatingVisitor;
-import de.prob.animator.command.EvaluateFormulaCommand;
-import de.prob.animator.command.EvaluationCommand;
 import de.prob.model.representation.FormulaUUID;
 import de.prob.model.representation.IFormulaUUID;
 import de.prob.prolog.output.IPrologTermOutput;
-import de.prob.statespace.State;
 
 /**
  * Representation of a ClassicalB formula.
@@ -134,11 +134,6 @@ public class ClassicalB extends AbstractEvalElement implements IBEvalElement {
 	@Override
 	public IFormulaUUID getFormulaId() {
 		return uuid;
-	}
-
-	@Override
-	public EvaluationCommand getCommand(final State state) {
-		return new EvaluateFormulaCommand(this, state.getId());
 	}
 
 	@Override

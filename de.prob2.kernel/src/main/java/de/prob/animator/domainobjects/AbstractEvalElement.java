@@ -2,6 +2,9 @@ package de.prob.animator.domainobjects;
 
 import java.util.HashMap;
 
+import de.prob.animator.command.EvaluateFormulaCommand;
+import de.prob.statespace.State;
+
 /**
  * @author joy
  * 
@@ -36,6 +39,12 @@ public abstract class AbstractEvalElement implements IEvalElement {
 	@Override
 	public String toString() {
 		return this.getCode();
+	}
+	
+	@Deprecated
+	@Override
+	public EvaluateFormulaCommand getCommand(final State state) {
+		return new EvaluateFormulaCommand(this, state.getId());
 	}
 	
 	@Override

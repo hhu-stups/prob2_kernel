@@ -1,6 +1,6 @@
 package de.prob.animator.domainobjects;
 
-import de.prob.animator.command.EvaluationCommand;
+import de.prob.animator.command.EvaluateFormulaCommand;
 import de.prob.model.representation.IFormulaUUID;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.statespace.State;
@@ -35,7 +35,11 @@ public interface IEvalElement {
 
 	public IFormulaUUID getFormulaId();
 
-	public EvaluationCommand getCommand(State state);
+	/**
+	 * @deprecated Use {@link State#eval(IEvalElement)} or similar methods, or manually construct a {@link EvaluateFormulaCommand} if necessary.
+	 */
+	@Deprecated
+	public EvaluateFormulaCommand getCommand(State state);
 
 	public FormulaExpand expansion();
 }

@@ -11,13 +11,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import de.prob.Main;
-import de.prob.animator.command.EvaluateFormulaCommand;
-import de.prob.animator.command.EvaluationCommand;
 import de.prob.model.representation.CSPModel;
 import de.prob.model.representation.FormulaUUID;
 import de.prob.model.representation.IFormulaUUID;
 import de.prob.prolog.output.IPrologTermOutput;
-import de.prob.statespace.State;
 
 /**
  * A Formula representation for CSP
@@ -100,11 +97,5 @@ public class CSP extends AbstractEvalElement {
 	@Override
 	public IFormulaUUID getFormulaId() {
 		return uuid;
-	}
-
-	@Override
-	public EvaluationCommand getCommand(State stateId) {
-		/* TODO: we could do a more efficient implementation here */
-		return new EvaluateFormulaCommand(this, stateId.getId());
 	}
 }
