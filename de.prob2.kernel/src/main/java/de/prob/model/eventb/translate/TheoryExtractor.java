@@ -3,6 +3,7 @@ package de.prob.model.eventb.translate;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -18,6 +19,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import de.prob.animator.domainobjects.EventB;
 import de.prob.animator.domainobjects.FormulaExpand;
+import de.prob.exception.ProBError;
 import de.prob.model.eventb.EventBAxiom;
 import de.prob.model.eventb.theory.AxiomaticDefinitionBlock;
 import de.prob.model.eventb.theory.DataType;
@@ -127,8 +129,10 @@ public class TheoryExtractor extends DefaultHandler {
 					mappingFileName);
 		} catch (FileNotFoundException e) {
 			logger.warn("No .ptm file found for Theory {}. This means that ProB has no information on how to interpret this theory.", name, e);
-		} catch (IOException | TheoryMappingException e) {
-			logger.error("Error extracting theory", e);
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (TheoryMappingException e) {
+			throw new ProBError(e);
 		}
 		theory = new Theory(name, project, mappings);
 		typeEnv = new HashSet<>();
@@ -402,8 +406,10 @@ public class TheoryExtractor extends DefaultHandler {
 				saxParser.parse(new File(workspacePath + path), extractor);
 				theories = theories.addElement(extractor.getTheory());
 				typeEnv.addAll(extractor.getTypeEnv());
-			} catch (IOException | ParserConfigurationException e) {
-				logger.error("Error extracting theory", e);
+			} catch (IOException e) {
+				throw new UncheckedIOException(e);
+			} catch (ParserConfigurationException e) {
+				throw new SAXException(e);
 			}
 		}
 	}
