@@ -60,21 +60,17 @@ public final class LtlCheckingCommand extends AbstractCommand implements
 		PrologTerm term = bindings.get(VARIABLE_NAME_RESULT);
 
 		if (term.hasFunctor("ok", 0)) {
-			LTLOk res = new LTLOk(ltlFormula);
-			result = res;
+			result = new LTLOk(ltlFormula);
 		} else if (term.hasFunctor("nostart", 0)) {
-			LTLError res = new LTLError(ltlFormula,
+			result = new LTLError(ltlFormula,
 					"Could not find initialisation. Try to animating the model.");
-			result = res;
 		} else if (term.hasFunctor("typeerror", 0)) {
 			ListPrologTerm errorTerm = (ListPrologTerm) bindings.get(VARIABLE_NAME_ERRORS);
-			LTLError res = new LTLError(ltlFormula, String.join("\n", errorTerm.stream()
+			result = new LTLError(ltlFormula, String.join("\n", errorTerm.stream()
 				.map(PrologTerm::atomicString)
 				.collect(Collectors.toList())));
-			result = res;
 		} else if (term.hasFunctor("incomplete", 0)) {
-			LTLNotYetFinished res = new LTLNotYetFinished(ltlFormula);
-			result = res;
+			result = new LTLNotYetFinished(ltlFormula);
 		} else if (term.hasFunctor("counterexample", 3)) {
 			CompoundPrologTerm cpt = BindingGenerator.getCompoundTerm(term, 3);
 			List<Transition> counterExample = BindingGenerator.getList(cpt.getArgument(1)).stream()
@@ -108,8 +104,7 @@ public final class LtlCheckingCommand extends AbstractCommand implements
 					s, BindingGenerator.getCompoundTerm(pt, 4)))
 				.collect(Collectors.toList());
 			
-			LTLCounterExample res = new LTLCounterExample(ltlFormula, s, pathToCE, counterExample, loopEntry, pathType);
-			result = res;
+			result = new LTLCounterExample(ltlFormula, s, pathToCE, counterExample, loopEntry, pathType);
 		} else {
 			throw new UnknownLtlResult("Unknown result from LTL checking: " + term);
 		}
