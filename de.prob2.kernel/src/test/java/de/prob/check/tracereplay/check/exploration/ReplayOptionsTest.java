@@ -18,7 +18,7 @@ public class ReplayOptionsTest {
 		Set<ReplayOptions.OptionFlags> options = Arrays.stream(ReplayOptions.OptionFlags.values()).collect(Collectors.toSet());
 		ReplayOptions replayOptions = new ReplayOptions(options, emptyList(), emptyMap(), emptyMap());
 
-		PersistentTransition persistentTransition = new PersistentTransition("inc", emptyMap(), emptyMap(), emptyMap(), emptySet(), emptyList());
+		PersistentTransition persistentTransition = new PersistentTransition("inc", emptyMap(), emptyMap(), emptyMap(), emptySet(), emptyList(), emptyList());
 
 		PredicateBuilder result = replayOptions.createMapping(persistentTransition);
 
@@ -35,7 +35,7 @@ public class ReplayOptionsTest {
 		Map<String, String> variables = singletonMap("a", "1=1");
 
 		PersistentTransition persistentTransition = new PersistentTransition("inc", input,
-				output, variables, emptySet(), emptyList());
+				output, variables, emptySet(), emptyList(), emptyList());
 
 		PredicateBuilder expected = new PredicateBuilder();
 		expected.addMap(input);
@@ -57,7 +57,7 @@ public class ReplayOptionsTest {
 		Map<String, String> variables = singletonMap("a", "1=1");
 
 		PersistentTransition persistentTransition = new PersistentTransition("inc", input,
-				output, variables, emptySet(), emptyList());
+				output, variables, emptySet(), emptyList(), emptyList());
 
 		PredicateBuilder expected = new PredicateBuilder();
 
@@ -78,7 +78,7 @@ public class ReplayOptionsTest {
 		Map<String, String> variables = singletonMap("a", "1=1");
 
 		PersistentTransition persistentTransition = new PersistentTransition("inc", input,
-				output, variables, emptySet(), emptyList());
+				output, variables, emptySet(), emptyList(), emptyList());
 
 		PredicateBuilder expected = new PredicateBuilder();
 		expected.addMap(input);
@@ -100,7 +100,7 @@ public class ReplayOptionsTest {
 		Map<String, String> variables = singletonMap("a", "1=1");
 
 		PersistentTransition persistentTransition = new PersistentTransition("inc", input,
-				output, variables, emptySet(), emptyList());
+				output, variables, emptySet(), emptyList(), emptyList());
 
 		PredicateBuilder expected = new PredicateBuilder();
 		expected.addMap(input);
@@ -122,7 +122,7 @@ public class ReplayOptionsTest {
 		Map<String, String> variables = singletonMap("a", "1=1");
 
 		PersistentTransition persistentTransition = new PersistentTransition("inc", input,
-				output, variables, emptySet(), emptyList());
+				output, variables, emptySet(), emptyList(), emptyList());
 
 		PredicateBuilder expected = new PredicateBuilder();
 
@@ -142,7 +142,7 @@ public class ReplayOptionsTest {
 		Map<String, String> variables = singletonMap("a", "1=1");
 
 		PersistentTransition persistentTransition = new PersistentTransition("inc", input,
-				output, variables, emptySet(), emptyList());
+				output, variables, emptySet(), emptyList(), emptyList());
 
 		PredicateBuilder expected = new PredicateBuilder();
 

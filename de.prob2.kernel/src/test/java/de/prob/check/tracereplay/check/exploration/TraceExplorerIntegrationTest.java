@@ -116,24 +116,24 @@ public class TraceExplorerIntegrationTest {
 
 
 		PersistentTransition init = new PersistentTransition(Transition.INITIALISE_MACHINE_NAME, Collections.emptyMap(),
-				Collections.emptyMap(), singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList());
+				Collections.emptyMap(), singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList());
 
 		PersistentTransition first = new PersistentTransition("inc", new HashMap<String, String>() {{
 			put("a","1");
-		}}, Collections.emptyMap(), singletonMap("floors", "1"), Collections.emptySet(), Collections.emptyList());
+		}}, Collections.emptyMap(), singletonMap("floors", "1"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList());
 
 		PersistentTransition second = new PersistentTransition("dec", Collections.emptyMap(),
-				Collections.emptyMap(), singletonMap("floors", "0"), Collections.emptySet(), Collections.emptyList());
+				Collections.emptyMap(), singletonMap("floors", "0"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList());
 
 		PersistentTransition initNew = new PersistentTransition(Transition.INITIALISE_MACHINE_NAME, Collections.emptyMap(),
-				Collections.emptyMap(), singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList());
+				Collections.emptyMap(), singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList());
 
 		PersistentTransition firstNew_var1 = new PersistentTransition("inc", new HashMap<String, String>() {{
 			put("x","1");
 			put("y","0");
 			put("z","0");
 		}},
-				Collections.emptyMap(), singletonMap("levels", "1"), Collections.emptySet(), Collections.emptyList());
+				Collections.emptyMap(), singletonMap("levels", "1"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList());
 
 		PersistentTransition firstNew_var2 = new PersistentTransition("inc", new HashMap<String, String>() {{
 
@@ -141,7 +141,7 @@ public class TraceExplorerIntegrationTest {
 			put("y","1");
 			put("z","1");
 		}},
-				Collections.emptyMap(), singletonMap("levels", "1"), Collections.emptySet(), Collections.emptyList());
+				Collections.emptyMap(), singletonMap("levels", "1"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList());
 
 		PersistentTransition firstNew_var3 = new PersistentTransition("inc", new HashMap<String, String>() {{
 			put("x","-1");
@@ -149,10 +149,10 @@ public class TraceExplorerIntegrationTest {
 			put("z","1");
 		}},
 
-				Collections.emptyMap(), singletonMap("levels", "1"), Collections.emptySet(), Collections.emptyList());
+				Collections.emptyMap(), singletonMap("levels", "1"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList());
 
 		PersistentTransition secondNew = new PersistentTransition("dec", Collections.emptyMap(),
-				Collections.emptyMap(), singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList());
+				Collections.emptyMap(), singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList());
 
 
 		//The explorer will find multiple possible solutions, we expect at least 3, because we want to test if the mapping from
@@ -235,13 +235,13 @@ public class TraceExplorerIntegrationTest {
 
 
 		PersistentTransition init = new PersistentTransition(Transition.INITIALISE_MACHINE_NAME, emptyMap(),
-				emptyMap(), singletonMap("level", "0"), emptySet(), emptyList());
+				emptyMap(), singletonMap("level", "0"), emptySet(), emptyList(), emptyList());
 
 		PersistentTransition first = new PersistentTransition("inc", emptyMap(), emptyMap(),
-				singletonMap("level", "1"), emptySet(), emptyList());
+				singletonMap("level", "1"), emptySet(), emptyList(), emptyList());
 
 		PersistentTransition second = new PersistentTransition("dec", Collections.emptyMap(),
-				Collections.emptyMap(), singletonMap("level", "0"), Collections.emptySet(), Collections.emptyList());
+				Collections.emptyMap(), singletonMap("level", "0"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList());
 
 
 
@@ -278,34 +278,34 @@ public class TraceExplorerIntegrationTest {
 
 
 		PersistentTransition init = new PersistentTransition(Transition.INITIALISE_MACHINE_NAME, emptyMap(),
-				emptyMap(), singletonMap("levels", "0"), emptySet(), emptyList());
+				emptyMap(), singletonMap("levels", "0"), emptySet(), emptyList(), emptyList());
 
 		PersistentTransition first = new PersistentTransition("inc", singletonMap("a", "1"), emptyMap(),
-				singletonMap("floors", "1"), emptySet(), emptyList());
+				singletonMap("floors", "1"), emptySet(), emptyList(), emptyList());
 
 		PersistentTransition second = new PersistentTransition("dec", Collections.emptyMap(),
-				Collections.emptyMap(), singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList());
+				Collections.emptyMap(), singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList());
 
 		PersistentTransition initNew = new PersistentTransition(Transition.INITIALISE_MACHINE_NAME, Collections.emptyMap(),
-				Collections.emptyMap(), singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList());
+				Collections.emptyMap(), singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList());
 
 		PersistentTransition firstNew_var1 = new PersistentTransition("inc", new HashMap<String, String>() {{
 			put("x","1");
 			put("y","0");
 			put("z","TRUE");
 		}},
-				Collections.emptyMap(), singletonMap("levels", "1"), Collections.emptySet(), Collections.emptyList());
+				Collections.emptyMap(), singletonMap("levels", "1"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList());
 
 		PersistentTransition firstNew_var2 = new PersistentTransition("inc", new HashMap<String, String>() {{
 
 			put("x","0");
 			put("y","1");
 			put("z","TRUE");
-		}}, Collections.emptyMap(), singletonMap("levels", "1"), Collections.emptySet(), Collections.emptyList());
+		}}, Collections.emptyMap(), singletonMap("levels", "1"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList());
 
 
 		PersistentTransition secondNew = new PersistentTransition("dec", Collections.emptyMap(),
-				Collections.emptyMap(), singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList());
+				Collections.emptyMap(), singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList());
 
 
 		//The explorer will find multiple possible solutions, we expect at least 3, because we want to test if the mapping from

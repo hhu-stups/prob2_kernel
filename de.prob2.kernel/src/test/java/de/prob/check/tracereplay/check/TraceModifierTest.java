@@ -51,18 +51,18 @@ public class TraceModifierTest {
 
 		PersistentTransition persistentTransition = new PersistentTransition("hallo", Collections.singletonMap("x", "1"),
 				Collections.singletonMap("y", "1"), Collections.singletonMap("z", "1"), Collections.singleton("a"),
-				Collections.emptyList());
+				Collections.emptyList(), Collections.emptyList());
 
 		PersistentTransition persistentTransition2 = new PersistentTransition("welt", Collections.singletonMap("x", "1"),
 				Collections.singletonMap("y", "1"), Collections.singletonMap("z", "1"), Collections.singleton("a"),
-				Collections.emptyList());
+				Collections.emptyList(), Collections.emptyList());
 
 		currentState = Arrays.asList(persistentTransition, persistentTransition2, persistentTransition);
 
 
 		PersistentTransition expectedTransition = new PersistentTransition("hallihallo", Collections.singletonMap("b", "1"),
 				Collections.singletonMap("y", "1"), Collections.singletonMap("z", "1"), Collections.singleton("a"),
-				Collections.emptyList());
+				Collections.emptyList(), Collections.emptyList());
 
 
 		RenamingDelta renamingDelta = new RenamingDelta("hallo", "hallihallo", Collections.singletonMap("x", "b"), Collections.emptyMap(), Collections.emptyMap());
@@ -83,18 +83,18 @@ public class TraceModifierTest {
 
 		PersistentTransition persistentTransition = new PersistentTransition("hallo", Collections.singletonMap("x", "1"),
 				Collections.singletonMap("y", "1"), Collections.singletonMap("z", "1"), Collections.singleton("a"),
-				Collections.emptyList());
+				Collections.emptyList(), Collections.emptyList());
 
 		PersistentTransition persistentTransition2 = new PersistentTransition("welt", Collections.singletonMap("x", "1"),
 				Collections.singletonMap("y", "1"), Collections.singletonMap("z", "1"), Collections.singleton("a"),
-				Collections.emptyList());
+				Collections.emptyList(), Collections.emptyList());
 
 		currentState = Arrays.asList(persistentTransition, persistentTransition2, persistentTransition);
 
 
 		PersistentTransition expectedTransition = new PersistentTransition("hallihallo", Collections.singletonMap("b", "1"),
 				Collections.singletonMap("g", "1"), Collections.singletonMap("f", "1"), Collections.singleton("a"),
-				Collections.emptyList());
+				Collections.emptyList(), Collections.emptyList());
 
 
 		RenamingDelta renamingDelta = new RenamingDelta("hallo", "hallihallo", Collections.singletonMap("x", "b"),
@@ -116,11 +116,11 @@ public class TraceModifierTest {
 
 		PersistentTransition persistentTransition = new PersistentTransition("hallo", Collections.singletonMap("x", "1"),
 				Collections.singletonMap("y", "1"), Collections.singletonMap("z", "1"), Collections.singleton("a"),
-				Collections.emptyList());
+				Collections.emptyList(), Collections.emptyList());
 
 		PersistentTransition persistentTransition2 = new PersistentTransition("welt", Collections.singletonMap("x", "1"),
 				Collections.singletonMap("y", "1"), Collections.singletonMap("z", "1"), Collections.singleton("a"),
-				Collections.emptyList());
+				Collections.emptyList(), Collections.emptyList());
 
 		currentState = Arrays.asList(persistentTransition, persistentTransition2, persistentTransition);
 
@@ -146,32 +146,32 @@ public class TraceModifierTest {
 
 		PersistentTransition persistentTransition = new PersistentTransition("eins", Collections.singletonMap("x", "1"),
 				Collections.singletonMap("y", "1"), Collections.singletonMap("z", "1"), Collections.singleton("a"),
-				Collections.emptyList());
+				Collections.emptyList(), Collections.emptyList());
 
 
 		PersistentTransition persistentTransition3 = new PersistentTransition("drei", Collections.singletonMap("x", "1"),
 				Collections.singletonMap("y", "1"), Collections.singletonMap("z", "1"), Collections.singleton("a"),
-				Collections.emptyList());
+				Collections.emptyList(), Collections.emptyList());
 
 
 		PersistentTransition persistentTransition5 = new PersistentTransition("fuenf", Collections.singletonMap("x", "1"),
 				Collections.singletonMap("y", "1"), Collections.singletonMap("z", "1"), Collections.singleton("a"),
-				Collections.emptyList());
+				Collections.emptyList(), Collections.emptyList());
 
 
 		PersistentTransition persistentTransition6 = new PersistentTransition("sechs", Collections.singletonMap("x", "1"),
 				Collections.singletonMap("y", "1"), Collections.singletonMap("z", "1"), Collections.singleton("a"),
-				Collections.emptyList());
+				Collections.emptyList(), Collections.emptyList());
 
 
 		PersistentTransition persistentTransition7 = new PersistentTransition("sieben", Collections.singletonMap("x", "1"),
 				Collections.singletonMap("y", "1"), Collections.singletonMap("z", "1"), Collections.singleton("a"),
-				Collections.emptyList());
+				Collections.emptyList(), Collections.emptyList());
 
 
 		PersistentTransition persistentTransition8 = new PersistentTransition("acht", Collections.singletonMap("x", "1"),
 				Collections.singletonMap("y", "1"), Collections.singletonMap("z", "1"), Collections.singleton("a"),
-				Collections.emptyList());
+				Collections.emptyList(), Collections.emptyList());
 
 
 		original = Arrays.asList(persistentTransition7, persistentTransition5, persistentTransition8,
@@ -391,22 +391,22 @@ public class TraceModifierTest {
 	public void applyMultipleChanges_test_empty(){
 		PersistentTransition persistentTransition = new PersistentTransition("eins", Collections.singletonMap("x", "1"),
 				Collections.singletonMap("y", "1"), Collections.singletonMap("z", "1"), Collections.singleton("a"),
-				Collections.emptyList());
+				Collections.emptyList(), Collections.emptyList());
 
 
 		PersistentTransition persistentTransition3 = new PersistentTransition("drei", Collections.singletonMap("x", "1"),
 				Collections.singletonMap("y", "1"), Collections.singletonMap("z", "1"), Collections.singleton("a"),
-				Collections.emptyList());
+				Collections.emptyList(), Collections.emptyList());
 
 
 		PersistentTransition persistentTransition5 = new PersistentTransition("fuenf", Collections.singletonMap("x", "1"),
 				Collections.singletonMap("y", "1"), Collections.singletonMap("z", "1"), Collections.singleton("a"),
-				Collections.emptyList());
+				Collections.emptyList(), Collections.emptyList());
 
 
 		PersistentTransition persistentTransition6 = new PersistentTransition("sechs", Collections.singletonMap("x", "1"),
 				Collections.singletonMap("y", "1"), Collections.singletonMap("z", "1"), Collections.singleton("a"),
-				Collections.emptyList());
+				Collections.emptyList(), Collections.emptyList());
 
 
 
@@ -432,22 +432,22 @@ public class TraceModifierTest {
 
 		PersistentTransition persistentTransition = new PersistentTransition("eins", Collections.singletonMap("x", "1"),
 				Collections.singletonMap("y", "1"), Collections.singletonMap("z", "1"), Collections.singleton("a"),
-				Collections.emptyList());
+				Collections.emptyList(), Collections.emptyList());
 
 
 		PersistentTransition persistentTransition3 = new PersistentTransition("drei", Collections.singletonMap("x", "1"),
 				Collections.singletonMap("y", "1"), Collections.singletonMap("z", "1"), Collections.singleton("a"),
-				Collections.emptyList());
+				Collections.emptyList(), Collections.emptyList());
 
 
 		PersistentTransition persistentTransition5 = new PersistentTransition("fuenf", Collections.singletonMap("x", "1"),
 				Collections.singletonMap("y", "1"), Collections.singletonMap("z", "1"), Collections.singleton("a"),
-				Collections.emptyList());
+				Collections.emptyList(), Collections.emptyList());
 
 
 		PersistentTransition persistentTransition6 = new PersistentTransition("sechs", Collections.singletonMap("x", "1"),
 				Collections.singletonMap("y", "1"), Collections.singletonMap("z", "1"), Collections.singleton("a"),
-				Collections.emptyList());
+				Collections.emptyList(), Collections.emptyList());
 
 
 
@@ -458,12 +458,12 @@ public class TraceModifierTest {
 
 		PersistentTransition persistentTransition2 = new PersistentTransition("zwei", Collections.singletonMap("a", "1"),
 				Collections.singletonMap("y", "1"), Collections.singletonMap("z", "1"), Collections.singleton("a"),
-				Collections.emptyList());
+				Collections.emptyList(), Collections.emptyList());
 
 
 		PersistentTransition persistentTransition7 = new PersistentTransition("sieben", Collections.singletonMap("a", "1"),
 				Collections.singletonMap("y", "1"), Collections.singletonMap("z", "1"), Collections.singleton("a"),
-				Collections.emptyList());
+				Collections.emptyList(), Collections.emptyList());
 
 
 		List<PersistentTransition> expected = Arrays.asList(persistentTransition2, persistentTransition7, persistentTransition3,
@@ -523,22 +523,22 @@ public class TraceModifierTest {
 
 		PersistentTransition persistentTransition = new PersistentTransition("eins", Collections.singletonMap("x", "1"),
 				Collections.singletonMap("y", "1"), Collections.singletonMap("z", "1"), Collections.singleton("a"),
-				Collections.emptyList());
+				Collections.emptyList(), Collections.emptyList());
 
 
 		PersistentTransition persistentTransition3 = new PersistentTransition("drei", Collections.singletonMap("x", "1"),
 				Collections.singletonMap("y", "1"), Collections.singletonMap("z", "1"), Collections.singleton("a"),
-				Collections.emptyList());
+				Collections.emptyList(), Collections.emptyList());
 
 
 		PersistentTransition persistentTransition5 = new PersistentTransition("fuenf", Collections.singletonMap("x", "1"),
 				Collections.singletonMap("y", "1"), Collections.singletonMap("z", "1"), Collections.singleton("a"),
-				Collections.emptyList());
+				Collections.emptyList(), Collections.emptyList());
 
 
 		PersistentTransition persistentTransition6 = new PersistentTransition("sechs", Collections.singletonMap("x", "1"),
 				Collections.singletonMap("y", "1"), Collections.singletonMap("z", "1"), Collections.singleton("a"),
-				Collections.emptyList());
+				Collections.emptyList(), Collections.emptyList());
 
 
 

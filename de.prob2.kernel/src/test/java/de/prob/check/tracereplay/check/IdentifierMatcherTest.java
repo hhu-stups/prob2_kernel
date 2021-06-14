@@ -839,17 +839,17 @@ public class IdentifierMatcherTest {
 	@Test
 	public void generateAllPossibleMappingVariations_test() throws IOException {
 		PersistentTransition init = new PersistentTransition(Transition.INITIALISE_MACHINE_NAME, emptyMap(),
-				emptyMap(), Collections.singletonMap("floors", "0"), Collections.emptySet(), Collections.emptyList());
+				emptyMap(), Collections.singletonMap("floors", "0"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList());
 
 		PersistentTransition first = new PersistentTransition("inc", new HashMap<String, String>() {{
 			put("a","1");
 			put("b","0");
 			put("c","0");
 		}},
-				emptyMap(), Collections.singletonMap("floors", "1"), Collections.emptySet(), Collections.emptyList());
+				emptyMap(), Collections.singletonMap("floors", "1"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList());
 
 		PersistentTransition second = new PersistentTransition("dec", emptyMap(),
-				emptyMap(), Collections.singletonMap("floors", "0"), Collections.emptySet(), Collections.emptyList());
+				emptyMap(), Collections.singletonMap("floors", "0"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList());
 
 		StateSpace stateSpace1 = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "reducedSigLengthAndRenamedVariable",  "OneTypeIIICandidateCounterPart.mch"));
 		Map<String, OperationInfo> oldInfos = stateSpace1.getLoadedMachine().getOperations();
@@ -944,15 +944,15 @@ public class IdentifierMatcherTest {
 	@Test
 	public void generateAllPossibleMappingVariations_empty_typeIII_test() throws IOException {
 		PersistentTransition init = new PersistentTransition(Transition.INITIALISE_MACHINE_NAME, emptyMap(),
-				emptyMap(), Collections.singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList());
+				emptyMap(), Collections.singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList());
 
 		PersistentTransition first = new PersistentTransition("inc", new HashMap<String, String>() {{
 			put("x","1");
 		}},
-				emptyMap(), Collections.singletonMap("levels", "1"), Collections.emptySet(), Collections.emptyList());
+				emptyMap(), Collections.singletonMap("levels", "1"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList());
 
 		PersistentTransition second = new PersistentTransition("dec", emptyMap(),
-				emptyMap(), Collections.singletonMap("leves", "0"), Collections.emptySet(), Collections.emptyList());
+				emptyMap(), Collections.singletonMap("leves", "0"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList());
 
 
 		StateSpace stateSpace1 = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "reducedSigLengthAndRenamedVariable",  "OneTypeIIICandidateCounterPart.mch"));
