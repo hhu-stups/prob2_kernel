@@ -4,15 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.prob.animator.command.LtlCheckingCommand.PathType;
-import de.prob.animator.domainobjects.AbstractEvalResult;
 import de.prob.animator.domainobjects.LTL;
 import de.prob.statespace.ITraceDescription;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
 import de.prob.statespace.Transition;
 
-public class LTLCounterExample extends AbstractEvalResult implements IModelCheckingResult, 
-		ITraceDescription {
+public class LTLCounterExample implements IModelCheckingResult, ITraceDescription {
 
 	private final LTL formula;
 	private final StateSpace stateSpace;

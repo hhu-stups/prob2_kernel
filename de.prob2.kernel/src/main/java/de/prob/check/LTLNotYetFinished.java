@@ -1,10 +1,8 @@
 package de.prob.check;
 
-import de.prob.animator.domainobjects.AbstractEvalResult;
 import de.prob.animator.domainobjects.LTL;
 
-public class LTLNotYetFinished extends AbstractEvalResult implements
-		IModelCheckingResult {
+public class LTLNotYetFinished implements IModelCheckingResult {
 
 	private final LTL formula;
 
