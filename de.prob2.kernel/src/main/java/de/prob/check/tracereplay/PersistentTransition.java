@@ -16,7 +16,7 @@ import java.util.*;
 
 import static java.util.Collections.*;
 
-@JsonPropertyOrder({"name", "params", "results", "destState", "destStateNotChanged", "preds"})
+@JsonPropertyOrder({"name", "params", "results", "destState", "destStateNotChanged", "preds", "postconditions"})
 public class PersistentTransition {
 
 	private final String name;
@@ -26,6 +26,7 @@ public class PersistentTransition {
 	private final Map<String, String> destState = new HashMap<>();
 	private final Set<String> destStateNotChanged = new HashSet<>();
 	private final List<String> preds = new ArrayList<>();
+	private final List<Postcondition> postconditions = new ArrayList<>();
 
 
 	public PersistentTransition(Transition transition) {
@@ -99,22 +100,23 @@ public class PersistentTransition {
 	 * @param destState target state of the transition
 	 * @param destStateNotChanged target state is no change
 	 * @param preds predicates
+	 * @param postconditions postconditions
 	 */
 	public PersistentTransition(@JsonProperty("name") String name,
 								@JsonProperty("params") Map<String, String> params,
 								@JsonProperty("results") Map<String, String> results,
 								@JsonProperty("destState") Map<String, String> destState,
 								@JsonProperty("destStateNotChanged") Set<String> destStateNotChanged,
-								@JsonProperty("preds") List<String> preds){
+								@JsonProperty("preds") List<String> preds,
+								@JsonProperty("postconditions") List<Postcondition> postconditions){
 		this.name = Objects.requireNonNull(name, "name");
 		this.params.putAll(Objects.requireNonNull(params, "params"));
 		this.results.putAll(Objects.requireNonNull(results, "results"));
 		this.destState.putAll(Objects.requireNonNull(destState, "destState"));
 		this.destStateNotChanged.addAll(Objects.requireNonNull(destStateNotChanged, "destStateNotChanged"));
 		this.preds.addAll(Objects.requireNonNull(preds, "preds"));
+		this.postconditions.addAll(Objects.requireNonNull(postconditions, "postconditions"));
 	}
-
-
 
 
 	public static List<PersistentTransition> createFromList(final List<Transition> transitions){
@@ -158,19 +160,23 @@ public class PersistentTransition {
 
 
 	public PersistentTransition copyWithNewDestState(Map<String, String> destState){
-		return  new PersistentTransition(name, params, results, destState, destStateNotChanged, preds);
+		return  new PersistentTransition(name, params, results, destState, destStateNotChanged, preds, postconditions);
 	}
 
 	public PersistentTransition copyWithNewParameters(Map<String, String> params){
-		return  new PersistentTransition(name, params, results, destState, destStateNotChanged, preds);
+		return  new PersistentTransition(name, params, results, destState, destStateNotChanged, preds, postconditions);
 	}
 
 	public PersistentTransition copyWithNewOutputParameters(Map<String, String> outputParameters){
-		return  new PersistentTransition(name, params, outputParameters, destState, destStateNotChanged, preds);
+		return  new PersistentTransition(name, params, outputParameters, destState, destStateNotChanged, preds, postconditions);
 	}
 
 	public PersistentTransition copyWithDestStateNotChanged(Set<String> destStateNotChanged){
-		return  new PersistentTransition(name, params, results, destState, destStateNotChanged, preds);
+		return  new PersistentTransition(name, params, results, destState, destStateNotChanged, preds, postconditions);
+	}
+
+	public PersistentTransition copyWithNewPostconditions(List<Postcondition> postconditions){
+		return  new PersistentTransition(name, params, results, destState, destStateNotChanged, preds, postconditions);
 	}
 
 	private void addValuesToDestState2(Map<IEvalElement, AbstractEvalResult> map,  PersistentTransition transitionBefore) {
@@ -257,6 +263,15 @@ public class PersistentTransition {
 		return new HashMap<>(this.destState);
 	}
 
+	@JsonProperty("postconditions")
+	public List<Postcondition> getPostconditions() {
+		if(postconditions == null){
+			return new ArrayList<>();
+		}
+		// Do invoke ArrayList constructor as it will copy the list
+		return this.postconditions;
+	}
+
 	@JsonIgnore
 	public Map<String, String> getAllPredicates(){
 		Map<String, String> result = new HashMap<>();
@@ -276,7 +291,9 @@ public class PersistentTransition {
 					if(((PersistentTransition) obj).destState.equals(this.destState)){
 						if(((PersistentTransition) obj).destStateNotChanged.equals(this.destStateNotChanged)){
 							if(((PersistentTransition) obj).results.equals(this.results)){
-								return ((PersistentTransition) obj).preds.equals(this.preds);
+								if(((PersistentTransition) obj).postconditions.equals(this.postconditions)) {
+									return ((PersistentTransition) obj).preds.equals(this.preds);
+								}
 							}
 						}
 					}
@@ -298,18 +315,18 @@ public class PersistentTransition {
 	public static PersistentTransition createEmptyPTransition(){
 
 		return new PersistentTransition("Dummy",new HashMap<>(), new HashMap<>(), new HashMap<>(),new HashSet<>(),
-				new ArrayList<>());
+				new ArrayList<>(), new ArrayList<>());
 
 	}
 
 	public static PersistentTransition createEmptyPTransition(String name){
 
 		return new PersistentTransition(name,new HashMap<>(), new HashMap<>(), new HashMap<>(),new HashSet<>(),
-				new ArrayList<>());
+				new ArrayList<>(), new ArrayList<>());
 
 	}
 
 	public static PersistentTransition copy(PersistentTransition persistentTransition){
-		return new PersistentTransition(persistentTransition.name, persistentTransition.params, persistentTransition.results, persistentTransition.destState, persistentTransition.destStateNotChanged, persistentTransition.preds);
+		return new PersistentTransition(persistentTransition.name, persistentTransition.params, persistentTransition.results, persistentTransition.destState, persistentTransition.destStateNotChanged, persistentTransition.preds, persistentTransition.postconditions);
 	}
 }

@@ -25,7 +25,7 @@ import static java.util.stream.Collectors.toMap;
 @JsonPropertyOrder({"description", "transitionList",  "variableNames", "constantNames", "setNames", "machineOperationInfos", "globalIdentifierTypes", "metadata"})
 public class TraceJsonFile implements HasMetadata {
 	public static final String FILE_TYPE = "Trace";
-	public static final int CURRENT_FORMAT_VERSION = 2;
+	public static final int CURRENT_FORMAT_VERSION = 3;
 
 	private final String description;
 	private final List<PersistentTransition> transitionList;

@@ -4,10 +4,12 @@ import de.hhu.stups.prob.translator.BValue;
 import de.hhu.stups.prob.translator.Translator;
 import de.hhu.stups.prob.translator.exceptions.TranslationException;
 import de.prob.animator.command.GetOperationByPredicateCommand;
+import de.prob.animator.domainobjects.AbstractEvalResult;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.formula.PredicateBuilder;
 import de.prob.statespace.OperationInfo;
+import de.prob.statespace.State;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
 import de.prob.statespace.Transition;
@@ -30,6 +32,17 @@ public class TraceReplay {
 		return replayTrace(persistentTrace, stateSpace, true, new HashMap<>(), new DefaultTraceChecker());
 	}
 
+	private static boolean checkPostconditions(State state, List<Postcondition> postconditions) {
+		// TODO: Return a list of boolean (for each postcondition)
+		for(Postcondition postcondition : postconditions) {
+			AbstractEvalResult result = state.eval(postcondition.getValue(), FormulaExpand.EXPAND);
+			if(!"TRUE".equals(result.toString())) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	/**
 	 * Iterate through a transition list and tries to replay every transition contained
 	 * @param persistentTrace the trace to replay
@@ -47,9 +60,11 @@ public class TraceReplay {
 		final List<PersistentTransition> transitionList = persistentTrace.getTransitionList();
 		for (int i = 0; i < transitionList.size(); i++) {
 			traceChecker.updateProgress((double) i / transitionList.size(), replayInformation);
-			Transition trans = replayPersistentTransition(trace, transitionList.get(i), setCurrentAnimation, replayInformation, traceChecker);
+			PersistentTransition persistentTransition = transitionList.get(i);
+			Transition trans = replayPersistentTransition(trace, persistentTransition, setCurrentAnimation, replayInformation, traceChecker);
 			if (trans != null) {
 				trace = trace.add(trans);
+				success = success && checkPostconditions(trace.getCurrentState(), persistentTransition.getPostconditions());
 			} else {
 				success = false;
 				break;
