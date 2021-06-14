@@ -11,6 +11,7 @@ import de.prob.ProBKernelStub;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.cli.CliTestCommon;
+import de.prob.json.JsonConversionException;
 import de.prob.json.JsonMetadata;
 import de.prob.json.JsonMetadataBuilder;
 import de.prob.statespace.StateSpace;
@@ -44,7 +45,7 @@ public class TraceManagerTest {
 		Path tempDirPath = tempDir.resolve("testFile.txt");
 		final StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "ExampleMachine.mch"));
 
-		JsonMetadata metadata = new JsonMetadataBuilder("Trace", 2)
+		JsonMetadata metadata = new JsonMetadataBuilder("Trace", 3)
 			.withSavedNow()
 			.withUserCreator()
 			.withProBCliVersion("version")
@@ -61,7 +62,7 @@ public class TraceManagerTest {
 		Path tempDirPath = tempDir.resolve("testFile.txt");
 		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "ExampleMachine.mch"));
 
-		JsonMetadata metadata = new JsonMetadataBuilder("Trace", 2)
+		JsonMetadata metadata = new JsonMetadataBuilder("Trace", 3)
 				.withSavedNow()
 				.withUserCreator()
 				.withProBCliVersion("version")
@@ -99,7 +100,7 @@ public class TraceManagerTest {
 
 	@Test
 	public void deserialize_wrong_fields_test() {
-		assertThrows(JsonProcessingException.class, () ->
+		assertThrows(JsonConversionException.class, () ->
 		traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines","traces", "test4.prob2trace")));
 	}
 

@@ -29,10 +29,10 @@ public class TraceManager  {
 
 			@Override
 			public ObjectNode convertOldData(final ObjectNode oldObject, final int oldVersion) {
+				if (!oldObject.has("transitionList")) {
+					throw new JsonConversionException("Not a valid trace file - missing required field transitionList");
+				}
 				if (oldVersion <= 0) {
-					if (!oldObject.has("transitionList")) {
-						throw new JsonConversionException("Not a valid trace file - missing required field transitionList");
-					}
 					if (!oldObject.has("description")) {
 						oldObject.put("description", "");
 					}
