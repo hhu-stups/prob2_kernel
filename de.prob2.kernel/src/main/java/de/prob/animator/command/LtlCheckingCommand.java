@@ -16,7 +16,6 @@ import de.prob.animator.domainobjects.ErrorItem;
 import de.prob.animator.domainobjects.LTL;
 import de.prob.check.CheckInterrupted;
 import de.prob.check.IModelCheckingResult;
-import de.prob.check.LTLChecker;
 import de.prob.check.LTLCounterExample;
 import de.prob.check.LTLError;
 import de.prob.check.LTLNotYetFinished;
@@ -31,7 +30,7 @@ import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
 
-public final class LtlCheckingCommand extends EvaluationCommand implements
+public final class LtlCheckingCommand extends AbstractCommand implements
 		IStateSpaceModifier {
 	private static final String PROLOG_COMMAND_NAME = "prob2_do_ltl_modelcheck";
 	private static final String VARIABLE_NAME_RESULT = "R";
@@ -47,7 +46,6 @@ public final class LtlCheckingCommand extends EvaluationCommand implements
 	private final StateSpace s;
 
 	public LtlCheckingCommand(final StateSpace s, final LTL ltlFormula, final int max) {
-		super(ltlFormula, null);
 		this.s = s;
 		this.ltlFormula = ltlFormula;
 		this.max = max;
@@ -64,23 +62,19 @@ public final class LtlCheckingCommand extends EvaluationCommand implements
 		if (term.hasFunctor("ok", 0)) {
 			LTLOk res = new LTLOk(ltlFormula);
 			result = res;
-			value = res;
 		} else if (term.hasFunctor("nostart", 0)) {
 			LTLError res = new LTLError(ltlFormula,
 					"Could not find initialisation. Try to animating the model.");
 			result = res;
-			value = res;
 		} else if (term.hasFunctor("typeerror", 0)) {
 			ListPrologTerm errorTerm = (ListPrologTerm) bindings.get(VARIABLE_NAME_ERRORS);
 			LTLError res = new LTLError(ltlFormula, String.join("\n", errorTerm.stream()
 				.map(PrologTerm::atomicString)
 				.collect(Collectors.toList())));
 			result = res;
-			value = res;
 		} else if (term.hasFunctor("incomplete", 0)) {
 			LTLNotYetFinished res = new LTLNotYetFinished(ltlFormula);
 			result = res;
-			value = res;
 		} else if (term.hasFunctor("counterexample", 3)) {
 			CompoundPrologTerm cpt = BindingGenerator.getCompoundTerm(term, 3);
 			List<Transition> counterExample = BindingGenerator.getList(cpt.getArgument(1)).stream()
@@ -116,7 +110,6 @@ public final class LtlCheckingCommand extends EvaluationCommand implements
 			
 			LTLCounterExample res = new LTLCounterExample(ltlFormula, s, pathToCE, counterExample, loopEntry, pathType);
 			result = res;
-			value = res;
 		} else {
 			throw new UnknownLtlResult("Unknown result from LTL checking: " + term);
 		}
@@ -134,7 +127,7 @@ public final class LtlCheckingCommand extends EvaluationCommand implements
 	@Override
 	public void writeCommand(final IPrologTermOutput pto) {
 		pto.openTerm(PROLOG_COMMAND_NAME);
-		evalElement.printProlog(pto);
+		this.ltlFormula.printProlog(pto);
 		pto.printNumber(max);
 		pto.printVariable(VARIABLE_NAME_RESULT);
 		pto.printVariable(VARIABLE_NAME_ERRORS);
