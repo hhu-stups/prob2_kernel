@@ -53,7 +53,10 @@ public class Api {
 	 * Get the version of the ProB CLI.
 	 * 
 	 * @return the version of the ProB CLI, or {@code null} if the version could not be determined
+	 * 
+	 * @deprecated Use {@link GetVersionCommand} with an existing animator instead.
 	 */
+	@Deprecated
 	public CliVersionNumber getVersion() {
 		IAnimator animator = null;
 		try {
@@ -76,7 +79,6 @@ public class Api {
 	public String help() {
 		return "Api Commands:\n\n"
 			+ " String help(): print out available commands\n"
-			+ " CliVersionNumber getVersion(): get the version of the ProB CLI\n"
 			+ " void shutdown(ProBInstance instance): shutdown ProBInstance\n"
 			+ " StateSpace b_load(String filePath, [Map<String, String> prefs]): load a classical B machine from a .mch file\n"
 			+ " StateSpace b_load(Start ast, [Map<String, String> prefs]): load aclassical B machine from an AST\n"
