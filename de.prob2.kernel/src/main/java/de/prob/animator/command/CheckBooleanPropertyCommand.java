@@ -11,9 +11,6 @@ import de.prob.parser.ResultParserException;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Command to retrieve a state property. Most likely you rather want one of the
  * specialized versions {@link CheckInitialisationStatusCommand},
@@ -24,9 +21,6 @@ import org.slf4j.LoggerFactory;
 public class CheckBooleanPropertyCommand extends AbstractCommand {
 
 	private static final String PROLOG_COMMAND_NAME = "state_property";
-
-	private final Logger logger = LoggerFactory
-			.getLogger(CheckBooleanPropertyCommand.class);
 
 	private static final String PROP_RESULT = "PropResult";
 
@@ -52,7 +46,6 @@ public class CheckBooleanPropertyCommand extends AbstractCommand {
 	private void checkIfBoolean(final String functor) {
 		if (!"true".equals(functor) && !"false".equals(functor)) {
 			result = null;
-			logger.error("Expected true or false, but was: {}", functor);
 			throw new ResultParserException("Expected true or false, but was: "
 					+ functor, null);
 		}

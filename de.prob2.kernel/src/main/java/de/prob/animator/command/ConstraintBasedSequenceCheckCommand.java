@@ -77,6 +77,7 @@ public class ConstraintBasedSequenceCheckCommand extends AbstractCommand impleme
 		final PrologTerm resultTerm = bindings.get(RESULT_VARIABLE);
 		if (resultTerm.hasFunctor("errors", 1)) {
 			PrologTerm error = resultTerm.getArgument(1);
+			// FIXME Return the error messages somehow instead of only logging them!
 			logger.error("CBC Sequence Check produced errors: {}", error);
 			this.result = ResultType.ERROR;
 		} else if (resultTerm.hasFunctor("interrupt", 0)) {
@@ -94,9 +95,7 @@ public class ConstraintBasedSequenceCheckCommand extends AbstractCommand impleme
 			}
 			this.transitions = transitions;
 		} else {
-			String msg = "unexpected result from sequence check: " + resultTerm;
-			logger.error(msg);
-			throw new ProBError(msg);
+			throw new ProBError("unexpected result from sequence check: " + resultTerm);
 		}
 	}
 	

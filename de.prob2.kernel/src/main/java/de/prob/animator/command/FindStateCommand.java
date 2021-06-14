@@ -77,6 +77,7 @@ public class FindStateCommand extends AbstractCommand implements IStateSpaceModi
 			this.result = ResultType.NO_STATE_FOUND;
 		} else if (resultTerm.hasFunctor("errors", 1)) {
 			PrologTerm error = resultTerm.getArgument(1);
+			// FIXME Return the error messages somehow instead of only logging them!
 			logger.error("Find state produced errors: {}", error);
 			this.result = ResultType.ERROR;
 		} else if (resultTerm.hasFunctor("interrupted", 0)) {

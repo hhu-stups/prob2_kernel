@@ -1,19 +1,15 @@
 package de.prob.synthesis;
 
 import de.be4.classicalb.core.parser.ClassicalBParser;
+import de.prob.exception.ProBError;
 import de.prob.parser.BindingGenerator;
 import de.prob.parserbase.ProBParseException;
 import de.prob.parserbase.ProBParserBaseAdapter;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.PrologTerm;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class VariableExample {
-
-	private final Logger logger = LoggerFactory.getLogger(VariableExample.class);
-
 	private final ProBParserBaseAdapter bParser =
 		new ProBParserBaseAdapter(new ClassicalBParser());
 
@@ -43,7 +39,7 @@ public class VariableExample {
 				.printAtom(name)
 				.printTerm(bParser.parseExpression(value, false)).closeTerm();
 		} catch (final ProBParseException parseException) {
-			logger.error("Error when parsing synthesis example value.", parseException);
+			throw new ProBError("Error when parsing synthesis example value.", parseException);
 		}
 	}
 

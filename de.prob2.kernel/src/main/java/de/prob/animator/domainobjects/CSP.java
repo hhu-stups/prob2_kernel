@@ -19,17 +19,12 @@ import de.prob.model.representation.IFormulaUUID;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.statespace.State;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * A Formula representation for CSP
  *
  * @author joy
  */
 public class CSP extends AbstractEvalElement {
-	private static final Logger LOGGER = LoggerFactory.getLogger(CSP.class);
-
 	private final FormulaUUID uuid;
 	private final String fileName;
 	private final Path cspmfPath;
@@ -85,11 +80,9 @@ public class CSP extends AbstractEvalElement {
 				}
 			}
 		} catch (IOException e) {
-			LOGGER.error("IOException while calling cspmf", e);
 			throw new EvaluationException("IOException while parsing CSP", e);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
-			LOGGER.error("Thread interrupted while calling cspmf", e);
 			throw new EvaluationException("Thread interrupted while parsing CSP", e);
 		}
 	}

@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.be4.classicalb.core.parser.analysis.prolog.ASTProlog;
-
 import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.EvalElementType;
 import de.prob.parser.BindingGenerator;
@@ -25,9 +24,6 @@ import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
 import de.prob.statespace.Transition;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Command to execute an event that has not been enumerated by ProB.
  * 
@@ -38,7 +34,6 @@ public final class ConstructTraceCommand extends AbstractCommand implements
 		IStateSpaceModifier, ITraceDescription {
 
 	private static final String PROLOG_COMMAND_NAME = "prob2_construct_trace";
-	Logger logger = LoggerFactory.getLogger(ConstructTraceCommand.class);
 	private static final String RESULT_VARIABLE = "Res";
 	private static final String ERRORS_VARIABLE = "Errors";
 

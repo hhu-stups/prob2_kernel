@@ -16,6 +16,8 @@ import javax.script.SimpleScriptContext;
 
 import com.google.common.io.CharStreams;
 
+import de.prob.exception.ProBError;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,13 +49,12 @@ public class GroovySE implements ScriptEngine {
 		) {
 			initscript = CharStreams.toString(reader);
 		} catch (IOException e) {
-			logger.error("Could not read initscript", e);
-			return;
+			throw new ProBError("Could not read initscript", e);
 		}
 		try {
 			groovy.eval(IMPORTS + initscript);
 		} catch (ScriptException e) {
-			logger.error("initscript threw an exception", e);
+			throw new ProBError("initscript threw an exception", e);
 		}
 	}
 

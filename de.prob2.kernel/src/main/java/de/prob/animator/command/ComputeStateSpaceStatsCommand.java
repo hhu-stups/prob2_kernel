@@ -12,14 +12,10 @@ import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.IntegerPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public final class ComputeStateSpaceStatsCommand extends AbstractCommand {
 
 	private static final String PROLOG_COMMAND_NAME = "compute_efficient_statespace_stats";
 	private StateSpaceStats coverageResult;
-	Logger logger = LoggerFactory.getLogger(ComputeStateSpaceStatsCommand.class);
 
 	public StateSpaceStats getResult() {
 		return coverageResult;

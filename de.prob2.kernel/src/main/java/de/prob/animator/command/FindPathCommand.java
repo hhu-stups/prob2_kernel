@@ -1,5 +1,8 @@
 package de.prob.animator.command;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.be4.classicalb.core.parser.analysis.prolog.ASTProlog;
 import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.EvalElementType;
@@ -9,19 +12,17 @@ import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
-import de.prob.statespace.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
+import de.prob.statespace.ITraceDescription;
+import de.prob.statespace.State;
+import de.prob.statespace.StateSpace;
+import de.prob.statespace.Trace;
+import de.prob.statespace.Transition;
 
 public class FindPathCommand extends AbstractCommand implements
 		IStateSpaceModifier, ITraceDescription {
 
 
 	private static final String PROLOG_COMMAND_NAME = "prob2_find_trace";
-	Logger logger = LoggerFactory.getLogger(ConstructTraceCommand.class);
 	private static final String RESULT_VARIABLE = "Res";
 	private static final String ERRORS_VARIABLE = "Errors";
 

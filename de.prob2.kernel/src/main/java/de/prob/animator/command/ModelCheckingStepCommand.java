@@ -27,12 +27,7 @@ import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.Transition;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class ModelCheckingStepCommand extends AbstractCommand implements IStateSpaceModifier {
-	private static final Logger logger = LoggerFactory.getLogger(ModelCheckingStepCommand.class);
-
 	private static final String PROLOG_COMMAND_NAME = "do_modelchecking";
 
 	/**
@@ -157,8 +152,6 @@ public class ModelCheckingStepCommand extends AbstractCommand implements IStateS
 			}
 
 		default:
-			logger.error("Model checking result unknown. This should not happen "
-				+ "unless someone changed the prolog kernel. Result was: {} ", cpt);
 			throw new IllegalArgumentException("model checking result unknown: " + cpt);
 		}
 

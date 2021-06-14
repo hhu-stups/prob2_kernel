@@ -22,12 +22,7 @@ import de.prob.model.eventb.translate.EventBModelTranslator;
 import de.prob.prolog.output.PrologTermOutput;
 import de.prob.statespace.StateSpace;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class Api {
-	private static final Logger LOGGER = LoggerFactory.getLogger(Api.class);
-	
 	private final FactoryProvider modelFactoryProvider;
 	private final Provider<IAnimator> animatorProvider;
 	private LinkedHashMap<Object, Object> globals = new LinkedHashMap<>();
@@ -66,9 +61,6 @@ public class Api {
 			GetVersionCommand versionCommand = new GetVersionCommand();
 			animator.execute(versionCommand);
 			return versionCommand.getVersion();
-		} catch (RuntimeException e) {
-			LOGGER.warn("Exception while getting CLI version info", e);
-			return null;
 		} finally {
 			if (animator != null) {
 				animator.kill();

@@ -19,9 +19,6 @@ import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.State;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Calculates the values of Classical-B Predicates and Expressions.
  * 
@@ -34,9 +31,6 @@ public class CbcSolveCommand extends AbstractCommand {
 	}
 
 	private static final String PROLOG_COMMAND_NAME = "cbc_solve_with_opts";
-
-	private final Logger logger = LoggerFactory
-			.getLogger(CbcSolveCommand.class);
 
 	private static final int BINDINGS = 1;
 
@@ -114,9 +108,10 @@ public class CbcSolveCommand extends AbstractCommand {
 			result = new ComputationNotCompletedResult(evalElement.getCode(),
 					"no solution found (but one might exist), reason: " + prologTerm.getArgument(1));
 		} else if (prologTerm.hasFunctor("error",0)) {
-			String msg = "Unexpected result when solving command. See Log for details.";
-			logger.error(msg);
-			throw new ProBError(msg);
+			// FIXME Can this case actually happen?
+			// It seems that error/0 should only be returned if probcli has added an error to the error manager,
+			// in which case AnimatorImpl should have already thrown a ProBError.
+			throw new ProBError("Unexpected result when solving command. See Log for details.");
 		} else {
 			throw new AssertionError("Unhandled functor in result: " + prologTerm.getFunctor() + "/" + prologTerm.getArity());
 		}
