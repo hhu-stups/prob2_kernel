@@ -43,17 +43,11 @@ import de.prob.model.representation.ModelElementList;
 import de.prob.model.representation.Variable;
 
 import org.eventb.core.ast.extension.IFormulaExtension;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class MachineXmlHandler extends DefaultHandler {
-	private static final Logger logger = LoggerFactory.getLogger(MachineXmlHandler.class);
-
 	private EventBModel model;
 	private final Set<IFormulaExtension> typeEnv;
 	private EventBMachine machine;
