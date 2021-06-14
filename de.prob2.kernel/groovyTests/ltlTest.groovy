@@ -13,7 +13,8 @@ assert res1 instanceof LTLOk
 final res2 = new LTLChecker(s, new LTL("G({ card(active) = 0 })")).call()
 assert res2 instanceof LTLCounterExample
 def t = res2.getTrace(s)
-assert t.transitionList.size() == 8
+assert t.transitionList.size() == 3 
+// used to be == 8, but with safety mc you just need three steps: init,new,ready
 
 final res3 = new LTLChecker(s, new LTL("G({ active < 7 })")).call()
 assert res3 instanceof LTLError
