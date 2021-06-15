@@ -13,15 +13,17 @@ import de.prob.statespace.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+
+import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toMap;
 
 public class FindPathCommand extends AbstractCommand implements
 		IStateSpaceModifier, ITraceDescription {
 
 
 	private static final String PROLOG_COMMAND_NAME = "prob2_find_trace";
-	Logger logger = LoggerFactory.getLogger(ConstructTraceCommand.class);
+	//Logger logger = LoggerFactory.getLogger(FindPathCommand.class);
 	private static final String RESULT_VARIABLE = "Res";
 	private static final String ERRORS_VARIABLE = "Errors";
 
@@ -31,34 +33,64 @@ public class FindPathCommand extends AbstractCommand implements
 	private final StateSpace stateSpace;
 	private final List<Transition> resultTrace = new ArrayList<>();
 	private final List<String> errors = new ArrayList<>();
+	private final Map<String, List<String>> alternatives;
 
+	/**
+	 * Tries to satisfy the given path with given predicates. Will fail if path is not executable
+	 * @param s the state space - the machine to satisfy the trace on
+	 * @param stateId the entry point
+	 * @param trace the trace to satisfy
+	 * @param predicates the constraints to put on each transition; maps 1:1 with trace
+	 */
 	public FindPathCommand(final StateSpace s, final State stateId,
-								 final List<String> name, final List<ClassicalB> predicate) {
+								 final List<String> trace, final List<ClassicalB> predicates) {
+		 this(s, stateId, trace, predicates, trace.stream().collect(toMap(entry->entry, Collections::singletonList)));
+	}
+
+	/**
+	 * Tries to satisfy the given path with given predicates. Will fail if path is not executable. Is provided with
+	 * alternatives to especially explore refinements.
+	 * @param s the state space - the machine to satisfy the trace on
+	 * @param stateId the entry point
+	 * @param trace the trace to satisfy
+	 * @param predicates the constraints to put on each transition; maps 1:1 with trace
+	 * @param alternatives In cases where a transition can have alternatives (e.g. refinements)
+	 *                        those are stored here, expects a 1:1 mapping else
+	 */
+	public FindPathCommand(final StateSpace s, final State stateId,
+						   final List<String> trace, final List<ClassicalB> predicates, final Map<String, List<String>> alternatives) {
 		this.stateSpace = s;
 		this.stateId = stateId;
-		this.name = name;
-		this.evalElement = predicate;
-		if (name.size() != predicate.size()) {
+		this.name = trace;
+		this.evalElement = predicates;
+		this.alternatives = alternatives;
+
+
+		if (trace.size() != predicates.size()) {
 			throw new IllegalArgumentException(
 					"Must provide the same number of names and predicates.");
 		}
-		for (ClassicalB classicalB : predicate) {
+		for (ClassicalB classicalB : predicates) {
 			if (!EvalElementType.PREDICATE.equals(classicalB.getKind())) {
 				throw new IllegalArgumentException(
-						"Formula must be a predicate: " + predicate);
+						"Formula must be a predicates: " + predicates);
 			}
 		}
-		int size = this.name.size();
+		for(String entry : trace){
+			if(!alternatives.containsKey(entry)){
+				throw new IllegalArgumentException(
+						"Operation " + s + " must have an alternative");
+			}
+		}
 
 	}
 
 
 	/**
 	 * This method is called when the command is prepared for sending. The
-	 * method is called by the Animator class, most likely it is not interesting
-	 * for other classes.
+	 * method is called by the Animator class.
 	 *
-	 * @see de.prob.animator.command.AbstractCommand#writeCommand(de.prob.prolog.output.IPrologTermOutput)
+	 * @see de.prob.animator.command.AbstractCommand writeCommand(de.prob.prolog.output.IPrologTermOutput)
 	 */
 	@Override
 	public void writeCommand(final IPrologTermOutput pto) {
@@ -66,7 +98,12 @@ public class FindPathCommand extends AbstractCommand implements
 				.printAtomOrNumber(stateId.getId());
 		pto.openList();
 		for (String n : name) {
-			pto.printAtom(n);
+			pto.openList();
+			for(String entry : alternatives.get(n))
+			{
+				pto.printAtom(entry);
+			}
+			pto.closeList();
 		}
 		pto.closeList();
 		final ASTProlog prolog = new ASTProlog(pto, null);
