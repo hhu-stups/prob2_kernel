@@ -2,20 +2,16 @@ package de.prob.animator.domainobjects;
 
 import de.be4.classicalb.core.parser.ClassicalBParser;
 import de.be4.ltl.core.parser.LtlParseException;
+import de.prob.exception.ProBError;
 import de.prob.ltl.parser.LtlParser;
 import de.prob.parserbase.ProBParserBase;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class LTL {
 	private final String code;
 	private final PrologTerm generatedTerm;
 	
-	private static final Logger logger = LoggerFactory.getLogger(LTL.class);
-
 	public LTL(final String code) throws LtlParseException {
 		this(code, new ClassicalBParser());
 	}
@@ -30,6 +26,9 @@ public class LTL {
 	public LTL(final String code, ProBParserBase languageSpecificParser, LtlParser parser) {
 		this.code = code;
 		generatedTerm = parser.generatePrologTerm("root", languageSpecificParser);
+		if (generatedTerm == null) {
+			throw new ProBError("LTL Prolog term generation failed - most likely there was a parse error");
+		}
 	}
 	
 	public String getCode() {
@@ -42,10 +41,6 @@ public class LTL {
 	}
 	
 	public void printProlog(final IPrologTermOutput pout) {
-		if(generatedTerm == null) {
-			logger.error("PrologTerm is null");
-			return;
-		}
 		pout.printTerm(generatedTerm);
 	}
 
