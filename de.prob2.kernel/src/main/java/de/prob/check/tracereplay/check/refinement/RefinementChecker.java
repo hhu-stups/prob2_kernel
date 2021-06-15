@@ -69,55 +69,53 @@ public class RefinementChecker {
 	}
 
 
-	public List<PersistentTransition> checkEventB() throws IOException {
+	public List<PersistentTransition> checkEventB() throws IOException, TraceConstructionError {
 		ReusableAnimator animator = injector.getInstance(ReusableAnimator.class);
 		StateSpace stateSpace = animator.createStateSpace();
 		EventBFactory eventBFactory = injector.getInstance(EventBFactory.class);
 		eventBFactory.extract(alpha.toString()).loadIntoStateSpace(stateSpace);
 
-		Set<String> usedOperations = TraceCheckerUtils.usedOperations(TraceCheckerUtils.stripNonOpClause(transitionList));
-
 		AbstractModel model = stateSpace.getModel();
-		List<DependencyGraph.Node> chain = model.getGraph().refinementChain();
-		ModelElementList<Machine> involvedMachines = stateSpace.getModel().getChildrenOfType(Machine.class);
 
-		Map<String, Set<String>> operationSets = involvedMachines
-				.stream()
-				.collect(toMap(Machine::getName, entry -> entry.getChildren().get(BEvent.class).stream().map(Object::toString)
-				.collect(Collectors.toSet())));
+		Machine topLevelMachine = model.getChildrenOfType(Machine.class).get(model.getGraph().getStart());
 
-		Map<String, Machine> machineMap = involvedMachines.stream().collect(toMap(Machine::getName, entry -> entry));
+		ModelElementList<Event> eventList = topLevelMachine.getChildrenOfType(Event.class);
 
-		String bestMatch = operationSets.entrySet().stream().collect(toMap(Map.Entry::getKey, entry -> {
-			Set<String> current = new HashSet<String>(entry.getValue());
-			current.removeAll(usedOperations);
-			return current.size();
-		})).entrySet().stream().max(new Comparator<Map.Entry<String, Integer>>() {
-			@Override
-			public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
-				if (o1.getValue() >= o2.getValue()) {
-					return 1;
-				} else {
-					return -1;
-				}
-			}
-		}).get().getKey();
+		Map<String, String> result = eventList.stream()
+				.collect(toMap(BEvent::getName, entry -> traceEvent(entry).getName()));
 
-		Machine blabla = model.getChildrenOfType(Machine.class).get(model.getGraph().getStart());
-		ModelElementList<Event> initialEventList = blabla.getChildrenOfType(Event.class);
+		List<PersistentTransition> enhancedTransition = transitionList.stream()
+				.map(entry -> {
+					switch (entry.getOperationName()){
+						case Transition.INITIALISE_MACHINE_NAME:
+						case Transition.SETUP_CONSTANTS_NAME:
+							return entry;
+						default:
+							return entry.copyWithNewName(result.get(entry.getOperationName()));
+					}
 
+				})
+				.collect(Collectors.toList());
 
+		List<Transition> resultRaw = AdvancedTraceConstructor.constructTraceByName(enhancedTransition, stateSpace);
 
-		return null;
+		return PersistentTransition.createFromList(resultRaw);
 	}
 
-	public Map<String, String> pairOldAndNew(ModelElementList<Event> eventList, Map<String, String> aux){
-		if(aux.isEmpty()){
-			eventList.forEach(element -> aux.put(element.getName(), element.getName()));
+	/**
+	 * Traces an event back to its origins and returns the original event, return event if it was never refined
+	 * @param event the event to trace
+	 * @return the origin event
+	 */
+	public static Event traceEvent(Event event){
+		if(event.getRefines().isEmpty()){
+			return event;
 		}else{
-
+			return traceEvent(event.getRefines().get(0)); //In EventB there should only be one Event refined from
 		}
 	}
+
+
 
 	public List<PersistentTransition> checkClassicalB() throws IOException, BCompoundException, TraceConstructionError {
 		BParser alphaParser = new BParser(alpha.toString());
@@ -134,7 +132,6 @@ public class RefinementChecker {
 		PrettyPrinter prettyPrinter = new PrettyPrinter();
 		prettyPrinter.caseAAbstractMachineParseUnit(aAbstractMachineParseUnit);
 
-		File bla = alpha.getParent().toFile();
 		File tempFile = File.createTempFile("machine", ".mch", alpha.getParent().toFile());
 
 
@@ -144,7 +141,6 @@ public class RefinementChecker {
 
 
 		StateSpace stateSpace = TraceCheckerUtils.createStateSpace(tempFile.toPath().toString(), injector);
-
 
 		List<Transition> resultRaw = AdvancedTraceConstructor.constructTraceByName(transitionList, stateSpace);
 

@@ -156,21 +156,24 @@ public class PersistentTransition {
 
 	}
 
+	public PersistentTransition copyWithNewName(String name){
+		return new PersistentTransition(name, params, results, destState, destStateNotChanged, preds);
+	}
 
 	public PersistentTransition copyWithNewDestState(Map<String, String> destState){
-		return  new PersistentTransition(name, params, results, destState, destStateNotChanged, preds);
+		return new PersistentTransition(name, params, results, destState, destStateNotChanged, preds);
 	}
 
 	public PersistentTransition copyWithNewParameters(Map<String, String> params){
-		return  new PersistentTransition(name, params, results, destState, destStateNotChanged, preds);
+		return new PersistentTransition(name, params, results, destState, destStateNotChanged, preds);
 	}
 
 	public PersistentTransition copyWithNewOutputParameters(Map<String, String> outputParameters){
-		return  new PersistentTransition(name, params, outputParameters, destState, destStateNotChanged, preds);
+		return new PersistentTransition(name, params, outputParameters, destState, destStateNotChanged, preds);
 	}
 
 	public PersistentTransition copyWithDestStateNotChanged(Set<String> destStateNotChanged){
-		return  new PersistentTransition(name, params, results, destState, destStateNotChanged, preds);
+		return new PersistentTransition(name, params, results, destState, destStateNotChanged, preds);
 	}
 
 	private void addValuesToDestState2(Map<IEvalElement, AbstractEvalResult> map,  PersistentTransition transitionBefore) {
