@@ -260,20 +260,5 @@ public class TraceJsonFile implements HasMetadata {
 	public TraceJsonFile changeMachineInfos(Map<String, OperationInfo> operationInfoMap){
 		return new TraceJsonFile(description, transitionList, variableNames, operationInfoMap, constantNames, setNames, getMetadata());
 	}
-
-	// TODO: Just for debug
-	@Override
-	public String toString() {
-		return "TraceJsonFile{" +
-				"description='" + description + '\'' +
-				", transitionList=" + transitionList +
-				", variableNames=" + variableNames +
-				", constantNames=" + constantNames +
-				", setNames=" + setNames +
-				", machineOperationInfos=" + machineOperationInfos +
-				", reducedMachineOperationInfos=" + reducedMachineOperationInfos +
-				", globalIdentifierTypes=" + globalIdentifierTypes +
-				", metadata=" + metadata +
-				'}';
-	}
+	
 }
