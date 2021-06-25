@@ -19,7 +19,7 @@ public class DefaultTraceChecker implements ITraceChecker {
 	}
 
 	@Override
-	public void setResult(boolean success, List<Boolean> postconditionResults, Map<String, Object> replayInformation) {
+	public void setResult(boolean success, List<List<Boolean>> postconditionResults, Map<String, Object> replayInformation) {
 		if(success) {
 			System.out.println("Trace Replay and Checking Postconditions Successful");
 		} else {

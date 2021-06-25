@@ -33,15 +33,13 @@ public class TraceReplay {
 		return replayTrace(persistentTrace, stateSpace, true, new HashMap<>(), new DefaultTraceChecker());
 	}
 
-	private static boolean checkPostconditions(State state, List<Postcondition> postconditions) {
-		// TODO: Return a list of boolean (for each postcondition)
+	private static List<Boolean> checkPostconditions(State state, List<Postcondition> postconditions) {
+		List<Boolean> result = new ArrayList<>();
 		for(Postcondition postcondition : postconditions) {
-			AbstractEvalResult result = state.eval(postcondition.getValue(), FormulaExpand.EXPAND);
-			if(!"TRUE".equals(result.toString())) {
-				return false;
-			}
+			AbstractEvalResult evalResult = state.eval(postcondition.getValue(), FormulaExpand.EXPAND);
+			result.add("TRUE".equals(evalResult.toString()));
 		}
-		return true;
+		return result;
 	}
 
 	/**
@@ -59,16 +57,16 @@ public class TraceReplay {
 		trace.setExploreStateByDefault(false);
 		boolean success = true;
 		final List<PersistentTransition> transitionList = persistentTrace.getTransitionList();
-		final List<Boolean> postcondtionsResults = new ArrayList<>();
+		final List<List<Boolean>> postcondtionsResults = new ArrayList<>();
 		for (int i = 0; i < transitionList.size(); i++) {
 			traceChecker.updateProgress((double) i / transitionList.size(), replayInformation);
 			PersistentTransition persistentTransition = transitionList.get(i);
 			Transition trans = replayPersistentTransition(trace, persistentTransition, setCurrentAnimation, replayInformation, traceChecker);
 			if (trans != null) {
 				trace = trace.add(trans);
-				boolean postconditionResult = checkPostconditions(trace.getCurrentState(), persistentTransition.getPostconditions());
+				List<Boolean> postconditionResult = checkPostconditions(trace.getCurrentState(), persistentTransition.getPostconditions());
 				postcondtionsResults.add(postconditionResult);
-				success = success && postconditionResult;
+				success = success && postconditionResult.stream().reduce(true, (a, e) -> a && e);
 			} else {
 				success = false;
 				break;
