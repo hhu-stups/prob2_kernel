@@ -304,11 +304,6 @@ public class PersistentTransition {
 	}
 
 	@Override
-	public int hashCode() {
-		return Objects.hash(name, params, results, destState, destStateNotChanged, preds, postconditions);
-	}
-
-	@Override
 	public String toString() {
 		return "PersistentTransition{" +
 				"name='" + name + '\'' +
