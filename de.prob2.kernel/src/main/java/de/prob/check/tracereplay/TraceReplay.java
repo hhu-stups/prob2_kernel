@@ -16,6 +16,7 @@ import de.prob.statespace.Transition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,13 +59,16 @@ public class TraceReplay {
 		trace.setExploreStateByDefault(false);
 		boolean success = true;
 		final List<PersistentTransition> transitionList = persistentTrace.getTransitionList();
+		final List<Boolean> postcondtionsResults = new ArrayList<>();
 		for (int i = 0; i < transitionList.size(); i++) {
 			traceChecker.updateProgress((double) i / transitionList.size(), replayInformation);
 			PersistentTransition persistentTransition = transitionList.get(i);
 			Transition trans = replayPersistentTransition(trace, persistentTransition, setCurrentAnimation, replayInformation, traceChecker);
 			if (trans != null) {
 				trace = trace.add(trans);
-				success = success && checkPostconditions(trace.getCurrentState(), persistentTransition.getPostconditions());
+				boolean postconditionResult = checkPostconditions(trace.getCurrentState(), persistentTransition.getPostconditions());
+				postcondtionsResults.add(postconditionResult);
+				success = success && postconditionResult;
 			} else {
 				success = false;
 				break;
@@ -76,7 +80,7 @@ public class TraceReplay {
 			}
 
 		}
-		traceChecker.setResult(success, replayInformation);
+		traceChecker.setResult(success, postcondtionsResults, replayInformation);
 		trace.setExploreStateByDefault(true);
 		trace.getCurrentState().explore();
 

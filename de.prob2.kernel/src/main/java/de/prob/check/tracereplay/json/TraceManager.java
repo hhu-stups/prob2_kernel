@@ -13,7 +13,7 @@ import de.prob.json.JacksonManager;
 import de.prob.json.JsonConversionException;
 
 /**
- * Loads and safes traces
+ * Loads and saves traces
  */
 public class TraceManager  {
 	private final JacksonManager<TraceJsonFile> jacksonManager;

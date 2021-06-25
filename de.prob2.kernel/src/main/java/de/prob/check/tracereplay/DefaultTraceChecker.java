@@ -1,5 +1,6 @@
 package de.prob.check.tracereplay;
 
+import java.util.List;
 import java.util.Map;
 
 public class DefaultTraceChecker implements ITraceChecker {
@@ -14,6 +15,15 @@ public class DefaultTraceChecker implements ITraceChecker {
 			System.out.println("Trace Replay Successful");
 		} else {
 			System.out.println("Trace Replay Failed");
+		}
+	}
+
+	@Override
+	public void setResult(boolean success, List<Boolean> postconditionResults, Map<String, Object> replayInformation) {
+		if(success) {
+			System.out.println("Trace Replay and Checking Postconditions Successful");
+		} else {
+			System.out.println("Trace Replay and Checking Postconditions Failed");
 		}
 	}
 

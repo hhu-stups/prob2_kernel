@@ -268,7 +268,7 @@ public class PersistentTransition {
 		if(postconditions == null){
 			return new ArrayList<>();
 		}
-		// Do invoke ArrayList constructor as it will copy the list
+		// Do not invoke ArrayList constructor as it will copy the list
 		return this.postconditions;
 	}
 
@@ -301,16 +301,25 @@ public class PersistentTransition {
 			}
 		}
 		return false;
-
 	}
 
+	@Override
+	public int hashCode() {
+		return Objects.hash(name, params, results, destState, destStateNotChanged, preds, postconditions);
+	}
 
 	@Override
 	public String toString() {
-		return "PersistentTransition:" + name +  params.toString()  + destState.toString()
-				+ results.toString()  +destStateNotChanged.toString() ;
+		return "PersistentTransition{" +
+				"name='" + name + '\'' +
+				", params=" + params +
+				", results=" + results +
+				", destState=" + destState +
+				", destStateNotChanged=" + destStateNotChanged +
+				", preds=" + preds +
+				", postconditions=" + postconditions +
+				'}';
 	}
-
 
 	public static PersistentTransition createEmptyPTransition(){
 
