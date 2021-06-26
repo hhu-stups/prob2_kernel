@@ -52,7 +52,7 @@ public class TraceModifier {
 						.map(entry -> renamingDelta.getVariables().getOrDefault(entry, entry)).collect(toSet());
 
 				return new PersistentTransition(renamingDelta.getDeltaName(), newParameters, newOutputParameters, newDestState,
-						destStateNotChanged, Collections.emptyList(), Collections.emptyList());
+						destStateNotChanged, Collections.emptyList(), persistentTransition.getPostconditions(), persistentTransition.getDescription());
 			} else {
 				return persistentTransition;
 			}

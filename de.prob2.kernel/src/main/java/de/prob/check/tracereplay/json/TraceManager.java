@@ -71,6 +71,13 @@ public class TraceManager  {
 					}
 				}
 
+				if (oldVersion <= 3) {
+					for (final JsonNode transitionNode : oldObject.get("transitionList")) {
+						final ObjectNode transition = (ObjectNode)transitionNode;
+						transition.put("description", "");
+					}
+				}
+
 				return oldObject;
 			}
 		});
