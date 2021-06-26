@@ -45,7 +45,7 @@ public class TraceManagerTest {
 		Path tempDirPath = tempDir.resolve("testFile.txt");
 		final StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "ExampleMachine.mch"));
 
-		JsonMetadata metadata = new JsonMetadataBuilder("Trace", 3)
+		JsonMetadata metadata = new JsonMetadataBuilder("Trace", 4)
 			.withSavedNow()
 			.withUserCreator()
 			.withProBCliVersion("version")
@@ -62,7 +62,7 @@ public class TraceManagerTest {
 		Path tempDirPath = tempDir.resolve("testFile.txt");
 		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "ExampleMachine.mch"));
 
-		JsonMetadata metadata = new JsonMetadataBuilder("Trace", 3)
+		JsonMetadata metadata = new JsonMetadataBuilder("Trace", 4)
 				.withSavedNow()
 				.withUserCreator()
 				.withProBCliVersion("version")

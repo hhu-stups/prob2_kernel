@@ -35,7 +35,7 @@ public class TraceExplorerUnitTest {
 	public void createPersistentTransitionFromMapping_test_1(){
 
 		PersistentTransition floors = new PersistentTransition("floors", Collections.singletonMap("x", "4"),
-				emptyMap(), Collections.singletonMap("floors", "0"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList());
+				emptyMap(), Collections.singletonMap("floors", "0"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList(), "");
 
 
 
@@ -52,7 +52,7 @@ public class TraceExplorerUnitTest {
 		mappingHelper1.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
 
 		PersistentTransition expected = new PersistentTransition(floors.getOperationName(), Collections.singletonMap("y", "4"),
-				emptyMap(), Collections.singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList());
+				emptyMap(), Collections.singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList(), "");
 
 		PersistentTransition result = TraceExplorer.createPersistentTransitionFromMapping(mappingHelper1, floors);
 
@@ -67,7 +67,7 @@ public class TraceExplorerUnitTest {
 			put("x", "0");
 			put("z", "0");
 		}},
-				emptyMap(), Collections.singletonMap("floors", "0"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList());
+				emptyMap(), Collections.singletonMap("floors", "0"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList(), "");
 
 
 
@@ -84,7 +84,7 @@ public class TraceExplorerUnitTest {
 		mappingHelper1.put(TraceExplorer.MappingNames.OUTPUT_PARAMETERS, emptyMap());
 
 		PersistentTransition expected = new PersistentTransition(floors.getOperationName(), Collections.singletonMap("a", "0"),
-				emptyMap(), Collections.singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList());
+				emptyMap(), Collections.singletonMap("levels", "0"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList(), "");
 
 		PersistentTransition result = TraceExplorer.createPersistentTransitionFromMapping(mappingHelper1, floors);
 
@@ -98,7 +98,7 @@ public class TraceExplorerUnitTest {
 			put("x", "2");
 			put("y", "1");
 		}},
-				emptyMap(), Collections.singletonMap("floors", "3"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList());
+				emptyMap(), Collections.singletonMap("floors", "3"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList(), "");
 
 
 
@@ -119,7 +119,7 @@ public class TraceExplorerUnitTest {
 			put("a", "2");
 			put("b", "1");
 		}},
-				emptyMap(), Collections.singletonMap("levels", "3"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList());
+				emptyMap(), Collections.singletonMap("levels", "3"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList(), "");
 
 		PersistentTransition result = TraceExplorer.createPersistentTransitionFromMapping(mappingHelper1, floors);
 
@@ -135,7 +135,7 @@ public class TraceExplorerUnitTest {
 			put("z", "0");
 
 		}},
-				emptyMap(), Collections.singletonMap("floors", "3"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList());
+				emptyMap(), Collections.singletonMap("floors", "3"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList(), "");
 
 
 
@@ -154,7 +154,7 @@ public class TraceExplorerUnitTest {
 		PersistentTransition expected = new PersistentTransition(floors.getOperationName(), new HashMap<String, String>() {{
 			put("a", "0");
 		}},
-				emptyMap(), Collections.singletonMap("levels", "3"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList());
+				emptyMap(), Collections.singletonMap("levels", "3"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList(), "");
 
 		PersistentTransition result = TraceExplorer.createPersistentTransitionFromMapping(mappingHelper1, floors);
 
@@ -170,7 +170,7 @@ public class TraceExplorerUnitTest {
 			put("z", "0");
 
 		}},
-				emptyMap(), Collections.singletonMap("floors", "1"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList());
+				emptyMap(), Collections.singletonMap("floors", "1"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList(), "");
 
 
 
@@ -189,7 +189,7 @@ public class TraceExplorerUnitTest {
 		PersistentTransition expected = new PersistentTransition(floors.getOperationName(), new HashMap<String, String>() {{
 			put("a", "0");
 		}},
-				emptyMap(), Collections.singletonMap("levels", "1"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList());
+				emptyMap(), Collections.singletonMap("levels", "1"), Collections.emptySet(), Collections.emptyList(), Collections.emptyList(), "");
 
 		PersistentTransition result = TraceExplorer.createPersistentTransitionFromMapping(mappingHelper1, floors);
 
@@ -203,7 +203,7 @@ public class TraceExplorerUnitTest {
 			put("x", "2");
 			put("y", "1");
 		}},
-				emptyMap(), singletonMap("out", "4"), singleton("floors"), Collections.emptyList(), Collections.emptyList());
+				emptyMap(), singletonMap("out", "4"), singleton("floors"), Collections.emptyList(), Collections.emptyList(), "");
 
 
 
@@ -225,7 +225,7 @@ public class TraceExplorerUnitTest {
 			put("a", "2");
 			put("b", "1");
 		}},
-				emptyMap(), singletonMap("outter", "4"), singleton("levels"), emptyList(), emptyList());
+				emptyMap(), singletonMap("outter", "4"), singleton("levels"), emptyList(), emptyList(), "");
 
 		PersistentTransition result = TraceExplorer.createPersistentTransitionFromMapping(mappingHelper1, floors);
 
@@ -239,7 +239,7 @@ public class TraceExplorerUnitTest {
 			put("x", "2");
 			put("y", "1");
 		}},
-				emptyMap(), emptyMap(), singleton("floors"), Collections.emptyList(), Collections.emptyList());
+				emptyMap(), emptyMap(), singleton("floors"), Collections.emptyList(), Collections.emptyList(), "");
 
 
 
@@ -259,7 +259,7 @@ public class TraceExplorerUnitTest {
 			put("a", "2");
 			put("b", "1");
 		}},
-				emptyMap(), emptyMap(), singleton("levels"), emptyList(), emptyList());
+				emptyMap(), emptyMap(), singleton("levels"), emptyList(), emptyList(), "");
 
 		PersistentTransition result = TraceExplorer.createPersistentTransitionFromMapping(mappingHelper1, floors);
 

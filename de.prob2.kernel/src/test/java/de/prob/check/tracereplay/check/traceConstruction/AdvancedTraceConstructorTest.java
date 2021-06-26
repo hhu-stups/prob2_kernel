@@ -66,7 +66,7 @@ public class AdvancedTraceConstructorTest {
 
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "one_time_intermediate_operation", "ISLAND.prob2trace"));
 
-		PersistentTransition fakeTransition = new PersistentTransition("dummy", emptyMap(), emptyMap(), emptyMap(), emptySet(), emptyList(), emptyList());
+		PersistentTransition fakeTransition = new PersistentTransition("dummy", emptyMap(), emptyMap(), emptyMap(), emptySet(), emptyList(), emptyList(), "");
 		List<PersistentTransition> persistentTransitions = new ArrayList<>(jsonFile.getTransitionList());
 		persistentTransitions.add(fakeTransition);
 		assertThrows(TraceConstructionError.class, () -> AdvancedTraceConstructor.constructTraceWithOptions(persistentTransitions, stateSpace, ReplayOptions.replayJustNames()));
