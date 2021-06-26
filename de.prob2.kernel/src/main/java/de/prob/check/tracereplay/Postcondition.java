@@ -54,17 +54,4 @@ public class Postcondition {
                 ", value='" + value + '\'' +
                 '}';
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Postcondition that = (Postcondition) o;
-        return kind == that.kind && Objects.equals(value, that.value);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(kind, value);
-    }
 }
