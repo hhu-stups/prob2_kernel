@@ -142,10 +142,6 @@ public class RefineTraceCommand extends AbstractCommand implements
 			resultTrace.add(operation);
 		}
 
-		ListPrologTerm reportedErrors = BindingGenerator.getList(bindings.get(ERRORS_VARIABLE));
-		for (PrologTerm prologTerm : reportedErrors) {
-			this.errors.add(prologTerm.toString());
-		}
 	}
 
 	@Override

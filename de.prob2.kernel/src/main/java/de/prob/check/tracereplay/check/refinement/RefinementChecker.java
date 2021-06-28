@@ -101,7 +101,10 @@ public class RefinementChecker {
 		alternatives.put(Transition.INITIALISE_MACHINE_NAME, Collections.singletonList(Transition.INITIALISE_MACHINE_NAME));
 		alternatives.put(Transition.SETUP_CONSTANTS_NAME, Collections.singletonList(Transition.SETUP_CONSTANTS_NAME));
 
-		List<String> blackList = new ArrayList<>(alternatives.keySet());
+		List<String> blackList =newOldMapping.entrySet().stream()
+				.filter(entry -> !entry.getValue().equals(entry.getKey()))
+				.map(Map.Entry::getValue)
+				.collect(toList());
 
 
 		List<Transition> resultRaw = AdvancedTraceConstructor.constructTrace(transitionList, stateSpace, alternatives, blackList);

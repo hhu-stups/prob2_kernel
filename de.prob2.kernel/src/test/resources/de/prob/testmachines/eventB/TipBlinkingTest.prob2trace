@@ -36,131 +36,17 @@
       "description": ""
     },
     {
-      "name": "TIME_Nothing",
-      "params": {
-        "newOnCycle": "TRUE"
-      },
-      "results": {},
-      "destState": {
-        "onCycle": "TRUE"
-      },
-      "destStateNotChanged": [
-        "blinkRight",
-        "remaining_blinks",
-        "active_blinkers",
-        "blinkLeft"
-      ],
-      "preds": [],
-      "postconditions": [],
-      "description": ""
-    },
-    {
-      "name": "SET_LeftBlinkersOn",
-      "params": {
-        "rem": "-1"
-      },
-      "results": {},
-      "destState": {
-        "remaining_blinks": "-1",
-        "active_blinkers": "{left_blink}",
-        "blinkLeft": "100"
-      },
-      "destStateNotChanged": [
-        "blinkRight",
-        "onCycle"
-      ],
-      "preds": [],
-      "postconditions": [],
-      "description": ""
-    },
-    {
-      "name": "SET_RightBlinkersOn",
-      "params": {
-        "rem": "1"
-      },
-      "results": {},
-      "destState": {
-        "blinkRight": "100",
-        "remaining_blinks": "1",
-        "active_blinkers": "{right_blink}",
-        "blinkLeft": "0"
-      },
-      "destStateNotChanged": [
-        "onCycle"
-      ],
-      "preds": [],
-      "postconditions": [],
-      "description": ""
-    },
-    {
-      "name": "SET_LeftBlinkersOn",
-      "params": {
-        "rem": "1"
-      },
-      "results": {},
-      "destState": {
-        "blinkRight": "0",
-        "active_blinkers": "{left_blink}",
-        "blinkLeft": "100"
-      },
-      "destStateNotChanged": [
-        "onCycle",
-        "remaining_blinks"
-      ],
-      "preds": [],
-      "postconditions": [],
-      "description": ""
-    },
-    {
-      "name": "SET_RightBlinkersOn",
-      "params": {
-        "rem": "-1"
-      },
-      "results": {},
-      "destState": {
-        "blinkRight": "100",
-        "remaining_blinks": "-1",
-        "active_blinkers": "{right_blink}",
-        "blinkLeft": "0"
-      },
-      "destStateNotChanged": [
-        "onCycle"
-      ],
-      "preds": [],
-      "postconditions": [],
-      "description": ""
-    },
-    {
       "name": "SET_AllBlinkersOn",
       "params": {},
       "results": {},
       "destState": {
         "active_blinkers": "{left_blink,right_blink}",
-        "blinkLeft": "100"
+        "remaining_blinks": "-1"
       },
       "destStateNotChanged": [
         "blinkRight",
         "onCycle",
-        "remaining_blinks"
-      ],
-      "preds": [],
-      "postconditions": [],
-      "description": ""
-    },
-    {
-      "name": "SET_RightBlinkersOn",
-      "params": {
-        "rem": "-1"
-      },
-      "results": {},
-      "destState": {
-        "active_blinkers": "{right_blink}",
-        "blinkLeft": "0"
-      },
-      "destStateNotChanged": [
-        "blinkRight",
-        "onCycle",
-        "remaining_blinks"
+        "blinkLeft"
       ],
       "preds": [],
       "postconditions": [],
@@ -171,67 +57,12 @@
       "params": {},
       "results": {},
       "destState": {
-        "blinkRight": "0",
-        "remaining_blinks": "0",
-        "active_blinkers": "∅"
-      },
-      "destStateNotChanged": [
-        "onCycle",
-        "blinkLeft"
-      ],
-      "preds": [],
-      "postconditions": [],
-      "description": ""
-    },
-    {
-      "name": "SET_LeftBlinkersOn",
-      "params": {
-        "rem": "3"
-      },
-      "results": {},
-      "destState": {
-        "remaining_blinks": "3",
-        "active_blinkers": "{left_blink}",
-        "blinkLeft": "100"
+        "active_blinkers": "∅",
+        "remaining_blinks": "0"
       },
       "destStateNotChanged": [
         "blinkRight",
-        "onCycle"
-      ],
-      "preds": [],
-      "postconditions": [],
-      "description": ""
-    },
-    {
-      "name": "SET_RemainingBlinks",
-      "params": {
-        "rem": "3"
-      },
-      "results": {},
-      "destState": {},
-      "destStateNotChanged": [
-        "blinkRight",
         "onCycle",
-        "remaining_blinks",
-        "active_blinkers",
-        "blinkLeft"
-      ],
-      "preds": [],
-      "postconditions": [],
-      "description": ""
-    },
-    {
-      "name": "SET_RemainingBlinks",
-      "params": {
-        "rem": "3"
-      },
-      "results": {},
-      "destState": {},
-      "destStateNotChanged": [
-        "blinkRight",
-        "onCycle",
-        "remaining_blinks",
-        "active_blinkers",
         "blinkLeft"
       ],
       "preds": [],
@@ -241,17 +72,53 @@
     {
       "name": "SET_RightBlinkersOn",
       "params": {
-        "rem": "2"
+        "rem": "3"
       },
+      "results": {},
+      "destState": {
+        "active_blinkers": "{right_blink}",
+        "remaining_blinks": "3"
+      },
+      "destStateNotChanged": [
+        "blinkRight",
+        "onCycle",
+        "blinkLeft"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "TIME_BlinkerOn",
+      "params": {},
       "results": {},
       "destState": {
         "blinkRight": "100",
         "remaining_blinks": "2",
-        "active_blinkers": "{right_blink}",
-        "blinkLeft": "0"
+        "onCycle": "TRUE"
       },
       "destStateNotChanged": [
-        "onCycle"
+        "active_blinkers",
+        "blinkLeft"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "SET_RemainingBlinks",
+      "params": {
+        "rem": "-1"
+      },
+      "results": {},
+      "destState": {
+        "remaining_blinks": "-1"
+      },
+      "destStateNotChanged": [
+        "blinkRight",
+        "onCycle",
+        "active_blinkers",
+        "blinkLeft"
       ],
       "preds": [],
       "postconditions": [],
@@ -275,15 +142,14 @@
       "description": ""
     },
     {
-      "name": "SET_RightBlinkersOn",
-      "params": {
-        "rem": "2"
-      },
+      "name": "TIME_BlinkerOn",
+      "params": {},
       "results": {},
-      "destState": {},
+      "destState": {
+        "blinkRight": "100",
+        "onCycle": "TRUE"
+      },
       "destStateNotChanged": [
-        "blinkRight",
-        "onCycle",
         "remaining_blinks",
         "active_blinkers",
         "blinkLeft"
@@ -295,17 +161,17 @@
     {
       "name": "SET_LeftBlinkersOn",
       "params": {
-        "rem": "3"
+        "rem": "-1"
       },
       "results": {},
       "destState": {
+        "blinkRight": "0",
         "active_blinkers": "{left_blink}",
-        "remaining_blinks": "3"
+        "blinkLeft": "100"
       },
       "destStateNotChanged": [
-        "blinkRight",
         "onCycle",
-        "blinkLeft"
+        "remaining_blinks"
       ],
       "preds": [],
       "postconditions": [],
@@ -315,79 +181,6 @@
       "name": "SET_RightBlinkersOn",
       "params": {
         "rem": "-1"
-      },
-      "results": {},
-      "destState": {
-        "active_blinkers": "{right_blink}",
-        "remaining_blinks": "-1"
-      },
-      "destStateNotChanged": [
-        "blinkRight",
-        "onCycle",
-        "blinkLeft"
-      ],
-      "preds": [],
-      "postconditions": [],
-      "description": ""
-    },
-    {
-      "name": "SET_LeftBlinkersOn",
-      "params": {
-        "rem": "2"
-      },
-      "results": {},
-      "destState": {
-        "active_blinkers": "{left_blink}",
-        "remaining_blinks": "2"
-      },
-      "destStateNotChanged": [
-        "blinkRight",
-        "onCycle",
-        "blinkLeft"
-      ],
-      "preds": [],
-      "postconditions": [],
-      "description": ""
-    },
-    {
-      "name": "TIME_BlinkerOn",
-      "params": {},
-      "results": {},
-      "destState": {
-        "remaining_blinks": "1",
-        "onCycle": "TRUE",
-        "blinkLeft": "100"
-      },
-      "destStateNotChanged": [
-        "blinkRight",
-        "active_blinkers"
-      ],
-      "preds": [],
-      "postconditions": [],
-      "description": ""
-    },
-    {
-      "name": "SET_LeftBlinkersOn",
-      "params": {
-        "rem": "1"
-      },
-      "results": {},
-      "destState": {},
-      "destStateNotChanged": [
-        "blinkRight",
-        "onCycle",
-        "remaining_blinks",
-        "active_blinkers",
-        "blinkLeft"
-      ],
-      "preds": [],
-      "postconditions": [],
-      "description": ""
-    },
-    {
-      "name": "SET_RightBlinkersOn",
-      "params": {
-        "rem": "1"
       },
       "results": {},
       "destState": {
@@ -404,18 +197,194 @@
       "description": ""
     },
     {
-      "name": "SET_RightBlinkersOn",
+      "name": "SET_LeftBlinkersOn",
       "params": {
-        "rem": "2"
+        "rem": "3"
       },
       "results": {},
       "destState": {
-        "remaining_blinks": "2"
+        "blinkRight": "0",
+        "remaining_blinks": "3",
+        "active_blinkers": "{left_blink}",
+        "blinkLeft": "100"
+      },
+      "destStateNotChanged": [
+        "onCycle"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "SET_RemainingBlinks",
+      "params": {
+        "rem": "-1"
+      },
+      "results": {},
+      "destState": {
+        "remaining_blinks": "-1"
       },
       "destStateNotChanged": [
         "blinkRight",
         "onCycle",
         "active_blinkers",
+        "blinkLeft"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "TIME_BlinkerOff",
+      "params": {},
+      "results": {},
+      "destState": {
+        "onCycle": "FALSE",
+        "blinkLeft": "0"
+      },
+      "destStateNotChanged": [
+        "blinkRight",
+        "remaining_blinks",
+        "active_blinkers"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "SET_AllBlinkersOn",
+      "params": {},
+      "results": {},
+      "destState": {
+        "active_blinkers": "{left_blink,right_blink}"
+      },
+      "destStateNotChanged": [
+        "blinkRight",
+        "onCycle",
+        "remaining_blinks",
+        "blinkLeft"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "SET_AllBlinkersOff",
+      "params": {},
+      "results": {},
+      "destState": {
+        "active_blinkers": "∅",
+        "remaining_blinks": "0"
+      },
+      "destStateNotChanged": [
+        "blinkRight",
+        "onCycle",
+        "blinkLeft"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "SET_AllBlinkersOn",
+      "params": {},
+      "results": {},
+      "destState": {
+        "active_blinkers": "{left_blink,right_blink}",
+        "remaining_blinks": "-1"
+      },
+      "destStateNotChanged": [
+        "blinkRight",
+        "onCycle",
+        "blinkLeft"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "SET_AllBlinkersOff",
+      "params": {},
+      "results": {},
+      "destState": {
+        "active_blinkers": "∅",
+        "remaining_blinks": "0"
+      },
+      "destStateNotChanged": [
+        "blinkRight",
+        "onCycle",
+        "blinkLeft"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "SET_AllBlinkersOn",
+      "params": {},
+      "results": {},
+      "destState": {
+        "active_blinkers": "{left_blink,right_blink}",
+        "remaining_blinks": "-1"
+      },
+      "destStateNotChanged": [
+        "blinkRight",
+        "onCycle",
+        "blinkLeft"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "SET_AllBlinkersOff",
+      "params": {},
+      "results": {},
+      "destState": {
+        "active_blinkers": "∅",
+        "remaining_blinks": "0"
+      },
+      "destStateNotChanged": [
+        "blinkRight",
+        "onCycle",
+        "blinkLeft"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "TIME_Nothing",
+      "params": {
+        "newOnCycle": "TRUE"
+      },
+      "results": {},
+      "destState": {
+        "onCycle": "TRUE"
+      },
+      "destStateNotChanged": [
+        "blinkRight",
+        "remaining_blinks",
+        "active_blinkers",
+        "blinkLeft"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "SET_RightBlinkersOn",
+      "params": {
+        "rem": "-1"
+      },
+      "results": {},
+      "destState": {
+        "blinkRight": "100",
+        "remaining_blinks": "-1",
+        "active_blinkers": "{right_blink}"
+      },
+      "destStateNotChanged": [
+        "onCycle",
         "blinkLeft"
       ],
       "preds": [],
@@ -430,12 +399,88 @@
       "results": {},
       "destState": {
         "blinkRight": "0",
-        "remaining_blinks": "-1",
         "active_blinkers": "{left_blink}",
         "blinkLeft": "100"
       },
       "destStateNotChanged": [
-        "onCycle"
+        "onCycle",
+        "remaining_blinks"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "SET_LeftBlinkersOn",
+      "params": {
+        "rem": "3"
+      },
+      "results": {},
+      "destState": {
+        "remaining_blinks": "3"
+      },
+      "destStateNotChanged": [
+        "blinkRight",
+        "onCycle",
+        "active_blinkers",
+        "blinkLeft"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "SET_RemainingBlinks",
+      "params": {
+        "rem": "-1"
+      },
+      "results": {},
+      "destState": {
+        "remaining_blinks": "-1"
+      },
+      "destStateNotChanged": [
+        "blinkRight",
+        "onCycle",
+        "active_blinkers",
+        "blinkLeft"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "SET_LeftBlinkersOn",
+      "params": {
+        "rem": "3"
+      },
+      "results": {},
+      "destState": {
+        "remaining_blinks": "3"
+      },
+      "destStateNotChanged": [
+        "blinkRight",
+        "onCycle",
+        "active_blinkers",
+        "blinkLeft"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "SET_RemainingBlinks",
+      "params": {
+        "rem": "-1"
+      },
+      "results": {},
+      "destState": {
+        "remaining_blinks": "-1"
+      },
+      "destStateNotChanged": [
+        "blinkRight",
+        "onCycle",
+        "active_blinkers",
+        "blinkLeft"
       ],
       "preds": [],
       "postconditions": [],
@@ -461,73 +506,34 @@
       "description": ""
     },
     {
-      "name": "SET_LeftBlinkersOn",
+      "name": "SET_RightBlinkersOn",
       "params": {
         "rem": "-1"
       },
       "results": {},
       "destState": {
+        "remaining_blinks": "-1"
+      },
+      "destStateNotChanged": [
+        "blinkRight",
+        "onCycle",
+        "active_blinkers",
+        "blinkLeft"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "TIME_BlinkerOff",
+      "params": {},
+      "results": {},
+      "destState": {
         "blinkRight": "0",
-        "remaining_blinks": "-1",
-        "active_blinkers": "{left_blink}",
-        "blinkLeft": "100"
+        "onCycle": "FALSE"
       },
       "destStateNotChanged": [
-        "onCycle"
-      ],
-      "preds": [],
-      "postconditions": [],
-      "description": ""
-    },
-    {
-      "name": "SET_LeftBlinkersOn",
-      "params": {
-        "rem": "3"
-      },
-      "results": {},
-      "destState": {
-        "remaining_blinks": "3"
-      },
-      "destStateNotChanged": [
-        "blinkRight",
-        "onCycle",
-        "active_blinkers",
-        "blinkLeft"
-      ],
-      "preds": [],
-      "postconditions": [],
-      "description": ""
-    },
-    {
-      "name": "SET_LeftBlinkersOn",
-      "params": {
-        "rem": "3"
-      },
-      "results": {},
-      "destState": {},
-      "destStateNotChanged": [
-        "blinkRight",
-        "onCycle",
         "remaining_blinks",
-        "active_blinkers",
-        "blinkLeft"
-      ],
-      "preds": [],
-      "postconditions": [],
-      "description": ""
-    },
-    {
-      "name": "SET_RemainingBlinks",
-      "params": {
-        "rem": "2"
-      },
-      "results": {},
-      "destState": {
-        "remaining_blinks": "2"
-      },
-      "destStateNotChanged": [
-        "blinkRight",
-        "onCycle",
         "active_blinkers",
         "blinkLeft"
       ],
@@ -540,11 +546,28 @@
       "params": {},
       "results": {},
       "destState": {
-        "blinkRight": "100",
-        "remaining_blinks": "-1",
         "active_blinkers": "{left_blink,right_blink}"
       },
       "destStateNotChanged": [
+        "blinkRight",
+        "onCycle",
+        "remaining_blinks",
+        "blinkLeft"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "SET_AllBlinkersOff",
+      "params": {},
+      "results": {},
+      "destState": {
+        "active_blinkers": "∅",
+        "remaining_blinks": "0"
+      },
+      "destStateNotChanged": [
+        "blinkRight",
         "onCycle",
         "blinkLeft"
       ],
@@ -554,20 +577,20 @@
     }
   ],
   "variableNames": [
-    "onCycle",
     "active_blinkers",
     "blinkLeft",
-    "remaining_blinks",
-    "blinkRight"
+    "blinkRight",
+    "onCycle",
+    "remaining_blinks"
   ],
   "constantNames": [
+    "BLINK_CYCLE_COUNTER",
     "BLINK_DIRECTION",
     "LAMP_STATUS",
     "continuousBlink",
     "cycleMaxLampStatus",
     "lamp_off",
-    "lamp_on",
-    "BLINK_CYCLE_COUNTER"
+    "lamp_on"
   ],
   "setNames": [
     "DIRECTIONS"
@@ -771,10 +794,10 @@
   "metadata": {
     "fileType": "Trace",
     "formatVersion": 4,
-    "savedAt": "2021-06-28T08:55:17.619034Z",
+    "savedAt": "2021-06-28T11:13:24.159735Z",
     "creator": "traceReplay",
     "proB2KernelVersion": "4.0.0-SNAPSHOT",
     "proBCliVersion": "1.11.0-nightly",
-    "modelName": "BlinkLamps (1)"
+    "modelName": "BlinkLamps"
   }
 }

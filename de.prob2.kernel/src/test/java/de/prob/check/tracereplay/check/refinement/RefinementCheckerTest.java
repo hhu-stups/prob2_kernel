@@ -50,7 +50,8 @@ public class RefinementCheckerTest {
 
 	@BeforeAll
 	static void beforeAll() {
-		System.setProperty("probHome", "/home/sebastian/prob_prolog");
+		System.setProperty("prob.home", "/home/sebastian/prob_prolog");
+
 		traceManager = CliTestCommon.getInjector().getInstance(TraceManager.class);
 		proBKernelStub = CliTestCommon.getInjector().getInstance(ProBKernelStub.class);
 	}
@@ -117,13 +118,65 @@ public class RefinementCheckerTest {
 
 		List<PersistentTransition> result = new RefinementChecker(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace1).check();
 
-		Assertions.assertEquals(jsonFile.getTransitionList(), result);
+		Assertions.assertEquals(jsonFile.getTransitionList().size(), result.size());
 	}
 
 
+	@Test
+	public void simple_event_b_one_refinement_step() throws IOException, TraceConstructionError, BCompoundException {
 
 
+		Path pathStateSpace1 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "pitman_v4_files", "PitmanController.bum");
+
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "BlinkLamps30RandomSteps.prob2trace"));
+
+		List<PersistentTransition> result = new RefinementChecker(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace1).check();
+
+		Assertions.assertEquals(jsonFile.getTransitionList().size(), result.size());
+	}
 
 
+	@Test
+	public void simple_event_b_one_refinement_step_careful_choice() throws IOException, TraceConstructionError, BCompoundException {
+
+
+		Path pathStateSpace1 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "pitman_v4_files", "PitmanController.bum");
+
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "BlinkLampsDeliberate.prob2trace"));
+
+		List<PersistentTransition> result = new RefinementChecker(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace1).check();
+
+		Assertions.assertEquals(jsonFile.getTransitionList().size(), result.size());
+	}
+
+
+	@Test
+	public void simple_event_b_one_refinement_step_careful_choice_2() throws IOException, TraceConstructionError, BCompoundException {
+
+
+		Path pathStateSpace1 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "pitman_v4_files", "PitmanController.bum");
+
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "TipBlinkingTest.prob2trace"));
+
+		List<PersistentTransition> result = new RefinementChecker(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace1).check();
+
+//		traceManager.save(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "TipBlinkingTestForPitmanController.prob2trace"), jsonFile.changeTransitionList(result));
+		Assertions.assertEquals(jsonFile.getTransitionList().size(), result.size());
+	}
+
+
+	@Test
+	public void simple_event_b_one_refinement_step_careful_choice_3() throws IOException, TraceConstructionError, BCompoundException {
+
+
+		Path pathStateSpace1 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "pitman_v4_files", "PitmanController2_TIME.bum");
+
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "TipBlinkingTestForPitmanController.prob2trace"));
+
+		List<PersistentTransition> result = new RefinementChecker(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace1).check();
+
+		traceManager.save(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "TipBlinkingTestForPitmanControllerTime.prob2trace"), jsonFile.changeTransitionList(result));
+		Assertions.assertEquals(jsonFile.getTransitionList().size(), result.size());
+	}
 
 }
