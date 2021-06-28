@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<org.eventb.core.scContextFile org.eventb.core.accurate="true" org.eventb.core.configuration="org.eventb.core.fwd;de.prob.symbolic.ctxBase;org.animb.valuation.valBase">
+<org.eventb.core.scAxiom name="'" org.eventb.core.label="axm1" org.eventb.core.predicate="partition(TIMERS,{tip_deadline},{blink_deadline})" org.eventb.core.source="/ABZ2020_v4/ctimers.buc|org.eventb.core.contextFile#ctimers|org.eventb.core.axiom#_ZVYm0zeOEeqtGtGHK80c3Q" org.eventb.core.theorem="false"/>
+<org.eventb.core.scCarrierSet name="TIMERS" org.eventb.core.source="/ABZ2020_v4/ctimers.buc|org.eventb.core.contextFile#ctimers|org.eventb.core.carrierSet#_ZVYm0DeOEeqtGtGHK80c3Q" org.eventb.core.type="ℙ(TIMERS)"/>
+<org.eventb.core.scConstant name="blink_deadline" org.eventb.core.source="/ABZ2020_v4/ctimers.buc|org.eventb.core.contextFile#ctimers|org.eventb.core.constant#_ZVYm0jeOEeqtGtGHK80c3Q" org.eventb.core.type="TIMERS"/>
+<org.eventb.core.scConstant name="tip_deadline" org.eventb.core.source="/ABZ2020_v4/ctimers.buc|org.eventb.core.contextFile#ctimers|org.eventb.core.constant#_ZVYm0TeOEeqtGtGHK80c3Q" org.eventb.core.type="TIMERS"/>
+</org.eventb.core.scContextFile>
