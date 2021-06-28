@@ -81,12 +81,7 @@ public class RefineTraceCommand extends AbstractCommand implements
 						"Formula must be a predicates: " + predicates);
 			}
 		}
-		for (String entry : trace) {
-			if (!alternatives.containsKey(entry)) {
-				throw new IllegalArgumentException(
-						"Operation " + s + " must have an alternative");
-			}
-		}
+
 
 	}
 
@@ -105,8 +100,12 @@ public class RefineTraceCommand extends AbstractCommand implements
 		pto.openList();
 		for (String n : name) {
 			pto.openList();
-			for (String entry : alternatives.get(n)) {
-				pto.printAtom(entry);
+			if(alternatives.containsKey(n)) {
+				for (String entry : alternatives.get(n)) {
+					pto.printAtom(entry);
+				}
+			}else{
+				pto.printAtom(n);
 			}
 			pto.closeList();
 		}

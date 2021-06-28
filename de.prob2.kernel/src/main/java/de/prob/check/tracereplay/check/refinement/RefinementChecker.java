@@ -89,19 +89,6 @@ public class RefinementChecker {
 		Map<String, String> newOldMapping = eventList.stream()
 				.collect(toMap(BEvent::getName, entry -> traceEvent(entry).getName()));
 
-		List<PersistentTransition> enhancedTransition = transitionList.stream()
-				.map(entry -> {
-					switch (entry.getOperationName()){
-						case Transition.INITIALISE_MACHINE_NAME:
-						case Transition.SETUP_CONSTANTS_NAME:
-							return entry;
-						default:
-							return entry.copyWithNewName(newOldMapping.get(entry.getOperationName()));
-					}
-
-				})
-				.collect(Collectors.toList());
-
 
 		Map<String, List<String>> alternatives = newOldMapping.entrySet().stream()
 				.collect(groupingBy(Map.Entry::getValue))
@@ -110,11 +97,14 @@ public class RefinementChecker {
 						.map(Map.Entry::getKey)
 						.collect(toList())));
 
+		alternatives.remove("INITIALISATION");
+		alternatives.put(Transition.INITIALISE_MACHINE_NAME, Collections.singletonList(Transition.INITIALISE_MACHINE_NAME));
+		alternatives.put(Transition.SETUP_CONSTANTS_NAME, Collections.singletonList(Transition.SETUP_CONSTANTS_NAME));
 
 		List<String> blackList = new ArrayList<>(alternatives.keySet());
 
 
-		List<Transition> resultRaw = AdvancedTraceConstructor.constructTrace(enhancedTransition, stateSpace, alternatives, blackList);
+		List<Transition> resultRaw = AdvancedTraceConstructor.constructTrace(transitionList, stateSpace, alternatives, blackList);
 
 		return PersistentTransition.createFromList(resultRaw);
 	}

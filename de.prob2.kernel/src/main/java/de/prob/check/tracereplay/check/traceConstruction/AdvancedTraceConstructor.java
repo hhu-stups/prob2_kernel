@@ -6,6 +6,7 @@ import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.exploration.ReplayOptions;
+import de.prob.formula.PredicateBuilder;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
 import de.prob.statespace.Transition;
@@ -62,7 +63,7 @@ public class AdvancedTraceConstructor {
 				.map(PersistentTransition::getOperationName)
 				.collect(toList());
 		List<ClassicalB> predicates = modifiedList.stream()
-				.map(entry -> new ClassicalB(entry.getAllPredicates().toString(), FormulaExpand.EXPAND))
+				.map(entry -> new ClassicalB(new PredicateBuilder().addMap(entry.getAllPredicates()).toString(), FormulaExpand.EXPAND))
 				.collect(toList());
 
 		RefineTraceCommand refineTraceCommand = new RefineTraceCommand(modifiedTrace.getStateSpace(), modifiedTrace.getCurrentState(), transitionNames, predicates, alternatives, blackList);
