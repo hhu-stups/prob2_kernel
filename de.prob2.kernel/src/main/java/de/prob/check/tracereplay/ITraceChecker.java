@@ -10,4 +10,5 @@ public interface ITraceChecker {
 	void setResult(boolean success, List<List<Boolean>> postconditionResults, Map<String, Object> replayInformation);
 	void afterInterrupt();
 	void showError(TraceReplay.TraceReplayError errorType, Map<String, Object> replayInformation);
+	void showTestError(PersistentTrace persistentTrace, List<List<Boolean>> postconditionResults);
 }

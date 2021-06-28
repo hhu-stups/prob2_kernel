@@ -38,7 +38,8 @@ public class TraceReplay {
 		List<Boolean> result = new ArrayList<>();
 		for(Postcondition postcondition : postconditions) {
 			AbstractEvalResult evalResult = state.eval(postcondition.getValue(), FormulaExpand.EXPAND);
-			result.add("TRUE".equals(evalResult.toString()));
+			boolean postconditionsResult = "TRUE".equals(evalResult.toString());
+			result.add(postconditionsResult);
 		}
 		return result;
 	}
@@ -59,14 +60,16 @@ public class TraceReplay {
 		boolean success = true;
 		final List<PersistentTransition> transitionList = persistentTrace.getTransitionList();
 		final List<List<Boolean>> postcondtionsResults = new ArrayList<>();
+
+		boolean replaySuccess = true;
 		for (int i = 0; i < transitionList.size(); i++) {
 			traceChecker.updateProgress((double) i / transitionList.size(), replayInformation);
 			PersistentTransition persistentTransition = transitionList.get(i);
-			Transition trans = replayPersistentTransition(trace, persistentTransition, setCurrentAnimation, replayInformation, traceChecker);
-			if(!success) {
+			if(!replaySuccess) {
 				postcondtionsResults.add(persistentTransition.getPostconditions().stream()
 						.map(post -> false).collect(Collectors.toList()));
 			} else {
+				Transition trans = replayPersistentTransition(trace, persistentTransition, setCurrentAnimation, replayInformation, traceChecker);
 				if (trans != null) {
 					trace = trace.add(trans);
 					List<Boolean> postconditionResult = checkPostconditions(trace.getCurrentState(), persistentTransition.getPostconditions());
@@ -74,6 +77,7 @@ public class TraceReplay {
 					success = success && postconditionResult.stream().reduce(true, (a, e) -> a && e);
 				} else {
 					success = false;
+					replaySuccess = false;
 					postcondtionsResults.add(persistentTransition.getPostconditions().stream()
 							.map(post -> false).collect(Collectors.toList()));
 				}
@@ -85,13 +89,13 @@ public class TraceReplay {
 			}
 
 		}
+		traceChecker.showTestError(persistentTrace, postcondtionsResults);
 		traceChecker.setResult(success, postcondtionsResults, replayInformation);
 		trace.setExploreStateByDefault(true);
 		trace.getCurrentState().explore();
 
 		return trace;
 	}
-
 
 	private static Transition replayPersistentTransition(Trace t, PersistentTransition persistentTransition,
 														 boolean setCurrentAnimation, Map<String, Object> replayInformation,

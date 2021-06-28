@@ -50,4 +50,28 @@ public class DefaultTraceChecker implements ITraceChecker {
 				break;
 		}
 	}
+
+	@Override
+	public void showTestError(PersistentTrace persistentTrace, List<List<Boolean>> postconditionResults) {
+		StringBuilder sb = new StringBuilder();
+		List<PersistentTransition> transitions = persistentTrace.getTransitionList();
+		boolean failed = false;
+		for(int i = 0; i < transitions.size(); i++) {
+			PersistentTransition transition = transitions.get(i);
+			List<Boolean> postconditionTransitionResults = postconditionResults.get(i);
+			for(int j = 0; j < postconditionTransitionResults.size(); j++) {
+				boolean result = postconditionTransitionResults.get(j);
+				if(!result) {
+					Postcondition postcondition = transition.getPostconditions().get(j);
+					sb.append(String.format("Checking postcondition in transition %s failed for postcondition %s", transition.getOperationName(), postcondition.getValue()));
+					sb.append("\n");
+					failed = true;
+				}
+			}
+		}
+		if(failed) {
+			System.out.println("Checking tests for trace failed");
+			System.out.println(sb.toString());
+		}
+	}
 }
