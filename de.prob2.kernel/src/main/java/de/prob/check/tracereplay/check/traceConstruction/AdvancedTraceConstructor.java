@@ -1,8 +1,7 @@
 package de.prob.check.tracereplay.check.traceConstruction;
 
-import de.prob.animator.command.ConstructTraceCommand;
 import de.prob.animator.command.FindPathCommand;
-import de.prob.animator.command.GetOperationByPredicateCommand;
+import de.prob.animator.command.RefineTraceCommand;
 import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.check.tracereplay.PersistentTransition;
@@ -11,10 +10,9 @@ import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
 import de.prob.statespace.Transition;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -53,6 +51,29 @@ public class AdvancedTraceConstructor {
 		return constructTraceWithOptions(persistentTrace, stateSpace, ReplayOptions.replayJustNames());
 	}
 
+
+	public static List<Transition> constructTrace(List<PersistentTransition> persistentTrace, StateSpace stateSpace, Map<String, List<String>> alternatives, List<String> blackList) throws TraceConstructionError {
+
+		Trace modifiedTrace = prepareTrace(new Trace(stateSpace), persistentTrace);
+		modifiedTrace.setExploreStateByDefault(true);
+		List<PersistentTransition> modifiedList = prepareTraceList(modifiedTrace, persistentTrace);
+
+		List<String> transitionNames = modifiedList.stream()
+				.map(PersistentTransition::getOperationName)
+				.collect(toList());
+		List<ClassicalB> predicates = modifiedList.stream()
+				.map(entry -> new ClassicalB(entry.getAllPredicates().toString(), FormulaExpand.EXPAND))
+				.collect(toList());
+
+		RefineTraceCommand refineTraceCommand = new RefineTraceCommand(modifiedTrace.getStateSpace(), modifiedTrace.getCurrentState(), transitionNames, predicates, alternatives, blackList);
+		stateSpace.execute(refineTraceCommand);
+
+		if (refineTraceCommand.hasErrors() && refineTraceCommand.getNewTransitions().size() < persistentTrace.size()) { //The command failed in finding an complete Trace
+			throw new TraceConstructionError(refineTraceCommand.getErrors(), refineTraceCommand.getNewTransitions());
+		} else {
+			return refineTraceCommand.getNewTransitions();
+		}
+	}
 
 	/**
 	 * Similar to prepareTrace for the other direction. The Trace has more elements than the machine cna give, therefore the
