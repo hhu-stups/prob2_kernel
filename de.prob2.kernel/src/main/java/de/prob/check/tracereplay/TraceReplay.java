@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class TraceReplay {
 
@@ -62,14 +63,20 @@ public class TraceReplay {
 			traceChecker.updateProgress((double) i / transitionList.size(), replayInformation);
 			PersistentTransition persistentTransition = transitionList.get(i);
 			Transition trans = replayPersistentTransition(trace, persistentTransition, setCurrentAnimation, replayInformation, traceChecker);
-			if (trans != null) {
-				trace = trace.add(trans);
-				List<Boolean> postconditionResult = checkPostconditions(trace.getCurrentState(), persistentTransition.getPostconditions());
-				postcondtionsResults.add(postconditionResult);
-				success = success && postconditionResult.stream().reduce(true, (a, e) -> a && e);
+			if(!success) {
+				postcondtionsResults.add(persistentTransition.getPostconditions().stream()
+						.map(post -> false).collect(Collectors.toList()));
 			} else {
-				success = false;
-				break;
+				if (trans != null) {
+					trace = trace.add(trans);
+					List<Boolean> postconditionResult = checkPostconditions(trace.getCurrentState(), persistentTransition.getPostconditions());
+					postcondtionsResults.add(postconditionResult);
+					success = success && postconditionResult.stream().reduce(true, (a, e) -> a && e);
+				} else {
+					success = false;
+					postcondtionsResults.add(persistentTransition.getPostconditions().stream()
+							.map(post -> false).collect(Collectors.toList()));
+				}
 			}
 
 			if (Thread.currentThread().isInterrupted()) {
