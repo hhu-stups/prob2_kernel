@@ -50,7 +50,7 @@ public class RefinementCheckerTest {
 
 	@BeforeAll
 	static void beforeAll() {
-
+		System.setProperty("probHome", "/home/sebastian/prob_prolog");
 		traceManager = CliTestCommon.getInjector().getInstance(TraceManager.class);
 		proBKernelStub = CliTestCommon.getInjector().getInstance(ProBKernelStub.class);
 	}
@@ -111,31 +111,16 @@ public class RefinementCheckerTest {
 	public void simple_event_b_no_changes() throws IOException, TraceConstructionError, BCompoundException {
 
 
-		Path pathStateSpace1 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "pitman_v2_files", "PitmanController.bum");
-		StateSpace stateSpace1 = proBKernelStub.createEventB(pathStateSpace1);
+		Path pathStateSpace1 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "pitman_v4_files", "BlinkLamps.bum");
 
-		LoadedMachine loadedMachine = stateSpace1.getLoadedMachine();
-		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "PitmanController.prob2trace"));
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "BlinkLamps30RandomSteps.prob2trace"));
 
+		List<PersistentTransition> result = new RefinementChecker(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace1).check();
 
-		AbstractModel foo = stateSpace1.getModel();
-
-		ModelElementList<Machine> gna = stateSpace1.getModel().getChildrenOfType(Machine.class);
-
-		ModelElementList<? extends AbstractElement> bla = gna.get(0).getChildren().get(Event.class);
-		ModelElementList<? extends AbstractElement> bla2 = gna.get(1).getChildren().get(Event.class);
-
-
-		Map<String, OperationInfo> oldInfos = stateSpace1.getLoadedMachine().getOperations();
-		List<String> oldVars = stateSpace1.getLoadedMachine().getVariableNames();
-
-		StateSpace stateSpace2 = proBKernelStub.createEventB(pathStateSpace1);
-		Map<String, OperationInfo> newInfos = stateSpace2.getLoadedMachine().getOperations();
-		List<String> newVars = stateSpace2.getLoadedMachine().getVariableNames();
-
-
-		new RefinementChecker(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace1).check();
+		Assertions.assertEquals(jsonFile.getTransitionList(), result);
 	}
+
+
 
 
 
