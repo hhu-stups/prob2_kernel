@@ -50,7 +50,7 @@ public class StaticRenamingAnalyzerTest {
 		Map<String, Set<String>> typeIICandidates = emptyMap();
 
 		StaticRenamingAnalyzer renamingAnalyzer = new StaticRenamingAnalyzer(typeIorIICandidates, typeIICandidates,
-                false, traceJsonFile.getMachineOperationInfos(), stateSpace.getLoadedMachine().getOperations(), new TestUtils.StubFactoryImplementation(), injector, traceJsonFile.getTransitionList() , new HashSet<>(traceJsonFile.getVariableNames()));
+			false, traceJsonFile.getMachineOperationInfos(), stateSpace.getLoadedMachine().getOperations(), new TestUtils.StubFactoryImplementation(), injector, traceJsonFile.getTransitionList() , new HashSet<>(traceJsonFile.getVariableNames()));
 
 
 		renamingAnalyzer.calculateDelta();
