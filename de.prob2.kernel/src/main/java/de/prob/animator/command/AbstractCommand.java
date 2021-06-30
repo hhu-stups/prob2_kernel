@@ -137,7 +137,7 @@ public abstract class AbstractCommand {
 	 * but hasn't finished computation yet
 	 */
 	public IPrologTermOutput processCallBack(final PrologTerm callBack) {
-		System.out.println("Callback request from Prolog: " + callBack);
+		// System.out.println("Callback request from Prolog: " + callBack);
 		
 		if (callBack.hasFunctor("interrupt_requested",0)) {
 			PrologTermStringOutput irq = new PrologTermStringOutput();
@@ -187,7 +187,7 @@ public abstract class AbstractCommand {
 				}
 				PrologTermStringOutput pout = new PrologTermStringOutput();
 				ASTProlog.printFormula(ast, pout);
-				System.out.println("parse tree: " + pout);
+				// System.out.println("parse tree: " + pout);
 				return pout;
 			} catch (BCompoundException e) {
 				System.out.println("parse error exception: " + e);
