@@ -20,7 +20,7 @@ public class ReadVisBPathFromDefinitionsCommand extends AbstractCommand {
 
 	@Override
 	public void processResult(ISimplifiedROMap<String, PrologTerm> bindings) {
-		String pathResult = bindings.get(PATH).toString();
+		String pathResult = PrologTerm.atomicString(bindings.get(PATH));
 		this.path = "none".equals(pathResult) ? null : pathResult;
 	}
 
