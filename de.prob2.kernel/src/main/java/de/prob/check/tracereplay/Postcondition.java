@@ -20,7 +20,7 @@ public class Postcondition {
 
     public Postcondition(final PostconditionKind kind) {
         this.kind = kind;
-        this.value = null;
+        this.value = "";
     }
 
     public Postcondition(@JsonProperty("kind") final PostconditionKind kind,
