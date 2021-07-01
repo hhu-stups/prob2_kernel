@@ -37,9 +37,24 @@ public class TraceReplay {
 	private static List<Boolean> checkPostconditions(State state, List<Postcondition> postconditions) {
 		List<Boolean> result = new ArrayList<>();
 		for(Postcondition postcondition : postconditions) {
-			AbstractEvalResult evalResult = state.eval(postcondition.getValue(), FormulaExpand.EXPAND);
-			boolean postconditionsResult = "TRUE".equals(evalResult.toString());
-			result.add(postconditionsResult);
+			Postcondition.PostconditionKind kind = postcondition.getKind();
+			switch (kind) {
+				case PREDICATE: {
+					AbstractEvalResult evalResult = state.eval(postcondition.getValue(), FormulaExpand.EXPAND);
+					boolean postconditionResult = "TRUE".equals(evalResult.toString());
+					result.add(postconditionResult);
+					break;
+				}
+				case ENABLEDNESS: {
+					Transition transition = state.findTransition(postcondition.getValue(), "1=1");
+					boolean postconditionResult = transition != null;
+					result.add(postconditionResult);
+					break;
+				}
+				default:
+					throw new RuntimeException("Postcondition kind is unknown: " + kind);
+			}
+
 		}
 		return result;
 	}
