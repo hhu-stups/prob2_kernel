@@ -78,6 +78,24 @@ public class TraceManager  {
 					}
 				}
 
+				if (oldVersion <= 4) {
+					for (final JsonNode transitionNode : oldObject.get("transitionList")) {
+						final ObjectNode transition = (ObjectNode)transitionNode;
+						for (final JsonNode postconditionNode : transition.get("postconditions")) {
+							final ObjectNode postcondition = (ObjectNode)postconditionNode;
+							String kind = postcondition.get("kind").asText();
+							if("PREDICATE".equals(kind)) {
+								postcondition.put("predicate", postcondition.get("value").asText());
+							} else if("ENABLEDNESS".equals(kind)) {
+								postcondition.put("operation", postcondition.get("value").asText());
+								postcondition.put("predicate", "");
+							}
+							postcondition.remove("value");
+						}
+					}
+				}
+
+
 				return oldObject;
 			}
 		});

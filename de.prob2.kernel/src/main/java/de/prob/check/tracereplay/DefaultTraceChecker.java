@@ -63,18 +63,22 @@ public class DefaultTraceChecker implements ITraceChecker {
 				boolean result = postconditionTransitionResults.get(j);
 				if(!result) {
 					Postcondition postcondition = transition.getPostconditions().get(j);
-					Postcondition.PostconditionKind kind = postcondition.getKind();
-					switch (kind) {
+					switch (postcondition.getKind()) {
 						case PREDICATE:
-							sb.append(String.format("Checking predicate postcondition in transition %s failed for predicate %s", transition.getOperationName(), postcondition.getValue()));
+							sb.append(String.format("Checking predicate postcondition in transition %s failed for predicate %s", transition.getOperationName(), ((PostconditionPredicate) postcondition).getPredicate()));
 							sb.append("\n");
 							break;
 						case ENABLEDNESS:
-							sb.append(String.format("Checking enabledness postcondition in transition %s failed for operation %s", transition.getOperationName(), postcondition.getValue()));
+							String predicate = ((OperationEnabledness) postcondition).getPredicate();
+							if(predicate.isEmpty()) {
+								sb.append(String.format("Checking enabledness postcondition in transition %s failed for operation %s", transition.getOperationName(), ((OperationEnabledness) postcondition).getOperation()));
+							} else {
+								sb.append(String.format("Checking enabledness postcondition in transition %s failed for operation %s for predicate %s", transition.getOperationName(), ((OperationEnabledness) postcondition).getOperation(), predicate));
+							}
 							sb.append("\n");
 							break;
 						default:
-							throw new RuntimeException("Postcondition kind is unknown: " + kind);
+							throw new RuntimeException("Postcondition class is unknown: " + postcondition.getKind());
 					}
 					failed = true;
 				}

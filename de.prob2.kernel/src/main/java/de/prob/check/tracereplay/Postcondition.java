@@ -2,53 +2,31 @@ package de.prob.check.tracereplay;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-@JsonPropertyOrder({"kind", "value"})
-public class Postcondition {
+@JsonPropertyOrder({
+    "kind"
+})
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "kind")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = PostconditionPredicate.class, name = "PREDICATE"),
+        @JsonSubTypes.Type(value = OperationEnabledness.class, name = "ENABLEDNESS"),
+})
+public abstract class Postcondition {
 
-	public enum PostconditionKind {
-		PREDICATE, ENABLEDNESS;
-	}
+    public enum PostconditionKind {
+        PREDICATE, ENABLEDNESS;
+    }
 
-	private PostconditionKind kind;
+    private final PostconditionKind kind;
 
-	private String value;
+    public Postcondition(PostconditionKind kind) {
+        this.kind = kind;
+    }
 
-	public Postcondition(final PostconditionKind kind) {
-		this.kind = kind;
-		this.value = "";
-	}
-
-	public Postcondition(@JsonProperty("kind") final PostconditionKind kind,
-						 @JsonProperty("value") final String value) {
-		this.kind = kind;
-		this.value = value;
-	}
-
-	@JsonProperty("kind")
-	public PostconditionKind getKind() {
-		return kind;
-	}
-
-	@JsonProperty("value")
-	public String getValue() {
-		return value;
-	}
-
-	public void setValue(String value) {
-		this.value = value;
-	}
-
-	public void setKind(PostconditionKind kind) {
-		this.kind = kind;
-	}
-
-	@Override
-	public String toString() {
-		return "Postcondition{" +
-				"kind=" + kind +
-				", value='" + value + '\'' +
-				'}';
-	}
-
+    @JsonProperty("kind")
+    public PostconditionKind getKind() {
+        return kind;
+    }
 }
