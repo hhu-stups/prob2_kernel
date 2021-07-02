@@ -1,0 +1,960 @@
+{
+  "description": "",
+  "transitionList": [
+    {
+      "name": "$setup_constants",
+      "params": {},
+      "results": {},
+      "destState": {
+        "tailLamps": "{tailLampLeft,tailLampRight}",
+        "directionIndicators": "{blinkRight,blinkLeft}",
+        "brakeLight": "{brakeLeft,brakeMid,brakeRight}",
+        "Downward": "{Downward5,Downward7}",
+        "brightnessSensorRange": "(0 ‥ 100000)",
+        "Upward": "{Upward5,Upward7}",
+        "armoredVehicle": "FALSE",
+        "LowBeams": "{lowBeamLeft,lowBeamRight}",
+        "LigntnessLevel": "{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100}"
+      },
+      "destStateNotChanged": [],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "$initialise_machine",
+      "params": {},
+      "results": {},
+      "destState": {
+        "allDoorsClosed": "TRUE",
+        "voltageBattery": "0",
+        "brightnessSensor": "0",
+        "darknessModeSwitchOn": "FALSE",
+        "pitmanArmUD": "Neutral",
+        "keyState": "NoKeyInserted",
+        "headingState": "{(blinkRight↦0),(blinkLeft↦0),(lowBeamLeft↦0),(lowBeamRight↦0),(tailLampLeft↦0),(tailLampRight↦0),(reverseLight↦0),(brakeLeft↦0),(brakeMid↦0),(brakeRight↦0),(corneringLightLeft↦0),(corneringLightRight↦0)}",
+        "keyStateP": "NoKeyInserted",
+        "allDoorsClosedP": "TRUE",
+        "currentTime": "0",
+        "lightSwitchP": "Off",
+        "reverseGear": "FALSE",
+        "pitmanArmUDP": "Neutral",
+        "lightSwitch": "Off",
+        "brakePedal": "0",
+        "hazardWarningSwitchOn": "FALSE"
+      },
+      "destStateNotChanged": [],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "progress",
+      "params": {
+        "hl": "{}",
+        "step": "3"
+      },
+      "results": {},
+      "destState": {
+        "currentTime": "3"
+      },
+      "destStateNotChanged": [
+        "allDoorsClosed",
+        "voltageBattery",
+        "brightnessSensor",
+        "darknessModeSwitchOn",
+        "pitmanArmUD",
+        "keyState",
+        "headingState",
+        "keyStateP",
+        "allDoorsClosedP",
+        "lightSwitchP",
+        "reverseGear",
+        "pitmanArmUDP",
+        "lightSwitch",
+        "brakePedal",
+        "hazardWarningSwitchOn"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "progress",
+      "params": {
+        "hl": "{(blinkRight|->0)}",
+        "step": "3"
+      },
+      "results": {},
+      "destState": {
+        "allDoorsClosed": "TRUE",
+        "voltageBattery": "0",
+        "brightnessSensor": "0",
+        "darknessModeSwitchOn": "FALSE",
+        "pitmanArmUD": "Neutral",
+        "keyState": "NoKeyInserted",
+        "headingState": "{(blinkRight↦0),(blinkLeft↦0),(lowBeamLeft↦0),(lowBeamRight↦0),(tailLampLeft↦0),(tailLampRight↦0),(reverseLight↦0),(brakeLeft↦0),(brakeMid↦0),(brakeRight↦0),(corneringLightLeft↦0),(corneringLightRight↦0)}",
+        "keyStateP": "NoKeyInserted",
+        "allDoorsClosedP": "TRUE",
+        "currentTime": "6",
+        "lightSwitchP": "Off",
+        "reverseGear": "FALSE",
+        "pitmanArmUDP": "Neutral",
+        "lightSwitch": "Off",
+        "brakePedal": "0",
+        "hazardWarningSwitchOn": "FALSE"
+      },
+      "destStateNotChanged": [],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "progress",
+      "params": {
+        "hl": "{(blinkRight|->1)}",
+        "step": "3"
+      },
+      "results": {},
+      "destState": {
+        "currentTime": "9",
+        "headingState": "{(blinkRight↦1),(blinkLeft↦0),(lowBeamLeft↦0),(lowBeamRight↦0),(tailLampLeft↦0),(tailLampRight↦0),(reverseLight↦0),(brakeLeft↦0),(brakeMid↦0),(brakeRight↦0),(corneringLightLeft↦0),(corneringLightRight↦0)}"
+      },
+      "destStateNotChanged": [
+        "allDoorsClosed",
+        "voltageBattery",
+        "brightnessSensor",
+        "darknessModeSwitchOn",
+        "pitmanArmUD",
+        "keyState",
+        "keyStateP",
+        "allDoorsClosedP",
+        "lightSwitchP",
+        "reverseGear",
+        "pitmanArmUDP",
+        "lightSwitch",
+        "brakePedal",
+        "hazardWarningSwitchOn"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "progress",
+      "params": {
+        "hl": "{(blinkRight|->1)}",
+        "step": "3"
+      },
+      "results": {},
+      "destState": {
+        "allDoorsClosed": "TRUE",
+        "voltageBattery": "0",
+        "brightnessSensor": "0",
+        "darknessModeSwitchOn": "FALSE",
+        "pitmanArmUD": "Neutral",
+        "keyState": "NoKeyInserted",
+        "keyStateP": "NoKeyInserted",
+        "allDoorsClosedP": "TRUE",
+        "currentTime": "12",
+        "lightSwitchP": "Off",
+        "reverseGear": "FALSE",
+        "pitmanArmUDP": "Neutral",
+        "lightSwitch": "Off",
+        "brakePedal": "0",
+        "hazardWarningSwitchOn": "FALSE"
+      },
+      "destStateNotChanged": [
+        "headingState"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "progress",
+      "params": {
+        "hl": "{(blinkRight|->7)}",
+        "step": "3"
+      },
+      "results": {},
+      "destState": {
+        "currentTime": "15",
+        "headingState": "{(blinkRight↦7),(blinkLeft↦0),(lowBeamLeft↦0),(lowBeamRight↦0),(tailLampLeft↦0),(tailLampRight↦0),(reverseLight↦0),(brakeLeft↦0),(brakeMid↦0),(brakeRight↦0),(corneringLightLeft↦0),(corneringLightRight↦0)}"
+      },
+      "destStateNotChanged": [
+        "allDoorsClosed",
+        "voltageBattery",
+        "brightnessSensor",
+        "darknessModeSwitchOn",
+        "pitmanArmUD",
+        "keyState",
+        "keyStateP",
+        "allDoorsClosedP",
+        "lightSwitchP",
+        "reverseGear",
+        "pitmanArmUDP",
+        "lightSwitch",
+        "brakePedal",
+        "hazardWarningSwitchOn"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "progress",
+      "params": {
+        "hl": "{}",
+        "step": "3"
+      },
+      "results": {},
+      "destState": {
+        "allDoorsClosed": "TRUE",
+        "voltageBattery": "0",
+        "brightnessSensor": "0",
+        "darknessModeSwitchOn": "FALSE",
+        "pitmanArmUD": "Neutral",
+        "keyState": "NoKeyInserted",
+        "keyStateP": "NoKeyInserted",
+        "allDoorsClosedP": "TRUE",
+        "currentTime": "18",
+        "lightSwitchP": "Off",
+        "reverseGear": "FALSE",
+        "pitmanArmUDP": "Neutral",
+        "lightSwitch": "Off",
+        "brakePedal": "0",
+        "hazardWarningSwitchOn": "FALSE"
+      },
+      "destStateNotChanged": [
+        "headingState"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "progress",
+      "params": {
+        "hl": "{(blinkRight|->0)}",
+        "step": "3"
+      },
+      "results": {},
+      "destState": {
+        "currentTime": "21",
+        "headingState": "{(blinkRight↦0),(blinkLeft↦0),(lowBeamLeft↦0),(lowBeamRight↦0),(tailLampLeft↦0),(tailLampRight↦0),(reverseLight↦0),(brakeLeft↦0),(brakeMid↦0),(brakeRight↦0),(corneringLightLeft↦0),(corneringLightRight↦0)}"
+      },
+      "destStateNotChanged": [
+        "allDoorsClosed",
+        "voltageBattery",
+        "brightnessSensor",
+        "darknessModeSwitchOn",
+        "pitmanArmUD",
+        "keyState",
+        "keyStateP",
+        "allDoorsClosedP",
+        "lightSwitchP",
+        "reverseGear",
+        "pitmanArmUDP",
+        "lightSwitch",
+        "brakePedal",
+        "hazardWarningSwitchOn"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "progress",
+      "params": {
+        "hl": "{}",
+        "step": "3"
+      },
+      "results": {},
+      "destState": {
+        "allDoorsClosed": "TRUE",
+        "voltageBattery": "0",
+        "brightnessSensor": "0",
+        "darknessModeSwitchOn": "FALSE",
+        "pitmanArmUD": "Neutral",
+        "keyState": "NoKeyInserted",
+        "keyStateP": "NoKeyInserted",
+        "allDoorsClosedP": "TRUE",
+        "currentTime": "24",
+        "lightSwitchP": "Off",
+        "reverseGear": "FALSE",
+        "pitmanArmUDP": "Neutral",
+        "lightSwitch": "Off",
+        "brakePedal": "0",
+        "hazardWarningSwitchOn": "FALSE"
+      },
+      "destStateNotChanged": [
+        "headingState"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "progress",
+      "params": {
+        "hl": "{(blinkRight|->8)}",
+        "step": "3"
+      },
+      "results": {},
+      "destState": {
+        "currentTime": "27",
+        "headingState": "{(blinkRight↦8),(blinkLeft↦0),(lowBeamLeft↦0),(lowBeamRight↦0),(tailLampLeft↦0),(tailLampRight↦0),(reverseLight↦0),(brakeLeft↦0),(brakeMid↦0),(brakeRight↦0),(corneringLightLeft↦0),(corneringLightRight↦0)}"
+      },
+      "destStateNotChanged": [
+        "allDoorsClosed",
+        "voltageBattery",
+        "brightnessSensor",
+        "darknessModeSwitchOn",
+        "pitmanArmUD",
+        "keyState",
+        "keyStateP",
+        "allDoorsClosedP",
+        "lightSwitchP",
+        "reverseGear",
+        "pitmanArmUDP",
+        "lightSwitch",
+        "brakePedal",
+        "hazardWarningSwitchOn"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "progress",
+      "params": {
+        "hl": "{(blinkRight|->2)}",
+        "step": "3"
+      },
+      "results": {},
+      "destState": {
+        "allDoorsClosed": "TRUE",
+        "voltageBattery": "0",
+        "brightnessSensor": "0",
+        "darknessModeSwitchOn": "FALSE",
+        "pitmanArmUD": "Neutral",
+        "keyState": "NoKeyInserted",
+        "headingState": "{(blinkRight↦2),(blinkLeft↦0),(lowBeamLeft↦0),(lowBeamRight↦0),(tailLampLeft↦0),(tailLampRight↦0),(reverseLight↦0),(brakeLeft↦0),(brakeMid↦0),(brakeRight↦0),(corneringLightLeft↦0),(corneringLightRight↦0)}",
+        "keyStateP": "NoKeyInserted",
+        "allDoorsClosedP": "TRUE",
+        "currentTime": "30",
+        "lightSwitchP": "Off",
+        "reverseGear": "FALSE",
+        "pitmanArmUDP": "Neutral",
+        "lightSwitch": "Off",
+        "brakePedal": "0",
+        "hazardWarningSwitchOn": "FALSE"
+      },
+      "destStateNotChanged": [],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "progress",
+      "params": {
+        "hl": "{(blinkRight|->7)}",
+        "step": "3"
+      },
+      "results": {},
+      "destState": {
+        "currentTime": "33",
+        "headingState": "{(blinkRight↦7),(blinkLeft↦0),(lowBeamLeft↦0),(lowBeamRight↦0),(tailLampLeft↦0),(tailLampRight↦0),(reverseLight↦0),(brakeLeft↦0),(brakeMid↦0),(brakeRight↦0),(corneringLightLeft↦0),(corneringLightRight↦0)}"
+      },
+      "destStateNotChanged": [
+        "allDoorsClosed",
+        "voltageBattery",
+        "brightnessSensor",
+        "darknessModeSwitchOn",
+        "pitmanArmUD",
+        "keyState",
+        "keyStateP",
+        "allDoorsClosedP",
+        "lightSwitchP",
+        "reverseGear",
+        "pitmanArmUDP",
+        "lightSwitch",
+        "brakePedal",
+        "hazardWarningSwitchOn"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "progress",
+      "params": {
+        "hl": "{}",
+        "step": "3"
+      },
+      "results": {},
+      "destState": {
+        "allDoorsClosed": "TRUE",
+        "voltageBattery": "0",
+        "brightnessSensor": "0",
+        "darknessModeSwitchOn": "FALSE",
+        "pitmanArmUD": "Neutral",
+        "keyState": "NoKeyInserted",
+        "keyStateP": "NoKeyInserted",
+        "allDoorsClosedP": "TRUE",
+        "currentTime": "36",
+        "lightSwitchP": "Off",
+        "reverseGear": "FALSE",
+        "pitmanArmUDP": "Neutral",
+        "lightSwitch": "Off",
+        "brakePedal": "0",
+        "hazardWarningSwitchOn": "FALSE"
+      },
+      "destStateNotChanged": [
+        "headingState"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "progress",
+      "params": {
+        "hl": "{(blinkRight|->4)}",
+        "step": "3"
+      },
+      "results": {},
+      "destState": {
+        "currentTime": "39",
+        "headingState": "{(blinkRight↦4),(blinkLeft↦0),(lowBeamLeft↦0),(lowBeamRight↦0),(tailLampLeft↦0),(tailLampRight↦0),(reverseLight↦0),(brakeLeft↦0),(brakeMid↦0),(brakeRight↦0),(corneringLightLeft↦0),(corneringLightRight↦0)}"
+      },
+      "destStateNotChanged": [
+        "allDoorsClosed",
+        "voltageBattery",
+        "brightnessSensor",
+        "darknessModeSwitchOn",
+        "pitmanArmUD",
+        "keyState",
+        "keyStateP",
+        "allDoorsClosedP",
+        "lightSwitchP",
+        "reverseGear",
+        "pitmanArmUDP",
+        "lightSwitch",
+        "brakePedal",
+        "hazardWarningSwitchOn"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "progress",
+      "params": {
+        "hl": "{(blinkRight|->8)}",
+        "step": "3"
+      },
+      "results": {},
+      "destState": {
+        "allDoorsClosed": "TRUE",
+        "voltageBattery": "0",
+        "brightnessSensor": "0",
+        "darknessModeSwitchOn": "FALSE",
+        "pitmanArmUD": "Neutral",
+        "keyState": "NoKeyInserted",
+        "headingState": "{(blinkRight↦8),(blinkLeft↦0),(lowBeamLeft↦0),(lowBeamRight↦0),(tailLampLeft↦0),(tailLampRight↦0),(reverseLight↦0),(brakeLeft↦0),(brakeMid↦0),(brakeRight↦0),(corneringLightLeft↦0),(corneringLightRight↦0)}",
+        "keyStateP": "NoKeyInserted",
+        "allDoorsClosedP": "TRUE",
+        "currentTime": "42",
+        "lightSwitchP": "Off",
+        "reverseGear": "FALSE",
+        "pitmanArmUDP": "Neutral",
+        "lightSwitch": "Off",
+        "brakePedal": "0",
+        "hazardWarningSwitchOn": "FALSE"
+      },
+      "destStateNotChanged": [],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "progress",
+      "params": {
+        "hl": "{(blinkRight|->6)}",
+        "step": "3"
+      },
+      "results": {},
+      "destState": {
+        "currentTime": "45",
+        "headingState": "{(blinkRight↦6),(blinkLeft↦0),(lowBeamLeft↦0),(lowBeamRight↦0),(tailLampLeft↦0),(tailLampRight↦0),(reverseLight↦0),(brakeLeft↦0),(brakeMid↦0),(brakeRight↦0),(corneringLightLeft↦0),(corneringLightRight↦0)}"
+      },
+      "destStateNotChanged": [
+        "allDoorsClosed",
+        "voltageBattery",
+        "brightnessSensor",
+        "darknessModeSwitchOn",
+        "pitmanArmUD",
+        "keyState",
+        "keyStateP",
+        "allDoorsClosedP",
+        "lightSwitchP",
+        "reverseGear",
+        "pitmanArmUDP",
+        "lightSwitch",
+        "brakePedal",
+        "hazardWarningSwitchOn"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "progress",
+      "params": {
+        "hl": "{}",
+        "step": "3"
+      },
+      "results": {},
+      "destState": {
+        "allDoorsClosed": "TRUE",
+        "voltageBattery": "0",
+        "brightnessSensor": "0",
+        "darknessModeSwitchOn": "FALSE",
+        "pitmanArmUD": "Neutral",
+        "keyState": "NoKeyInserted",
+        "keyStateP": "NoKeyInserted",
+        "allDoorsClosedP": "TRUE",
+        "currentTime": "48",
+        "lightSwitchP": "Off",
+        "reverseGear": "FALSE",
+        "pitmanArmUDP": "Neutral",
+        "lightSwitch": "Off",
+        "brakePedal": "0",
+        "hazardWarningSwitchOn": "FALSE"
+      },
+      "destStateNotChanged": [
+        "headingState"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "progress",
+      "params": {
+        "hl": "{(blinkRight|->1)}",
+        "step": "3"
+      },
+      "results": {},
+      "destState": {
+        "currentTime": "51",
+        "headingState": "{(blinkRight↦1),(blinkLeft↦0),(lowBeamLeft↦0),(lowBeamRight↦0),(tailLampLeft↦0),(tailLampRight↦0),(reverseLight↦0),(brakeLeft↦0),(brakeMid↦0),(brakeRight↦0),(corneringLightLeft↦0),(corneringLightRight↦0)}"
+      },
+      "destStateNotChanged": [
+        "allDoorsClosed",
+        "voltageBattery",
+        "brightnessSensor",
+        "darknessModeSwitchOn",
+        "pitmanArmUD",
+        "keyState",
+        "keyStateP",
+        "allDoorsClosedP",
+        "lightSwitchP",
+        "reverseGear",
+        "pitmanArmUDP",
+        "lightSwitch",
+        "brakePedal",
+        "hazardWarningSwitchOn"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "progress",
+      "params": {
+        "hl": "{(blinkRight|->4)}",
+        "step": "3"
+      },
+      "results": {},
+      "destState": {
+        "allDoorsClosed": "TRUE",
+        "voltageBattery": "0",
+        "brightnessSensor": "0",
+        "darknessModeSwitchOn": "FALSE",
+        "pitmanArmUD": "Neutral",
+        "keyState": "NoKeyInserted",
+        "headingState": "{(blinkRight↦4),(blinkLeft↦0),(lowBeamLeft↦0),(lowBeamRight↦0),(tailLampLeft↦0),(tailLampRight↦0),(reverseLight↦0),(brakeLeft↦0),(brakeMid↦0),(brakeRight↦0),(corneringLightLeft↦0),(corneringLightRight↦0)}",
+        "keyStateP": "NoKeyInserted",
+        "allDoorsClosedP": "TRUE",
+        "currentTime": "54",
+        "lightSwitchP": "Off",
+        "reverseGear": "FALSE",
+        "pitmanArmUDP": "Neutral",
+        "lightSwitch": "Off",
+        "brakePedal": "0",
+        "hazardWarningSwitchOn": "FALSE"
+      },
+      "destStateNotChanged": [],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "progress",
+      "params": {
+        "hl": "{(blinkRight|->0)}",
+        "step": "3"
+      },
+      "results": {},
+      "destState": {
+        "currentTime": "57",
+        "headingState": "{(blinkRight↦0),(blinkLeft↦0),(lowBeamLeft↦0),(lowBeamRight↦0),(tailLampLeft↦0),(tailLampRight↦0),(reverseLight↦0),(brakeLeft↦0),(brakeMid↦0),(brakeRight↦0),(corneringLightLeft↦0),(corneringLightRight↦0)}"
+      },
+      "destStateNotChanged": [
+        "allDoorsClosed",
+        "voltageBattery",
+        "brightnessSensor",
+        "darknessModeSwitchOn",
+        "pitmanArmUD",
+        "keyState",
+        "keyStateP",
+        "allDoorsClosedP",
+        "lightSwitchP",
+        "reverseGear",
+        "pitmanArmUDP",
+        "lightSwitch",
+        "brakePedal",
+        "hazardWarningSwitchOn"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "progress",
+      "params": {
+        "hl": "{(blinkRight|->3)}",
+        "step": "3"
+      },
+      "results": {},
+      "destState": {
+        "allDoorsClosed": "TRUE",
+        "voltageBattery": "0",
+        "brightnessSensor": "0",
+        "darknessModeSwitchOn": "FALSE",
+        "pitmanArmUD": "Neutral",
+        "keyState": "NoKeyInserted",
+        "headingState": "{(blinkRight↦3),(blinkLeft↦0),(lowBeamLeft↦0),(lowBeamRight↦0),(tailLampLeft↦0),(tailLampRight↦0),(reverseLight↦0),(brakeLeft↦0),(brakeMid↦0),(brakeRight↦0),(corneringLightLeft↦0),(corneringLightRight↦0)}",
+        "keyStateP": "NoKeyInserted",
+        "allDoorsClosedP": "TRUE",
+        "currentTime": "60",
+        "lightSwitchP": "Off",
+        "reverseGear": "FALSE",
+        "pitmanArmUDP": "Neutral",
+        "lightSwitch": "Off",
+        "brakePedal": "0",
+        "hazardWarningSwitchOn": "FALSE"
+      },
+      "destStateNotChanged": [],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "progress",
+      "params": {
+        "hl": "{}",
+        "step": "3"
+      },
+      "results": {},
+      "destState": {
+        "currentTime": "63"
+      },
+      "destStateNotChanged": [
+        "allDoorsClosed",
+        "voltageBattery",
+        "brightnessSensor",
+        "darknessModeSwitchOn",
+        "pitmanArmUD",
+        "keyState",
+        "headingState",
+        "keyStateP",
+        "allDoorsClosedP",
+        "lightSwitchP",
+        "reverseGear",
+        "pitmanArmUDP",
+        "lightSwitch",
+        "brakePedal",
+        "hazardWarningSwitchOn"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "progress",
+      "params": {
+        "hl": "{(blinkRight|->6)}",
+        "step": "3"
+      },
+      "results": {},
+      "destState": {
+        "allDoorsClosed": "TRUE",
+        "voltageBattery": "0",
+        "brightnessSensor": "0",
+        "darknessModeSwitchOn": "FALSE",
+        "pitmanArmUD": "Neutral",
+        "keyState": "NoKeyInserted",
+        "headingState": "{(blinkRight↦6),(blinkLeft↦0),(lowBeamLeft↦0),(lowBeamRight↦0),(tailLampLeft↦0),(tailLampRight↦0),(reverseLight↦0),(brakeLeft↦0),(brakeMid↦0),(brakeRight↦0),(corneringLightLeft↦0),(corneringLightRight↦0)}",
+        "keyStateP": "NoKeyInserted",
+        "allDoorsClosedP": "TRUE",
+        "currentTime": "66",
+        "lightSwitchP": "Off",
+        "reverseGear": "FALSE",
+        "pitmanArmUDP": "Neutral",
+        "lightSwitch": "Off",
+        "brakePedal": "0",
+        "hazardWarningSwitchOn": "FALSE"
+      },
+      "destStateNotChanged": [],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "progress",
+      "params": {
+        "hl": "{}",
+        "step": "3"
+      },
+      "results": {},
+      "destState": {
+        "currentTime": "69"
+      },
+      "destStateNotChanged": [
+        "allDoorsClosed",
+        "voltageBattery",
+        "brightnessSensor",
+        "darknessModeSwitchOn",
+        "pitmanArmUD",
+        "keyState",
+        "headingState",
+        "keyStateP",
+        "allDoorsClosedP",
+        "lightSwitchP",
+        "reverseGear",
+        "pitmanArmUDP",
+        "lightSwitch",
+        "brakePedal",
+        "hazardWarningSwitchOn"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "progress",
+      "params": {
+        "hl": "{(blinkRight|->1)}",
+        "step": "3"
+      },
+      "results": {},
+      "destState": {
+        "allDoorsClosed": "TRUE",
+        "voltageBattery": "0",
+        "brightnessSensor": "0",
+        "darknessModeSwitchOn": "FALSE",
+        "pitmanArmUD": "Neutral",
+        "keyState": "NoKeyInserted",
+        "headingState": "{(blinkRight↦1),(blinkLeft↦0),(lowBeamLeft↦0),(lowBeamRight↦0),(tailLampLeft↦0),(tailLampRight↦0),(reverseLight↦0),(brakeLeft↦0),(brakeMid↦0),(brakeRight↦0),(corneringLightLeft↦0),(corneringLightRight↦0)}",
+        "keyStateP": "NoKeyInserted",
+        "allDoorsClosedP": "TRUE",
+        "currentTime": "72",
+        "lightSwitchP": "Off",
+        "reverseGear": "FALSE",
+        "pitmanArmUDP": "Neutral",
+        "lightSwitch": "Off",
+        "brakePedal": "0",
+        "hazardWarningSwitchOn": "FALSE"
+      },
+      "destStateNotChanged": [],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "progress",
+      "params": {
+        "hl": "{(blinkRight|->1)}",
+        "step": "3"
+      },
+      "results": {},
+      "destState": {
+        "currentTime": "75"
+      },
+      "destStateNotChanged": [
+        "allDoorsClosed",
+        "voltageBattery",
+        "brightnessSensor",
+        "darknessModeSwitchOn",
+        "pitmanArmUD",
+        "keyState",
+        "headingState",
+        "keyStateP",
+        "allDoorsClosedP",
+        "lightSwitchP",
+        "reverseGear",
+        "pitmanArmUDP",
+        "lightSwitch",
+        "brakePedal",
+        "hazardWarningSwitchOn"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "progress",
+      "params": {
+        "hl": "{(blinkRight|->2)}",
+        "step": "3"
+      },
+      "results": {},
+      "destState": {
+        "allDoorsClosed": "TRUE",
+        "voltageBattery": "0",
+        "brightnessSensor": "0",
+        "darknessModeSwitchOn": "FALSE",
+        "pitmanArmUD": "Neutral",
+        "keyState": "NoKeyInserted",
+        "headingState": "{(blinkRight↦2),(blinkLeft↦0),(lowBeamLeft↦0),(lowBeamRight↦0),(tailLampLeft↦0),(tailLampRight↦0),(reverseLight↦0),(brakeLeft↦0),(brakeMid↦0),(brakeRight↦0),(corneringLightLeft↦0),(corneringLightRight↦0)}",
+        "keyStateP": "NoKeyInserted",
+        "allDoorsClosedP": "TRUE",
+        "currentTime": "78",
+        "lightSwitchP": "Off",
+        "reverseGear": "FALSE",
+        "pitmanArmUDP": "Neutral",
+        "lightSwitch": "Off",
+        "brakePedal": "0",
+        "hazardWarningSwitchOn": "FALSE"
+      },
+      "destStateNotChanged": [],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "progress",
+      "params": {
+        "hl": "{}",
+        "step": "3"
+      },
+      "results": {},
+      "destState": {
+        "currentTime": "81"
+      },
+      "destStateNotChanged": [
+        "allDoorsClosed",
+        "voltageBattery",
+        "brightnessSensor",
+        "darknessModeSwitchOn",
+        "pitmanArmUD",
+        "keyState",
+        "headingState",
+        "keyStateP",
+        "allDoorsClosedP",
+        "lightSwitchP",
+        "reverseGear",
+        "pitmanArmUDP",
+        "lightSwitch",
+        "brakePedal",
+        "hazardWarningSwitchOn"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "moveKey",
+      "params": {
+        "hl": "{}",
+        "valkey": "KeyInserted"
+      },
+      "results": {},
+      "destState": {
+        "allDoorsClosed": "TRUE",
+        "voltageBattery": "0",
+        "brightnessSensor": "0",
+        "darknessModeSwitchOn": "FALSE",
+        "pitmanArmUD": "Neutral",
+        "keyState": "KeyInserted",
+        "headingState": "{(blinkRight↦2),(blinkLeft↦0),(lowBeamLeft↦0),(lowBeamRight↦0),(tailLampLeft↦0),(tailLampRight↦0),(reverseLight↦0),(brakeLeft↦0),(brakeMid↦0),(brakeRight↦0),(corneringLightLeft↦0),(corneringLightRight↦0)}",
+        "keyStateP": "NoKeyInserted",
+        "allDoorsClosedP": "TRUE",
+        "lightSwitchP": "Off",
+        "reverseGear": "FALSE",
+        "pitmanArmUDP": "Neutral",
+        "lightSwitch": "Off",
+        "brakePedal": "0",
+        "hazardWarningSwitchOn": "FALSE"
+      },
+      "destStateNotChanged": [
+        "currentTime"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    }
+  ],
+  "variableNames": [
+    "headingState"
+  ],
+  "constantNames": [
+    "LowBeams",
+    "directionIndicators",
+    "tailLamps",
+    "LigntnessLevel",
+    "brakeLight"
+  ],
+  "setNames": [
+    "HeadLights"
+  ],
+  "machineOperationInfos": {
+    "headLightSet": {
+      "operationName": "headLightSet",
+      "parameterNames": [
+        "hl"
+      ],
+      "outputParameterNames": [],
+      "topLevel": true,
+      "type": "EVENTB",
+      "readVariables": [
+        "LigntnessLevel",
+        "headingState"
+      ],
+      "writtenVariables": [
+        "headingState"
+      ],
+      "nonDetWrittenVariables": [],
+      "typeMap": {
+        "hl": "set(couple(global('HeadLights'),integer))",
+        "'LigntnessLevel'": "set(integer)"
+      }
+    }
+  },
+  "globalIdentifierTypes": {
+    "headingState": "set(couple(global('HeadLights'),integer))"
+  },
+  "metadata": {
+    "fileType": "Trace",
+    "formatVersion": 4,
+    "savedAt": "2021-06-29T05:51:15.733939Z",
+    "creator": "traceReplay",
+    "proB2KernelVersion": "4.0.0-SNAPSHOT",
+    "proBCliVersion": "1.11.0-nightly",
+    "modelName": "M0"
+  }
+}
