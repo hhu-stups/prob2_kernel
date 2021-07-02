@@ -129,6 +129,27 @@ public class RefinementChecker {
 		}
 	}
 
+	public void reverseTrace() throws IOException {
+
+		ReusableAnimator animator = injector.getInstance(ReusableAnimator.class);
+		StateSpace stateSpace = animator.createStateSpace();
+		EventBFactory eventBFactory = injector.getInstance(EventBFactory.class);
+		eventBFactory.extract(alpha.toString()).loadIntoStateSpace(stateSpace);
+
+		AbstractModel model = stateSpace.getModel();
+
+		Machine topLevelMachine = model.getChildrenOfType(Machine.class).get(model.getGraph().getStart());
+
+		ModelElementList<Event> eventList = topLevelMachine.getChildrenOfType(Event.class);
+
+		Map<String, String> newOldMapping = eventList.stream()
+				.collect(toMap(BEvent::getName, entry -> traceEvent(entry).getName()));
+
+		//List<String> lastIntroducedVariables = topLevelMachine.getChildrenOfType()
+
+		//FindPathCommand findPathCommand = new FindPathCommand()
+		System.out.println();
+	}
 
 
 	public List<PersistentTransition> checkClassicalB() throws IOException, BCompoundException, TraceConstructionError {

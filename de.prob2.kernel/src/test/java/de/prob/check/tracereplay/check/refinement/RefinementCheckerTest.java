@@ -123,7 +123,7 @@ public class RefinementCheckerTest {
 
 
 	@Test
-	public void simple_event_b_one_refinement_step() throws IOException, TraceConstructionError, BCompoundException {
+	public void simple_event_b_one_refinement_step_should_fail() throws IOException, TraceConstructionError, BCompoundException {
 
 
 		Path pathStateSpace1 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "pitman_v4_files", "PitmanController.bum");
@@ -137,7 +137,7 @@ public class RefinementCheckerTest {
 
 
 	@Test
-	public void simple_event_b_one_refinement_step_careful_choice() throws IOException, TraceConstructionError, BCompoundException {
+	public void simple_event_b_one_refinement_step_careful_choice_should_fail() throws IOException, TraceConstructionError, BCompoundException {
 
 
 		Path pathStateSpace1 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "pitman_v4_files", "PitmanController.bum");
@@ -161,7 +161,7 @@ public class RefinementCheckerTest {
 		List<PersistentTransition> result = new RefinementChecker(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace1).check();
 
 //		traceManager.save(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "TipBlinkingTestForPitmanController.prob2trace"), jsonFile.changeTransitionList(result));
-		Assertions.assertEquals(jsonFile.getTransitionList().size(), result.size());
+		Assertions.assertEquals(35, result.size());
 	}
 
 
@@ -176,7 +176,62 @@ public class RefinementCheckerTest {
 		List<PersistentTransition> result = new RefinementChecker(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace1).check();
 
 		traceManager.save(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "TipBlinkingTestForPitmanControllerTime.prob2trace"), jsonFile.changeTransitionList(result));
+		Assertions.assertEquals(45, result.size());
+	}
+/*
+	@Test
+	public void refine_traffic_light_m0_to_m1() throws IOException, TraceConstructionError, BCompoundException {
+
+
+		Path pathStateSpace1 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "trafficLight", "mac1.bum");
+
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "trafficLight_m0_trace.prob2trace"));
+
+		List<PersistentTransition> result = new RefinementChecker(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace1).check();
+
+		//traceManager.save(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "M1RefinementTest.prob2trace"), jsonFile.changeTransitionList(result));
 		Assertions.assertEquals(jsonFile.getTransitionList().size(), result.size());
+	}
+*/
+
+	@Test
+	public void refine_trace_els_1112_M0_to_M1() throws IOException, TraceConstructionError, BCompoundException {
+
+
+		Path pathStateSpace1 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "els_1112", "M1.bum");
+
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "M0RefinementTest.prob2trace"));
+
+		List<PersistentTransition> result = new RefinementChecker(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace1).check();
+
+		traceManager.save(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "M1RefinementTest.prob2trace"), jsonFile.changeTransitionList(result));
+		Assertions.assertEquals(jsonFile.getTransitionList().size(), result.size());
+	}
+
+	@Test
+	public void refine_trace_els_1112_M1_to_M2() throws IOException, TraceConstructionError, BCompoundException {
+
+
+		Path pathStateSpace1 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "els_1112", "M2.bum");
+
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "M1RandomMovements.prob2trace"));
+
+		List<PersistentTransition> result = new RefinementChecker(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace1).check();
+
+		traceManager.save(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "M2RandomMovements		.prob2trace"), jsonFile.changeTransitionList(result));
+		Assertions.assertEquals(jsonFile.getTransitionList().size(), result.size());
+	}
+
+	@Test
+	public void reverse_trace_M5_M4() throws IOException, TraceConstructionError, BCompoundException {
+
+
+		Path pathStateSpace1 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "els_1112", "M5.bum");
+
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "M5_to_M4.prob2trace"));
+
+		 new RefinementChecker(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace1).reverseTrace();
+
 	}
 
 }
