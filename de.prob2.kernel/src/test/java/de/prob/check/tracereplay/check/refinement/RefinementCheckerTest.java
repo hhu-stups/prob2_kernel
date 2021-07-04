@@ -228,9 +228,12 @@ public class RefinementCheckerTest {
 
 		Path pathStateSpace1 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "els_1112", "M5.bum");
 
+		Path pathStateSpace2 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "els_1112", "M4.bum");
+
+
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "M5_to_M4.prob2trace"));
 
-		 new RefinementChecker(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace1).reverseTrace();
+		 new RefinementChecker(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace2).reverseTrace();
 
 	}
 

@@ -20,18 +20,21 @@ import de.prob.animator.ReusableAnimator;
 import de.prob.animator.command.FindPathCommand;
 import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.FormulaExpand;
+import de.prob.check.tracereplay.PersistentTrace;
 import de.prob.check.tracereplay.PersistentTransition;
+import de.prob.check.tracereplay.TraceReplay;
 import de.prob.check.tracereplay.check.TraceCheckerUtils;
 import de.prob.check.tracereplay.check.exploration.ReplayOptions;
 import de.prob.check.tracereplay.check.traceConstruction.AdvancedTraceConstructor;
 import de.prob.check.tracereplay.check.traceConstruction.TraceConstructionError;
-import de.prob.model.eventb.Event;
+import de.prob.model.eventb.*;
 import de.prob.model.representation.*;
 import de.prob.scripting.EventBFactory;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
 import de.prob.statespace.Transition;
 
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.*;
 
 public class RefinementChecker {
@@ -87,7 +90,14 @@ public class RefinementChecker {
 		ModelElementList<Event> eventList = topLevelMachine.getChildrenOfType(Event.class);
 
 		Map<String, String> newOldMapping = eventList.stream()
-				.collect(toMap(BEvent::getName, entry -> traceEvent(entry).getName()));
+				.collect(toMap(BEvent::getName, entry -> {
+					String eventName = traceEvent(entry).getName();
+					if(eventName.equals("skip")){
+						return entry.getName();
+					}else{
+						return eventName;
+					}
+				}));
 
 
 		Map<String, List<String>> alternatives = newOldMapping.entrySet().stream()
@@ -123,13 +133,13 @@ public class RefinementChecker {
 	 */
 	public static Event traceEvent(Event event){
 		if(event.getRefines().isEmpty()){
-			return event;
+			return new Event("skip", Event.EventType.ORDINARY, true);
 		}else{
-			return traceEvent(event.getRefines().get(0)); //In EventB there should only be one Event refined from
+			return event.getRefines().get(0); //In EventB there should only be one Event refined from
 		}
 	}
 
-	public void reverseTrace() throws IOException {
+	public void reverseTrace() throws IOException, TraceConstructionError {
 
 		ReusableAnimator animator = injector.getInstance(ReusableAnimator.class);
 		StateSpace stateSpace = animator.createStateSpace();
@@ -145,10 +155,116 @@ public class RefinementChecker {
 		Map<String, String> newOldMapping = eventList.stream()
 				.collect(toMap(BEvent::getName, entry -> traceEvent(entry).getName()));
 
-		//List<String> lastIntroducedVariables = topLevelMachine.getChildrenOfType()
+		String original = model.getGraph().getStart();
+		String target = model.getGraph().getOutEdges(original).stream().filter(entry -> entry.getRelationship().equals(DependencyGraph.ERefType.REFINES)).collect(toList()).get(0).getTo().getElementName();
 
-		//FindPathCommand findPathCommand = new FindPathCommand()
-		System.out.println();
+		ModelElementList<Machine> modelList = model.getChildrenOfType(Machine.class);
+		List<EventBMachine> theBetterList = modelList.stream().map(entry -> (EventBMachine) entry).collect(toList());
+
+		Map<String, EventBMachine> theBetterMap = theBetterList.stream().filter(entry -> entry.getName().equals(original) || entry.getName().equals(target)).collect(toMap(Machine::getName, entry -> entry));
+
+		List<String> originalVars = theBetterMap.get(original).getVariables().stream().map(EventBVariable::getName).collect(toList());
+		List<String> targetVars = theBetterMap.get(target).getVariables().stream().map(EventBVariable::getName).collect(toList());
+
+
+		List<String> originalConst = extractConst(theBetterMap.get(original));
+		List<String> targetConst  = extractConst(theBetterMap.get(target));
+
+
+		List<String> machineExclusiveVars = originalVars.stream().filter(entry -> !targetVars.contains(entry)).collect(toList());
+		List<String> machineExclusiveConst = originalConst.stream().filter(entry -> !targetConst.contains(entry)).collect(toList());
+
+		Map<String, List<String>> machineOriginalParams = theBetterMap.get(original).getChildrenOfType(Event.class).stream()
+				.collect(toMap(BEvent::getName, entry -> entry.getChildrenOfType(EventParameter.class).stream()
+						.map(EventParameter::getName)
+						.collect(toList())));
+
+		Map<String, List<String>> machineTargetParams = theBetterMap.get(target).getChildrenOfType(Event.class).stream()
+				.collect(toMap(BEvent::getName, entry -> entry.getChildrenOfType(EventParameter.class).stream()
+						.map(EventParameter::getName)
+						.collect(toList())));
+
+
+		List<PersistentTransition> removedSkip = transitionList.stream()
+				.filter(entry -> {
+					if(!entry.getOperationName().equals(Transition.INITIALISE_MACHINE_NAME) && !entry.getOperationName().equals(Transition.SETUP_CONSTANTS_NAME)) {
+						String name = entry.getOperationName();
+						return !newOldMapping.get(name).equals("skip");
+					}
+					return true;
+				})
+				.collect(toList());
+
+		Map<String, List<String>> removedEventParas = machineOriginalParams.entrySet().stream()
+				.filter(entry -> !newOldMapping.get(entry.getKey()).equals("skip"))
+				.collect(toMap(Map.Entry::getKey, entry -> {
+					String nameInAbstract = newOldMapping.get(entry.getKey());
+					List<String> parametersOfAbstract = machineTargetParams.get(nameInAbstract);
+					return entry.getValue().stream()
+							.filter(innerEntry -> !parametersOfAbstract.contains(innerEntry))
+							.collect(toList());
+				}));
+
+		List<PersistentTransition> removedParameters = predicateRemoverParameters(removedSkip, removedEventParas);
+		List<PersistentTransition> removedPredVars = predicateRemover(removedParameters, machineExclusiveVars);
+		List<PersistentTransition> removedPredConst = predicateRemover(removedPredVars, machineExclusiveConst);
+
+
+
+		List< PersistentTransition> listReady = removedPredConst.stream().map(entry -> {
+			if(entry.getOperationName().equals(Transition.SETUP_CONSTANTS_NAME)||entry.getOperationName().equals(Transition.INITIALISE_MACHINE_NAME)){
+				return entry;
+			}else{
+				return entry.copyWithNewName(newOldMapping.get(entry.getOperationName()));
+			}
+		}).collect(toList());
+
+
+		StateSpace stateSpace2 = TraceCheckerUtils.createStateSpace(beta.toString(), injector);
+		Trace result = TraceReplay.replayTrace(new PersistentTrace("", listReady), stateSpace2);
+
+		result.size();
+	}
+
+
+	public static List<String> extractConst(EventBMachine target){
+		if(!target.getChildrenOfType(de.prob.model.eventb.Context.class).isEmpty())
+		{
+			return target.getChildrenOfType(Context.class).get(0).getConstants().stream().map(EventBConstant::getName).collect(toList());
+		}else{
+			return emptyList();
+		}
+
+	}
+
+	public List<PersistentTransition> predicateRemoverParameters(List<PersistentTransition> persistentTransitionList, Map<String, List<String>> machineExclusive) {
+		return persistentTransitionList.stream()
+				.map(entry -> entry.copyWithNewParameters(entry.getParameters().entrySet().stream()
+						.filter(innerEntry -> !machineExclusive.get(entry.getOperationName()).contains(innerEntry.getKey()))
+						.collect(toMap(Map.Entry::getKey, Map.Entry::getValue))))
+				.collect(toList());
+
+
+	}
+
+		public List<PersistentTransition> predicateRemover(List<PersistentTransition> persistentTransitionList, List<String> machineExclusive){
+		 return persistentTransitionList.stream()
+				.map(entry -> entry.copyWithNewDestState(entry.getDestinationStateVariables()
+						.entrySet()
+						.stream()
+						.filter(innerEntry -> !machineExclusive.contains(innerEntry.getKey()))
+						.collect(toMap(Map.Entry::getKey, Map.Entry::getValue))))
+				 .map(entry -> entry.copyWithNewOutputParameters(entry.getOutputParameters()
+						 .entrySet()
+						 .stream()
+						 .filter(innerEntry -> !machineExclusive.contains(innerEntry.getKey()))
+						 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue))))
+				 .map(entry -> entry.copyWithNewParameters(entry.getParameters()
+						 .entrySet()
+						 .stream()
+						 .filter(innerEntry -> !machineExclusive.contains(innerEntry.getKey()))
+						 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue))))
+		 .collect(toList());
 	}
 
 
