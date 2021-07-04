@@ -2,7 +2,7 @@ package de.prob.animator.command;
 
 import de.be4.classicalb.core.parser.analysis.prolog.ASTProlog;
 import de.prob.animator.domainobjects.AbstractEvalElement;
-import de.prob.animator.domainobjects.ClassicalB;
+import de.prob.animator.domainobjects.EventB;
 import de.prob.animator.domainobjects.EvalElementType;
 import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
@@ -19,7 +19,7 @@ import java.util.Map;
 
 import static java.util.stream.Collectors.toMap;
 
-public class RefineTraceCommand extends AbstractCommand implements
+public class RefineTraceEventBCommand extends AbstractCommand implements
 		IStateSpaceModifier, ITraceDescription {
 
 
@@ -28,7 +28,7 @@ public class RefineTraceCommand extends AbstractCommand implements
 	private static final String RESULT_VARIABLE = "Res";
 	private static final String ERRORS_VARIABLE = "Errors";
 
-	private final List<ClassicalB> evalElement;
+	private final List<EventB> evalElement;
 	private final State stateId;
 	private final List<String> name;
 	private final StateSpace stateSpace;
@@ -45,8 +45,8 @@ public class RefineTraceCommand extends AbstractCommand implements
 	 * @param trace      the trace to satisfy
 	 * @param predicates the constraints to put on each transition; maps 1:1 with trace
 	 */
-	public RefineTraceCommand(final StateSpace s, final State stateId,
-						   final List<String> trace, final List<ClassicalB> predicates) {
+	public RefineTraceEventBCommand(final StateSpace s, final State stateId,
+							  final List<String> trace, final List<EventB> predicates) {
 		this(s, stateId, trace, predicates, trace.stream().collect(toMap(entry -> entry, Collections::singletonList)), Collections.emptyList());
 	}
 
@@ -62,8 +62,8 @@ public class RefineTraceCommand extends AbstractCommand implements
 	 *                     those are stored here, expects a 1:1 mapping else
 	 * @param blackList    All events/operations that are not introduced via a skip refinement
 	 */
-	public RefineTraceCommand(final StateSpace s, final State stateId,
-						   final List<String> trace, final List<ClassicalB> predicates, final Map<String, List<String>> alternatives, final List<String> blackList) {
+	public RefineTraceEventBCommand(final StateSpace s, final State stateId,
+							  final List<String> trace, final List<EventB> predicates, final Map<String, List<String>> alternatives, final List<String> blackList) {
 		this.stateSpace = s;
 		this.stateId = stateId;
 		this.name = trace;
@@ -76,8 +76,8 @@ public class RefineTraceCommand extends AbstractCommand implements
 			throw new IllegalArgumentException(
 					"Must provide the same number of names and predicates.");
 		}
-		for (ClassicalB classicalB : predicates) {
-			if (!EvalElementType.PREDICATE.equals(classicalB.getKind())) {
+		for (EventB EventB : predicates) {
+			if (!EvalElementType.PREDICATE.equals(EventB.getKind())) {
 				throw new IllegalArgumentException(
 						"Formula must be a predicates: " + predicates);
 			}
@@ -115,8 +115,7 @@ public class RefineTraceCommand extends AbstractCommand implements
 		pto.openList();
 
 		AbstractEvalElement g;
-
-		for (ClassicalB cb : evalElement) {
+		for (EventB cb : evalElement) {
 			cb.getAst().apply(prolog);
 		}
 		pto.closeList();

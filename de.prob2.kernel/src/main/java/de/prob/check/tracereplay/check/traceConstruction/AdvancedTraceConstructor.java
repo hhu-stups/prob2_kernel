@@ -2,7 +2,9 @@ package de.prob.check.tracereplay.check.traceConstruction;
 
 import de.prob.animator.command.FindPathCommand;
 import de.prob.animator.command.RefineTraceCommand;
+import de.prob.animator.command.RefineTraceEventBCommand;
 import de.prob.animator.domainobjects.ClassicalB;
+import de.prob.animator.domainobjects.EventB;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.exploration.ReplayOptions;
@@ -63,10 +65,39 @@ public class AdvancedTraceConstructor {
 				.map(PersistentTransition::getOperationName)
 				.collect(toList());
 		List<ClassicalB> predicates = modifiedList.stream()
-				.map(entry -> new ClassicalB(new PredicateBuilder().addMap(entry.getAllPredicates()).toString(), FormulaExpand.EXPAND))
+				.map(entry -> {
+					String pred = new PredicateBuilder().addMap(entry.getAllPredicates()).toString();
+					return new ClassicalB(new PredicateBuilder().addMap(entry.getAllPredicates()).toString(), FormulaExpand.EXPAND);
+				})
 				.collect(toList());
 
 		RefineTraceCommand refineTraceCommand = new RefineTraceCommand(modifiedTrace.getStateSpace(), modifiedTrace.getCurrentState(), transitionNames, predicates, alternatives, blackList);
+		stateSpace.execute(refineTraceCommand);
+
+		if (refineTraceCommand.hasErrors() && refineTraceCommand.getNewTransitions().size() < persistentTrace.size()) { //The command failed in finding an complete Trace
+			throw new TraceConstructionError(refineTraceCommand.getErrors(), refineTraceCommand.getNewTransitions());
+		} else {
+			return refineTraceCommand.getNewTransitions();
+		}
+	}
+
+	public static List<Transition> constructTraceEventB(List<PersistentTransition> persistentTrace, StateSpace stateSpace, Map<String, List<String>> alternatives, List<String> blackList) throws TraceConstructionError {
+
+		Trace modifiedTrace = prepareTrace(new Trace(stateSpace), persistentTrace);
+		modifiedTrace.setExploreStateByDefault(true);
+		List<PersistentTransition> modifiedList = prepareTraceList(modifiedTrace, persistentTrace);
+
+		List<String> transitionNames = modifiedList.stream()
+				.map(PersistentTransition::getOperationName)
+				.collect(toList());
+		List<EventB> predicates = modifiedList.stream()
+				.map(entry -> {
+					String pred = new PredicateBuilder().addMap(entry.getAllPredicates()).toString();
+					return new EventB(new PredicateBuilder().addMap(entry.getAllPredicates()).toString(), FormulaExpand.EXPAND);
+				})
+				.collect(toList());
+
+		RefineTraceEventBCommand refineTraceCommand = new RefineTraceEventBCommand(modifiedTrace.getStateSpace(), modifiedTrace.getCurrentState(), transitionNames, predicates, alternatives, blackList);
 		stateSpace.execute(refineTraceCommand);
 
 		if (refineTraceCommand.hasErrors() && refineTraceCommand.getNewTransitions().size() < persistentTrace.size()) { //The command failed in finding an complete Trace

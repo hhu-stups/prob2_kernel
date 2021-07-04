@@ -117,7 +117,7 @@ public class RefinementChecker {
 				.collect(toList());
 
 
-		List<Transition> resultRaw = AdvancedTraceConstructor.constructTrace(transitionList, stateSpace, alternatives, blackList);
+		List<Transition> resultRaw = AdvancedTraceConstructor.constructTraceEventB(transitionList, stateSpace, alternatives, blackList);
 
 		return PersistentTransition.createFromList(resultRaw);
 	}
@@ -139,7 +139,7 @@ public class RefinementChecker {
 		}
 	}
 
-	public void reverseTrace() throws IOException, TraceConstructionError {
+	public List<PersistentTransition> reverseTrace() throws IOException, TraceConstructionError {
 
 		ReusableAnimator animator = injector.getInstance(ReusableAnimator.class);
 		StateSpace stateSpace = animator.createStateSpace();
@@ -223,7 +223,7 @@ public class RefinementChecker {
 		StateSpace stateSpace2 = TraceCheckerUtils.createStateSpace(beta.toString(), injector);
 		Trace result = TraceReplay.replayTrace(new PersistentTrace("", listReady), stateSpace2);
 
-		result.size();
+		return PersistentTransition.createFromList(new ArrayList<>(result.getTransitionList()));
 	}
 
 

@@ -17,6 +17,10 @@ import de.be4.classicalb.core.parser.node.AAbstractMachineParseUnit;
 import de.be4.classicalb.core.parser.node.Start;
 import de.be4.classicalb.core.parser.util.PrettyPrinter;
 import de.prob.ProBKernelStub;
+import de.prob.animator.domainobjects.ClassicalB;
+import de.prob.animator.domainobjects.EventB;
+import de.prob.animator.domainobjects.FormulaExpand;
+import de.prob.check.tracereplay.PersistentTrace;
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.TestUtils;
 import de.prob.check.tracereplay.check.TraceChecker;
@@ -230,10 +234,31 @@ public class RefinementCheckerTest {
 
 		Path pathStateSpace2 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "els_1112", "M4.bum");
 
-
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "M5_to_M4.prob2trace"));
 
-		 new RefinementChecker(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace2).reverseTrace();
+		List<PersistentTransition> result = new RefinementChecker(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace2).reverseTrace();
+
+		traceManager.save(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "M4_created_from_M5.prob2trace"), jsonFile.changeTransitionList(result));
+
+		List<PersistentTransition> result2 = new RefinementChecker(CliTestCommon.getInjector(), result, pathStateSpace1, pathStateSpace1).check();
+
+		traceManager.save(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "M5_created_from_M4_created_from_M5.prob2trace"), jsonFile.changeTransitionList(result));
+
+
+	}
+
+
+	@Test
+	public void parse_classical_B() throws IOException, TraceConstructionError, BCompoundException {
+
+
+		String bla = "val=Upward5 & hl={(lowBeamLeft|->0),(lowBeamRight|->0),(tailLampLeft|->0),(tailLampRight|->0),(corneringLightLeft|->0),(corneringLightRight|->0)}" +
+				//" & left=FALSE " +
+				"& pitmanArmUD=Upward5 & nextflashDesacLeft=0 & nextflashDesacRight=0 & right=FALSE & nbc=0";
+
+		EventB eventB = new EventB(bla, FormulaExpand.EXPAND);
+
+
 
 	}
 
