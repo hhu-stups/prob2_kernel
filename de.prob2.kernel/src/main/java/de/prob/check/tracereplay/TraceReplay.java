@@ -52,6 +52,14 @@ public class TraceReplay {
 					result.add(postconditionResult);
 					break;
 				}
+				case DISABLEDNESS: {
+					String predicate = ((OperationDisabledness) postcondition).getPredicate();
+					predicate = predicate.isEmpty() ? "1=1" : predicate;
+					Transition transition = state.findTransition(((OperationDisabledness) postcondition).getOperation(), predicate);
+					boolean postconditionResult = transition == null;
+					result.add(postconditionResult);
+					break;
+				}
 				default:
 					throw new RuntimeException("Postcondition class is unknown: " + postcondition.getKind());
 			}

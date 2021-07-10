@@ -12,11 +12,12 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonSubTypes({
         @JsonSubTypes.Type(value = PostconditionPredicate.class, name = "PREDICATE"),
         @JsonSubTypes.Type(value = OperationEnabledness.class, name = "ENABLEDNESS"),
+        @JsonSubTypes.Type(value = OperationDisabledness.class, name = "DISABLEDNESS"),
 })
 public abstract class Postcondition {
 
     public enum PostconditionKind {
-        PREDICATE, ENABLEDNESS;
+        PREDICATE, ENABLEDNESS, DISABLEDNESS;
     }
 
     private final PostconditionKind kind;
