@@ -81,9 +81,9 @@ public class DefaultTraceChecker implements ITraceChecker {
 						case DISABLEDNESS: {
 							String predicate = ((OperationDisabledness) postcondition).getPredicate();
 							if (predicate.isEmpty()) {
-								sb.append(String.format("Checking enabledness postcondition in transition %s failed for operation %s", transition.getOperationName(), ((OperationDisabledness) postcondition).getOperation()));
+								sb.append(String.format("Checking disabledness postcondition in transition %s failed for operation %s", transition.getOperationName(), ((OperationDisabledness) postcondition).getOperation()));
 							} else {
-								sb.append(String.format("Checking enabledness postcondition in transition %s failed for operation %s for predicate %s", transition.getOperationName(), ((OperationDisabledness) postcondition).getOperation(), predicate));
+								sb.append(String.format("Checking disabledness postcondition in transition %s failed for operation %s for predicate %s", transition.getOperationName(), ((OperationDisabledness) postcondition).getOperation(), predicate));
 							}
 							sb.append("\n");
 							break;
