@@ -10,11 +10,11 @@ import java.util.List;
  * The VisBEvent is designed for the JSON / VisB file
  */
 public class VisBHover {
-	private String svgID; // id of the object whose attribute is modified upon hover
-	private String hoverID;
-	private String hoverAttribute;
-	private String hoverEnterValue;
-	private String hoverLeaveValue;
+	private final String svgID; // id of the object whose attribute is modified upon hover
+	private final String hoverID;
+	private final String hoverAttribute;
+	private final String hoverEnterValue;
+	private final String hoverLeaveValue;
 
 	public VisBHover(String svgID, String hoverID, String hoverAttribute, String hoverEnterValue, String hoverLeaveValue){
 		this.svgID = svgID;

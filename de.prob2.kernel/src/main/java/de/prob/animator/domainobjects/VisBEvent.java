@@ -11,10 +11,10 @@ import java.util.Map;
  * The VisBEvent is designed for the JSON / VisB file
  */
 public class VisBEvent {
-	private String id;
-	private String event;
-	private List<String> predicates;
-	private List<VisBHover> hovers; // TO DO: maybe provide multiple values and allow value to depend on B state
+	private final String id;
+	private final String event;
+	private final List<String> predicates;
+	private final List<VisBHover> hovers; // TO DO: maybe provide multiple values and allow value to depend on B state
 
 
 	/**

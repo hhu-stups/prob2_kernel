@@ -43,13 +43,13 @@ public class VisBItem {
 		}
 	}
 
-	private VisBItemKey key;
-	private String id;
-	private String attribute;
-	private String expression;
-	private String description;
+	private final VisBItemKey key;
+	private final String id;
+	private final String attribute;
+	private final String expression;
+	private final String description;
 	private String value; // B Formula to compute value of attribute for SVG object id
-	private String source;
+	private final String source;
 
 	/**
 	 *
