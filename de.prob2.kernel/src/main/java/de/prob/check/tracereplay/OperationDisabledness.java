@@ -14,7 +14,7 @@ public class OperationDisabledness extends OperationExecutability {
 
 	@JsonCreator
 	public OperationDisabledness(@JsonProperty("operation") final String operation,
-                                 @JsonProperty("predicate") final String predicate) {
+			@JsonProperty("predicate") final String predicate) {
 		super(PostconditionKind.DISABLEDNESS, operation, predicate);
 	}
 
