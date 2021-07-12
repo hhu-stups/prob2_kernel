@@ -1,10 +1,10 @@
 package de.prob.animator.domainobjects;
 
+import java.util.Objects;
+
+import de.prob.animator.command.GetVisBAttributeValuesCommand;
 import de.prob.parser.BindingGenerator;
 import de.prob.prolog.term.PrologTerm;
-
-
-import java.util.Objects;
 
 /**
  * The VisBItem is designed for the JSON / VisB file
@@ -92,6 +92,10 @@ public class VisBItem {
 		return source;
 	}
 
+	/**
+	 * @deprecated Use {@link GetVisBAttributeValuesCommand} for getting attribute values instead.
+	 */
+	@Deprecated
 	public String getValue() {
 		return value;
 	}
@@ -108,6 +112,10 @@ public class VisBItem {
 		return new VisBItem(id, attribute, expression, description, source);
 	}
 
+	/**
+	 * @deprecated Use {@link GetVisBAttributeValuesCommand} for getting attribute values instead.
+	 */
+	@Deprecated
 	public void setValue(String value) {
 		this.value = value;
 	}
