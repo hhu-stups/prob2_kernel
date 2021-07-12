@@ -46,9 +46,8 @@ public class VisBItem {
 	private final VisBItemKey key;
 	private final String id;
 	private final String attribute;
-	private final String expression;
+	private final String expression; // B Formula to compute value of attribute for SVG object id
 	private final String description;
-	private String value; // B Formula to compute value of attribute for SVG object id
 	private final String source;
 
 	/**
@@ -92,15 +91,6 @@ public class VisBItem {
 		return source;
 	}
 
-	/**
-	 * @deprecated Use {@link GetVisBAttributeValuesCommand} for getting attribute values instead.
-	 */
-	@Deprecated
-	public String getValue() {
-		return value;
-	}
-
-
 	public static VisBItem fromPrologTerm(final PrologTerm term) {
 		BindingGenerator.getCompoundTerm(term, "visb_item", 5);
 		final String id = PrologTerm.atomicString(term.getArgument(1));
@@ -112,17 +102,9 @@ public class VisBItem {
 		return new VisBItem(id, attribute, expression, description, source);
 	}
 
-	/**
-	 * @deprecated Use {@link GetVisBAttributeValuesCommand} for getting attribute values instead.
-	 */
-	@Deprecated
-	public void setValue(String value) {
-		this.value = value;
-	}
-
 	@Override
 	public String toString() {
-		return String.format("VisBItem{%s, %s, %s, %s, %s, %s}", id, attribute, expression, description, value, source);
+		return String.format("VisBItem{%s, %s, %s, %s, %s}", id, attribute, expression, description, source);
 	}
 
 	@Override
@@ -130,11 +112,11 @@ public class VisBItem {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		VisBItem visBItem = (VisBItem) o;
-		return Objects.equals(id, visBItem.id) && Objects.equals(attribute, visBItem.attribute) && Objects.equals(expression, visBItem.expression) && Objects.equals(description, visBItem.description) && Objects.equals(value, visBItem.value) && Objects.equals(source, visBItem.source);
+		return Objects.equals(id, visBItem.id) && Objects.equals(attribute, visBItem.attribute) && Objects.equals(expression, visBItem.expression) && Objects.equals(description, visBItem.description) && Objects.equals(source, visBItem.source);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, attribute, expression, description, value, source);
+		return Objects.hash(id, attribute, expression, description, source);
 	}
 }
