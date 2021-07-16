@@ -5,6 +5,7 @@ import de.hhu.stups.prob.translator.Translator;
 import de.hhu.stups.prob.translator.exceptions.TranslationException;
 import de.prob.animator.command.GetOperationByPredicateCommand;
 import de.prob.animator.domainobjects.AbstractEvalResult;
+import de.prob.animator.domainobjects.EvaluationException;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.formula.PredicateBuilder;
@@ -39,9 +40,14 @@ public class TraceReplay {
 		for(Postcondition postcondition : postconditions) {
 			switch (postcondition.getKind()) {
 				case PREDICATE: {
-					AbstractEvalResult evalResult = state.eval(((PostconditionPredicate) postcondition).getPredicate(), FormulaExpand.EXPAND);
-					boolean postconditionResult = "TRUE".equals(evalResult.toString());
-					result.add(postconditionResult);
+					// TODO: Distinguish between success, failed, and parse error
+					try {
+						AbstractEvalResult evalResult = state.eval(((PostconditionPredicate) postcondition).getPredicate(), FormulaExpand.EXPAND);
+						boolean postconditionResult = "TRUE".equals(evalResult.toString());
+						result.add(postconditionResult);
+					} catch (EvaluationException e) {
+						result.add(false);
+					}
 					break;
 				}
 				case ENABLEDNESS: {
