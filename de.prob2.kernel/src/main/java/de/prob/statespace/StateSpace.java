@@ -37,6 +37,7 @@ import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.animator.domainobjects.ProBPreference;
 import de.prob.animator.domainobjects.TypeCheckResult;
 import de.prob.annotations.MaxCacheSize;
+import de.prob.exception.ProBError;
 import de.prob.formula.PredicateBuilder;
 import de.prob.model.classicalb.ClassicalBModel;
 import de.prob.model.eventb.EventBModel;
@@ -260,7 +261,11 @@ public class StateSpace implements IAnimator {
 				pred, nrOfSolutions);
 		execute(command);
 		if (command.hasErrors()) {
-			throw new ExecuteOperationException("Executing operation " + opName + " with additional predicate produced errors: " + String.join(", ", command.getErrorMessages()), command.getErrors());
+			if(command.getErrors().stream().allMatch(err -> err.getType() == GetOperationByPredicateCommand.GetOperationErrorType.CANNOT_EXECUTE)) {
+				throw new ExecuteOperationException("Executing operation " + opName + " with additional predicate produced errors: " + String.join(", ", command.getErrorMessages()), command.getErrors());
+			} else {
+				throw new ProBError("Executing operation " + opName + " with additional predicate produced parse errors: " + String.join(", ", command.getErrorMessages()));
+			}
 		}
 		return command.getNewTransitions();
 	}

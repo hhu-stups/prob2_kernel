@@ -10,6 +10,7 @@ import de.prob.animator.domainobjects.EvalResult;
 import de.prob.animator.domainobjects.EvaluationException;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
+import de.prob.exception.ProBError;
 import de.prob.formula.PredicateBuilder;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.State;
@@ -75,7 +76,7 @@ public class TraceReplay {
 					default:
 						throw new RuntimeException("Postcondition class is unknown: " + postcondition.getKind());
 				}
-			} catch (EvaluationException e) {
+			} catch (EvaluationException | ProBError e) {
 				result.add(PostconditionResult.PARSE_ERROR);
 			}
 		}
