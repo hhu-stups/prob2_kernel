@@ -5,6 +5,8 @@ import de.hhu.stups.prob.translator.Translator;
 import de.hhu.stups.prob.translator.exceptions.TranslationException;
 import de.prob.animator.command.GetOperationByPredicateCommand;
 import de.prob.animator.domainobjects.AbstractEvalResult;
+import de.prob.animator.domainobjects.ComputationNotCompletedResult;
+import de.prob.animator.domainobjects.EvalResult;
 import de.prob.animator.domainobjects.EvaluationException;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
@@ -31,43 +33,50 @@ public class TraceReplay {
 		COMMAND, NO_OPERATION_POSSIBLE, TRACE_REPLAY, MISMATCH_OUTPUT
 	}
 
+	public enum PostconditionResult {
+		SUCCESS, FAIL, PARSE_ERROR
+	}
+
 	public static Trace replayTrace(PersistentTrace persistentTrace, StateSpace stateSpace) {
 		return replayTrace(persistentTrace, stateSpace, true, new HashMap<>(), new DefaultTraceChecker());
 	}
 
-	private static List<Boolean> checkPostconditions(State state, List<Postcondition> postconditions) {
-		List<Boolean> result = new ArrayList<>();
+	private static List<PostconditionResult> checkPostconditions(State state, List<Postcondition> postconditions) {
+		List<PostconditionResult> result = new ArrayList<>();
 		for(Postcondition postcondition : postconditions) {
-			switch (postcondition.getKind()) {
-				case PREDICATE: {
-					// TODO: Distinguish between success, failed, and parse error
-					try {
+			try {
+				switch (postcondition.getKind()) {
+					case PREDICATE: {
 						AbstractEvalResult evalResult = state.eval(((PostconditionPredicate) postcondition).getPredicate(), FormulaExpand.EXPAND);
-						boolean postconditionResult = "TRUE".equals(evalResult.toString());
-						result.add(postconditionResult);
-					} catch (EvaluationException e) {
-						result.add(false);
+						if(evalResult instanceof ComputationNotCompletedResult) {
+							result.add(PostconditionResult.PARSE_ERROR);
+						} else {
+							PostconditionResult postconditionResult = "TRUE".equals(evalResult.toString()) ? PostconditionResult.SUCCESS : PostconditionResult.FAIL;
+							result.add(postconditionResult);
+						}
+						break;
 					}
-					break;
+					case ENABLEDNESS: {
+						String predicate = ((OperationEnabledness) postcondition).getPredicate();
+						predicate = predicate.isEmpty() ? "1=1" : predicate;
+						Transition transition = state.findTransition(((OperationEnabledness) postcondition).getOperation(), predicate);
+						PostconditionResult postconditionResult = transition != null ? PostconditionResult.SUCCESS : PostconditionResult.FAIL;
+						result.add(postconditionResult);
+						break;
+					}
+					case DISABLEDNESS: {
+						String predicate = ((OperationDisabledness) postcondition).getPredicate();
+						predicate = predicate.isEmpty() ? "1=1" : predicate;
+						Transition transition = state.findTransition(((OperationDisabledness) postcondition).getOperation(), predicate);
+						PostconditionResult postconditionResult = transition == null ? PostconditionResult.SUCCESS : PostconditionResult.FAIL;
+						result.add(postconditionResult);
+						break;
+					}
+					default:
+						throw new RuntimeException("Postcondition class is unknown: " + postcondition.getKind());
 				}
-				case ENABLEDNESS: {
-					String predicate = ((OperationEnabledness) postcondition).getPredicate();
-					predicate = predicate.isEmpty() ? "1=1" : predicate;
-					Transition transition = state.findTransition(((OperationEnabledness) postcondition).getOperation(), predicate);
-					boolean postconditionResult = transition != null;
-					result.add(postconditionResult);
-					break;
-				}
-				case DISABLEDNESS: {
-					String predicate = ((OperationDisabledness) postcondition).getPredicate();
-					predicate = predicate.isEmpty() ? "1=1" : predicate;
-					Transition transition = state.findTransition(((OperationDisabledness) postcondition).getOperation(), predicate);
-					boolean postconditionResult = transition == null;
-					result.add(postconditionResult);
-					break;
-				}
-				default:
-					throw new RuntimeException("Postcondition class is unknown: " + postcondition.getKind());
+			} catch (EvaluationException e) {
+				result.add(PostconditionResult.PARSE_ERROR);
 			}
 		}
 		return result;
@@ -88,7 +97,7 @@ public class TraceReplay {
 		trace.setExploreStateByDefault(false);
 		boolean success = true;
 		final List<PersistentTransition> transitionList = persistentTrace.getTransitionList();
-		final List<List<Boolean>> postcondtionsResults = new ArrayList<>();
+		final List<List<PostconditionResult>> postcondtionsResults = new ArrayList<>();
 
 		boolean replaySuccess = true;
 		for (int i = 0; i < transitionList.size(); i++) {
@@ -96,19 +105,19 @@ public class TraceReplay {
 			PersistentTransition persistentTransition = transitionList.get(i);
 			if(!replaySuccess) {
 				postcondtionsResults.add(persistentTransition.getPostconditions().stream()
-						.map(post -> false).collect(Collectors.toList()));
+						.map(post -> PostconditionResult.FAIL).collect(Collectors.toList()));
 			} else {
 				Transition trans = replayPersistentTransition(trace, persistentTransition, setCurrentAnimation, replayInformation, traceChecker);
 				if (trans != null) {
 					trace = trace.add(trans);
-					List<Boolean> postconditionResult = checkPostconditions(trace.getCurrentState(), persistentTransition.getPostconditions());
+					List<PostconditionResult> postconditionResult = checkPostconditions(trace.getCurrentState(), persistentTransition.getPostconditions());
 					postcondtionsResults.add(postconditionResult);
-					success = success && postconditionResult.stream().reduce(true, (a, e) -> a && e);
+					success = success && postconditionResult.stream().map(r -> r == PostconditionResult.SUCCESS).reduce(true, (a, e) -> a && e);
 				} else {
 					success = false;
 					replaySuccess = false;
 					postcondtionsResults.add(persistentTransition.getPostconditions().stream()
-							.map(post -> false).collect(Collectors.toList()));
+							.map(post -> PostconditionResult.FAIL).collect(Collectors.toList()));
 				}
 			}
 

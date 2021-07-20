@@ -19,7 +19,7 @@ public class DefaultTraceChecker implements ITraceChecker {
 	}
 
 	@Override
-	public void setResult(boolean success, List<List<Boolean>> postconditionResults, Map<String, Object> replayInformation) {
+	public void setResult(boolean success, List<List<TraceReplay.PostconditionResult>> postconditionResults, Map<String, Object> replayInformation) {
 		if(success) {
 			System.out.println("Trace Replay and Checking Postconditions Successful");
 		} else {
@@ -52,20 +52,23 @@ public class DefaultTraceChecker implements ITraceChecker {
 	}
 
 	@Override
-	public void showTestError(PersistentTrace persistentTrace, List<List<Boolean>> postconditionResults) {
+	public void showTestError(PersistentTrace persistentTrace, List<List<TraceReplay.PostconditionResult>> postconditionResults) {
 		StringBuilder sb = new StringBuilder();
 		List<PersistentTransition> transitions = persistentTrace.getTransitionList();
 		boolean failed = false;
 		for(int i = 0; i < transitions.size(); i++) {
 			PersistentTransition transition = transitions.get(i);
-			List<Boolean> postconditionTransitionResults = postconditionResults.get(i);
+			List<TraceReplay.PostconditionResult> postconditionTransitionResults = postconditionResults.get(i);
 			for(int j = 0; j < postconditionTransitionResults.size(); j++) {
-				boolean result = postconditionTransitionResults.get(j);
-				if(!result) {
+				TraceReplay.PostconditionResult result = postconditionTransitionResults.get(j);
+				if(result != TraceReplay.PostconditionResult.SUCCESS) {
 					Postcondition postcondition = transition.getPostconditions().get(j);
 					switch (postcondition.getKind()) {
 						case PREDICATE:
 							sb.append(String.format("Checking predicate postcondition in transition %s failed for predicate %s", transition.getOperationName(), ((PostconditionPredicate) postcondition).getPredicate()));
+							if(result == TraceReplay.PostconditionResult.PARSE_ERROR) {
+								sb.append(" due to parse error");
+							}
 							sb.append("\n");
 							break;
 						case ENABLEDNESS: {
@@ -74,6 +77,9 @@ public class DefaultTraceChecker implements ITraceChecker {
 								sb.append(String.format("Checking enabledness postcondition in transition %s failed for operation %s", transition.getOperationName(), ((OperationEnabledness) postcondition).getOperation()));
 							} else {
 								sb.append(String.format("Checking enabledness postcondition in transition %s failed for operation %s for predicate %s", transition.getOperationName(), ((OperationEnabledness) postcondition).getOperation(), predicate));
+							}
+							if(result == TraceReplay.PostconditionResult.PARSE_ERROR) {
+								sb.append(" due to parse error");
 							}
 							sb.append("\n");
 							break;
@@ -84,6 +90,9 @@ public class DefaultTraceChecker implements ITraceChecker {
 								sb.append(String.format("Checking disabledness postcondition in transition %s failed for operation %s", transition.getOperationName(), ((OperationDisabledness) postcondition).getOperation()));
 							} else {
 								sb.append(String.format("Checking disabledness postcondition in transition %s failed for operation %s for predicate %s", transition.getOperationName(), ((OperationDisabledness) postcondition).getOperation(), predicate));
+							}
+							if(result == TraceReplay.PostconditionResult.PARSE_ERROR) {
+								sb.append(" due to parse error");
 							}
 							sb.append("\n");
 							break;
