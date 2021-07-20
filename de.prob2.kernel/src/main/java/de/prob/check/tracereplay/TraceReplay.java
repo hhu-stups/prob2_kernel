@@ -77,7 +77,7 @@ public class TraceReplay {
 					default:
 						throw new RuntimeException("Postcondition class is unknown: " + postcondition.getKind());
 				}
-			} catch (EvaluationException | ProBError e) {
+			} catch (EvaluationException | IllegalArgumentException e) {
 				result.add(PostconditionResult.PARSE_ERROR);
 			}
 		}

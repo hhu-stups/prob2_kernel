@@ -264,7 +264,7 @@ public class StateSpace implements IAnimator {
 			if(command.getErrors().stream().allMatch(err -> err.getType() == GetOperationByPredicateCommand.GetOperationErrorType.CANNOT_EXECUTE)) {
 				throw new ExecuteOperationException("Executing operation " + opName + " with additional predicate produced errors: " + String.join(", ", command.getErrorMessages()), command.getErrors());
 			} else {
-				throw new ProBError("Executing operation " + opName + " with additional predicate produced parse errors: " + String.join(", ", command.getErrorMessages()));
+				throw new IllegalArgumentException("Executing operation " + opName + " with additional predicate produced parse errors: " + String.join(", ", command.getErrorMessages()));
 			}
 		}
 		return command.getNewTransitions();
