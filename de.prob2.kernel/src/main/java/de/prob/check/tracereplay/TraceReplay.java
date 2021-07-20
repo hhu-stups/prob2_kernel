@@ -48,6 +48,7 @@ public class TraceReplay {
 			try {
 				switch (postcondition.getKind()) {
 					case PREDICATE: {
+						// TODO: Evaluation of a formula always bounds a variable when there should be a scope error
 						AbstractEvalResult evalResult = state.eval(((PostconditionPredicate) postcondition).getPredicate(), FormulaExpand.EXPAND);
 						if(evalResult instanceof ComputationNotCompletedResult) {
 							result.add(PostconditionResult.PARSE_ERROR);
