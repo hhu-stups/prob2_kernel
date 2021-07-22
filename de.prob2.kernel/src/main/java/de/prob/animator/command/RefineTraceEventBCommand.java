@@ -35,7 +35,7 @@ public class RefineTraceEventBCommand extends AbstractCommand implements
 	private final List<Transition> resultTrace = new ArrayList<>();
 	private final List<String> errors = new ArrayList<>();
 	private final Map<String, List<String>> alternatives;
-	private final List<String> blackList;
+	private final List<String> skips;
 
 	/**
 	 * Tries to satisfy the given path with given predicates. Will fail if path is not executable
@@ -47,7 +47,7 @@ public class RefineTraceEventBCommand extends AbstractCommand implements
 	 */
 	public RefineTraceEventBCommand(final StateSpace s, final State stateId,
 							  final List<String> trace, final List<EventB> predicates) {
-		this(s, stateId, trace, predicates, trace.stream().collect(toMap(entry -> entry, Collections::singletonList)), Collections.emptyList());
+		this(s, stateId, trace, predicates, trace.stream().collect(toMap(entry -> entry, Collections::singletonList)) , Collections.emptyMap(), Collections.emptyList());
 	}
 
 	/**
@@ -60,16 +60,16 @@ public class RefineTraceEventBCommand extends AbstractCommand implements
 	 * @param predicates   the constraints to put on each transition; maps 1:1 with trace
 	 * @param alternatives In cases where a transition can have alternatives (e.g. refinements)
 	 *                     those are stored here, expects a 1:1 mapping else
-	 * @param blackList    All events/operations that are not introduced via a skip refinement
+	 * @param skips    All events/operations that are not introduced via a skip refinement
 	 */
 	public RefineTraceEventBCommand(final StateSpace s, final State stateId,
-							  final List<String> trace, final List<EventB> predicates, final Map<String, List<String>> alternatives, final List<String> blackList) {
+							  final List<String> trace, final List<EventB> predicates, final Map<String, List<String>> alternatives, final Map<String, List<String>> refinedAlternatives, final List<String> skips) {
 		this.stateSpace = s;
 		this.stateId = stateId;
 		this.name = trace;
 		this.evalElement = predicates;
 		this.alternatives = alternatives;
-		this.blackList = blackList;
+		this.skips = skips;
 
 
 		if (trace.size() != predicates.size()) {
@@ -121,8 +121,9 @@ public class RefineTraceEventBCommand extends AbstractCommand implements
 		pto.closeList();
 
 
+
 		pto.openList();
-		for (String string : blackList) {
+		for (String string : skips) {
 			pto.printAtom(string);
 		}
 		pto.closeList();

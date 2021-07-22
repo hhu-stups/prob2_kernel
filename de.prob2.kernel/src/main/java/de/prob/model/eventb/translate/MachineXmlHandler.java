@@ -98,8 +98,7 @@ public class MachineXmlHandler extends DefaultHandler {
 	}
 
 	@Override
-	public void startElement(final String uri, final String localName,
-			final String qName, final Attributes attributes) throws SAXException {
+	public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
 		switch (qName) {
 			case "org.eventb.core.scRefinesMachine":
 				addRefinedMachine(attributes);

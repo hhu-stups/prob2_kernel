@@ -241,6 +241,12 @@ public class TraceJsonFile implements HasMetadata {
 		return new TraceJsonFile(description, transitionList, variableNames, machineOperationInfos, constantNames, setNames, metadata);
 	}
 
+
+	public TraceJsonFile updateMetaData(){
+		return new TraceJsonFile(description, transitionList, variableNames, machineOperationInfos, constantNames, setNames, metadataBuilder().build());
+
+	}
+
 	public TraceJsonFile changeTrace(PersistentTrace trace){
 		return new TraceJsonFile(trace, variableNames, machineOperationInfos, constantNames, setNames, getMetadata());
 	}

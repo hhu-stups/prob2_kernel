@@ -45,62 +45,20 @@
       "description": ""
     },
     {
-      "name": "ENV_HazardBlinkingOn",
-      "params": {},
+      "name": "TIME_Nothing",
+      "params": {
+        "delta": "500",
+        "newOnCycle": "TRUE"
+      },
       "results": {},
       "destState": {
-        "remaining_blinks": "-1",
-        "hazardWarningSwitchOn": "switch_on",
-        "active_blinkers": "{left_blink,right_blink}"
+        "onCycle": "TRUE",
+        "curTime": "500"
       },
       "destStateNotChanged": [
         "blinkRight",
         "tipStartTime",
-        "curTime",
         "engineOn",
-        "onCycle",
-        "keyState",
-        "pitmanArmUpDown",
-        "blinkLeft"
-      ],
-      "preds": [],
-      "postconditions": [],
-      "description": ""
-    },
-    {
-      "name": "ENV_HazardBlinkingOff",
-      "params": {},
-      "results": {},
-      "destState": {
-        "blinkRight": "0",
-        "tipStartTime": "0",
-        "curTime": "0",
-        "engineOn": "FALSE",
-        "onCycle": "FALSE",
-        "keyState": "KeyInsertedOnPosition",
-        "pitmanArmUpDown": "Neutral",
-        "remaining_blinks": "0",
-        "hazardWarningSwitchOn": "switch_off",
-        "active_blinkers": "∅",
-        "blinkLeft": "0"
-      },
-      "destStateNotChanged": [],
-      "preds": [],
-      "postconditions": [],
-      "description": ""
-    },
-    {
-      "name": "ENV_Turn_EngineOn_Noblink",
-      "params": {},
-      "results": {},
-      "destState": {
-        "engineOn": "TRUE"
-      },
-      "destStateNotChanged": [
-        "blinkRight",
-        "tipStartTime",
-        "curTime",
-        "onCycle",
         "keyState",
         "pitmanArmUpDown",
         "remaining_blinks",
@@ -113,75 +71,48 @@
       "description": ""
     },
     {
+      "name": "ENV_Turn_EngineOn_Noblink",
+      "params": {},
+      "results": {},
+      "destState": {
+        "blinkRight": "0",
+        "tipStartTime": "0",
+        "engineOn": "TRUE",
+        "keyState": "KeyInsertedOnPosition",
+        "pitmanArmUpDown": "Neutral",
+        "remaining_blinks": "0",
+        "hazardWarningSwitchOn": "switch_off",
+        "active_blinkers": "∅",
+        "blinkLeft": "0"
+      },
+      "destStateNotChanged": [
+        "curTime",
+        "onCycle"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
       "name": "ENV_Pitman_TipBlinkingRight_Blink",
       "params": {
         "rem": "3"
       },
       "results": {},
       "destState": {
-        "blinkRight": "0",
-        "tipStartTime": "0",
-        "curTime": "0",
-        "onCycle": "FALSE",
-        "keyState": "KeyInsertedOnPosition",
+        "blinkRight": "100",
+        "tipStartTime": "500",
+        "curTime": "500",
+        "onCycle": "TRUE",
         "pitmanArmUpDown": "Upward5",
         "remaining_blinks": "3",
-        "hazardWarningSwitchOn": "switch_off",
-        "active_blinkers": "{right_blink}",
-        "blinkLeft": "0"
+        "active_blinkers": "{right_blink}"
       },
       "destStateNotChanged": [
-        "engineOn"
-      ],
-      "preds": [],
-      "postconditions": [],
-      "description": ""
-    },
-    {
-      "name": "TIME_BlinkerOn",
-      "params": {
-        "delta": "500"
-      },
-      "results": {},
-      "destState": {
-        "blinkRight": "100",
-        "remaining_blinks": "2",
-        "curTime": "500",
-        "engineOn": "TRUE",
-        "onCycle": "TRUE"
-      },
-      "destStateNotChanged": [
-        "tipStartTime",
-        "keyState",
-        "pitmanArmUpDown",
-        "hazardWarningSwitchOn",
-        "active_blinkers",
-        "blinkLeft"
-      ],
-      "preds": [],
-      "postconditions": [],
-      "description": ""
-    },
-    {
-      "name": "TIME_Tip_blinking_Timeout",
-      "params": {
-        "rem": "-1"
-      },
-      "results": {},
-      "destState": {
-        "tipStartTime": "0",
-        "keyState": "KeyInsertedOnPosition",
-        "pitmanArmUpDown": "Upward5",
-        "remaining_blinks": "-1",
-        "hazardWarningSwitchOn": "switch_off",
-        "active_blinkers": "{right_blink}",
-        "blinkLeft": "0"
-      },
-      "destStateNotChanged": [
-        "blinkRight",
-        "curTime",
         "engineOn",
-        "onCycle"
+        "keyState",
+        "hazardWarningSwitchOn",
+        "blinkLeft"
       ],
       "preds": [],
       "postconditions": [],
@@ -197,16 +128,66 @@
         "blinkRight": "0",
         "curTime": "1000",
         "engineOn": "TRUE",
-        "onCycle": "FALSE"
+        "onCycle": "FALSE",
+        "keyState": "KeyInsertedOnPosition",
+        "hazardWarningSwitchOn": "switch_off",
+        "blinkLeft": "0"
       },
       "destStateNotChanged": [
         "tipStartTime",
-        "keyState",
         "pitmanArmUpDown",
         "remaining_blinks",
+        "active_blinkers"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "TIME_Tip_blinking_Timeout",
+      "params": {
+        "rem": "-1"
+      },
+      "results": {},
+      "destState": {
+        "tipStartTime": "500",
+        "pitmanArmUpDown": "Upward5",
+        "remaining_blinks": "-1",
+        "active_blinkers": "{right_blink}"
+      },
+      "destStateNotChanged": [
+        "blinkRight",
+        "curTime",
+        "engineOn",
+        "onCycle",
+        "keyState",
         "hazardWarningSwitchOn",
-        "active_blinkers",
         "blinkLeft"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "TIME_Passes",
+      "params": {
+        "delta": "100"
+      },
+      "results": {},
+      "destState": {
+        "blinkRight": "0",
+        "curTime": "1100",
+        "engineOn": "TRUE",
+        "onCycle": "FALSE",
+        "keyState": "KeyInsertedOnPosition",
+        "hazardWarningSwitchOn": "switch_off",
+        "blinkLeft": "0"
+      },
+      "destStateNotChanged": [
+        "tipStartTime",
+        "pitmanArmUpDown",
+        "remaining_blinks",
+        "active_blinkers"
       ],
       "preds": [],
       "postconditions": [],
@@ -215,23 +196,73 @@
     {
       "name": "TIME_BlinkerOn",
       "params": {
-        "delta": "500"
+        "delta": "400"
       },
       "results": {},
       "destState": {
         "blinkRight": "100",
-        "tipStartTime": "0",
+        "tipStartTime": "500",
         "curTime": "1500",
         "onCycle": "TRUE",
-        "keyState": "KeyInsertedOnPosition",
         "pitmanArmUpDown": "Upward5",
         "remaining_blinks": "-1",
+        "active_blinkers": "{right_blink}"
+      },
+      "destStateNotChanged": [
+        "engineOn",
+        "keyState",
+        "hazardWarningSwitchOn",
+        "blinkLeft"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "ENV_Pitman_DirectionBlinkingRight_Blink",
+      "params": {
+        "rem": "-1"
+      },
+      "results": {},
+      "destState": {
+        "pitmanArmUpDown": "Upward7",
+        "engineOn": "TRUE",
         "hazardWarningSwitchOn": "switch_off",
-        "active_blinkers": "{right_blink}",
+        "keyState": "KeyInsertedOnPosition",
         "blinkLeft": "0"
       },
       "destStateNotChanged": [
-        "engineOn"
+        "blinkRight",
+        "tipStartTime",
+        "curTime",
+        "onCycle",
+        "remaining_blinks",
+        "active_blinkers"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "TIME_BlinkerOff",
+      "params": {
+        "delta": "500"
+      },
+      "results": {},
+      "destState": {
+        "blinkRight": "0",
+        "tipStartTime": "500",
+        "curTime": "2000",
+        "onCycle": "FALSE",
+        "remaining_blinks": "-1",
+        "active_blinkers": "{right_blink}"
+      },
+      "destStateNotChanged": [
+        "engineOn",
+        "keyState",
+        "pitmanArmUpDown",
+        "hazardWarningSwitchOn",
+        "blinkLeft"
       ],
       "preds": [],
       "postconditions": [],
@@ -244,19 +275,68 @@
       },
       "results": {},
       "destState": {
-        "blinkRight": "0",
-        "pitmanArmUpDown": "Downward7",
         "engineOn": "TRUE",
+        "keyState": "KeyInsertedOnPosition",
+        "pitmanArmUpDown": "Downward7",
+        "hazardWarningSwitchOn": "switch_off",
         "active_blinkers": "{left_blink}",
-        "blinkLeft": "100"
+        "blinkLeft": "0"
       },
       "destStateNotChanged": [
+        "blinkRight",
         "tipStartTime",
         "curTime",
         "onCycle",
+        "remaining_blinks"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "ENV_Pitman_Reset_to_Neutral_Noblink",
+      "params": {},
+      "results": {},
+      "destState": {
+        "blinkRight": "0",
+        "tipStartTime": "500",
+        "curTime": "2000",
+        "onCycle": "FALSE",
+        "pitmanArmUpDown": "Neutral",
+        "remaining_blinks": "0",
+        "active_blinkers": "∅"
+      },
+      "destStateNotChanged": [
+        "engineOn",
         "keyState",
+        "hazardWarningSwitchOn",
+        "blinkLeft"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "TIME_Nothing",
+      "params": {
+        "delta": "500",
+        "newOnCycle": "TRUE"
+      },
+      "results": {},
+      "destState": {
+        "curTime": "2500",
+        "engineOn": "TRUE",
+        "onCycle": "TRUE",
+        "keyState": "KeyInsertedOnPosition",
+        "hazardWarningSwitchOn": "switch_off",
+        "blinkLeft": "0"
+      },
+      "destStateNotChanged": [
+        "blinkRight",
+        "tipStartTime",
+        "pitmanArmUpDown",
         "remaining_blinks",
-        "hazardWarningSwitchOn"
+        "active_blinkers"
       ],
       "preds": [],
       "postconditions": [],
@@ -270,43 +350,18 @@
       "results": {},
       "destState": {
         "blinkRight": "100",
-        "tipStartTime": "0",
-        "curTime": "1500",
-        "onCycle": "TRUE",
-        "keyState": "KeyInsertedOnPosition",
+        "tipStartTime": "500",
         "pitmanArmUpDown": "Upward7",
         "remaining_blinks": "-1",
-        "hazardWarningSwitchOn": "switch_off",
-        "active_blinkers": "{right_blink}",
-        "blinkLeft": "0"
-      },
-      "destStateNotChanged": [
-        "engineOn"
-      ],
-      "preds": [],
-      "postconditions": [],
-      "description": ""
-    },
-    {
-      "name": "ENV_Pitman_TipBlinkingLeft_Blink",
-      "params": {
-        "rem": "3"
-      },
-      "results": {},
-      "destState": {
-        "blinkRight": "0",
-        "tipStartTime": "1500",
-        "engineOn": "TRUE",
-        "pitmanArmUpDown": "Downward5",
-        "remaining_blinks": "3",
-        "active_blinkers": "{left_blink}",
-        "blinkLeft": "100"
+        "active_blinkers": "{right_blink}"
       },
       "destStateNotChanged": [
         "curTime",
+        "engineOn",
         "onCycle",
         "keyState",
-        "hazardWarningSwitchOn"
+        "hazardWarningSwitchOn",
+        "blinkLeft"
       ],
       "preds": [],
       "postconditions": [],
@@ -319,19 +374,119 @@
       },
       "results": {},
       "destState": {
-        "curTime": "2000",
-        "hazardWarningSwitchOn": "switch_off",
+        "blinkRight": "0",
+        "curTime": "3000",
+        "engineOn": "TRUE",
         "onCycle": "FALSE",
         "keyState": "KeyInsertedOnPosition",
+        "hazardWarningSwitchOn": "switch_off",
+        "blinkLeft": "0"
+      },
+      "destStateNotChanged": [
+        "tipStartTime",
+        "pitmanArmUpDown",
+        "remaining_blinks",
+        "active_blinkers"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "TIME_BlinkerOn",
+      "params": {
+        "delta": "500"
+      },
+      "results": {},
+      "destState": {
+        "blinkRight": "100",
+        "tipStartTime": "500",
+        "curTime": "3500",
+        "onCycle": "TRUE",
+        "pitmanArmUpDown": "Upward7",
+        "remaining_blinks": "-1",
+        "active_blinkers": "{right_blink}"
+      },
+      "destStateNotChanged": [
+        "engineOn",
+        "keyState",
+        "hazardWarningSwitchOn",
+        "blinkLeft"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "ENV_Pitman_TipBlinkingRight_Blink",
+      "params": {
+        "rem": "3"
+      },
+      "results": {},
+      "destState": {
+        "tipStartTime": "3500",
+        "engineOn": "TRUE",
+        "keyState": "KeyInsertedOnPosition",
+        "pitmanArmUpDown": "Upward5",
+        "remaining_blinks": "3",
+        "hazardWarningSwitchOn": "switch_off",
         "blinkLeft": "0"
       },
       "destStateNotChanged": [
         "blinkRight",
+        "curTime",
+        "onCycle",
+        "active_blinkers"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "TIME_BlinkerOff",
+      "params": {
+        "delta": "500"
+      },
+      "results": {},
+      "destState": {
+        "blinkRight": "0",
+        "curTime": "4000",
+        "active_blinkers": "{right_blink}",
+        "onCycle": "FALSE"
+      },
+      "destStateNotChanged": [
         "tipStartTime",
         "engineOn",
+        "keyState",
         "pitmanArmUpDown",
         "remaining_blinks",
-        "active_blinkers"
+        "hazardWarningSwitchOn",
+        "blinkLeft"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "ENV_Pitman_TipBlinkingLeft_Blink",
+      "params": {
+        "rem": "3"
+      },
+      "results": {},
+      "destState": {
+        "tipStartTime": "4000",
+        "engineOn": "TRUE",
+        "keyState": "KeyInsertedOnPosition",
+        "pitmanArmUpDown": "Downward5",
+        "remaining_blinks": "3",
+        "hazardWarningSwitchOn": "switch_off",
+        "active_blinkers": "{left_blink}",
+        "blinkLeft": "0"
+      },
+      "destStateNotChanged": [
+        "blinkRight",
+        "curTime",
+        "onCycle"
       ],
       "preds": [],
       "postconditions": [],
@@ -345,16 +500,16 @@
       "results": {},
       "destState": {
         "blinkRight": "0",
-        "tipStartTime": "2000",
-        "engineOn": "TRUE",
         "pitmanArmUpDown": "Upward5",
-        "remaining_blinks": "3",
-        "active_blinkers": "{right_blink}"
+        "curTime": "4000",
+        "active_blinkers": "{right_blink}",
+        "onCycle": "FALSE"
       },
       "destStateNotChanged": [
-        "curTime",
-        "onCycle",
+        "tipStartTime",
+        "engineOn",
         "keyState",
+        "remaining_blinks",
         "hazardWarningSwitchOn",
         "blinkLeft"
       ],
@@ -370,7 +525,9 @@
       "results": {},
       "destState": {
         "blinkRight": "100",
-        "curTime": "2500",
+        "tipStartTime": "4000",
+        "curTime": "4500",
+        "engineOn": "TRUE",
         "onCycle": "TRUE",
         "keyState": "KeyInsertedOnPosition",
         "remaining_blinks": "2",
@@ -378,8 +535,6 @@
         "blinkLeft": "0"
       },
       "destStateNotChanged": [
-        "tipStartTime",
-        "engineOn",
         "pitmanArmUpDown",
         "active_blinkers"
       ],
@@ -394,15 +549,15 @@
       },
       "results": {},
       "destState": {
-        "tipStartTime": "2000",
         "pitmanArmUpDown": "Upward5",
         "remaining_blinks": "-1",
-        "engineOn": "TRUE",
         "active_blinkers": "{right_blink}"
       },
       "destStateNotChanged": [
         "blinkRight",
+        "tipStartTime",
         "curTime",
+        "engineOn",
         "onCycle",
         "keyState",
         "hazardWarningSwitchOn",
@@ -413,25 +568,137 @@
       "description": ""
     },
     {
-      "name": "ENV_Pitman_TipBlinkingLeft_Blink",
-      "params": {
-        "rem": "3"
-      },
+      "name": "ENV_Pitman_Reset_to_Neutral_Noblink",
+      "params": {},
       "results": {},
       "destState": {
         "blinkRight": "0",
-        "tipStartTime": "2500",
-        "curTime": "2500",
+        "tipStartTime": "4000",
+        "curTime": "4500",
+        "engineOn": "TRUE",
         "onCycle": "TRUE",
         "keyState": "KeyInsertedOnPosition",
-        "pitmanArmUpDown": "Downward5",
-        "remaining_blinks": "3",
+        "pitmanArmUpDown": "Neutral",
+        "remaining_blinks": "0",
         "hazardWarningSwitchOn": "switch_off",
+        "active_blinkers": "∅",
+        "blinkLeft": "0"
+      },
+      "destStateNotChanged": [],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "ENV_HazardBlinkingOn",
+      "params": {},
+      "results": {},
+      "destState": {
+        "blinkRight": "100",
+        "remaining_blinks": "-1",
+        "hazardWarningSwitchOn": "switch_on",
+        "active_blinkers": "{left_blink,right_blink}",
+        "blinkLeft": "100"
+      },
+      "destStateNotChanged": [
+        "tipStartTime",
+        "curTime",
+        "engineOn",
+        "onCycle",
+        "keyState",
+        "pitmanArmUpDown"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "ENV_HazardBlinkingOff",
+      "params": {},
+      "results": {},
+      "destState": {
+        "blinkRight": "0",
+        "tipStartTime": "4000",
+        "curTime": "4500",
+        "engineOn": "TRUE",
+        "onCycle": "TRUE",
+        "keyState": "KeyInsertedOnPosition",
+        "pitmanArmUpDown": "Neutral",
+        "remaining_blinks": "0",
+        "hazardWarningSwitchOn": "switch_off",
+        "active_blinkers": "∅",
+        "blinkLeft": "0"
+      },
+      "destStateNotChanged": [],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "ENV_Pitman_DirectionBlinkingLeft_Blink",
+      "params": {
+        "rem": "-1"
+      },
+      "results": {},
+      "destState": {
+        "pitmanArmUpDown": "Downward7",
+        "remaining_blinks": "-1",
         "active_blinkers": "{left_blink}",
         "blinkLeft": "100"
       },
       "destStateNotChanged": [
-        "engineOn"
+        "blinkRight",
+        "tipStartTime",
+        "curTime",
+        "engineOn",
+        "onCycle",
+        "keyState",
+        "hazardWarningSwitchOn"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "ENV_Pitman_Reset_to_Neutral_Noblink",
+      "params": {},
+      "results": {},
+      "destState": {
+        "blinkRight": "0",
+        "tipStartTime": "4000",
+        "curTime": "4500",
+        "engineOn": "TRUE",
+        "onCycle": "TRUE",
+        "keyState": "KeyInsertedOnPosition",
+        "pitmanArmUpDown": "Neutral",
+        "remaining_blinks": "0",
+        "hazardWarningSwitchOn": "switch_off",
+        "active_blinkers": "∅",
+        "blinkLeft": "0"
+      },
+      "destStateNotChanged": [],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "ENV_HazardBlinkingOn",
+      "params": {},
+      "results": {},
+      "destState": {
+        "blinkRight": "100",
+        "remaining_blinks": "-1",
+        "hazardWarningSwitchOn": "switch_on",
+        "active_blinkers": "{left_blink,right_blink}",
+        "blinkLeft": "100"
+      },
+      "destStateNotChanged": [
+        "tipStartTime",
+        "curTime",
+        "engineOn",
+        "onCycle",
+        "keyState",
+        "pitmanArmUpDown"
       ],
       "preds": [],
       "postconditions": [],
@@ -444,16 +711,16 @@
       },
       "results": {},
       "destState": {
-        "curTime": "3000",
+        "blinkRight": "0",
+        "tipStartTime": "4000",
+        "curTime": "5000",
         "engineOn": "TRUE",
         "onCycle": "FALSE",
+        "keyState": "KeyInsertedOnPosition",
+        "pitmanArmUpDown": "Neutral",
         "blinkLeft": "0"
       },
       "destStateNotChanged": [
-        "blinkRight",
-        "tipStartTime",
-        "keyState",
-        "pitmanArmUpDown",
         "remaining_blinks",
         "hazardWarningSwitchOn",
         "active_blinkers"
@@ -463,23 +730,50 @@
       "description": ""
     },
     {
-      "name": "ENV_HazardBlinkingOn",
-      "params": {},
+      "name": "TIME_BlinkerOn",
+      "params": {
+        "delta": "500"
+      },
+      "results": {},
+      "destState": {
+        "blinkRight": "100",
+        "curTime": "5500",
+        "onCycle": "TRUE",
+        "remaining_blinks": "-1",
+        "hazardWarningSwitchOn": "switch_on",
+        "active_blinkers": "{left_blink,right_blink}",
+        "blinkLeft": "100"
+      },
+      "destStateNotChanged": [
+        "tipStartTime",
+        "engineOn",
+        "keyState",
+        "pitmanArmUpDown"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "TIME_BlinkerOff",
+      "params": {
+        "delta": "500"
+      },
       "results": {},
       "destState": {
         "blinkRight": "0",
-        "tipStartTime": "2500",
+        "tipStartTime": "4000",
+        "curTime": "6000",
+        "engineOn": "TRUE",
+        "onCycle": "FALSE",
         "keyState": "KeyInsertedOnPosition",
-        "pitmanArmUpDown": "Downward5",
-        "remaining_blinks": "-1",
-        "hazardWarningSwitchOn": "switch_on",
-        "active_blinkers": "{left_blink,right_blink}"
+        "pitmanArmUpDown": "Neutral",
+        "blinkLeft": "0"
       },
       "destStateNotChanged": [
-        "curTime",
-        "engineOn",
-        "onCycle",
-        "blinkLeft"
+        "remaining_blinks",
+        "hazardWarningSwitchOn",
+        "active_blinkers"
       ],
       "preds": [],
       "postconditions": [],
@@ -490,111 +784,19 @@
       "params": {},
       "results": {},
       "destState": {
-        "curTime": "3000",
-        "engineOn": "TRUE",
-        "onCycle": "FALSE",
         "remaining_blinks": "0",
         "hazardWarningSwitchOn": "switch_off",
-        "active_blinkers": "∅",
-        "blinkLeft": "0"
+        "active_blinkers": "∅"
       },
       "destStateNotChanged": [
         "blinkRight",
         "tipStartTime",
-        "keyState",
-        "pitmanArmUpDown"
-      ],
-      "preds": [],
-      "postconditions": [],
-      "description": ""
-    },
-    {
-      "name": "ENV_HazardBlinkingOn",
-      "params": {},
-      "results": {},
-      "destState": {
-        "blinkRight": "0",
-        "tipStartTime": "2500",
-        "keyState": "KeyInsertedOnPosition",
-        "pitmanArmUpDown": "Downward5",
-        "remaining_blinks": "-1",
-        "hazardWarningSwitchOn": "switch_on",
-        "active_blinkers": "{left_blink,right_blink}"
-      },
-      "destStateNotChanged": [
         "curTime",
         "engineOn",
         "onCycle",
-        "blinkLeft"
-      ],
-      "preds": [],
-      "postconditions": [],
-      "description": ""
-    },
-    {
-      "name": "ENV_HazardBlinkingOff",
-      "params": {},
-      "results": {},
-      "destState": {
-        "curTime": "3000",
-        "engineOn": "TRUE",
-        "onCycle": "FALSE",
-        "remaining_blinks": "0",
-        "hazardWarningSwitchOn": "switch_off",
-        "active_blinkers": "∅",
-        "blinkLeft": "0"
-      },
-      "destStateNotChanged": [
-        "blinkRight",
-        "tipStartTime",
         "keyState",
-        "pitmanArmUpDown"
-      ],
-      "preds": [],
-      "postconditions": [],
-      "description": ""
-    },
-    {
-      "name": "ENV_HazardBlinkingOn",
-      "params": {},
-      "results": {},
-      "destState": {
-        "blinkRight": "0",
-        "tipStartTime": "2500",
-        "keyState": "KeyInsertedOnPosition",
-        "pitmanArmUpDown": "Downward5",
-        "remaining_blinks": "-1",
-        "hazardWarningSwitchOn": "switch_on",
-        "active_blinkers": "{left_blink,right_blink}"
-      },
-      "destStateNotChanged": [
-        "curTime",
-        "engineOn",
-        "onCycle",
+        "pitmanArmUpDown",
         "blinkLeft"
-      ],
-      "preds": [],
-      "postconditions": [],
-      "description": ""
-    },
-    {
-      "name": "ENV_HazardBlinkingOff",
-      "params": {},
-      "results": {},
-      "destState": {
-        "curTime": "3000",
-        "engineOn": "TRUE",
-        "onCycle": "FALSE",
-        "remaining_blinks": "0",
-        "hazardWarningSwitchOn": "switch_off",
-        "active_blinkers": "∅",
-        "blinkLeft": "0"
-      },
-      "destStateNotChanged": [
-        "blinkRight",
-        "tipStartTime",
-        "keyState",
-        "pitmanArmUpDown"
       ],
       "preds": [],
       "postconditions": [],
@@ -609,118 +811,18 @@
       "results": {},
       "destState": {
         "blinkRight": "0",
-        "tipStartTime": "2500",
-        "curTime": "3500",
+        "tipStartTime": "4000",
+        "curTime": "6500",
+        "engineOn": "TRUE",
         "onCycle": "TRUE",
         "keyState": "KeyInsertedOnPosition",
-        "pitmanArmUpDown": "Downward5"
+        "pitmanArmUpDown": "Neutral",
+        "blinkLeft": "0"
       },
       "destStateNotChanged": [
-        "engineOn",
         "remaining_blinks",
         "hazardWarningSwitchOn",
-        "active_blinkers",
-        "blinkLeft"
-      ],
-      "preds": [],
-      "postconditions": [],
-      "description": ""
-    },
-    {
-      "name": "ENV_Pitman_DirectionBlinkingRight_Blink",
-      "params": {
-        "rem": "-1"
-      },
-      "results": {},
-      "destState": {
-        "blinkRight": "100",
-        "engineOn": "TRUE",
-        "pitmanArmUpDown": "Upward7",
-        "remaining_blinks": "-1",
-        "hazardWarningSwitchOn": "switch_off",
-        "active_blinkers": "{right_blink}",
-        "blinkLeft": "0"
-      },
-      "destStateNotChanged": [
-        "tipStartTime",
-        "curTime",
-        "onCycle",
-        "keyState"
-      ],
-      "preds": [],
-      "postconditions": [],
-      "description": ""
-    },
-    {
-      "name": "ENV_Pitman_DirectionBlinkingLeft_Blink",
-      "params": {
-        "rem": "-1"
-      },
-      "results": {},
-      "destState": {
-        "blinkRight": "0",
-        "tipStartTime": "2500",
-        "curTime": "3500",
-        "onCycle": "TRUE",
-        "keyState": "KeyInsertedOnPosition",
-        "pitmanArmUpDown": "Downward7",
-        "active_blinkers": "{left_blink}",
-        "blinkLeft": "100"
-      },
-      "destStateNotChanged": [
-        "engineOn",
-        "remaining_blinks",
-        "hazardWarningSwitchOn"
-      ],
-      "preds": [],
-      "postconditions": [],
-      "description": ""
-    },
-    {
-      "name": "ENV_Pitman_TipBlinkingLeft_Blink",
-      "params": {
-        "rem": "3"
-      },
-      "results": {},
-      "destState": {
-        "tipStartTime": "3500",
-        "pitmanArmUpDown": "Downward5",
-        "remaining_blinks": "3",
-        "engineOn": "TRUE",
-        "hazardWarningSwitchOn": "switch_off"
-      },
-      "destStateNotChanged": [
-        "blinkRight",
-        "curTime",
-        "onCycle",
-        "keyState",
-        "active_blinkers",
-        "blinkLeft"
-      ],
-      "preds": [],
-      "postconditions": [],
-      "description": ""
-    },
-    {
-      "name": "TIME_BlinkerOff",
-      "params": {
-        "delta": "500"
-      },
-      "results": {},
-      "destState": {
-        "blinkRight": "0",
-        "curTime": "4000",
-        "onCycle": "FALSE",
-        "keyState": "KeyInsertedOnPosition",
-        "active_blinkers": "{left_blink}",
-        "blinkLeft": "0"
-      },
-      "destStateNotChanged": [
-        "tipStartTime",
-        "engineOn",
-        "pitmanArmUpDown",
-        "remaining_blinks",
-        "hazardWarningSwitchOn"
+        "active_blinkers"
       ],
       "preds": [],
       "postconditions": [],
@@ -733,142 +835,19 @@
       },
       "results": {},
       "destState": {
-        "tipStartTime": "4000",
-        "engineOn": "TRUE",
+        "blinkRight": "100",
+        "tipStartTime": "6500",
         "pitmanArmUpDown": "Upward5",
         "remaining_blinks": "3",
         "hazardWarningSwitchOn": "switch_off",
         "active_blinkers": "{right_blink}"
       },
       "destStateNotChanged": [
-        "blinkRight",
         "curTime",
+        "engineOn",
         "onCycle",
         "keyState",
         "blinkLeft"
-      ],
-      "preds": [],
-      "postconditions": [],
-      "description": ""
-    },
-    {
-      "name": "ENV_Pitman_TipBlinkingLeft_Blink",
-      "params": {
-        "rem": "3"
-      },
-      "results": {},
-      "destState": {
-        "blinkRight": "0",
-        "curTime": "4000",
-        "onCycle": "FALSE",
-        "keyState": "KeyInsertedOnPosition",
-        "pitmanArmUpDown": "Downward5",
-        "active_blinkers": "{left_blink}",
-        "blinkLeft": "0"
-      },
-      "destStateNotChanged": [
-        "tipStartTime",
-        "engineOn",
-        "remaining_blinks",
-        "hazardWarningSwitchOn"
-      ],
-      "preds": [],
-      "postconditions": [],
-      "description": ""
-    },
-    {
-      "name": "TIME_BlinkerOn",
-      "params": {
-        "delta": "500"
-      },
-      "results": {},
-      "destState": {
-        "tipStartTime": "4000",
-        "curTime": "4500",
-        "engineOn": "TRUE",
-        "onCycle": "TRUE",
-        "remaining_blinks": "2",
-        "hazardWarningSwitchOn": "switch_off",
-        "blinkLeft": "100"
-      },
-      "destStateNotChanged": [
-        "blinkRight",
-        "keyState",
-        "pitmanArmUpDown",
-        "active_blinkers"
-      ],
-      "preds": [],
-      "postconditions": [],
-      "description": ""
-    },
-    {
-      "name": "TIME_Tip_blinking_Timeout",
-      "params": {
-        "rem": "-1"
-      },
-      "results": {},
-      "destState": {
-        "blinkRight": "0",
-        "pitmanArmUpDown": "Downward5",
-        "remaining_blinks": "-1",
-        "active_blinkers": "{left_blink}",
-        "keyState": "KeyInsertedOnPosition"
-      },
-      "destStateNotChanged": [
-        "tipStartTime",
-        "curTime",
-        "engineOn",
-        "onCycle",
-        "hazardWarningSwitchOn",
-        "blinkLeft"
-      ],
-      "preds": [],
-      "postconditions": [],
-      "description": ""
-    },
-    {
-      "name": "ENV_Pitman_Reset_to_Neutral_Noblink",
-      "params": {},
-      "results": {},
-      "destState": {
-        "tipStartTime": "4000",
-        "curTime": "4500",
-        "engineOn": "TRUE",
-        "onCycle": "TRUE",
-        "pitmanArmUpDown": "Neutral",
-        "remaining_blinks": "0",
-        "hazardWarningSwitchOn": "switch_off",
-        "active_blinkers": "∅",
-        "blinkLeft": "0"
-      },
-      "destStateNotChanged": [
-        "blinkRight",
-        "keyState"
-      ],
-      "preds": [],
-      "postconditions": [],
-      "description": ""
-    },
-    {
-      "name": "ENV_Pitman_TipBlinkingLeft_Blink",
-      "params": {
-        "rem": "3"
-      },
-      "results": {},
-      "destState": {
-        "blinkRight": "0",
-        "tipStartTime": "4500",
-        "keyState": "KeyInsertedOnPosition",
-        "pitmanArmUpDown": "Downward5",
-        "remaining_blinks": "3",
-        "active_blinkers": "{left_blink}",
-        "blinkLeft": "100"
-      },
-      "destStateNotChanged": [
-        "curTime",
-        "engineOn",
-        "onCycle",
-        "hazardWarningSwitchOn"
       ],
       "preds": [],
       "postconditions": [],
@@ -881,18 +860,18 @@
       },
       "results": {},
       "destState": {
-        "curTime": "5000",
+        "blinkRight": "0",
+        "curTime": "7000",
         "engineOn": "TRUE",
-        "hazardWarningSwitchOn": "switch_off",
         "onCycle": "FALSE",
+        "keyState": "KeyInsertedOnPosition",
         "blinkLeft": "0"
       },
       "destStateNotChanged": [
-        "blinkRight",
         "tipStartTime",
-        "keyState",
         "pitmanArmUpDown",
         "remaining_blinks",
+        "hazardWarningSwitchOn",
         "active_blinkers"
       ],
       "preds": [],
@@ -900,50 +879,25 @@
       "description": ""
     },
     {
-      "name": "TIME_Tip_blinking_Timeout",
+      "name": "ENV_Pitman_TipBlinkingLeft_Blink",
       "params": {
-        "rem": "-1"
+        "rem": "3"
       },
       "results": {},
       "destState": {
-        "blinkRight": "0",
-        "tipStartTime": "4500",
-        "keyState": "KeyInsertedOnPosition",
+        "tipStartTime": "7000",
         "pitmanArmUpDown": "Downward5",
-        "remaining_blinks": "-1",
+        "remaining_blinks": "3",
+        "hazardWarningSwitchOn": "switch_off",
         "active_blinkers": "{left_blink}"
       },
       "destStateNotChanged": [
+        "blinkRight",
         "curTime",
         "engineOn",
         "onCycle",
-        "hazardWarningSwitchOn",
-        "blinkLeft"
-      ],
-      "preds": [],
-      "postconditions": [],
-      "description": ""
-    },
-    {
-      "name": "TIME_BlinkerOn",
-      "params": {
-        "delta": "500"
-      },
-      "results": {},
-      "destState": {
-        "curTime": "5500",
-        "engineOn": "TRUE",
-        "hazardWarningSwitchOn": "switch_off",
-        "onCycle": "TRUE",
-        "blinkLeft": "100"
-      },
-      "destStateNotChanged": [
-        "blinkRight",
-        "tipStartTime",
         "keyState",
-        "pitmanArmUpDown",
-        "remaining_blinks",
-        "active_blinkers"
+        "blinkLeft"
       ],
       "preds": [],
       "postconditions": [],
@@ -956,18 +910,18 @@
       },
       "results": {},
       "destState": {
-        "blinkRight": "100",
-        "tipStartTime": "5500",
+        "blinkRight": "0",
+        "curTime": "7000",
+        "engineOn": "TRUE",
+        "onCycle": "FALSE",
         "keyState": "KeyInsertedOnPosition",
         "pitmanArmUpDown": "Upward5",
-        "remaining_blinks": "3",
         "active_blinkers": "{right_blink}",
         "blinkLeft": "0"
       },
       "destStateNotChanged": [
-        "curTime",
-        "engineOn",
-        "onCycle",
+        "tipStartTime",
+        "remaining_blinks",
         "hazardWarningSwitchOn"
       ],
       "preds": [],
@@ -975,25 +929,50 @@
       "description": ""
     },
     {
-      "name": "ENV_Pitman_DirectionBlinkingRight_Blink",
+      "name": "TIME_BlinkerOn",
+      "params": {
+        "delta": "500"
+      },
+      "results": {},
+      "destState": {
+        "blinkRight": "100",
+        "tipStartTime": "7000",
+        "curTime": "7500",
+        "onCycle": "TRUE",
+        "remaining_blinks": "2",
+        "hazardWarningSwitchOn": "switch_off"
+      },
+      "destStateNotChanged": [
+        "engineOn",
+        "keyState",
+        "pitmanArmUpDown",
+        "active_blinkers",
+        "blinkLeft"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "TIME_Tip_blinking_Timeout",
       "params": {
         "rem": "-1"
       },
       "results": {},
       "destState": {
-        "curTime": "5500",
         "engineOn": "TRUE",
-        "onCycle": "TRUE",
-        "pitmanArmUpDown": "Upward7",
+        "keyState": "KeyInsertedOnPosition",
+        "pitmanArmUpDown": "Upward5",
         "remaining_blinks": "-1",
-        "hazardWarningSwitchOn": "switch_off"
+        "active_blinkers": "{right_blink}",
+        "blinkLeft": "0"
       },
       "destStateNotChanged": [
         "blinkRight",
         "tipStartTime",
-        "keyState",
-        "active_blinkers",
-        "blinkLeft"
+        "curTime",
+        "onCycle",
+        "hazardWarningSwitchOn"
       ],
       "preds": [],
       "postconditions": [],
@@ -1007,40 +986,17 @@
       "results": {},
       "destState": {
         "blinkRight": "0",
-        "tipStartTime": "5500",
-        "curTime": "6000",
-        "onCycle": "FALSE",
-        "keyState": "KeyInsertedOnPosition",
-        "active_blinkers": "{right_blink}",
-        "blinkLeft": "0"
+        "tipStartTime": "7000",
+        "curTime": "8000",
+        "hazardWarningSwitchOn": "switch_off",
+        "onCycle": "FALSE"
       },
       "destStateNotChanged": [
         "engineOn",
+        "keyState",
         "pitmanArmUpDown",
         "remaining_blinks",
-        "hazardWarningSwitchOn"
-      ],
-      "preds": [],
-      "postconditions": [],
-      "description": ""
-    },
-    {
-      "name": "ENV_HazardBlinkingOn",
-      "params": {},
-      "results": {},
-      "destState": {
-        "pitmanArmUpDown": "Upward7",
-        "remaining_blinks": "-1",
-        "engineOn": "TRUE",
-        "hazardWarningSwitchOn": "switch_on",
-        "active_blinkers": "{left_blink,right_blink}"
-      },
-      "destStateNotChanged": [
-        "blinkRight",
-        "tipStartTime",
-        "curTime",
-        "onCycle",
-        "keyState",
+        "active_blinkers",
         "blinkLeft"
       ],
       "preds": [],
@@ -1048,48 +1004,25 @@
       "description": ""
     },
     {
-      "name": "ENV_HazardBlinkingOff_RightBlink",
+      "name": "ENV_Pitman_TipBlinkingLeft_Blink",
       "params": {
-        "rem": "-1"
+        "rem": "3"
       },
       "results": {},
       "destState": {
-        "blinkRight": "0",
-        "tipStartTime": "5500",
-        "curTime": "6000",
-        "onCycle": "FALSE",
+        "tipStartTime": "8000",
+        "engineOn": "TRUE",
         "keyState": "KeyInsertedOnPosition",
-        "hazardWarningSwitchOn": "switch_off",
-        "active_blinkers": "{right_blink}",
+        "pitmanArmUpDown": "Downward5",
+        "remaining_blinks": "3",
+        "active_blinkers": "{left_blink}",
         "blinkLeft": "0"
       },
       "destStateNotChanged": [
-        "engineOn",
-        "pitmanArmUpDown",
-        "remaining_blinks"
-      ],
-      "preds": [],
-      "postconditions": [],
-      "description": ""
-    },
-    {
-      "name": "ENV_Pitman_Reset_to_Neutral_Noblink",
-      "params": {},
-      "results": {},
-      "destState": {
-        "pitmanArmUpDown": "Neutral",
-        "remaining_blinks": "0",
-        "engineOn": "TRUE",
-        "active_blinkers": "∅"
-      },
-      "destStateNotChanged": [
         "blinkRight",
-        "tipStartTime",
         "curTime",
         "onCycle",
-        "keyState",
-        "hazardWarningSwitchOn",
-        "blinkLeft"
+        "hazardWarningSwitchOn"
       ],
       "preds": [],
       "postconditions": [],
@@ -1097,20 +1030,20 @@
     }
   ],
   "variableNames": [
+    "onCycle",
     "active_blinkers",
     "blinkLeft",
-    "blinkRight",
-    "onCycle",
-    "remaining_blinks"
+    "remaining_blinks",
+    "blinkRight"
   ],
   "constantNames": [
-    "BLINK_CYCLE_COUNTER",
     "BLINK_DIRECTION",
     "LAMP_STATUS",
     "continuousBlink",
     "cycleMaxLampStatus",
     "lamp_off",
-    "lamp_on"
+    "lamp_on",
+    "BLINK_CYCLE_COUNTER"
   ],
   "setNames": [
     "DIRECTIONS"
@@ -1313,11 +1246,11 @@
   },
   "metadata": {
     "fileType": "Trace",
-    "formatVersion": 4,
-    "savedAt": "2021-06-28T11:13:24.159735Z",
-    "creator": "traceReplay",
+    "formatVersion": 5,
+    "savedAt": "2021-07-21T11:58:46.688075Z",
+    "creator": "User",
     "proB2KernelVersion": "4.0.0-SNAPSHOT",
-    "proBCliVersion": "1.11.0-nightly",
-    "modelName": "BlinkLamps"
+    "proBCliVersion": null,
+    "modelName": null
   }
 }

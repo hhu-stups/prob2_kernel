@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -89,18 +90,31 @@ public class RefinementChecker {
 
 		ModelElementList<Event> eventList = topLevelMachine.getChildrenOfType(Event.class);
 
+		List<Event> refinedEvents = topLevelMachine.getChildrenOfType(Event.class)
+				.stream()
+				.filter(entry -> !entry.isExtended()).collect(toList());
+
+
 		Map<String, String> newOldMapping = eventList.stream()
-				.collect(toMap(BEvent::getName, entry -> {
-					String eventName = traceEvent(entry).getName();
-					if(eventName.equals("skip")){
-						return entry.getName();
-					}else{
-						return eventName;
-					}
-				}));
+				.collect(toMap(BEvent::getName, entry -> traceEvent(entry).getName()));
+
+		List<String> introducedBySkip = newOldMapping.values().stream()
+				.filter(s -> s.equals("skip"))
+				.collect(toList());
+
+		Map<String, String> refinedEventsMapping = refinedEvents.stream()
+				.collect(toMap(BEvent::getName, entry -> traceEvent(entry).getName()));
 
 
 		Map<String, List<String>> alternatives = newOldMapping.entrySet().stream()
+				.collect(groupingBy(Map.Entry::getValue))
+				.entrySet().stream()
+				.collect(toMap(Map.Entry::getKey, entry -> entry.getValue().stream()
+						.map(Map.Entry::getKey)
+						.collect(toList())));
+
+
+		Map<String, List<String>> refinedAlternatives = refinedEventsMapping.entrySet().stream()
 				.collect(groupingBy(Map.Entry::getValue))
 				.entrySet().stream()
 				.collect(toMap(Map.Entry::getKey, entry -> entry.getValue().stream()
@@ -111,13 +125,17 @@ public class RefinementChecker {
 		alternatives.put(Transition.INITIALISE_MACHINE_NAME, Collections.singletonList(Transition.INITIALISE_MACHINE_NAME));
 		alternatives.put(Transition.SETUP_CONSTANTS_NAME, Collections.singletonList(Transition.SETUP_CONSTANTS_NAME));
 
-		List<String> blackList =newOldMapping.entrySet().stream()
+		List<String> blackList = newOldMapping.entrySet().stream()
 				.filter(entry -> !entry.getValue().equals(entry.getKey()))
 				.map(Map.Entry::getValue)
 				.collect(toList());
 
+		long time = System.currentTimeMillis();
+		List<Transition> resultRaw = AdvancedTraceConstructor.constructTraceEventB(transitionList, stateSpace, alternatives, refinedAlternatives, introducedBySkip);
+		long time2 = System.currentTimeMillis();
 
-		List<Transition> resultRaw = AdvancedTraceConstructor.constructTraceEventB(transitionList, stateSpace, alternatives, blackList);
+		long result = time2-time;
+		System.out.println("Time elapsed: " + result);
 
 		return PersistentTransition.createFromList(resultRaw);
 	}

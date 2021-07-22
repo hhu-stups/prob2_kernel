@@ -81,7 +81,7 @@ public class AdvancedTraceConstructor {
 		}
 	}
 
-	public static List<Transition> constructTraceEventB(List<PersistentTransition> persistentTrace, StateSpace stateSpace, Map<String, List<String>> alternatives, List<String> blackList) throws TraceConstructionError {
+	public static List<Transition> constructTraceEventB(List<PersistentTransition> persistentTrace, StateSpace stateSpace, Map<String, List<String>> alternatives, Map<String, List<String>> refinedAlternatives, List<String> skips) throws TraceConstructionError {
 
 		Trace modifiedTrace = prepareTrace(new Trace(stateSpace), persistentTrace);
 		modifiedTrace.setExploreStateByDefault(true);
@@ -97,7 +97,7 @@ public class AdvancedTraceConstructor {
 				})
 				.collect(toList());
 
-		RefineTraceEventBCommand refineTraceCommand = new RefineTraceEventBCommand(modifiedTrace.getStateSpace(), modifiedTrace.getCurrentState(), transitionNames, predicates, alternatives, blackList);
+		RefineTraceEventBCommand refineTraceCommand = new RefineTraceEventBCommand(modifiedTrace.getStateSpace(), modifiedTrace.getCurrentState(), transitionNames, predicates, alternatives, refinedAlternatives,  skips);
 		stateSpace.execute(refineTraceCommand);
 
 		if (refineTraceCommand.hasErrors() && refineTraceCommand.getNewTransitions().size() < persistentTrace.size()) { //The command failed in finding an complete Trace
