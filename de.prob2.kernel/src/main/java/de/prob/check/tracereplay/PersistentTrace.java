@@ -2,6 +2,7 @@ package de.prob.check.tracereplay;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.prob.statespace.Trace;
@@ -52,5 +53,15 @@ public class PersistentTrace {
 
 	public PersistentTrace setTrace(List<PersistentTransition> trace){
 		return new PersistentTrace(this.description, trace);
+	}
+
+	public void recordTests() {
+		for(PersistentTransition transition : this.transitionList) {
+			for(Map.Entry<String, String> entry : transition.getDestinationStateVariables().entrySet()) {
+				String key = entry.getKey();
+				String value = entry.getValue();
+				transition.getPostconditions().add(new PostconditionPredicate(String.format("%s = %s", key, value)));
+			}
+		}
 	}
 }
