@@ -98,8 +98,9 @@ public class RefinementChecker {
 		Map<String, String> newOldMapping = eventList.stream()
 				.collect(toMap(BEvent::getName, entry -> traceEvent(entry).getName()));
 
-		List<String> introducedBySkip = newOldMapping.values().stream()
-				.filter(s -> s.equals("skip"))
+		List<String> introducedBySkip = newOldMapping.entrySet().stream()
+				.filter(s -> s.getValue().equals("skip"))
+				.map(Map.Entry::getKey)
 				.collect(toList());
 
 		Map<String, String> refinedEventsMapping = refinedEvents.stream()

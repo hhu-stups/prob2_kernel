@@ -35,6 +35,7 @@ public class RefineTraceEventBCommand extends AbstractCommand implements
 	private final List<Transition> resultTrace = new ArrayList<>();
 	private final List<String> errors = new ArrayList<>();
 	private final Map<String, List<String>> alternatives;
+	private final Map<String, List<String>> refineAlternatives;
 	private final List<String> skips;
 
 	/**
@@ -69,6 +70,7 @@ public class RefineTraceEventBCommand extends AbstractCommand implements
 		this.name = trace;
 		this.evalElement = predicates;
 		this.alternatives = alternatives;
+		this.refineAlternatives = refinedAlternatives;
 		this.skips = skips;
 
 
@@ -120,7 +122,9 @@ public class RefineTraceEventBCommand extends AbstractCommand implements
 		}
 		pto.closeList();
 
+		//printMap(pto, alternatives);
 
+		printMap(pto, refineAlternatives);
 
 		pto.openList();
 		for (String string : skips) {
@@ -131,6 +135,23 @@ public class RefineTraceEventBCommand extends AbstractCommand implements
 
 		pto.printVariable(RESULT_VARIABLE);
 		pto.closeTerm();
+	}
+
+
+	private static void printMap(IPrologTermOutput pto, Map<String, List<String>> toPrint){
+		pto.openList();
+		for (Map.Entry<String, List<String>> entry: toPrint.entrySet()) {
+			pto.openList();
+			pto.printAtom(entry.getKey());
+			pto.openList();
+			for(String listEntry : entry.getValue())
+			{
+				pto.printAtom(listEntry);
+			}
+			pto.closeList();
+			pto.closeList();
+		}
+		pto.closeList();
 	}
 
 	@Override
