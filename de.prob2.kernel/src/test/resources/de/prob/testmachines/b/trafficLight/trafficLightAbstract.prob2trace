@@ -1,0 +1,359 @@
+{
+  "description": "",
+  "transitionList": [
+    {
+      "name": "$initialise_machine",
+      "params": {},
+      "results": {},
+      "destState": {
+        "tl_cars": "red",
+        "tl_peds": "red"
+      },
+      "destStateNotChanged": [],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "Send_command_cars_ry",
+      "params": {},
+      "results": {},
+      "destState": {},
+      "destStateNotChanged": [
+        "tl_cars",
+        "tl_peds"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "Send_command_peds_g",
+      "params": {},
+      "results": {},
+      "destState": {},
+      "destStateNotChanged": [
+        "tl_cars",
+        "tl_peds"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "Timeout",
+      "params": {
+        "cmd": "cmd_cars_redyellow"
+      },
+      "results": {},
+      "destState": {},
+      "destStateNotChanged": [
+        "tl_cars",
+        "tl_peds"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "Send_command_peds_g",
+      "params": {},
+      "results": {},
+      "destState": {},
+      "destStateNotChanged": [
+        "tl_cars",
+        "tl_peds"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "Timeout",
+      "params": {
+        "cmd": "cmd_peds_red"
+      },
+      "results": {},
+      "destState": {},
+      "destStateNotChanged": [
+        "tl_cars",
+        "tl_peds"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "RTIME_Passes",
+      "params": {
+        "delta": "0"
+      },
+      "results": {},
+      "destState": {},
+      "destStateNotChanged": [
+        "tl_cars",
+        "tl_peds"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "RTIME_Passes",
+      "params": {
+        "delta": "2"
+      },
+      "results": {},
+      "destState": {},
+      "destStateNotChanged": [
+        "tl_cars",
+        "tl_peds"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "Timeout",
+      "params": {
+        "cmd": "cmd_cars_yellow"
+      },
+      "results": {},
+      "destState": {},
+      "destStateNotChanged": [
+        "tl_cars",
+        "tl_peds"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "Timeout",
+      "params": {
+        "cmd": "cmd_peds_green"
+      },
+      "results": {},
+      "destState": {},
+      "destStateNotChanged": [
+        "tl_cars",
+        "tl_peds"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    }
+  ],
+  "variableNames": [
+    "tl_cars",
+    "tl_peds"
+  ],
+  "constantNames": [],
+  "setNames": [
+    "colors",
+    "COMMANDS"
+  ],
+  "machineOperationInfos": {
+    "Send_command_cars_y": {
+      "operationName": "Send_command_cars_y",
+      "parameterNames": [],
+      "outputParameterNames": [],
+      "topLevel": true,
+      "type": "CLASSICAL_B",
+      "readVariables": [],
+      "writtenVariables": [],
+      "nonDetWrittenVariables": [],
+      "typeMap": {}
+    },
+    "Send_command_peds_r": {
+      "operationName": "Send_command_peds_r",
+      "parameterNames": [],
+      "outputParameterNames": [],
+      "topLevel": true,
+      "type": "CLASSICAL_B",
+      "readVariables": [],
+      "writtenVariables": [],
+      "nonDetWrittenVariables": [],
+      "typeMap": {}
+    },
+    "cars_y": {
+      "operationName": "cars_y",
+      "parameterNames": [],
+      "outputParameterNames": [],
+      "topLevel": true,
+      "type": "CLASSICAL_B",
+      "readVariables": [
+        "tl_cars"
+      ],
+      "writtenVariables": [
+        "tl_cars"
+      ],
+      "nonDetWrittenVariables": [],
+      "typeMap": {}
+    },
+    "Send_command_cars_ry": {
+      "operationName": "Send_command_cars_ry",
+      "parameterNames": [],
+      "outputParameterNames": [],
+      "topLevel": true,
+      "type": "CLASSICAL_B",
+      "readVariables": [],
+      "writtenVariables": [],
+      "nonDetWrittenVariables": [],
+      "typeMap": {}
+    },
+    "Timeout": {
+      "operationName": "Timeout",
+      "parameterNames": [
+        "cmd"
+      ],
+      "outputParameterNames": [],
+      "topLevel": true,
+      "type": "CLASSICAL_B",
+      "readVariables": [],
+      "writtenVariables": [],
+      "nonDetWrittenVariables": [],
+      "typeMap": {
+        "cmd": "global('COMMANDS')"
+      }
+    },
+    "peds_r": {
+      "operationName": "peds_r",
+      "parameterNames": [],
+      "outputParameterNames": [],
+      "topLevel": true,
+      "type": "CLASSICAL_B",
+      "readVariables": [
+        "tl_peds"
+      ],
+      "writtenVariables": [
+        "tl_peds"
+      ],
+      "nonDetWrittenVariables": [],
+      "typeMap": {}
+    },
+    "cars_ry": {
+      "operationName": "cars_ry",
+      "parameterNames": [],
+      "outputParameterNames": [],
+      "topLevel": true,
+      "type": "CLASSICAL_B",
+      "readVariables": [
+        "tl_cars",
+        "tl_peds"
+      ],
+      "writtenVariables": [
+        "tl_cars"
+      ],
+      "nonDetWrittenVariables": [],
+      "typeMap": {}
+    },
+    "cars_r": {
+      "operationName": "cars_r",
+      "parameterNames": [],
+      "outputParameterNames": [],
+      "topLevel": true,
+      "type": "CLASSICAL_B",
+      "readVariables": [
+        "tl_cars"
+      ],
+      "writtenVariables": [
+        "tl_cars"
+      ],
+      "nonDetWrittenVariables": [],
+      "typeMap": {}
+    },
+    "Send_command_peds_g": {
+      "operationName": "Send_command_peds_g",
+      "parameterNames": [],
+      "outputParameterNames": [],
+      "topLevel": true,
+      "type": "CLASSICAL_B",
+      "readVariables": [],
+      "writtenVariables": [],
+      "nonDetWrittenVariables": [],
+      "typeMap": {}
+    },
+    "peds_g": {
+      "operationName": "peds_g",
+      "parameterNames": [],
+      "outputParameterNames": [],
+      "topLevel": true,
+      "type": "CLASSICAL_B",
+      "readVariables": [
+        "tl_cars",
+        "tl_peds"
+      ],
+      "writtenVariables": [
+        "tl_peds"
+      ],
+      "nonDetWrittenVariables": [],
+      "typeMap": {}
+    },
+    "Send_command_cars_g": {
+      "operationName": "Send_command_cars_g",
+      "parameterNames": [],
+      "outputParameterNames": [],
+      "topLevel": true,
+      "type": "CLASSICAL_B",
+      "readVariables": [],
+      "writtenVariables": [],
+      "nonDetWrittenVariables": [],
+      "typeMap": {}
+    },
+    "RTIME_Passes": {
+      "operationName": "RTIME_Passes",
+      "parameterNames": [
+        "delta"
+      ],
+      "outputParameterNames": [],
+      "topLevel": true,
+      "type": "CLASSICAL_B",
+      "readVariables": [],
+      "writtenVariables": [],
+      "nonDetWrittenVariables": [],
+      "typeMap": {
+        "delta": "integer"
+      }
+    },
+    "Send_command_cars_r": {
+      "operationName": "Send_command_cars_r",
+      "parameterNames": [],
+      "outputParameterNames": [],
+      "topLevel": true,
+      "type": "CLASSICAL_B",
+      "readVariables": [],
+      "writtenVariables": [],
+      "nonDetWrittenVariables": [],
+      "typeMap": {}
+    },
+    "cars_g": {
+      "operationName": "cars_g",
+      "parameterNames": [],
+      "outputParameterNames": [],
+      "topLevel": true,
+      "type": "CLASSICAL_B",
+      "readVariables": [
+        "tl_cars"
+      ],
+      "writtenVariables": [
+        "tl_cars"
+      ],
+      "nonDetWrittenVariables": [],
+      "typeMap": {}
+    }
+  },
+  "globalIdentifierTypes": {
+    "tl_cars": "global(colors)",
+    "tl_peds": "global(colors)"
+  },
+  "metadata": {
+    "fileType": "Trace",
+    "formatVersion": 5,
+    "savedAt": "2021-07-26T10:34:01.711914Z",
+    "creator": "traceReplay",
+    "proB2KernelVersion": "4.0.0-SNAPSHOT",
+    "proBCliVersion": "1.11.0-nightly",
+    "modelName": "TrafficLight2"
+  }
+}
