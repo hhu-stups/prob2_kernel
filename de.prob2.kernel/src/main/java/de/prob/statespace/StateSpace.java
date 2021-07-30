@@ -240,7 +240,7 @@ public class StateSpace implements IAnimator {
 	/**
 	 * Takes the name of an operation and a predicate and finds Operations that
 	 * satisfy the name and predicate at the given state. New Operations are
-	 * added to the graph. This is only valid for ClassicalB predicates.
+	 * added to the graph.
 	 *
 	 * @param state
 	 *            {@link State} from which the operation should be found
