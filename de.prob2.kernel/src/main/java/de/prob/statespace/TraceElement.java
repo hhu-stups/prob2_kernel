@@ -16,8 +16,8 @@ public class TraceElement {
 
 	private final TraceElement previous;
 
-	public TraceElement(final State stateId) {
-		this.currentState = stateId;
+	public TraceElement(final State state) {
+		this.currentState = state;
 
 		// FOR THE FIRST STATE ID, EVERYTHING IS
 		transition = null;

@@ -27,16 +27,16 @@ public class FindPathCommand extends AbstractCommand implements
 	private static final String ERRORS_VARIABLE = "Errors";
 
 	private final List<ClassicalB> evalElement;
-	private final State stateId;
+	private final State state;
 	private final List<String> name;
 	private final StateSpace stateSpace;
 	private final List<Transition> resultTrace = new ArrayList<>();
 	private final List<String> errors = new ArrayList<>();
 
-	public FindPathCommand(final StateSpace s, final State stateId,
+	public FindPathCommand(final StateSpace s, final State state,
 								 final List<String> name, final List<ClassicalB> predicate) {
 		this.stateSpace = s;
-		this.stateId = stateId;
+		this.state = state;
 		this.name = name;
 		this.evalElement = predicate;
 		if (name.size() != predicate.size()) {
@@ -64,7 +64,7 @@ public class FindPathCommand extends AbstractCommand implements
 	@Override
 	public void writeCommand(final IPrologTermOutput pto) {
 		pto.openTerm(PROLOG_COMMAND_NAME)
-				.printAtomOrNumber(stateId.getId());
+				.printAtomOrNumber(state.getId());
 		pto.openList();
 		for (String n : name) {
 			pto.printAtom(n);
@@ -112,7 +112,7 @@ public class FindPathCommand extends AbstractCommand implements
 
 	@Override
 	public Trace getTrace(final StateSpace s) {
-		Trace t = s.getTrace(stateId.getId());
+		Trace t = s.getTrace(state.getId());
 		return t.addTransitions(resultTrace);
 	}
 
