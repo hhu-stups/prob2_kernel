@@ -108,7 +108,7 @@ public class RefinementCheckerTest {
 
 
 	@Test
-	public void simple_event_b_no_changes() throws IOException, DeltaCalculationException, TraceConstructionError, BCompoundException {
+	public void simple_event_b_no_changes() throws IOException, TraceConstructionError, BCompoundException {
 
 
 		Path pathStateSpace1 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "pitman_v2_files", "PitmanController.bum");

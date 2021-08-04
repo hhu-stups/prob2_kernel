@@ -17,17 +17,22 @@ import de.be4.classicalb.core.parser.node.AAbstractMachineParseUnit;
 import de.be4.classicalb.core.parser.node.Start;
 import de.be4.classicalb.core.parser.util.PrettyPrinter;
 import de.prob.animator.ReusableAnimator;
+import de.prob.animator.command.FindPathCommand;
+import de.prob.animator.domainobjects.ClassicalB;
+import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.TraceCheckerUtils;
+import de.prob.check.tracereplay.check.exploration.ReplayOptions;
 import de.prob.check.tracereplay.check.traceConstruction.AdvancedTraceConstructor;
 import de.prob.check.tracereplay.check.traceConstruction.TraceConstructionError;
 import de.prob.model.eventb.Event;
 import de.prob.model.representation.*;
 import de.prob.scripting.EventBFactory;
 import de.prob.statespace.StateSpace;
+import de.prob.statespace.Trace;
 import de.prob.statespace.Transition;
 
-import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.*;
 
 public class RefinementChecker {
 	private final Injector injector;
@@ -69,55 +74,69 @@ public class RefinementChecker {
 	}
 
 
-	public List<PersistentTransition> checkEventB() throws IOException {
+	public List<PersistentTransition> checkEventB() throws IOException, TraceConstructionError {
 		ReusableAnimator animator = injector.getInstance(ReusableAnimator.class);
 		StateSpace stateSpace = animator.createStateSpace();
 		EventBFactory eventBFactory = injector.getInstance(EventBFactory.class);
 		eventBFactory.extract(alpha.toString()).loadIntoStateSpace(stateSpace);
 
-		Set<String> usedOperations = TraceCheckerUtils.usedOperations(TraceCheckerUtils.stripNonOpClause(transitionList));
-
 		AbstractModel model = stateSpace.getModel();
-		List<DependencyGraph.Node> chain = model.getGraph().refinementChain();
-		ModelElementList<Machine> involvedMachines = stateSpace.getModel().getChildrenOfType(Machine.class);
 
-		Map<String, Set<String>> operationSets = involvedMachines
-				.stream()
-				.collect(toMap(Machine::getName, entry -> entry.getChildren().get(BEvent.class).stream().map(Object::toString)
-				.collect(Collectors.toSet())));
+		Machine topLevelMachine = model.getChildrenOfType(Machine.class).get(model.getGraph().getStart());
 
-		Map<String, Machine> machineMap = involvedMachines.stream().collect(toMap(Machine::getName, entry -> entry));
+		ModelElementList<Event> eventList = topLevelMachine.getChildrenOfType(Event.class);
 
-		String bestMatch = operationSets.entrySet().stream().collect(toMap(Map.Entry::getKey, entry -> {
-			Set<String> current = new HashSet<String>(entry.getValue());
-			current.removeAll(usedOperations);
-			return current.size();
-		})).entrySet().stream().max(new Comparator<Map.Entry<String, Integer>>() {
-			@Override
-			public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
-				if (o1.getValue() >= o2.getValue()) {
-					return 1;
-				} else {
-					return -1;
-				}
-			}
-		}).get().getKey();
+		Map<String, String> newOldMapping = eventList.stream()
+				.collect(toMap(BEvent::getName, entry -> traceEvent(entry).getName()));
 
-		Machine blabla = model.getChildrenOfType(Machine.class).get(model.getGraph().getStart());
-		ModelElementList<Event> initialEventList = blabla.getChildrenOfType(Event.class);
+		List<PersistentTransition> enhancedTransition = transitionList.stream()
+				.map(entry -> {
+					switch (entry.getOperationName()){
+						case Transition.INITIALISE_MACHINE_NAME:
+						case Transition.SETUP_CONSTANTS_NAME:
+							return entry;
+						default:
+							return entry.copyWithNewName(newOldMapping.get(entry.getOperationName()));
+					}
+
+				})
+				.collect(Collectors.toList());
 
 
+		Map<String, List<String>> alternatives = newOldMapping.entrySet().stream()
+				.collect(groupingBy(Map.Entry::getValue))
+				.entrySet().stream()
+				.collect(toMap(Map.Entry::getKey, entry -> entry.getValue().stream()
+						.map(Map.Entry::getKey)
+						.collect(toList())));
 
-		return null;
+
+		List<String> blackList = new ArrayList<>(alternatives.keySet());
+
+
+		List<Transition> resultRaw = AdvancedTraceConstructor.constructTrace(enhancedTransition, stateSpace, alternatives, blackList);
+
+		return PersistentTransition.createFromList(resultRaw);
 	}
 
-	public Map<String, String> pairOldAndNew(ModelElementList<Event> eventList, Map<String, String> aux){
-		if(aux.isEmpty()){
-			eventList.forEach(element -> aux.put(element.getName(), element.getName()));
-		}else{
 
+
+
+
+	/**
+	 * Traces an event back to its origins and returns the original event, return event if it was never refined
+	 * @param event the event to trace
+	 * @return the origin event
+	 */
+	public static Event traceEvent(Event event){
+		if(event.getRefines().isEmpty()){
+			return event;
+		}else{
+			return traceEvent(event.getRefines().get(0)); //In EventB there should only be one Event refined from
 		}
 	}
+
+
 
 	public List<PersistentTransition> checkClassicalB() throws IOException, BCompoundException, TraceConstructionError {
 		BParser alphaParser = new BParser(alpha.toString());
@@ -134,7 +153,6 @@ public class RefinementChecker {
 		PrettyPrinter prettyPrinter = new PrettyPrinter();
 		prettyPrinter.caseAAbstractMachineParseUnit(aAbstractMachineParseUnit);
 
-		File bla = alpha.getParent().toFile();
 		File tempFile = File.createTempFile("machine", ".mch", alpha.getParent().toFile());
 
 
@@ -144,7 +162,6 @@ public class RefinementChecker {
 
 
 		StateSpace stateSpace = TraceCheckerUtils.createStateSpace(tempFile.toPath().toString(), injector);
-
 
 		List<Transition> resultRaw = AdvancedTraceConstructor.constructTraceByName(transitionList, stateSpace);
 
