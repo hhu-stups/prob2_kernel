@@ -116,9 +116,9 @@ public class RefinementCheckerTest {
 	public void simple_event_b_no_changes() throws IOException, TraceConstructionError, BCompoundException {
 
 
-		Path pathStateSpace1 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "pitman_v4_files", "BlinkLamps.bum");
+		Path pathStateSpace1 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "trafficLight", "mac.bum");
 
-		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "BlinkLamps30RandomSteps.prob2trace"));
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB",  "trafficLight", "trafficLight.prob2trace"));
 
 		List<PersistentTransition> result = new RefinementChecker(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace1).check();
 
