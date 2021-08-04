@@ -1,8 +1,5 @@
 package de.prob.animator.command;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.be4.classicalb.core.parser.analysis.prolog.ASTProlog;
 import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.EvalElementType;
@@ -12,11 +9,14 @@ import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
-import de.prob.statespace.ITraceDescription;
-import de.prob.statespace.State;
-import de.prob.statespace.StateSpace;
-import de.prob.statespace.Trace;
-import de.prob.statespace.Transition;
+import de.prob.statespace.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.*;
+
+import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toMap;
 
 public class FindPathCommand extends AbstractCommand implements
 		IStateSpaceModifier, ITraceDescription {
@@ -27,44 +27,52 @@ public class FindPathCommand extends AbstractCommand implements
 	private static final String ERRORS_VARIABLE = "Errors";
 
 	private final List<ClassicalB> evalElement;
-	private final State state;
+	private final State stateId;
 	private final List<String> name;
 	private final StateSpace stateSpace;
 	private final List<Transition> resultTrace = new ArrayList<>();
 	private final List<String> errors = new ArrayList<>();
 
-	public FindPathCommand(final StateSpace s, final State state,
-								 final List<String> name, final List<ClassicalB> predicate) {
+
+	/**
+	 * Tries to satisfy the given path with given predicates. Will fail if path is not executable. Is provided with
+	 * alternatives to especially explore refinements.
+	 * @param s the state space - the machine to satisfy the trace on
+	 * @param stateId the entry point
+	 * @param trace the trace to satisfy
+	 * @param predicates the constraints to put on each transition; maps 1:1 with trace
+	 */
+	public FindPathCommand(final StateSpace s, final State stateId,
+						   final List<String> trace, final List<ClassicalB> predicates) {
 		this.stateSpace = s;
-		this.state = state;
-		this.name = name;
-		this.evalElement = predicate;
-		if (name.size() != predicate.size()) {
+		this.stateId = stateId;
+		this.name = trace;
+		this.evalElement = predicates;
+
+
+		if (trace.size() != predicates.size()) {
 			throw new IllegalArgumentException(
 					"Must provide the same number of names and predicates.");
 		}
-		for (ClassicalB classicalB : predicate) {
+		for (ClassicalB classicalB : predicates) {
 			if (!EvalElementType.PREDICATE.equals(classicalB.getKind())) {
 				throw new IllegalArgumentException(
-						"Formula must be a predicate: " + predicate);
+						"Formula must be a predicates: " + predicates);
 			}
 		}
-		int size = this.name.size();
-
 	}
 
 
 	/**
 	 * This method is called when the command is prepared for sending. The
-	 * method is called by the Animator class, most likely it is not interesting
-	 * for other classes.
+	 * method is called by the Animator class.
 	 *
-	 * @see de.prob.animator.command.AbstractCommand#writeCommand(de.prob.prolog.output.IPrologTermOutput)
+	 * @see de.prob.animator.command.AbstractCommand writeCommand(de.prob.prolog.output.IPrologTermOutput)
 	 */
 	@Override
 	public void writeCommand(final IPrologTermOutput pto) {
 		pto.openTerm(PROLOG_COMMAND_NAME)
-				.printAtomOrNumber(state.getId());
+				.printAtomOrNumber(stateId.getId());
 		pto.openList();
 		for (String n : name) {
 			pto.printAtom(n);
@@ -112,7 +120,7 @@ public class FindPathCommand extends AbstractCommand implements
 
 	@Override
 	public Trace getTrace(final StateSpace s) {
-		Trace t = s.getTrace(state.getId());
+		Trace t = s.getTrace(stateId.getId());
 		return t.addTransitions(resultTrace);
 	}
 
