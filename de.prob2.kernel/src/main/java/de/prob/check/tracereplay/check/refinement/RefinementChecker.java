@@ -106,6 +106,8 @@ public class RefinementChecker {
 		Map<String, String> refinedEventsMapping = refinedEvents.stream()
 				.collect(toMap(BEvent::getName, entry -> traceEvent(entry).getName()));
 
+		List<String> formallyRefined = refinedEvents.stream().filter(event -> !event.getWitnesses().isEmpty())
+				.map(BEvent::getName).collect(toList());
 
 		Map<String, List<String>> alternatives = newOldMapping.entrySet().stream()
 				.collect(groupingBy(Map.Entry::getValue))
@@ -126,13 +128,10 @@ public class RefinementChecker {
 		alternatives.put(Transition.INITIALISE_MACHINE_NAME, Collections.singletonList(Transition.INITIALISE_MACHINE_NAME));
 		alternatives.put(Transition.SETUP_CONSTANTS_NAME, Collections.singletonList(Transition.SETUP_CONSTANTS_NAME));
 
-		List<String> blackList = newOldMapping.entrySet().stream()
-				.filter(entry -> !entry.getValue().equals(entry.getKey()))
-				.map(Map.Entry::getValue)
-				.collect(toList());
+
 
 		long time = System.currentTimeMillis();
-		List<Transition> resultRaw = AdvancedTraceConstructor.constructTraceEventB(transitionList, stateSpace, alternatives, refinedAlternatives, introducedBySkip);
+		List<Transition> resultRaw = AdvancedTraceConstructor.constructTraceEventB(transitionList, stateSpace, alternatives, formallyRefined, introducedBySkip);
 		long time2 = System.currentTimeMillis();
 
 		long result = time2-time;
