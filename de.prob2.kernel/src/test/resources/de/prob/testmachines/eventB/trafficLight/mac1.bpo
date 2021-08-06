@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<org.eventb.core.poFile org.eventb.core.poStamp="63">
-    <org.eventb.core.poPredicateSet name="CTXHYP" org.eventb.core.poStamp="41">
+<org.eventb.core.poFile org.eventb.core.poStamp="4">
+    <org.eventb.core.poPredicateSet name="CTXHYP" org.eventb.core.poStamp="0">
         <org.eventb.core.poIdentifier name="colours" org.eventb.core.type="ℙ(colours)"/>
         <org.eventb.core.poIdentifier name="yellow" org.eventb.core.type="colours"/>
         <org.eventb.core.poIdentifier name="red" org.eventb.core.type="colours"/>
         <org.eventb.core.poIdentifier name="green" org.eventb.core.type="colours"/>
         <org.eventb.core.poPredicate name="colourt" org.eventb.core.predicate="partition(colours,{red},{yellow},{green})" org.eventb.core.source="/TrafficLigth/Colours.buc|org.eventb.core.contextFile#Colours|org.eventb.core.axiom#_HiDuUlpFEeuuR_r4b_C18g"/>
     </org.eventb.core.poPredicateSet>
-    <org.eventb.core.poPredicateSet name="ABSHYP" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#CTXHYP" org.eventb.core.poStamp="42">
+    <org.eventb.core.poPredicateSet name="ABSHYP" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#CTXHYP" org.eventb.core.poStamp="1">
         <org.eventb.core.poIdentifier name="cars_color" org.eventb.core.type="ℙ(colours)"/>
+        <org.eventb.core.poIdentifier name="activated" org.eventb.core.type="BOOL"/>
         <org.eventb.core.poIdentifier name="peds_color" org.eventb.core.type="colours"/>
         <org.eventb.core.poIdentifier name="cars_go" org.eventb.core.type="BOOL"/>
         <org.eventb.core.poIdentifier name="peds_go" org.eventb.core.type="BOOL"/>
@@ -16,7 +17,7 @@
         <org.eventb.core.poPredicate name="peds_colot" org.eventb.core.predicate="cars_go∈BOOL" org.eventb.core.source="/TrafficLigth/mac.bum|org.eventb.core.machineFile#mac|org.eventb.core.invariant#_VGVWEFvOEeuAE4_C4q2wCA"/>
         <org.eventb.core.poPredicate name="peds_colou" org.eventb.core.predicate="¬(cars_go=TRUE∧peds_go=TRUE)" org.eventb.core.source="/TrafficLigth/mac.bum|org.eventb.core.machineFile#mac|org.eventb.core.invariant#_VGV9IFvOEeuAE4_C4q2wCA"/>
     </org.eventb.core.poPredicateSet>
-    <org.eventb.core.poSequent name="INITIALISATION/inv4/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  establishment" org.eventb.core.poStamp="42">
+    <org.eventb.core.poSequent name="INITIALISATION/inv4/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  establishment" org.eventb.core.poStamp="4">
         <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#EVTALLHYPpeds_colos"/>
         <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="red∈{red,green}" org.eventb.core.source="/TrafficLigth/mac1.bum|org.eventb.core.machineFile#mac1|org.eventb.core.invariant#_FGYOk1vQEeuAE4_C4q2wCA"/>
         <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="ABSTRACT" org.eventb.core.source="/TrafficLigth/mac.bum|org.eventb.core.machineFile#mac|org.eventb.core.event#'"/>
@@ -25,7 +26,7 @@
         <org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#CTXHYP" org.eventb.core.poSelHintSnd="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poSequent#INITIALISATION\/inv4\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
         <org.eventb.core.poSelHint name="SEQHYV" org.eventb.core.poSelHintFst="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#ALLHYP|org.eventb.core.poPredicate#PRD0"/>
     </org.eventb.core.poSequent>
-    <org.eventb.core.poSequent name="INITIALISATION/inv7/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  establishment" org.eventb.core.poStamp="56">
+    <org.eventb.core.poSequent name="INITIALISATION/inv7/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  establishment" org.eventb.core.poStamp="4">
         <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#EVTALLHYPpeds_colos"/>
         <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="FALSE=TRUE⇔red=green" org.eventb.core.source="/TrafficLigth/mac1.bum|org.eventb.core.machineFile#mac1|org.eventb.core.invariant#_OtyGUVvTEeuAE4_C4q2wCA"/>
         <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="ABSTRACT" org.eventb.core.source="/TrafficLigth/mac.bum|org.eventb.core.machineFile#mac|org.eventb.core.event#'"/>
@@ -34,7 +35,7 @@
         <org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#CTXHYP" org.eventb.core.poSelHintSnd="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poSequent#INITIALISATION\/inv7\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
         <org.eventb.core.poSelHint name="SEQHYV" org.eventb.core.poSelHintFst="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#ALLHYP|org.eventb.core.poPredicate#PRD2"/>
     </org.eventb.core.poSequent>
-    <org.eventb.core.poSequent name="INITIALISATION/inv8/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  establishment" org.eventb.core.poStamp="57">
+    <org.eventb.core.poSequent name="INITIALISATION/inv8/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  establishment" org.eventb.core.poStamp="4">
         <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#EVTALLHYPpeds_colos"/>
         <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="FALSE=TRUE⇔green∈{red}" org.eventb.core.source="/TrafficLigth/mac1.bum|org.eventb.core.machineFile#mac1|org.eventb.core.invariant#_O2tlwNr8Eeu2DNwez0hSPQ"/>
         <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="ABSTRACT" org.eventb.core.source="/TrafficLigth/mac.bum|org.eventb.core.machineFile#mac|org.eventb.core.event#'"/>
@@ -43,15 +44,22 @@
         <org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#CTXHYP" org.eventb.core.poSelHintSnd="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poSequent#INITIALISATION\/inv8\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
         <org.eventb.core.poSelHint name="SEQHYV" org.eventb.core.poSelHintFst="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#ALLHYP|org.eventb.core.poPredicate#PRD3"/>
     </org.eventb.core.poSequent>
-    <org.eventb.core.poPredicateSet name="EVTIDENTpeds_colos" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#CTXHYP" org.eventb.core.poStamp="42">
+    <org.eventb.core.poPredicateSet name="EVTIDENTpeds_colos" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#CTXHYP" org.eventb.core.poStamp="1">
+        <org.eventb.core.poIdentifier name="activated'" org.eventb.core.type="BOOL"/>
         <org.eventb.core.poIdentifier name="cars_go'" org.eventb.core.type="BOOL"/>
         <org.eventb.core.poIdentifier name="peds_color'" org.eventb.core.type="colours"/>
         <org.eventb.core.poIdentifier name="cars_color'" org.eventb.core.type="ℙ(colours)"/>
         <org.eventb.core.poIdentifier name="peds_go'" org.eventb.core.type="BOOL"/>
     </org.eventb.core.poPredicateSet>
-    <org.eventb.core.poPredicateSet name="EVTALLHYPpeds_colos" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#EVTIDENTpeds_colos" org.eventb.core.poStamp="42"/>
-    <org.eventb.core.poSequent name="set_peds_green/inv4/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="62">
-        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#EVTALLHYPpeds_colot"/>
+    <org.eventb.core.poPredicateSet name="EVTALLHYPpeds_colos" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#EVTIDENTpeds_colos" org.eventb.core.poStamp="1"/>
+    <org.eventb.core.poPredicateSet name="EVTIDENTpeds_colot" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poStamp="0">
+        <org.eventb.core.poIdentifier name="activated'" org.eventb.core.type="BOOL"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poPredicateSet name="EVTALLHYPpeds_colot" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#EVTIDENTpeds_colot" org.eventb.core.poStamp="2">
+        <org.eventb.core.poPredicate name="PRD0" org.eventb.core.predicate="activated=FALSE" org.eventb.core.source="/TrafficLigth/mac1.bum|org.eventb.core.machineFile#mac1|org.eventb.core.event#_hw148PaREeuy_vi781afiA|org.eventb.core.guard#_VwVOYNpLEeuow-v_uN4kng"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poSequent name="set_peds_green/inv4/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="3">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#EVTALLHYPpeds_colou"/>
         <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="green∈{red,green}" org.eventb.core.source="/TrafficLigth/mac1.bum|org.eventb.core.machineFile#mac1|org.eventb.core.invariant#_FGYOk1vQEeuAE4_C4q2wCA"/>
         <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="ABSTRACT" org.eventb.core.source="/TrafficLigth/mac.bum|org.eventb.core.machineFile#mac|org.eventb.core.event#_VGWkMFvOEeuAE4_C4q2wCA"/>
         <org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="CONCRETE" org.eventb.core.source="/TrafficLigth/mac1.bum|org.eventb.core.machineFile#mac1|org.eventb.core.event#_ipTu8NoqEeuMcdSHN4IZZA"/>
@@ -59,8 +67,8 @@
         <org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poSequent#set_peds_green\/inv4\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
         <org.eventb.core.poSelHint name="SEQHYV" org.eventb.core.poSelHintFst="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#ALLHYP|org.eventb.core.poPredicate#PRD0"/>
     </org.eventb.core.poSequent>
-    <org.eventb.core.poSequent name="set_peds_green/inv7/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="62">
-        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#EVTALLHYPpeds_colot"/>
+    <org.eventb.core.poSequent name="set_peds_green/inv7/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="3">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#EVTALLHYPpeds_colou"/>
         <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="TRUE=TRUE⇔green=green" org.eventb.core.source="/TrafficLigth/mac1.bum|org.eventb.core.machineFile#mac1|org.eventb.core.invariant#_OtyGUVvTEeuAE4_C4q2wCA"/>
         <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="ABSTRACT" org.eventb.core.source="/TrafficLigth/mac.bum|org.eventb.core.machineFile#mac|org.eventb.core.event#_VGWkMFvOEeuAE4_C4q2wCA"/>
         <org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="CONCRETE" org.eventb.core.source="/TrafficLigth/mac1.bum|org.eventb.core.machineFile#mac1|org.eventb.core.event#_ipTu8NoqEeuMcdSHN4IZZA"/>
@@ -68,23 +76,24 @@
         <org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poSequent#set_peds_green\/inv7\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
         <org.eventb.core.poSelHint name="SEQHYV" org.eventb.core.poSelHintFst="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#ALLHYP|org.eventb.core.poPredicate#PRD2"/>
     </org.eventb.core.poSequent>
-    <org.eventb.core.poSequent name="set_peds_green/grd1/GRD" org.eventb.core.accurate="true" org.eventb.core.poDesc="Guard strengthening (split)" org.eventb.core.poStamp="62">
-        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#EVTALLHYPpeds_colot"/>
+    <org.eventb.core.poSequent name="set_peds_green/grd1/GRD" org.eventb.core.accurate="true" org.eventb.core.poDesc="Guard strengthening (split)" org.eventb.core.poStamp="3">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#EVTALLHYPpeds_colou"/>
         <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="cars_go=FALSE" org.eventb.core.source="/TrafficLigth/mac.bum|org.eventb.core.machineFile#mac|org.eventb.core.event#_VGWkMFvOEeuAE4_C4q2wCA|org.eventb.core.guard#_moT_EFvOEeuAE4_C4q2wCA"/>
         <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="ABSTRACT" org.eventb.core.source="/TrafficLigth/mac.bum|org.eventb.core.machineFile#mac|org.eventb.core.event#_VGWkMFvOEeuAE4_C4q2wCA"/>
         <org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="ABSTRACT" org.eventb.core.source="/TrafficLigth/mac.bum|org.eventb.core.machineFile#mac|org.eventb.core.event#_VGWkMFvOEeuAE4_C4q2wCA|org.eventb.core.guard#_moT_EFvOEeuAE4_C4q2wCA"/>
         <org.eventb.core.poSource name="SEQHYT" org.eventb.core.poRole="CONCRETE" org.eventb.core.source="/TrafficLigth/mac1.bum|org.eventb.core.machineFile#mac1|org.eventb.core.event#_ipTu8NoqEeuMcdSHN4IZZA"/>
         <org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poSequent#set_peds_green\/grd1\/GRD|org.eventb.core.poPredicateSet#SEQHYP"/>
     </org.eventb.core.poSequent>
-    <org.eventb.core.poPredicateSet name="EVTIDENTpeds_colot" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poStamp="62">
+    <org.eventb.core.poPredicateSet name="EVTIDENTpeds_colou" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poStamp="1">
         <org.eventb.core.poIdentifier name="peds_color'" org.eventb.core.type="colours"/>
         <org.eventb.core.poIdentifier name="peds_go'" org.eventb.core.type="BOOL"/>
     </org.eventb.core.poPredicateSet>
-    <org.eventb.core.poPredicateSet name="EVTALLHYPpeds_colot" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#EVTIDENTpeds_colot" org.eventb.core.poStamp="62">
+    <org.eventb.core.poPredicateSet name="EVTALLHYPpeds_colou" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#EVTIDENTpeds_colou" org.eventb.core.poStamp="3">
         <org.eventb.core.poPredicate name="PRD0" org.eventb.core.predicate="green∉cars_color" org.eventb.core.source="/TrafficLigth/mac1.bum|org.eventb.core.machineFile#mac1|org.eventb.core.event#_ipTu8NoqEeuMcdSHN4IZZA|org.eventb.core.guard#_FGWZYVvQEeuAE4_C4q2wCA"/>
+        <org.eventb.core.poPredicate name="PRD1" org.eventb.core.predicate="activated=TRUE" org.eventb.core.source="/TrafficLigth/mac1.bum|org.eventb.core.machineFile#mac1|org.eventb.core.event#_ipTu8NoqEeuMcdSHN4IZZA|org.eventb.core.guard#_FDNaoNsYEeu2DNwez0hSPQ"/>
     </org.eventb.core.poPredicateSet>
-    <org.eventb.core.poSequent name="set_peds_red/inv4/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="57">
-        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#EVTALLHYPpeds_colou"/>
+    <org.eventb.core.poSequent name="set_peds_red/inv4/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="3">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#EVTALLHYPpeds_colov"/>
         <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="red∈{red,green}" org.eventb.core.source="/TrafficLigth/mac1.bum|org.eventb.core.machineFile#mac1|org.eventb.core.invariant#_FGYOk1vQEeuAE4_C4q2wCA"/>
         <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="ABSTRACT" org.eventb.core.source="/TrafficLigth/mac.bum|org.eventb.core.machineFile#mac|org.eventb.core.event#_moTYAFvOEeuAE4_C4q2wCA"/>
         <org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="CONCRETE" org.eventb.core.source="/TrafficLigth/mac1.bum|org.eventb.core.machineFile#mac1|org.eventb.core.event#_ipUWAdoqEeuMcdSHN4IZZA"/>
@@ -92,8 +101,8 @@
         <org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poSequent#set_peds_red\/inv4\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
         <org.eventb.core.poSelHint name="SEQHYV" org.eventb.core.poSelHintFst="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#ALLHYP|org.eventb.core.poPredicate#PRD0"/>
     </org.eventb.core.poSequent>
-    <org.eventb.core.poSequent name="set_peds_red/inv7/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="57">
-        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#EVTALLHYPpeds_colou"/>
+    <org.eventb.core.poSequent name="set_peds_red/inv7/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="3">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#EVTALLHYPpeds_colov"/>
         <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="FALSE=TRUE⇔red=green" org.eventb.core.source="/TrafficLigth/mac1.bum|org.eventb.core.machineFile#mac1|org.eventb.core.invariant#_OtyGUVvTEeuAE4_C4q2wCA"/>
         <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="ABSTRACT" org.eventb.core.source="/TrafficLigth/mac.bum|org.eventb.core.machineFile#mac|org.eventb.core.event#_moTYAFvOEeuAE4_C4q2wCA"/>
         <org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="CONCRETE" org.eventb.core.source="/TrafficLigth/mac1.bum|org.eventb.core.machineFile#mac1|org.eventb.core.event#_ipUWAdoqEeuMcdSHN4IZZA"/>
@@ -101,19 +110,21 @@
         <org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poSequent#set_peds_red\/inv7\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
         <org.eventb.core.poSelHint name="SEQHYV" org.eventb.core.poSelHintFst="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#ALLHYP|org.eventb.core.poPredicate#PRD2"/>
     </org.eventb.core.poSequent>
-    <org.eventb.core.poPredicateSet name="EVTIDENTpeds_colou" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poStamp="57">
+    <org.eventb.core.poPredicateSet name="EVTIDENTpeds_colov" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poStamp="1">
         <org.eventb.core.poIdentifier name="peds_color'" org.eventb.core.type="colours"/>
         <org.eventb.core.poIdentifier name="peds_go'" org.eventb.core.type="BOOL"/>
     </org.eventb.core.poPredicateSet>
-    <org.eventb.core.poPredicateSet name="EVTALLHYPpeds_colou" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#EVTIDENTpeds_colou" org.eventb.core.poStamp="57"/>
-    <org.eventb.core.poSequent name="set_cars_colors/new_value/WFIS" org.eventb.core.accurate="true" org.eventb.core.poDesc="Feasibility of witness" org.eventb.core.poStamp="63">
-        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#EVTALLHYPpeds_colov"/>
+    <org.eventb.core.poPredicateSet name="EVTALLHYPpeds_colov" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#EVTIDENTpeds_colov" org.eventb.core.poStamp="3">
+        <org.eventb.core.poPredicate name="PRD0" org.eventb.core.predicate="activated=TRUE" org.eventb.core.source="/TrafficLigth/mac1.bum|org.eventb.core.machineFile#mac1|org.eventb.core.event#_ipUWAdoqEeuMcdSHN4IZZA|org.eventb.core.guard#_uIUL8PaREeuy_vi781afiA"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poSequent name="set_cars_colors/new_value/WFIS" org.eventb.core.accurate="true" org.eventb.core.poDesc="Feasibility of witness" org.eventb.core.poStamp="3">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#EVTALLHYPpeds_colow"/>
         <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="∃new_value⦂BOOL·new_value=TRUE⇔green∈new_value_color" org.eventb.core.source="/TrafficLigth/mac1.bum|org.eventb.core.machineFile#mac1|org.eventb.core.event#_LIBrkNpOEeuow-v_uN4kng|org.eventb.core.witness#_LlLS0NsYEeu2DNwez0hSPQ"/>
         <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/TrafficLigth/mac1.bum|org.eventb.core.machineFile#mac1|org.eventb.core.event#_LIBrkNpOEeuow-v_uN4kng|org.eventb.core.witness#_LlLS0NsYEeu2DNwez0hSPQ"/>
         <org.eventb.core.poSelHint name="SEQHYS" org.eventb.core.poSelHintFst="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poSequent#set_cars_colors\/new_value\/WFIS|org.eventb.core.poPredicateSet#SEQHYP"/>
     </org.eventb.core.poSequent>
-    <org.eventb.core.poSequent name="set_cars_colors/inv8/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="63">
-        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#EVTALLHYPpeds_colov">
+    <org.eventb.core.poSequent name="set_cars_colors/inv8/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="3">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#EVTALLHYPpeds_colow">
             <org.eventb.core.poPredicate name="'" org.eventb.core.predicate="new_value=TRUE⇔green∈new_value_color" org.eventb.core.source="/TrafficLigth/mac1.bum|org.eventb.core.machineFile#mac1|org.eventb.core.event#_LIBrkNpOEeuow-v_uN4kng|org.eventb.core.witness#_LlLS0NsYEeu2DNwez0hSPQ"/>
         </org.eventb.core.poPredicateSet>
         <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="new_value=TRUE⇔green∈new_value_color" org.eventb.core.source="/TrafficLigth/mac1.bum|org.eventb.core.machineFile#mac1|org.eventb.core.invariant#_O2tlwNr8Eeu2DNwez0hSPQ"/>
@@ -123,8 +134,8 @@
         <org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poSequent#set_cars_colors\/inv8\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
         <org.eventb.core.poSelHint name="SEQHYV" org.eventb.core.poSelHintFst="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#ALLHYP|org.eventb.core.poPredicate#PRD3"/>
     </org.eventb.core.poSequent>
-    <org.eventb.core.poSequent name="set_cars_colors/grd2/GRD" org.eventb.core.accurate="true" org.eventb.core.poDesc="Guard strengthening (split)" org.eventb.core.poStamp="63">
-        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#EVTALLHYPpeds_colov">
+    <org.eventb.core.poSequent name="set_cars_colors/grd2/GRD" org.eventb.core.accurate="true" org.eventb.core.poDesc="Guard strengthening (split)" org.eventb.core.poStamp="3">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#EVTALLHYPpeds_colow">
             <org.eventb.core.poPredicate name="'" org.eventb.core.predicate="new_value=TRUE⇔green∈new_value_color" org.eventb.core.source="/TrafficLigth/mac1.bum|org.eventb.core.machineFile#mac1|org.eventb.core.event#_LIBrkNpOEeuow-v_uN4kng|org.eventb.core.witness#_LlLS0NsYEeu2DNwez0hSPQ"/>
         </org.eventb.core.poPredicateSet>
         <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="new_value=TRUE⇒peds_go=FALSE" org.eventb.core.source="/TrafficLigth/mac.bum|org.eventb.core.machineFile#mac|org.eventb.core.event#_moTYAlvOEeuAE4_C4q2wCA|org.eventb.core.guard#_moT_EVvOEeuAE4_C4q2wCA"/>
@@ -133,24 +144,26 @@
         <org.eventb.core.poSource name="SEQHYT" org.eventb.core.poRole="CONCRETE" org.eventb.core.source="/TrafficLigth/mac1.bum|org.eventb.core.machineFile#mac1|org.eventb.core.event#_LIBrkNpOEeuow-v_uN4kng"/>
         <org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poSequent#set_cars_colors\/grd2\/GRD|org.eventb.core.poPredicateSet#SEQHYP"/>
     </org.eventb.core.poSequent>
-    <org.eventb.core.poPredicateSet name="EVTIDENTpeds_colov" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poStamp="57">
+    <org.eventb.core.poPredicateSet name="EVTIDENTpeds_colow" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poStamp="0">
         <org.eventb.core.poIdentifier name="cars_go'" org.eventb.core.type="BOOL"/>
         <org.eventb.core.poIdentifier name="cars_color'" org.eventb.core.type="ℙ(colours)"/>
         <org.eventb.core.poIdentifier name="new_value" org.eventb.core.type="BOOL"/>
         <org.eventb.core.poIdentifier name="new_value_color" org.eventb.core.type="ℙ(colours)"/>
     </org.eventb.core.poPredicateSet>
-    <org.eventb.core.poPredicateSet name="EVTALLHYPpeds_colov" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#EVTIDENTpeds_colov" org.eventb.core.poStamp="60">
-        <org.eventb.core.poPredicate name="PRD0" org.eventb.core.predicate="new_value_color⊆colours" org.eventb.core.source="/TrafficLigth/mac1.bum|org.eventb.core.machineFile#mac1|org.eventb.core.event#_LIBrkNpOEeuow-v_uN4kng|org.eventb.core.guard#_VwVOYNpLEeuow-v_uN4kng"/>
+    <org.eventb.core.poPredicateSet name="EVTALLHYPpeds_colow" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#EVTIDENTpeds_colow" org.eventb.core.poStamp="3">
+        <org.eventb.core.poPredicate name="PRD0" org.eventb.core.predicate="new_value_color⊆colours" org.eventb.core.source="/TrafficLigth/mac1.bum|org.eventb.core.machineFile#mac1|org.eventb.core.event#_LIBrkNpOEeuow-v_uN4kng|org.eventb.core.guard#_hw2gAfaREeuy_vi781afiA"/>
         <org.eventb.core.poPredicate name="PRD1" org.eventb.core.predicate="green∈new_value_color⇒peds_color=red" org.eventb.core.source="/TrafficLigth/mac1.bum|org.eventb.core.machineFile#mac1|org.eventb.core.event#_LIBrkNpOEeuow-v_uN4kng|org.eventb.core.guard#_WGe_INr8Eeu2DNwez0hSPQ"/>
-        <org.eventb.core.poPredicate name="PRD2" org.eventb.core.predicate="cars_color={yellow}⇒new_value_color={red}" org.eventb.core.source="/TrafficLigth/mac1.bum|org.eventb.core.machineFile#mac1|org.eventb.core.event#_LIBrkNpOEeuow-v_uN4kng|org.eventb.core.guard#_FDNaoNsYEeu2DNwez0hSPQ"/>
+        <org.eventb.core.poPredicate name="PRD2" org.eventb.core.predicate="cars_color={yellow}⇒new_value_color={red}" org.eventb.core.source="/TrafficLigth/mac1.bum|org.eventb.core.machineFile#mac1|org.eventb.core.event#_LIBrkNpOEeuow-v_uN4kng|org.eventb.core.guard#_uIUzAPaREeuy_vi781afiA"/>
         <org.eventb.core.poPredicate name="PRD3" org.eventb.core.predicate="cars_color={red}⇒new_value_color={red,yellow}" org.eventb.core.source="/TrafficLigth/mac1.bum|org.eventb.core.machineFile#mac1|org.eventb.core.event#_LIBrkNpOEeuow-v_uN4kng|org.eventb.core.guard#_C3IkoNsYEeu2DNwez0hSPQ"/>
         <org.eventb.core.poPredicate name="PRD4" org.eventb.core.predicate="cars_color={red,yellow}⇒new_value_color={green}" org.eventb.core.source="/TrafficLigth/mac1.bum|org.eventb.core.machineFile#mac1|org.eventb.core.event#_LIBrkNpOEeuow-v_uN4kng|org.eventb.core.guard#_C3IkodsYEeu2DNwez0hSPQ"/>
         <org.eventb.core.poPredicate name="PRD5" org.eventb.core.predicate="cars_color={green}⇒new_value_color={yellow}" org.eventb.core.source="/TrafficLigth/mac1.bum|org.eventb.core.machineFile#mac1|org.eventb.core.event#_LIBrkNpOEeuow-v_uN4kng|org.eventb.core.guard#_C3IkotsYEeu2DNwez0hSPQ"/>
+        <org.eventb.core.poPredicate name="PRD6" org.eventb.core.predicate="activated=TRUE" org.eventb.core.source="/TrafficLigth/mac1.bum|org.eventb.core.machineFile#mac1|org.eventb.core.event#_LIBrkNpOEeuow-v_uN4kng|org.eventb.core.guard#_uIUzAfaREeuy_vi781afiA"/>
     </org.eventb.core.poPredicateSet>
-    <org.eventb.core.poPredicateSet name="ALLHYP" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#ABSHYP" org.eventb.core.poStamp="57">
+    <org.eventb.core.poPredicateSet name="ALLHYP" org.eventb.core.parentSet="/TrafficLigth/mac1.bpo|org.eventb.core.poFile#mac1|org.eventb.core.poPredicateSet#ABSHYP" org.eventb.core.poStamp="1">
         <org.eventb.core.poPredicate name="PRD0" org.eventb.core.predicate="peds_color∈{red,green}" org.eventb.core.source="/TrafficLigth/mac1.bum|org.eventb.core.machineFile#mac1|org.eventb.core.invariant#_FGYOk1vQEeuAE4_C4q2wCA"/>
         <org.eventb.core.poPredicate name="PRD1" org.eventb.core.predicate="cars_color⊆colours" org.eventb.core.source="/TrafficLigth/mac1.bum|org.eventb.core.machineFile#mac1|org.eventb.core.invariant#_FGYOlFvQEeuAE4_C4q2wCA"/>
         <org.eventb.core.poPredicate name="PRD2" org.eventb.core.predicate="peds_go=TRUE⇔peds_color=green" org.eventb.core.source="/TrafficLigth/mac1.bum|org.eventb.core.machineFile#mac1|org.eventb.core.invariant#_OtyGUVvTEeuAE4_C4q2wCA"/>
         <org.eventb.core.poPredicate name="PRD3" org.eventb.core.predicate="cars_go=TRUE⇔green∈cars_color" org.eventb.core.source="/TrafficLigth/mac1.bum|org.eventb.core.machineFile#mac1|org.eventb.core.invariant#_O2tlwNr8Eeu2DNwez0hSPQ"/>
+        <org.eventb.core.poPredicate name="PRD4" org.eventb.core.predicate="activated∈BOOL" org.eventb.core.source="/TrafficLigth/mac1.bum|org.eventb.core.machineFile#mac1|org.eventb.core.invariant#_hw3HEfaREeuy_vi781afiA"/>
     </org.eventb.core.poPredicateSet>
 </org.eventb.core.poFile>

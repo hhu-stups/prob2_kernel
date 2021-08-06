@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <org.eventb.core.psFile>
-    <org.eventb.core.psStatus name="INITIALISATION/inv4/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="42" org.eventb.core.psManual="false"/>
-    <org.eventb.core.psStatus name="INITIALISATION/inv7/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="56" org.eventb.core.psManual="false"/>
-    <org.eventb.core.psStatus name="INITIALISATION/inv8/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="57" org.eventb.core.psManual="false"/>
-    <org.eventb.core.psStatus name="set_peds_green/inv4/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="62" org.eventb.core.psManual="false"/>
-    <org.eventb.core.psStatus name="set_peds_green/inv7/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="62" org.eventb.core.psManual="false"/>
-    <org.eventb.core.psStatus name="set_peds_green/grd1/GRD" org.eventb.core.confidence="1000" org.eventb.core.poStamp="62" org.eventb.core.psManual="false"/>
-    <org.eventb.core.psStatus name="set_peds_red/inv4/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="57" org.eventb.core.psManual="false"/>
-    <org.eventb.core.psStatus name="set_peds_red/inv7/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="57" org.eventb.core.psManual="false"/>
-    <org.eventb.core.psStatus name="set_cars_colors/new_value/WFIS" org.eventb.core.confidence="1000" org.eventb.core.poStamp="63" org.eventb.core.psManual="false"/>
-    <org.eventb.core.psStatus name="set_cars_colors/inv8/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="63" org.eventb.core.psManual="false"/>
-    <org.eventb.core.psStatus name="set_cars_colors/grd2/GRD" org.eventb.core.confidence="1000" org.eventb.core.poStamp="63" org.eventb.core.psManual="false"/>
+    <org.eventb.core.psStatus name="INITIALISATION/inv4/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="4" org.eventb.core.psManual="false"/>
+    <org.eventb.core.psStatus name="INITIALISATION/inv7/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="4" org.eventb.core.psManual="false"/>
+    <org.eventb.core.psStatus name="INITIALISATION/inv8/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="4" org.eventb.core.psManual="false"/>
+    <org.eventb.core.psStatus name="set_peds_green/inv4/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="3" org.eventb.core.psManual="false"/>
+    <org.eventb.core.psStatus name="set_peds_green/inv7/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="3" org.eventb.core.psManual="false"/>
+    <org.eventb.core.psStatus name="set_peds_green/grd1/GRD" org.eventb.core.confidence="1000" org.eventb.core.poStamp="3" org.eventb.core.psManual="false"/>
+    <org.eventb.core.psStatus name="set_peds_red/inv4/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="3" org.eventb.core.psManual="false"/>
+    <org.eventb.core.psStatus name="set_peds_red/inv7/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="3" org.eventb.core.psManual="false"/>
+    <org.eventb.core.psStatus name="set_cars_colors/new_value/WFIS" org.eventb.core.confidence="1000" org.eventb.core.poStamp="3" org.eventb.core.psManual="false"/>
+    <org.eventb.core.psStatus name="set_cars_colors/inv8/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="3" org.eventb.core.psManual="false"/>
+    <org.eventb.core.psStatus name="set_cars_colors/grd2/GRD" org.eventb.core.confidence="1000" org.eventb.core.poStamp="3" org.eventb.core.psManual="false"/>
 </org.eventb.core.psFile>

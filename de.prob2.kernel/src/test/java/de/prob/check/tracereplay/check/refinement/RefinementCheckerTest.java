@@ -5,39 +5,21 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import com.google.inject.Injector;
 import de.be4.classicalb.core.parser.BParser;
 import de.be4.classicalb.core.parser.exceptions.BCompoundException;
 import de.be4.classicalb.core.parser.node.AAbstractMachineParseUnit;
 import de.be4.classicalb.core.parser.node.Start;
 import de.be4.classicalb.core.parser.util.PrettyPrinter;
 import de.prob.ProBKernelStub;
-import de.prob.animator.domainobjects.ClassicalB;
-import de.prob.animator.domainobjects.EventB;
-import de.prob.animator.domainobjects.FormulaExpand;
-import de.prob.check.tracereplay.PersistentTrace;
 import de.prob.check.tracereplay.PersistentTransition;
-import de.prob.check.tracereplay.check.TestUtils;
-import de.prob.check.tracereplay.check.TraceChecker;
-import de.prob.check.tracereplay.check.exploration.ReplayOptions;
-import de.prob.check.tracereplay.check.renamig.DeltaCalculationException;
 import de.prob.check.tracereplay.check.traceConstruction.AdvancedTraceConstructor;
 import de.prob.check.tracereplay.check.traceConstruction.TraceConstructionError;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.cli.CliTestCommon;
-import de.prob.model.eventb.Event;
-import de.prob.model.representation.AbstractElement;
-import de.prob.model.representation.AbstractModel;
-import de.prob.model.representation.Machine;
-import de.prob.model.representation.ModelElementList;
-import de.prob.statespace.LoadedMachine;
-import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
 
@@ -118,7 +100,7 @@ public class RefinementCheckerTest {
 
 		Path pathStateSpace1 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "trafficLight", "mac.bum");
 
-		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB",  "trafficLight", "trafficLight.prob2trace"));
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB",  "trafficLight", "test1234.prob2trace"));
 
 		List<PersistentTransition> result = new RefinementChecker(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace1).check();
 
@@ -126,23 +108,11 @@ public class RefinementCheckerTest {
 	}
 
 
-	@Test
-	public void simple_event_b_one_refinement_step_should_fail() throws IOException, TraceConstructionError, BCompoundException {
 
-
-		Path pathStateSpace1 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "pitman_v4_files", "PitmanController.bum");
-
-		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "BlinkLamps30RandomSteps.prob2trace"));
-
-		List<PersistentTransition> result = new RefinementChecker(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace1).check();
-
-		Assertions.assertEquals(jsonFile.getTransitionList().size(), result.size());
-	}
 
 
 	@Test
 	public void simple_event_b_refinement_success() throws IOException, TraceConstructionError, BCompoundException {
-
 
 		Path pathStateSpace1 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "trafficLight", "mac1.bum");
 
@@ -150,7 +120,19 @@ public class RefinementCheckerTest {
 
 		List<PersistentTransition> result = new RefinementChecker(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace1).check();
 
-		Assertions.assertEquals(jsonFile.getTransitionList().size(), result.size());
+
+		String comparison1 = "activateSystem";
+
+
+		List<String> nameList = result.stream().map(PersistentTransition::getOperationName).collect(Collectors.toList());
+		List<String> nameListWithoutSkip = nameList.stream().filter(entry -> !entry.equals(comparison1)).collect(Collectors.toList());
+
+
+		boolean hasActivatedTheSystemOnce = nameList.stream().filter(entry -> entry.equals(comparison1)).count() == 1;
+
+		Assertions.assertTrue(hasActivatedTheSystemOnce);
+		Assertions.assertEquals(11, nameListWithoutSkip.size());
+
 	}
 
 }
