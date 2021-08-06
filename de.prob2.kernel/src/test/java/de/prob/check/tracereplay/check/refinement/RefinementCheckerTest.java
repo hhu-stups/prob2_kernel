@@ -36,7 +36,7 @@ public class RefinementCheckerTest {
 
 	@BeforeAll
 	static void beforeAll() {
-		System.setProperty("prob.home", "/home/sebastian/prob_prolog");
+	//	System.setProperty("prob.home", "/home/sebastian/prob_prolog");
 
 		traceManager = CliTestCommon.getInjector().getInstance(TraceManager.class);
 		proBKernelStub = CliTestCommon.getInjector().getInstance(ProBKernelStub.class);
