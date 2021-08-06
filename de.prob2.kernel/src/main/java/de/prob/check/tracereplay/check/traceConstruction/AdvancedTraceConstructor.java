@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 public class AdvancedTraceConstructor {
 
@@ -65,10 +66,7 @@ public class AdvancedTraceConstructor {
 				.map(PersistentTransition::getOperationName)
 				.collect(toList());
 		List<ClassicalB> predicates = modifiedList.stream()
-				.map(entry -> {
-					String pred = new PredicateBuilder().addMap(entry.getAllPredicates()).toString();
-					return new ClassicalB(new PredicateBuilder().addMap(entry.getAllPredicates()).toString(), FormulaExpand.EXPAND);
-				})
+				.map(entry -> new ClassicalB(new PredicateBuilder().addMap(entry.getAllPredicates()).toString(), FormulaExpand.EXPAND))
 				.collect(toList());
 
 		RefineTraceCommand refineTraceCommand = new RefineTraceCommand(modifiedTrace.getStateSpace(), modifiedTrace.getCurrentState(), transitionNames, predicates, alternatives, blackList);
@@ -81,7 +79,7 @@ public class AdvancedTraceConstructor {
 		}
 	}
 
-	public static List<Transition> constructTraceEventB(List<PersistentTransition> persistentTrace, StateSpace stateSpace, Map<String, List<String>> alternatives, Map<String, List<String>> refinedAlternatives, List<String> skips) throws TraceConstructionError {
+	public static List<Transition> constructTraceEventB(List<PersistentTransition> persistentTrace, StateSpace stateSpace, Map<String, List<String>> alternatives, List<String> refinedAlternatives, List<String> skips) throws TraceConstructionError {
 
 		Trace modifiedTrace = prepareTrace(new Trace(stateSpace), persistentTrace);
 		modifiedTrace.setExploreStateByDefault(true);
@@ -90,10 +88,23 @@ public class AdvancedTraceConstructor {
 		List<String> transitionNames = modifiedList.stream()
 				.map(PersistentTransition::getOperationName)
 				.collect(toList());
+
+
+		List<String> refiningEvents = alternatives.entrySet().stream()
+				.filter(entry -> entry.getValue().stream().anyMatch(refinedAlternatives::contains))
+				.map(Map.Entry::getKey).collect(toList());
+
+
 		List<EventB> predicates = modifiedList.stream()
 				.map(entry -> {
-					String pred = new PredicateBuilder().addMap(entry.getAllPredicates()).toString();
-					return new EventB(new PredicateBuilder().addMap(entry.getAllPredicates()).toString(), FormulaExpand.EXPAND);
+					if(refiningEvents.contains(entry.getOperationName())){ //A refining event does not now its former parameters, keeping them would lead to failing predicates
+						Map<String, String > mapWithoutParameters = entry.getAllPredicates().entrySet().stream()
+								.filter(innerEntry -> !entry.getParameters().containsKey(innerEntry.getKey()))
+								.collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+						return new EventB(new PredicateBuilder().addMap(mapWithoutParameters).toString(), FormulaExpand.EXPAND);
+					}else {
+						return new EventB(new PredicateBuilder().addMap(entry.getAllPredicates()).toString(), FormulaExpand.EXPAND);
+					}
 				})
 				.collect(toList());
 
