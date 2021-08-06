@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toMap;
 
 public class RefineTraceEventBCommand extends AbstractCommand implements
@@ -35,7 +36,7 @@ public class RefineTraceEventBCommand extends AbstractCommand implements
 	private final List<Transition> resultTrace = new ArrayList<>();
 	private final List<String> errors = new ArrayList<>();
 	private final Map<String, List<String>> alternatives;
-	private final Map<String, List<String>> refineAlternatives;
+	private final List<String> refineAlternatives;
 	private final List<String> skips;
 
 	/**
@@ -48,7 +49,7 @@ public class RefineTraceEventBCommand extends AbstractCommand implements
 	 */
 	public RefineTraceEventBCommand(final StateSpace s, final State stateId,
 							  final List<String> trace, final List<EventB> predicates) {
-		this(s, stateId, trace, predicates, trace.stream().collect(toMap(entry -> entry, Collections::singletonList)) , Collections.emptyMap(), Collections.emptyList());
+		this(s, stateId, trace, predicates, trace.stream().collect(toMap(entry -> entry, Collections::singletonList)) , emptyList(), emptyList());
 	}
 
 	/**
@@ -64,7 +65,7 @@ public class RefineTraceEventBCommand extends AbstractCommand implements
 	 * @param skips    All events/operations that are not introduced via a skip refinement
 	 */
 	public RefineTraceEventBCommand(final StateSpace s, final State stateId,
-							  final List<String> trace, final List<EventB> predicates, final Map<String, List<String>> alternatives, final Map<String, List<String>> refinedAlternatives, final List<String> skips) {
+							  final List<String> trace, final List<EventB> predicates, final Map<String, List<String>> alternatives, final List<String> refinedAlternatives, final List<String> skips) {
 		this.stateSpace = s;
 		this.stateId = stateId;
 		this.name = trace;
@@ -97,8 +98,8 @@ public class RefineTraceEventBCommand extends AbstractCommand implements
 	 */
 	@Override
 	public void writeCommand(final IPrologTermOutput pto) {
-		pto.openTerm(PROLOG_COMMAND_NAME)
-				.printAtomOrNumber(stateId.getId());
+
+		pto.openTerm(PROLOG_COMMAND_NAME).printAtomOrNumber(stateId.getId());
 
 		pto.openList();
 		for (String n : name) {
@@ -113,18 +114,22 @@ public class RefineTraceEventBCommand extends AbstractCommand implements
 			pto.closeList();
 		}
 		pto.closeList();
+
 		final ASTProlog prolog = new ASTProlog(pto, null);
 		pto.openList();
-
-		AbstractEvalElement g;
 		for (EventB cb : evalElement) {
 			cb.getAst().apply(prolog);
 		}
 		pto.closeList();
 
-		//printMap(pto, alternatives);
+		pto.openList();
+		for(String entry : refineAlternatives){
+				pto.printAtom(entry);
+		}
+		pto.closeList();
 
-		printMap(pto, refineAlternatives);
+
+
 
 		pto.openList();
 		for (String string : skips) {
@@ -135,6 +140,8 @@ public class RefineTraceEventBCommand extends AbstractCommand implements
 
 		pto.printVariable(RESULT_VARIABLE);
 		pto.closeTerm();
+
+		System.out.println(pto);
 	}
 
 
