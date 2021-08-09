@@ -141,7 +141,6 @@ public class RefineTraceEventBCommand extends AbstractCommand implements
 		pto.printVariable(RESULT_VARIABLE);
 		pto.closeTerm();
 
-		System.out.println(pto);
 	}
 
 
