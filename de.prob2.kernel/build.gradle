@@ -272,6 +272,7 @@ wrapper {
 
 task groovyIntegrationTests(type: JavaExec) {
 	main = "de.prob2.commandline.CommandLineMain"
+	inputs.dir("groovyTests")
 	classpath = project(":de.prob2.commandline").sourceSets.main.runtimeClasspath
 	args = ['-script', 'groovyTests']
 }
