@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<org.eventb.core.scContextFile org.eventb.core.accurate="true" org.eventb.core.configuration="org.eventb.core.fwd;de.prob.symbolic.ctxBase">
+    <org.eventb.core.scAxiom name="'" org.eventb.core.label="axm1" org.eventb.core.predicate="partition(colours,{red},{yellow},{green})" org.eventb.core.source="/TrafficLigth/Colours.buc|org.eventb.core.contextFile#Colours|org.eventb.core.axiom#_HiDuUlpFEeuuR_r4b_C18g" org.eventb.core.theorem="false"/>
+    <org.eventb.core.scConstant name="yellow" org.eventb.core.source="/TrafficLigth/Colours.buc|org.eventb.core.contextFile#Colours|org.eventb.core.constant#_HiDuUFpFEeuuR_r4b_C18g" org.eventb.core.type="colours"/>
+    <org.eventb.core.scConstant name="red" org.eventb.core.source="/TrafficLigth/Colours.buc|org.eventb.core.contextFile#Colours|org.eventb.core.constant#_HiDHQVpFEeuuR_r4b_C18g" org.eventb.core.type="colours"/>
+    <org.eventb.core.scConstant name="green" org.eventb.core.source="/TrafficLigth/Colours.buc|org.eventb.core.contextFile#Colours|org.eventb.core.constant#_HiDuUVpFEeuuR_r4b_C18g" org.eventb.core.type="colours"/>
+    <org.eventb.core.scCarrierSet name="colours" org.eventb.core.source="/TrafficLigth/Colours.buc|org.eventb.core.contextFile#Colours|org.eventb.core.carrierSet#_HiDHQFpFEeuuR_r4b_C18g" org.eventb.core.type="ℙ(colours)"/>
+</org.eventb.core.scContextFile>

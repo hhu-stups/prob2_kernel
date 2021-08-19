@@ -240,7 +240,7 @@ public class TypeFinderTest {
 
 		TraceJsonFile bla = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "testTraceMachine10Steps.prob2trace"));
 
-		Set<String> result = TypeFinder.usedOperations(bla.getTransitionList());
+		Set<String> result = TraceCheckerUtils.usedOperations(bla.getTransitionList());
 
 		Set<String> expected = new HashSet<>(Arrays.asList("dec", "getfloors", "inc", Transition.INITIALISE_MACHINE_NAME));
 

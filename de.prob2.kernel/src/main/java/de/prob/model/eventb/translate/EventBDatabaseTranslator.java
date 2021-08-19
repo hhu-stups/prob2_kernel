@@ -22,8 +22,7 @@ public class EventBDatabaseTranslator {
 	private AbstractElement mainComponent;
 	private EventBModel model;
 
-	public EventBDatabaseTranslator(EventBModel m,
-			final String fileName) throws IOException {
+	public EventBDatabaseTranslator(EventBModel m, final String fileName) throws IOException {
 		File modelFile = new File(fileName);
 		String fullFileName = modelFile.getAbsolutePath();
 		try {
@@ -33,19 +32,15 @@ public class EventBDatabaseTranslator {
 
 			this.model = m.setModelFile(modelFile);
 
-			String directory = fullFileName.substring(0,
-					fullFileName.lastIndexOf(File.separatorChar));
-			String workspacePath = directory.substring(0,
-					directory.lastIndexOf(File.separatorChar));
+			String directory = fullFileName.substring(0, fullFileName.lastIndexOf(File.separatorChar));
+			String workspacePath = directory.substring(0, directory.lastIndexOf(File.separatorChar));
 
-			File theoryFile = new File(directory + File.separator
-					+ "TheoryPath.tcl");
+			File theoryFile = new File(directory + File.separator + "TheoryPath.tcl");
 			Set<IFormulaExtension> typeEnv;
 			if (!theoryFile.exists()) {
 				typeEnv = new HashSet<>();
 			} else {
-				TheoryXmlHandler theoryHandler = new TheoryXmlHandler(this.model,
-						workspacePath);
+				TheoryXmlHandler theoryHandler = new TheoryXmlHandler(this.model, workspacePath);
 				saxParser.parse(theoryFile, theoryHandler);
 				typeEnv = theoryHandler.getTypeEnv();
 				this.model = theoryHandler.getModel();

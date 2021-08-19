@@ -5,7 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import de.be4.classicalb.core.parser.BParser;
@@ -36,6 +36,7 @@ public class RefinementCheckerTest {
 
 	@BeforeAll
 	static void beforeAll() {
+	//	System.setProperty("prob.home", "/home/sebastian/prob_prolog");
 
 		traceManager = CliTestCommon.getInjector().getInstance(TraceManager.class);
 		proBKernelStub = CliTestCommon.getInjector().getInstance(ProBKernelStub.class);
@@ -90,4 +91,48 @@ public class RefinementCheckerTest {
 		List<String> expected = jsonFile.getTransitionList().stream().map(PersistentTransition::getOperationName).collect(Collectors.toList());
 		Assertions.assertEquals(expected, result);
 	}
+
+
+
+	@Test
+	public void simple_event_b_no_changes() throws IOException, TraceConstructionError, BCompoundException {
+
+
+		Path pathStateSpace1 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "trafficLight", "mac.bum");
+
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB",  "trafficLight", "test1234.prob2trace"));
+
+		List<PersistentTransition> result = new RefinementChecker(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace1).check();
+
+		Assertions.assertEquals(jsonFile.getTransitionList().size(), result.size());
+	}
+
+
+
+
+
+	@Test
+	public void simple_event_b_refinement_success() throws IOException, TraceConstructionError, BCompoundException {
+
+		Path pathStateSpace1 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "trafficLight", "mac1.bum");
+
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB",  "trafficLight", "test1234.prob2trace"));
+
+		List<PersistentTransition> result = new RefinementChecker(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace1).check();
+
+
+		String comparison1 = "activateSystem";
+
+
+		List<String> nameList = result.stream().map(PersistentTransition::getOperationName).collect(Collectors.toList());
+		List<String> nameListWithoutSkip = nameList.stream().filter(entry -> !entry.equals(comparison1)).collect(Collectors.toList());
+
+
+		boolean hasActivatedTheSystemOnce = nameList.stream().filter(entry -> entry.equals(comparison1)).count() == 1;
+
+		Assertions.assertTrue(hasActivatedTheSystemOnce);
+		Assertions.assertEquals(11, nameListWithoutSkip.size());
+
+	}
+
 }

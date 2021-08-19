@@ -161,6 +161,9 @@ public class PersistentTransition {
 
 	}
 
+	public PersistentTransition copyWithNewName(String name){
+		return new PersistentTransition(name, params, results, destState, destStateNotChanged, preds, postconditions, description);
+	}
 
 	public PersistentTransition copyWithNewDestState(Map<String, String> destState){
 		return  new PersistentTransition(name, params, results, destState, destStateNotChanged, preds, postconditions, description);
