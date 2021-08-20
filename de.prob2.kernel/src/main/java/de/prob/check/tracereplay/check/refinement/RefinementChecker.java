@@ -128,14 +128,8 @@ public class RefinementChecker {
 		alternatives.put(Transition.INITIALISE_MACHINE_NAME, Collections.singletonList(Transition.INITIALISE_MACHINE_NAME));
 		alternatives.put(Transition.SETUP_CONSTANTS_NAME, Collections.singletonList(Transition.SETUP_CONSTANTS_NAME));
 
-
-
-		long time = System.currentTimeMillis();
 		List<Transition> resultRaw = AdvancedTraceConstructor.constructTraceEventB(transitionList, stateSpace, alternatives, formallyRefined, introducedBySkip);
-		long time2 = System.currentTimeMillis();
 
-		long result = time2-time;
-		System.out.println("Time elapsed: " + result);
 
 		return PersistentTransition.createFromList(resultRaw);
 	}
