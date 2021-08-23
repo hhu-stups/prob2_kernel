@@ -18,6 +18,13 @@ public class OperationsFinder extends DepthFirstAdapter {
 	}
 
 
+	public Map<String, Set<String>> usedOperationsReversed(){
+		return used.values().stream().flatMap(Collection::stream).collect(Collectors.toSet()).stream().collect(Collectors.toMap(entry -> entry, entry ->
+			 used.entrySet().stream().filter(innerEntry -> innerEntry.getValue().contains(entry))
+					 .map(Map.Entry::getKey).collect(Collectors.toSet())
+		));
+	}
+
 	@Override
 	public void caseAPromotesMachineClause(APromotesMachineClause node)
 	{
@@ -48,10 +55,6 @@ public class OperationsFinder extends DepthFirstAdapter {
 			used.put(currentOperation.getOpName().getFirst().getText(), new HashSet<>(Stream.of(function).collect(Collectors.toSet())));
 		}
 	}
-
-
-
-
 
 
 
