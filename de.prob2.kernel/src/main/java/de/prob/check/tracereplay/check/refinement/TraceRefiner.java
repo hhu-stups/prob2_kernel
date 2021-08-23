@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.Set;
 
 import com.google.inject.Injector;
 
@@ -14,9 +15,7 @@ import de.be4.classicalb.core.parser.node.AAbstractMachineParseUnit;
 import de.be4.classicalb.core.parser.node.Start;
 import de.be4.classicalb.core.parser.util.PrettyPrinter;
 import de.prob.animator.ReusableAnimator;
-import de.prob.check.tracereplay.PersistentTrace;
 import de.prob.check.tracereplay.PersistentTransition;
-import de.prob.check.tracereplay.TraceReplay;
 import de.prob.check.tracereplay.check.TraceCheckerUtils;
 import de.prob.check.tracereplay.check.traceConstruction.AdvancedTraceConstructor;
 import de.prob.check.tracereplay.check.traceConstruction.TraceConstructionError;
@@ -24,17 +23,17 @@ import de.prob.model.eventb.*;
 import de.prob.model.representation.*;
 import de.prob.scripting.EventBFactory;
 import de.prob.statespace.StateSpace;
-import de.prob.statespace.Trace;
 import de.prob.statespace.Transition;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.*;
 
 public class TraceRefiner {
 	private final Injector injector;
 	private final List<PersistentTransition> transitionList;
-	private final Path alpha;
-	private final Path beta;
+	private final Path alpha; //Machine the trace comes from
+	private final Path beta; //Machine the trace has to be adapted to
 
 	public TraceRefiner(Injector injector, List<PersistentTransition> transitionList, Path alpha, Path beta) {
 		this.injector = injector;
@@ -66,13 +65,6 @@ public class TraceRefiner {
 		}
 	}
 
-	/**
-	 * Reverses a given trace crated on B back to A if possible.
-	 * @return
-	 */
-	public List<PersistentTransition> reverseTrace(){
-		return null;
-	}
 
 	/**
 	 * Checks an EventB machine if it is able to perform the given Trace. For the algorithm see prolog code.
@@ -122,8 +114,8 @@ public class TraceRefiner {
 
 
 		alternatives.remove("INITIALISATION");
-		alternatives.put(Transition.INITIALISE_MACHINE_NAME, Collections.singletonList(Transition.INITIALISE_MACHINE_NAME));
-		alternatives.put(Transition.SETUP_CONSTANTS_NAME, Collections.singletonList(Transition.SETUP_CONSTANTS_NAME));
+		alternatives.put(Transition.INITIALISE_MACHINE_NAME, singletonList(Transition.INITIALISE_MACHINE_NAME));
+		alternatives.put(Transition.SETUP_CONSTANTS_NAME, singletonList(Transition.SETUP_CONSTANTS_NAME));
 
 		List<Transition> resultRaw = AdvancedTraceConstructor.constructTraceEventB(transitionList, stateSpace, alternatives, formallyRefined, introducedBySkip);
 
@@ -157,150 +149,7 @@ public class TraceRefiner {
 		return stateSpace;
 	}
 
-	/**
-	 * Let A and B be two machines. Let T be a Trace created on B. Let B refine A. This function return the T
-	 * recalculated for A.
-	 * @return a trace for an abstract machine.
-	 * @throws IOException file reading went wrong
-	 */
-	public List<PersistentTransition> reverseEventBTrace() throws IOException {
 
-		AbstractModel model = loadEventBFileAsStateSpace().getModel();
-
-		Machine topLevelMachine = model.getChildrenOfType(Machine.class).get(model.getGraph().getStart());
-
-		ModelElementList<Event> eventList = topLevelMachine.getChildrenOfType(Event.class);
-
-		Map<String, String> newOldMapping = eventList.stream()
-				.collect(toMap(BEvent::getName, entry -> traceEvent(entry).getName()));
-
-		String original = model.getGraph().getStart();
-		String target = model.getGraph().getOutEdges(original).stream().filter(entry -> entry.getRelationship().equals(DependencyGraph.ERefType.REFINES)).collect(toList()).get(0).getTo().getElementName();
-
-		ModelElementList<Machine> modelList = model.getChildrenOfType(Machine.class);
-		List<EventBMachine> theBetterList = modelList.stream().map(entry -> (EventBMachine) entry).collect(toList());
-
-		Map<String, EventBMachine> theBetterMap = theBetterList.stream().filter(entry -> entry.getName().equals(original) || entry.getName().equals(target)).collect(toMap(Machine::getName, entry -> entry));
-
-		List<String> originalVars = theBetterMap.get(original).getVariables().stream().map(EventBVariable::getName).collect(toList());
-		List<String> targetVars = theBetterMap.get(target).getVariables().stream().map(EventBVariable::getName).collect(toList());
-
-
-		List<String> originalConst = extractConst(theBetterMap.get(original));
-		List<String> targetConst  = extractConst(theBetterMap.get(target));
-
-
-		List<String> machineExclusiveVars = originalVars.stream().filter(entry -> !targetVars.contains(entry)).collect(toList());
-		List<String> machineExclusiveConst = originalConst.stream().filter(entry -> !targetConst.contains(entry)).collect(toList());
-
-		Map<String, List<String>> machineOriginalParams = theBetterMap.get(original).getChildrenOfType(Event.class).stream()
-				.collect(toMap(BEvent::getName, entry -> entry.getChildrenOfType(EventParameter.class).stream()
-						.map(EventParameter::getName)
-						.collect(toList())));
-
-		Map<String, List<String>> machineTargetParams = theBetterMap.get(target).getChildrenOfType(Event.class).stream()
-				.collect(toMap(BEvent::getName, entry -> entry.getChildrenOfType(EventParameter.class).stream()
-						.map(EventParameter::getName)
-						.collect(toList())));
-
-
-		List<PersistentTransition> removedSkip = transitionList.stream()
-				.filter(entry -> {
-					if(!entry.getOperationName().equals(Transition.INITIALISE_MACHINE_NAME) && !entry.getOperationName().equals(Transition.SETUP_CONSTANTS_NAME)) {
-						String name = entry.getOperationName();
-						return !newOldMapping.get(name).equals("skip");
-					}
-					return true;
-				})
-				.collect(toList());
-
-		Map<String, List<String>> removedEventParas = machineOriginalParams.entrySet().stream()
-				.filter(entry -> !newOldMapping.get(entry.getKey()).equals("skip"))
-				.collect(toMap(Map.Entry::getKey, entry -> {
-					String nameInAbstract = newOldMapping.get(entry.getKey());
-					List<String> parametersOfAbstract = machineTargetParams.get(nameInAbstract);
-					return entry.getValue().stream()
-							.filter(innerEntry -> !parametersOfAbstract.contains(innerEntry))
-							.collect(toList());
-				}));
-
-		List<PersistentTransition> removedParameters = predicateRemoverParameters(removedSkip, removedEventParas);
-		List<PersistentTransition> removedPredVars = predicateRemover(removedParameters, machineExclusiveVars);
-		List<PersistentTransition> removedPredConst = predicateRemover(removedPredVars, machineExclusiveConst);
-
-
-
-		List< PersistentTransition> listReady = removedPredConst.stream().map(entry -> {
-			if(entry.getOperationName().equals(Transition.SETUP_CONSTANTS_NAME)||entry.getOperationName().equals(Transition.INITIALISE_MACHINE_NAME)){
-				return entry;
-			}else{
-				return entry.copyWithNewName(newOldMapping.get(entry.getOperationName()));
-			}
-		}).collect(toList());
-
-
-		StateSpace stateSpace2 = TraceCheckerUtils.createStateSpace(beta.toString(), injector);
-		Trace result = TraceReplay.replayTrace(new PersistentTrace("", listReady), stateSpace2);
-
-		return PersistentTransition.createFromList(new ArrayList<>(result.getTransitionList()));
-	}
-
-	/**
-	 * Extracts all constants of an EventB Machine
-	 * @param target the machine to extract from
-	 * @return the constants
-	 */
-	private static List<String> extractConst(EventBMachine target){
-		if(!target.getChildrenOfType(de.prob.model.eventb.Context.class).isEmpty())
-		{
-			return target.getChildrenOfType(Context.class).get(0).getConstants().stream().map(EventBConstant::getName).collect(toList());
-		}else{
-			return emptyList();
-		}
-
-	}
-
-	/**
-	 * Helper method for the trace reversal. Remove predicates from parameters that are not present in the target machine.
-	 * @param persistentTransitionList the transition list to remove predicates from
-	 * @param machineExclusive the predicates that have to be removed
-	 * @return the cleansed list
-	 */
-	private List<PersistentTransition> predicateRemoverParameters(List<PersistentTransition> persistentTransitionList, Map<String, List<String>> machineExclusive) {
-		return persistentTransitionList.stream()
-				.map(entry -> entry.copyWithNewParameters(entry.getParameters().entrySet().stream()
-						.filter(innerEntry -> !machineExclusive.get(entry.getOperationName()).contains(innerEntry.getKey()))
-						.collect(toMap(Map.Entry::getKey, Map.Entry::getValue))))
-				.collect(toList());
-
-
-	}
-
-	/**
-	 * Helper method for the trace reversal. Remove predicates that are not present in the target machine.
-	 * @param persistentTransitionList the transition list to remove predicates from
-	 * @param machineExclusive the predicates that have to be removed
-	 * @return the cleansed list
-	 */
-	private List<PersistentTransition> predicateRemover(List<PersistentTransition> persistentTransitionList, List<String> machineExclusive){
-		 return persistentTransitionList.stream()
-				.map(entry -> entry.copyWithNewDestState(entry.getDestinationStateVariables()
-						.entrySet()
-						.stream()
-						.filter(innerEntry -> !machineExclusive.contains(innerEntry.getKey()))
-						.collect(toMap(Map.Entry::getKey, Map.Entry::getValue))))
-				 .map(entry -> entry.copyWithNewOutputParameters(entry.getOutputParameters()
-						 .entrySet()
-						 .stream()
-						 .filter(innerEntry -> !machineExclusive.contains(innerEntry.getKey()))
-						 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue))))
-				 .map(entry -> entry.copyWithNewParameters(entry.getParameters()
-						 .entrySet()
-						 .stream()
-						 .filter(innerEntry -> !machineExclusive.contains(innerEntry.getKey()))
-						 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue))))
-		 .collect(toList());
-	}
 
 	/**
 	 * Checks an EventB machine if it is able to perform the given Trace. For the algorithm see prolog code.
@@ -340,6 +189,39 @@ public class TraceRefiner {
 		return PersistentTransition.createFromList(resultRaw);
 	}
 
+
+	public List<PersistentTransition> horizontalRefinement() throws IOException, BCompoundException, TraceConstructionError {
+		BParser betaParser = new BParser(beta.toString());
+		Start betaStart = betaParser.parseFile(beta.toFile(), false);
+
+		OperationsFinder operationsFinder = new OperationsFinder();
+		operationsFinder.explore(betaStart);
+
+		StateSpace stateSpace = TraceCheckerUtils.createStateSpace(beta.toString(), injector);
+
+		Set<String> promoted = operationsFinder.getPromoted();
+		Map<String, Set<String>> internal = operationsFinder.usedOperationsReversed();
+
+		Set<String> usedOperations = TraceCheckerUtils.usedOperations(transitionList);
+
+		Map<String, List<String>> alternatives = usedOperations.stream().collect(toMap(entry -> entry, entry -> {
+			Set<String> result = new HashSet<>();
+			if(promoted.contains(entry)){
+				result.add(entry);
+			}else if(internal.containsKey(entry)){
+				result.addAll(internal.get(entry));
+			}
+			return new ArrayList<>(result);
+		}));
+
+		alternatives.remove("INITIALISATION");
+		alternatives.put(Transition.INITIALISE_MACHINE_NAME, singletonList(Transition.INITIALISE_MACHINE_NAME));
+		alternatives.put(Transition.SETUP_CONSTANTS_NAME, singletonList(Transition.SETUP_CONSTANTS_NAME));
+
+		List<Transition> resultRaw = AdvancedTraceConstructor.constructTraceEventB(transitionList, stateSpace, alternatives, emptyList(), emptyList());
+
+		return PersistentTransition.createFromList(resultRaw);
+	}
 
 
 

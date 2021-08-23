@@ -135,4 +135,43 @@ public class RefinementCheckerTest {
 
 	}
 
+	@Test
+	public void test_horizontal_refinement_simple_promotes() throws IOException, TraceConstructionError, BCompoundException {
+		Path pathStateSpace1 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "promotes", "M2.mch");
+
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b",  "promotes", "test.prob2trace"));
+
+		TraceRefiner traceRefiner = new TraceRefiner(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace1);
+
+		List<PersistentTransition> result = traceRefiner.horizontalRefinement();
+
+		Assertions.assertEquals(jsonFile.getTransitionList().size(), result.size());
+	}
+
+	@Test
+	public void test_horizontal_refinement_internal_function() throws IOException, TraceConstructionError, BCompoundException {
+		Path pathStateSpace1 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "internalOperationCall", "M2.mch");
+
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b",  "internalOperationCall", "test.prob2trace"));
+
+		TraceRefiner traceRefiner = new TraceRefiner(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace1);
+
+		List<PersistentTransition> result = traceRefiner.horizontalRefinement();
+
+		Assertions.assertEquals(jsonFile.getTransitionList().size(), result.size());
+	}
+
+	@Test
+	public void test_horizontal_refinement_promotes_and_internal_function() throws IOException, TraceConstructionError, BCompoundException {
+		Path pathStateSpace1 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "promotedAndInternal", "M2.mch");
+
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b",  "promotedAndInternal", "test.prob2trace"));
+
+		TraceRefiner traceRefiner = new TraceRefiner(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace1);
+
+		List<PersistentTransition> result = traceRefiner.horizontalRefinement();
+
+		Assertions.assertEquals(jsonFile.getTransitionList().size(), result.size());
+	}
+
 }

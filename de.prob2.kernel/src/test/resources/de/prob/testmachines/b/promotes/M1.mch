@@ -1,0 +1,13 @@
+MACHINE M1
+
+VARIABLES x
+
+INVARIANT x : NAT
+
+INITIALISATION x := 1
+
+OPERATIONS
+
+Inc = x := x + 1
+
+END
