@@ -194,8 +194,8 @@ public class TraceRefiner {
 		BParser betaParser = new BParser(beta.toString());
 		Start betaStart = betaParser.parseFile(beta.toFile(), false);
 
-		OperationsFinder operationsFinder = new OperationsFinder();
-		operationsFinder.explore(betaStart);
+		OperationsFinder operationsFinder = new OperationsFinder(alpha.getFileName().toString().substring(alpha.getFileName().toString().lastIndexOf("*")), betaStart);
+		operationsFinder.explore();
 
 		StateSpace stateSpace = TraceCheckerUtils.createStateSpace(beta.toString(), injector);
 

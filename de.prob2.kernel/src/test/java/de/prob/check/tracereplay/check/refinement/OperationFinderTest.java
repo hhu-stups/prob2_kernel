@@ -20,8 +20,8 @@ public class OperationFinderTest {
 
 		BParser parser = new BParser(file.toString());
 		Start result = parser.parseFile(file.toFile(), false);
-		OperationsFinder operationsFinder = new OperationsFinder();
-		operationsFinder.explore(result);
+		OperationsFinder operationsFinder = new OperationsFinder("MachineA", result);
+		operationsFinder.explore();
 
 		Map<String, Set<String>> expected = new HashMap<>();
 		expected.put("Foo", Collections.singleton("Inc2"));
@@ -39,18 +39,17 @@ public class OperationFinderTest {
 	}
 
 	@Test
-	public void test() throws BCompoundException, IOException {
-		Path file = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "promotes", "M2.mch");
+	public void extends_are_recognized() throws BCompoundException, IOException {
+		Path file = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "extends", "M2.mch");
 
 
 		BParser parser = new BParser(file.toString());
 		Start result = parser.parseFile(file.toFile(), false);
-		OperationsFinder operationsFinder = new OperationsFinder();
-		operationsFinder.explore(result);
+		OperationsFinder operationsFinder = new OperationsFinder("M1", result);
+		operationsFinder.explore();
 
 
-		Set<String> promoted = operationsFinder.getPromoted();
-		Map<String, HashSet<String>> used = operationsFinder.getUsed();
+		Assertions.assertTrue(operationsFinder.isExtendsSourceMachine());
 
 
 

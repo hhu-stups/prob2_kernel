@@ -12,8 +12,16 @@ public class OperationsFinder extends DepthFirstAdapter {
 	private Set<String> promoted = new HashSet<>();
 	private Map<String, HashSet<String>> used = new HashMap<>();
 	private AOperation currentOperation;
+	private final String sourceMachine;
+	private final Start node;
+	private boolean extendsSourceMachine = false;
 
-	public void explore(Start node){
+	public OperationsFinder(String sourceMachine, Start node){
+		this.sourceMachine = sourceMachine;
+		this.node = node;
+	}
+
+	public void explore(){
 		node.apply(this);
 	}
 
@@ -56,6 +64,26 @@ public class OperationsFinder extends DepthFirstAdapter {
 		}
 	}
 
+	@Override
+	public void caseAExtendsMachineClause(AExtendsMachineClause node)
+	{
+
+		List<PMachineReference> copy = new ArrayList<>(node.getMachineReferences());
+		for(PMachineReference reference : copy){
+			reference.apply(this);
+		}
+
+	}
+
+	@Override
+	public void caseAMachineReference(AMachineReference node)
+	{
+		if(node.parent() instanceof AExtendsMachineClause){
+			boolean sourceMachineExtended = node.getMachineName().stream().anyMatch(entry -> entry.toString().trim().equals(sourceMachine));
+			extendsSourceMachine = sourceMachineExtended || extendsSourceMachine;
+		}
+
+	}
 
 
 	public Set<String> getPromoted() {
@@ -64,6 +92,10 @@ public class OperationsFinder extends DepthFirstAdapter {
 
 	public Map<String, HashSet<String>> getUsed() {
 		return used;
+	}
+
+	public boolean isExtendsSourceMachine() {
+		return extendsSourceMachine;
 	}
 
 }
