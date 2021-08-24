@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.inject.Injector;
 
@@ -21,12 +22,12 @@ import de.prob.check.tracereplay.check.traceConstruction.AdvancedTraceConstructo
 import de.prob.check.tracereplay.check.traceConstruction.TraceConstructionError;
 import de.prob.model.eventb.*;
 import de.prob.model.representation.*;
+import de.prob.scripting.ClassicalBFactory;
 import de.prob.scripting.EventBFactory;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
+import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 
 public class TraceRefiner {
@@ -149,6 +150,19 @@ public class TraceRefiner {
 		return stateSpace;
 	}
 
+	/**
+	 * Loads an EventB File into a new StateSpace
+	 * @return the file loaded into the state space
+	 * @throws IOException file reading went wrong
+	 */
+	private StateSpace loadClassicalBFileAsStateSpace() throws IOException {
+		ReusableAnimator animator = injector.getInstance(ReusableAnimator.class);
+		StateSpace stateSpace = animator.createStateSpace();
+		ClassicalBFactory classicalBFactory = injector.getInstance(ClassicalBFactory.class);
+		classicalBFactory.extract(alpha.toString()).loadIntoStateSpace(stateSpace);
+		return stateSpace;
+	}
+
 
 
 	/**
@@ -199,15 +213,18 @@ public class TraceRefiner {
 
 		StateSpace stateSpace = TraceCheckerUtils.createStateSpace(beta.toString(), injector);
 
-		Set<String> promoted = operationsFinder.getPromoted();
+	 StateSpace stateSpace2 = loadClassicalBFileAsStateSpace();
+		Map<String, OperationsFinder.RenamingContainer> promotedOperations =
+				handlePromotedOperations(operationsFinder.getPromoted(), "name", new ArrayList<>(stateSpace2.getLoadedMachine().getOperations().keySet()), operationsFinder.getExtendedMachines(), operationsFinder.getIncludedImportedMachines());
+
 		Map<String, Set<String>> internal = operationsFinder.usedOperationsReversed();
 
 		Set<String> usedOperations = TraceCheckerUtils.usedOperations(transitionList);
 
 		Map<String, List<String>> alternatives = usedOperations.stream().collect(toMap(entry -> entry, entry -> {
 			Set<String> result = new HashSet<>();
-			if(promoted.contains(entry)){
-				result.add(entry);
+			if(promotedOperations.containsKey(entry)){
+				result.add(promotedOperations.get(entry).toString());
 			}else if(internal.containsKey(entry)){
 				result.addAll(internal.get(entry));
 			}
@@ -222,6 +239,45 @@ public class TraceRefiner {
 
 		return PersistentTransition.createFromList(resultRaw);
 	}
+
+	/**
+	 * Provided with the necessary input this function calculates which operations are exposed via promotes
+	 * The problem this method deals with is renaming of machines in the promotes clause and thus resulting name clashes
+	 * if the operations are used without prefix
+	 * The method will create a mapping from origin operations to the names used for the operations in the target machine
+	 * @param promotedOperations extracted promoted operations
+	 * @param targetMachine the machine to adapt everything for
+	 * @param operationsOfOrigin the operation names from the machine the trace was created on
+	 * @param extendedMachines the machines that are declared to be extended
+	 * @param includedImportedMachines the machines that are declared to be imported
+	 * @return A map. mapping origin names to target names
+	 */
+	public static Map<String, OperationsFinder.RenamingContainer> handlePromotedOperations(Set<OperationsFinder.RenamingContainer> promotedOperations, String targetMachine, List<String> operationsOfOrigin, List<OperationsFinder.RenamingContainer> extendedMachines, List<OperationsFinder.RenamingContainer> includedImportedMachines){
+		if(extendedMachines.stream().anyMatch(entry -> entry.complies(targetMachine)))
+		{
+			OperationsFinder.RenamingContainer renamingContainer = extendedMachines.stream()
+					.filter(entry -> entry.complies(targetMachine))
+					.collect(toList())
+					.get(0);
+			return operationsOfOrigin.stream()
+					.collect(toMap(entry -> entry, entry -> new OperationsFinder.RenamingContainer(renamingContainer.prefix, entry)));
+		}
+
+		if(includedImportedMachines.stream().anyMatch(entry -> entry.complies(targetMachine))){
+			OperationsFinder.RenamingContainer complyingMachines = includedImportedMachines.stream().filter(entry -> entry.complies(targetMachine)).collect(toList()).get(0);
+
+			Set<OperationsFinder.RenamingContainer> promoteCandidates = operationsOfOrigin.stream().map(entry -> new OperationsFinder.RenamingContainer(complyingMachines.prefix, entry)).collect(Collectors.toSet());
+
+			List<OperationsFinder.RenamingContainer> contained = promoteCandidates.stream().filter(promotedOperations::contains).collect(toList());
+			return promotedOperations.stream()
+					.filter(promoteCandidates::contains)
+					.collect(toMap(entry -> entry.suffix, entry -> entry));
+		}
+
+		return emptyMap();
+
+	}
+
 
 
 
