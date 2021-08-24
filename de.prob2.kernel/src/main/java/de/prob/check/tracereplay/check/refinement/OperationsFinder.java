@@ -22,21 +22,21 @@ public class OperationsFinder extends DepthFirstAdapter {
 
 
 	public static class RenamingContainer {
-		final String renamed;
-		final String original;
+		final String prefix;
+		final String suffix;
 
-		public RenamingContainer(String renamed, String original){
-			this.renamed = renamed;
-			this.original = original;
+		public RenamingContainer(String prefix, String suffix){
+			this.prefix = prefix;
+			this.suffix = suffix;
 		}
 
 		public RenamingContainer(List<TIdentifierLiteral> list) throws ProBError {
 			if(list.size() == 2) {
-				this.renamed = list.get(0).getText();
-				this.original = list.get(1).getText();
+				this.prefix = list.get(0).getText();
+				this.suffix = list.get(1).getText();
 			}else if(list.size() == 1){
-				this.renamed = "";
-				this.original = list.get(0).getText();
+				this.prefix = "";
+				this.suffix = list.get(0).getText();
 			}else{
 				throw new ProBError(new WrongNumberArgsException("Expects a list of length two"));
 			}
@@ -44,24 +44,24 @@ public class OperationsFinder extends DepthFirstAdapter {
 
 
 		public boolean complies(String name){
-			return renamed.equals(name);
+			return suffix.equals(name);
 		}
 
 		@Override
 		public boolean equals(Object o){
 			if(o instanceof RenamingContainer)
 			{
-				return ((RenamingContainer) o).original.equals(this.original) && ((RenamingContainer) o).renamed.equals(this.renamed);
+				return ((RenamingContainer) o).suffix.equals(this.suffix) && ((RenamingContainer) o).prefix.equals(this.prefix);
 			}
 			return false;
 		}
 
 		@Override
 		public String toString(){
-			if(renamed.equals("")){
-				return original;
+			if(prefix.equals("")){
+				return suffix;
 			}else {
-				return renamed + "." + original;
+				return prefix + "." + suffix;
 			}
 		}
 	}
