@@ -1,0 +1,12 @@
+MACHINE M3
+
+VARIABLES z 
+INVARIANT z : NAT
+
+INITIALISATION z := 2
+
+OPERATIONS
+Pow = z := z * z
+
+
+END

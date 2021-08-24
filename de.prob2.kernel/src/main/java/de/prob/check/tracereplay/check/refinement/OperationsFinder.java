@@ -1,7 +1,9 @@
 package de.prob.check.tracereplay.check.refinement;
 
+import com.sun.org.apache.xpath.internal.functions.WrongNumberArgsException;
 import de.be4.classicalb.core.parser.analysis.DepthFirstAdapter;
 import de.be4.classicalb.core.parser.node.*;
+import de.prob.exception.ProBError;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -9,12 +11,62 @@ import java.util.stream.Stream;
 
 public class OperationsFinder extends DepthFirstAdapter {
 
-	private Set<String> promoted = new HashSet<>();
-	private Map<String, HashSet<String>> used = new HashMap<>();
+	private Set<RenamingContainer> promoted = new HashSet<>();
+	private final Map<String, HashSet<String>> used = new HashMap<>();
 	private AOperation currentOperation;
 	private final String sourceMachine;
 	private final Start node;
 	private boolean extendsSourceMachine = false;
+	private final List<RenamingContainer> extendedMachines = new ArrayList<>();
+	private final List<RenamingContainer> includedImportedMachines = new ArrayList<>();
+
+
+	public static class RenamingContainer {
+		final String renamed;
+		final String original;
+
+		public RenamingContainer(String renamed, String original){
+			this.renamed = renamed;
+			this.original = original;
+		}
+
+		public RenamingContainer(List<TIdentifierLiteral> list) throws ProBError {
+			if(list.size() == 2) {
+				this.renamed = list.get(0).getText();
+				this.original = list.get(1).getText();
+			}else if(list.size() == 1){
+				this.renamed = "";
+				this.original = list.get(0).getText();
+			}else{
+				throw new ProBError(new WrongNumberArgsException("Expects a list of length two"));
+			}
+		}
+
+
+		public boolean complies(String name){
+			return renamed.equals(name);
+		}
+
+		@Override
+		public boolean equals(Object o){
+			if(o instanceof RenamingContainer)
+			{
+				return ((RenamingContainer) o).original.equals(this.original) && ((RenamingContainer) o).renamed.equals(this.renamed);
+			}
+			return false;
+		}
+
+		@Override
+		public String toString(){
+			if(renamed.equals("")){
+				return original;
+			}else {
+				return renamed + "." + original;
+			}
+		}
+	}
+
+
 
 	public OperationsFinder(String sourceMachine, Start node){
 		this.sourceMachine = sourceMachine;
@@ -36,10 +88,21 @@ public class OperationsFinder extends DepthFirstAdapter {
 	@Override
 	public void caseAPromotesMachineClause(APromotesMachineClause node)
 	{
-		promoted = node.getOperationNames().stream().map(Object::toString)
-				.map(String::trim)
-				.collect(Collectors.toSet());
+		Set<RenamingContainer> result = new HashSet<>();
+		for(PExpression expression : node.getOperationNames()){
+			if(expression instanceof AIdentifierExpression){
+				LinkedList<TIdentifierLiteral> identifier = ((AIdentifierExpression) expression).getIdentifier();
+				if(identifier.size() == 1){
+					result.add(new RenamingContainer("", identifier.get(0).getText()));
+				}else if(identifier.size() == 2){
+					result.add(new RenamingContainer(identifier.get(0).getText(), identifier.get(1).getText()));
+				}
+			}
+		}
+
+		promoted = result;
 	}
+
 
 
 	@Override
@@ -81,12 +144,23 @@ public class OperationsFinder extends DepthFirstAdapter {
 		if(node.parent() instanceof AExtendsMachineClause){
 			boolean sourceMachineExtended = node.getMachineName().stream().anyMatch(entry -> entry.toString().trim().equals(sourceMachine));
 			extendsSourceMachine = sourceMachineExtended || extendsSourceMachine;
+		    extendedMachines.add(new RenamingContainer(node.getMachineName()));
+
+		}else if(node.parent() instanceof  AIncludesMachineClause || node.parent() instanceof  AImportsMachineClause){
+			includedImportedMachines.add(new RenamingContainer(node.getMachineName()));
 		}
 
 	}
 
+	public List<RenamingContainer> getExtendedMachines() {
+		return extendedMachines;
+	}
 
-	public Set<String> getPromoted() {
+	public List<RenamingContainer> getIncludedImportedMachines() {
+		return includedImportedMachines;
+	}
+
+	public Set<RenamingContainer> getPromoted() {
 		return promoted;
 	}
 

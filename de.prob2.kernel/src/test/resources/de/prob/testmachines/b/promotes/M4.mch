@@ -1,0 +1,7 @@
+MACHINE M4
+
+INCLUDES gna.M1, M3
+
+PROMOTES gna.Inc, Pow
+
+END

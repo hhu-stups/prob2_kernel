@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class OperationFinderTest {
 
@@ -31,7 +33,7 @@ public class OperationFinderTest {
 		expected2.put("Inc2", Collections.singleton("Foo"));
 
 
-		Assertions.assertEquals(Collections.singleton("Inc"), operationsFinder.getPromoted());
+		Assertions.assertEquals(Collections.singleton("Inc"), operationsFinder.getPromoted().stream().map(OperationsFinder.RenamingContainer::toString).collect(Collectors.toSet()));
 		Assertions.assertEquals(expected, operationsFinder.getUsed());
 		Assertions.assertEquals(expected2, operationsFinder.usedOperationsReversed());
 
@@ -51,7 +53,42 @@ public class OperationFinderTest {
 
 		Assertions.assertTrue(operationsFinder.isExtendsSourceMachine());
 
+	}
 
+
+	@Test
+	public void promoted_operations_are_recognized_correctly() throws BCompoundException, IOException {
+		Path file = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "promotes", "M4.mch");
+
+
+		BParser parser = new BParser(file.toString());
+		Start result = parser.parseFile(file.toFile(), false);
+		OperationsFinder operationsFinder = new OperationsFinder("M3", result);
+		operationsFinder.explore();
+
+		Set<String> operationResult = operationsFinder.getPromoted().stream().map(OperationsFinder.RenamingContainer::toString).collect(Collectors.toSet());
+
+		Set<String> expected = Stream.of("gna.Inc", "Pow").collect(Collectors.toSet());
+
+		Assertions.assertEquals(expected, operationResult);
+
+	}
+
+	@Test
+	public void included_operations_are_recognized_correctly() throws BCompoundException, IOException {
+		Path file = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "promotes", "M4.mch");
+
+
+		BParser parser = new BParser(file.toString());
+		Start result = parser.parseFile(file.toFile(), false);
+		OperationsFinder operationsFinder = new OperationsFinder("M3", result);
+		operationsFinder.explore();
+
+		Set<String> operationResult = operationsFinder.getIncludedImportedMachines().stream().map(OperationsFinder.RenamingContainer::toString).collect(Collectors.toSet());
+
+		Set<String> expected = Stream.of("gna.M1", "M3").collect(Collectors.toSet());
+
+		Assertions.assertEquals(expected, operationResult);
 
 	}
 }
