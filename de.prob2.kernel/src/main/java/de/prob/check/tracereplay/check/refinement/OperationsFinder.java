@@ -1,6 +1,5 @@
 package de.prob.check.tracereplay.check.refinement;
 
-import com.sun.org.apache.xpath.internal.functions.WrongNumberArgsException;
 import de.be4.classicalb.core.parser.analysis.DepthFirstAdapter;
 import de.be4.classicalb.core.parser.node.*;
 import de.prob.exception.ProBError;
@@ -38,7 +37,7 @@ public class OperationsFinder extends DepthFirstAdapter {
 				this.prefix = "";
 				this.suffix = list.get(0).getText();
 			}else{
-				throw new ProBError(new WrongNumberArgsException("Expects a list of length two"));
+				throw new ProBError(new IllegalArgumentException("Expects a list of length two"));
 			}
 		}
 
@@ -63,6 +62,11 @@ public class OperationsFinder extends DepthFirstAdapter {
 			}else {
 				return prefix + "." + suffix;
 			}
+		}
+
+		@Override
+		public int hashCode(){
+			return (prefix+suffix).hashCode();
 		}
 	}
 
