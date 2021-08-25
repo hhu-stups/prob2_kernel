@@ -1,70 +1,34 @@
 package de.prob.check.tracereplay.check.refinement;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.*;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import com.google.inject.Injector;
-
-import de.be4.classicalb.core.parser.BParser;
-import de.be4.classicalb.core.parser.exceptions.BCompoundException;
-import de.be4.classicalb.core.parser.node.AAbstractMachineParseUnit;
-import de.be4.classicalb.core.parser.node.Start;
-import de.be4.classicalb.core.parser.util.PrettyPrinter;
 import de.prob.animator.ReusableAnimator;
 import de.prob.check.tracereplay.PersistentTransition;
-import de.prob.check.tracereplay.check.TraceCheckerUtils;
 import de.prob.check.tracereplay.check.traceConstruction.AdvancedTraceConstructor;
 import de.prob.check.tracereplay.check.traceConstruction.TraceConstructionError;
-import de.prob.model.eventb.*;
-import de.prob.model.representation.*;
-import de.prob.scripting.ClassicalBFactory;
+import de.prob.model.eventb.Event;
+import de.prob.model.representation.AbstractModel;
+import de.prob.model.representation.BEvent;
+import de.prob.model.representation.Machine;
+import de.prob.model.representation.ModelElementList;
 import de.prob.scripting.EventBFactory;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
 
-import static java.util.Collections.*;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
+
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.*;
 
-public class TraceRefiner {
-	private final Injector injector;
-	private final List<PersistentTransition> transitionList;
-	private final Path adaptFrom; //Machine the trace comes from
-	private final Path adaptTo; //Machine the trace has to be adapted to
+public class TraceRefinerEventB extends AbstractTraceRefinement {
 
-	public TraceRefiner(Injector injector, List<PersistentTransition> transitionList, Path adaptFrom, Path adaptTo) {
-		this.injector = injector;
-		this.transitionList = transitionList;
-		this.adaptFrom = adaptFrom;
-		this.adaptTo = adaptTo;
+	public TraceRefinerEventB(Injector injector, List<PersistentTransition> transitionList, Path adaptFrom) {
+		super(injector, transitionList, adaptFrom);
 	}
 
-
-
-
-	/**
-	 * Refines the trace for the given machine. Let A and B be machines. B refines A. A = alpha, B = Beta
-	 * @return the trace if it works on the machine
-	 * @throws IOException something went wrong when parsing the file
-	 * @throws BCompoundException something in the file was wrong with the machine
-	 * @throws TraceConstructionError something went wrong when constructing the trace
-	 */
-	public List<PersistentTransition> refineTrace() throws IOException, BCompoundException, TraceConstructionError {
-		switch (adaptFrom.toString().substring(adaptFrom.toString().lastIndexOf("."))){
-			case ".mch":
-			case ".ref":
-			case ".imp":
-				return refineTraceClassicalB();
-			case ".bum":
-				return refineTraceEventB();
-			default:
-				throw new IOException("file not suitable for refinement replay");
-		}
-	}
 
 
 	/**
@@ -79,7 +43,7 @@ public class TraceRefiner {
 	 * @throws IOException File reading went wrong
 	 * @throws TraceConstructionError no suitable adaptation was found
 	 */
-	private List<PersistentTransition> refineTraceEventB() throws IOException, TraceConstructionError {
+	public List<PersistentTransition> refineTrace() throws IOException, TraceConstructionError {
 		StateSpace stateSpace = loadEventBFileAsStateSpace();
 
 		AbstractModel model = stateSpace.getModel();
@@ -149,48 +113,6 @@ public class TraceRefiner {
 		eventBFactory.extract(adaptFrom.toString()).loadIntoStateSpace(stateSpace);
 		return stateSpace;
 	}
-
-
-
-	/**
-	 * Checks an EventB machine if it is able to perform the given Trace. For the algorithm see prolog code.
-	 * For that both machines are merged and run and the original trace is executed.
-	 * @return The transformed trace
-	 * @throws IOException file reading went wrong
-	 * @throws BCompoundException predicate translation went wrong
-	 * @throws TraceConstructionError trace could not be found
-	 */
-	private List<PersistentTransition> refineTraceClassicalB() throws IOException, BCompoundException, TraceConstructionError {
-		BParser alphaParser = new BParser(adaptFrom.toString());
-		Start alphaStart = alphaParser.parseFile(adaptFrom.toFile(), false);
-
-		BParser betaParser = new BParser(adaptTo.toString());
-		Start betaStart = betaParser.parseFile(adaptTo.toFile(), false);
-
-		NodeCollector nodeCollector = new NodeCollector(alphaStart);
-		ASTManipulator astManipulator = new ASTManipulator(betaStart, nodeCollector);
-
-		AAbstractMachineParseUnit aAbstractMachineParseUnit = (AAbstractMachineParseUnit) astManipulator.getStart().getPParseUnit();
-
-		PrettyPrinter prettyPrinter = new PrettyPrinter();
-		prettyPrinter.caseAAbstractMachineParseUnit(aAbstractMachineParseUnit);
-
-		File tempFile = File.createTempFile("machine", ".mch", adaptFrom.getParent().toFile());
-
-
-		FileWriter writer = new FileWriter(tempFile);
-		writer.write(prettyPrinter.getPrettyPrint());
-		writer.close();
-
-
-		StateSpace stateSpace = TraceCheckerUtils.createStateSpace(tempFile.toPath().toString(), injector);
-
-		List<Transition> resultRaw = AdvancedTraceConstructor.constructTraceByName(transitionList, stateSpace);
-
-		return PersistentTransition.createFromList(resultRaw);
-	}
-
-
 
 
 }

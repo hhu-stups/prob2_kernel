@@ -22,16 +22,12 @@ import static java.util.Collections.*;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
-public class HorizontalTraceRefiner {
-	private final Injector injector;
-	private final List<PersistentTransition> transitionList;
-	private final Path adaptFrom;
+public class HorizontalTraceRefiner extends AbstractTraceRefinement {
+
 	private final Path adaptTo;
 
 	public HorizontalTraceRefiner(Injector injector, List<PersistentTransition> transitionList, Path adaptFrom, Path adaptTo) {
-		this.injector = injector;
-		this.transitionList = transitionList;
-		this.adaptFrom = adaptFrom;
+		super(injector, transitionList, adaptFrom);
 		this.adaptTo = adaptTo;
 	}
 

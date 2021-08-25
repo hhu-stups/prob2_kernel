@@ -1,13 +1,5 @@
 package de.prob.check.tracereplay.check.refinement;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.stream.Collectors;
-
 import de.be4.classicalb.core.parser.BParser;
 import de.be4.classicalb.core.parser.exceptions.BCompoundException;
 import de.be4.classicalb.core.parser.node.AAbstractMachineParseUnit;
@@ -22,22 +14,25 @@ import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.cli.CliTestCommon;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
-
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class RefinementCheckerTest {
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
 
-
+public class VerticalTraceRefinerTest {
 	private static TraceManager traceManager;
 	private static ProBKernelStub proBKernelStub;
 
 	@BeforeAll
 	static void beforeAll() {
-	//	System.setProperty("prob.home", "/home/sebastian/prob_prolog");
-
 		traceManager = CliTestCommon.getInjector().getInstance(TraceManager.class);
 		proBKernelStub = CliTestCommon.getInjector().getInstance(ProBKernelStub.class);
 	}
@@ -50,7 +45,7 @@ public class RefinementCheckerTest {
 
 
 	@Test
-	public void test_integration_1_simple_refinement() throws IOException, BCompoundException, TraceConstructionError {
+	public void test_integration_1_simple_refinement_hand_assembly() throws IOException, BCompoundException, TraceConstructionError {
 
 
 		Path file = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "refinements",  "TrafficLightRef.ref");
@@ -93,49 +88,23 @@ public class RefinementCheckerTest {
 	}
 
 
-
 	@Test
-	public void simple_event_b_no_changes() throws IOException, TraceConstructionError, BCompoundException {
+	public void test_integration_1_simple_refinement_via_method() throws IOException, BCompoundException, TraceConstructionError {
 
 
-		Path pathStateSpace1 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "trafficLight", "mac.bum");
+		Path file = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "refinements",  "TrafficLightRef.ref");
+		Path file2 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "refinements",  "TrafficLight.mch");
 
-		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB",  "trafficLight", "test1234.prob2trace"));
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "refinements", "TrafficLightRef.prob2trace"));
 
-		List<PersistentTransition> result = new TraceRefiner(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace1).refineTrace();
+		List<String> result = new VerticalTraceRefiner(CliTestCommon.getInjector(), jsonFile.getTransitionList(), file, file2)
+				.refineTrace()
+				.stream().map(PersistentTransition::getOperationName)
+				.collect(Collectors.toList());
 
-		Assertions.assertEquals(jsonFile.getTransitionList().size(), result.size());
+		List<String> expected = jsonFile.getTransitionList().stream().map(PersistentTransition::getOperationName).collect(Collectors.toList());
+		Assertions.assertEquals(expected, result);
 	}
-
-
-
-
-
-	@Test
-	public void simple_event_b_refinement_success() throws IOException, TraceConstructionError, BCompoundException {
-
-		Path pathStateSpace1 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "trafficLight", "mac1.bum");
-
-		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB",  "trafficLight", "test1234.prob2trace"));
-
-		List<PersistentTransition> result = new TraceRefiner(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace1).refineTrace();
-
-
-		String comparison1 = "activateSystem";
-
-
-		List<String> nameList = result.stream().map(PersistentTransition::getOperationName).collect(Collectors.toList());
-		List<String> nameListWithoutSkip = nameList.stream().filter(entry -> !entry.equals(comparison1)).collect(Collectors.toList());
-
-
-		boolean hasActivatedTheSystemOnce = nameList.stream().filter(entry -> entry.equals(comparison1)).count() == 1;
-
-		Assertions.assertTrue(hasActivatedTheSystemOnce);
-		Assertions.assertEquals(11, nameListWithoutSkip.size());
-
-	}
-
 
 
 }
-
