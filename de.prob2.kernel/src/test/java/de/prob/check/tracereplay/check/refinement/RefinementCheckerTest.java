@@ -142,9 +142,9 @@ public class RefinementCheckerTest {
 
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b",  "promotes", "test.prob2trace"));
 
-		TraceRefiner traceRefiner = new TraceRefiner(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace2);
+		HorizontalTraceRefiner traceRefiner = new HorizontalTraceRefiner(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace2);
 
-		List<PersistentTransition> result = traceRefiner.horizontalRefinement();
+		List<PersistentTransition> result = traceRefiner.refineTrace();
 
 		Assertions.assertEquals(jsonFile.getTransitionList().size(), result.size());
 	}
@@ -156,9 +156,9 @@ public class RefinementCheckerTest {
 
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b",  "internalOperationCall", "test.prob2trace"));
 
-		TraceRefiner traceRefiner = new TraceRefiner(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace2);
+		HorizontalTraceRefiner traceRefiner = new HorizontalTraceRefiner(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace2);
 
-		List<PersistentTransition> result = traceRefiner.horizontalRefinement();
+		List<PersistentTransition> result = traceRefiner.refineTrace();
 
 		Assertions.assertEquals(jsonFile.getTransitionList().size(), result.size());
 	}
@@ -170,9 +170,9 @@ public class RefinementCheckerTest {
 
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b",  "promotedAndInternal", "test.prob2trace"));
 
-		TraceRefiner traceRefiner = new TraceRefiner(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace2);
+		HorizontalTraceRefiner traceRefiner = new HorizontalTraceRefiner(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace2);
 
-		List<PersistentTransition> result = traceRefiner.horizontalRefinement();
+		List<PersistentTransition> result = traceRefiner.refineTrace();
 
 		Assertions.assertEquals(jsonFile.getTransitionList().size(), result.size());
 	}
@@ -195,7 +195,7 @@ public class RefinementCheckerTest {
 
 		StateSpace stateSpace2 = proBKernelStub.createStateSpace(alpha);
 		Map<String, OperationsFinder.RenamingContainer> promotedOperations =
-				TraceRefiner.handlePromotedOperations(operationsFinder.getPromoted(), alphaName, new ArrayList<>(stateSpace2.getLoadedMachine().getOperations().keySet()), operationsFinder.getExtendedMachines(), operationsFinder.getIncludedImportedMachines());
+				HorizontalTraceRefiner.handlePromotedOperations(operationsFinder.getPromoted(), alphaName, new ArrayList<>(stateSpace2.getLoadedMachine().getOperations().keySet()), operationsFinder.getExtendedMachines(), operationsFinder.getIncludedImportedMachines());
 
 
 		OperationsFinder.RenamingContainer expectedEntry = new OperationsFinder.RenamingContainer("", "Pow");
@@ -225,7 +225,7 @@ public class RefinementCheckerTest {
 
 		StateSpace stateSpace2 = proBKernelStub.createStateSpace(alpha);
 		Map<String, OperationsFinder.RenamingContainer> promotedOperations =
-				TraceRefiner.handlePromotedOperations(operationsFinder.getPromoted(), alphaName, new ArrayList<>(stateSpace2.getLoadedMachine().getOperations().keySet()), operationsFinder.getExtendedMachines(), operationsFinder.getIncludedImportedMachines());
+				HorizontalTraceRefiner.handlePromotedOperations(operationsFinder.getPromoted(), alphaName, new ArrayList<>(stateSpace2.getLoadedMachine().getOperations().keySet()), operationsFinder.getExtendedMachines(), operationsFinder.getIncludedImportedMachines());
 
 
 		OperationsFinder.RenamingContainer expectedEntry = new OperationsFinder.RenamingContainer("", "Inc");
@@ -258,7 +258,7 @@ public class RefinementCheckerTest {
 
 		StateSpace stateSpace2 = proBKernelStub.createStateSpace(alpha);
 		Map<String, OperationsFinder.RenamingContainer> promotedOperations =
-				TraceRefiner.handlePromotedOperations(operationsFinder.getPromoted(), alphaName, new ArrayList<>(stateSpace2.getLoadedMachine().getOperations().keySet()), operationsFinder.getExtendedMachines(), operationsFinder.getIncludedImportedMachines());
+				HorizontalTraceRefiner.handlePromotedOperations(operationsFinder.getPromoted(), alphaName, new ArrayList<>(stateSpace2.getLoadedMachine().getOperations().keySet()), operationsFinder.getExtendedMachines(), operationsFinder.getIncludedImportedMachines());
 
 
 		OperationsFinder.RenamingContainer expectedEntry = new OperationsFinder.RenamingContainer("r1", "Inc");
