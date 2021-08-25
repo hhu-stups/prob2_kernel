@@ -8,6 +8,7 @@ INITIALISATION x := 1
 
 OPERATIONS
 
-Inc = x := x + 1
+Inc = x := x + 1;
+Dec = SELECT x > 0 THEN x := x -1 END
 
 END
