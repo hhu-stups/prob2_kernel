@@ -152,7 +152,6 @@ public class TraceRefiner {
 
 
 
-
 	/**
 	 * Checks an EventB machine if it is able to perform the given Trace. For the algorithm see prolog code.
 	 * For that both machines are merged and run and the original trace is executed.

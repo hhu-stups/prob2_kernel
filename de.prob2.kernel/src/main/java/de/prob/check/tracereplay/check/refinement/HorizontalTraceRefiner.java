@@ -48,6 +48,10 @@ public class HorizontalTraceRefiner {
 		return stateSpace;
 	}
 
+	private String removeFileExtension(Path path){
+		return path.getFileName().toString().substring(0, path.getFileName().toString().lastIndexOf("."));
+	}
+
 
 	/**
 	 * Refines a classical B Trace horizontally. Respects Includes/Extends/Promotes/Imports
@@ -60,14 +64,14 @@ public class HorizontalTraceRefiner {
 		BParser betaParser = new BParser(adaptTo.toString());
 		Start betaStart = betaParser.parseFile(adaptTo.toFile(), false);
 
-		OperationsFinder operationsFinder = new OperationsFinder(adaptFrom.getFileName().toString().substring(adaptFrom.getFileName().toString().lastIndexOf("*")), betaStart);
+		OperationsFinder operationsFinder = new OperationsFinder(removeFileExtension(adaptFrom), betaStart);
 		operationsFinder.explore();
 
 		StateSpace stateSpace = TraceCheckerUtils.createStateSpace(adaptTo.toString(), injector);
 
 		StateSpace stateSpace2 = loadClassicalBFileAsStateSpace();
 		Map<String, OperationsFinder.RenamingContainer> promotedOperations =
-				handlePromotedOperations(operationsFinder.getPromoted(), "name", new ArrayList<>(stateSpace2.getLoadedMachine().getOperations().keySet()), operationsFinder.getExtendedMachines(), operationsFinder.getIncludedImportedMachines());
+				handlePromotedOperations(operationsFinder.getPromoted(), removeFileExtension(adaptFrom), new ArrayList<>(stateSpace2.getLoadedMachine().getOperations().keySet()), operationsFinder.getExtendedMachines(), operationsFinder.getIncludedImportedMachines());
 
 		Map<String, Set<String>> internal = operationsFinder.usedOperationsReversed();
 
