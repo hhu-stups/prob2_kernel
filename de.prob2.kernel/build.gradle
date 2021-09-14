@@ -266,8 +266,7 @@ groovydoc {
 }
 
 wrapper {
-	gradleVersion = "6.8.2"
-	distributionType = Wrapper.DistributionType.ALL
+	gradleVersion = "7.2"
 }
 
 task groovyIntegrationTests(type: JavaExec) {
