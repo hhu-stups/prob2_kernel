@@ -279,7 +279,7 @@ task groovyIntegrationTests(type: JavaExec) {
 // Run a single groovy Testcase
 // Usage: ./gradlew groovyTest --args="-script groovyTests/cbcChecking.groovy"
 task groovyTest(type: JavaExec) {
-    main = "de.prob2.commandline.CommandLineMain"
+	main = "de.prob2.commandline.CommandLineMain"
 	classpath = project(":de.prob2.commandline").sourceSets.main.runtimeClasspath
 }
 
