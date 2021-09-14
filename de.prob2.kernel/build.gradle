@@ -270,7 +270,7 @@ wrapper {
 }
 
 task groovyIntegrationTests(type: JavaExec) {
-	main = "de.prob2.commandline.CommandLineMain"
+	mainClass = "de.prob2.commandline.CommandLineMain"
 	inputs.dir("groovyTests")
 	classpath = project(":de.prob2.commandline").sourceSets.main.runtimeClasspath
 	args = ['-script', 'groovyTests']
@@ -279,7 +279,7 @@ task groovyIntegrationTests(type: JavaExec) {
 // Run a single groovy Testcase
 // Usage: ./gradlew groovyTest --args="-script groovyTests/cbcChecking.groovy"
 task groovyTest(type: JavaExec) {
-	main = "de.prob2.commandline.CommandLineMain"
+	mainClass = "de.prob2.commandline.CommandLineMain"
 	classpath = project(":de.prob2.commandline").sourceSets.main.runtimeClasspath
 }
 
@@ -291,8 +291,8 @@ jacoco {
 }
 jacocoTestReport {
 	reports {
-		xml.enabled false
-		csv.enabled false
+		xml.required = false
+		csv.required = false
 		html.destination new File("${buildDir}/jacocoHtml")
 	}
 	executionData(test, groovyIntegrationTests)
