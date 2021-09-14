@@ -1,6 +1,5 @@
 plugins {
 	id "de.undercouch.download" version "4.1.1"
-	id "com.google.osdetector" version "1.7.0"
 }
 
 apply plugin: 'java-library'
