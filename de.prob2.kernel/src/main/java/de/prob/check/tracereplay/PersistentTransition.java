@@ -122,6 +122,10 @@ public class PersistentTransition {
 	}
 
 
+	public PersistentTransition(String name) {
+		this.name = name;
+	}
+
 	public static List<PersistentTransition> createFromList(final List<Transition> transitions){
 		if(transitions.isEmpty()) return emptyList();
 		PersistentTransition first = new PersistentTransition(transitions.get(0), null);

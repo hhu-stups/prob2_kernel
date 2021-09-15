@@ -83,7 +83,7 @@ public class AdvancedTraceConstructorTest {
 		persistentTransitionsWithoutInit.remove(0);
 
 		Trace t = new Trace(stateSpace);
-		Trace resultTrace = AdvancedTraceConstructor.prepareTrace(t, persistentTransitionsWithoutInit);
+		Trace resultTrace = AdvancedTraceConstructor.prepareTrace2(t, persistentTransitionsWithoutInit);
 
 		Assertions.assertEquals(1, resultTrace.getTransitionList().size());
 		Assertions.assertEquals(Transition.SETUP_CONSTANTS_NAME, resultTrace.getTransitionList().get(0).getName());
@@ -99,7 +99,7 @@ public class AdvancedTraceConstructorTest {
 		persistentTransitionsWithoutInit.remove(0);
 
 		Trace t = new Trace(stateSpace);
-		Trace resultTrace = AdvancedTraceConstructor.prepareTrace(t, persistentTransitionsWithoutInit);
+		Trace resultTrace = AdvancedTraceConstructor.prepareTrace2(t, persistentTransitionsWithoutInit);
 		List<PersistentTransition> list = AdvancedTraceConstructor.prepareTraceList(resultTrace, jsonFile.getTransitionList());
 
 

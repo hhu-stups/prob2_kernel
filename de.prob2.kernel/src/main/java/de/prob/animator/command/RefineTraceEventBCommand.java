@@ -99,9 +99,12 @@ public class RefineTraceEventBCommand extends AbstractCommand implements
 	@Override
 	public void writeCommand(final IPrologTermOutput pto) {
 
-		pto.openTerm(PROLOG_COMMAND_NAME).printAtomOrNumber(stateId.getId());
+		pto.openTerm(PROLOG_COMMAND_NAME);
+
+		pto.printAtomOrNumber(stateId.getId());
 
 		pto.openList();
+
 		for (String n : name) {
 			pto.openList();
 			if(alternatives.containsKey(n)) {

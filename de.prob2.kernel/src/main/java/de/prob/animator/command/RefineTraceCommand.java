@@ -12,11 +12,11 @@ import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toMap;
 
 public class RefineTraceCommand extends AbstractCommand implements
@@ -24,9 +24,7 @@ public class RefineTraceCommand extends AbstractCommand implements
 
 
 	private static final String PROLOG_COMMAND_NAME = "prob2_refine_trace";
-	//Logger logger = LoggerFactory.getLogger(FindPathCommand.class);
 	private static final String RESULT_VARIABLE = "Res";
-	private static final String ERRORS_VARIABLE = "Errors";
 
 	private final List<ClassicalB> evalElement;
 	private final State stateId;
@@ -47,7 +45,7 @@ public class RefineTraceCommand extends AbstractCommand implements
 	 */
 	public RefineTraceCommand(final StateSpace s, final State stateId,
 						   final List<String> trace, final List<ClassicalB> predicates) {
-		this(s, stateId, trace, predicates, trace.stream().collect(toMap(entry -> entry, Collections::singletonList)), Collections.emptyList());
+		this(s, stateId, trace, predicates, new HashSet<>(trace).stream().collect(toMap(entry -> entry, Collections::singletonList)), emptyList());
 	}
 
 	/**
@@ -95,8 +93,9 @@ public class RefineTraceCommand extends AbstractCommand implements
 	 */
 	@Override
 	public void writeCommand(final IPrologTermOutput pto) {
-		pto.openTerm(PROLOG_COMMAND_NAME)
-				.printAtomOrNumber(stateId.getId());
+		pto.openTerm(PROLOG_COMMAND_NAME);
+
+		pto.printAtomOrNumber(stateId.getId());
 
 		pto.openList();
 		for (String n : name) {
@@ -114,8 +113,6 @@ public class RefineTraceCommand extends AbstractCommand implements
 		final ASTProlog prolog = new ASTProlog(pto, null);
 		pto.openList();
 
-		AbstractEvalElement g;
-
 		for (ClassicalB cb : evalElement) {
 			cb.getAst().apply(prolog);
 		}
@@ -126,6 +123,9 @@ public class RefineTraceCommand extends AbstractCommand implements
 		for (String string : blackList) {
 			pto.printAtom(string);
 		}
+		pto.closeList();
+
+		pto.openList();
 		pto.closeList();
 
 

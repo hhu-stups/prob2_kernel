@@ -21,7 +21,9 @@ import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.exploration.ReplayOptions;
 import de.prob.check.tracereplay.check.refinement.ASTManipulator;
+import de.prob.check.tracereplay.check.refinement.HorizontalTraceRefiner;
 import de.prob.check.tracereplay.check.refinement.NodeCollector;
+import de.prob.check.tracereplay.check.traceConstruction.TraceConstructionError;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.cli.CliTestCommon;
@@ -57,6 +59,8 @@ public class FindPathCommandTest {
 	static void afterAll() {
 		proBKernelStub.killCurrentAnimator();
 	}
+
+
 
 
 

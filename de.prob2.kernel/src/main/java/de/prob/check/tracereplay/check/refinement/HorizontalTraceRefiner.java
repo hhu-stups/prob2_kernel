@@ -87,7 +87,7 @@ public class HorizontalTraceRefiner extends AbstractTraceRefinement {
 		alternatives.put(Transition.INITIALISE_MACHINE_NAME, singletonList(Transition.INITIALISE_MACHINE_NAME));
 		alternatives.put(Transition.SETUP_CONSTANTS_NAME, singletonList(Transition.SETUP_CONSTANTS_NAME));
 
-		List<Transition> resultRaw = AdvancedTraceConstructor.constructTraceEventB(transitionList, stateSpace, alternatives, emptyList(), emptyList());
+		List<Transition> resultRaw = AdvancedTraceConstructor.constructTrace(transitionList, stateSpace);
 
 		return PersistentTransition.createFromList(resultRaw);
 	}

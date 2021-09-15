@@ -13,6 +13,7 @@ import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
 import de.prob.statespace.Transition;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -26,53 +27,46 @@ public class AdvancedTraceConstructor {
 
 	public static List<Transition> constructTraceWithOptions(List<PersistentTransition> persistentTrace, StateSpace stateSpace, ReplayOptions replayOptions) throws TraceConstructionError {
 
-		Trace modifiedTrace = prepareTrace(new Trace(stateSpace), persistentTrace);
-		modifiedTrace.setExploreStateByDefault(true);
-		List<PersistentTransition> modifiedList = prepareTraceList(modifiedTrace, persistentTrace);
+		List<PersistentTransition> modifiedTrace = prepareTrace(new Trace(stateSpace), persistentTrace);
 
-		List<String> transitionNames = modifiedList.stream()
+		List<String> transitionNames = modifiedTrace.stream()
 				.map(PersistentTransition::getOperationName)
 				.collect(toList());
-		List<ClassicalB> predicates = modifiedList.stream()
+		List<ClassicalB> predicates = modifiedTrace.stream()
 				.map(entry -> new ClassicalB(replayOptions.createMapping(entry).toString(), FormulaExpand.EXPAND))
 				.collect(toList());
 
-		FindPathCommand constructTraceCommand = new FindPathCommand(modifiedTrace.getStateSpace(), modifiedTrace.getCurrentState(), transitionNames, predicates);
+		FindPathCommand constructTraceCommand = new FindPathCommand(stateSpace, stateSpace.getRoot(), transitionNames, predicates);
 		stateSpace.execute(constructTraceCommand);
 
-		if (constructTraceCommand.hasErrors() && constructTraceCommand.getNewTransitions().size() < persistentTrace.size()) { //Te command failed in finding an complete Trace
+		if (constructTraceCommand.hasErrors() && constructTraceCommand.getNewTransitions().size() < persistentTrace.size()) {
 			throw new TraceConstructionError(constructTraceCommand.getErrors(), constructTraceCommand.getNewTransitions());
 		} else {
 			return constructTraceCommand.getNewTransitions();
 		}
 	}
 
-	public static List<Transition> constructTrace(List<PersistentTransition> persistentTrace, StateSpace stateSpace) throws TraceConstructionError {
-		return constructTraceWithOptions(persistentTrace, stateSpace, ReplayOptions.allowAll());
-	}
+
 
 	public static List<Transition> constructTraceByName(List<PersistentTransition> persistentTrace, StateSpace stateSpace) throws TraceConstructionError {
 		return constructTraceWithOptions(persistentTrace, stateSpace, ReplayOptions.replayJustNames());
 	}
 
+	public static List<Transition> constructTrace(List<PersistentTransition> persistentTrace, StateSpace stateSpace) throws TraceConstructionError {
 
-	public static List<Transition> constructTrace(List<PersistentTransition> persistentTrace, StateSpace stateSpace, Map<String, List<String>> alternatives, List<String> blackList) throws TraceConstructionError {
+		List<PersistentTransition> modifiedTrace = prepareTrace(new Trace(stateSpace), persistentTrace);
 
-		Trace modifiedTrace = prepareTrace(new Trace(stateSpace), persistentTrace);
-		modifiedTrace.setExploreStateByDefault(true);
-		List<PersistentTransition> modifiedList = prepareTraceList(modifiedTrace, persistentTrace);
-
-		List<String> transitionNames = modifiedList.stream()
+		List<String> transitionNames = modifiedTrace.stream()
 				.map(PersistentTransition::getOperationName)
 				.collect(toList());
-		List<ClassicalB> predicates = modifiedList.stream()
+		List<ClassicalB> predicates = modifiedTrace.stream()
 				.map(entry -> new ClassicalB(new PredicateBuilder().addMap(entry.getAllPredicates()).toString(), FormulaExpand.EXPAND))
 				.collect(toList());
 
-		RefineTraceCommand refineTraceCommand = new RefineTraceCommand(modifiedTrace.getStateSpace(), modifiedTrace.getCurrentState(), transitionNames, predicates, alternatives, blackList);
+		RefineTraceCommand refineTraceCommand = new RefineTraceCommand(stateSpace, stateSpace.getRoot(), transitionNames, predicates);
 		stateSpace.execute(refineTraceCommand);
 
-		if (refineTraceCommand.hasErrors() && refineTraceCommand.getNewTransitions().size() < persistentTrace.size()) { //The command failed in finding an complete Trace
+		if (refineTraceCommand.hasErrors() && refineTraceCommand.getNewTransitions().size() < persistentTrace.size()) {
 			throw new TraceConstructionError(refineTraceCommand.getErrors(), refineTraceCommand.getNewTransitions());
 		} else {
 			return refineTraceCommand.getNewTransitions();
@@ -81,7 +75,7 @@ public class AdvancedTraceConstructor {
 
 	public static List<Transition> constructTraceEventB(List<PersistentTransition> persistentTrace, StateSpace stateSpace, Map<String, List<String>> alternatives, List<String> refinedAlternatives, List<String> skips) throws TraceConstructionError {
 
-		Trace modifiedTrace = prepareTrace(new Trace(stateSpace), persistentTrace);
+		Trace modifiedTrace = prepareTrace2(new Trace(stateSpace), persistentTrace);
 		modifiedTrace.setExploreStateByDefault(true);
 		List<PersistentTransition> modifiedList = prepareTraceList(modifiedTrace, persistentTrace);
 
@@ -118,14 +112,34 @@ public class AdvancedTraceConstructor {
 		}
 	}
 
+	public static List<PersistentTransition> prepareTrace(Trace t, List<PersistentTransition> persistentTransitionList){
+		boolean traceHasSC = possesOperationNamePT(persistentTransitionList, Transition.SETUP_CONSTANTS_NAME);
+
+		boolean machineHasSc = possesOperationNameT(t.getNextTransitions(), Transition.SETUP_CONSTANTS_NAME);
+
+
+
+		if(!traceHasSC && machineHasSc){
+			ArrayList<PersistentTransition> result = new ArrayList<>(persistentTransitionList);
+			result.add(0, new PersistentTransition(Transition.SETUP_CONSTANTS_NAME));
+			return result;
+		}
+
+		return persistentTransitionList;
+
+	}
+
+
+
+
 	/**
-	 * Similar to prepareTrace for the other direction. The Trace has more elements than the machine cna give, therefore the
+	 * Similar to prepareTrace for the other direction. The Trace has more elements than the machine has, therefore the
 	 * trace is reworked for the needs of the machine
 	 * @param t the machine represented as trace
 	 * @param persistentTransitionList the trace to replay
 	 * @return the modified trace
 	 *
-	 */
+     */
 	public static List<PersistentTransition> prepareTraceList(Trace t, List<PersistentTransition> persistentTransitionList){
 		boolean scWasSet = possesOperationNameT(t.getTransitionList(), Transition.SETUP_CONSTANTS_NAME);
 
@@ -145,7 +159,7 @@ public class AdvancedTraceConstructor {
 	 * @param persistentTransitionList the trace to investigate
 	 * @return a prepared trace that has the correct starting point set
 	 */
-	public static Trace prepareTrace(Trace t, List<PersistentTransition> persistentTransitionList){
+	public static Trace prepareTrace2(Trace t, List<PersistentTransition> persistentTransitionList){
 		boolean traceHasSC = possesOperationNamePT(persistentTransitionList, Transition.SETUP_CONSTANTS_NAME);
 
 		boolean machineHasSc = possesOperationNameT(t.getNextTransitions(), Transition.SETUP_CONSTANTS_NAME);
@@ -162,7 +176,7 @@ public class AdvancedTraceConstructor {
 
 	}
 
-
+	//To small helpers as the contains function does not work properly on complex data structures
 	public static boolean possesOperationNameT(Collection<Transition> list, String name){
 		return list.stream().anyMatch(entry -> entry.getName().equals(name));
 	}
@@ -170,4 +184,6 @@ public class AdvancedTraceConstructor {
 	public static boolean possesOperationNamePT(Collection<PersistentTransition> list, String name){
 		return list.stream().anyMatch(entry -> entry.getOperationName().equals(name));
 	}
+
+
 }

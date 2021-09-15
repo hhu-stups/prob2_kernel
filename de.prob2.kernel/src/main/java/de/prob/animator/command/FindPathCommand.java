@@ -18,6 +18,10 @@ import java.util.*;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toMap;
 
+/**
+ * Use RefineTraceCommand instead; Can be removed after removing dependency in UI
+ */
+@Deprecated
 public class FindPathCommand extends AbstractCommand implements
 		IStateSpaceModifier, ITraceDescription {
 
@@ -35,8 +39,7 @@ public class FindPathCommand extends AbstractCommand implements
 
 
 	/**
-	 * Tries to satisfy the given path with given predicates. Will fail if path is not executable. Is provided with
-	 * alternatives to especially explore refinements.
+	 * Tries to satisfy the given path with given predicates. Will fail if path is not executable.
 	 * @param s the state space - the machine to satisfy the trace on
 	 * @param stateId the entry point
 	 * @param trace the trace to satisfy
@@ -71,14 +74,18 @@ public class FindPathCommand extends AbstractCommand implements
 	 */
 	@Override
 	public void writeCommand(final IPrologTermOutput pto) {
-		pto.openTerm(PROLOG_COMMAND_NAME)
-				.printAtomOrNumber(stateId.getId());
+		pto.openTerm(PROLOG_COMMAND_NAME);
+
+		pto .printAtomOrNumber(stateId.getId());
+
 		pto.openList();
 		for (String n : name) {
 			pto.printAtom(n);
 		}
 		pto.closeList();
+
 		final ASTProlog prolog = new ASTProlog(pto, null);
+
 		pto.openList();
 		for (ClassicalB cb : evalElement) {
 			cb.getAst().apply(prolog);
