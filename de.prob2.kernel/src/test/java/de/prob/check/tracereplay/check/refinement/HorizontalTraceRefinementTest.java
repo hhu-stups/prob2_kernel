@@ -54,33 +54,7 @@ public class HorizontalTraceRefinementTest {
 		Assertions.assertEquals(jsonFile.getTransitionList().size(), result.size());
 	}
 
-	@Test
-	public void test_horizontal_refinement_internal_function() throws IOException, TraceConstructionError, BCompoundException {
-		Path pathStateSpace1 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "internalOperationCall", "M1.mch");
-		Path pathStateSpace2 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "internalOperationCall", "M2.mch");
 
-		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b",  "internalOperationCall", "test.prob2trace"));
-
-		HorizontalTraceRefiner traceRefiner = new HorizontalTraceRefiner(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace2);
-
-		List<PersistentTransition> result = traceRefiner.refineTrace();
-
-		Assertions.assertEquals(jsonFile.getTransitionList().size(), result.size());
-	}
-
-	@Test
-	public void test_horizontal_refinement_promotes_and_internal_function() throws IOException, TraceConstructionError, BCompoundException {
-		Path pathStateSpace1 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "promotedAndInternal", "M1.mch");
-		Path pathStateSpace2 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "promotedAndInternal", "M2.mch");
-
-		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b",  "promotedAndInternal", "test.prob2trace"));
-
-		HorizontalTraceRefiner traceRefiner = new HorizontalTraceRefiner(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace2);
-
-		List<PersistentTransition> result = traceRefiner.refineTrace();
-
-		Assertions.assertEquals(jsonFile.getTransitionList().size(), result.size());
-	}
 
 	@Test
 	public void handlePromotedOperations_test() throws IOException, BCompoundException {
@@ -177,4 +151,21 @@ public class HorizontalTraceRefinementTest {
 		Assertions.assertEquals(expected, promotedOperations);
 
 	}
+
+
+	@Test
+	public void test_horizontal_refinement_traffic_light_example() throws IOException, TraceConstructionError, BCompoundException {
+		Path pathStateSpace1 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "trafficLight", "TrafficLight2.mch");
+		Path pathStateSpace2 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "trafficLight", "TrafficLightTime_Ref.mch");
+
+		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b",  "trafficLight", "TrafficLight2Minimal.prob2trace"));
+
+		HorizontalTraceRefiner traceRefiner = new HorizontalTraceRefiner(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace2);
+
+		List<PersistentTransition> result = traceRefiner.refineTrace();
+
+		Assertions.assertEquals(jsonFile.getTransitionList().size()+1, result.size()); //Will add setup constants
+	}
+
 }
+
