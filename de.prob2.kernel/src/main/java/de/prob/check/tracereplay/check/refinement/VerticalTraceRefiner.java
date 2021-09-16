@@ -64,7 +64,7 @@ public class VerticalTraceRefiner extends AbstractTraceRefinement{
 
 		StateSpace stateSpace = TraceCheckerUtils.createStateSpace(tempFile.toPath().toString(), injector);
 
-		List<Transition> resultRaw = AdvancedTraceConstructor.constructTraceByName(transitionList, stateSpace);
+		List<Transition> resultRaw = AdvancedTraceConstructor.constructTrace(transitionList, stateSpace);
 
 		return PersistentTransition.createFromList(resultRaw);
 	}

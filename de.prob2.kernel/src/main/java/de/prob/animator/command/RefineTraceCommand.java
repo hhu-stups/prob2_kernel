@@ -1,9 +1,7 @@
 package de.prob.animator.command;
 
 import de.be4.classicalb.core.parser.analysis.prolog.ASTProlog;
-import de.prob.animator.domainobjects.AbstractEvalElement;
-import de.prob.animator.domainobjects.ClassicalB;
-import de.prob.animator.domainobjects.EvalElementType;
+import de.prob.animator.domainobjects.*;
 import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
@@ -13,10 +11,8 @@ import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toMap;
 
 public class RefineTraceCommand extends AbstractCommand implements
@@ -26,14 +22,16 @@ public class RefineTraceCommand extends AbstractCommand implements
 	private static final String PROLOG_COMMAND_NAME = "prob2_refine_trace";
 	private static final String RESULT_VARIABLE = "Res";
 
-	private final List<ClassicalB> evalElement;
+	private final List<ClassicalB> evalElementB;
+	private final List<EventB> evalElementEventB;
 	private final State stateId;
 	private final List<String> name;
 	private final StateSpace stateSpace;
 	private final List<Transition> resultTrace = new ArrayList<>();
 	private final List<String> errors = new ArrayList<>();
 	private final Map<String, List<String>> alternatives;
-	private final List<String> blackList;
+	private final List<String> refineAlternatives;
+	private final List<String> skips;
 
 	/**
 	 * Tries to satisfy the given path with given predicates. Will fail if path is not executable
@@ -44,8 +42,30 @@ public class RefineTraceCommand extends AbstractCommand implements
 	 * @param predicates the constraints to put on each transition; maps 1:1 with trace
 	 */
 	public RefineTraceCommand(final StateSpace s, final State stateId,
-						   final List<String> trace, final List<ClassicalB> predicates) {
-		this(s, stateId, trace, predicates, new HashSet<>(trace).stream().collect(toMap(entry -> entry, Collections::singletonList)), emptyList());
+							  final List<String> trace, final List<ClassicalB> predicates) {
+
+
+		this.stateSpace = s;
+		this.stateId = stateId;
+		this.name = trace;
+		this.evalElementB = predicates;
+		this.alternatives = new HashSet<>(trace).stream().collect(toMap(entry -> entry, Collections::singletonList));
+		this.refineAlternatives = emptyList();
+		this.skips = emptyList();
+
+		this.evalElementEventB = emptyList();
+
+
+		if (trace.size() != predicates.size()) {
+			throw new IllegalArgumentException(
+					"Must provide the same number of names and predicates.");
+		}
+		for (AbstractEvalElement eval : predicates) {
+			if (!EvalElementType.PREDICATE.equals(eval.getKind())) {
+				throw new IllegalArgumentException(
+						"Formula must be a predicates: " + predicates);
+			}
+		}
 	}
 
 	/**
@@ -58,24 +78,27 @@ public class RefineTraceCommand extends AbstractCommand implements
 	 * @param predicates   the constraints to put on each transition; maps 1:1 with trace
 	 * @param alternatives In cases where a transition can have alternatives (e.g. refinements)
 	 *                     those are stored here, expects a 1:1 mapping else
-	 * @param blackList    All events/operations that are not introduced via a skip refinement
+	 * @param skips    All events/operations that are not introduced via a skip refinement
 	 */
 	public RefineTraceCommand(final StateSpace s, final State stateId,
-						   final List<String> trace, final List<ClassicalB> predicates, final Map<String, List<String>> alternatives, final List<String> blackList) {
+							  final List<String> trace, final List<EventB> predicates, final Map<String, List<String>> alternatives, final List<String> refinedAlternatives, final List<String> skips) {
 		this.stateSpace = s;
 		this.stateId = stateId;
 		this.name = trace;
-		this.evalElement = predicates;
+		this.evalElementEventB = predicates;
 		this.alternatives = alternatives;
-		this.blackList = blackList;
+		this.refineAlternatives = refinedAlternatives;
+		this.skips = skips;
+
+		this.evalElementB = emptyList();
 
 
 		if (trace.size() != predicates.size()) {
 			throw new IllegalArgumentException(
 					"Must provide the same number of names and predicates.");
 		}
-		for (ClassicalB classicalB : predicates) {
-			if (!EvalElementType.PREDICATE.equals(classicalB.getKind())) {
+		for (AbstractEvalElement eval : predicates) {
+			if (!EvalElementType.PREDICATE.equals(eval.getKind())) {
 				throw new IllegalArgumentException(
 						"Formula must be a predicates: " + predicates);
 			}
@@ -83,6 +106,7 @@ public class RefineTraceCommand extends AbstractCommand implements
 
 
 	}
+
 
 
 	/**
@@ -93,11 +117,13 @@ public class RefineTraceCommand extends AbstractCommand implements
 	 */
 	@Override
 	public void writeCommand(final IPrologTermOutput pto) {
+
 		pto.openTerm(PROLOG_COMMAND_NAME);
 
 		pto.printAtomOrNumber(stateId.getId());
 
 		pto.openList();
+
 		for (String n : name) {
 			pto.openList();
 			if(alternatives.containsKey(n)) {
@@ -110,28 +136,44 @@ public class RefineTraceCommand extends AbstractCommand implements
 			pto.closeList();
 		}
 		pto.closeList();
+
 		final ASTProlog prolog = new ASTProlog(pto, null);
 		pto.openList();
+		if(!evalElementEventB.isEmpty()){
+			for (AbstractEvalElement cb : evalElementEventB) {
+				if (cb instanceof EventB || cb instanceof ClassicalB) {
+					((IBEvalElement) cb).getAst().apply(prolog);
+				}
+			}
+		}else if(!evalElementB.isEmpty()){
+				for (AbstractEvalElement cb : evalElementB) {
+					if(cb instanceof EventB || cb instanceof ClassicalB){
+						((IBEvalElement) cb).getAst().apply(prolog);
+					}
+				}
 
-		for (ClassicalB cb : evalElement) {
-			cb.getAst().apply(prolog);
 		}
 		pto.closeList();
 
 
 		pto.openList();
-		for (String string : blackList) {
+		for(String entry : refineAlternatives){
+			pto.printAtom(entry);
+		}
+		pto.closeList();
+
+		pto.openList();
+		for (String string : skips) {
 			pto.printAtom(string);
 		}
-		pto.closeList();
-
-		pto.openList();
 		pto.closeList();
 
 
 		pto.printVariable(RESULT_VARIABLE);
 		pto.closeTerm();
+
 	}
+
 
 	@Override
 	public void processResult(

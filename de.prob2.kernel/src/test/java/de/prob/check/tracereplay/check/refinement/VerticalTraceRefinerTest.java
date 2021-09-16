@@ -79,7 +79,7 @@ public class VerticalTraceRefinerTest {
 
 		List<Transition> resultRaw;
 
-		resultRaw = AdvancedTraceConstructor.constructTraceByName(jsonFile.getTransitionList(), stateSpace);
+		resultRaw = AdvancedTraceConstructor.constructTrace(jsonFile.getTransitionList(), stateSpace);
 
 		List<String> result = PersistentTransition.createFromList(resultRaw).stream().map(PersistentTransition::getOperationName).collect(Collectors.toList());
 

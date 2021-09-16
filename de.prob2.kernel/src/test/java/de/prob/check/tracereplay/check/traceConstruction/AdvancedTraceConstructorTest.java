@@ -74,39 +74,6 @@ public class AdvancedTraceConstructorTest {
 
 
 
-	@Test
-	public void test_trace_missing_sc_clause() throws IOException {
-		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "complexExample", "PitmanController_TIME_v4.mch"));
-
-		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "complexExample", "pitman_1.prob2trace"));
-		List<PersistentTransition> persistentTransitionsWithoutInit = new ArrayList<>(jsonFile.getTransitionList());
-		persistentTransitionsWithoutInit.remove(0);
-
-		Trace t = new Trace(stateSpace);
-		Trace resultTrace = AdvancedTraceConstructor.prepareTrace2(t, persistentTransitionsWithoutInit);
-
-		Assertions.assertEquals(1, resultTrace.getTransitionList().size());
-		Assertions.assertEquals(Transition.SETUP_CONSTANTS_NAME, resultTrace.getTransitionList().get(0).getName());
-
-	}
-
-	@Test
-	public void test_transitionList_missing_sc_clause() throws IOException {
-		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "complexExample", "PitmanController_TIME_v4.mch"));
-
-		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "complexExample", "pitman_1.prob2trace"));
-		List<PersistentTransition> persistentTransitionsWithoutInit = new ArrayList<>(jsonFile.getTransitionList());
-		persistentTransitionsWithoutInit.remove(0);
-
-		Trace t = new Trace(stateSpace);
-		Trace resultTrace = AdvancedTraceConstructor.prepareTrace2(t, persistentTransitionsWithoutInit);
-		List<PersistentTransition> list = AdvancedTraceConstructor.prepareTraceList(resultTrace, jsonFile.getTransitionList());
-
-
-		Assertions.assertEquals(jsonFile.getTransitionList().size()-1, list.size());
-
-	}
-
 
 
 }
