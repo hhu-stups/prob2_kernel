@@ -1,8 +1,6 @@
 package de.prob.cli
 
-import java.util.concurrent.atomic.AtomicInteger
-
-import spock.lang.Specification 
+import spock.lang.Specification
 
 class ProBInstanceImplTest extends Specification {
 	def testCliShutdown() {
@@ -12,7 +10,7 @@ class ProBInstanceImplTest extends Specification {
 		final userInterruptRef = 1234L
 		final ProBConnection connection = Mock()
 		final OsSpecificInfo osinfo = Mock()
-		final ProBInstance cli = new ProBInstance(process, reader, userInterruptRef, connection, "", osinfo, new AtomicInteger())
+		final ProBInstance cli = new ProBInstance(process, reader, userInterruptRef, connection, "", osinfo)
 
 		expect:
 		!cli.shuttingDown
