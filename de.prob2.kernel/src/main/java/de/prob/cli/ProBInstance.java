@@ -41,9 +41,7 @@ public class ProBInstance {
 	public void shutdown() {
 		shuttingDown = true;
 		try {
-			if (thread.isAlive()) {
-				thread.interrupt();
-			}
+			thread.interrupt();
 			connection.disconnect();
 		} finally {
 			process.destroy();
