@@ -8,7 +8,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,7 +49,6 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 	private final PrologProcessProvider processProvider;
 	private final String home;
 	private final OsSpecificInfo osInfo;
-	private final AtomicInteger processCounter;
 	private final Set<WeakReference<ProBInstance>> processes = new HashSet<>();
 
 	@Inject
@@ -60,17 +58,11 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 		this.home = home;
 		this.osInfo = osInfo;
 		installer.ensureCLIsInstalled();
-		processCounter = new AtomicInteger();
 	}
 
 	@Override
 	public ProBInstance get() {
 		return startProlog();
-	}
-
-	@Deprecated
-	public int numberOfCLIs() {
-		return processCounter.get();
 	}
 
 	public void shutdownAll() {
@@ -124,10 +116,8 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 		} catch (IOException e) {
 			throw new CliError("Error while opening socket connection to CLI", e);
 		}
-		processCounter.incrementAndGet();
 		ProBInstance cli = new ProBInstance(process, stream,
-				cliInformation.getUserInterruptReference(), connection, home, osInfo,
-				processCounter);
+				cliInformation.getUserInterruptReference(), connection, home, osInfo);
 		processes.add(new WeakReference<>(cli));
 		return cli;
 	}
