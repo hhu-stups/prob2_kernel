@@ -22,11 +22,11 @@ final class ConsoleListener implements Runnable {
 		try (final BufferedReader ignored = this.stream) {
 			logLines();
 		} catch (IOException e) {
-			String message = e.getMessage();
-			if (!"Stream closed".equals(message)) {
-				message = "OutputLogger died with error";
+			if ("Stream closed".equals(e.getMessage())) {
+				logger.debug("CLI stdout stream closed - stopping ConsoleListener", e);
+			} else {
+				logger.info("ConsoleListener died with error", e);
 			}
-			logger.info(message, e);
 		}
 	}
 
