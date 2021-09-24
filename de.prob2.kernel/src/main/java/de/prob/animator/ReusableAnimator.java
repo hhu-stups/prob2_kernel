@@ -12,12 +12,26 @@ import de.prob.exception.CliError;
 import de.prob.statespace.StateSpace;
 
 /**
+ * <p>
  * An animator that can be used by more than one model/state space.
  * Internally, the animator reuses the same instance of {@code probcli} for all state spaces,
  * which allows loading new machines more quickly than by starting a new {@code probcli} instance for every model.
+ * </p>
+ * <p>
  * A {@link ReusableAnimator} instance can only be used by one model/state space at a time.
  * To load a new model into the animator,
  * the old model/state space must be killed first.
+ * </p>
+ * <p>
+ * By default, some state is maintained across models in a single reusable animator.
+ * Notably, preferences are not automatically reset,
+ * so preferences changed in the context of a previous model will remain changed for future models.
+ * This behavior is desirable in some cases,
+ * e. g. in a REPL environment like the Jupyter kernel,
+ * but not in other cases like the ProB 2 UI.
+ * To fully reset the animator to a clean state as if it was newly started,
+ * call {@link #resetProB()} before creating a new state space.
+ * </p>
  */
 public final class ReusableAnimator implements IAnimator {
 	private final class InternalAnimator implements IAnimator {
@@ -83,6 +97,11 @@ public final class ReusableAnimator implements IAnimator {
 		@Override
 		public String getId() {
 			return ReusableAnimator.this.getId();
+		}
+		
+		@Override
+		public void resetProB() {
+			throw new UnsupportedOperationException("Should never be called on a ReusableAnimator.InternalAnimator");
 		}
 		
 		@Override
@@ -182,6 +201,17 @@ public final class ReusableAnimator implements IAnimator {
 	@Override
 	public String getId() {
 		return this.animator.getId();
+	}
+	
+	@Override
+	public void resetProB() {
+		synchronized (this.currentStateSpaceLock) {
+			if (this.getCurrentStateSpace() != null && !this.getCurrentStateSpace().isKilled()) {
+				throw new IllegalStateException("Cannot reset ReusableAnimator's ProB instance while it is still in use - kill the StateSpace first");
+			}
+			
+			this.animator.resetProB();
+		}
 	}
 	
 	@Override

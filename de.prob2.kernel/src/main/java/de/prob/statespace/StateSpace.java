@@ -902,6 +902,18 @@ public class StateSpace implements IAnimator {
 		return killed;
 	}
 
+	/**
+	 * This method cannot be used on a {@link StateSpace} - you probably want {@link #kill()}.
+	 * Resetting ProB clears the currently loaded model (among other things),
+	 * which would break the {@link StateSpace} instance as it expects a specific model.
+	 * 
+	 * @throws UnsupportedOperationException when called
+	 */
+	@Override
+	public void resetProB() {
+		throw new UnsupportedOperationException("Cannot reset the ProB instance belonging to an active StateSpace");
+	}
+
 	@Override
 	public long getTotalNumberOfErrors() {
 		return animator.getTotalNumberOfErrors();

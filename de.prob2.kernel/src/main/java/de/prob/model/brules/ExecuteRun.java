@@ -60,6 +60,7 @@ public class ExecuteRun {
 		if (oldStateSpace != null) {
 			oldStateSpace.kill();
 		}
+		this.animator.resetProB();
 		final StateSpace stateSpace = this.animator.createStateSpace();
 		stateSpace.changePreferences(this.prefs);
 		this.extractedModel.loadIntoStateSpace(stateSpace);

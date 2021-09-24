@@ -12,6 +12,7 @@ import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.command.ComposedCommand;
 import de.prob.animator.command.GetErrorItemsCommand;
 import de.prob.animator.command.GetTotalNumberOfErrorsCommand;
+import de.prob.animator.command.ResetProBCommand;
 import de.prob.animator.domainobjects.ErrorItem;
 import de.prob.cli.ProBInstance;
 import de.prob.exception.ProBError;
@@ -141,6 +142,11 @@ class AnimatorImpl implements IAnimator {
 	@Override
 	public void kill() {
 		cli.shutdown();
+	}
+
+	@Override
+	public void resetProB() {
+		this.execute(new ResetProBCommand());
 	}
 
 	@Override
