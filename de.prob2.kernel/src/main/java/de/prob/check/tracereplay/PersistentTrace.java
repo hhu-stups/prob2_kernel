@@ -64,4 +64,8 @@ public class PersistentTrace {
 			}
 		}
 	}
+
+	public PersistentTrace changeTrace(List<PersistentTransition> trace){
+		return new PersistentTrace(description, trace);
+	}
 }
