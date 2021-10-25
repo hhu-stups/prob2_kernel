@@ -60,8 +60,9 @@ class CommandProcessor {
 				command.processProgressResult(PrologTermGenerator.toPrologTerm(ast));
 				result = cli.receive(); // receive next term by Prolog
 			} else {
-				IPrologTermOutput callbackres = command.processCallBack(PrologTermGenerator.toPrologTerm(ast));
-				result = cli.send(callbackres.fullstop().toString());
+				final PrologTermStringOutput pout = new PrologTermStringOutput();
+				command.processCallBack(PrologTermGenerator.toPrologTerm(ast), pout);
+				result = cli.send(pout.fullstop().toString());
 			}
 			ast = parseResult(result);
 			topnode = ast.getPResult();

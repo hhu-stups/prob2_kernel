@@ -136,18 +136,15 @@ public abstract class AbstractCommand {
 	 * This code is called when the Prolog process sends a call_back term
 	 * but hasn't finished computation yet
 	 */
-	public IPrologTermOutput processCallBack(final PrologTerm callBack) {
+	public void processCallBack(final PrologTerm callBack, final IPrologTermOutput pout) {
 		// System.out.println("Callback request from Prolog: " + callBack);
 		
 		if (callBack.hasFunctor("interrupt_requested",0)) {
-			PrologTermStringOutput irq = new PrologTermStringOutput();
 			if (Thread.interrupted()) {
-				irq.printAtom("interrupt_is_requested");
+				pout.printAtom("interrupt_is_requested");
 			} else {
-				irq.printAtom("not_requested");
+				pout.printAtom("not_requested");
 			}
-			System.out.println("irq: " + irq);
-			return irq;
 		} else if (callBack.hasFunctor("parse_classical_b",3)) {
 			// parse_classical_b(Kind,DefList,Formula)
 			// we could use: (new ClassicalB(formulaToEval, FormulaExpand.EXPAND), but
@@ -185,22 +182,14 @@ public abstract class AbstractCommand {
 					default:
 						throw new IllegalArgumentException("Invalid kind for parse_classical_b: " + Kind);
 				}
-				PrologTermStringOutput pout = new PrologTermStringOutput();
 				ASTProlog.printFormula(ast, pout);
-				// System.out.println("parse tree: " + pout);
-				return pout;
 			} catch (BCompoundException e) {
-				System.out.println("parse error exception: " + e);
-				PrologTermStringOutput perr = new PrologTermStringOutput();
-				perr.openTerm("parse_error");
-				PrologExceptionPrinter.printException(perr, e);
-				perr.closeTerm();
-				return perr;
+				pout.openTerm("parse_error");
+				PrologExceptionPrinter.printException(pout, e);
+				pout.closeTerm();
 			}
 		}
 		
-		PrologTermStringOutput callbackres = new PrologTermStringOutput();
-		callbackres.printAtom("call_back_not_supported");
-		return callbackres;
+		pout.printAtom("call_back_not_supported");
 	}
 }
