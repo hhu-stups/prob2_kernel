@@ -194,7 +194,7 @@ public class EventBModel extends AbstractModel {
 	/**
 	 * An event can be renamend. This method creates a map from the most recent name to the original one
 	 * TODO can this cause problems in longer refinement chains?
-	 * @return a map mapping current -> original name
+	 * @return a map mapping current -&gt; original name
 	 */
 	public Map<String, String> pairNameChanges(){
 		return getEventList().stream().collect(toMap(BEvent::getName, entry -> findEventOrigin(entry).getName()));
