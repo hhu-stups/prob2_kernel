@@ -95,13 +95,13 @@ public class TraceManagerTest {
 	@Test
 	public void deserialize_file_wrong_value_test() {
 		assertThrows(JsonProcessingException.class, () ->
-				traceManager.load(Paths.get("src", "test", "resources", "de", "prob","testmachines", "traces",  "test3.prob2trace")));
+				traceManager.load(Paths.get("src", "test", "resources", "de", "prob","testmachines", "traces",  "trace3.prob2trace")));
 	}
 
 	@Test
 	public void deserialize_wrong_fields_test() {
 		assertThrows(JsonConversionException.class, () ->
-		traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines","traces", "test4.prob2trace")));
+		traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines","traces", "trace4.prob2trace")));
 	}
 
 

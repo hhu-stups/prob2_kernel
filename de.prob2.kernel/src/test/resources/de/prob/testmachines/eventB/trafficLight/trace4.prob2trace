@@ -1,0 +1,163 @@
+{
+  "description": "",
+  "transitionList": [
+    {
+      "name": "$initialise_machine",
+      "params": {},
+      "results": {},
+      "destState": {
+        "cars_color": "{red}",
+        "peds_go": "FALSE",
+        "cars_go": "FALSE",
+        "activated": "FALSE",
+        "peds_color": "red"
+      },
+      "destStateNotChanged": [],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "activateSystem",
+      "params": {},
+      "results": {},
+      "destState": {
+        "activated": "TRUE"
+      },
+      "destStateNotChanged": [
+        "cars_go",
+        "cars_color",
+        "peds_go",
+        "peds_color"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "set_cars_colors",
+      "params": {
+        "new_value_color": "{red,yellow}"
+      },
+      "results": {},
+      "destState": {
+        "cars_color": "{red,yellow}",
+        "peds_go": "FALSE",
+        "cars_go": "FALSE",
+        "peds_color": "red"
+      },
+      "destStateNotChanged": [
+        "activated"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "set_cars_colors",
+      "params": {
+        "new_value_color": "{green}"
+      },
+      "results": {},
+      "destState": {
+        "cars_color": "{green}",
+        "cars_go": "TRUE",
+        "activated": "TRUE"
+      },
+      "destStateNotChanged": [
+        "peds_go",
+        "peds_color"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "set_cars_colors",
+      "params": {
+        "new_value_color": "{yellow}"
+      },
+      "results": {},
+      "destState": {
+        "cars_color": "{yellow}",
+        "peds_go": "FALSE",
+        "cars_go": "FALSE",
+        "peds_color": "red"
+      },
+      "destStateNotChanged": [
+        "activated"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    }
+  ],
+  "variableNames": [
+    "cars_go",
+    "peds_go"
+  ],
+  "constantNames": [],
+  "setNames": [],
+  "machineOperationInfos": {
+    "set_peds_go": {
+      "operationName": "set_peds_go",
+      "parameterNames": [],
+      "outputParameterNames": [],
+      "topLevel": true,
+      "type": "EVENTB",
+      "readVariables": [
+        "cars_go"
+      ],
+      "writtenVariables": [
+        "peds_go"
+      ],
+      "nonDetWrittenVariables": [],
+      "typeMap": {}
+    },
+    "set_peds_stop": {
+      "operationName": "set_peds_stop",
+      "parameterNames": [],
+      "outputParameterNames": [],
+      "topLevel": true,
+      "type": "EVENTB",
+      "readVariables": [],
+      "writtenVariables": [
+        "peds_go"
+      ],
+      "nonDetWrittenVariables": [],
+      "typeMap": {}
+    },
+    "set_cars": {
+      "operationName": "set_cars",
+      "parameterNames": [
+        "new_value"
+      ],
+      "outputParameterNames": [],
+      "topLevel": true,
+      "type": "EVENTB",
+      "readVariables": [
+        "peds_go"
+      ],
+      "writtenVariables": [
+        "cars_go"
+      ],
+      "nonDetWrittenVariables": [],
+      "typeMap": {
+        "new_value": "boolean"
+      }
+    }
+  },
+  "globalIdentifierTypes": {
+    "cars_go": "boolean",
+    "peds_go": "boolean"
+  },
+  "metadata": {
+    "fileType": "Trace",
+    "formatVersion": 5,
+    "savedAt": "2021-10-20T09:36:20.139008807Z",
+    "creator": "traceReplay",
+    "proB2KernelVersion": "4.0.0-SNAPSHOT",
+    "proBCliVersion": "1.11.1-nightly",
+    "modelName": "mac"
+  }
+}
