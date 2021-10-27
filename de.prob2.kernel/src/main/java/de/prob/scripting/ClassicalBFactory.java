@@ -2,6 +2,8 @@ package de.prob.scripting;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -31,6 +33,10 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 
 	Logger logger = LoggerFactory.getLogger(ClassicalBFactory.class);
 	private final Provider<ClassicalBModel> modelCreator;
+	public final String CLASSICAL_B_MACHINE_EXTENSION = ".mch";
+	public final String CLASSICAL_B_REFINEMENT_EXTENSION = ".ref";
+	public final String CLASSICAL_B_IMPLEMENTATION_EXTENSION = ".imp";
+
 
 	@Inject
 	public ClassicalBFactory(final Provider<ClassicalBModel> modelCreator, final @Home String probdir) {
