@@ -5,11 +5,7 @@ import de.prob.animator.ReusableAnimator;
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.traceConstruction.AdvancedTraceConstructor;
 import de.prob.check.tracereplay.check.traceConstruction.TraceConstructionError;
-import de.prob.model.eventb.Event;
-import de.prob.model.representation.AbstractModel;
-import de.prob.model.representation.BEvent;
-import de.prob.model.representation.Machine;
-import de.prob.model.representation.ModelElementList;
+import de.prob.model.eventb.EventBModel;
 import de.prob.scripting.EventBFactory;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
@@ -25,10 +21,13 @@ import static java.util.stream.Collectors.*;
 
 public class TraceRefinerEventB extends AbstractTraceRefinement {
 
-	public TraceRefinerEventB(Injector injector, List<PersistentTransition> transitionList, Path adaptFrom) {
-		super(injector, transitionList, adaptFrom);
-	}
 
+	private final StateSpace stateSpace;
+
+	public TraceRefinerEventB(Injector injector, List<PersistentTransition> transitionList, Path adaptFrom) throws IOException {
+		super(injector, transitionList, adaptFrom);
+		this.stateSpace = loadEventBFileAsStateSpace();
+	}
 
 
 	/**
@@ -44,33 +43,10 @@ public class TraceRefinerEventB extends AbstractTraceRefinement {
 	 * @throws TraceConstructionError no suitable adaptation was found
 	 */
 	public List<PersistentTransition> refineTrace() throws IOException, TraceConstructionError {
-		StateSpace stateSpace = loadEventBFileAsStateSpace();
 
-		AbstractModel model = stateSpace.getModel();
+		EventBModel model = (EventBModel) stateSpace.getModel();
 
-		Machine topLevelMachine = model.getChildrenOfType(Machine.class).get(model.getGraph().getStart());
-
-		ModelElementList<Event> eventList = topLevelMachine.getChildrenOfType(Event.class);
-
-		List<Event> refinedEvents = topLevelMachine.getChildrenOfType(Event.class)
-				.stream()
-				.filter(entry -> !entry.isExtended())
-				.collect(toList());
-
-		Map<String, String> newOldMapping = eventList.stream()
-				.collect(toMap(BEvent::getName, entry -> traceEvent(entry).getName()));
-
-		List<String> introducedBySkip = newOldMapping.entrySet().stream()
-				.filter(s -> s.getValue().equals("skip"))
-				.map(Map.Entry::getKey)
-				.collect(toList());
-
-		List<String> formallyRefined = refinedEvents.stream()
-				.filter(event -> !event.getWitnesses().isEmpty())
-				.map(BEvent::getName)
-				.collect(toList());
-
-		Map<String, List<String>> alternatives = newOldMapping.entrySet().stream()
+		Map<String, List<String>> alternatives = model.pairNameChanges().entrySet().stream()
 				.collect(groupingBy(Map.Entry::getValue))
 				.entrySet().stream()
 				.collect(toMap(Map.Entry::getKey, entry -> entry.getValue().stream()
@@ -82,24 +58,12 @@ public class TraceRefinerEventB extends AbstractTraceRefinement {
 		alternatives.put(Transition.INITIALISE_MACHINE_NAME, singletonList(Transition.INITIALISE_MACHINE_NAME));
 		alternatives.put(Transition.SETUP_CONSTANTS_NAME, singletonList(Transition.SETUP_CONSTANTS_NAME));
 
-		List<Transition> resultRaw = AdvancedTraceConstructor.constructTraceEventB(transitionList, stateSpace, alternatives, formallyRefined, introducedBySkip);
+		List<Transition> resultRaw = AdvancedTraceConstructor.constructTraceEventB(transitionList, stateSpace, alternatives, model.extendEvents(), model.introducedBySkip());
 
 
 		return PersistentTransition.createFromList(resultRaw);
 	}
 
-	/**
-	 * Traces an event back to its origins and returns the original event, return event if it was never refined
-	 * @param event the event to trace
-	 * @return the origin event
-	 */
-	private static Event traceEvent(Event event){
-		if(event.getRefines().isEmpty()){
-			return new Event("skip", Event.EventType.ORDINARY, true);
-		}else{
-			return event.getRefines().get(0); //In EventB there should only be one Event refined from
-		}
-	}
 
 	/**
 	 * Loads an EventB File into a new StateSpace
