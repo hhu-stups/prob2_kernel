@@ -20,5 +20,5 @@ public abstract class AbstractTraceRefinement {
 		this.transitionList = transitionList;
 		this.adaptFrom = adaptFrom;
 	}
-	abstract List<PersistentTransition> refineTrace() throws IOException, TraceConstructionError, BCompoundException;
+	public abstract List<PersistentTransition> refineTrace() throws IOException, TraceConstructionError, BCompoundException;
 }

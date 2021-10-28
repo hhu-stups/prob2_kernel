@@ -65,6 +65,8 @@ public class TraceConnector {
 		public SkipTransition() {
 			super("skip");
 		}
+
+
 	}
 
 	static class StutteringTransition extends PersistentTransition{
@@ -74,9 +76,9 @@ public class TraceConnector {
 		}
 	}
 
-	static class Pair<T, E>{
-		T first;
-		E second;
+	public static class Pair<T, E>{
+		public T first;
+		public E second;
 
 		public Pair(T first, E second){
 			this.first = first;

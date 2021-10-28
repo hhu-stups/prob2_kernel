@@ -33,9 +33,9 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 
 	Logger logger = LoggerFactory.getLogger(ClassicalBFactory.class);
 	private final Provider<ClassicalBModel> modelCreator;
-	public final String CLASSICAL_B_MACHINE_EXTENSION = ".mch";
-	public final String CLASSICAL_B_REFINEMENT_EXTENSION = ".ref";
-	public final String CLASSICAL_B_IMPLEMENTATION_EXTENSION = ".imp";
+	public static final String CLASSICAL_B_MACHINE_EXTENSION = "mch";
+	public static final String CLASSICAL_B_REFINEMENT_EXTENSION = "ref";
+	public static final String CLASSICAL_B_IMPLEMENTATION_EXTENSION = "imp";
 
 
 	@Inject

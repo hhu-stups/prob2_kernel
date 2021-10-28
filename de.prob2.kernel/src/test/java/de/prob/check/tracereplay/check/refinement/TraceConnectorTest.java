@@ -35,6 +35,7 @@ public class TraceConnectorTest {
 
 		List<TraceConnector.Pair<PersistentTransition, PersistentTransition>> result = traceConnector.connect();
 
+		Assertions.assertEquals(new TraceConnector.SkipTransition(), result.get(1).getFirst());
 		Assertions.assertEquals(10, result.size());
 	}
 

@@ -28,9 +28,9 @@ import org.codehaus.groovy.runtime.ResourceGroovyMethods;
 public class EventBFactory implements ModelFactory<EventBModel> {
 	private final Provider<EventBModel> modelCreator;
 	private final EventBPackageFactory eventBPackageFactory;
-	public final String ATELIER_B_EXTENSION = ".eventb";
-	public final String RODIN_MACHINE_EXTENSION = ".bum";
-	public final String RODIN_CONTEXT_EXTENSION = ".buc";
+	public static final String ATELIER_B_EXTENSION = "eventb";
+	public static final String RODIN_MACHINE_EXTENSION = "bum";
+	public static final String RODIN_CONTEXT_EXTENSION = ".buc";
 
 	@Inject
 	public EventBFactory(final Provider<EventBModel> modelCreator, final EventBPackageFactory eventBPackageFactory) {
@@ -40,7 +40,7 @@ public class EventBFactory implements ModelFactory<EventBModel> {
 
 	@Override
 	public ExtractedModel<EventBModel> extract(String modelPath) throws IOException {
-		if (modelPath.endsWith(ATELIER_B_EXTENSION)) {
+		if (modelPath.endsWith("."+ATELIER_B_EXTENSION)) {
 			throw new IllegalArgumentException("This is an EventB package file, it must be loaded using EventBPackageFactory instead of EventBFactory.\nPath: " + modelPath);
 		}
 		File file = new File(modelPath);
@@ -54,10 +54,10 @@ public class EventBFactory implements ModelFactory<EventBModel> {
 	}
 
 	private String getValidFileName(String fileName) {
-		if (fileName.endsWith(RODIN_CONTEXT_EXTENSION)) {
+		if (fileName.endsWith("."+RODIN_CONTEXT_EXTENSION)) {
 			fileName = fileName.replaceAll("\\.buc$", ".bcc");
 		}
-		if (fileName.endsWith(RODIN_MACHINE_EXTENSION)) {
+		if (fileName.endsWith("."+RODIN_MACHINE_EXTENSION)) {
 			fileName = fileName.replaceAll("\\.bum$", ".bcm");
 		}
 		if (!(fileName.endsWith(".bcc") || fileName.endsWith(".bcm"))) {
