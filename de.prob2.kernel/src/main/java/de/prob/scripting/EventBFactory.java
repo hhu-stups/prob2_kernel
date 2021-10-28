@@ -30,7 +30,7 @@ public class EventBFactory implements ModelFactory<EventBModel> {
 	private final EventBPackageFactory eventBPackageFactory;
 	public static final String ATELIER_B_EXTENSION = "eventb";
 	public static final String RODIN_MACHINE_EXTENSION = "bum";
-	public static final String RODIN_CONTEXT_EXTENSION = ".buc";
+	public static final String RODIN_CONTEXT_EXTENSION = "buc";
 
 	@Inject
 	public EventBFactory(final Provider<EventBModel> modelCreator, final EventBPackageFactory eventBPackageFactory) {
