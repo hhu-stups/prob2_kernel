@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+import java.util.Objects;
+
 @JsonPropertyOrder({"predicate"})
 public class PostconditionPredicate extends Postcondition {
 
@@ -34,4 +36,16 @@ public class PostconditionPredicate extends Postcondition {
 		return String.format("PostconditionPredicate{predicate = %s}", predicate);
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		PostconditionPredicate that = (PostconditionPredicate) o;
+		return Objects.equals(predicate, that.predicate);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(predicate);
+	}
 }
