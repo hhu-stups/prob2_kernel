@@ -1,5 +1,6 @@
 package de.prob.animator.command;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +16,7 @@ import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.CompoundPrologTerm;
+import de.prob.prolog.term.IntegerPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.State;
@@ -30,7 +32,7 @@ public class CbcSolveCommand extends AbstractCommand {
 		PROB, KODKOD, SMT_SUPPORTED_INTERPRETER, Z3, CVC4
 	}
 
-	private static final String PROLOG_COMMAND_NAME = "cbc_solve_with_opts";
+	private static final String PROLOG_COMMAND_NAME = "cbc_timed_solve_with_opts";
 
 	private static final int BINDINGS = 1;
 
@@ -41,10 +43,12 @@ public class CbcSolveCommand extends AbstractCommand {
 
 	private static final String EVALUATE_TERM_VARIABLE = "Val";
 	private static final String IDENTIFIER_LIST = "IdList";
+	private static final String TIME_VARIABLE = "Time";
 	private final IEvalElement evalElement;
 	private final Solvers solver;
 	private final State state;
 	private AbstractEvalResult result;
+	private BigInteger milliSeconds;
 	private final List<String> freeVariables = new ArrayList<>();
 
 	public CbcSolveCommand(final IEvalElement evalElement) {
@@ -69,6 +73,10 @@ public class CbcSolveCommand extends AbstractCommand {
 		return result;
 	}
 
+	public BigInteger getMilliSeconds() {
+		return  milliSeconds;
+	}
+
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
 		PrologTerm idList = bindings.get(IDENTIFIER_LIST);
@@ -77,6 +85,9 @@ public class CbcSolveCommand extends AbstractCommand {
 				freeVariables.add(id.getFunctor());
 			}
 		}
+
+		IntegerPrologTerm runtime =  (IntegerPrologTerm) bindings.get(TIME_VARIABLE);
+		milliSeconds = runtime.getValue();
 
 		PrologTerm prologTerm = bindings.get(EVALUATE_TERM_VARIABLE);
 
@@ -136,6 +147,7 @@ public class CbcSolveCommand extends AbstractCommand {
 		evalElement.printProlog(pout);
 		pout.printVariable(IDENTIFIER_LIST);
 		pout.printVariable(EVALUATE_TERM_VARIABLE);
+		pout.printVariable(TIME_VARIABLE);
 		pout.closeTerm();
 	}
 
