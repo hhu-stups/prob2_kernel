@@ -2,9 +2,7 @@ package de.prob.animator.command;
 
 import java.io.File;
 
-import de.be4.classicalb.core.parser.analysis.prolog.NodeIdAssignment;
 import de.be4.classicalb.core.parser.analysis.prolog.RecursiveMachineLoader;
-
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.output.StructuredPrologOutput;
@@ -49,13 +47,5 @@ public class LoadBProjectCommand extends AbstractCommand {
 		for (PrologTerm term : parserOutput.getSentences()) {
 			pto.printTerm(term);
 		}
-	}
-
-	/**
-	 * @deprecated Call {@link RecursiveMachineLoader#getNodeIdMapping()} on {@code rml} directly.
-	 */
-	@Deprecated
-	public NodeIdAssignment getNodeIdMapping() {
-		return this.rml.getNodeIdMapping();
 	}
 }
