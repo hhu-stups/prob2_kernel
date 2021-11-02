@@ -68,13 +68,6 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 		return new ExtractedModel<>(classicalBModel, classicalBModel.getMainMachine());
 	}
 
-	/**
-	 * Use create(name,model) instead. The cli now checks if the name matches
-	 * the filename.
-	 * 
-	 * @deprecated
-	 */
-	@Deprecated
 	public ExtractedModel<ClassicalBModel> create(final String model) {
 		return create("from_string", model);
 	}
@@ -96,13 +89,6 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 		return new ExtractedModel<>(classicalBModel, classicalBModel.getMainMachine());
 	}
 
-	/**
-	 * Use create(name,model) instead. The cli now checks if the name matches
-	 * the filename.
-	 * 
-	 * @deprecated
-	 */
-	@Deprecated
 	public ExtractedModel<ClassicalBModel> create(final Start model) {
 		return create("from_string", model);
 	}
