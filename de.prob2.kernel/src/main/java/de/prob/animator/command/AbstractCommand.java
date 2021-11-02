@@ -188,8 +188,8 @@ public abstract class AbstractCommand {
 				PrologExceptionPrinter.printException(pout, e);
 				pout.closeTerm();
 			}
+		} else {
+			pout.printAtom("call_back_not_supported");
 		}
-		
-		pout.printAtom("call_back_not_supported");
 	}
 }
