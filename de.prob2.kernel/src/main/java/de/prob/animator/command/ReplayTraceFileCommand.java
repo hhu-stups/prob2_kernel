@@ -1,11 +1,12 @@
 package de.prob.animator.command;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import de.prob.check.tracereplay.TransitionReplayPrecision;
 import de.prob.check.tracereplay.TraceReplayStatus;
+import de.prob.check.tracereplay.TransitionReplayPrecision;
 import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
@@ -27,6 +28,7 @@ public final class ReplayTraceFileCommand extends AbstractCommand implements ITr
 	private TraceReplayStatus replayStatus;
 	private List<PrologTerm> transitionTerms;
 	private List<TransitionReplayPrecision> transitionReplayPrecisions;
+	private List<List<String>> transitionErrorMessages;
 	
 	public ReplayTraceFileCommand(final String path) {
 		this.path = path;
@@ -46,9 +48,22 @@ public final class ReplayTraceFileCommand extends AbstractCommand implements ITr
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
 		this.replayStatus = TraceReplayStatus.fromPrologTerm(bindings.get(REPLAY_STATUS_VAR));
 		this.transitionTerms = BindingGenerator.getList(bindings, TRANSITIONS_VAR);
-		this.transitionReplayPrecisions = BindingGenerator.getList(bindings, MATCH_INFO_LIST_VAR).stream()
-			.map(TransitionReplayPrecision::fromPrologTerm)
-			.collect(Collectors.toList());
+		this.transitionReplayPrecisions = new ArrayList<>();
+		this.transitionErrorMessages = new ArrayList<>();
+		for (final PrologTerm term : BindingGenerator.getList(bindings, MATCH_INFO_LIST_VAR)) {
+			BindingGenerator.getCompoundTerm(term, "replay_step", 2);
+			this.transitionReplayPrecisions.add(TransitionReplayPrecision.fromPrologTerm(term.getArgument(1)));
+			
+			final List<String> errorMessages = new ArrayList<>();
+			for (final PrologTerm errorTerm : BindingGenerator.getList(term.getArgument(2))) {
+				if ("rerror".equals(errorTerm.getFunctor()) && errorTerm.getArity() == 1) {
+					errorMessages.add(PrologTerm.atomicString(errorTerm.getArgument(1)));
+				} else {
+					errorMessages.add(errorTerm.toString());
+				}
+			}
+			this.transitionErrorMessages.add(Collections.unmodifiableList(errorMessages));
+		}
 	}
 	
 	public TraceReplayStatus getReplayStatus() {
@@ -66,5 +81,9 @@ public final class ReplayTraceFileCommand extends AbstractCommand implements ITr
 	
 	public List<TransitionReplayPrecision> getTransitionReplayPrecisions() {
 		return Collections.unmodifiableList(this.transitionReplayPrecisions);
+	}
+	
+	public List<List<String>> getTransitionErrorMessages() {
+		return Collections.unmodifiableList(this.transitionErrorMessages);
 	}
 }
