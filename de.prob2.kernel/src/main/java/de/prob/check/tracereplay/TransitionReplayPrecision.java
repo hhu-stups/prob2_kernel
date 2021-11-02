@@ -3,6 +3,7 @@ package de.prob.check.tracereplay;
 import de.prob.prolog.term.PrologTerm;
 
 public enum TransitionReplayPrecision {
+	FAILED,
 	PARAMETERS_ONLY,
 	PARAMETERS_AND_RESULTS,
 	PRECISE,
@@ -10,6 +11,9 @@ public enum TransitionReplayPrecision {
 	
 	public static TransitionReplayPrecision fromPrologTerm(final PrologTerm term) {
 		switch (term.getFunctor()) {
+			case "failed":
+				return FAILED;
+			
 			case "parameters_only":
 				return PARAMETERS_ONLY;
 			
