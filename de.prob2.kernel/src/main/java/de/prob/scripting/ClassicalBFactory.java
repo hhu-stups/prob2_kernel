@@ -2,8 +2,6 @@ package de.prob.scripting;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -58,7 +56,13 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 		File f = new File(modelPath);
 		BParser bparser = new BParser(modelPath);
 
-		Start ast = parseFile(f, bparser);
+		logger.trace("Parsing main file '{}'", f.getAbsolutePath());
+		Start ast;
+		try {
+			ast = bparser.parseFile(f, false);
+		} catch (BCompoundException e) {
+			throw new ProBError(e);
+		}
 		RecursiveMachineLoader rml = parseAllMachines(ast, f.getParent(), f, bparser.getContentProvider(), bparser);
 		classicalBModel = classicalBModel.create(ast, rml, f, bparser);
 		return new ExtractedModel<>(classicalBModel, classicalBModel.getMainMachine());
@@ -79,7 +83,12 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 		ClassicalBModel classicalBModel = modelCreator.get();
 		BParser bparser = new BParser(name);
 
-		Start ast = parseString(model, bparser);
+		Start ast;
+		try {
+			ast = bparser.parse(model, false, new PlainFileContentProvider());
+		} catch (BCompoundException e) {
+			throw new ProBError(e);
+		}
 		final RecursiveMachineLoader rml = parseAllMachines(ast, ".", new File(name + ".mch"),
 				bparser.getContentProvider(),
 				bparser);
@@ -155,7 +164,13 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 	 *             if an I/O error occurred
 	 * @throws ProBError
 	 *             if the file could not be parsed
+	 * @deprecated This method only parses a single classical B file into an AST -
+	 *     it does not parse referenced files and cannot be used to actually load the machine into ProB.
+	 *     You're probably looking for {@link #extract(String)}.
+	 *     If you really want to parse only a single file,
+	 *     use {@link BParser#parseFile(File, boolean)} directly.
 	 */
+	@Deprecated
 	public Start parseFile(final File model, final BParser bparser) throws IOException {
 		try {
 			logger.trace("Parsing main file '{}'", model.getAbsolutePath());
@@ -164,14 +179,4 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 			throw new ProBError(e);
 		}
 	}
-
-	private Start parseString(final String model, final BParser bparser) {
-		try {
-			logger.trace("Parsing file");
-			return bparser.parse(model, false, new PlainFileContentProvider());
-		} catch (BCompoundException e) {
-			throw new ProBError(e);
-		}
-	}
-
 }

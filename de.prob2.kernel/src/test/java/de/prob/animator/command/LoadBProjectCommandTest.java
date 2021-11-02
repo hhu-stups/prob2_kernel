@@ -8,6 +8,7 @@ import java.util.Collection;
 
 import de.be4.classicalb.core.parser.BParser;
 import de.be4.classicalb.core.parser.analysis.prolog.RecursiveMachineLoader;
+import de.be4.classicalb.core.parser.exceptions.BCompoundException;
 import de.be4.classicalb.core.parser.node.Start;
 import de.prob.prolog.output.StructuredPrologOutput;
 import de.prob.prolog.term.CompoundPrologTerm;
@@ -16,19 +17,21 @@ import de.prob.scripting.ClassicalBFactory;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class LoadBProjectCommandTest {
 
 	@Test
-	public void testWriteCommand() throws URISyntaxException, IOException {
+	public void testWriteCommand() throws BCompoundException, URISyntaxException, IOException {
 		URL resource = this.getClass().getResource("/de/prob/testmachines/b/scheduler.mch");
 		assertNotNull(resource);
 		File f =  new File(resource.toURI());
 		StructuredPrologOutput prologTermOutput = new StructuredPrologOutput();
 		ClassicalBFactory factory = new ClassicalBFactory(null, null);
 		BParser bparser = new BParser();
-		Start ast = factory.parseFile(f, bparser);
+		Start ast = bparser.parseFile(f, false);
 		RecursiveMachineLoader rml = factory.parseAllMachines(ast,
 				f.getParent(), f, bparser.getContentProvider(), bparser);
 

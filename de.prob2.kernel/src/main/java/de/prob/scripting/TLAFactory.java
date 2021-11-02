@@ -53,12 +53,15 @@ public class TLAFactory implements ModelFactory<ClassicalBModel> {
 		} catch (PreParseException e) {
 			throw new ProBError(e);
 		}
+		final RecursiveMachineLoader rml;
 		try {
-			final RecursiveMachineLoader rml = parseAllMachines(ast, f, bparser);
-			classicalBModel = classicalBModel.create(ast, rml, f, bparser);
+			rml = new RecursiveMachineLoader(f.getParent(), bparser.getContentProvider());
+			rml.loadAllMachines(f, ast, bparser.getDefinitions());
 		} catch (BCompoundException e) {
 			throw new ProBError(e);
 		}
+		logger.trace("Done parsing '{}'", f.getAbsolutePath());
+		classicalBModel = classicalBModel.create(ast, rml, f, bparser);
 		return new ExtractedModel<>(classicalBModel, classicalBModel.getMainMachine());
 	}
 
@@ -75,7 +78,11 @@ public class TLAFactory implements ModelFactory<ClassicalBModel> {
 	 *            {@link BParser} for parsing
 	 * @return {@link RecursiveMachineLoader} rml with all loaded machines
 	 * @throws BCompoundException if the machines could not be loaded
+	 * @deprecated This method only parses classical B files and not TLA+.
+	 *     Use {@link #extract(String)} to parse TLA+ files,
+	 *     or {@link ClassicalBFactory} or {@link BParser} to parse classical B files.
 	 */
+	@Deprecated
 	public RecursiveMachineLoader parseAllMachines(final Start ast, final File f, final BParser bparser)
 			throws BCompoundException {
 		final RecursiveMachineLoader rml = new RecursiveMachineLoader(f.getParent(), bparser.getContentProvider());
@@ -96,7 +103,11 @@ public class TLAFactory implements ModelFactory<ClassicalBModel> {
 	 *         bparser
 	 * @throws IOException if an I/O error occurred
 	 * @throws BCompoundException if the file could not be parsed
+	 * @deprecated This method only parses classical B files and not TLA+.
+	 *     Use {@link #extract(String)} to parse TLA+ files,
+	 *     or {@link ClassicalBFactory} or {@link BParser} to parse classical B files.
 	 */
+	@Deprecated
 	public Start parseFile(final File model, final BParser bparser) throws IOException, BCompoundException {
 		logger.trace("Parsing main file '{}'", model.getAbsolutePath());
 		return bparser.parseFile(model, false);
