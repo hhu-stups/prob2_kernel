@@ -131,7 +131,12 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 	 * @return {@link RecursiveMachineLoader} rml with all loaded machines
 	 * @throws ProBError
 	 *             if the model could not be loaded
+	 * @deprecated You're probably looking for {@link #extract(String)}.
+	 *     If you need to manually load a machine,
+	 *     use {@link RecursiveMachineLoader#loadFile(File, ParsingBehaviour, IDefinitionFileProvider)}
+	 *     or {@link RecursiveMachineLoader#loadFromAst(BParser, Start, ParsingBehaviour, IDefinitionFileProvider)}.
 	 */
+	@Deprecated
 	public RecursiveMachineLoader parseAllMachines(final Start ast, final String directory, final File f,
 			final IDefinitionFileProvider contentProvider, final BParser bparser) {
 		try {
