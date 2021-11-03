@@ -49,6 +49,12 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 		}
 	}
 
+	private static ParsingBehaviour getDefaultParsingBehaviour() {
+		final ParsingBehaviour parsingBehaviour = new ParsingBehaviour();
+		parsingBehaviour.setAddLineNumbers(true);
+		return parsingBehaviour;
+	}
+
 	@Override
 	public ExtractedModel<ClassicalBModel> extract(final String modelPath) throws IOException {
 		ClassicalBModel classicalBModel = modelCreator.get();
@@ -58,12 +64,13 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 
 		logger.trace("Parsing main file '{}'", f.getAbsolutePath());
 		Start ast;
+		final RecursiveMachineLoader rml;
 		try {
 			ast = bparser.parseFile(f, false);
+			rml = RecursiveMachineLoader.loadFromAst(bparser, ast, getDefaultParsingBehaviour(), bparser.getContentProvider());
 		} catch (BCompoundException e) {
 			throw new ProBError(e);
 		}
-		RecursiveMachineLoader rml = parseAllMachines(ast, f.getParent(), f, bparser.getContentProvider(), bparser);
 		classicalBModel = classicalBModel.create(ast, rml, f, bparser);
 		return new ExtractedModel<>(classicalBModel, classicalBModel.getMainMachine());
 	}
@@ -74,17 +81,16 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 
 	public ExtractedModel<ClassicalBModel> create(final String name, final String model) {
 		ClassicalBModel classicalBModel = modelCreator.get();
-		BParser bparser = new BParser(name);
+		BParser bparser = new BParser(name + ".mch");
 
 		Start ast;
+		final RecursiveMachineLoader rml;
 		try {
 			ast = bparser.parse(model, false, new PlainFileContentProvider());
+			rml = RecursiveMachineLoader.loadFromAst(bparser, ast, getDefaultParsingBehaviour(), bparser.getContentProvider());
 		} catch (BCompoundException e) {
 			throw new ProBError(e);
 		}
-		final RecursiveMachineLoader rml = parseAllMachines(ast, ".", new File(name + ".mch"),
-				bparser.getContentProvider(),
-				bparser);
 		classicalBModel = classicalBModel.create(ast, rml, new File(name + ".mch"), bparser);
 		return new ExtractedModel<>(classicalBModel, classicalBModel.getMainMachine());
 	}
@@ -95,10 +101,14 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 	
 	public ExtractedModel<ClassicalBModel> create(final String name, final Start model) {
 		ClassicalBModel classicalBModel = modelCreator.get();
-		BParser bparser = new BParser(name);
+		BParser bparser = new BParser(name + ".mch");
 
-		final RecursiveMachineLoader rml = parseAllMachines(model, ".", new File(name + ".mch"),
-				new CachingDefinitionFileProvider(), bparser);
+		final RecursiveMachineLoader rml;
+		try {
+			rml = RecursiveMachineLoader.loadFromAst(bparser, model, getDefaultParsingBehaviour(), new CachingDefinitionFileProvider());
+		} catch (BCompoundException e) {
+			throw new ProBError(e);
+		}
 		classicalBModel = classicalBModel.create(model, rml, new File(name + ".mch"), bparser);
 		return new ExtractedModel<>(classicalBModel, classicalBModel.getMainMachine());
 	}

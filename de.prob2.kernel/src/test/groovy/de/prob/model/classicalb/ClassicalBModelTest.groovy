@@ -3,6 +3,7 @@ package de.prob.model.classicalb
 import java.nio.file.Paths
 
 import de.be4.classicalb.core.parser.BParser
+import de.be4.classicalb.core.parser.ParsingBehaviour
 import de.be4.classicalb.core.parser.analysis.prolog.RecursiveMachineLoader
 import de.prob.model.representation.DependencyGraph.ERefType
 
@@ -16,8 +17,7 @@ class ClassicalBModelTest extends Specification {
 		model = new ClassicalBModel(null)
 		final bparser = new BParser()
 		final ast = bparser.parseFile(modelFile,false)
-		final rml = new RecursiveMachineLoader(modelFile.parent, bparser.contentProvider)
-		rml.loadAllMachines(modelFile, ast, bparser.definitions)
+		final rml = RecursiveMachineLoader.loadFromAst(bparser, ast, new ParsingBehaviour(), bparser.contentProvider)
 		model = model.create(ast, rml, modelFile, bparser)
 	}
 

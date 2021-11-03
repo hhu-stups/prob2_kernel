@@ -8,6 +8,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import de.be4.classicalb.core.parser.BParser;
+import de.be4.classicalb.core.parser.ParsingBehaviour;
 import de.be4.classicalb.core.parser.analysis.prolog.RecursiveMachineLoader;
 import de.be4.classicalb.core.parser.exceptions.BCompoundException;
 import de.be4.classicalb.core.parser.exceptions.PreParseException;
@@ -55,8 +56,7 @@ public class TLAFactory implements ModelFactory<ClassicalBModel> {
 		}
 		final RecursiveMachineLoader rml;
 		try {
-			rml = new RecursiveMachineLoader(f.getParent(), bparser.getContentProvider());
-			rml.loadAllMachines(f, ast, bparser.getDefinitions());
+			rml = RecursiveMachineLoader.loadFromAst(bparser, ast, new ParsingBehaviour(), bparser.getContentProvider());
 		} catch (BCompoundException e) {
 			throw new ProBError(e);
 		}
@@ -80,13 +80,12 @@ public class TLAFactory implements ModelFactory<ClassicalBModel> {
 	 * @throws BCompoundException if the machines could not be loaded
 	 * @deprecated This method only parses classical B files and not TLA+.
 	 *     Use {@link #extract(String)} to parse TLA+ files,
-	 *     or {@link ClassicalBFactory} or {@link BParser} to parse classical B files.
+	 *     or {@link ClassicalBFactory} or {@link RecursiveMachineLoader} to parse classical B files.
 	 */
 	@Deprecated
 	public RecursiveMachineLoader parseAllMachines(final Start ast, final File f, final BParser bparser)
 			throws BCompoundException {
-		final RecursiveMachineLoader rml = new RecursiveMachineLoader(f.getParent(), bparser.getContentProvider());
-		rml.loadAllMachines(f, ast, bparser.getDefinitions());
+		final RecursiveMachineLoader rml = RecursiveMachineLoader.loadFromAst(bparser, ast, new ParsingBehaviour(), bparser.getContentProvider());
 
 		logger.trace("Done parsing '{}'", f.getAbsolutePath());
 		return rml;
