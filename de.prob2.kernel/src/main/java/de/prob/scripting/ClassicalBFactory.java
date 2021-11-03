@@ -42,9 +42,7 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 
 		// Provide location of ProB stdlib directory to the parser,
 		// if it hasn't been set already.
-		// (The null check for probdir is only needed because this constructor is called manually from LoadBProjectCommandTest.testWriteCommand.
-		// In all other cases, probdir is never null.)
-		if (System.getProperty("prob.stdlib") == null && probdir != null) {
+		if (System.getProperty("prob.stdlib") == null) {
 			System.setProperty("prob.stdlib", probdir + File.separator + "stdlib");
 		}
 	}
