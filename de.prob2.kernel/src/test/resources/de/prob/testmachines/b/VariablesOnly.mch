@@ -5,5 +5,5 @@ INVARIANT
   x : INTEGER &
   f : INT +-> INT
 INITIALISATION
-  x := 1 || f := {}
+  x := 5 || f := {}
 END
