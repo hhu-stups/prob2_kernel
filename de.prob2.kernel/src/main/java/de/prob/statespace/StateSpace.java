@@ -254,11 +254,10 @@ public class StateSpace implements IAnimator {
 	 *            predicate
 	 * @return list of operations calculated by ProB
 	 */
-	public List<Transition> transitionFromPredicate(final State state, final String opName, final String predicate,
+	public List<Transition> transitionFromPredicate(final State state, final String opName, final IEvalElement predicate,
 			final int nrOfSolutions) {
-		final IEvalElement pred = model.parseFormula(predicate, FormulaExpand.EXPAND);
 		final GetOperationByPredicateCommand command = new GetOperationByPredicateCommand(this, state.getId(), opName,
-				pred, nrOfSolutions);
+				predicate, nrOfSolutions);
 		execute(command);
 		if (command.hasErrors()) {
 			if(command.getErrors().stream().allMatch(err -> err.getType() == GetOperationByPredicateCommand.GetOperationErrorType.CANNOT_EXECUTE)) {
@@ -268,6 +267,21 @@ public class StateSpace implements IAnimator {
 			}
 		}
 		return command.getNewTransitions();
+	}
+	
+	/**
+	 * Same as {@link #transitionFromPredicate(State, String, IEvalElement, int)}.
+	 * 
+	 * @param state {@link State} from which the operation should be found
+	 * @param opName name of the operation that should be executed
+	 * @param predicate an additional guard for the operation. This usually describes the parameters
+	 * @param nrOfSolutions int number of solutions that should be found for the given predicate
+	 * @return list of operations calculated by ProB
+	 */
+	public List<Transition> transitionFromPredicate(final State state, final String opName, final String predicate,
+		final int nrOfSolutions) {
+		final IEvalElement pred = model.parseFormula(predicate, FormulaExpand.EXPAND);
+		return this.transitionFromPredicate(state, opName, pred, nrOfSolutions);
 	}
 
 	public List<Transition> getTransitionsBasedOnParameterValues(final State state, final String opName,
