@@ -123,7 +123,6 @@ class CbcSolveCommandTest {
 	}
 
 	@Test
-	@Disabled("Only works for y<x somehow?")
 	void should_solve_in_state_when_dpllt() throws IOException {
 		State state = stateSpace.getRoot().explore();
 		state = state.getTransitions().get(0).getDestination().explore();
