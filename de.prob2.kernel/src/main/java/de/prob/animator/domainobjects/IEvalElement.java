@@ -20,6 +20,15 @@ public interface IEvalElement {
 	public abstract String getCode();
 
 	/**
+	 * Pretty-print this formula,
+	 * i. e. convert the parsed AST back into equivalent source code.
+	 * This can be used to check equality of two formulas while ignoring comments and formatting.
+	 *
+	 * @return a pretty-printed version of the formula
+	 */
+	public abstract String getPrettyPrint();
+
+	/**
 	 * Writes the formula to {@link IPrologTermOutput} pout
 	 * 
 	 * @param pout the {@link IPrologTermOutput} to write to

@@ -42,6 +42,11 @@ public class CSP extends AbstractEvalElement {
 	}
 
 	@Override
+	public String getPrettyPrint() {
+		throw new UnsupportedOperationException("Pretty-printing CSP formulas is not yet supported");
+	}
+
+	@Override
 	public void printProlog(IPrologTermOutput pout) {
 		callCSPMF(pout, "translate", "--expressionToPrologTerm=" + this.getCode(), fileName);
 	}
