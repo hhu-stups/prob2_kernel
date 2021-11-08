@@ -54,10 +54,10 @@ public class ClassicalB extends AbstractEvalElement implements IBEvalElement {
 	}
 
 	public ClassicalB(final String formula, final FormulaExpand expansion) {
-		this(parse(formula,false), expansion); // false: does not allow substitutions
+		this(parse(formula,false), expansion, formula); // false: does not allow substitutions
 	}
 	public ClassicalB(final String formula, final FormulaExpand expansion, final Boolean AllowSubst) {
-		this(parse(formula,AllowSubst), expansion);
+		this(parse(formula,AllowSubst), expansion, formula);
 	}
 
 	/**

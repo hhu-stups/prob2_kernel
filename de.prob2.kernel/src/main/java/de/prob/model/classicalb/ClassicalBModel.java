@@ -116,7 +116,7 @@ public class ClassicalBModel extends AbstractModel {
 	@Override
 	public IEvalElement parseFormula(final String formula, final FormulaExpand expand) {
 		try {
-			return new ClassicalB(bparser.parseFormula(formula), expand);
+			return new ClassicalB(bparser.parseFormula(formula), expand, formula);
 		} catch (BCompoundException e) {
 			final Throwable cause = e.getCause();
 			if (cause != null && cause.getCause() instanceof BParseException) {

@@ -57,7 +57,7 @@ public class RulesModel extends AbstractModel {
 	@Override
 	public IEvalElement parseFormula(String formula, FormulaExpand expand) {
 		try {
-			return new ClassicalB(new BParser().parseFormula(formula), expand);
+			return new ClassicalB(new BParser().parseFormula(formula), expand, formula);
 		} catch (BCompoundException e) {
 			throw new EvaluationException(e.getMessage(), e.getFirstException());
 		}
