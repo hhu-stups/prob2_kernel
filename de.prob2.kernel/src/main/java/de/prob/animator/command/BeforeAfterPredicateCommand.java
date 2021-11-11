@@ -29,7 +29,8 @@ public class BeforeAfterPredicateCommand extends AbstractCommand {
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
 		CompoundPrologTerm compoundTerm = BindingGenerator.getCompoundTerm(bindings.get(BA_PRED_VARIABLE), 0);
 		String code = compoundTerm.getFunctor();
-		result = new EventB(code, FormulaExpand.EXPAND);
+		// probcli returns Unicode primes (Classical B syntax), which the Rodin parser doesn't support
+		result = new EventB(code.replace('′', '\''), FormulaExpand.EXPAND);
 	}
 
 	@Override
