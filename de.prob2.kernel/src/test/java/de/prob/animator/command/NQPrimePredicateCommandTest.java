@@ -40,28 +40,28 @@ class NQPrimePredicateCommandTest {
 	@Test
 	public void should_prime_var_greater_zero() {
 		String formula = "a>0";
-		String expected = "a' > 0";
+		String expected = "a′ > 0";
 		assertPriming(formula, expected);
 	}
 
 	@Test
 	public void should_prime_machine_var_greater_zero() {
 		String formula = "x>0";
-		String expected = "x' > 0";
+		String expected = "x′ > 0";
 		assertPriming(formula, expected);
 	}
 
 	@Test
 	public void should_prime_int_membership() {
 		String formula = "a:INTEGER";
-		String expected = "a' : INTEGER";
+		String expected = "a′ : INTEGER";
 		assertPriming(formula, expected);
 	}
 
 	@Test
 	public void should_prime_machine_var_int_membership() {
 		String formula = "x:INTEGER";
-		String expected = "x' : INTEGER";
+		String expected = "x′ : INTEGER";
 		assertPriming(formula, expected);
 	}
 
@@ -82,14 +82,14 @@ class NQPrimePredicateCommandTest {
 	@Test
 	public void should_prime_without_quantifier_nonmachine_var_gt_relation() {
 		String formula = "a>a-1";
-		String expected = "a' > a' - 1";
+		String expected = "a′ > a′ - 1";
 		assertPriming(formula, expected);
 	}
 
 	@Test
 	public void should_prime_gt_relation_with_machine_var_and_free_var() {
 		String formula = "x>y";
-		String expected = "x' > y'";
+		String expected = "x′ > y′";
 		assertPriming(formula, expected);
 	}
 
@@ -118,7 +118,7 @@ class NQPrimePredicateCommandTest {
 	@Test
 	public void should_prime_function_properly()  {
 		String formula = "f : INT +-> INT";
-		String expected = "f' : INT +-> INT";
+		String expected = "f′ : INT +-> INT";
 		assertPriming(formula, expected);
 	}
 
@@ -126,7 +126,7 @@ class NQPrimePredicateCommandTest {
 	@Test
 	public void should_prime_non_machinevar_function_properly()  {
 		String formula = "g : INT +-> INT";
-		String expected = "g' : INT +-> INT";
+		String expected = "g′ : INT +-> INT";
 		assertPriming(formula, expected);
 	}
 
