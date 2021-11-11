@@ -96,7 +96,7 @@ class CbcSolveCommandTest {
 		assertEquals(expected, actual);
 	}
 
-
+	@Disabled
 	@Test
 	void should_get_free_variables_and_solution_when_solving_with_DPLLT() {
 		String predicate = "x:INTEGER & y:INTEGER & x>y";
