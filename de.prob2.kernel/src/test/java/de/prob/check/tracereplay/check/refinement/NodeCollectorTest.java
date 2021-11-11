@@ -20,7 +20,7 @@ public class NodeCollectorTest {
 		Path file = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "refinements", "check", "ContainsClauses.mch");
 		BParser bParser = new BParser(file.toString());
 
-		Start start = bParser.parseFile(file.toFile(), true);
+		Start start = bParser.parseFile(file.toFile(), false);
 
 		NodeCollector nodeCollector = new NodeCollector(start);
 
