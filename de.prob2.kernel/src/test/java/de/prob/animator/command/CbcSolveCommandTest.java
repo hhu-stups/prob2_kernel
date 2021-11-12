@@ -96,7 +96,6 @@ class CbcSolveCommandTest {
 		assertEquals(expected, actual);
 	}
 
-	@Disabled
 	@Test
 	void should_get_free_variables_and_solution_when_solving_with_DPLLT() {
 		String predicate = "x:INTEGER & y:INTEGER & x>y";
@@ -123,7 +122,6 @@ class CbcSolveCommandTest {
 	}
 
 	@Test
-	@Disabled("Only works for y<x somehow?")
 	void should_solve_in_state_when_dpllt() throws IOException {
 		State state = stateSpace.getRoot().explore();
 		state = state.getTransitions().get(0).getDestination().explore();
