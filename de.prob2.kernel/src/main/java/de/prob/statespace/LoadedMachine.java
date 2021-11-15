@@ -89,7 +89,7 @@ public class LoadedMachine {
 
 	private List<IEvalElement> namesToEvalElements(final List<String> names, final FormulaExpand expand) {
 		return names.stream()
-			.map(name -> stateSpace.getModel().parseFormula(name, expand))
+			.map(name -> stateSpace.getModel().formulaFromIdentifier(name, expand))
 			.collect(Collectors.toList());
 	}
 

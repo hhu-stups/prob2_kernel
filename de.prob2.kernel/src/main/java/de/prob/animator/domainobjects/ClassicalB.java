@@ -6,14 +6,18 @@
 
 package de.prob.animator.domainobjects;
 
+import java.util.Collections;
+
 import de.be4.classicalb.core.parser.BParser;
 import de.be4.classicalb.core.parser.analysis.prolog.ASTProlog;
 import de.be4.classicalb.core.parser.exceptions.BCompoundException;
 import de.be4.classicalb.core.parser.node.AExpressionParseUnit;
+import de.be4.classicalb.core.parser.node.AIdentifierExpression;
 import de.be4.classicalb.core.parser.node.APredicateParseUnit;
 import de.be4.classicalb.core.parser.node.EOF;
 import de.be4.classicalb.core.parser.node.Node;
 import de.be4.classicalb.core.parser.node.Start;
+import de.be4.classicalb.core.parser.node.TIdentifierLiteral;
 import de.be4.classicalb.core.parser.util.PrettyPrinter;
 import de.hhu.stups.prob.translator.BValue;
 import de.hhu.stups.prob.translator.TranslatingVisitor;
@@ -94,6 +98,25 @@ public class ClassicalB extends AbstractEvalElement implements IBEvalElement {
 		final PrettyPrinter prettyPrinter = new PrettyPrinter();
 		predicate.apply(prettyPrinter);
 		return prettyPrinter.getPrettyPrint();
+	}
+
+	/**
+	 * <p>Create a classical B formula representing the given identifier.</p>
+	 * <p>
+	 * Unlike the normal constructors that parse the input string using the B parser,
+	 * this method accepts arbitrary strings as identifiers,
+	 * even ones that are not syntactically valid B identifiers
+	 * and would otherwise need to be quoted.
+	 * </p>
+	 * 
+	 * @param identifier an unquoted identifier to convert to a formula
+	 * @param expansion expansion mode to use when evaluating the formula
+	 * @return a classical B formula representing the given identifier
+	 */
+	public static ClassicalB fromIdentifier(final String identifier, final FormulaExpand expansion) {
+		final AIdentifierExpression idNode = new AIdentifierExpression(Collections.singletonList(new TIdentifierLiteral(identifier)));
+		final Start ast = new Start(new AExpressionParseUnit(idNode), new EOF());
+		return new ClassicalB(ast, expansion);
 	}
 
 	@Override

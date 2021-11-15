@@ -64,6 +64,11 @@ public class RulesModel extends AbstractModel {
 	}
 
 	@Override
+	public IEvalElement formulaFromIdentifier(final String identifier, final FormulaExpand expansion) {
+		return ClassicalB.fromIdentifier(identifier, expansion);
+	}
+
+	@Override
 	public <T extends AbstractElement> ModelElementList<T> getChildrenOfType(final Class<T> c) {
 		return new ModelElementList<>();
 	}

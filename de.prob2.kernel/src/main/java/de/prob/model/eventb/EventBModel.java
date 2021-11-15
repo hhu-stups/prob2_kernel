@@ -48,6 +48,11 @@ public class EventBModel extends AbstractModel {
 		return new EventB(formula, Collections.emptySet(), expand);
 	}
 
+	@Override
+	public IEvalElement formulaFromIdentifier(final String identifier, final FormulaExpand expansion) {
+		return EventB.fromIdentifier(identifier, expansion);
+	}
+
 	public EventBModel set(Class<? extends AbstractElement> clazz, ModelElementList<? extends AbstractElement> elements) {
 		return new EventBModel(getStateSpaceProvider(), assoc(clazz, elements), getGraph(), getModelFile());
 	}

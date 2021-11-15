@@ -67,6 +67,26 @@ public class EventB extends AbstractEvalElement implements IBEvalElement {
 
 		this.types = types;
 	}
+
+	/**
+	 * <p>Create an Event-B formula representing the given identifier.</p>
+	 * <p>
+	 * Unlike the normal constructors that parse the input string using the Rodin parser,
+	 * this method accepts arbitrary strings as identifiers,
+	 * even ones that are not syntactically valid Event-B identifiers.
+	 * </p>
+	 *
+	 * @param identifier an identifier to convert to a formula
+	 * @param expansion expansion mode to use when evaluating the formula
+	 * @return an Event-B formula representing the given identifier
+	 */
+	public static EventB fromIdentifier(final String identifier, final FormulaExpand expansion) {
+		final ClassicalB bFormula = ClassicalB.fromIdentifier(identifier, expansion);
+		final EventB eventBFormula = new EventB(bFormula.getCode(), expansion);
+		eventBFormula.ast = bFormula.getAst();
+		eventBFormula.kind = EvalElementType.EXPRESSION;
+		return eventBFormula;
+	}
 	
 	public IParseResult ensurePredicateParsed() {
 		final String unicode = this.toUnicode();

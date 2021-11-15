@@ -56,6 +56,12 @@ public class CSPModel extends AbstractModel {
 	}
 
 	@Override
+	public IEvalElement formulaFromIdentifier(final String identifier, final FormulaExpand expansion) {
+		// TODO This only handles syntactically valid identifiers and not arbitrary strings
+		return this.parseFormula(identifier, expansion);
+	}
+
+	@Override
 	public FormalismType getFormalismType() {
 		return FormalismType.CSP;
 	}

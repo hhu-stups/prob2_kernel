@@ -128,6 +128,11 @@ public class ClassicalBModel extends AbstractModel {
 	}
 
 	@Override
+	public IEvalElement formulaFromIdentifier(final String identifier, final FormulaExpand expansion) {
+		return ClassicalB.fromIdentifier(identifier, expansion);
+	}
+
+	@Override
 	public FormalismType getFormalismType() {
 		return FormalismType.B;
 	}
