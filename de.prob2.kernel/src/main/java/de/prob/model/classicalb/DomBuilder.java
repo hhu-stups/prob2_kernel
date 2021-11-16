@@ -1,6 +1,7 @@
 package de.prob.model.classicalb;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -285,8 +286,10 @@ public class DomBuilder extends DepthFirstAdapter {
 				String id = node.getIdentifier().get(0).getText();
 
 				if (usedIds.contains(id)) {
-					node.getIdentifier().set(0,
-							new TIdentifierLiteral(prefix + "." + id));
+					final List<TIdentifierLiteral> prefixTokens = Arrays.stream(prefix.split("\\."))
+						.map(TIdentifierLiteral::new)
+						.collect(Collectors.toList());
+					node.getIdentifier().addAll(0, prefixTokens);
 				}
 			}
 		}
