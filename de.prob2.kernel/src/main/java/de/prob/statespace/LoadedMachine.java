@@ -1,7 +1,7 @@
 package de.prob.statespace;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -89,7 +89,7 @@ public class LoadedMachine {
 
 	private List<IEvalElement> namesToEvalElements(final List<String> names, final FormulaExpand expand) {
 		return names.stream()
-			.map(name -> stateSpace.getModel().formulaFromIdentifier(name, expand))
+			.map(name -> stateSpace.getModel().formulaFromIdentifier(Arrays.asList(name.split("\\.")), expand))
 			.collect(Collectors.toList());
 	}
 

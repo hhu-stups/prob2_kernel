@@ -76,11 +76,11 @@ public class EventB extends AbstractEvalElement implements IBEvalElement {
 	 * even ones that are not syntactically valid Event-B identifiers.
 	 * </p>
 	 *
-	 * @param identifier an identifier to convert to a formula
+	 * @param identifier list of string parts that make up a dotted identifier
 	 * @param expansion expansion mode to use when evaluating the formula
 	 * @return an Event-B formula representing the given identifier
 	 */
-	public static EventB fromIdentifier(final String identifier, final FormulaExpand expansion) {
+	public static EventB fromIdentifier(final List<String> identifier, final FormulaExpand expansion) {
 		final ClassicalB bFormula = ClassicalB.fromIdentifier(identifier, expansion);
 		final EventB eventBFormula = new EventB(bFormula.getCode(), expansion);
 		eventBFormula.ast = bFormula.getAst();

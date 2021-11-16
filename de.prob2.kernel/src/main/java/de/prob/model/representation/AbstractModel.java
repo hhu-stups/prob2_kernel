@@ -89,11 +89,11 @@ public abstract class AbstractModel extends AbstractElement {
 	 * and would be unrepresentable or require quoting.
 	 * </p>
 	 *
-	 * @param identifier an unquoted identifier to convert to a formula
+	 * @param identifier list of string parts that make up a dotted identifier
 	 * @param expansion expansion mode to use when evaluating the formula
 	 * @return a formula representing the given identifier
 	 */
-	public abstract IEvalElement formulaFromIdentifier(final String identifier, final FormulaExpand expansion);
+	public abstract IEvalElement formulaFromIdentifier(final List<String> identifier, final FormulaExpand expansion);
 
 	/**
 	 * Will check the syntax of a formula to see if it is valid in the scope of

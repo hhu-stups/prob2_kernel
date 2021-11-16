@@ -1,6 +1,7 @@
 package de.prob.model.representation;
 
 import java.io.File;
+import java.util.List;
 
 import com.github.krukow.clj_lang.PersistentHashMap;
 import com.google.inject.Inject;
@@ -56,9 +57,9 @@ public class CSPModel extends AbstractModel {
 	}
 
 	@Override
-	public IEvalElement formulaFromIdentifier(final String identifier, final FormulaExpand expansion) {
+	public IEvalElement formulaFromIdentifier(final List<String> identifier, final FormulaExpand expansion) {
 		// TODO This only handles syntactically valid identifiers and not arbitrary strings
-		return this.parseFormula(identifier, expansion);
+		return this.parseFormula(String.join(".", identifier), expansion);
 	}
 
 	@Override

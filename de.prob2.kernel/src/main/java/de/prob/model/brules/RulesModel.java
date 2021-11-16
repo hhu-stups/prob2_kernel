@@ -2,6 +2,7 @@ package de.prob.model.brules;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.github.krukow.clj_lang.PersistentHashMap;
@@ -64,7 +65,7 @@ public class RulesModel extends AbstractModel {
 	}
 
 	@Override
-	public IEvalElement formulaFromIdentifier(final String identifier, final FormulaExpand expansion) {
+	public IEvalElement formulaFromIdentifier(final List<String> identifier, final FormulaExpand expansion) {
 		return ClassicalB.fromIdentifier(identifier, expansion);
 	}
 

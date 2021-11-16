@@ -1,6 +1,7 @@
 package de.prob.model.representation;
 
 import java.io.File;
+import java.util.List;
 
 import com.github.krukow.clj_lang.PersistentHashMap;
 import com.google.inject.Inject;
@@ -8,7 +9,6 @@ import com.google.inject.Inject;
 import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.command.LoadAlloyTermCommand;
 import de.prob.animator.domainobjects.ClassicalB;
-import de.prob.animator.domainobjects.EvaluationException;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.scripting.StateSpaceProvider;
@@ -38,7 +38,7 @@ public class AlloyModel extends AbstractModel {
 	}
 
 	@Override
-	public IEvalElement formulaFromIdentifier(final String identifier, final FormulaExpand expansion) {
+	public IEvalElement formulaFromIdentifier(final List<String> identifier, final FormulaExpand expansion) {
 		return ClassicalB.fromIdentifier(identifier, expansion);
 	}
 

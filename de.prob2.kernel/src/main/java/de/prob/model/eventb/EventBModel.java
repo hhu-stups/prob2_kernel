@@ -49,7 +49,7 @@ public class EventBModel extends AbstractModel {
 	}
 
 	@Override
-	public IEvalElement formulaFromIdentifier(final String identifier, final FormulaExpand expansion) {
+	public IEvalElement formulaFromIdentifier(final List<String> identifier, final FormulaExpand expansion) {
 		return EventB.fromIdentifier(identifier, expansion);
 	}
 

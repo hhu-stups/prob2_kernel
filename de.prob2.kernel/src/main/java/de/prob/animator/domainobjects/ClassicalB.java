@@ -6,7 +6,8 @@
 
 package de.prob.animator.domainobjects;
 
-import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import de.be4.classicalb.core.parser.BParser;
 import de.be4.classicalb.core.parser.analysis.prolog.ASTProlog;
@@ -109,12 +110,12 @@ public class ClassicalB extends AbstractEvalElement implements IBEvalElement {
 	 * and would otherwise need to be quoted.
 	 * </p>
 	 * 
-	 * @param identifier an unquoted identifier to convert to a formula
+	 * @param identifier list of string parts that make up a dotted identifier
 	 * @param expansion expansion mode to use when evaluating the formula
 	 * @return a classical B formula representing the given identifier
 	 */
-	public static ClassicalB fromIdentifier(final String identifier, final FormulaExpand expansion) {
-		final AIdentifierExpression idNode = new AIdentifierExpression(Collections.singletonList(new TIdentifierLiteral(identifier)));
+	public static ClassicalB fromIdentifier(final List<String> identifier, final FormulaExpand expansion) {
+		final AIdentifierExpression idNode = new AIdentifierExpression(identifier.stream().map(TIdentifierLiteral::new).collect(Collectors.toList()));
 		final Start ast = new Start(new AExpressionParseUnit(idNode), new EOF());
 		return new ClassicalB(ast, expansion);
 	}
