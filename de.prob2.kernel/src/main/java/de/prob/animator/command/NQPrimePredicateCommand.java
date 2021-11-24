@@ -39,13 +39,13 @@ public class NQPrimePredicateCommand extends AbstractCommand {
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
 		CompoundPrologTerm compoundTerm = BindingGenerator.getCompoundTerm(bindings.get(PRIMED_PREDICATE_VARIABLE), 0);
-		// Note: It would be more elegant to return an EventB or ClassicalB element, as
-		// PrimePredicateCommand attempts.
-		// However, the introduced ' as priming symbol hinders the parsing of a ClassicalB element
-		// (which is why PrimePredicateCommand doesn't work with ClassicalB input...).
-		// We could circumvent it by using Classical B's other apostrophe, ′ (0x007F, not a backtick ´),
-		// but for now it makes more sense to let the user handle it themselves.
+
 		result = compoundTerm.getFunctor();
+		if (evalElement instanceof EventB) {
+			// probcli returns Unicode primes (Classical B syntax), which the Rodin parser doesn't support
+			result = result.replace('′', '\'');
+		}
+
 	}
 
 	@Override
