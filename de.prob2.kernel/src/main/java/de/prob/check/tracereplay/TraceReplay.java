@@ -212,4 +212,19 @@ public class TraceReplay {
 		return true;
 	}
 
+	public static List<List<PostconditionResult>> checkPostconditionsAfterReplay(final PersistentTrace persistentTrace, final Trace replayedTrace) {
+		final List<PersistentTransition> persistentTransitions = persistentTrace.getTransitionList();
+		final List<Transition> replayedTransitions = replayedTrace.getTransitionList();
+		if (persistentTransitions.size() < replayedTransitions.size()) {
+			throw new IllegalArgumentException("Mismatched trace sizes: the saved trace has only " + persistentTransitions.size() + " transitions, but the replayed trace has " + replayedTransitions.size() + " transitions");
+		}
+		
+		final List<List<PostconditionResult>> results = new ArrayList<>(replayedTransitions.size());
+		for (int i = 0; i < replayedTransitions.size(); i++) {
+			final PersistentTransition persistentTransition = persistentTransitions.get(i);
+			final Transition replayedTransition = replayedTransitions.get(i);
+			results.add(checkPostconditions(replayedTransition.getDestination(), persistentTransition.getPostconditions()));
+		}
+		return results;
+	}
 }
