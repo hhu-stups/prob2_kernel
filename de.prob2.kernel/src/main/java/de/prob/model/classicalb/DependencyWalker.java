@@ -13,9 +13,9 @@ import de.prob.model.representation.ModelElementList;
 
 public final class DependencyWalker {
 
-	private DependencyGraph graph;
 	private final RecursiveMachineLoader rml;
 	private ModelElementList<ClassicalBMachine> machines;
+	private DependencyGraph graph;
 	private Set<String> machineIds;
 
 	public DependencyWalker(final String machineId,
