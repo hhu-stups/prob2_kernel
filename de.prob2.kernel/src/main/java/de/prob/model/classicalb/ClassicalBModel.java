@@ -2,10 +2,8 @@ package de.prob.model.classicalb;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -58,37 +56,13 @@ public class ClassicalBModel extends AbstractModel {
 	}
 
 	public ClassicalBModel create(final Start mainAST, final RecursiveMachineLoader rml, final File modelFile, final BParser bparser) {
-		DependencyGraph graph = new DependencyGraph();
-
 		final DomBuilder d = new DomBuilder(rml.getMainMachineName(), null);
 		final ClassicalBMachine classicalBMachine = d.build(mainAST);
 
-		ModelElementList<ClassicalBMachine> machines = new ModelElementList<>();
-		machines = machines.addElement(classicalBMachine);
-		graph = graph.addVertex(classicalBMachine.getName());
+		final DependencyWalker walker = new DependencyWalker(rml, classicalBMachine);
+		walker.findDependencies();
 
-		final Set<String> vertices = new HashSet<>();
-		vertices.add(rml.getMainMachineName());
-		final Set<String> done = new HashSet<>();
-		boolean fpReached = false;
-
-		while (!fpReached) {
-			fpReached = true;
-			// Copy vertices set so that it can be safely mutated during iteration
-			for (final String machineId : new HashSet<>(vertices)) {
-				if (!done.contains(machineId)) {
-					final DependencyWalker walker = new DependencyWalker(machineId, rml, machines, graph);
-					walker.addReferences(machineId);
-					graph = walker.getGraph();
-					machines = walker.getMachines();
-					vertices.addAll(walker.getMachineIds());
-					done.add(machineId);
-					fpReached = false;
-				}
-			}
-		}
-
-		return new ClassicalBModel(getStateSpaceProvider(), assoc(Machine.class, machines), graph, modelFile, bparser, rml, classicalBMachine);
+		return new ClassicalBModel(getStateSpaceProvider(), assoc(Machine.class, walker.getMachines()), walker.getGraph(), modelFile, bparser, rml, classicalBMachine);
 	}
 
 	public ClassicalBMachine getMainMachine() {

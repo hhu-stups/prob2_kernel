@@ -18,18 +18,37 @@ public final class DependencyWalker {
 	private DependencyGraph graph;
 	private Set<String> machineIds;
 
-	public DependencyWalker(final String machineId,
+	public DependencyWalker(
 			final RecursiveMachineLoader rml,
-			final ModelElementList<ClassicalBMachine> machines,
-			final DependencyGraph graph) {
+			final ClassicalBMachine mainMachine) {
 		this.machineIds = new HashSet<>();
-		this.machineIds.add(machineId);
+		this.machineIds.add(mainMachine.getName());
 		this.rml = rml;
-		this.machines = machines;
-		this.graph = graph;
+		this.machines = new ModelElementList<>();
+		this.machines = this.machines.addElement(mainMachine);
+		this.graph = new DependencyGraph();
+		this.graph = this.graph.addVertex(mainMachine.getName());
+	}
+
+	public void findDependencies() {
+		final Set<String> done = new HashSet<>();
+		boolean fpReached = false;
+
+		while (!fpReached) {
+			fpReached = true;
+			// Copy machineIds set so that it can be safely mutated during iteration
+			for (final String machineId : new HashSet<>(this.machineIds)) {
+				if (!done.contains(machineId)) {
+					addReferences(machineId);
+					done.add(machineId);
+					fpReached = false;
+				}
+			}
+		}
 	}
 
 	public void addReferences(final String machineId) {
+		this.machineIds.add(machineId);
 		final String machineName;
 		final String prefix;
 		final int lastDot = machineId.lastIndexOf('.');
@@ -105,9 +124,4 @@ public final class DependencyWalker {
 	public DependencyGraph getGraph() {
 		return graph;
 	}
-
-	public Set<String> getMachineIds() {
-		return machineIds;
-	}
-
 }
