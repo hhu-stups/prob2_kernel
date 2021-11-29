@@ -32,14 +32,21 @@ public class DependencyWalker extends DepthFirstAdapter {
 	private final String name;
 	private final Map<String, Start> parsedMachines;
 	private ModelElementList<ClassicalBMachine> machines;
-	private Set<LinkedList<TIdentifierLiteral>> machineIds;
+	private Set<String> machineIds;
 
-	public DependencyWalker(final LinkedList<TIdentifierLiteral> machine,
+	public DependencyWalker(final String machineId,
 			final ModelElementList<ClassicalBMachine> machines,
 			final DependencyGraph graph, final Map<String, Start> parsedMachines) {
 		this.machineIds = new HashSet<>();
-		this.name = extractMachineName(machine);
-		this.prefix = extractMachinePrefix(machine);
+		this.machineIds.add(machineId);
+		final int lastDot = machineId.lastIndexOf('.');
+		if (lastDot == -1) {
+			this.name = machineId;
+			this.prefix = null;
+		} else {
+			this.name = machineId.substring(lastDot + 1);
+			this.prefix = machineId.substring(0, lastDot);
+		}
 		this.machines = machines;
 		this.graph = graph;
 		this.parsedMachines = parsedMachines;
@@ -100,16 +107,20 @@ public class DependencyWalker extends DepthFirstAdapter {
 		}
 	}
 
+	private static String extractIdentifierName(final List<TIdentifierLiteral> nameL) {
+		return nameL.stream()
+			.map(Token::getText)
+			.collect(Collectors.joining("."));
+	}
+
 	private String extractMachineName(final LinkedList<TIdentifierLiteral> list) {
-		machineIds.add(list);
+		machineIds.add(extractIdentifierName(list));
 		return list.getLast().getText();
 	}
 
 	private String extractMachinePrefix(LinkedList<TIdentifierLiteral> list) {
 		if (list.size() > 1) {
-			return list.subList(0, list.size() - 1).stream()
-				.map(Token::getText)
-				.collect(Collectors.joining("."));
+			return extractIdentifierName(list.subList(0, list.size() - 1));
 		} else {
 			return null;
 		}
@@ -145,7 +156,7 @@ public class DependencyWalker extends DepthFirstAdapter {
 		return graph;
 	}
 
-	public Set<LinkedList<TIdentifierLiteral>> getMachineIds() {
+	public Set<String> getMachineIds() {
 		return machineIds;
 	}
 

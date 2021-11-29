@@ -3,7 +3,6 @@ package de.prob.model.classicalb;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,7 +18,6 @@ import de.be4.classicalb.core.parser.analysis.prolog.RecursiveMachineLoader;
 import de.be4.classicalb.core.parser.exceptions.BCompoundException;
 import de.be4.classicalb.core.parser.exceptions.BParseException;
 import de.be4.classicalb.core.parser.node.Start;
-import de.be4.classicalb.core.parser.node.TIdentifierLiteral;
 import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.command.LoadBProjectCommand;
 import de.prob.animator.domainobjects.ClassicalB;
@@ -69,18 +67,23 @@ public class ClassicalBModel extends AbstractModel {
 		machines = machines.addElement(classicalBMachine);
 		graph = graph.addVertex(classicalBMachine.getName());
 
-		final Set<LinkedList<TIdentifierLiteral>> vertices = new HashSet<>();
-		final LinkedList<TIdentifierLiteral> mainId = new LinkedList<>();
-		mainId.add(new TIdentifierLiteral(rml.getMainMachineName()));
-		vertices.add(mainId);
-		final Set<LinkedList<TIdentifierLiteral>> done = new HashSet<>();
+		final Set<String> vertices = new HashSet<>();
+		vertices.add(rml.getMainMachineName());
+		final Set<String> done = new HashSet<>();
 		boolean fpReached = false;
 
 		while (!fpReached) {
 			fpReached = true;
-			final Set<LinkedList<TIdentifierLiteral>> newVertices = new HashSet<>();
-			for (final LinkedList<TIdentifierLiteral> machineId : vertices) {
-				final String machineName = machineId.getLast().getText();
+			final Set<String> newVertices = new HashSet<>();
+			for (final String machineId : vertices) {
+				final int lastDot = machineId.lastIndexOf('.');
+				final String machineName;
+				if (lastDot == -1) {
+					machineName = machineId;
+				} else {
+					machineName = machineId.substring(lastDot + 1);
+				}
+
 				final Start ast = rml.getParsedMachines().get(machineName);
 				if (!done.contains(machineId)) {
 					final DependencyWalker walker = new DependencyWalker(machineId, machines, graph, rml.getParsedMachines());
