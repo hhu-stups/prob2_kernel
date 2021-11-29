@@ -74,28 +74,18 @@ public class ClassicalBModel extends AbstractModel {
 
 		while (!fpReached) {
 			fpReached = true;
-			final Set<String> newVertices = new HashSet<>();
-			for (final String machineId : vertices) {
-				final int lastDot = machineId.lastIndexOf('.');
-				final String machineName;
-				if (lastDot == -1) {
-					machineName = machineId;
-				} else {
-					machineName = machineId.substring(lastDot + 1);
-				}
-
+			// Copy vertices set so that it can be safely mutated during iteration
+			for (final String machineId : new HashSet<>(vertices)) {
 				if (!done.contains(machineId)) {
-					final DependencyWalker walker = new DependencyWalker(machineId, machines, graph, rml.getParsedMachines());
-					walker.addReferences(rml.getMachineReferenceInfo().get(machineName));
+					final DependencyWalker walker = new DependencyWalker(machineId, rml, machines, graph);
+					walker.addReferences(machineId);
 					graph = walker.getGraph();
 					machines = walker.getMachines();
-					newVertices.addAll(walker.getMachineIds());
+					vertices.addAll(walker.getMachineIds());
 					done.add(machineId);
 					fpReached = false;
 				}
 			}
-
-			vertices.addAll(newVertices);
 		}
 
 		return new ClassicalBModel(getStateSpaceProvider(), assoc(Machine.class, machines), graph, modelFile, bparser, rml, classicalBMachine);
