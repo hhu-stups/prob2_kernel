@@ -84,10 +84,9 @@ public class ClassicalBModel extends AbstractModel {
 					machineName = machineId.substring(lastDot + 1);
 				}
 
-				final Start ast = rml.getParsedMachines().get(machineName);
 				if (!done.contains(machineId)) {
 					final DependencyWalker walker = new DependencyWalker(machineId, machines, graph, rml.getParsedMachines());
-					ast.apply(walker);
+					walker.addReferences(rml.getMachineReferenceInfo().get(machineName));
 					graph = walker.getGraph();
 					machines = walker.getMachines();
 					newVertices.addAll(walker.getMachineIds());

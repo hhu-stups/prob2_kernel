@@ -1,31 +1,17 @@
 package de.prob.model.classicalb;
 
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import de.be4.classicalb.core.parser.analysis.DepthFirstAdapter;
-import de.be4.classicalb.core.parser.node.AIdentifierExpression;
-import de.be4.classicalb.core.parser.node.AImplementationMachineParseUnit;
-import de.be4.classicalb.core.parser.node.AImportsMachineClause;
-import de.be4.classicalb.core.parser.node.AMachineReference;
-import de.be4.classicalb.core.parser.node.ARefinementMachineParseUnit;
-import de.be4.classicalb.core.parser.node.ASeesMachineClause;
-import de.be4.classicalb.core.parser.node.AUsesMachineClause;
-import de.be4.classicalb.core.parser.node.PExpression;
-import de.be4.classicalb.core.parser.node.PMachineReference;
+import de.be4.classicalb.core.parser.analysis.prolog.MachineReference;
+import de.be4.classicalb.core.parser.analysis.prolog.ReferencedMachines;
 import de.be4.classicalb.core.parser.node.Start;
-import de.be4.classicalb.core.parser.node.TIdentifierLiteral;
-import de.be4.classicalb.core.parser.node.Token;
-
 import de.prob.model.representation.DependencyGraph;
 import de.prob.model.representation.DependencyGraph.ERefType;
 import de.prob.model.representation.ModelElementList;
 
-public class DependencyWalker extends DepthFirstAdapter {
+public final class DependencyWalker {
 
 	private DependencyGraph graph;
 	private final String prefix;
@@ -52,77 +38,44 @@ public class DependencyWalker extends DepthFirstAdapter {
 		this.parsedMachines = parsedMachines;
 	}
 
-	@Override
-	public void caseASeesMachineClause(final ASeesMachineClause node) {
-		registerMachineNames(node.getMachineNames(), ERefType.SEES);
-	}
+	public void addReferences(final ReferencedMachines refMachines) {
+		for (final MachineReference ref : refMachines.getReferences()) {
+			this.machineIds.add(concat(ref.getRenamedName(), ref.getName()));
 
-	@Override
-	public void caseAUsesMachineClause(final AUsesMachineClause node) {
-		registerMachineNames(node.getMachineNames(), ERefType.USES);
-	}
-
-	@Override
-	public void caseAImportsMachineClause(final AImportsMachineClause node) {
-		for (final PMachineReference r : node.getMachineReferences()) {
-			final String dest = extractMachineName(((AMachineReference) r).getMachineName());
-			addMachine(dest, prefix, ERefType.IMPORTS);
-		}
-	}
-
-	@Override
-	public void caseAMachineReference(final AMachineReference node) {
-		final String dest = extractMachineName(node.getMachineName());
-		final String prefix = extractMachinePrefix(node.getMachineName());
-		addMachine(dest, concat(this.prefix, prefix), ERefType.INCLUDES);
-	}
-
-
-	@Override
-	public void outARefinementMachineParseUnit(
-			final ARefinementMachineParseUnit node) {
-		registerRefinementMachine(node.getRefMachine());
-	}
-
-	@Override
-	public void outAImplementationMachineParseUnit(
-			final AImplementationMachineParseUnit node) {
-		registerRefinementMachine(node.getRefMachine());
-	}
-
-	private void registerRefinementMachine(final TIdentifierLiteral refMachine) {
-		final String dest = refMachine.getText();
-		addMachine(dest, prefix, ERefType.REFINES);
-	}
-
-	private void registerMachineNames(final List<PExpression> machineNames,
-			final ERefType depType) {
-		for (final PExpression machineName : machineNames) {
-			if (machineName instanceof AIdentifierExpression) {
-				final AIdentifierExpression identifier = (AIdentifierExpression) machineName;
-				final String dest = extractMachineName(identifier
-						.getIdentifier());
-				addMachine(dest, depType == ERefType.USES ? dest : prefix, depType); // TODO test this
+			String refPrefix = this.prefix;
+			final ERefType refType;
+			switch (ref.getType()) {
+				case SEES:
+					refType = ERefType.SEES;
+					break;
+				
+				case USES:
+					refPrefix = ref.getName(); // TODO test this
+					refType = ERefType.USES;
+					break;
+				
+				case REFINES:
+					refType = ERefType.REFINES;
+					break;
+				
+				case INCLUDES:
+					refPrefix = concat(this.prefix, ref.getRenamedName());
+					refType = ERefType.INCLUDES;
+					break;
+				
+				case EXTENDS:
+					refType = ERefType.EXTENDS;
+					break;
+				
+				case IMPORTS:
+					refType = ERefType.IMPORTS;
+					break;
+				
+				default:
+					continue;
 			}
-		}
-	}
 
-	private static String extractIdentifierName(final List<TIdentifierLiteral> nameL) {
-		return nameL.stream()
-			.map(Token::getText)
-			.collect(Collectors.joining("."));
-	}
-
-	private String extractMachineName(final LinkedList<TIdentifierLiteral> list) {
-		machineIds.add(extractIdentifierName(list));
-		return list.getLast().getText();
-	}
-
-	private String extractMachinePrefix(LinkedList<TIdentifierLiteral> list) {
-		if (list.size() > 1) {
-			return extractIdentifierName(list.subList(0, list.size() - 1));
-		} else {
-			return null;
+			addMachine(ref.getName(), refPrefix, refType);
 		}
 	}
 
