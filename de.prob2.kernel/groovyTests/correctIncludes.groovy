@@ -65,8 +65,8 @@ assert operations(m, "MA.MC.M3") == ["MA.MC.set"]
 assert operations(m, "MB.MD.M3") == ["MB.MD.set"]
 assert operations(m, "MB.MC.M3") == ["MB.MC.set"]
 
-Variable variable(AbstractModel model, String element, String var) {
-	model.getComponent(element).variables.getElement(var)
+Variable variable(AbstractModel model, String element, String variable) {
+	model.getComponent(element).variables.getElement(variable)
 }
 
 variable(m, "M1", "v1").subscribe(s)
