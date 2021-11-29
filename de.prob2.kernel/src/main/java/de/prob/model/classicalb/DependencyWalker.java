@@ -116,7 +116,7 @@ public class DependencyWalker extends DepthFirstAdapter {
 	}
 
 	private ClassicalBMachine makeMachine(final String dest, final String prefix) {
-		final DomBuilder builder = new DomBuilder(prefix);
+		final DomBuilder builder = new DomBuilder(dest, prefix);
 		final Start start = parsedMachines.get(dest);
 		start.apply(builder);
 		return builder.getMachine();

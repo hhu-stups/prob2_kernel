@@ -47,7 +47,6 @@ import de.prob.model.representation.Variable;
 public class DomBuilder extends DepthFirstAdapter {
 
 	private final EOF EOF = new EOF();
-	private String name;
 	private final List<Parameter> parameters = new ArrayList<>();
 	private final List<Constraint> constraints = new ArrayList<>();
 	private final List<ClassicalBConstant> constants = new ArrayList<>();
@@ -58,28 +57,27 @@ public class DomBuilder extends DepthFirstAdapter {
 	private final List<Assertion> assertions = new ArrayList<>();
 	private final List<Operation> operations = new ArrayList<>();
 	private final Set<String> usedIds = new HashSet<>();
-	private String prefix;
+	private final String unprefixedName;
+	private final String prefix;
 
-	public DomBuilder(final String prefix) {
+	public DomBuilder(final String unprefixedName, final String prefix) {
+		this.unprefixedName = unprefixedName;
 		this.prefix = prefix;
 	}
 
 	public ClassicalBMachine build(final Start ast) {
 		ast.apply(this);
-		if (this.name == null) {
-			// Special case for when a definition file is loaded as the main file.
-			// In that case the file doesn't contain a machine header,
-			// so the name field isn't set.
-			// The same special machine name is set by RecursiveMachineLoader,
-			// but there's no good way to read it,
-			// so we hardcode it here again (not very nice...)
-			this.name = "DEFINITION_FILE";
-		}
 		return getMachine();
 	}
 
 	public ClassicalBMachine getMachine() {
-		ClassicalBMachine machine = new ClassicalBMachine(name);
+		final String prefixedName;
+		if (prefix == null || prefix.equals(unprefixedName)) {
+			prefixedName = unprefixedName;
+		} else {
+			prefixedName = prefix + "." + unprefixedName;
+		}
+		ClassicalBMachine machine = new ClassicalBMachine(prefixedName);
 		machine = machine.set(Assertion.class, new ModelElementList<>(assertions));
 		machine = machine.set(Constant.class, new ModelElementList<>(constants));
 		machine = machine.set(Constraint.class, new ModelElementList<>(constraints));
@@ -94,9 +92,9 @@ public class DomBuilder extends DepthFirstAdapter {
 
 	@Override
 	public void outAMachineHeader(final AMachineHeader node) {
-		name = extractIdentifierName(node.getName());
-		if (prefix != null && !prefix.equals(name)) {
-			name = prefix + "." + name;
+		final String nameInAst = extractIdentifierName(node.getName());
+		if (!nameInAst.equals(unprefixedName)) {
+			throw new ProBError("Machine name mismatch: expected name " + unprefixedName + ", but found name " + nameInAst + " in AST");
 		}
 		for (PExpression expression : node.getParameters()) {
 			parameters.add(new Parameter(createExpressionAST(expression)));
