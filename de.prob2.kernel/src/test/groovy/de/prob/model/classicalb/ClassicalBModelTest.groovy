@@ -44,7 +44,7 @@ class ClassicalBModelTest extends Specification {
 		"Foo" | "Bar" | ERefType.REFINES
 		"Foo" | "A"   | ERefType.SEES
 		"Foo" | "C"   | ERefType.INCLUDES
-		"Foo" | "D"   | ERefType.INCLUDES
+		"Foo" | "D"   | ERefType.EXTENDS
 	}
 
 	def "If an edge is not in the graph, null is returned"() {
