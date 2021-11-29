@@ -70,7 +70,9 @@ public class ClassicalBModel extends AbstractModel {
 		graph = graph.addVertex(classicalBMachine.getName());
 
 		final Set<LinkedList<TIdentifierLiteral>> vertices = new HashSet<>();
-		vertices.add(d.getMachineId());
+		final LinkedList<TIdentifierLiteral> mainId = new LinkedList<>();
+		mainId.add(new TIdentifierLiteral(rml.getMainMachineName()));
+		vertices.add(mainId);
 		final Set<LinkedList<TIdentifierLiteral>> done = new HashSet<>();
 		boolean fpReached = false;
 

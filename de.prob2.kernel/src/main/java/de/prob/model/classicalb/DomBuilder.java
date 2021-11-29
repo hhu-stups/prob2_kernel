@@ -3,7 +3,6 @@ package de.prob.model.classicalb;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -34,7 +33,6 @@ import de.be4.classicalb.core.parser.node.PSubstitution;
 import de.be4.classicalb.core.parser.node.Start;
 import de.be4.classicalb.core.parser.node.TIdentifierLiteral;
 import de.be4.classicalb.core.parser.node.Token;
-
 import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.exception.ProBError;
@@ -61,7 +59,6 @@ public class DomBuilder extends DepthFirstAdapter {
 	private final List<Operation> operations = new ArrayList<>();
 	private final Set<String> usedIds = new HashSet<>();
 	private String prefix;
-	private LinkedList<TIdentifierLiteral> machineId;
 
 	public DomBuilder(final String prefix) {
 		this.prefix = prefix;
@@ -69,23 +66,16 @@ public class DomBuilder extends DepthFirstAdapter {
 
 	public ClassicalBMachine build(final Start ast) {
 		ast.apply(this);
-		if (this.machineId == null) {
+		if (this.name == null) {
 			// Special case for when a definition file is loaded as the main file.
 			// In that case the file doesn't contain a machine header,
-			// so machineId and name aren't set.
-			assert this.name == null;
-			this.machineId = new LinkedList<>();
+			// so the name field isn't set.
 			// The same special machine name is set by RecursiveMachineLoader,
 			// but there's no good way to read it,
 			// so we hardcode it here again (not very nice...)
-			this.machineId.add(new TIdentifierLiteral("DEFINITION_FILE"));
-			this.name = extractIdentifierName(this.machineId);
+			this.name = "DEFINITION_FILE";
 		}
 		return getMachine();
-	}
-
-	public LinkedList<TIdentifierLiteral> getMachineId() {
-		return machineId;
 	}
 
 	public ClassicalBMachine getMachine() {
@@ -105,7 +95,6 @@ public class DomBuilder extends DepthFirstAdapter {
 	@Override
 	public void outAMachineHeader(final AMachineHeader node) {
 		name = extractIdentifierName(node.getName());
-		machineId = node.getName();
 		if (prefix != null && !prefix.equals(name)) {
 			name = prefix + "." + name;
 		}
