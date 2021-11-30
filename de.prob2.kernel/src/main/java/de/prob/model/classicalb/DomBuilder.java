@@ -2,13 +2,17 @@ package de.prob.model.classicalb;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import de.be4.classicalb.core.parser.analysis.DepthFirstAdapter;
+import de.be4.classicalb.core.parser.analysis.MachineClauseAdapter;
 import de.be4.classicalb.core.parser.node.AAssertionsMachineClause;
+import de.be4.classicalb.core.parser.node.AConjunctPredicate;
 import de.be4.classicalb.core.parser.node.AConstantsMachineClause;
 import de.be4.classicalb.core.parser.node.AConstraintsMachineClause;
 import de.be4.classicalb.core.parser.node.ADeferredSetSet;
@@ -17,18 +21,22 @@ import de.be4.classicalb.core.parser.node.AEnumeratedSetSet;
 import de.be4.classicalb.core.parser.node.AExpressionParseUnit;
 import de.be4.classicalb.core.parser.node.AIdentifierExpression;
 import de.be4.classicalb.core.parser.node.AInvariantMachineClause;
+import de.be4.classicalb.core.parser.node.ALocalOperationsMachineClause;
 import de.be4.classicalb.core.parser.node.AMachineHeader;
 import de.be4.classicalb.core.parser.node.AOperation;
+import de.be4.classicalb.core.parser.node.AOperationsMachineClause;
 import de.be4.classicalb.core.parser.node.APreconditionSubstitution;
 import de.be4.classicalb.core.parser.node.APredicateParseUnit;
 import de.be4.classicalb.core.parser.node.APropertiesMachineClause;
 import de.be4.classicalb.core.parser.node.ASelectSubstitution;
+import de.be4.classicalb.core.parser.node.ASetsMachineClause;
 import de.be4.classicalb.core.parser.node.ASubstitutionParseUnit;
 import de.be4.classicalb.core.parser.node.AVariablesMachineClause;
 import de.be4.classicalb.core.parser.node.EOF;
-import de.be4.classicalb.core.parser.node.Node;
 import de.be4.classicalb.core.parser.node.PExpression;
+import de.be4.classicalb.core.parser.node.POperation;
 import de.be4.classicalb.core.parser.node.PPredicate;
+import de.be4.classicalb.core.parser.node.PSet;
 import de.be4.classicalb.core.parser.node.PSubstitution;
 import de.be4.classicalb.core.parser.node.Start;
 import de.be4.classicalb.core.parser.node.TIdentifierLiteral;
@@ -44,7 +52,7 @@ import de.prob.model.representation.Invariant;
 import de.prob.model.representation.ModelElementList;
 import de.prob.model.representation.Variable;
 
-public class DomBuilder extends DepthFirstAdapter {
+public class DomBuilder extends MachineClauseAdapter {
 
 	private final EOF EOF = new EOF();
 	private final List<Parameter> parameters = new ArrayList<>();
@@ -91,7 +99,7 @@ public class DomBuilder extends DepthFirstAdapter {
 	}
 
 	@Override
-	public void outAMachineHeader(final AMachineHeader node) {
+	public void caseAMachineHeader(final AMachineHeader node) {
 		final String nameInAst = extractIdentifierName(node.getName());
 		if (!nameInAst.equals(unprefixedName)) {
 			throw new ProBError("Machine name mismatch: expected name " + unprefixedName + ", but found name " + nameInAst + " in AST");
@@ -102,16 +110,16 @@ public class DomBuilder extends DepthFirstAdapter {
 	}
 
 	@Override
-	public void outAConstraintsMachineClause(
+	public void caseAConstraintsMachineClause(
 			final AConstraintsMachineClause node) {
-		List<PPredicate> predicates = getPredicates(node);
+		List<PPredicate> predicates = getPredicates(node.getPredicates());
 		for (PPredicate pPredicate : predicates) {
 			constraints.add(new Constraint(createPredicateAST(pPredicate)));
 		}
 	}
 
 	@Override
-	public void outAConstantsMachineClause(final AConstantsMachineClause node) {
+	public void caseAConstantsMachineClause(final AConstantsMachineClause node) {
 		for (PExpression pExpression : node.getIdentifiers()) {
 			constants.add(new ClassicalBConstant(
 					createExpressionAST(pExpression)));
@@ -119,14 +127,14 @@ public class DomBuilder extends DepthFirstAdapter {
 	}
 
 	@Override
-	public void outAPropertiesMachineClause(final APropertiesMachineClause node) {
-		for (PPredicate pPredicate : getPredicates(node)) {
+	public void caseAPropertiesMachineClause(final APropertiesMachineClause node) {
+		for (PPredicate pPredicate : getPredicates(node.getPredicates())) {
 			properties.add(new Property(createPredicateAST(pPredicate)));
 		}
 	}
 
 	@Override
-	public void outAVariablesMachineClause(final AVariablesMachineClause node) {
+	public void caseAVariablesMachineClause(final AVariablesMachineClause node) {
 		for (PExpression pExpression : node.getIdentifiers()) {
 			if (prefix != null) {
 				usedIds.add(extractIdentifierName(pExpression));
@@ -137,8 +145,8 @@ public class DomBuilder extends DepthFirstAdapter {
 	}
 
 	@Override
-	public void outAInvariantMachineClause(final AInvariantMachineClause node) {
-		List<PPredicate> predicates = getPredicates(node);
+	public void caseAInvariantMachineClause(final AInvariantMachineClause node) {
+		List<PPredicate> predicates = getPredicates(node.getPredicates());
 		for (PPredicate pPredicate : predicates) {
 			invariants.add(new ClassicalBInvariant(
 					createPredicateAST(pPredicate)));
@@ -146,30 +154,51 @@ public class DomBuilder extends DepthFirstAdapter {
 	}
 
 	@Override
-	public void outADeferredSetSet(final ADeferredSetSet node) {
-		sets.add(new de.prob.model.representation.Set(new ClassicalB(
-			extractIdentifierName(node.getIdentifier()),
-			FormulaExpand.EXPAND
-		)));
-	}
-
-	@Override
-	public void outAEnumeratedSetSet(final AEnumeratedSetSet node) {
-		sets.add(new de.prob.model.representation.Set(new ClassicalB(
-			extractIdentifierName(node.getIdentifier()),
-			FormulaExpand.EXPAND
-		)));
-	}
-
-	@Override
-	public void outAAssertionsMachineClause(final AAssertionsMachineClause node) {
-		for (PPredicate pPredicate : getPredicates(node)) {
-			assertions.add(new Assertion(createPredicateAST(pPredicate)));
+	public void caseASetsMachineClause(final ASetsMachineClause node) {
+		for (final PSet set : node.getSetDefinitions()) {
+			final List<TIdentifierLiteral> identifier;
+			if (set instanceof ADeferredSetSet) {
+				identifier = ((ADeferredSetSet)set).getIdentifier();
+			} else if (set instanceof AEnumeratedSetSet) {
+				identifier = ((AEnumeratedSetSet)set).getIdentifier();
+			} else {
+				continue;
+			}
+			sets.add(new de.prob.model.representation.Set(new ClassicalB(
+				extractIdentifierName(identifier),
+				FormulaExpand.EXPAND
+			)));
 		}
 	}
 
 	@Override
-	public void inAOperation(final AOperation node) {
+	public void caseAAssertionsMachineClause(final AAssertionsMachineClause node) {
+		for (final PPredicate preds : node.getPredicates()) {
+			for (PPredicate pPredicate : getPredicates(preds)) {
+				assertions.add(new Assertion(createPredicateAST(pPredicate)));
+			}
+		}
+	}
+
+	@Override
+	public void caseALocalOperationsMachineClause(final ALocalOperationsMachineClause node) {
+		doOperations(node.getOperations());
+	}
+
+	@Override
+	public void caseAOperationsMachineClause(final AOperationsMachineClause node) {
+		doOperations(node.getOperations());
+	}
+
+	private void doOperations(final List<? extends POperation> ops) {
+		for (final POperation op : ops) {
+			if (op instanceof AOperation) {
+				doOperation((AOperation)op);
+			}
+		}
+	}
+
+	private void doOperation(final AOperation node) {
 		String name = extractIdentifierName(node.getOpName());
 		if (prefix != null && !prefix.equals(name)) {
 			name = prefix + "." + name;
@@ -230,10 +259,21 @@ public class DomBuilder extends DepthFirstAdapter {
 			.collect(Collectors.toList());
 	}
 
-	private static List<PPredicate> getPredicates(final Node node) {
-		final PredicateConjunctionSplitter s = new PredicateConjunctionSplitter();
-		node.apply(s);
-		return s.getPredicates();
+	private static List<PPredicate> getPredicates(final PPredicate node) {
+		if (!(node instanceof AConjunctPredicate)) {
+			return Collections.singletonList(node);
+		}
+
+		final LinkedList<PPredicate> conjunctPreds = new LinkedList<>();
+		AConjunctPredicate currentNode = (AConjunctPredicate)node;
+		while (currentNode.getLeft() instanceof AConjunctPredicate) {
+			conjunctPreds.addFirst(currentNode.getRight());
+			currentNode = (AConjunctPredicate)currentNode.getLeft();
+		}
+		conjunctPreds.addFirst(currentNode.getRight());
+		conjunctPreds.addFirst(currentNode.getLeft());
+
+		return conjunctPreds;
 	}
 
 	private Start createExpressionAST(final PExpression expression) {
