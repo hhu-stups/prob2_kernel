@@ -62,7 +62,7 @@ public class ClassicalBModel extends AbstractModel {
 		final DependencyWalker walker = new DependencyWalker(rml, classicalBMachine);
 		walker.findDependencies();
 
-		return new ClassicalBModel(getStateSpaceProvider(), assoc(Machine.class, walker.getMachines()), walker.getGraph(), modelFile, bparser, rml, classicalBMachine);
+		return new ClassicalBModel(getStateSpaceProvider(), assoc(Machine.class, new ModelElementList<>(walker.getMachines())), walker.getGraph(), modelFile, bparser, rml, classicalBMachine);
 	}
 
 	public ClassicalBMachine getMainMachine() {

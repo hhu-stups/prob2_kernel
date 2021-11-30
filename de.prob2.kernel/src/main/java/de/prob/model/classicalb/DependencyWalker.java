@@ -1,6 +1,8 @@
 package de.prob.model.classicalb;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import de.be4.classicalb.core.parser.analysis.prolog.MachineReference;
@@ -9,12 +11,11 @@ import de.be4.classicalb.core.parser.analysis.prolog.ReferencedMachines;
 import de.be4.classicalb.core.parser.node.Start;
 import de.prob.model.representation.DependencyGraph;
 import de.prob.model.representation.DependencyGraph.ERefType;
-import de.prob.model.representation.ModelElementList;
 
 public final class DependencyWalker {
 
 	private final RecursiveMachineLoader rml;
-	private ModelElementList<ClassicalBMachine> machines;
+	private List<ClassicalBMachine> machines;
 	private DependencyGraph graph;
 	private Set<String> machineIds;
 
@@ -24,8 +25,8 @@ public final class DependencyWalker {
 		this.machineIds = new HashSet<>();
 		this.machineIds.add(mainMachine.getName());
 		this.rml = rml;
-		this.machines = new ModelElementList<>();
-		this.machines = this.machines.addElement(mainMachine);
+		this.machines = new ArrayList<>();
+		this.machines.add(mainMachine);
 		this.graph = new DependencyGraph();
 		this.graph = this.graph.addVertex(mainMachine.getName());
 	}
@@ -98,7 +99,7 @@ public final class DependencyWalker {
 			}
 
 			final ClassicalBMachine newMachine = makeMachine(ref.getName(), refPrefix);
-			machines = machines.addElement(newMachine);
+			machines.add(newMachine);
 			graph = graph.addEdge(concat(prefix, machineName), newMachine.getName(), refType);
 		}
 	}
@@ -117,7 +118,7 @@ public final class DependencyWalker {
 		return prefix + "." + name;
 	}
 
-	public ModelElementList<ClassicalBMachine> getMachines() {
+	public List<ClassicalBMachine> getMachines() {
 		return machines;
 	}
 
