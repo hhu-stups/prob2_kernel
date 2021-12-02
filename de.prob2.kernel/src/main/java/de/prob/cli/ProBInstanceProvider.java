@@ -44,7 +44,7 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 	private static final Logger logger = LoggerFactory.getLogger(ProBInstanceProvider.class);
 
 	static final Pattern CLI_PORT_PATTERN = Pattern.compile("^.*Port: (\\d+)$");
-	static final Pattern CLI_USER_INTERRUPT_REFERENCE_PATTERN = Pattern.compile("^.*user interrupt reference id: *(\\d+) *$");
+	static final Pattern CLI_USER_INTERRUPT_REFERENCE_PATTERN = Pattern.compile("^.*user interrupt reference id: *(\\d+|off) *$");
 
 	private final PrologProcessProvider processProvider;
 	private final String home;
@@ -152,8 +152,14 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 			
 			final Matcher userInterruptReferenceMatcher = CLI_USER_INTERRUPT_REFERENCE_PATTERN.matcher(line);
 			if (userInterruptReferenceMatcher.matches()) {
-				userInterruptReference = Long.parseLong(userInterruptReferenceMatcher.group(1));
-				logger.info("Received user interrupt reference from CLI: {}", userInterruptReference);
+				final String userInterruptReferenceString = userInterruptReferenceMatcher.group(1);
+				if ("off".equals(userInterruptReferenceString)) {
+					userInterruptReference = -1L;
+					logger.info("This ProB build has user interrupt support disabled. Interrupting ProB may not work as expected.");
+				} else {
+					userInterruptReference = Long.parseLong(userInterruptReferenceString);
+					logger.info("Received user interrupt reference from CLI: {}", userInterruptReference);
+				}
 			}
 		} while ((port == null || userInterruptReference == null) && !line.contains("starting command loop"));
 
