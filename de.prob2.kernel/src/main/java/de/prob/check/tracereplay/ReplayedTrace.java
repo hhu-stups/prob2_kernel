@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import de.prob.animator.domainobjects.ErrorItem;
 import de.prob.parser.BindingGenerator;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.ITraceDescription;
@@ -14,12 +15,14 @@ import de.prob.statespace.Transition;
 
 public final class ReplayedTrace implements ITraceDescription {
 	private final TraceReplayStatus replayStatus;
+	private final List<ErrorItem> errors;
 	private final List<PrologTerm> transitionTerms;
 	private final List<TransitionReplayPrecision> transitionReplayPrecisions;
 	private final List<List<String>> transitionErrorMessages;
 	
-	public ReplayedTrace(final TraceReplayStatus replayStatus, final List<PrologTerm> transitionTerms, final List<TransitionReplayPrecision> transitionReplayPrecisions, final List<List<String>> transitionErrorMessages) {
+	public ReplayedTrace(final TraceReplayStatus replayStatus, final List<ErrorItem> errors, final List<PrologTerm> transitionTerms, final List<TransitionReplayPrecision> transitionReplayPrecisions, final List<List<String>> transitionErrorMessages) {
 		this.replayStatus = replayStatus;
+		this.errors = errors;
 		this.transitionTerms = transitionTerms;
 		this.transitionReplayPrecisions = transitionReplayPrecisions;
 		this.transitionErrorMessages = transitionErrorMessages;
@@ -43,11 +46,25 @@ public final class ReplayedTrace implements ITraceDescription {
 			}
 			transitionErrorMessages.add(Collections.unmodifiableList(errorMessages));
 		}
-		return new ReplayedTrace(replayStatus, BindingGenerator.getList(transitionTerms), transitionReplayPrecisions, transitionErrorMessages);
+		return new ReplayedTrace(replayStatus, Collections.emptyList(), BindingGenerator.getList(transitionTerms), transitionReplayPrecisions, transitionErrorMessages);
 	}
 	
 	public TraceReplayStatus getReplayStatus() {
 		return this.replayStatus;
+	}
+	
+	public List<ErrorItem> getErrors() {
+		return Collections.unmodifiableList(this.errors);
+	}
+	
+	public ReplayedTrace withErrors(final List<ErrorItem> errors) {
+		return new ReplayedTrace(
+			this.getReplayStatus(),
+			errors,
+			this.transitionTerms,
+			this.getTransitionReplayPrecisions(),
+			this.getTransitionErrorMessages()
+		);
 	}
 	
 	@Override

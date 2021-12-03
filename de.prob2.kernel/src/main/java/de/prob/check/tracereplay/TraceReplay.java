@@ -1,12 +1,19 @@
 package de.prob.check.tracereplay;
 
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import de.hhu.stups.prob.translator.BValue;
 import de.hhu.stups.prob.translator.Translator;
 import de.hhu.stups.prob.translator.exceptions.TranslationException;
 import de.prob.animator.command.GetOperationByPredicateCommand;
+import de.prob.animator.command.ReplayTraceFileCommand;
 import de.prob.animator.domainobjects.AbstractEvalResult;
 import de.prob.animator.domainobjects.ComputationNotCompletedResult;
-import de.prob.animator.domainobjects.EvalResult;
 import de.prob.animator.domainobjects.EvaluationException;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
@@ -17,14 +24,9 @@ import de.prob.statespace.State;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
 import de.prob.statespace.Transition;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class TraceReplay {
 
@@ -36,6 +38,27 @@ public class TraceReplay {
 
 	public enum PostconditionResult {
 		SUCCESS, FAIL, PARSE_ERROR
+	}
+	
+	/**
+	 * <p>Replay a ProB 2 (JSON) trace file.</p>
+	 * <p>
+	 * This method currently doesn't check postconditions.
+	 * Use {@link #checkPostconditionsAfterReplay(PersistentTrace, Trace)} to manually check postconditions afterwards.
+	 * </p>
+	 * 
+	 * @param stateSpace the state space in which to replay the trace
+	 * @param traceFile path of the trace file to replay
+	 * @return the replayed trace and status information about the replay
+	 */
+	public static ReplayedTrace replayTraceFile(final StateSpace stateSpace, final Path traceFile) {
+		final ReplayTraceFileCommand cmd = new ReplayTraceFileCommand(traceFile.toString());
+		try {
+			stateSpace.execute(cmd);
+			return cmd.getTrace();
+		} catch (ProBError e) {
+			return cmd.getTrace().withErrors(e.getErrors());
+		}
 	}
 
 	public static Trace replayTrace(PersistentTrace persistentTrace, StateSpace stateSpace) {
