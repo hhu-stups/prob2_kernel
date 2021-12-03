@@ -13,10 +13,10 @@ import de.prob.statespace.Trace;
 import de.prob.statespace.Transition;
 
 public final class ReplayedTrace implements ITraceDescription {
-	private TraceReplayStatus replayStatus;
-	private List<PrologTerm> transitionTerms;
-	private List<TransitionReplayPrecision> transitionReplayPrecisions;
-	private List<List<String>> transitionErrorMessages;
+	private final TraceReplayStatus replayStatus;
+	private final List<PrologTerm> transitionTerms;
+	private final List<TransitionReplayPrecision> transitionReplayPrecisions;
+	private final List<List<String>> transitionErrorMessages;
 	
 	public ReplayedTrace(final TraceReplayStatus replayStatus, final List<PrologTerm> transitionTerms, final List<TransitionReplayPrecision> transitionReplayPrecisions, final List<List<String>> transitionErrorMessages) {
 		this.replayStatus = replayStatus;
