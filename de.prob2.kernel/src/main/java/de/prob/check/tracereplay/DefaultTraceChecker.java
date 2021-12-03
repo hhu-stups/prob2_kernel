@@ -1,8 +1,15 @@
 package de.prob.check.tracereplay;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
+import de.prob.statespace.StateSpace;
+
+/**
+ * @deprecated Use {@link TraceReplay#replayTraceFile(StateSpace, Path)} and {@link ReplayedTrace} instead.
+ */
+@Deprecated
 public class DefaultTraceChecker implements ITraceChecker {
 	@Override
 	public void updateProgress(double value, Map<String, Object> replayInformation) {

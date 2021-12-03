@@ -32,6 +32,10 @@ public class TraceReplay {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TraceReplay.class);
 
+	/**
+	 * @deprecated Use {@link #replayTraceFile(StateSpace, Path)} and {@link ReplayedTrace} instead.
+	 */
+	@Deprecated
 	public enum TraceReplayError {
 		COMMAND, NO_OPERATION_POSSIBLE, TRACE_REPLAY, MISMATCH_OUTPUT
 	}
@@ -61,6 +65,10 @@ public class TraceReplay {
 		}
 	}
 
+	/**
+	 * @deprecated Use {@link #replayTraceFile(StateSpace, Path)} and {@link #checkPostconditionsAfterReplay(PersistentTrace, Trace)} instead.
+	 */
+	@Deprecated
 	public static Trace replayTrace(PersistentTrace persistentTrace, StateSpace stateSpace) {
 		return replayTrace(persistentTrace, stateSpace, true, new HashMap<>(), new DefaultTraceChecker());
 	}
@@ -115,7 +123,9 @@ public class TraceReplay {
 	 * @param replayInformation a reference to an map in which additional results will be stored
 	 * @param traceChecker an interface implementation for processing results
 	 * @return A Trace when the replay was successful else return null
+	 * @deprecated Use {@link #replayTraceFile(StateSpace, Path)} and {@link #checkPostconditionsAfterReplay(PersistentTrace, Trace)} instead.
 	 */
+	@Deprecated
 	public static Trace replayTrace(PersistentTrace persistentTrace, StateSpace stateSpace, final boolean setCurrentAnimation,
 									 Map<String, Object> replayInformation, ITraceChecker traceChecker) {
 		Trace trace = new Trace(stateSpace);
@@ -160,6 +170,7 @@ public class TraceReplay {
 		return trace;
 	}
 
+	@Deprecated
 	private static Transition replayPersistentTransition(Trace t, PersistentTransition persistentTransition,
 														 boolean setCurrentAnimation, Map<String, Object> replayInformation,
 														 ITraceChecker traceChecker) {
@@ -194,6 +205,7 @@ public class TraceReplay {
 		return trans;
 	}
 
+	@Deprecated
 	private static boolean checkOutputParams(Transition trans, PersistentTransition persistentTransition, boolean setCurrentAnimation,
 											 Map<String,Object> replayInformation, ITraceChecker traceChecker) {
 		String operationName = trans.getName();
