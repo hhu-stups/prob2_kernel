@@ -16,7 +16,7 @@ and mirrored to https://github.com/hhu-stups/prob2_kernel
 
 ## Bugs
 
-Please report bugs and feature requests at https://probjira.atlassian.net
+Please report bugs and feature requests at [prob-issues on GitHub](https://github.com/hhu-stups/prob-issues/issues).
 
 ## Setting up a development environment
 
