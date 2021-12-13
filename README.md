@@ -11,7 +11,7 @@ and mirrored to https://github.com/hhu-stups/prob2_kernel
 
 ## Documentation
 
-* Tutorial: https://www3.hhu.de/stups/prob/index.php/Tutorial13
+* [Tutorial](https://prob.hhu.de/w/index.php/Tutorial13)
 * Developer Handbook: [HTML](https://www3.hhu.de/stups/handbook/prob2/prob_handbook.html) [PDF](https://www3.hhu.de/stups/handbook/prob2/prob_handbook.pdf)
 
 ## Bugs
