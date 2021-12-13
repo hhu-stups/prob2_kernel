@@ -20,7 +20,8 @@ Please report bugs and feature requests at [prob-issues on GitHub](https://githu
 
 ## Setting up a development environment
 
-ProB 2.0 works with Java 7 on Mac OS, Windows and most Linux distributions.
+The ProB 2 Java API requires Java 8 or later (tested using Java 8, 11, and 17)
+and is compatible with 64-bit versions of Windows, macOS, and most Linux distributions (glibc on x86_64).
 
 We assume, you have a fresh copy of Eclipse and an empty workspace at hand. Furthermore, we assume that you have a recent version of gradle (http://www.gradle.org/) installed on your computer. Gradle 2.0 or newer will be sufficient.
 
