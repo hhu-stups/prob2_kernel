@@ -23,15 +23,20 @@ Please report bugs and feature requests at [prob-issues on GitHub](https://githu
 The ProB 2 Java API requires Java 8 or later (tested using Java 8, 11, and 17)
 and is compatible with 64-bit versions of Windows, macOS, and most Linux distributions (glibc on x86_64).
 
-We assume, you have a fresh copy of Eclipse and an empty workspace at hand. Furthermore, we assume that you have a recent version of gradle (http://www.gradle.org/) installed on your computer. Gradle 2.0 or newer will be sufficient.
+ProB 2 is built using [Gradle](https://gradle.org/).
+We recommend running Gradle via the Gradle wrapper (`gradlew`) included in the repo
+to ensure that the expected Gradle version is used.
+Alternatively you can install a compatible Gradle version yourself,
+e. g. via your package manager.
 
-1. In Eclipse: Install the Groovy-Eclipse plugin by following the instructions on https://github.com/groovy/groovy-eclipse/wiki (use the snapshot builds for Eclipse 4.5 or newer).
-<!---Tool Suite from the Eclipse Market Place. You can leave out the Grails IDE, Spring Dashboard and all features starting with Pivotal. For Eclipse Mars, see https://tedvinke.wordpress.com/2015/10/17/eclipse-mars-grails-3-1-with-gradle-groovy-and-gsp-support/ for installation instructions. Use the Groovy 2.4 Compiler feature.-->
-2. Clone the prob2 repository to some location (e.g. gitrepo/prob2).
-   We assume that gitrepo is a directory outside your Eclipse workspace.
-3. cd into gitrepo/prob2/de.prob2.kernel, switch to the development branch (git checkout develop) and run `gradle eclipse`
-4. In Eclipse, import project from gitrepo/prob2/de.prob2.kernel
+Note that the Gradle project is located in the subdirectory "de.prob2.kernel".
+You need to `cd` into this directory before running Gradle,
+or the build will not work.
+If you are using an IDE,
+the Gradle project in the subdirectory might be detected automatically,
+otherwise you need to select the "de.prob2.kernel" directory when importing the project.
 
+To run the test suite: `./gradlew check`
 
 ## License
 
