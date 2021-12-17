@@ -227,11 +227,6 @@ task downloadBinaries(type: Download) {
 	onlyIfModified(true)
 }
 
-task cleanOldCliDownloads(type: Delete) {
-	// Delete old CLI download directory (no longer used)
-	delete(file("src/main/resources/de/prob/cli/binaries"))
-}
-
 def readCurrentGitCommit() {
 	def proc = ["git", "rev-parse", "HEAD"].execute(null, project.projectDir)
 	def exitCode = proc.waitFor()
@@ -249,7 +244,7 @@ processResources {
 
 if (!project.hasProperty("probHome")) {
 	// Automatically download probcli/cspmf, unless a custom PROB_HOME is set
-	processResources.dependsOn(cleanOldCliDownloads, downloadBinaries)
+	processResources.dependsOn(downloadBinaries)
 }
 
 test {
