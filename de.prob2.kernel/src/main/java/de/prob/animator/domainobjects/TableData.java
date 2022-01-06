@@ -1,5 +1,7 @@
 package de.prob.animator.domainobjects;
 
+
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,8 +34,13 @@ public final class TableData {
 
 	public static TableData fromProlog(PrologTerm tableTerm) {
 		final List<List<String>> table = getListTermContents(tableTerm).stream()
-			.map(term -> tableRowFromList(getListTermContents(term)))
-			.collect(Collectors.toList());
+				.map(term -> {
+					if(term.hasFunctor("list", 1)) {
+						return tableRowFromList(getListTermContents(term));
+					}
+					return Collections.singletonList(term.toString());
+				})
+				.collect(Collectors.toList());
 		final List<String> header = table.remove(0);
 		return new TableData(header, table);
 	}

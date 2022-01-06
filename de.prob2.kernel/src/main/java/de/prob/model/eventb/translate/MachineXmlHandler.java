@@ -2,6 +2,7 @@ package de.prob.model.eventb.translate;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,17 +43,11 @@ import de.prob.model.representation.ModelElementList;
 import de.prob.model.representation.Variable;
 
 import org.eventb.core.ast.extension.IFormulaExtension;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class MachineXmlHandler extends DefaultHandler {
-	private static final Logger logger = LoggerFactory.getLogger(MachineXmlHandler.class);
-
 	private EventBModel model;
 	private final Set<IFormulaExtension> typeEnv;
 	private EventBMachine machine;
@@ -93,11 +88,8 @@ public class MachineXmlHandler extends DefaultHandler {
 		this.model = model;
 		this.typeEnv = typeEnv;
 
-		String name = fileName.substring(
-				fileName.lastIndexOf(File.separatorChar) + 1,
-				fileName.lastIndexOf('.'));
-		directoryPath = fileName.substring(0,
-				fileName.lastIndexOf(File.separatorChar));
+		String name = fileName.substring(fileName.lastIndexOf(File.separatorChar) + 1, fileName.lastIndexOf('.'));
+		directoryPath = fileName.substring(0, fileName.lastIndexOf(File.separatorChar));
 		machine = new EventBMachine(name);
 
 		axiomCache.put(name, new HashMap<>());
@@ -106,8 +98,7 @@ public class MachineXmlHandler extends DefaultHandler {
 	}
 
 	@Override
-	public void startElement(final String uri, final String localName,
-			final String qName, final Attributes attributes) {
+	public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
 		switch (qName) {
 			case "org.eventb.core.scRefinesMachine":
 				addRefinedMachine(attributes);
@@ -186,8 +177,7 @@ public class MachineXmlHandler extends DefaultHandler {
 
 	private void addRefinedEvent(final Attributes attributes) {
 		String target = attributes.getValue("org.eventb.core.scTarget");
-		String internalName = target.substring(target.lastIndexOf('#') + 1,
-				target.length());
+		String internalName = target.substring(target.lastIndexOf('#') + 1);
 
 		if (internalName.endsWith("\\\\")) {
 			internalName = internalName.substring(0, internalName.length() - 1);
@@ -199,8 +189,7 @@ public class MachineXmlHandler extends DefaultHandler {
 
 		String refinedMachineName = fileSource.substring(
 				fileSource.lastIndexOf('/') + 1, fileSource.lastIndexOf('.'));
-		refinesForEvent.add(eventCache.get(refinedMachineName)
-				.get(internalName));
+		refinesForEvent.add(eventCache.get(refinedMachineName).get(internalName));
 	}
 
 	private void addEventParameter(final Attributes attributes) {
@@ -235,7 +224,7 @@ public class MachineXmlHandler extends DefaultHandler {
 		} else {
 			eventType = Event.EventType.ANTICIPATED;
 		}
-		event = new Event(name, eventType, Boolean.valueOf(extended));
+		event = new Event(name, eventType, Boolean.parseBoolean(extended));
 		eventCache.get(machine.getName()).put(crazyRodinInternalName, event);
 
 		extractingEvent = true;
@@ -286,7 +275,7 @@ public class MachineXmlHandler extends DefaultHandler {
 		}
 	}
 
-	private void addRefinedMachine(final Attributes attributes) {
+	private void addRefinedMachine(final Attributes attributes) throws SAXException {
 		String target = attributes.getValue("org.eventb.core.scTarget");
 		String machineName = target.substring(target.lastIndexOf('/') + 1,
 				target.lastIndexOf('.'));
@@ -316,8 +305,10 @@ public class MachineXmlHandler extends DefaultHandler {
 				refines.add(handler.getMachine());
 
 				model = handler.getModel();
-			} catch (IOException | ParserConfigurationException | SAXException e) {
-				logger.error("Error parsing XML",e);
+			} catch (IOException e) {
+				throw new UncheckedIOException(e);
+			} catch (ParserConfigurationException e) {
+				throw new SAXException(e);
 			}
 		}
 	}
@@ -339,8 +330,7 @@ public class MachineXmlHandler extends DefaultHandler {
 			invariants.add(inv);
 			invariantCache.get(machine.getName()).put(internalName, inv);
 		} else {
-			inheritedInvariants.add(invariantCache.get(machineName).get(
-					internalName));
+			inheritedInvariants.add(invariantCache.get(machineName).get(internalName));
 		}
 	}
 

@@ -9,13 +9,10 @@ import de.be4.classicalb.core.parser.analysis.prolog.ASTProlog;
 import de.be4.classicalb.core.parser.node.Node;
 import de.hhu.stups.prob.translator.BValue;
 import de.hhu.stups.prob.translator.TranslatingVisitor;
-import de.prob.animator.command.EvaluateFormulaCommand;
-import de.prob.animator.command.EvaluationCommand;
 import de.prob.formula.TranslationVisitor;
 import de.prob.model.representation.FormulaUUID;
 import de.prob.model.representation.IFormulaUUID;
 import de.prob.prolog.output.IPrologTermOutput;
-import de.prob.statespace.State;
 import de.prob.unicode.UnicodeTranslator;
 
 import org.eventb.core.ast.ASTProblem;
@@ -69,6 +66,26 @@ public class EventB extends AbstractEvalElement implements IBEvalElement {
 		super(UnicodeTranslator.toAscii(code), expansion);
 
 		this.types = types;
+	}
+
+	/**
+	 * <p>Create an Event-B formula representing the given identifier.</p>
+	 * <p>
+	 * Unlike the normal constructors that parse the input string using the Rodin parser,
+	 * this method accepts arbitrary strings as identifiers,
+	 * even ones that are not syntactically valid Event-B identifiers.
+	 * </p>
+	 *
+	 * @param identifier list of string parts that make up a dotted identifier
+	 * @param expansion expansion mode to use when evaluating the formula
+	 * @return an Event-B formula representing the given identifier
+	 */
+	public static EventB fromIdentifier(final List<String> identifier, final FormulaExpand expansion) {
+		final ClassicalB bFormula = ClassicalB.fromIdentifier(identifier, expansion);
+		final EventB eventBFormula = new EventB(bFormula.getCode(), expansion);
+		eventBFormula.ast = bFormula.getAst();
+		eventBFormula.kind = EvalElementType.EXPRESSION;
+		return eventBFormula;
 	}
 	
 	public IParseResult ensurePredicateParsed() {
@@ -232,11 +249,6 @@ public class EventB extends AbstractEvalElement implements IBEvalElement {
 	@Override
 	public IFormulaUUID getFormulaId() {
 		return uuid;
-	}
-
-	@Override
-	public EvaluationCommand getCommand(final State stateId) {
-		return new EvaluateFormulaCommand(this, stateId.getId());
 	}
 
 	public String toUnicode() {

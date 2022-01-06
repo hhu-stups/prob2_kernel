@@ -2,6 +2,7 @@ package de.prob.model.eventb.translate;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,18 +17,11 @@ import de.prob.model.eventb.theory.Theory;
 import de.prob.model.representation.ModelElementList;
 
 import org.eventb.core.ast.extension.IFormulaExtension;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class TheoryXmlHandler extends DefaultHandler {
-
-	private static final Logger logger = LoggerFactory.getLogger(TheoryXmlHandler.class);
-
 	private final String workspacePath;
 	private final Set<IFormulaExtension> typeEnv = new HashSet<>();
 	private EventBModel model;
@@ -65,8 +59,10 @@ public class TheoryXmlHandler extends DefaultHandler {
 					saxParser.parse(new File(workspacePath + path), extractor);
 					theories = theories.addMultiple(extractor.getTheories());
 					typeEnv.addAll(extractor.getTypeEnv());
-				} catch (IOException | ParserConfigurationException e) {
-					logger.error("Error extracting theory", e);
+				} catch (IOException e) {
+					throw new UncheckedIOException(e);
+				} catch (ParserConfigurationException e) {
+					throw new SAXException(e);
 				}
 			} else {
 				theories = theories.addElement(theoryMap.get(path));

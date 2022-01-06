@@ -1,0 +1,284 @@
+{
+  "description": "",
+  "transitionList": [
+    {
+      "name": "$initialise_machine",
+      "params": {},
+      "results": {},
+      "destState": {
+        "curDeadlines": "∅",
+        "curTime": "0"
+      },
+      "destStateNotChanged": [],
+      "preds": []
+    },
+    {
+      "name": "AddDeadline",
+      "params": {
+        "deadline": "3",
+        "timer": "TIMERS1"
+      },
+      "results": {},
+      "destState": {
+        "curDeadlines": "{(TIMERS1↦3)}"
+      },
+      "destStateNotChanged": [
+        "curTime"
+      ],
+      "preds": []
+    },
+    {
+      "name": "AbsoluteSetDeadline",
+      "params": {
+        "deadline": "1",
+        "timer": "TIMERS2"
+      },
+      "results": {},
+      "destState": {
+        "curDeadlines": "{(TIMERS1↦3),(TIMERS2↦1)}"
+      },
+      "destStateNotChanged": [
+        "curTime"
+      ],
+      "preds": []
+    },
+    {
+      "name": "IncreaseTimeUntilCyclicDeadline",
+      "params": {
+        "delta": "1",
+        "timer": "TIMERS2",
+        "newDelta": "3"
+      },
+      "results": {},
+      "destState": {
+        "curDeadlines": "{(TIMERS1↦3),(TIMERS2↦4)}",
+        "curTime": "1"
+      },
+      "destStateNotChanged": [],
+      "preds": []
+    },
+    {
+      "name": "IncreaseTimeUntilCyclicDeadline",
+      "params": {
+        "delta": "2",
+        "timer": "TIMERS1",
+        "newDelta": "0"
+      },
+      "results": {},
+      "destState": {
+        "curTime": "3"
+      },
+      "destStateNotChanged": [
+        "curDeadlines"
+      ],
+      "preds": []
+    },
+    {
+      "name": "AbsoluteSetDeadline",
+      "params": {
+        "deadline": "1",
+        "timer": "TIMERS1"
+      },
+      "results": {},
+      "destState": {
+        "curDeadlines": "{(TIMERS1↦1),(TIMERS2↦4)}"
+      },
+      "destStateNotChanged": [
+        "curTime"
+      ],
+      "preds": []
+    },
+    {
+      "name": "AbsoluteSetDeadline",
+      "params": {
+        "deadline": "3",
+        "timer": "TIMERS2"
+      },
+      "results": {},
+      "destState": {
+        "curDeadlines": "{(TIMERS1↦1),(TIMERS2↦3)}"
+      },
+      "destStateNotChanged": [
+        "curTime"
+      ],
+      "preds": []
+    },
+    {
+      "name": "AbsoluteSetDeadline",
+      "params": {
+        "deadline": "3",
+        "timer": "TIMERS2"
+      },
+      "results": {},
+      "destState": {},
+      "destStateNotChanged": [
+        "curTime",
+        "curDeadlines"
+      ],
+      "preds": []
+    },
+    {
+      "name": "AbsoluteSetDeadline",
+      "params": {
+        "deadline": "0",
+        "timer": "TIMERS2"
+      },
+      "results": {},
+      "destState": {
+        "curDeadlines": "{(TIMERS1↦1),(TIMERS2↦0)}"
+      },
+      "destStateNotChanged": [
+        "curTime"
+      ],
+      "preds": []
+    },
+    {
+      "name": "AbsoluteSetDeadline",
+      "params": {
+        "deadline": "1",
+        "timer": "TIMERS1"
+      },
+      "results": {},
+      "destState": {},
+      "destStateNotChanged": [
+        "curTime",
+        "curDeadlines"
+      ],
+      "preds": []
+    }
+  ],
+  "variableNames": [
+    "curTime",
+    "curDeadlines"
+  ],
+  "constantNames": [],
+  "setNames": [
+    "TIMERS"
+  ],
+  "machineOperationInfos": {
+    "AddDeadline": {
+      "operationName": "AddDeadline",
+      "parameterNames": [
+        "timer",
+        "deadline"
+      ],
+      "outputParameterNames": [],
+      "topLevel": true,
+      "type": "CLASSICAL_B",
+      "readVariables": [
+        "curDeadlines",
+        "curTime"
+      ],
+      "writtenVariables": [
+        "curDeadlines"
+      ],
+      "nonDetWrittenVariables": [],
+      "typeMap": {
+        "timer": "global('TIMERS')",
+        "deadline": "integer"
+      }
+    },
+    "IncreaseTimeUntilDeadline": {
+      "operationName": "IncreaseTimeUntilDeadline",
+      "parameterNames": [
+        "timer",
+        "delta"
+      ],
+      "outputParameterNames": [],
+      "topLevel": true,
+      "type": "CLASSICAL_B",
+      "readVariables": [
+        "curDeadlines",
+        "curTime"
+      ],
+      "writtenVariables": [
+        "curDeadlines",
+        "curTime"
+      ],
+      "nonDetWrittenVariables": [],
+      "typeMap": {
+        "timer": "global('TIMERS')",
+        "delta": "integer"
+      }
+    },
+    "IncreaseTimeUntilCyclicDeadline": {
+      "operationName": "IncreaseTimeUntilCyclicDeadline",
+      "parameterNames": [
+        "timer",
+        "delta",
+        "newDelta"
+      ],
+      "outputParameterNames": [],
+      "topLevel": true,
+      "type": "CLASSICAL_B",
+      "readVariables": [
+        "curDeadlines",
+        "curTime"
+      ],
+      "writtenVariables": [
+        "curDeadlines",
+        "curTime"
+      ],
+      "nonDetWrittenVariables": [],
+      "typeMap": {
+        "timer": "global('TIMERS')",
+        "delta": "integer",
+        "newDelta": "integer"
+      }
+    },
+    "IncreaseTime": {
+      "operationName": "IncreaseTime",
+      "parameterNames": [
+        "delta"
+      ],
+      "outputParameterNames": [],
+      "topLevel": true,
+      "type": "CLASSICAL_B",
+      "readVariables": [
+        "curDeadlines",
+        "curTime"
+      ],
+      "writtenVariables": [
+        "curTime"
+      ],
+      "nonDetWrittenVariables": [],
+      "typeMap": {
+        "delta": "integer"
+      }
+    },
+    "AbsoluteSetDeadline": {
+      "operationName": "AbsoluteSetDeadline",
+      "parameterNames": [
+        "timer",
+        "deadline"
+      ],
+      "outputParameterNames": [],
+      "topLevel": true,
+      "type": "CLASSICAL_B",
+      "readVariables": [
+        "curDeadlines"
+      ],
+      "writtenVariables": [
+        "curDeadlines"
+      ],
+      "nonDetWrittenVariables": [],
+      "typeMap": {
+        "timer": "global('TIMERS')",
+        "deadline": "integer"
+      }
+    }
+  },
+  "globalIdentifierTypes": {
+    "curTime": "integer",
+    "curDeadlines": "set(couple(global('TIMERS'),integer))"
+  },
+  "metadata": {
+    "fileType": "Trace",
+    "formatVersion": 2,
+    "savedAt": null,
+    "creator": "traceReplay",
+    "proB2KernelVersion": "4.0.0-SNAPSHOT",
+    "proBCliVersion": "1.11.0-nightly",
+    "modelName": "GenericTimers"
+  }
+}

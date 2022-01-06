@@ -2,7 +2,6 @@ package de.prob.animator.command;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import de.prob.animator.domainobjects.ErrorItem;
@@ -28,17 +27,6 @@ public class GetErrorItemsCommand extends AbstractCommand {
 		errors = ((ListPrologTerm)bindings.get(ERRORS_VARIABLE)).stream()
 			.map(ErrorItem::fromProlog)
 			.collect(Collectors.toList());
-	}
-
-	/**
-	 * @deprecated There are now more types than just errors and warnings. Use {@code errors.stream().map(ErrorItem::getType).max(ErrorItem.Type::compareTo)} to get the worst type of error item from a list.
-	 */
-	@Deprecated
-	public boolean onlyWarningsOccurred() {
-		final Optional<ErrorItem.Type> worstErrorType = this.getErrors().stream()
-			.map(ErrorItem::getType)
-			.max(ErrorItem.Type::compareTo);
-		return !worstErrorType.isPresent() || worstErrorType.get().compareTo(ErrorItem.Type.WARNING) <= 0;
 	}
 
 	public List<ErrorItem> getErrors() {

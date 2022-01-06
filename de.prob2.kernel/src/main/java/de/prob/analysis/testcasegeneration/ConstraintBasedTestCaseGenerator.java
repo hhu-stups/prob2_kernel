@@ -14,9 +14,11 @@ import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.animator.domainobjects.Join;
-import de.prob.model.classicalb.ClassicalBModel;
-import de.prob.model.classicalb.Operation;
+import de.prob.model.representation.AbstractElement;
+import de.prob.model.representation.AbstractModel;
+import de.prob.model.representation.BEvent;
 import de.prob.model.representation.Extraction;
+import de.prob.model.representation.Machine;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
 
@@ -37,24 +39,19 @@ import java.util.stream.Collectors;
  */
 public class ConstraintBasedTestCaseGenerator {
 
-	private ClassicalBModel model;
-	private StateSpace stateSpace;
-	private TestCaseGeneratorSettings settings;
-	private List<String> finalOperations;
+	private final StateSpace stateSpace;
+	private final TestCaseGeneratorSettings settings;
+	private final List<String> finalOperations;
 	private List<String> infeasibleOperations;
 	private List<Target> targets;
 	private List<Target> uncoveredTargets = new ArrayList<>();
 
-	public ConstraintBasedTestCaseGenerator(ClassicalBModel model, StateSpace stateSpace, TestCaseGeneratorSettings settings, List<String> finalOperations) {
-		this.model = model;
+	public ConstraintBasedTestCaseGenerator(StateSpace stateSpace, TestCaseGeneratorSettings settings, List<String> finalOperations) {
 		this.stateSpace = stateSpace;
 		this.settings = settings;
 		this.finalOperations = finalOperations;
 	}
-
-	// Remark: It seems that there is a shift of the depth (greater 1)
-	// So if you apply test case generation with depth 2 and level 2, then it seems to apply it with depth 3 and level 2
-
+	
 	/**
 	 * Performs the test case generation.
 	 *
@@ -76,7 +73,7 @@ public class ConstraintBasedTestCaseGenerator {
 			return new TestCaseGeneratorResult(new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), interrupted);
 		}
 
-		infeasibleOperations = new FeasibilityAnalysis(model, stateSpace).analyseFeasibility();
+		infeasibleOperations = new FeasibilityAnalysis(stateSpace).analyseFeasibility();
 		discardInfeasibleTargets();
 
 		int depth = 0;
@@ -143,9 +140,13 @@ public class ConstraintBasedTestCaseGenerator {
 	 */
 	private List<Target> getMCDCTargets(int maxLevel) {
 		List<Target> mcdcTargets = new ArrayList<>();
-		Map<Operation, List<ConcreteMCDCTestCase>> testCases = new MCDCIdentifier(model, stateSpace, maxLevel).identifyMCDC();
-		for (Entry<Operation, List<ConcreteMCDCTestCase>> entry : testCases.entrySet()) {
+		Map<BEvent, List<ConcreteMCDCTestCase>> testCases = new MCDCIdentifier(stateSpace, maxLevel).identifyMCDC();
+		for (Entry<BEvent, List<ConcreteMCDCTestCase>> entry : testCases.entrySet()) {
 			for (ConcreteMCDCTestCase concreteMCDCTestCase : entry.getValue()) {
+				// INITIALISATION is only added for Event-B model which should not be considered for test case generation
+				if("INITIALISATION".equals(entry.getKey().getName())) {
+					continue;
+				}
 				mcdcTargets.add(new Target(entry.getKey().getName(), concreteMCDCTestCase));
 			}
 		}
@@ -173,6 +174,10 @@ public class ConstraintBasedTestCaseGenerator {
 	private List<Target> createTargetsForOperations(List<String> operations) {
 		List<Target> operationTargets = new ArrayList<>();
 		for (String operation : operations) {
+			// INITIALISATION is only added for Event-B model which should not be considered for test case generation
+			if("INITIALISATION".equals(operation)) {
+				continue;
+			}
 			operationTargets.add(new Target(operation, getGuardAsPredicate(operation)));
 		}
 		return operationTargets;
@@ -218,12 +223,15 @@ public class ConstraintBasedTestCaseGenerator {
 	}
 
 	private PPredicate getGuardAsPredicate(String operation) {
-		List<IEvalElement> guards = Extraction.getGuardPredicates(model, operation);
+		AbstractElement machine = stateSpace.getMainComponent();
+		AbstractModel model = stateSpace.getModel();;
+
+		List<IEvalElement> guards = Extraction.getGuardPredicates(machine, operation);
 		ClassicalB predicate = null;
 		if(guards.isEmpty()) {
 			predicate = new ClassicalB("1=1", FormulaExpand.EXPAND);
 		} else {
-			predicate = (ClassicalB) Join.conjunct(model, guards);
+			predicate = new ClassicalB(Join.conjunct(model, guards).getCode(), FormulaExpand.EXPAND);
 		}
 		Start ast = predicate.getAst();
 		return ((APredicateParseUnit) ast.getPParseUnit()).getPredicate();
@@ -235,8 +243,9 @@ public class ConstraintBasedTestCaseGenerator {
 	 * @return Names of feasible operations.
 	 */
 	private List<String> getAllOperationNames() {
+		Machine machine = (Machine) stateSpace.getMainComponent();
 		List<String> operations = new ArrayList<>();
-		for (Operation operation : model.getMainMachine().getEvents()) {
+		for (BEvent operation : machine.getChildrenOfType(BEvent.class)) {
 			if (!infeasibleOperations.contains(operation.getName())) {
 				operations.add(operation.getName());
 			}

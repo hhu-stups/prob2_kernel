@@ -8,10 +8,12 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import de.be4.classicalb.core.parser.BParser;
+import de.be4.classicalb.core.parser.ParsingBehaviour;
 import de.be4.classicalb.core.parser.analysis.prolog.RecursiveMachineLoader;
 import de.be4.classicalb.core.parser.exceptions.BCompoundException;
 import de.be4.classicalb.core.parser.exceptions.PreParseException;
 import de.be4.classicalb.core.parser.node.Start;
+import de.prob.exception.ProBError;
 import de.prob.model.classicalb.ClassicalBModel;
 import de.tla2b.exceptions.TLA2BException;
 import de.tla2bAst.Translator;
@@ -30,7 +32,7 @@ public class TLAFactory implements ModelFactory<ClassicalBModel> {
 	}
 
 	@Override
-	public ExtractedModel<ClassicalBModel> extract(final String fileName) throws IOException, ModelTranslationError {
+	public ExtractedModel<ClassicalBModel> extract(final String fileName) throws IOException {
 		ClassicalBModel classicalBModel = modelCreator.get();
 		File f = new File(fileName);
 		if (!f.exists()) {
@@ -43,21 +45,23 @@ public class TLAFactory implements ModelFactory<ClassicalBModel> {
 			translator = new Translator(f.getAbsolutePath());
 			ast = translator.translate();
 		} catch (TLA2BException e) {
-			throw new ModelTranslationError(e);
+			throw new ProBError(e);
 		}
 
 		BParser bparser = new BParser(fileName);
 		try {
 			bparser.getDefinitions().addDefinitions(translator.getBDefinitions());
 		} catch (PreParseException e) {
-			throw new ModelTranslationError(e);
+			throw new ProBError(e);
 		}
+		final RecursiveMachineLoader rml;
 		try {
-			final RecursiveMachineLoader rml = parseAllMachines(ast, f, bparser);
-			classicalBModel = classicalBModel.create(ast, rml, f, bparser);
+			rml = RecursiveMachineLoader.loadFromAst(bparser, ast, new ParsingBehaviour(), bparser.getContentProvider());
 		} catch (BCompoundException e) {
-			throw new ModelTranslationError(e);
+			throw new ProBError(e);
 		}
+		logger.trace("Done parsing '{}'", f.getAbsolutePath());
+		classicalBModel = classicalBModel.create(ast, rml, f, bparser);
 		return new ExtractedModel<>(classicalBModel, classicalBModel.getMainMachine());
 	}
 
@@ -74,11 +78,14 @@ public class TLAFactory implements ModelFactory<ClassicalBModel> {
 	 *            {@link BParser} for parsing
 	 * @return {@link RecursiveMachineLoader} rml with all loaded machines
 	 * @throws BCompoundException if the machines could not be loaded
+	 * @deprecated This method only parses classical B files and not TLA+.
+	 *     Use {@link #extract(String)} to parse TLA+ files,
+	 *     or {@link ClassicalBFactory} or {@link RecursiveMachineLoader} to parse classical B files.
 	 */
+	@Deprecated
 	public RecursiveMachineLoader parseAllMachines(final Start ast, final File f, final BParser bparser)
 			throws BCompoundException {
-		final RecursiveMachineLoader rml = new RecursiveMachineLoader(f.getParent(), bparser.getContentProvider());
-		rml.loadAllMachines(f, ast, bparser.getDefinitions());
+		final RecursiveMachineLoader rml = RecursiveMachineLoader.loadFromAst(bparser, ast, new ParsingBehaviour(), bparser.getContentProvider());
 
 		logger.trace("Done parsing '{}'", f.getAbsolutePath());
 		return rml;
@@ -95,7 +102,11 @@ public class TLAFactory implements ModelFactory<ClassicalBModel> {
 	 *         bparser
 	 * @throws IOException if an I/O error occurred
 	 * @throws BCompoundException if the file could not be parsed
+	 * @deprecated This method only parses classical B files and not TLA+.
+	 *     Use {@link #extract(String)} to parse TLA+ files,
+	 *     or {@link ClassicalBFactory} or {@link BParser} to parse classical B files.
 	 */
+	@Deprecated
 	public Start parseFile(final File model, final BParser bparser) throws IOException, BCompoundException {
 		logger.trace("Parsing main file '{}'", model.getAbsolutePath());
 		return bparser.parseFile(model, false);

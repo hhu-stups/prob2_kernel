@@ -7,6 +7,7 @@ import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.animator.domainobjects.Join;
 import de.prob.model.classicalb.ClassicalBModel;
+import de.prob.model.representation.AbstractModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,9 +24,9 @@ public class MCDCASTVisitor extends DepthFirstAdapter {
 	private List<ConcreteMCDCTestCase> tempTestCases = new ArrayList<>();
 	private int maxLevel;
 	private int currentLevel;
-	private final ClassicalBModel model;
+	private final AbstractModel model;
 
-	public MCDCASTVisitor(int maxLevel, final ClassicalBModel model) {
+	public MCDCASTVisitor(int maxLevel, final AbstractModel model) {
 		this.maxLevel = maxLevel;
 		this.model = model;
 	}

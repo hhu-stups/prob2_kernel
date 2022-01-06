@@ -1,30 +1,28 @@
 package de.prob.model.eventb.translate;
 
-import de.prob.model.eventb.EventBModel;
-import de.prob.model.representation.AbstractElement;
-import org.eventb.core.ast.extension.IFormulaExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
-
-import javax.xml.XMLConstants;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-public class EventBDatabaseTranslator {
-	private static final Logger logger = LoggerFactory.getLogger(EventBDatabaseTranslator.class);
+import javax.xml.XMLConstants;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
+import de.prob.exception.ProBError;
+import de.prob.model.eventb.EventBModel;
+import de.prob.model.representation.AbstractElement;
+
+import org.eventb.core.ast.extension.IFormulaExtension;
+import org.xml.sax.SAXException;
+
+public class EventBDatabaseTranslator {
 	private AbstractElement mainComponent;
 	private EventBModel model;
 
-	public EventBDatabaseTranslator(EventBModel m,
-			final String fileName) throws FileNotFoundException {
+	public EventBDatabaseTranslator(EventBModel m, final String fileName) throws IOException {
 		File modelFile = new File(fileName);
 		String fullFileName = modelFile.getAbsolutePath();
 		try {
@@ -34,19 +32,15 @@ public class EventBDatabaseTranslator {
 
 			this.model = m.setModelFile(modelFile);
 
-			String directory = fullFileName.substring(0,
-					fullFileName.lastIndexOf(File.separatorChar));
-			String workspacePath = directory.substring(0,
-					directory.lastIndexOf(File.separatorChar));
+			String directory = fullFileName.substring(0, fullFileName.lastIndexOf(File.separatorChar));
+			String workspacePath = directory.substring(0, directory.lastIndexOf(File.separatorChar));
 
-			File theoryFile = new File(directory + File.separator
-					+ "TheoryPath.tcl");
+			File theoryFile = new File(directory + File.separator + "TheoryPath.tcl");
 			Set<IFormulaExtension> typeEnv;
 			if (!theoryFile.exists()) {
 				typeEnv = new HashSet<>();
 			} else {
-				TheoryXmlHandler theoryHandler = new TheoryXmlHandler(this.model,
-						workspacePath);
+				TheoryXmlHandler theoryHandler = new TheoryXmlHandler(this.model, workspacePath);
 				saxParser.parse(theoryFile, theoryHandler);
 				typeEnv = theoryHandler.getTypeEnv();
 				this.model = theoryHandler.getModel();
@@ -65,11 +59,9 @@ public class EventBDatabaseTranslator {
 				this.model = xmlHandler.getModel();
 			}
 		} catch (FileNotFoundException e) {
-			String additionalMsg = "Translated .bcm or .bcc file could not be found. Try to clean the Rodin project";
-			logger.error(additionalMsg);
-			throw new EventBFileNotFoundException(fullFileName, additionalMsg, true);
-		} catch (IOException | ParserConfigurationException | SAXException e) {
-			logger.error("Error during EventB translation", e);
+			throw new EventBFileNotFoundException(fullFileName, "Translated .bcm or .bcc file could not be found. Try to clean the Rodin project", true, e);
+		} catch (ParserConfigurationException | SAXException e) {
+			throw new ProBError("XML parsing error while loading Event-B file from Rodin project", e);
 		}
 	}
 

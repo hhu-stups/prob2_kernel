@@ -1,0 +1,159 @@
+{
+  "description": "",
+  "transitionList": [
+    {
+      "name": "$initialise_machine",
+      "params": {},
+      "results": {},
+      "destState": {
+        "x": "1"
+      },
+      "destStateNotChanged": [],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "Inc",
+      "params": {},
+      "results": {},
+      "destState": {
+        "x": "2"
+      },
+      "destStateNotChanged": [],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "Inc",
+      "params": {},
+      "results": {},
+      "destState": {
+        "x": "3"
+      },
+      "destStateNotChanged": [],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "Inc",
+      "params": {},
+      "results": {},
+      "destState": {
+        "x": "4"
+      },
+      "destStateNotChanged": [],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "Inc",
+      "params": {},
+      "results": {},
+      "destState": {
+        "x": "5"
+      },
+      "destStateNotChanged": [],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "Inc",
+      "params": {},
+      "results": {},
+      "destState": {
+        "x": "6"
+      },
+      "destStateNotChanged": [],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "Inc",
+      "params": {},
+      "results": {},
+      "destState": {
+        "x": "7"
+      },
+      "destStateNotChanged": [],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "Inc",
+      "params": {},
+      "results": {},
+      "destState": {
+        "x": "8"
+      },
+      "destStateNotChanged": [],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "Inc",
+      "params": {},
+      "results": {},
+      "destState": {
+        "x": "9"
+      },
+      "destStateNotChanged": [],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "Inc",
+      "params": {},
+      "results": {},
+      "destState": {
+        "x": "10"
+      },
+      "destStateNotChanged": [],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    }
+  ],
+  "variableNames": [
+    "x"
+  ],
+  "constantNames": [],
+  "setNames": [],
+  "machineOperationInfos": {
+    "Inc": {
+      "operationName": "Inc",
+      "parameterNames": [],
+      "outputParameterNames": [],
+      "topLevel": true,
+      "type": "CLASSICAL_B",
+      "readVariables": [
+        "x"
+      ],
+      "writtenVariables": [
+        "x"
+      ],
+      "nonDetWrittenVariables": [],
+      "typeMap": {}
+    }
+  },
+  "globalIdentifierTypes": {
+    "x": "integer"
+  },
+  "metadata": {
+    "fileType": "Trace",
+    "formatVersion": 5,
+    "savedAt": "2021-08-23T08:52:16.986170374Z",
+    "creator": "traceReplay",
+    "proB2KernelVersion": "4.0.0-SNAPSHOT",
+    "proBCliVersion": "1.11.0-nightly",
+    "modelName": "M1"
+  }
+}

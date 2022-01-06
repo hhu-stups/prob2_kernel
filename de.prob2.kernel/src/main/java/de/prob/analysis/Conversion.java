@@ -8,10 +8,11 @@ import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.model.classicalb.ClassicalBModel;
+import de.prob.model.representation.AbstractModel;
 
 public class Conversion {
 
-	public static PPredicate predicateFromString(ClassicalBModel model, String predicateString) {
+	public static PPredicate predicateFromString(AbstractModel model, String predicateString) {
 		Start ast = ((ClassicalB) model.parseFormula(predicateString, FormulaExpand.EXPAND)).getAst();
 		return ((APredicateParseUnit) ast.getPParseUnit()).getPredicate();
 	}
@@ -21,13 +22,13 @@ public class Conversion {
 		return ((APredicateParseUnit) ast.getPParseUnit()).getPredicate();
 	}
 
-	public static IEvalElement classicalBFromPredicate(ClassicalBModel model, PPredicate predicate) {
+	public static IEvalElement classicalBFromPredicate(AbstractModel model, PPredicate predicate) {
 		PrettyPrinter pp = new PrettyPrinter();
 		predicate.apply(pp);
 		return model.parseFormula(pp.getPrettyPrint(), FormulaExpand.EXPAND);
 	}
 
-	public static PPredicate predicateFromPredicate(ClassicalBModel model, PPredicate predicate) {
+	public static PPredicate predicateFromPredicate(AbstractModel model, PPredicate predicate) {
 		PrettyPrinter pp = new PrettyPrinter();
 		predicate.apply(pp);
 		return predicateFromString(model, pp.getPrettyPrint());

@@ -1,8 +1,8 @@
 package de.prob.cli;
 
-import java.io.BufferedInputStream;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetAddress;
@@ -15,36 +15,30 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ProBConnection {
-
-	private static final int BUFFER_SIZE = 1024;
-
-	private Socket socket;
-	private BufferedInputStream inputStream;
-	private PrintWriter outputStream;
+	private final Scanner inputScanner;
+	private final PrintWriter outputStream;
 	private final Logger logger = LoggerFactory.getLogger(ProBConnection.class);
 	private volatile boolean shutingDown;
-	private volatile boolean busy;
 	private final String key;
 	private final int port;
 
-	public ProBConnection(final String key, final int port) {
+	public ProBConnection(final String key, final int port) throws IOException {
 		this.key = key;
 		this.port = port;
+
+		logger.debug("Connecting to port {} using key {}", this.port, this.key);
+		// The socket is closed in .disconnect() by closing its input/output streams.
+		@SuppressWarnings({"resource", "IOResourceOpenedButNotSafelyClosed", "SocketOpenedButNotSafelyClosed"})
+		final Socket socket = new Socket(InetAddress.getByName(null), this.port);
+		inputScanner = new Scanner(socket.getInputStream()).useDelimiter("\u0001"); // Prolog sends character 1 to terminate its outputs
+		outputStream = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8));
+		logger.debug("Connected");
 	}
 
 	@Override
 	public String toString() {
 		return MoreObjects.toStringHelper(ProBConnection.class).add("key", key)
 				.add("port", port).toString();
-	}
-
-	public void connect() throws IOException {
-		logger.debug("Connecting to port {} using key {}", port, key);
-		socket = new Socket(InetAddress.getByName(null), port);
-		inputStream = new BufferedInputStream(socket.getInputStream());
-		OutputStream outstream = socket.getOutputStream();
-		outputStream = new PrintWriter(new OutputStreamWriter(outstream, StandardCharsets.UTF_8));
-		logger.debug("Connected");
 	}
 
 	private static String shorten(final String s) {
@@ -60,77 +54,27 @@ public class ProBConnection {
 			logger.error("Cannot send terms while probcli is shutting down: {}", term);
 			throw new IOException("ProB has been shut down. It does not accept messages.");
 		}
-		if (isStreamReady()) {
-			outputStream.println(term);
-			outputStream.flush();
-		}
+		outputStream.println(term);
+		outputStream.flush();
 		String answer = getAnswer();
-		logger.trace(answer);
 		return answer;
 	}
 
-	public boolean isBusy() {
-		return busy;
-	}
-
-	private String getAnswer() throws IOException {
+	public String getAnswer() throws IOException {
 		String input;
-		input = readAnswer();
-		if (input == null) {
-			throw new IOException(
-					"ProB binary returned nothing - it might have crashed");
+		try {
+			input = inputScanner.next();
+		} catch (NoSuchElementException e) {
+			throw new IOException("ProB binary returned nothing - it might have crashed", e);
 		}
+		logger.trace(input);
 		return input;
-	}
-
-	protected String readAnswer() throws IOException {
-		final StringBuilder result = new StringBuilder();
-		final byte[] buffer = new byte[BUFFER_SIZE];
-		boolean done = false;
-
-		while (!done) {
-			/*
-			 * It might be necessary to check for inputStream.available() > 0.
-			 * Or add some kind of timer to prevent the thread blocks forever.
-			 * See task#102
-			 */
-			busy = true;
-			int count = inputStream.read(buffer);
-			busy = false; // as soon as we read something, we know that the
-							// Prolog has been processed and we do not want to
-							// allow interruption
-			if (count > 0) {
-				final byte length = 1;
-
-				// check for end of transmission (i.e. last byte is 1)
-				if (buffer[count - length] == 1) {
-					done = true;
-					count--; // remove end of transmission marker
-				}
-
-				// trim white spaces and append
-				// instead of removing the last byte trim is used, because on
-				// windows prob uses \r\n as new line.
-				String s = new String(buffer, 0, count, StandardCharsets.UTF_8);
-				result.append(s.replace("\r", "").replace("\n", ""));
-			} else {
-				done = true;
-			}
-		}
-
-		return result.length() > 0 ? result.toString() : null;
-	}
-
-	private boolean isStreamReady() {
-		if (inputStream == null || outputStream == null) {
-			logger.warn("Stream to ProB server not ready");
-			return false;
-		}
-		return true;
 	}
 
 	public void disconnect() {
 		shutingDown = true;
+		inputScanner.close();
+		outputStream.close();
 	}
 
 	public String getKey() {

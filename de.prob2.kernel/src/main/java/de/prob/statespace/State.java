@@ -2,6 +2,7 @@ package de.prob.statespace;
 
 import de.prob.animator.command.EvaluateFormulasCommand;
 import de.prob.animator.command.EvaluateRegisteredFormulasCommand;
+import de.prob.animator.command.ExecuteOperationException;
 import de.prob.animator.command.ExploreStateCommand;
 import de.prob.animator.command.GetBStateCommand;
 import de.prob.animator.domainobjects.AbstractEvalResult;
@@ -147,8 +148,13 @@ public class State extends GroovyObjectSupport {
 	 */
 	public List<Transition> findTransitions(String name, List<String> predicates, int nrOfSolutions) {
 		final String predicate = predicates.isEmpty() ? "TRUE = TRUE" : '(' + String.join(") & (", predicates) + ')';
-		final List<Transition> newOps = stateSpace.transitionFromPredicate(this, name, predicate, nrOfSolutions);
-		transitions.addAll(newOps);
+		List<Transition> newOps;
+		try {
+			newOps = stateSpace.transitionFromPredicate(this, name, predicate, nrOfSolutions);
+			transitions.addAll(newOps);
+		} catch (ExecuteOperationException e) {
+			return new ArrayList<>();
+		}
 		return newOps;
 	}
 

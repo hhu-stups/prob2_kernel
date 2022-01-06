@@ -23,7 +23,7 @@ public class SymbolicModelcheckCommand extends AbstractCommand {
 	}
 	
 	public enum ResultType {
-		SUCCESSFUL, INTERRUPTED, COUNTER_EXAMPLE, TIMEOUT;
+		SUCCESSFUL, INTERRUPTED, COUNTER_EXAMPLE, TIMEOUT, LIMIT_REACHED;
 	}
 	
 	private static final String COMMAND_NAME = "symbolic_model_check";
@@ -55,6 +55,8 @@ public class SymbolicModelcheckCommand extends AbstractCommand {
 			result = ResultType.SUCCESSFUL;
 		} else if(resultTerm.hasFunctor("solver_and_provers_too_weak", 0)) {
 			result = ResultType.TIMEOUT;
+		} else if(resultTerm.hasFunctor("limit_reached", 0)) {
+			result = ResultType.LIMIT_REACHED;
 		}
 	}
 	

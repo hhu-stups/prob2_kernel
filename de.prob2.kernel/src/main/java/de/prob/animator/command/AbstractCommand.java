@@ -3,6 +3,12 @@ package de.prob.animator.command;
 import java.util.Collections;
 import java.util.List;
 
+import de.be4.classicalb.core.parser.BParser;
+import de.be4.classicalb.core.parser.MockedDefinitions;
+import de.be4.classicalb.core.parser.analysis.prolog.ASTProlog;
+import de.be4.classicalb.core.parser.analysis.prolog.PrologExceptionPrinter;
+import de.be4.classicalb.core.parser.exceptions.BCompoundException;
+import de.be4.classicalb.core.parser.node.Start;
 import de.prob.animator.CommandInterruptedException;
 import de.prob.animator.IPrologResult;
 import de.prob.animator.InterruptedResult;
@@ -10,9 +16,12 @@ import de.prob.animator.NoResult;
 import de.prob.animator.YesResult;
 import de.prob.animator.domainobjects.ErrorItem;
 import de.prob.exception.ProBError;
+import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.parser.ResultParserException;
 import de.prob.prolog.output.IPrologTermOutput;
+import de.prob.prolog.output.PrologTermStringOutput;
+import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 
 /**
@@ -111,6 +120,76 @@ public abstract class AbstractCommand {
 			throw new ProBError("ProB reported Errors", errors);
 		} else {
 			throw new ProBError("Errors were", errors);
+		}
+	}
+	
+	/**
+	 * This code is called when the Prolog process sends a progress term
+	 * but hasn't finished computation yet
+	 */
+	public void processProgressResult(final PrologTerm progressInfo) {
+		System.out.println("Progress info: " + progressInfo); // TO DO: replace by something more useful
+	}
+	
+	
+	/**
+	 * This code is called when the Prolog process sends a call_back term
+	 * but hasn't finished computation yet
+	 */
+	public void processCallBack(final PrologTerm callBack, final IPrologTermOutput pout) {
+		// System.out.println("Callback request from Prolog: " + callBack);
+		
+		if (callBack.hasFunctor("interrupt_requested",0)) {
+			if (Thread.interrupted()) {
+				pout.printAtom("interrupt_is_requested");
+			} else {
+				pout.printAtom("not_requested");
+			}
+		} else if (callBack.hasFunctor("parse_classical_b",3)) {
+			// parse_classical_b(Kind,DefList,Formula)
+			// we could use: (new ClassicalB(formulaToEval, FormulaExpand.EXPAND), but
+			// it will also try parsing as substitution and creates an uncessary UUID
+			// TO DO : support multiple formulas, support parse_event_b call_back as well
+			// parse_classical_b(Kind,toParse)
+			String Kind = PrologTerm.atomicString(callBack.getArgument(1));
+			// Kind is formula, expression, predicate, substitution
+			// TO DO: process argument 2 as list ; it contains def(Name,Type,Arity) Terms
+			ListPrologTerm definitions = (ListPrologTerm) callBack.getArgument(2);
+			String toParse = PrologTerm.atomicString(callBack.getArgument(3));
+			try {
+				Start ast;
+				BParser parser = new BParser();
+				MockedDefinitions context = new MockedDefinitions();
+				for (PrologTerm definition : definitions) {
+					BindingGenerator.getCompoundTerm(definition, "def", 3);
+					String name = PrologTerm.atomicString(definition.getArgument(1));
+					String type = definition.getArgument(2).toString();
+					String parameterCount = definition.getArgument(3).toString();
+					context.addMockedDefinition(name, type, parameterCount);
+				}
+				parser.setDefinitions(context);
+				switch (Kind) {
+					case "formula":
+						ast = parser.parseFormula(toParse); break;
+					case "expression":
+						ast = parser.parseExpression(toParse); break;
+					case "predicate":
+						ast = parser.parsePredicate(toParse); break;
+					case "substitution":
+						ast = parser.parseSubstitution(toParse); break;
+					case "transition":
+						ast = parser.parseTransition(toParse); break;
+					default:
+						throw new IllegalArgumentException("Invalid kind for parse_classical_b: " + Kind);
+				}
+				ASTProlog.printFormula(ast, pout);
+			} catch (BCompoundException e) {
+				pout.openTerm("parse_error");
+				PrologExceptionPrinter.printException(pout, e);
+				pout.closeTerm();
+			}
+		} else {
+			pout.printAtom("call_back_not_supported");
 		}
 	}
 }

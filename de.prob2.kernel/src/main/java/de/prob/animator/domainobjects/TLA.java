@@ -3,10 +3,8 @@ package de.prob.animator.domainobjects;
 import de.be4.classicalb.core.parser.node.Node;
 import de.be4.classicalb.core.parser.node.Start;
 import de.hhu.stups.prob.translator.BValue;
-import de.prob.animator.command.EvaluationCommand;
 import de.prob.model.representation.IFormulaUUID;
 import de.prob.prolog.output.IPrologTermOutput;
-import de.prob.statespace.State;
 import de.tla2b.exceptions.ExpressionTranslationException;
 import de.tla2bAst.Translator;
 
@@ -60,11 +58,6 @@ public class TLA extends AbstractEvalElement implements IBEvalElement {
 	@Override
 	public IFormulaUUID getFormulaId() {
 		return classicalB.getFormulaId();
-	}
-
-	@Override
-	public EvaluationCommand getCommand(State stateid) {
-		return classicalB.getCommand(stateid);
 	}
 
 	@Override

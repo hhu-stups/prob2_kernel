@@ -1,6 +1,6 @@
 package de.prob.animator.domainobjects;
 
-import de.prob.animator.command.EvaluationCommand;
+import de.prob.animator.command.EvaluateFormulaCommand;
 import de.prob.model.representation.IFormulaUUID;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.statespace.State;
@@ -20,6 +20,15 @@ public interface IEvalElement {
 	public abstract String getCode();
 
 	/**
+	 * Pretty-print this formula,
+	 * i. e. convert the parsed AST back into equivalent source code.
+	 * This can be used to check equality of two formulas while ignoring comments and formatting.
+	 *
+	 * @return a pretty-printed version of the formula
+	 */
+	public abstract String getPrettyPrint();
+
+	/**
 	 * Writes the formula to {@link IPrologTermOutput} pout
 	 * 
 	 * @param pout the {@link IPrologTermOutput} to write to
@@ -35,7 +44,11 @@ public interface IEvalElement {
 
 	public IFormulaUUID getFormulaId();
 
-	public EvaluationCommand getCommand(State state);
+	/**
+	 * @deprecated Use {@link State#eval(IEvalElement)} or similar methods, or manually construct a {@link EvaluateFormulaCommand} if necessary.
+	 */
+	@Deprecated
+	public EvaluateFormulaCommand getCommand(State state);
 
 	public FormulaExpand expansion();
 }

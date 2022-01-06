@@ -2,60 +2,65 @@ package de.prob.check.tracereplay;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Collections;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.gson.JsonParseException;
 import com.google.inject.Inject;
 
-import de.prob.json.JsonManager;
+import de.prob.check.tracereplay.json.TraceManager;
+import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.json.JsonMetadata;
-import de.prob.json.ObjectWithMetadata;
 
+@Deprecated
 public class TraceLoaderSaver {
+	private final TraceManager traceManager;
 
-	private final JsonManager<PersistentTrace> jsonManager;
-
+	@Deprecated
 	@Inject
-	public TraceLoaderSaver(JsonManager<PersistentTrace> jsonManager) {
-		this.jsonManager = jsonManager;
-		final Gson gson = new GsonBuilder()
-			.disableHtmlEscaping()
-			.serializeNulls()
-			.setPrettyPrinting()
-			.create();
-		jsonManager.initContext(new JsonManager.Context<PersistentTrace>(gson, PersistentTrace.class, "Trace", 1) {
-			@Override
-			public ObjectWithMetadata<JsonObject> convertOldData(final JsonObject oldObject, final JsonMetadata oldMetadata) {
-				if (oldMetadata.getFileType() == null) {
-					assert oldMetadata.getFormatVersion() == 0;
-					if (!oldObject.has("transitionList")) {
-						throw new JsonParseException("Not a valid trace file - missing required field transitionList");
-					}
-				}
-				return new ObjectWithMetadata<>(oldObject, oldMetadata);
-			}
-		});
+	public TraceLoaderSaver(final TraceManager traceManager) {
+		this.traceManager = traceManager;
 	}
 
+	@Deprecated
 	public PersistentTrace load(Path path) throws IOException {
-		return this.jsonManager.readFromFile(path).getObject();
+		final TraceJsonFile traceJsonFile;
+		try {
+			traceJsonFile = this.traceManager.load(path);
+		} catch (JsonProcessingException e) {
+			throw new JsonParseException(e);
+		}
+		return new PersistentTrace(traceJsonFile.getDescription(), traceJsonFile.getTransitionList());
 	}
 
+	private void save(final Path location, final PersistentTrace trace, final JsonMetadata metadata) throws IOException {
+		final TraceJsonFile traceJsonFile = new TraceJsonFile(
+			trace.getDescription(),
+			trace.getTransitionList(),
+			Collections.emptyList(),
+			Collections.emptyMap(),
+			Collections.emptyList(),
+			Collections.emptyList(),
+			metadata
+		);
+		try {
+			this.traceManager.save(location, traceJsonFile);
+		} catch (JsonProcessingException e) {
+			throw new JsonParseException(e);
+		}
+	}
+
+	@Deprecated
 	public void save(PersistentTrace trace, Path location, String proBCliVersion, String modelName) throws IOException {
-		final JsonMetadata metadata = this.jsonManager.defaultMetadataBuilder()
+		final JsonMetadata metadata = TraceJsonFile.metadataBuilder()
 			.withProBCliVersion(proBCliVersion)
 			.withModelName(modelName)
 			.build();
-		this.jsonManager.writeToFile(location, trace, metadata);
+		this.save(location, trace, metadata);
 	}
 
+	@Deprecated
 	public void save(PersistentTrace trace, Path location) throws IOException {
-		this.jsonManager.writeToFile(location, trace);
-	}
-
-	public JsonManager<PersistentTrace> getJsonManager() {
-		return jsonManager;
+		this.save(location, trace, TraceJsonFile.metadataBuilder().build());
 	}
 }

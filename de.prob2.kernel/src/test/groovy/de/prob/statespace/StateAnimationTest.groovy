@@ -73,11 +73,8 @@ class StateAnimationTest extends Specification {
 	}
 
 	def "you can't find an illegal transition"() {
-		when:
-		root.findTransition("blah", [])
-
-		then:
-		thrown(IllegalArgumentException)
+		expect:
+		root.findTransition("blah", []) == null
 	}
 
 	def "transition that is cached will be simply returned if no predicates are given"() {

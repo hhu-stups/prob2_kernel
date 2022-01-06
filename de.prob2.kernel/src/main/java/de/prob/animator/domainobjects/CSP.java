@@ -11,16 +11,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import de.prob.Main;
-import de.prob.animator.command.EvaluateFormulaCommand;
-import de.prob.animator.command.EvaluationCommand;
 import de.prob.model.representation.CSPModel;
 import de.prob.model.representation.FormulaUUID;
 import de.prob.model.representation.IFormulaUUID;
 import de.prob.prolog.output.IPrologTermOutput;
-import de.prob.statespace.State;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A Formula representation for CSP
@@ -28,8 +22,6 @@ import org.slf4j.LoggerFactory;
  * @author joy
  */
 public class CSP extends AbstractEvalElement {
-	private static final Logger LOGGER = LoggerFactory.getLogger(CSP.class);
-
 	private final FormulaUUID uuid;
 	private final String fileName;
 	private final Path cspmfPath;
@@ -47,6 +39,11 @@ public class CSP extends AbstractEvalElement {
 		this.uuid = new FormulaUUID();
 		this.fileName = model.getModelFile().getAbsolutePath();
 		this.cspmfPath = Paths.get(Main.getProBDirectory(), model.getOsInfo().getCspmfName());
+	}
+
+	@Override
+	public String getPrettyPrint() {
+		throw new UnsupportedOperationException("Pretty-printing CSP formulas is not yet supported");
 	}
 
 	@Override
@@ -85,11 +82,9 @@ public class CSP extends AbstractEvalElement {
 				}
 			}
 		} catch (IOException e) {
-			LOGGER.error("IOException while calling cspmf", e);
 			throw new EvaluationException("IOException while parsing CSP", e);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
-			LOGGER.error("Thread interrupted while calling cspmf", e);
 			throw new EvaluationException("Thread interrupted while parsing CSP", e);
 		}
 	}
@@ -107,11 +102,5 @@ public class CSP extends AbstractEvalElement {
 	@Override
 	public IFormulaUUID getFormulaId() {
 		return uuid;
-	}
-
-	@Override
-	public EvaluationCommand getCommand(State stateId) {
-		/* TODO: we could do a more efficient implementation here */
-		return new EvaluateFormulaCommand(this, stateId.getId());
 	}
 }

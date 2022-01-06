@@ -17,33 +17,34 @@ import de.prob.model.representation.*;
 import de.prob.statespace.StateSpace;
 
 /**
- * Determines the MCDC test cases for all guards of all operations of a given {@link #model} up to a
+ * Determines the MCDC test cases for all guards of all operations of a given model extracted from the current state space up to a
  * specified {@link #maxLevel} (levels start at 0).
  */
 public class MCDCIdentifier {
 
 	private final static Logger log = Logger.getLogger(MCDCIdentifier.class.getName());
 
-	private ClassicalBModel model;
-	private StateSpace stateSpace;
-	private int maxLevel;
+	private final StateSpace stateSpace;
+	private final int maxLevel;
 
-	public MCDCIdentifier(ClassicalBModel model, StateSpace stateSpace, int maxLevel) {
-		this.model = model;
+	public MCDCIdentifier(StateSpace stateSpace, int maxLevel) {
 		this.stateSpace = stateSpace;
 		this.maxLevel = maxLevel;
 	}
 
-	public Map<Operation, List<ConcreteMCDCTestCase>> identifyMCDC() {
-		Map<Operation, List<ConcreteMCDCTestCase>> testCases = new HashMap<>();
-		ModelElementList<Operation> operations = model.getMainMachine().getEvents();
-		for (Operation operation : operations) {
-			List<IEvalElement> guards = Extraction.getGuardPredicates(model, operation.getName());
-			ClassicalB predicate = null;
+	public Map<BEvent, List<ConcreteMCDCTestCase>> identifyMCDC() {
+		AbstractElement machine = stateSpace.getMainComponent();
+		AbstractModel model = stateSpace.getModel();
+
+		Map<BEvent, List<ConcreteMCDCTestCase>> testCases = new HashMap<>();
+		ModelElementList<BEvent> operations = machine.getChildrenOfType(BEvent.class);
+		for (BEvent operation : operations) {
+			List<IEvalElement> guards = Extraction.getGuardPredicates(machine, operation.getName());
+			ClassicalB predicate;
 			if(guards.isEmpty()) {
 				predicate = new ClassicalB("1=1", FormulaExpand.EXPAND);
 			} else {
-				predicate = (ClassicalB) Join.conjunct(model, guards);
+				predicate = new ClassicalB(Join.conjunct(model, guards).getCode(), FormulaExpand.EXPAND);
 			}
 			Start ast = predicate.getAst();
 			PPredicate startNode = ((APredicateParseUnit) ast.getPParseUnit()).getPredicate();
@@ -53,11 +54,15 @@ public class MCDCIdentifier {
 	}
 
 	private List<ConcreteMCDCTestCase> getMCDCTestCases(PPredicate node) {
+		AbstractModel model = stateSpace.getModel();;
+
 		List<ConcreteMCDCTestCase> testCases = new MCDCASTVisitor(maxLevel, model).getMCDCTestCases(node);
 		return filterFeasible(testCases);
 	}
 
 	private List<ConcreteMCDCTestCase> filterFeasible(List<ConcreteMCDCTestCase> testCases) {
+		AbstractModel model = stateSpace.getModel();
+
 		List<ConcreteMCDCTestCase> feasibleTestCases = new ArrayList<>();
 		for (ConcreteMCDCTestCase t : testCases) {
 			CbcSolveCommand cmd = new CbcSolveCommand(Conversion.classicalBFromPredicate(model, t.getPredicate()));

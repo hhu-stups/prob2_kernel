@@ -2,11 +2,8 @@ package de.prob.model.classicalb;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -14,11 +11,11 @@ import com.github.krukow.clj_lang.PersistentHashMap;
 import com.google.inject.Inject;
 
 import de.be4.classicalb.core.parser.BParser;
+import de.be4.classicalb.core.parser.IDefinitions;
 import de.be4.classicalb.core.parser.analysis.prolog.RecursiveMachineLoader;
 import de.be4.classicalb.core.parser.exceptions.BCompoundException;
 import de.be4.classicalb.core.parser.exceptions.BParseException;
 import de.be4.classicalb.core.parser.node.Start;
-import de.be4.classicalb.core.parser.node.TIdentifierLiteral;
 import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.command.LoadBProjectCommand;
 import de.prob.animator.domainobjects.ClassicalB;
@@ -59,41 +56,13 @@ public class ClassicalBModel extends AbstractModel {
 	}
 
 	public ClassicalBModel create(final Start mainAST, final RecursiveMachineLoader rml, final File modelFile, final BParser bparser) {
-		DependencyGraph graph = new DependencyGraph();
-
-		final DomBuilder d = new DomBuilder(null);
+		final DomBuilder d = new DomBuilder(rml.getMainMachineName(), null);
 		final ClassicalBMachine classicalBMachine = d.build(mainAST);
 
-		ModelElementList<ClassicalBMachine> machines = new ModelElementList<>();
-		machines = machines.addElement(classicalBMachine);
-		graph = graph.addVertex(classicalBMachine.getName());
+		final DependencyWalker walker = new DependencyWalker(rml, classicalBMachine);
+		walker.findDependencies();
 
-		final Set<LinkedList<TIdentifierLiteral>> vertices = new HashSet<>();
-		vertices.add(d.getMachineId());
-		final Set<LinkedList<TIdentifierLiteral>> done = new HashSet<>();
-		boolean fpReached = false;
-
-		while (!fpReached) {
-			fpReached = true;
-			final Set<LinkedList<TIdentifierLiteral>> newVertices = new HashSet<>();
-			for (final LinkedList<TIdentifierLiteral> machineId : vertices) {
-				final String machineName = machineId.getLast().getText();
-				final Start ast = rml.getParsedMachines().get(machineName);
-				if (!done.contains(machineId)) {
-					final DependencyWalker walker = new DependencyWalker(machineId, machines, graph, rml.getParsedMachines());
-					ast.apply(walker);
-					graph = walker.getGraph();
-					machines = walker.getMachines();
-					newVertices.addAll(walker.getMachineIds());
-					done.add(machineId);
-					fpReached = false;
-				}
-			}
-
-			vertices.addAll(newVertices);
-		}
-
-		return new ClassicalBModel(getStateSpaceProvider(), assoc(Machine.class, machines), graph, modelFile, bparser, rml, classicalBMachine);
+		return new ClassicalBModel(getStateSpaceProvider(), assoc(Machine.class, new ModelElementList<>(walker.getMachines())), walker.getGraph(), modelFile, bparser, rml, classicalBMachine);
 	}
 
 	public ClassicalBMachine getMainMachine() {
@@ -115,15 +84,20 @@ public class ClassicalBModel extends AbstractModel {
 	@Override
 	public IEvalElement parseFormula(final String formula, final FormulaExpand expand) {
 		try {
-			return new ClassicalB(bparser.parseFormula(formula), expand);
+			return new ClassicalB(bparser.parseFormula(formula), expand, formula);
 		} catch (BCompoundException e) {
 			final Throwable cause = e.getCause();
 			if (cause != null && cause.getCause() instanceof BParseException) {
 				throw new EvaluationException(((BParseException)e.getCause().getCause()).getRealMsg(), e);
 			} else {
-				throw new EvaluationException(e);
+				throw new EvaluationException(e.getFirstException().getLocalizedMessage(), e);
 			}
 		}
+	}
+
+	@Override
+	public IEvalElement formulaFromIdentifier(final List<String> identifier, final FormulaExpand expansion) {
+		return ClassicalB.fromIdentifier(identifier, expansion);
 	}
 
 	@Override
@@ -153,5 +127,9 @@ public class ClassicalBModel extends AbstractModel {
 
 	public AbstractElement getAt(final String name) {
 		return getComponent(name);
+	}
+
+	public IDefinitions getDefinitions() {
+		return bparser.getDefinitions();
 	}
 }

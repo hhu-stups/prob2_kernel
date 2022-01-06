@@ -81,6 +81,21 @@ public abstract class AbstractModel extends AbstractElement {
 	}
 
 	/**
+	 * <p>Create a formula representing the given identifier.</p>
+	 * <p>
+	 * Unlike {@link #parseFormula(String, FormulaExpand)},
+	 * this method accepts arbitrary strings as identifiers,
+	 * even ones that are not syntactically valid in the language of the model
+	 * and would be unrepresentable or require quoting.
+	 * </p>
+	 *
+	 * @param identifier list of string parts that make up a dotted identifier
+	 * @param expansion expansion mode to use when evaluating the formula
+	 * @return a formula representing the given identifier
+	 */
+	public abstract IEvalElement formulaFromIdentifier(final List<String> identifier, final FormulaExpand expansion);
+
+	/**
 	 * Will check the syntax of a formula to see if it is valid in the scope of
 	 * this model.
 	 *

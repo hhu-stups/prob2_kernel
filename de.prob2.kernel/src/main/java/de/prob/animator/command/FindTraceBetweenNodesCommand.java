@@ -13,13 +13,8 @@ import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
 import de.prob.statespace.Transition;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class FindTraceBetweenNodesCommand extends AbstractCommand implements
 		ITraceDescription, IStateSpaceModifier {
-	private static final Logger logger = LoggerFactory.getLogger(FindTraceBetweenNodesCommand.class);
-
 	private static final String PROLOG_COMMAND_NAME = "find_trace_from_node_to_node";
 	private static final String TRACE = "Trace";
 
@@ -53,9 +48,7 @@ public class FindTraceBetweenNodesCommand extends AbstractCommand implements
 						stateSpace, (CompoundPrologTerm) term));
 			}
 		} else {
-			String msg = "Trace was not found. Error was: " + trace.getFunctor();
-			logger.error(msg);
-			throw new NoTraceFoundException(msg);
+			throw new NoTraceFoundException("Trace was not found. Error was: " + trace.getFunctor());
 		}
 	}
 

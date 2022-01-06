@@ -1,0 +1,3 @@
+MACHINE EmptyMachine
+
+END

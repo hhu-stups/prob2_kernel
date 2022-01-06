@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<org.eventb.core.machineFile org.eventb.core.configuration="org.eventb.core.fwd" org.eventb.core.generated="false" org.eventb.texttools.text_lastmodified="1625129739287" org.eventb.texttools.text_representation="machine mac&#10;&#10;variables&#10;cars_go peds_go&#10;&#10;invariants&#10;@inv1 peds_go ∈ BOOL&#10;@inv2 cars_go ∈ BOOL&#10;@inv3 ¬(cars_go=TRUE∧peds_go=TRUE)&#10;&#10;&#10;&#10;events&#10;  event INITIALISATION&#10;  then&#10;  @act1 peds_go ≔ FALSE&#10;  @act2 cars_go ≔ FALSE&#10;  end&#10;&#10;  event set_peds_go&#10;  when&#10;  @grd1 cars_go = FALSE&#10;  then&#10;  @act1 peds_go ≔ TRUE&#10;  end&#10;&#10;  event set_peds_stop&#10;  then&#10;  @act1 peds_go ≔ FALSE&#10;  end&#10;&#10;  event set_cars&#10;  any new_value&#10;  where&#10;  @grd1 new_value ∈ BOOL&#10;  @grd2 new_value = TRUE ⇒ peds_go=FALSE&#10;  then&#10;  @act1 cars_go≔new_value&#10;  end&#10;end&#10;" version="5">
+    <org.eventb.core.event name="'" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.generated="false" org.eventb.core.label="INITIALISATION">
+        <org.eventb.core.action name="_VGTg4FvOEeuAE4_C4q2wCA" org.eventb.core.assignment="peds_go ≔ FALSE" org.eventb.core.generated="false" org.eventb.core.label="act1"/>
+        <org.eventb.core.action name="_VGUH8FvOEeuAE4_C4q2wCA" org.eventb.core.assignment="cars_go ≔ FALSE" org.eventb.core.generated="false" org.eventb.core.label="act2"/>
+    </org.eventb.core.event>
+    <org.eventb.core.variable name="_VGUH8VvOEeuAE4_C4q2wCA" org.eventb.core.generated="false" org.eventb.core.identifier="cars_go"/>
+    <org.eventb.core.variable name="_VGUvAFvOEeuAE4_C4q2wCA" org.eventb.core.generated="false" org.eventb.core.identifier="peds_go"/>
+    <org.eventb.core.invariant name="_VGUvAVvOEeuAE4_C4q2wCA" org.eventb.core.generated="false" org.eventb.core.label="inv1" org.eventb.core.predicate="peds_go ∈ BOOL"/>
+    <org.eventb.core.invariant name="_VGVWEFvOEeuAE4_C4q2wCA" org.eventb.core.generated="false" org.eventb.core.label="inv2" org.eventb.core.predicate="cars_go ∈ BOOL"/>
+    <org.eventb.core.invariant name="_VGV9IFvOEeuAE4_C4q2wCA" org.eventb.core.generated="false" org.eventb.core.label="inv3" org.eventb.core.predicate="¬(cars_go=TRUE∧peds_go=TRUE)"/>
+    <org.eventb.core.event name="_VGWkMFvOEeuAE4_C4q2wCA" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.generated="false" org.eventb.core.label="set_peds_go">
+        <org.eventb.core.guard name="_moT_EFvOEeuAE4_C4q2wCA" org.eventb.core.generated="false" org.eventb.core.label="grd1" org.eventb.core.predicate="cars_go = FALSE"/>
+        <org.eventb.core.action name="_VGXLQVvOEeuAE4_C4q2wCA" org.eventb.core.assignment="peds_go ≔ TRUE" org.eventb.core.generated="false" org.eventb.core.label="act1"/>
+    </org.eventb.core.event>
+    <org.eventb.core.event name="_moTYAFvOEeuAE4_C4q2wCA" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.generated="false" org.eventb.core.label="set_peds_stop">
+        <org.eventb.core.action name="_moTYAVvOEeuAE4_C4q2wCA" org.eventb.core.assignment="peds_go ≔ FALSE" org.eventb.core.generated="false" org.eventb.core.label="act1"/>
+    </org.eventb.core.event>
+    <org.eventb.core.event name="_moTYAlvOEeuAE4_C4q2wCA" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.generated="false" org.eventb.core.label="set_cars">
+        <org.eventb.core.parameter name="_lxk5cFvQEeuAE4_C4q2wCA" org.eventb.core.generated="false" org.eventb.core.identifier="new_value"/>
+        <org.eventb.core.guard name="_QC9tYFvPEeuAE4_C4q2wCA" org.eventb.core.generated="false" org.eventb.core.label="grd1" org.eventb.core.predicate="new_value ∈ BOOL"/>
+        <org.eventb.core.guard name="_moT_EVvOEeuAE4_C4q2wCA" org.eventb.core.generated="false" org.eventb.core.label="grd2" org.eventb.core.predicate="new_value = TRUE ⇒ peds_go=FALSE"/>
+        <org.eventb.core.action name="_G7_s0NpKEeuC-LO8EBEaxg" org.eventb.core.assignment="cars_go≔new_value" org.eventb.core.generated="false" org.eventb.core.label="act1"/>
+    </org.eventb.core.event>
+</org.eventb.core.machineFile>

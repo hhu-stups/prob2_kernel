@@ -2,7 +2,6 @@ package de.prob.cli;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.common.base.MoreObjects;
 
@@ -24,14 +23,10 @@ public class ProBInstance {
 
 	private String[] interruptCommand;
 
-	private AtomicInteger processCounter;
-
 	public ProBInstance(final Process process, final BufferedReader stream, final Long userInterruptReference,
-			final ProBConnection connection, final String home, final OsSpecificInfo osInfo,
-			AtomicInteger processCounter) {
+			final ProBConnection connection, final String home, final OsSpecificInfo osInfo) {
 		this.process = process;
 		this.connection = connection;
-		this.processCounter = processCounter;
 		final String command = home + osInfo.getUserInterruptCmd();
 		interruptCommand = new String[] { command, Long.toString(userInterruptReference) };
 		thread = makeOutputPublisher(stream);
@@ -44,14 +39,9 @@ public class ProBInstance {
 	}
 
 	public void shutdown() {
-		if (!shuttingDown) {
-			processCounter.decrementAndGet();
-		}
 		shuttingDown = true;
 		try {
-			if (thread.isAlive()) {
-				thread.interrupt();
-			}
+			thread.interrupt();
 			connection.disconnect();
 		} finally {
 			process.destroy();
@@ -60,18 +50,22 @@ public class ProBInstance {
 
 	public void sendInterrupt() {
 		try {
-			if (connection.isBusy()) {
-				logger.info("sending interrupt signal");
-				Runtime.getRuntime().exec(interruptCommand);
-				// calls send_user_interrupt or send_user_interrupt.exe on Windows
+			logger.info("sending interrupt signal");
+			// calls send_user_interrupt or send_user_interrupt.exe on Windows
+			final int exitCode = new ProcessBuilder(interruptCommand).start().waitFor();
+			if (exitCode != 0) {
+				logger.warn("send_user_interrupt command exited with status code {}", exitCode);
 			} else {
-				logger.info("ignoring interrupt signal because the connection is not busy");
+				logger.trace("send_user_interrupt command exited successfully");
 			}
 		} catch (IOException e) {
 			logger.warn("calling the send_user_interrupt command failed", e);
+		} catch (InterruptedException e) {
+			logger.warn("Thread interrupted while waiting for send_user_interrupt to finish", e);
 		}
 	}
 
+	// a method to send a string to Prolog and return the response provided by Prolog
 	public String send(final String term) {
 		try {
 			return connection.send(term);
@@ -79,6 +73,16 @@ public class ProBInstance {
 			throw new CliError("Error during communication with Prolog core.", e);
 		}
 	}
+	// a method to just receive input from Prolog, without sending a string first
+	public String receive() {
+		try {
+			return connection.getAnswer();
+		} catch (IOException e) {
+			throw new CliError("Error receiving from Prolog core.", e);
+		}
+	}
+	
+	
 
 	public boolean isShuttingDown() {
 		return shuttingDown;

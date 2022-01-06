@@ -1,5 +1,7 @@
 package de.prob.json;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 
 import java.io.Reader;
@@ -11,6 +13,7 @@ import java.util.Objects;
  *
  * <p>Some of the metadata (e. g. {@link #creator}) is not yet used by the UI code, but is included in newly written JSON files for possible future use.</p>
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public final class JsonMetadata {
 	/**
 	 * Special value for {@link #creator} indicating that the data was created manually by the user, rather than generated or otherwise automatically created by the UI code.
@@ -61,13 +64,13 @@ public final class JsonMetadata {
 	private final String modelName;
 
 	public JsonMetadata(
-			final String fileType,
-			final int formatVersion,
-			final Instant savedAt,
-			final String creator,
-			final String proB2KernelVersion,
-			final String proBCliVersion,
-			final String modelName
+		@JsonProperty("fileType") final String fileType,
+		@JsonProperty("formatVersion") final int formatVersion,
+		@JsonProperty("savedAt") final Instant savedAt,
+		@JsonProperty("creator") final String creator,
+		@JsonProperty("proB2KernelVersion") final String proB2KernelVersion,
+		@JsonProperty("proBCliVersion") final String proBCliVersion,
+		@JsonProperty("modelName") final String modelName
 	) {
 		this.fileType = fileType;
 		this.formatVersion = formatVersion;
@@ -148,5 +151,9 @@ public final class JsonMetadata {
 				.add("proBCliVersion", this.getProBCliVersion())
 				.add("modelName", this.getModelName())
 				.toString();
+	}
+
+	public JsonMetadata changeModelName(String name){
+		return new JsonMetadata(fileType, formatVersion, savedAt, creator, proB2KernelVersion, proBCliVersion, name);
 	}
 }

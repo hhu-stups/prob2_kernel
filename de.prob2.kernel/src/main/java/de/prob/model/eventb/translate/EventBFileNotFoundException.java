@@ -9,10 +9,11 @@ public class EventBFileNotFoundException extends FileNotFoundException {
 
 	private boolean refreshProject;
 
-	public EventBFileNotFoundException(String path, String additionalMsg, boolean refreshProject) {
+	public EventBFileNotFoundException(String path, String additionalMsg, boolean refreshProject, Throwable cause) {
 		super(path + " (No such file)" + "\n" + additionalMsg);
 		this.path = path;
 		this.refreshProject = refreshProject;
+		this.initCause(cause);
 	}
 
 	public String getPath() {

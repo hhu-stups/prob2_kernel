@@ -5,15 +5,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -27,12 +23,32 @@ import org.slf4j.LoggerFactory;
 
 @Singleton
 public final class ProBInstanceProvider implements Provider<ProBInstance> {
+	static final class CliInformation {
+		private final int port;
+		private final long userInterruptReference;
+
+		CliInformation(final int port, final long userInterruptReference) {
+			this.port = port;
+			this.userInterruptReference = userInterruptReference;
+		}
+
+		int getPort() {
+			return port;
+		}
+
+		long getUserInterruptReference() {
+			return userInterruptReference;
+		}
+	}
+
 	private static final Logger logger = LoggerFactory.getLogger(ProBInstanceProvider.class);
+
+	static final Pattern CLI_PORT_PATTERN = Pattern.compile("^.*Port: (\\d+)$");
+	static final Pattern CLI_USER_INTERRUPT_REFERENCE_PATTERN = Pattern.compile("^.*user interrupt reference id: *(\\d+|off) *$");
 
 	private final PrologProcessProvider processProvider;
 	private final String home;
 	private final OsSpecificInfo osInfo;
-	private final AtomicInteger processCounter;
 	private final Set<WeakReference<ProBInstance>> processes = new HashSet<>();
 
 	@Inject
@@ -42,17 +58,11 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 		this.home = home;
 		this.osInfo = osInfo;
 		installer.ensureCLIsInstalled();
-		processCounter = new AtomicInteger();
 	}
 
 	@Override
 	public ProBInstance get() {
 		return startProlog();
-	}
-
-	@Deprecated
-	public int numberOfCLIs() {
-		return processCounter.get();
 	}
 
 	public void shutdownAll() {
@@ -85,7 +95,7 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 		final BufferedReader stream = new BufferedReader(new InputStreamReader(
 				process.getInputStream(), StandardCharsets.UTF_8));
 
-		final Map<Class<? extends AbstractCliPattern<?>>, AbstractCliPattern<?>> cliInformation;
+		final CliInformation cliInformation;
 		try {
 			cliInformation = extractCliInformation(stream);
 		} catch (CliError e) {
@@ -93,43 +103,23 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 			final Optional<Integer> exitCode = getProcessExitCode(process);
 			if (exitCode.isPresent()) {
 				// CLI exited, report the exit code.
-				throw new CliError("CLI exited with status " + exitCode.get() + " while matching output patterns", e);
+				throw new CliError("CLI exited with status " + exitCode.get() + " before socket connection could be opened", e);
 			} else {
 				// CLI didn't exit, just rethrow the error.
 				throw e;
 			}
 		}
 
-		Integer port = ((PortPattern) cliInformation.get(PortPattern.class))
-				.getValue();
-		Long userInterruptReference = ((InterruptRefPattern) cliInformation
-				.get(InterruptRefPattern.class)).getValue();
-
-		ProBConnection connection = new ProBConnection(key, port);
-
+		final ProBConnection connection;
 		try {
-			connection.connect();
+			connection = new ProBConnection(key, cliInformation.getPort());
 		} catch (IOException e) {
-			throw new CliError("Error connecting to Prolog binary.", e);
+			throw new CliError("Error while opening socket connection to CLI", e);
 		}
-		processCounter.incrementAndGet();
 		ProBInstance cli = new ProBInstance(process, stream,
-				userInterruptReference, connection, home, osInfo,
-				processCounter);
+				cliInformation.getUserInterruptReference(), connection, home, osInfo);
 		processes.add(new WeakReference<>(cli));
 		return cli;
-	}
-
-	Map<Class<? extends AbstractCliPattern<?>>, AbstractCliPattern<?>> extractCliInformation(
-			final BufferedReader input) {
-		final PortPattern portPattern = new PortPattern();
-		final InterruptRefPattern intPattern = new InterruptRefPattern();
-
-		Map<Class<? extends AbstractCliPattern<?>>, AbstractCliPattern<?>> pattern = new HashMap<>();
-		pattern.put(PortPattern.class, portPattern);
-		pattern.put(InterruptRefPattern.class, intPattern);
-		analyseStdout(input, pattern.values());
-		return pattern;
 	}
 
 	// prob_socketserver.pl prints the following:
@@ -138,35 +128,47 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 	// format(Stdout,'user interrupt reference id: ~w~n',[Ref]),
 	// format(Stdout,'-- starting command loop --~n', []),
 	// The patterns match some of the lines and collect info
-	private static void analyseStdout(final BufferedReader input, final Collection<? extends AbstractCliPattern<?>> patterns) {
-		final List<AbstractCliPattern<?>> patternsList = new ArrayList<>(patterns);
-		try {
-			String line;
-			do {
-				line = input.readLine();
-				if (line == null) {
-					break;
-				}
-				logger.info("Apply cli detection patterns to {}", line);
-				applyPatterns(patternsList, line);
-			} while (!patternsList.isEmpty() && !line.contains("starting command loop"));
-		} catch (IOException e) {
-			final String message = "Problem while starting ProB. Cannot read from input stream.";
-			logger.error(message);
-			logger.debug(message, e);
-			throw new CliError(message, e);
-		}
-		// if p is not empty we have failed to find some patterns:
-		// todoL also provide actual input (line) above in error message
-		for (AbstractCliPattern<?> p : patternsList) {
-			p.notifyNotFound();
-			if (p.notFoundIsFatal()) {
-				throw new CliError("Missing info from CLI " + p.getClass().getSimpleName());
-			}
-		}
-	}
+	CliInformation extractCliInformation(final BufferedReader input) {
+		Integer port = null;
+		Long userInterruptReference = null;
 
-	private static void applyPatterns(final Collection<? extends AbstractCliPattern<?>> patterns, final String line) {
-		patterns.removeIf(p -> p.matchesLine(line));
+		String line;
+		do {
+			try {
+				line = input.readLine();
+			} catch (IOException e) {
+				throw new CliError("Error while reading information from CLI", e);
+			}
+			if (line == null) {
+				break;
+			}
+			logger.info("CLI startup output: {}", line);
+			
+			final Matcher portMatcher = CLI_PORT_PATTERN.matcher(line);
+			if (portMatcher.matches()) {
+				port = Integer.parseInt(portMatcher.group(1));
+				logger.info("Received port number from CLI: {}", port);
+			}
+			
+			final Matcher userInterruptReferenceMatcher = CLI_USER_INTERRUPT_REFERENCE_PATTERN.matcher(line);
+			if (userInterruptReferenceMatcher.matches()) {
+				final String userInterruptReferenceString = userInterruptReferenceMatcher.group(1);
+				if ("off".equals(userInterruptReferenceString)) {
+					userInterruptReference = -1L;
+					logger.info("This ProB build has user interrupt support disabled. Interrupting ProB may not work as expected.");
+				} else {
+					userInterruptReference = Long.parseLong(userInterruptReferenceString);
+					logger.info("Received user interrupt reference from CLI: {}", userInterruptReference);
+				}
+			}
+		} while ((port == null || userInterruptReference == null) && !line.contains("starting command loop"));
+
+		if (port == null) {
+			throw new CliError("Did not receive port number from CLI");
+		}
+		if (userInterruptReference == null) {
+			throw new CliError("Did not receive user interrupt reference from CLI");
+		}
+		return new CliInformation(port, userInterruptReference);
 	}
 }

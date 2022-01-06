@@ -232,23 +232,18 @@ public class Transition {
 		}
 		evaluate(FormulaExpand.EXPAND);
 		List<String> predicates = new ArrayList<>();
-		AbstractElement mainComponent = stateSpace.getMainComponent();
-		List<String> paramNames = new ArrayList<>();
-		if (mainComponent instanceof ClassicalBMachine) {
-			Operation op = ((ClassicalBMachine) mainComponent).getOperation(getName());
-			paramNames = op.getParameters();
-		} else if (mainComponent instanceof EventBMachine) {
-			Event event = ((EventBMachine) mainComponent).getEvent(getName());
-			for (EventParameter eventParameter : event.getParameters()) {
-				paramNames.add(eventParameter.getName());
-			}
-		}
+		List<String> paramNames = getParameterNames();
 		if (paramNames.size() == this.params.size()) {
 			for (int i = 0; i < paramNames.size(); i++) {
 				predicates.add(paramNames.get(i) + " = " + this.params.get(i));
 			}
 		}
 		return predicates;
+	}
+
+	public List<String> getParameterNames() {
+		OperationInfo operationInfo = stateSpace.getLoadedMachine().getMachineOperationInfo(getName());
+		return operationInfo == null ? new ArrayList<>() : operationInfo.getParameterNames();
 	}
 
 	private String createRep(final String name, final List<String> params, final List<String> returnVals) {

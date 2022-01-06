@@ -20,7 +20,7 @@ class DomWalkerTest extends Specification {
 		"""
 		final parser = new BParser("testcase")
 		final ast = parser.parse(testmachine, false)
-		machine = new DomBuilder(null).build(ast)
+		machine = new DomBuilder("SimplyStructure", null).build(ast)
 	}
 
 	def "testing that variables are handled correctly"() {

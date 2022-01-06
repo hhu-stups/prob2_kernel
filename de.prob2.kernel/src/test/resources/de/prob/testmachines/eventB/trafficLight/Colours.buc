@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<org.eventb.core.contextFile org.eventb.core.configuration="org.eventb.core.fwd;de.prob.symbolic.ctxBase" org.eventb.core.generated="false" org.eventb.texttools.text_lastmodified="1625206177600" org.eventb.texttools.text_representation="context Colours&#10;&#10;sets&#10;colours&#10;&#10;constants&#10;red yellow green&#10;&#10;&#10;&#10;axioms&#10;@axm1 partition(colours, {red}, {yellow}, {green})&#10;end&#10;" version="3">
+    <org.eventb.core.carrierSet name="_HiDHQFpFEeuuR_r4b_C18g" org.eventb.core.generated="false" org.eventb.core.identifier="colours"/>
+    <org.eventb.core.constant name="_HiDHQVpFEeuuR_r4b_C18g" org.eventb.core.generated="false" org.eventb.core.identifier="red"/>
+    <org.eventb.core.constant name="_HiDuUFpFEeuuR_r4b_C18g" org.eventb.core.generated="false" org.eventb.core.identifier="yellow"/>
+    <org.eventb.core.constant name="_HiDuUVpFEeuuR_r4b_C18g" org.eventb.core.generated="false" org.eventb.core.identifier="green"/>
+    <org.eventb.core.axiom name="_HiDuUlpFEeuuR_r4b_C18g" org.eventb.core.generated="false" org.eventb.core.label="axm1" org.eventb.core.predicate="partition(colours, {red}, {yellow}, {green})"/>
+</org.eventb.core.contextFile>

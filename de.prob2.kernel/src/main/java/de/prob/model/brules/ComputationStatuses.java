@@ -40,7 +40,7 @@ public class ComputationStatuses {
 		final List<IEvalElement> evalElements = new ArrayList<>();
 		for (ComputationOperation comp : computations) {
 			compList.add(comp);
-			ClassicalB ruleObject = new ClassicalB(comp.getName(), FormulaExpand.EXPAND);
+			ClassicalB ruleObject = new ClassicalB(comp.getName(), FormulaExpand.EXPAND, true); // TODO: check if AllowSubst required
 			evalElements.add(ruleObject);
 		}
 		List<AbstractEvalResult> evalResults = state.eval(evalElements);

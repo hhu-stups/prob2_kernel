@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -27,6 +28,9 @@ import org.codehaus.groovy.runtime.ResourceGroovyMethods;
 public class EventBFactory implements ModelFactory<EventBModel> {
 	private final Provider<EventBModel> modelCreator;
 	private final EventBPackageFactory eventBPackageFactory;
+	public static final String ATELIER_B_EXTENSION = "eventb";
+	public static final String RODIN_MACHINE_EXTENSION = "bum";
+	public static final String RODIN_CONTEXT_EXTENSION = "buc";
 
 	@Inject
 	public EventBFactory(final Provider<EventBModel> modelCreator, final EventBPackageFactory eventBPackageFactory) {
@@ -35,13 +39,13 @@ public class EventBFactory implements ModelFactory<EventBModel> {
 	}
 
 	@Override
-	public ExtractedModel<EventBModel> extract(String modelPath) throws IOException, ModelTranslationError {
+	public ExtractedModel<EventBModel> extract(String modelPath) throws IOException {
 		if (modelPath.endsWith(".eventb")) {
 			throw new IllegalArgumentException("This is an EventB package file, it must be loaded using EventBPackageFactory instead of EventBFactory.\nPath: " + modelPath);
 		}
 		File file = new File(modelPath);
 		if(!file.exists()) {
-			throw new EventBFileNotFoundException(file.getAbsolutePath(), "", false);
+			throw new EventBFileNotFoundException(file.getAbsolutePath(), "", false, null);
 		}
 		final EventBModel model = modelCreator.get();
 		final String validFileName = getValidFileName(modelPath);
@@ -50,10 +54,10 @@ public class EventBFactory implements ModelFactory<EventBModel> {
 	}
 
 	private String getValidFileName(String fileName) {
-		if (fileName.endsWith(".buc")) {
+		if (fileName.endsWith("."+RODIN_CONTEXT_EXTENSION)) {
 			fileName = fileName.replaceAll("\\.buc$", ".bcc");
 		}
-		if (fileName.endsWith(".bum")) {
+		if (fileName.endsWith("."+RODIN_MACHINE_EXTENSION)) {
 			fileName = fileName.replaceAll("\\.bum$", ".bcm");
 		}
 		if (!(fileName.endsWith(".bcc") || fileName.endsWith(".bcm"))) {

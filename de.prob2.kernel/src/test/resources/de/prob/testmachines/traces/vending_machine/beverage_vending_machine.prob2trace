@@ -1,0 +1,236 @@
+{
+  "description": "",
+  "transitionList": [
+    {
+      "name": "$initialise_machine",
+      "params": {},
+      "results": {},
+      "destState": {
+        "soda": "3",
+        "coins": "0"
+      },
+      "destStateNotChanged": [],
+      "preds": []
+    },
+    {
+      "name": "insert_coin",
+      "params": {},
+      "results": {},
+      "destState": {
+        "coins": "1"
+      },
+      "destStateNotChanged": [
+        "soda"
+      ],
+      "preds": []
+    },
+    {
+      "name": "get_soda",
+      "params": {},
+      "results": {},
+      "destState": {
+        "soda": "2",
+        "coins": "0"
+      },
+      "destStateNotChanged": [],
+      "preds": []
+    },
+    {
+      "name": "insert_coin",
+      "params": {},
+      "results": {},
+      "destState": {
+        "coins": "1"
+      },
+      "destStateNotChanged": [
+        "soda"
+      ],
+      "preds": []
+    },
+    {
+      "name": "get_soda",
+      "params": {},
+      "results": {},
+      "destState": {
+        "soda": "1",
+        "coins": "0"
+      },
+      "destStateNotChanged": [],
+      "preds": []
+    },
+    {
+      "name": "insert_coin",
+      "params": {},
+      "results": {},
+      "destState": {
+        "coins": "1"
+      },
+      "destStateNotChanged": [
+        "soda"
+      ],
+      "preds": []
+    },
+    {
+      "name": "insert_coin",
+      "params": {},
+      "results": {},
+      "destState": {
+        "coins": "2"
+      },
+      "destStateNotChanged": [
+        "soda"
+      ],
+      "preds": []
+    },
+    {
+      "name": "insert_coin",
+      "params": {},
+      "results": {},
+      "destState": {
+        "coins": "3"
+      },
+      "destStateNotChanged": [
+        "soda"
+      ],
+      "preds": []
+    },
+    {
+      "name": "get_soda",
+      "params": {},
+      "results": {},
+      "destState": {
+        "soda": "0",
+        "coins": "2"
+      },
+      "destStateNotChanged": [],
+      "preds": []
+    },
+    {
+      "name": "insert_coin",
+      "params": {},
+      "results": {},
+      "destState": {
+        "coins": "3"
+      },
+      "destStateNotChanged": [
+        "soda"
+      ],
+      "preds": []
+    },
+    {
+      "name": "insert_coin",
+      "params": {},
+      "results": {},
+      "destState": {
+        "coins": "4"
+      },
+      "destStateNotChanged": [
+        "soda"
+      ],
+      "preds": []
+    },
+    {
+      "name": "insert_coin",
+      "params": {},
+      "results": {},
+      "destState": {
+        "coins": "5"
+      },
+      "destStateNotChanged": [
+        "soda"
+      ],
+      "preds": []
+    },
+    {
+      "name": "insert_coin",
+      "params": {},
+      "results": {},
+      "destState": {
+        "coins": "6"
+      },
+      "destStateNotChanged": [
+        "soda"
+      ],
+      "preds": []
+    },
+    {
+      "name": "insert_coin",
+      "params": {},
+      "results": {},
+      "destState": {
+        "coins": "7"
+      },
+      "destStateNotChanged": [
+        "soda"
+      ],
+      "preds": []
+    },
+    {
+      "name": "insert_coin",
+      "params": {},
+      "results": {},
+      "destState": {
+        "coins": "8"
+      },
+      "destStateNotChanged": [
+        "soda"
+      ],
+      "preds": []
+    }
+  ],
+  "variableNames": [
+    "coins",
+    "soda"
+  ],
+  "constantNames": [],
+  "setNames": [],
+  "machineOperationInfos": {
+    "get_soda": {
+      "operationName": "get_soda",
+      "parameterNames": [],
+      "outputParameterNames": [],
+      "topLevel": true,
+      "type": "CLASSICAL_B",
+      "readVariables": [
+        "coins",
+        "soda"
+      ],
+      "writtenVariables": [
+        "coins",
+        "soda"
+      ],
+      "nonDetWrittenVariables": [],
+      "typeMap": {}
+    },
+    "insert_coin": {
+      "operationName": "insert_coin",
+      "parameterNames": [],
+      "outputParameterNames": [],
+      "topLevel": true,
+      "type": "CLASSICAL_B",
+      "readVariables": [
+        "coins",
+        "soda"
+      ],
+      "writtenVariables": [
+        "coins",
+        "soda"
+      ],
+      "nonDetWrittenVariables": [],
+      "typeMap": {}
+    }
+  },
+  "globalIdentifierTypes": {
+    "coins": "integer",
+    "soda": "integer"
+  },
+  "metadata": {
+    "fileType": "Trace",
+    "formatVersion": 2,
+    "savedAt": "2021-05-11T09:06:39.598472Z",
+    "creator": "traceReplay",
+    "proB2KernelVersion": "4.0.0-SNAPSHOT",
+    "proBCliVersion": "1.11.0-nightly",
+    "modelName": "beverage_vending_machine"
+  }
+}

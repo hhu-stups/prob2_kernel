@@ -1,0 +1,17 @@
+MACHINE M2
+
+
+EXTENDS M1
+
+VARIABLES y
+
+INVARIANT y : NAT
+
+INITIALISATION y := 0
+
+OPERATIONS
+
+mega = y := y + 1 || Inc
+
+
+END//MACHINE

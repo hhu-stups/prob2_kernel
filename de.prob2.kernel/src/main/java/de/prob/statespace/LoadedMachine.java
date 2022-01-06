@@ -1,6 +1,7 @@
 package de.prob.statespace;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
 
 import de.prob.animator.command.GetMachineIdentifiersCommand;
 import de.prob.animator.command.GetMachineOperationInfos;
+import de.prob.animator.command.GetMachineOperationInfosWithTypes;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 
@@ -27,6 +29,7 @@ public class LoadedMachine {
 	private final Map<FormulaExpand, List<IEvalElement>> variableEvalElements;
 	private final Map<FormulaExpand, List<IEvalElement>> constantEvalElements;
 	private final Map<FormulaExpand, List<IEvalElement>> setEvalElements;
+
 
 	public LoadedMachine(StateSpace stateSpace) {
 		this.stateSpace = stateSpace;
@@ -56,19 +59,37 @@ public class LoadedMachine {
 		return getOperations().get(operationName);
 	}
 
-	private Map<String, OperationInfo> getOperations() {
+	public Map<String, OperationInfo> getOperations() {
 		if (this.machineOperationInfos == null) {
-			GetMachineOperationInfos command = new GetMachineOperationInfos();
-			this.stateSpace.execute(command);
-			this.machineOperationInfos = command.getOperationInfos().stream()
-					.collect(toOrderedMap(OperationInfo::getOperationName, i -> i));
+			/*
+			TODO:
+			1. Always return operation info with 9 arguments from Prolog
+			2. Get rid of GetMachineOperationInfos
+			3. Assume in GetMachineOperationInfosWithTypes that there are always 9 arguments
+			 */
+			if(stateSpace.getModel().getFormalismType() == FormalismType.CSP) {
+				GetMachineOperationInfos command = new GetMachineOperationInfos();
+				this.stateSpace.execute(command);
+				this.machineOperationInfos = command.getOperationInfos().stream()
+						.collect(toOrderedMap(OperationInfo::getOperationName, i -> i));
+			} else {
+				GetMachineOperationInfosWithTypes command = new GetMachineOperationInfosWithTypes();
+				this.stateSpace.execute(command);
+				this.machineOperationInfos = command.getOperationInfos().stream()
+						.collect(toOrderedMap(OperationInfo::getOperationName, i -> i));
+			}
 		}
 		return this.machineOperationInfos;
 	}
 
+	public Map<String, String> getOperationIdentifierTypeMap(String operationName){
+		return getOperations().get(operationName).getTypeMap();
+	}
+
+
 	private List<IEvalElement> namesToEvalElements(final List<String> names, final FormulaExpand expand) {
 		return names.stream()
-			.map(name -> stateSpace.getModel().parseFormula(name, expand))
+			.map(name -> stateSpace.getModel().formulaFromIdentifier(Arrays.asList(name.split("\\.")), expand))
 			.collect(Collectors.toList());
 	}
 

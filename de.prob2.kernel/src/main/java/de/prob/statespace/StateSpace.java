@@ -37,6 +37,7 @@ import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.animator.domainobjects.ProBPreference;
 import de.prob.animator.domainobjects.TypeCheckResult;
 import de.prob.annotations.MaxCacheSize;
+import de.prob.exception.ProBError;
 import de.prob.formula.PredicateBuilder;
 import de.prob.model.classicalb.ClassicalBModel;
 import de.prob.model.eventb.EventBModel;
@@ -238,10 +239,10 @@ public class StateSpace implements IAnimator {
 
 	/**
 	 * Takes the name of an operation and a predicate and finds Operations that
-	 * satisfy the name and predicate at the given stateId. New Operations are
-	 * added to the graph. This is only valid for ClassicalB predicates.
+	 * satisfy the name and predicate at the given state. New Operations are
+	 * added to the graph.
 	 *
-	 * @param stateId
+	 * @param state
 	 *            {@link State} from which the operation should be found
 	 * @param opName
 	 *            name of the operation that should be executed
@@ -253,19 +254,37 @@ public class StateSpace implements IAnimator {
 	 *            predicate
 	 * @return list of operations calculated by ProB
 	 */
-	public List<Transition> transitionFromPredicate(final State stateId, final String opName, final String predicate,
+	public List<Transition> transitionFromPredicate(final State state, final String opName, final IEvalElement predicate,
 			final int nrOfSolutions) {
-		final IEvalElement pred = model.parseFormula(predicate, FormulaExpand.EXPAND);
-		final GetOperationByPredicateCommand command = new GetOperationByPredicateCommand(this, stateId.getId(), opName,
-				pred, nrOfSolutions);
+		final GetOperationByPredicateCommand command = new GetOperationByPredicateCommand(this, state.getId(), opName,
+				predicate, nrOfSolutions);
 		execute(command);
 		if (command.hasErrors()) {
-			throw new ExecuteOperationException("Executing operation " + opName + " with additional predicate produced errors: " + String.join(", ", command.getErrorMessages()), command.getErrors());
+			if(command.getErrors().stream().allMatch(err -> err.getType() == GetOperationByPredicateCommand.GetOperationErrorType.CANNOT_EXECUTE)) {
+				throw new ExecuteOperationException("Executing operation " + opName + " with additional predicate produced errors: " + String.join(", ", command.getErrorMessages()), command.getErrors());
+			} else {
+				throw new IllegalArgumentException("Executing operation " + opName + " with additional predicate produced parse errors: " + String.join(", ", command.getErrorMessages()));
+			}
 		}
 		return command.getNewTransitions();
 	}
+	
+	/**
+	 * Same as {@link #transitionFromPredicate(State, String, IEvalElement, int)}.
+	 * 
+	 * @param state {@link State} from which the operation should be found
+	 * @param opName name of the operation that should be executed
+	 * @param predicate an additional guard for the operation. This usually describes the parameters
+	 * @param nrOfSolutions int number of solutions that should be found for the given predicate
+	 * @return list of operations calculated by ProB
+	 */
+	public List<Transition> transitionFromPredicate(final State state, final String opName, final String predicate,
+		final int nrOfSolutions) {
+		final IEvalElement pred = model.parseFormula(predicate, FormulaExpand.EXPAND);
+		return this.transitionFromPredicate(state, opName, pred, nrOfSolutions);
+	}
 
-	public List<Transition> getTransitionsBasedOnParameterValues(final State stateId, final String opName,
+	public List<Transition> getTransitionsBasedOnParameterValues(final State state, final String opName,
 			final List<String> parameterValues, final int nrOfSolutions) {
 		if (Transition.isArtificialTransitionName(opName)) {
 			throw new IllegalArgumentException(opName + " is a special operation and does not take positional arguments. Use transitionFromPredicate instead and specify the argument/variable/constant values as a predicate.");
@@ -288,14 +307,14 @@ public class StateSpace implements IAnimator {
 			}
 		}
 
-		return this.transitionFromPredicate(stateId, opName, pb.toString(), nrOfSolutions);
+		return this.transitionFromPredicate(state, opName, pb.toString(), nrOfSolutions);
 	}
 
 	/**
 	 * Tests to see if a combination of an operation name and a predicate is
 	 * valid from a given state.
 	 *
-	 * @param stateId
+	 * @param state
 	 *            {@link State} id for state to test
 	 * @param name
 	 *            {@link String} name of operation
@@ -304,9 +323,9 @@ public class StateSpace implements IAnimator {
 	 * @return true, if the operation is valid from the given state. False
 	 *         otherwise.
 	 */
-	public boolean isValidOperation(final State stateId, final String name, final String predicate) {
+	public boolean isValidOperation(final State state, final String name, final String predicate) {
 		final ClassicalB pred = new ClassicalB(predicate, FormulaExpand.EXPAND);
-		GetOperationByPredicateCommand command = new GetOperationByPredicateCommand(this, stateId.getId(), name, pred,
+		GetOperationByPredicateCommand command = new GetOperationByPredicateCommand(this, state.getId(), name, pred,
 				1);
 		execute(command);
 		return !command.hasErrors();
@@ -849,12 +868,12 @@ public class StateSpace implements IAnimator {
 		Map<State, Map<IEvalElement, AbstractEvalResult>> result = new HashMap<>();
 		Map<State, EvaluateFormulasCommand> evalCommandsByState = new HashMap<>();
 
-		for (State stateId : states) {
+		for (State state : states) {
 			Map<IEvalElement, AbstractEvalResult> res = new HashMap<>();
-			result.put(stateId, res);
+			result.put(state, res);
 
 			// Check for cached values
-			Map<IEvalElement, AbstractEvalResult> map = stateId.getValues();
+			Map<IEvalElement, AbstractEvalResult> map = state.getValues();
 			final List<IEvalElement> toEvaluateInState = new ArrayList<>();
 			for (IEvalElement f : formulas) {
 				if (map.containsKey(f)) {
@@ -864,7 +883,7 @@ public class StateSpace implements IAnimator {
 				}
 			}
 			if (!toEvaluateInState.isEmpty()) {
-				evalCommandsByState.put(stateId, new EvaluateFormulasCommand(toEvaluateInState, stateId.getId()));
+				evalCommandsByState.put(state, new EvaluateFormulasCommand(toEvaluateInState, state.getId()));
 			}
 		}
 
@@ -895,6 +914,18 @@ public class StateSpace implements IAnimator {
 
 	public boolean isKilled() {
 		return killed;
+	}
+
+	/**
+	 * This method cannot be used on a {@link StateSpace} - you probably want {@link #kill()}.
+	 * Resetting ProB clears the currently loaded model (among other things),
+	 * which would break the {@link StateSpace} instance as it expects a specific model.
+	 * 
+	 * @throws UnsupportedOperationException when called
+	 */
+	@Override
+	public void resetProB() {
+		throw new UnsupportedOperationException("Cannot reset the ProB instance belonging to an active StateSpace");
 	}
 
 	@Override

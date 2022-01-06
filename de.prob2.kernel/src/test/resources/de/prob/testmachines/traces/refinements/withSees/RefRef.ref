@@ -1,0 +1,10 @@
+REFINEMENT RefRef
+REFINES Abstract
+SEES DummyMachine2
+
+
+
+OPERATIONS
+op = skip
+
+END

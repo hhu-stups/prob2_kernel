@@ -1,0 +1,118 @@
+{
+  "description": "",
+  "transitionList": [
+    {
+      "name": "$initialise_machine",
+      "params": {},
+      "results": {},
+      "destState": {
+        "peds_go": "FALSE",
+        "cars_go": "FALSE"
+      },
+      "destStateNotChanged": [],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "set_cars",
+      "params": {
+        "new_value": "TRUE"
+      },
+      "results": {},
+      "destState": {
+        "cars_go": "TRUE"
+      },
+      "destStateNotChanged": [
+        "peds_go"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    },
+    {
+      "name": "set_cars",
+      "params": {
+        "new_value": "FALSE"
+      },
+      "results": {},
+      "destState": {
+        "cars_go": "FALSE"
+      },
+      "destStateNotChanged": [
+        "peds_go"
+      ],
+      "preds": [],
+      "postconditions": [],
+      "description": ""
+    }
+  ],
+  "variableNames": [
+    "cars_go",
+    "peds_go"
+  ],
+  "constantNames": [],
+  "setNames": [],
+  "machineOperationInfos": {
+    "set_peds_go": {
+      "operationName": "set_peds_go",
+      "parameterNames": [],
+      "outputParameterNames": [],
+      "topLevel": true,
+      "type": "EVENTB",
+      "readVariables": [
+        "cars_go"
+      ],
+      "writtenVariables": [
+        "peds_go"
+      ],
+      "nonDetWrittenVariables": [],
+      "typeMap": {}
+    },
+    "set_peds_stop": {
+      "operationName": "set_peds_stop",
+      "parameterNames": [],
+      "outputParameterNames": [],
+      "topLevel": true,
+      "type": "EVENTB",
+      "readVariables": [],
+      "writtenVariables": [
+        "peds_go"
+      ],
+      "nonDetWrittenVariables": [],
+      "typeMap": {}
+    },
+    "set_cars": {
+      "operationName": "set_cars",
+      "parameterNames": [
+        "new_value"
+      ],
+      "outputParameterNames": [],
+      "topLevel": true,
+      "type": "EVENTB",
+      "readVariables": [
+        "peds_go"
+      ],
+      "writtenVariables": [
+        "cars_go"
+      ],
+      "nonDetWrittenVariables": [],
+      "typeMap": {
+        "new_value": "boolean"
+      }
+    }
+  },
+  "globalIdentifierTypes": {
+    "cars_go": "boolean",
+    "peds_go": "boolean"
+  },
+  "metadata": {
+    "fileType": "Trace",
+    "formatVersion": 5,
+    "savedAt": "2021-10-20T09:36:20.139008807Z",
+    "creator": "traceReplay",
+    "proB2KernelVersion": "4.0.0-SNAPSHOT",
+    "proBCliVersion": "1.11.1-nightly",
+    "modelName": "mac"
+  }
+}

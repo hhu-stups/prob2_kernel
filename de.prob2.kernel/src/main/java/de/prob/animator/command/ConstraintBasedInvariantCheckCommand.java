@@ -24,9 +24,6 @@ import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * This command makes ProB search for a invariant violation with an optional
  * selection of events.
@@ -35,8 +32,6 @@ import org.slf4j.LoggerFactory;
  */
 public class ConstraintBasedInvariantCheckCommand extends AbstractCommand
 		implements IStateSpaceModifier {
-	private static final Logger logger = LoggerFactory.getLogger(ConstraintBasedInvariantCheckCommand.class);
-
 	private static final String PROLOG_COMMAND_NAME = "prob2_invariant_check";
 	private static final String RESULT_VARIABLE = "R";
 
@@ -105,9 +100,7 @@ public class ConstraintBasedInvariantCheckCommand extends AbstractCommand
 					"No Invariant violation was found")
 					: new CBCInvariantViolationFound(counterexamples);
 		} else {
-			String msg = "unexpected result from invariant check: " + resultTerm;
-			logger.error(msg);
-			throw new ProBError(msg);
+			throw new ProBError("unexpected result from invariant check: " + resultTerm);
 		}
 	}
 

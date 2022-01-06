@@ -33,6 +33,7 @@ public class GetMachineOperationInfos extends AbstractCommand {
 		}
 	}
 
+
 	private static OperationInfo operationInfoFromPrologTerm(final PrologTerm prologTerm) {
 		final CompoundPrologTerm cpt = BindingGenerator.getCompoundTerm(prologTerm, "operation_info", 8);
 		final String opName = PrologTerm.atomicString(cpt.getArgument(1));

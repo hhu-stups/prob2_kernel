@@ -24,9 +24,6 @@ import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * This command makes ProB search for a deadlock with an optional predicate to
  * limit the search space.
@@ -35,8 +32,6 @@ import org.slf4j.LoggerFactory;
  */
 public class ConstraintBasedDeadlockCheckCommand extends AbstractCommand
 		implements IStateSpaceModifier {
-	private static final Logger logger = LoggerFactory.getLogger(ConstraintBasedDeadlockCheckCommand.class);
-
 	private static final String PROLOG_COMMAND_NAME = "prob2_deadlock_freedom_check";
 	private static final String RESULT_VARIABLE = "R";
 

@@ -31,7 +31,8 @@ public class PrimePredicateCommand extends AbstractCommand {
 		CompoundPrologTerm compoundTerm = BindingGenerator.getCompoundTerm(bindings.get(PRIMED_PREDICATE_VARIABLE), 0);
 		String code = compoundTerm.getFunctor();
 		if (evalElement instanceof EventB) {
-			result = new EventB(code, FormulaExpand.EXPAND);
+			// probcli returns Unicode primes (Classical B syntax), which the Rodin parser doesn't support
+			result = new EventB(code.replace('′', '\''), FormulaExpand.EXPAND);
 		} else {
 			result = new ClassicalB(code, FormulaExpand.EXPAND);
 		}

@@ -2,6 +2,7 @@ package de.prob.model.eventb.translate;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -74,8 +75,10 @@ public class ProofExtractor {
 				discharged = new HashSet<>();
 				logger.info("Could not find file {}. Assuming that no proofs are discharged for model element.", bpsFileName);
 			}
-		} catch (ParserConfigurationException | IOException e) {
-			logger.error("Error extracting proof", e);
+		} catch (ParserConfigurationException e) {
+			throw new SAXException(e);
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
 		}
 	}
 

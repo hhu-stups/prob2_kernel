@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<org.eventb.core.poFile org.eventb.core.poStamp="1">
+    <org.eventb.core.poPredicateSet name="ABSHYP" org.eventb.core.poStamp="0">
+        <org.eventb.core.poIdentifier name="colours" org.eventb.core.type="ℙ(colours)"/>
+        <org.eventb.core.poIdentifier name="yellow" org.eventb.core.type="colours"/>
+        <org.eventb.core.poIdentifier name="red" org.eventb.core.type="colours"/>
+        <org.eventb.core.poIdentifier name="green" org.eventb.core.type="colours"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poPredicateSet name="ALLHYP" org.eventb.core.parentSet="/TrafficLigth/Colours.bpo|org.eventb.core.poFile#Colours|org.eventb.core.poPredicateSet#ABSHYP" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicate name="PRD0" org.eventb.core.predicate="partition(colours,{red},{yellow},{green})" org.eventb.core.source="/TrafficLigth/Colours.buc|org.eventb.core.contextFile#Colours|org.eventb.core.axiom#_HiDuUlpFEeuuR_r4b_C18g"/>
+    </org.eventb.core.poPredicateSet>
+</org.eventb.core.poFile>

@@ -11,30 +11,35 @@ import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.animator.domainobjects.Join;
 import de.prob.model.classicalb.ClassicalBModel;
 import de.prob.model.classicalb.Operation;
+import de.prob.model.representation.AbstractElement;
+import de.prob.model.representation.AbstractModel;
+import de.prob.model.representation.BEvent;
 import de.prob.model.representation.Extraction;
+import de.prob.model.representation.Machine;
 import de.prob.statespace.StateSpace;
 
 public class FeasibilityAnalysis {
 
-	private ClassicalBModel model;
-	private StateSpace stateSpace;
+	private final StateSpace stateSpace;
 
-	public FeasibilityAnalysis(ClassicalBModel model, StateSpace stateSpace) {
-		this.model = model;
+	public FeasibilityAnalysis(StateSpace stateSpace) {
 		this.stateSpace = stateSpace;
 	}
 
 	public List<String> analyseFeasibility() {
+		AbstractElement machine = stateSpace.getMainComponent();
+		AbstractModel model = stateSpace.getModel();
+
 		List<String> infeasibleOperations = new ArrayList<>();
-		List<IEvalElement> invariantPredicates = Extraction.getInvariantPredicates(model);
-		for (Operation operation : model.getMainMachine().getEvents()) {
+		List<IEvalElement> invariantPredicates = Extraction.getInvariantPredicates(machine);
+		for (BEvent operation : machine.getChildrenOfType(BEvent.class)) {
 			List<IEvalElement> iEvalElements = new ArrayList<>(invariantPredicates);
-			iEvalElements.addAll(Extraction.getGuardPredicates(model, operation.getName()));
-			ClassicalB predicate = null;
+			iEvalElements.addAll(Extraction.getGuardPredicates(machine, operation.getName()));
+			ClassicalB predicate;
 			if(iEvalElements.isEmpty()) {
 				predicate = new ClassicalB("1=1", FormulaExpand.EXPAND);
 			} else {
-				predicate = (ClassicalB) Join.conjunct(model, iEvalElements);
+				predicate = new ClassicalB(Join.conjunct(model, iEvalElements).getCode(), FormulaExpand.EXPAND);
 			}
 			CbcSolveCommand cmd = new CbcSolveCommand(predicate);
 			stateSpace.execute(cmd);

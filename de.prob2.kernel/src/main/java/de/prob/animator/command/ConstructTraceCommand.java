@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.be4.classicalb.core.parser.analysis.prolog.ASTProlog;
-
 import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.EvalElementType;
 import de.prob.parser.BindingGenerator;
@@ -25,9 +24,6 @@ import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
 import de.prob.statespace.Transition;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Command to execute an event that has not been enumerated by ProB.
  * 
@@ -38,23 +34,22 @@ public final class ConstructTraceCommand extends AbstractCommand implements
 		IStateSpaceModifier, ITraceDescription {
 
 	private static final String PROLOG_COMMAND_NAME = "prob2_construct_trace";
-	Logger logger = LoggerFactory.getLogger(ConstructTraceCommand.class);
 	private static final String RESULT_VARIABLE = "Res";
 	private static final String ERRORS_VARIABLE = "Errors";
 
 	private final List<ClassicalB> evalElement;
-	private final State stateId;
+	private final State state;
 	private final List<String> name;
 	private final StateSpace stateSpace;
 	private final List<Transition> resultTrace = new ArrayList<>();
 	private final List<String> errors = new ArrayList<>();
 	private List<Integer> executionNumber = new ArrayList<>();
 
-	public ConstructTraceCommand(final StateSpace s, final State stateId,
+	public ConstructTraceCommand(final StateSpace s, final State state,
 			final List<String> name, final List<ClassicalB> predicate,
 			final Integer executionNumber) {
 		this.stateSpace = s;
-		this.stateId = stateId;
+		this.state = state;
 		this.name = name;
 		this.evalElement = predicate;
 		if (name.size() != predicate.size()) {
@@ -73,15 +68,15 @@ public final class ConstructTraceCommand extends AbstractCommand implements
 		}
 	}
 
-	public ConstructTraceCommand(final StateSpace s, final State stateId,
+	public ConstructTraceCommand(final StateSpace s, final State state,
 			final List<String> name, final List<ClassicalB> predicate) {
-		this(s, stateId, name, predicate, 1);
+		this(s, state, name, predicate, 1);
 	}
 
-	public ConstructTraceCommand(final StateSpace s, final State stateId,
+	public ConstructTraceCommand(final StateSpace s, final State state,
 			final List<String> name, final List<ClassicalB> predicate,
 			final List<Integer> executionNumber) {
-		this(s, stateId, name, predicate);
+		this(s, state, name, predicate);
 		this.executionNumber = executionNumber;
 		if (name.size() != executionNumber.size()) {
 			throw new IllegalArgumentException(
@@ -99,7 +94,7 @@ public final class ConstructTraceCommand extends AbstractCommand implements
 	@Override
 	public void writeCommand(final IPrologTermOutput pto) {
 		pto.openTerm(PROLOG_COMMAND_NAME)
-				.printAtomOrNumber(stateId.getId());
+				.printAtomOrNumber(state.getId());
 		pto.openList();
 		for (String n : name) {
 			pto.printAtom(n);
@@ -136,7 +131,7 @@ public final class ConstructTraceCommand extends AbstractCommand implements
 
 		ListPrologTerm reportedErrors = BindingGenerator.getList(bindings.get(ERRORS_VARIABLE));
 		for (PrologTerm prologTerm : reportedErrors) {
-			this.errors.add(prologTerm.getFunctor());
+			this.errors.add(prologTerm.toString());
 		}
 	}
 
@@ -151,7 +146,7 @@ public final class ConstructTraceCommand extends AbstractCommand implements
 
 	@Override
 	public Trace getTrace(final StateSpace s) {
-		Trace t = s.getTrace(stateId.getId());
+		Trace t = s.getTrace(state.getId());
 		return t.addTransitions(resultTrace);
 	}
 

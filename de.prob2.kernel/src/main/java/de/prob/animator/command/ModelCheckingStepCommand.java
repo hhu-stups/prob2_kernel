@@ -15,6 +15,7 @@ import de.prob.animator.domainobjects.ErrorItem;
 import de.prob.check.CheckInterrupted;
 import de.prob.check.IModelCheckingResult;
 import de.prob.check.ModelCheckErrorUncovered;
+import de.prob.check.ModelCheckGoalFound;
 import de.prob.check.ModelCheckOk;
 import de.prob.check.ModelCheckingOptions;
 import de.prob.check.NotYetFinished;
@@ -26,12 +27,7 @@ import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.Transition;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class ModelCheckingStepCommand extends AbstractCommand implements IStateSpaceModifier {
-	private static final Logger logger = LoggerFactory.getLogger(ModelCheckingStepCommand.class);
-
 	private static final String PROLOG_COMMAND_NAME = "do_modelchecking";
 
 	/**
@@ -136,7 +132,7 @@ public class ModelCheckingStepCommand extends AbstractCommand implements IStateS
 			return new ModelCheckErrorUncovered("A state error occured.", cpt
 					.getArgument(1).getFunctor());
 		case "goal_found":
-			return new ModelCheckErrorUncovered("Goal found", cpt
+			return new ModelCheckGoalFound("Goal found", cpt
 					.getArgument(1).getFunctor());
 		case "well_definedness_error":
 			return new ModelCheckErrorUncovered(
@@ -156,8 +152,6 @@ public class ModelCheckingStepCommand extends AbstractCommand implements IStateS
 			}
 
 		default:
-			logger.error("Model checking result unknown. This should not happen "
-				+ "unless someone changed the prolog kernel. Result was: {} ", cpt);
 			throw new IllegalArgumentException("model checking result unknown: " + cpt);
 		}
 

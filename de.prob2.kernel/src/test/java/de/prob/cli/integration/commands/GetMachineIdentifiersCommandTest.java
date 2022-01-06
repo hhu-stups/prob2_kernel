@@ -6,7 +6,6 @@ import java.nio.file.Paths;
 import de.prob.animator.command.GetMachineIdentifiersCommand;
 import de.prob.cli.CliTestCommon;
 import de.prob.scripting.Api;
-import de.prob.scripting.ModelTranslationError;
 import de.prob.statespace.StateSpace;
 
 import org.junit.After;
@@ -27,7 +26,7 @@ public class GetMachineIdentifiersCommandTest {
 	}
 
 	@Test
-	public void testGetMachineIdentifiersCommand() throws IOException, ModelTranslationError {
+	public void testGetMachineIdentifiersCommand() throws IOException {
 		s = api.b_load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "ExampleMachine.mch").toString());
 		assertNotNull(s);
 		GetMachineIdentifiersCommand command = new GetMachineIdentifiersCommand(

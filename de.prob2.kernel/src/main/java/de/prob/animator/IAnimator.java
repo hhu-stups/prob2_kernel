@@ -114,6 +114,15 @@ public interface IAnimator {
 	 */
 	String getId();
 
+	/**
+	 * Reset this animator's ProB instance to a clean state as if it was newly started.
+	 * This unloads any loaded model and resets all preferences to their default values,
+	 * among other things.
+	 * (This does not reset {@link #getTotalNumberOfErrors()},
+	 * which can intentionally only be reset by completely restarting probcli.)
+	 */
+	void resetProB();
+
 	long getTotalNumberOfErrors();
 
 	void addWarningListener(final IWarningListener listener);

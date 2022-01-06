@@ -22,12 +22,7 @@ import de.prob.model.eventb.translate.EventBModelTranslator;
 import de.prob.prolog.output.PrologTermOutput;
 import de.prob.statespace.StateSpace;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class Api {
-	private static final Logger LOGGER = LoggerFactory.getLogger(Api.class);
-	
 	private final FactoryProvider modelFactoryProvider;
 	private final Provider<IAnimator> animatorProvider;
 	private LinkedHashMap<Object, Object> globals = new LinkedHashMap<>();
@@ -58,7 +53,10 @@ public class Api {
 	 * Get the version of the ProB CLI.
 	 * 
 	 * @return the version of the ProB CLI, or {@code null} if the version could not be determined
+	 * 
+	 * @deprecated Use {@link GetVersionCommand} with an existing animator instead.
 	 */
+	@Deprecated
 	public CliVersionNumber getVersion() {
 		IAnimator animator = null;
 		try {
@@ -66,9 +64,6 @@ public class Api {
 			GetVersionCommand versionCommand = new GetVersionCommand();
 			animator.execute(versionCommand);
 			return versionCommand.getVersion();
-		} catch (RuntimeException e) {
-			LOGGER.warn("Exception while getting CLI version info", e);
-			return null;
 		} finally {
 			if (animator != null) {
 				animator.kill();
@@ -84,7 +79,6 @@ public class Api {
 	public String help() {
 		return "Api Commands:\n\n"
 			+ " String help(): print out available commands\n"
-			+ " CliVersionNumber getVersion(): get the version of the ProB CLI\n"
 			+ " void shutdown(ProBInstance instance): shutdown ProBInstance\n"
 			+ " StateSpace b_load(String filePath, [Map<String, String> prefs]): load a classical B machine from a .mch file\n"
 			+ " StateSpace b_load(Start ast, [Map<String, String> prefs]): load aclassical B machine from an AST\n"
@@ -112,7 +106,7 @@ public class Api {
 	 * @param prefs the preferences to use
 	 * @return the {@link StateSpace} for the loaded machine
 	 */
-	public StateSpace b_load(final String file, final Map<String, String> prefs) throws IOException, ModelTranslationError {
+	public StateSpace b_load(final String file, final Map<String, String> prefs) throws IOException {
 		final ClassicalBFactory bFactory = modelFactoryProvider.getClassicalBFactory();
 		return bFactory.extract(file).load(prefs);
 	}
@@ -123,7 +117,7 @@ public class Api {
 	 * @param file the path of the file to load
 	 * @return the {@link StateSpace} for the loaded machine
 	 */
-	public StateSpace b_load(final String file) throws IOException, ModelTranslationError {
+	public StateSpace b_load(final String file) throws IOException {
 		return b_load(file, Collections.emptyMap());
 	}
 
@@ -134,7 +128,7 @@ public class Api {
 	 * @param prefs the preferences to use
 	 * @return the {@link StateSpace} for the loaded machine
 	 */
-	public StateSpace b_load(final Start ast, final Map<String, String> prefs) throws IOException, ModelTranslationError {
+	public StateSpace b_load(final Start ast, final Map<String, String> prefs) throws IOException {
 		final ClassicalBFactory bFactory = modelFactoryProvider.getClassicalBFactory();
 		return bFactory.create(ast).load(prefs);
 	}
@@ -145,7 +139,7 @@ public class Api {
 	 * @param ast the AST to load
 	 * @return the {@link StateSpace} for the loaded machine
 	 */
-	public StateSpace b_load(final Start ast) throws IOException, ModelTranslationError {
+	public StateSpace b_load(final Start ast) throws IOException {
 		return b_load(ast, Collections.emptyMap());
 	}
 
@@ -156,7 +150,7 @@ public class Api {
 	 * @param prefs the preferences to use
 	 * @return the {@link StateSpace} for the loaded machine
 	 */
-	public StateSpace eventb_load(final String file, final Map<String, String> prefs) throws IOException, ModelTranslationError {
+	public StateSpace eventb_load(final String file, final Map<String, String> prefs) throws IOException {
 		final ModelFactory<EventBModel> factory;
 		if (file.endsWith(".eventb")) {
 			factory = modelFactoryProvider.getEventBPackageFactory();
@@ -172,7 +166,7 @@ public class Api {
 	 * @param file the path of the file to load
 	 * @return the {@link StateSpace} for the loaded machine
 	 */
-	public StateSpace eventb_load(final String file) throws IOException, ModelTranslationError {
+	public StateSpace eventb_load(final String file) throws IOException {
 		return eventb_load(file, Collections.emptyMap());
 	}
 
@@ -182,7 +176,7 @@ public class Api {
 	 * @param s the {@link StateSpace} to save, whose model must be an EventB model
 	 * @param path the path of the file to save to
 	 */
-	public void eventb_save(final StateSpace s, final String path) throws IOException, ModelTranslationError {
+	public void eventb_save(final StateSpace s, final String path) throws IOException {
 		final EventBModelTranslator translator = new EventBModelTranslator((EventBModel) s.getModel(), s.getMainComponent());
 
 		try (final FileOutputStream fos = new FileOutputStream(path)) {
@@ -202,7 +196,7 @@ public class Api {
 	 * @param prefs the preferences to use
 	 * @return the {@link StateSpace} for the loaded model
 	 */
-	public StateSpace tla_load(final String file, final Map<String, String> prefs) throws IOException, ModelTranslationError {
+	public StateSpace tla_load(final String file, final Map<String, String> prefs) throws IOException {
 		final TLAFactory tlaFactory = modelFactoryProvider.getTLAFactory();
 		return tlaFactory.extract(file).load(prefs);
 	}
@@ -213,7 +207,7 @@ public class Api {
 	 * @param file the path of the file to load
 	 * @return the {@link StateSpace} for the loaded model
 	 */
-	public StateSpace tla_load(final String file) throws IOException, ModelTranslationError {
+	public StateSpace tla_load(final String file) throws IOException {
 		return tla_load(file, Collections.emptyMap());
 	}
 
@@ -247,7 +241,7 @@ public class Api {
 	 * @return the {@link StateSpace} for the loaded model
 	 * @throws CliError if the {@code cspm} parser is not installed
 	 */
-	public StateSpace csp_load(final String file, final Map<String, String> prefs) throws IOException, ModelTranslationError {
+	public StateSpace csp_load(final String file, final Map<String, String> prefs) throws IOException {
 		final CSPFactory cspFactory = modelFactoryProvider.getCspFactory();
 		try {
 			return cspFactory.extract(file).load(prefs);
@@ -266,7 +260,7 @@ public class Api {
 	 * @return the {@link StateSpace} for the loaded model
 	 * @throws CliError if the {@code cspm} parser is not installed
 	 */
-	public StateSpace csp_load(final String file) throws IOException, ModelTranslationError {
+	public StateSpace csp_load(final String file) throws IOException {
 		return csp_load(file, Collections.emptyMap());
 	}
 
@@ -277,7 +271,7 @@ public class Api {
 	 * @param prefs the preferences to use
 	 * @return the {@link StateSpace} for the loaded model
 	 */
-	public StateSpace xtl_load(final String file, final Map<String, String> prefs) throws IOException, ModelTranslationError {
+	public StateSpace xtl_load(final String file, final Map<String, String> prefs) throws IOException {
 		final XTLFactory xtlFactory = modelFactoryProvider.getXTLFactory();
 		return xtlFactory.extract(file).load(prefs);
 	}
@@ -288,7 +282,7 @@ public class Api {
 	 * @param file the path of the file to load
 	 * @return the {@link StateSpace} for the loaded model
 	 */
-	public StateSpace xtl_load(final String file) throws IOException, ModelTranslationError {
+	public StateSpace xtl_load(final String file) throws IOException {
 		return xtl_load(file, Collections.emptyMap());
 	}
 
@@ -299,7 +293,7 @@ public class Api {
 	 * @param prefs the preferences to use
 	 * @return the {@link StateSpace} for the loaded model
 	 */
-	public StateSpace z_load(final String file, final Map<String, String> prefs) throws IOException, ModelTranslationError {
+	public StateSpace z_load(final String file, final Map<String, String> prefs) throws IOException {
 		final ZFactory zFactory = modelFactoryProvider.getZFactory();
 		return zFactory.extract(file).load(prefs);
 	}
@@ -310,7 +304,7 @@ public class Api {
 	 * @param file the path of the file to load
 	 * @return the {@link StateSpace} for the loaded model
 	 */
-	public StateSpace z_load(final String file) throws IOException, ModelTranslationError {
+	public StateSpace z_load(final String file) throws IOException {
 		return z_load(file, Collections.emptyMap());
 	}
 
@@ -321,7 +315,7 @@ public class Api {
 	 * @param prefs the preferences to use
 	 * @return the {@link StateSpace} for the loaded model
 	 */
-	public StateSpace alloy_load(final String file, final Map<String, String> prefs) throws IOException, ModelTranslationError {
+	public StateSpace alloy_load(final String file, final Map<String, String> prefs) throws IOException {
 		final AlloyFactory alloyFactory = modelFactoryProvider.getAlloyFactory();
 		return alloyFactory.extract(file).load(prefs);
 	}
@@ -332,7 +326,7 @@ public class Api {
 	 * @param file the path of the file to load
 	 * @return the {@link StateSpace} for the loaded model
 	 */
-	public StateSpace alloy_load(final String file) throws IOException, ModelTranslationError {
+	public StateSpace alloy_load(final String file) throws IOException {
 		return alloy_load(file, Collections.emptyMap());
 	}
 }

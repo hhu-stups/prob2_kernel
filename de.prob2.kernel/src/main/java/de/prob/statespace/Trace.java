@@ -1,26 +1,28 @@
 package de.prob.statespace;
 
-import com.github.krukow.clj_lang.PersistentVector;
-import de.prob.animator.command.ComposedCommand;
-import de.prob.animator.command.EvaluationCommand;
-import de.prob.animator.domainobjects.AbstractEvalResult;
-import de.prob.animator.domainobjects.FormulaExpand;
-import de.prob.animator.domainobjects.IEvalElement;
-import de.prob.model.representation.AbstractModel;
-import de.prob.util.Tuple2;
-import groovy.lang.GroovyObjectSupport;
-import org.codehaus.groovy.runtime.DefaultGroovyMethods;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import com.github.krukow.clj_lang.PersistentVector;
+
+import de.prob.animator.command.ComposedCommand;
+import de.prob.animator.command.EvaluateFormulaCommand;
+import de.prob.animator.domainobjects.AbstractEvalResult;
+import de.prob.animator.domainobjects.FormulaExpand;
+import de.prob.animator.domainobjects.IEvalElement;
+import de.prob.model.representation.AbstractModel;
+import de.prob.util.Tuple2;
+
+import groovy.lang.GroovyObjectSupport;
+
+import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 
 /**
  * @author joy
@@ -94,17 +96,17 @@ public class Trace extends GroovyObjectSupport {
 	}
 
 	public List<Tuple2<String, AbstractEvalResult>> eval(IEvalElement formula) {
-		final List<EvaluationCommand> cmds = new ArrayList<>();
+		final List<EvaluateFormulaCommand> cmds = new ArrayList<>();
 		for (Transition t : transitionList) {
 			if (getStateSpace().canBeEvaluated(t.getDestination())) {
-				cmds.add(formula.getCommand(t.getDestination()));
+				cmds.add(new EvaluateFormulaCommand(formula, t.getDestination().getId()));
 			}
 		}
 
 		stateSpace.execute(new ComposedCommand(cmds));
 
 		final List<Tuple2<String, AbstractEvalResult>> res = new ArrayList<>();
-		for (EvaluationCommand cmd : cmds) {
+		for (EvaluateFormulaCommand cmd : cmds) {
 			res.add(new Tuple2<>(cmd.getStateId(), cmd.getValue()));
 		}
 		return res;

@@ -7,7 +7,6 @@
 package de.prob.animator.command;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,9 +21,6 @@ import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Command to execute an event that has not been enumerated by ProB.
@@ -57,8 +53,6 @@ public final class GetOperationByPredicateCommand extends AbstractCommand
 	}
 
 	private static final String PROLOG_COMMAND_NAME = "prob2_execute_custom_operations";
-	Logger logger = LoggerFactory
-			.getLogger(GetOperationByPredicateCommand.class);
 	private static final String NEW_STATE_ID_VARIABLE = "NewStateID";
 	private static final String ERRORS_VARIABLE = "Errors";
 	private final IEvalElement evalElement;

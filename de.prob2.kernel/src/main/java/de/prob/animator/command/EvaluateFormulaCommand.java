@@ -12,6 +12,8 @@ import de.prob.prolog.term.PrologTerm;
  * @author joy
  * 
  */
+// After next release, merge EvaluationCommand into this class and remove the SuppressWarnings.
+@SuppressWarnings("deprecation")
 public class EvaluateFormulaCommand extends EvaluationCommand {
 
 	private static final String PROLOG_COMMAND_NAME = "evaluate_formula";

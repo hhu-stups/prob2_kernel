@@ -1,0 +1,6 @@
+MACHINE Abstract
+INCLUDES DummyMachine1
+
+OPERATIONS
+op = Inc
+END

@@ -1,0 +1,17 @@
+MACHINE M3
+
+
+EXTENDS r1.M1
+
+VARIABLES y
+
+INVARIANT y : NAT
+
+INITIALISATION y := 0
+
+OPERATIONS
+
+mega = y := y + 1 || r1.Inc
+
+
+END//MACHINE

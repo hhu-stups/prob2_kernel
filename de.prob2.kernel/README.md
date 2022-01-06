@@ -11,8 +11,4 @@ Building:
 
 You can also use an installed version of gradle (http://www.gradle.org)
 
-Be sure to install the latest Prolog binaries. You can do that from within the groovy shell. The command is `upgrade "latest"`. 
-
-
-  
 (c) 2011-2020 Jens Bendisposto, all rights reserved

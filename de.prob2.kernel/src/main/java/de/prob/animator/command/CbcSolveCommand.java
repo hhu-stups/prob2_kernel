@@ -1,5 +1,6 @@
 package de.prob.animator.command;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,12 +16,10 @@ import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.CompoundPrologTerm;
+import de.prob.prolog.term.IntegerPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.State;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Calculates the values of Classical-B Predicates and Expressions.
@@ -30,13 +29,10 @@ import org.slf4j.LoggerFactory;
  */
 public class CbcSolveCommand extends AbstractCommand {
 	public enum Solvers {
-		PROB, KODKOD, SMT_SUPPORTED_INTERPRETER, Z3, CVC4
+		PROB, KODKOD, SMT_SUPPORTED_INTERPRETER, Z3, CVC4, DPLLT, Z3AXM, Z3CNS
 	}
 
-	private static final String PROLOG_COMMAND_NAME = "cbc_solve_with_opts";
-
-	private final Logger logger = LoggerFactory
-			.getLogger(CbcSolveCommand.class);
+	private static final String PROLOG_COMMAND_NAME = "cbc_timed_solve_with_opts";
 
 	private static final int BINDINGS = 1;
 
@@ -47,10 +43,12 @@ public class CbcSolveCommand extends AbstractCommand {
 
 	private static final String EVALUATE_TERM_VARIABLE = "Val";
 	private static final String IDENTIFIER_LIST = "IdList";
+	private static final String TIME_VARIABLE = "Time";
 	private final IEvalElement evalElement;
 	private final Solvers solver;
 	private final State state;
 	private AbstractEvalResult result;
+	private BigInteger milliSeconds;
 	private final List<String> freeVariables = new ArrayList<>();
 
 	public CbcSolveCommand(final IEvalElement evalElement) {
@@ -75,6 +73,10 @@ public class CbcSolveCommand extends AbstractCommand {
 		return result;
 	}
 
+	public BigInteger getMilliSeconds() {
+		return  milliSeconds;
+	}
+
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
 		PrologTerm idList = bindings.get(IDENTIFIER_LIST);
@@ -83,6 +85,9 @@ public class CbcSolveCommand extends AbstractCommand {
 				freeVariables.add(id.getFunctor());
 			}
 		}
+
+		IntegerPrologTerm runtime =  (IntegerPrologTerm) bindings.get(TIME_VARIABLE);
+		milliSeconds = runtime.getValue();
 
 		PrologTerm prologTerm = bindings.get(EVALUATE_TERM_VARIABLE);
 
@@ -114,9 +119,10 @@ public class CbcSolveCommand extends AbstractCommand {
 			result = new ComputationNotCompletedResult(evalElement.getCode(),
 					"no solution found (but one might exist), reason: " + prologTerm.getArgument(1));
 		} else if (prologTerm.hasFunctor("error",0)) {
-			String msg = "Unexpected result when solving command. See Log for details.";
-			logger.error(msg);
-			throw new ProBError(msg);
+			// FIXME Can this case actually happen?
+			// It seems that error/0 should only be returned if probcli has added an error to the error manager,
+			// in which case AnimatorImpl should have already thrown a ProBError.
+			throw new ProBError("Unexpected result when solving command. See Log for details.");
 		} else {
 			throw new AssertionError("Unhandled functor in result: " + prologTerm.getFunctor() + "/" + prologTerm.getArity());
 		}
@@ -141,6 +147,7 @@ public class CbcSolveCommand extends AbstractCommand {
 		evalElement.printProlog(pout);
 		pout.printVariable(IDENTIFIER_LIST);
 		pout.printVariable(EVALUATE_TERM_VARIABLE);
+		pout.printVariable(TIME_VARIABLE);
 		pout.closeTerm();
 	}
 

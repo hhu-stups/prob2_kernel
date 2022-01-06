@@ -3,6 +3,7 @@ package de.prob.model.classicalb
 import java.nio.file.Paths
 
 import de.be4.classicalb.core.parser.BParser
+import de.be4.classicalb.core.parser.ParsingBehaviour
 import de.be4.classicalb.core.parser.analysis.prolog.RecursiveMachineLoader
 import de.prob.model.representation.DependencyGraph.ERefType
 
@@ -14,10 +15,9 @@ class ClassicalBModelTest extends Specification {
 	def setup() {
 		final modelFile = Paths.get("groovyTests", "machines", "references", "Foo.mch").toFile()
 		model = new ClassicalBModel(null)
-		final bparser = new BParser()
+		final bparser = new BParser(modelFile.toString())
 		final ast = bparser.parseFile(modelFile,false)
-		final rml = new RecursiveMachineLoader(modelFile.parent, bparser.contentProvider)
-		rml.loadAllMachines(modelFile, ast, bparser.definitions)
+		final rml = RecursiveMachineLoader.loadFromAst(bparser, ast, new ParsingBehaviour(), bparser.contentProvider)
 		model = model.create(ast, rml, modelFile, bparser)
 	}
 
@@ -28,10 +28,8 @@ class ClassicalBModelTest extends Specification {
 		where:
 		a     | b
 		"A"   | true
-		"E"   | true
 		"A"   | true
 		"Foo" | true
-		"B"   | true
 		"C"   | true
 		"Bar" | true
 		"Baz" | false
@@ -45,10 +43,8 @@ class ClassicalBModelTest extends Specification {
 		a     | b     | etype
 		"Foo" | "Bar" | ERefType.REFINES
 		"Foo" | "A"   | ERefType.SEES
-		"Foo" | "B"   | ERefType.USES
 		"Foo" | "C"   | ERefType.INCLUDES
-		"Foo" | "D"   | ERefType.INCLUDES
-		"Foo" | "E"   | ERefType.IMPORTS
+		"Foo" | "D"   | ERefType.EXTENDS
 	}
 
 	def "If an edge is not in the graph, null is returned"() {
@@ -57,8 +53,8 @@ class ClassicalBModelTest extends Specification {
 
 		where:
 		a   | b
-		"A" | "B"
-		"B" | "C"
+		"A" | "C"
+		"D" | "C"
 	}
 
 	def "If a vertex is not in the graph, an IllegalArgumentException is thrown"() {
@@ -83,11 +79,9 @@ class ClassicalBModelTest extends Specification {
 		a     | b
 		"Foo" | "Bar"
 		"Foo" | "A"
-		"Foo" | "B"
 		"Foo" | "C"
 		"Foo" | "D"
-		"Foo" | "E"
-		"A"   | "B"
-		"B"   | "C"
+		"A"   | "C"
+		"D"   | "C"
 	}
 }

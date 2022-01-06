@@ -6,20 +6,25 @@
 
 package de.prob.animator.domainobjects;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import de.be4.classicalb.core.parser.BParser;
 import de.be4.classicalb.core.parser.analysis.prolog.ASTProlog;
 import de.be4.classicalb.core.parser.exceptions.BCompoundException;
-import de.be4.classicalb.core.parser.node.*;
+import de.be4.classicalb.core.parser.node.AExpressionParseUnit;
+import de.be4.classicalb.core.parser.node.AIdentifierExpression;
+import de.be4.classicalb.core.parser.node.APredicateParseUnit;
+import de.be4.classicalb.core.parser.node.EOF;
+import de.be4.classicalb.core.parser.node.Node;
+import de.be4.classicalb.core.parser.node.Start;
+import de.be4.classicalb.core.parser.node.TIdentifierLiteral;
 import de.be4.classicalb.core.parser.util.PrettyPrinter;
-
 import de.hhu.stups.prob.translator.BValue;
 import de.hhu.stups.prob.translator.TranslatingVisitor;
-import de.prob.animator.command.EvaluateFormulaCommand;
-import de.prob.animator.command.EvaluationCommand;
 import de.prob.model.representation.FormulaUUID;
 import de.prob.model.representation.IFormulaUUID;
 import de.prob.prolog.output.IPrologTermOutput;
-import de.prob.statespace.State;
 
 /**
  * Representation of a ClassicalB formula.
@@ -54,7 +59,10 @@ public class ClassicalB extends AbstractEvalElement implements IBEvalElement {
 	}
 
 	public ClassicalB(final String formula, final FormulaExpand expansion) {
-		this(parse(formula), expansion);
+		this(parse(formula,false), expansion, formula); // false: does not allow substitutions
+	}
+	public ClassicalB(final String formula, final FormulaExpand expansion, final Boolean AllowSubst) {
+		this(parse(formula,AllowSubst), expansion, formula);
 	}
 
 	/**
@@ -69,15 +77,20 @@ public class ClassicalB extends AbstractEvalElement implements IBEvalElement {
 		this(code, FormulaExpand.EXPAND);
 	}
 
-	private static Start parse(final String formula) {
+	private static Start parse(final String formula, Boolean AllowSubst) {
 		final BParser bParser = new BParser();
 		try {
 			return bParser.parseFormula(formula);
 		} catch (BCompoundException e) {
-			try {
-				return bParser.parseSubstitution(formula);
-			} catch (BCompoundException f) {
-				throw new EvaluationException(f.getMessage(), f);
+		    if (AllowSubst) {
+		       // also try parsing as substitution
+				try {
+					return bParser.parseSubstitution(formula);
+				} catch (BCompoundException f) {
+					throw new EvaluationException(f.getMessage(), f);
+				}
+			} else {
+				throw new EvaluationException(e.getMessage(), e);
 			}
 		}
 	}
@@ -86,6 +99,25 @@ public class ClassicalB extends AbstractEvalElement implements IBEvalElement {
 		final PrettyPrinter prettyPrinter = new PrettyPrinter();
 		predicate.apply(prettyPrinter);
 		return prettyPrinter.getPrettyPrint();
+	}
+
+	/**
+	 * <p>Create a classical B formula representing the given identifier.</p>
+	 * <p>
+	 * Unlike the normal constructors that parse the input string using the B parser,
+	 * this method accepts arbitrary strings as identifiers,
+	 * even ones that are not syntactically valid B identifiers
+	 * and would otherwise need to be quoted.
+	 * </p>
+	 * 
+	 * @param identifier list of string parts that make up a dotted identifier
+	 * @param expansion expansion mode to use when evaluating the formula
+	 * @return a classical B formula representing the given identifier
+	 */
+	public static ClassicalB fromIdentifier(final List<String> identifier, final FormulaExpand expansion) {
+		final AIdentifierExpression idNode = new AIdentifierExpression(identifier.stream().map(TIdentifierLiteral::new).collect(Collectors.toList()));
+		final Start ast = new Start(new AExpressionParseUnit(idNode), new EOF());
+		return new ClassicalB(ast, expansion);
 	}
 
 	@Override
@@ -126,11 +158,6 @@ public class ClassicalB extends AbstractEvalElement implements IBEvalElement {
 	@Override
 	public IFormulaUUID getFormulaId() {
 		return uuid;
-	}
-
-	@Override
-	public EvaluationCommand getCommand(final State state) {
-		return new EvaluateFormulaCommand(this, state.getId());
 	}
 
 	@Override
