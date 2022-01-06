@@ -117,7 +117,7 @@ allprojects {
 // IMPORTANT !!!
 // Remember to release the cli
 ext {
-	cli_version = '1.10.2'
+	cli_version = '1.11.1'
 }
 // IMPORTANT !!!
 
