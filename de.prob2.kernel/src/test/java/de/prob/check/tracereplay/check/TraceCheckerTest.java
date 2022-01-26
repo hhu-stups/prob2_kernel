@@ -24,7 +24,7 @@ import de.prob.scripting.ModelFactory;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
 
-import org.junit.Assert;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;

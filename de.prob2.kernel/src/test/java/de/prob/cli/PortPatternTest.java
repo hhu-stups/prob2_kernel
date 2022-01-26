@@ -2,9 +2,9 @@ package de.prob.cli;
 
 import java.util.regex.Matcher;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PortPatternTest {
 
@@ -12,7 +12,7 @@ public class PortPatternTest {
 	public void testSuccess1() {
 		String line = "Port: 3422";
 		final Matcher matcher = ProBInstanceProvider.CLI_PORT_PATTERN.matcher(line);
-		assertTrue("Pattern does not match", matcher.matches());
+		assertTrue(matcher.matches(), "Pattern does not match");
 		assertEquals("3422", matcher.group(1));
 	}
 
@@ -20,7 +20,7 @@ public class PortPatternTest {
 	public void testSuccess2() {
 		String line = " s \t  Port: 3422";
 		final Matcher matcher = ProBInstanceProvider.CLI_PORT_PATTERN.matcher(line);
-		assertTrue("Pattern does not match", matcher.matches());
+		assertTrue(matcher.matches(), "Pattern does not match");
 		assertEquals("3422", matcher.group(1));
 	}
 
@@ -28,21 +28,21 @@ public class PortPatternTest {
 	public void testFailingMatch1()  {
 		String line = "Port: ";
 		final Matcher matcher = ProBInstanceProvider.CLI_PORT_PATTERN.matcher(line);
-		assertFalse("Pattern matches, but should not", matcher.matches());
+		assertFalse(matcher.matches(), "Pattern matches, but should not");
 	}
 
 	@Test
 	public void testEmptyInput()  {
 		String line = "";
 		final Matcher matcher = ProBInstanceProvider.CLI_PORT_PATTERN.matcher(line);
-		assertFalse("Pattern matches empty string", matcher.matches());
+		assertFalse(matcher.matches(), "Pattern matches empty string");
 	}
 
 	@Test
 	public void testTrailingChars()  {
 		String line = "    Port: 3422 ";
 		final Matcher matcher = ProBInstanceProvider.CLI_PORT_PATTERN.matcher(line);
-		assertFalse("Pattern does not match", matcher.matches());
+		assertFalse(matcher.matches(), "Pattern does not match");
 	}
 
 }

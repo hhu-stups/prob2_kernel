@@ -3,9 +3,10 @@ package de.prob.cli;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class OsInfoProviderTest {
 	private static final Map<String, OsFamily> SUPPORTED = new HashMap<>();
@@ -44,11 +45,13 @@ public class OsInfoProviderTest {
 		SUPPORTED.forEach((key, value) -> assertEquals(value, OsFamily.fromName(key)));
 	}
 
-	@Test(expected = UnsupportedOperationException.class)
+	@Test
 	public void testUnsupportedOS() {
-		for (String string : UNSUPPORTED) {
-			OsFamily.fromName(string);
-		}
+		Assertions.assertThrows(UnsupportedOperationException.class, () -> {
+			for (String string : UNSUPPORTED) {
+				OsFamily.fromName(string);
+			}
+		});
 	}
 
 }

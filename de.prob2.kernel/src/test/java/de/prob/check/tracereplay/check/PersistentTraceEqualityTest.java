@@ -1,7 +1,6 @@
 package de.prob.check.tracereplay.check;
 
 import de.prob.check.tracereplay.PersistentTransition;
-import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

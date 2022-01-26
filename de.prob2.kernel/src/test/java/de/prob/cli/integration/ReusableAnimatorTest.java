@@ -9,11 +9,11 @@ import de.prob.scripting.ClassicalBFactory;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public final class ReusableAnimatorTest {
 	private static ClassicalBFactory modelFactory;
@@ -24,17 +24,17 @@ public final class ReusableAnimatorTest {
 		super();
 	}
 	
-	@BeforeClass
+	@BeforeAll
 	public static void beforeClass() {
 		modelFactory = CliTestCommon.getInjector().getInstance(ClassicalBFactory.class);
 	}
 	
-	@Before
+	@BeforeEach
 	public void setUp() {
 		this.animator = CliTestCommon.getInjector().getInstance(ReusableAnimator.class);
 	}
 	
-	@After
+	@AfterEach
 	public void tearDown() {
 		this.animator.kill();
 		this.animator = null;
@@ -43,7 +43,7 @@ public final class ReusableAnimatorTest {
 	private static void checkAnimatorWorking(final IAnimator animator) {
 		final GetVersionCommand command = new GetVersionCommand();
 		animator.execute(command);
-		Assert.assertNotNull(command.getVersionString());
+		Assertions.assertNotNull(command.getVersionString());
 	}
 	
 	@Test
@@ -59,7 +59,7 @@ public final class ReusableAnimatorTest {
 			modelFactory.create("Test" + i, String.format("MACHINE Test%d VARIABLES x INVARIANT x : INTEGER INITIALISATION x := %d END", i, i))
 				.loadIntoStateSpace(stateSpace);
 			final Trace trace = new Trace(stateSpace).randomAnimation(1);
-			Assert.assertEquals(trace.evalCurrent("x", FormulaExpand.EXPAND).toString(), String.valueOf(i));
+			Assertions.assertEquals(trace.evalCurrent("x", FormulaExpand.EXPAND).toString(), String.valueOf(i));
 			stateSpace.kill();
 		}
 	}
@@ -68,7 +68,7 @@ public final class ReusableAnimatorTest {
 	public void testNotMoreThanOneStateSpace() {
 		final StateSpace stateSpace = this.animator.createStateSpace();
 		checkAnimatorWorking(stateSpace);
-		Assert.assertThrows(IllegalStateException.class, this.animator::createStateSpace);
+		Assertions.assertThrows(IllegalStateException.class, this.animator::createStateSpace);
 		checkAnimatorWorking(stateSpace);
 		stateSpace.kill();
 		final StateSpace newStateSpace = this.animator.createStateSpace();
@@ -80,14 +80,14 @@ public final class ReusableAnimatorTest {
 	public void testKillBusy() {
 		final StateSpace stateSpace = this.animator.createStateSpace();
 		checkAnimatorWorking(stateSpace);
-		Assert.assertFalse(stateSpace.isKilled());
-		Assert.assertFalse(stateSpace.isBusy());
-		Assert.assertFalse(this.animator.isBusy());
+		Assertions.assertFalse(stateSpace.isKilled());
+		Assertions.assertFalse(stateSpace.isBusy());
+		Assertions.assertFalse(this.animator.isBusy());
 		stateSpace.startTransaction();
-		Assert.assertTrue(stateSpace.isBusy());
-		Assert.assertTrue(this.animator.isBusy());
+		Assertions.assertTrue(stateSpace.isBusy());
+		Assertions.assertTrue(this.animator.isBusy());
 		stateSpace.kill();
-		Assert.assertTrue(stateSpace.isKilled());
-		Assert.assertFalse(this.animator.isBusy());
+		Assertions.assertTrue(stateSpace.isKilled());
+		Assertions.assertFalse(this.animator.isBusy());
 	}
 }

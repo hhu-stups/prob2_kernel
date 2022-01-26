@@ -1,6 +1,6 @@
 package de.prob.model.representation;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import de.prob.model.representation.DependencyGraph.Node;
 

@@ -7,25 +7,30 @@ import de.prob.cli.CliTestCommon;
 import de.prob.exception.ProBError;
 import de.prob.scripting.Api;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ParseErrorTest {
 
 	private Api api;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		api = CliTestCommon.getInjector().getInstance(Api.class);
 	}
 
-	@Test(expected = ProBError.class)
+	@Test
 	public void testLoadBMachineWithParseError() throws IOException {
-		api.b_load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "ParseError.mch").toString());
+		Assertions.assertThrows(ProBError.class, () -> {
+			api.b_load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "ParseError.mch").toString());
+		});
 	}
 
-	@Test(expected = IOException.class)
+	@Test
 	public void testLoadBMachineButFileDoesNotExists() throws IOException {
-		api.b_load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "FileDoesNotExists.mch").toString());
+		Assertions.assertThrows(IOException.class, () -> {
+			api.b_load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "FileDoesNotExists.mch").toString());
+		});
 	}
 }

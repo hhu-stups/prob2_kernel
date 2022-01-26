@@ -1,8 +1,9 @@
 package de.prob.animator.domainobjects;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ClassicalBEvalElementTest {
 
@@ -12,10 +13,12 @@ public class ClassicalBEvalElementTest {
 		assertEquals(EvalElementType.EXPRESSION, element.getKind());
 	}
 
-	@Test(expected = EvaluationException.class)
+	@Test
 	public void testExpressionParserError() {
-		ClassicalB element = new ClassicalB("9 + ", FormulaExpand.EXPAND);
-		assertEquals(EvalElementType.EXPRESSION, element.getKind());
+		Assertions.assertThrows(EvaluationException.class, () -> {
+			ClassicalB element = new ClassicalB("9 + ", FormulaExpand.EXPAND);
+			assertEquals(EvalElementType.EXPRESSION, element.getKind());
+		});
 	}
 
 	@Test
@@ -24,10 +27,12 @@ public class ClassicalBEvalElementTest {
 		assertEquals(EvalElementType.PREDICATE, element.getKind());
 	}
 
-	@Test(expected = EvaluationException.class)
+	@Test
 	public void testPredicateParserError() {
-		ClassicalB element = new ClassicalB("9:NAT & ", FormulaExpand.EXPAND);
-		assertEquals(EvalElementType.PREDICATE, element.getKind());
+		Assertions.assertThrows(EvaluationException.class, () -> {
+			ClassicalB element = new ClassicalB("9:NAT & ", FormulaExpand.EXPAND);
+			assertEquals(EvalElementType.PREDICATE, element.getKind());
+		});
 	}
 
 }

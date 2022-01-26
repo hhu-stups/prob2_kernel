@@ -182,8 +182,6 @@ dependencies {
 	testImplementation group: "ch.qos.logback", name: "logback-classic", version: "1.2.5" // Eclipse Public License 1.0
 	testImplementation(platform('org.junit:junit-bom:5.7.2'))
 	testImplementation('org.junit.jupiter:junit-jupiter')
-	// TODO Update all tests to JUnit 5, then remove the JUnit Vintage dependency
-	testImplementation group: "org.junit.vintage", name: "junit-vintage-engine"
 	testImplementation group: "org.spockframework", name: "spock-core", version: "2.0-groovy-3.0" // Apache License 2.0
 	// Byte Buddy and Objenesis are needed by Spock to mock classes
 	testRuntimeOnly group: "net.bytebuddy", name: "byte-buddy", version: "1.11.15" // Apache License 2.0
