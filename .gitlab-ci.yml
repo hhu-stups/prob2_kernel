@@ -34,14 +34,9 @@ variables:
   extends: .tests
   variables:
     DEBIAN_FRONTEND: noninteractive
-    LANG: en_US.UTF-8
   before_script:
     - export GRADLE_USER_HOME=`pwd`/.gradle
-    - apt-get update &&  apt-get install -y git locales
-    - sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen 
-    - dpkg-reconfigure --frontend=noninteractive locales
-    - update-locale LANG=en_US.UTF-8
-
+    - apt-get update && apt-get install -y git
 
 tests:jdk-8:
   extends: .docker-tests
