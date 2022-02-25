@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import de.be4.classicalb.core.parser.analysis.prolog.ASTProlog;
-
 import de.prob.animator.domainobjects.EventB;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.model.eventb.EventBAxiom;
@@ -120,7 +118,7 @@ public class TheoryTranslator {
 	}
 
 	private void printType(final String type, final IPrologTermOutput pto) {
-		printEventBElement(new EventB(type, typeEnv, FormulaExpand.EXPAND), pto);
+		new EventB(type, typeEnv, FormulaExpand.EXPAND).printProlog(pto);
 	}
 
 	private void printConstructor(String name,
@@ -142,13 +140,8 @@ public class TheoryTranslator {
 			final IPrologTermOutput pto) {
 		pto.openTerm(functor);
 		pto.printAtom(idString);
-		printEventBElement(type, pto);
+		type.printProlog(pto);
 		pto.closeTerm();
-	}
-
-	private void printEventBElement(final EventB eventB,
-			final IPrologTermOutput pto) {
-		eventB.getAst().apply(new ASTProlog(pto, null));
 	}
 
 	private void printOperatorDefs(final ModelElementList<Operator> operators,
@@ -166,7 +159,7 @@ public class TheoryTranslator {
 		pto.printAtom(operator.toString());
 
 		printOperatorArguments(operator.getArguments(), pto);
-		printEventBElement(operator.getWD(), pto);
+		operator.getWD().printProlog(pto);
 
 		processDefinition(operator.getDefinition(), pto);
 
@@ -218,15 +211,15 @@ public class TheoryTranslator {
 			pto.printAtom(fi.getName());
 		}
 		pto.closeList();
-		printEventBElement(c.getExpression(), pto);
-		printEventBElement(c.getFormula(), pto);
+		c.getExpression().printProlog(pto);
+		c.getFormula().printProlog(pto);
 		pto.closeTerm();
 	}
 
 	private void printDirectDefinition(final DirectDefinition definition,
 			final IPrologTermOutput pto) {
 		pto.openList();
-		printEventBElement((EventB) definition.getFormula(), pto);
+		definition.getFormula().printProlog(pto);
 		pto.closeList();
 	}
 
@@ -265,7 +258,7 @@ public class TheoryTranslator {
 
 		pto.openList();
 		for (EventBAxiom axiom : block.getAxioms()) {
-			printEventBElement((EventB) axiom.getPredicate(), pto);
+			axiom.getPredicate().printProlog(pto);
 		}
 		pto.closeList();
 
@@ -278,7 +271,7 @@ public class TheoryTranslator {
 		pto.printAtom(operator.toString());
 		printOperatorArguments(operator.getArguments(), pto);
 		pto.openList();
-		printEventBElement(operator.getWD(), pto);
+		operator.getWD().printProlog(pto);
 		pto.closeList();
 		pto.closeTerm();
 	}
