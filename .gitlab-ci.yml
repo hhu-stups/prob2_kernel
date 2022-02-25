@@ -25,6 +25,9 @@ variables:
       - "*/build/test-results"
       - "**/prob_log.txt"
       - "**/ProB.log.*.log"
+    reports:
+      junit:
+        - "*/build/test-results/TEST-*.xml"
     when: always
 
 .docker-tests:
