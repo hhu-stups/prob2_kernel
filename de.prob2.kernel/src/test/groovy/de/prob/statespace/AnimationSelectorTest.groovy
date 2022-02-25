@@ -1,8 +1,6 @@
 package de.prob.statespace
 
-import com.github.krukow.clj_lang.PersistentVector
-
-import spock.lang.Specification 
+import spock.lang.Specification
 
 class AnimationSelectorTest extends Specification {
 	private Trace trace
@@ -13,7 +11,7 @@ class AnimationSelectorTest extends Specification {
 		final StateSpace ss = Mock() {
 			isBusy() >> false
 		}
-		trace = new Trace(ss, null, PersistentVector.emptyVector(), UUID.randomUUID())
+		trace = new Trace(ss, null, [], UUID.randomUUID())
 		selector = new AnimationSelector()
 		listener = Mock()
 		selector.registerAnimationChangeListener(listener)

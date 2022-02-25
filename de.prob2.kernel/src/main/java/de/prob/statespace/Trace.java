@@ -43,15 +43,19 @@ public class Trace extends GroovyObjectSupport {
 		this(startState.getStateSpace(), new TraceElement(startState), PersistentVector.emptyVector(), UUID.randomUUID());
 	}
 
-	public Trace(final StateSpace s, final TraceElement head, PersistentVector<Transition> transitionList, UUID uuid) {
+	public Trace(final StateSpace s, final TraceElement head, List<Transition> transitionList, UUID uuid) {
 		this(s, head, head, transitionList, uuid);
 	}
 
-	private Trace(final StateSpace s, final TraceElement head, final TraceElement current, PersistentVector<Transition> transitionList, UUID uuid) {
+	private Trace(final StateSpace s, final TraceElement head, final TraceElement current, List<Transition> transitionList, UUID uuid) {
 		this.stateSpace = s;
 		this.head = head;
 		this.current = current;
-		this.transitionList = transitionList;
+		if (transitionList instanceof PersistentVector<?>) {
+			this.transitionList = (PersistentVector<Transition>)transitionList;
+		} else {
+			this.transitionList = PersistentVector.create(transitionList);
+		}
 		this.uuid = uuid;
 	}
 
