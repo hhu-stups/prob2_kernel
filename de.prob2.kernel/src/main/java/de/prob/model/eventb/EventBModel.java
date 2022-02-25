@@ -39,7 +39,7 @@ public class EventBModel extends AbstractModel {
 	}
 
 	public EventBModel setModelFile(final File modelFile) {
-		return new EventBModel(getStateSpaceProvider(), children, getGraph(), modelFile);
+		return new EventBModel(getStateSpaceProvider(), getChildren(), getGraph(), modelFile);
 	}
 
 	@Override
@@ -82,11 +82,11 @@ public class EventBModel extends AbstractModel {
 	}
 
 	public EventBModel addRelationship(final String element1, final String element2, final DependencyGraph.ERefType relationship) {
-		return new EventBModel(getStateSpaceProvider(), children, getGraph().addEdge(element1, element2, relationship), getModelFile());
+		return new EventBModel(getStateSpaceProvider(), getChildren(), getGraph().addEdge(element1, element2, relationship), getModelFile());
 	}
 
 	public EventBModel removeRelationship(final String element1, final String element2, final DependencyGraph.ERefType relationship) {
-		return new EventBModel(getStateSpaceProvider(), children, getGraph().removeEdge(element1, element2, relationship), getModelFile());
+		return new EventBModel(getStateSpaceProvider(), getChildren(), getGraph().removeEdge(element1, element2, relationship), getModelFile());
 	}
 
 	public EventBModel calculateDependencies() {
@@ -106,7 +106,7 @@ public class EventBModel extends AbstractModel {
 				graph = graph.addEdge(c.getName(), c2.getName(), DependencyGraph.ERefType.EXTENDS);
 			}
 		}
-		return new EventBModel(getStateSpaceProvider(), children, graph, getModelFile());
+		return new EventBModel(getStateSpaceProvider(), getChildren(), graph, getModelFile());
 	}
 
 	@Override

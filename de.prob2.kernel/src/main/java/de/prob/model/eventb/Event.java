@@ -109,14 +109,14 @@ public class Event extends BEvent {
 	}
 
 	public Event changeType(EventType type) {
-		return new Event(name, type, extended, children);
+		return new Event(name, type, extended, getChildren());
 	}
 
 	public Event toggleExtended(boolean extended) {
 		if (extended == this.extended) {
 			return this;
 		}
-		return new Event(name, type, extended, children);
+		return new Event(name, type, extended, getChildren());
 	}
 
 	@Override

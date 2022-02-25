@@ -20,7 +20,7 @@ public abstract class AbstractElement extends GroovyObjectSupport {
 	 * Maps from a subclass of {@link AbstractElement} to a set containing all
 	 * elements for that subclass
 	 */
-	protected final PersistentHashMap<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children;
+	private final PersistentHashMap<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children;
 
 	public AbstractElement() {
 		this(PersistentHashMap.emptyMap());
@@ -50,7 +50,7 @@ public abstract class AbstractElement extends GroovyObjectSupport {
 	@SuppressWarnings("unchecked")
 	public <T extends AbstractElement> ModelElementList<T> getChildrenOfType(
 			final Class<T> c) {
-		ModelElementList<? extends AbstractElement> list = children.get(c);
+		ModelElementList<? extends AbstractElement> list = getChildren().get(c);
 		if (list == null) {
 			return new ModelElementList<>();
 		}
@@ -59,7 +59,7 @@ public abstract class AbstractElement extends GroovyObjectSupport {
 
 	@SuppressWarnings("unchecked")
 	protected <T extends AbstractElement, S extends T> ModelElementList<S> getChildrenAndCast(Class<T> key, Class<S> realType) {
-		ModelElementList<? extends AbstractElement> list = children.get(key);
+		ModelElementList<? extends AbstractElement> list = getChildren().get(key);
 		if (list == null) {
 			return new ModelElementList<>();
 		}

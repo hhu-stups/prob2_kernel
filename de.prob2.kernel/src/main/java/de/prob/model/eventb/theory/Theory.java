@@ -115,8 +115,7 @@ public class Theory extends AbstractElement implements Named {
 	}
 
 	public Theory setTypeEnvironment(Set<IFormulaExtension> typeEnvironment) {
-		return new Theory(name, parentDirectory, proBMappings, typeEnvironment,
-				children);
+		return new Theory(name, parentDirectory, proBMappings, typeEnvironment, getChildren());
 	}
 
 	public Set<IFormulaExtension> getTypeEnvironment() {
