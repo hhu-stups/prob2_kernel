@@ -258,7 +258,7 @@ groovydoc {
 }
 
 wrapper {
-	gradleVersion = "7.2"
+	gradleVersion = "7.4"
 }
 
 task groovyIntegrationTests(type: JavaExec) {
