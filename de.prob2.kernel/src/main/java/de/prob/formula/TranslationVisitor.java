@@ -587,7 +587,7 @@ public class TranslationVisitor implements ISimpleVisitor {
 				final PPredicate member = new AMemberPredicate(expr, translateType(type));
 				// and P := "expr:type & P", if no P is given (predicate is
 				// null), just "expr:type"
-				tempPredicate = tempPredicate == null ? member : new AConjunctPredicate(member, predicate);
+				tempPredicate = tempPredicate == null ? member : new AConjunctPredicate(member, tempPredicate);
 			}
 		}
 		return tempPredicate;
