@@ -66,7 +66,7 @@ public abstract class AbstractElement extends GroovyObjectSupport {
 		return (ModelElementList<S>) list;
 	}
 
-	public PersistentHashMap<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>>assoc(
+	protected Map<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>>assoc(
 			Class<? extends AbstractElement> key, ModelElementList<? extends AbstractElement> val) {
 		return (PersistentHashMap<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>>) children.assoc(key, val);
 	}
