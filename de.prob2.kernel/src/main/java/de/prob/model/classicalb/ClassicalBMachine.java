@@ -1,6 +1,7 @@
 package de.prob.model.classicalb;
 
-import com.github.krukow.clj_lang.PersistentHashMap;
+import java.util.Collections;
+import java.util.Map;
 
 import de.prob.model.representation.AbstractElement;
 import de.prob.model.representation.BEvent;
@@ -13,10 +14,10 @@ import de.prob.model.representation.Variable;
 
 public class ClassicalBMachine extends Machine {
 	public ClassicalBMachine(final String name) {
-		super(name, PersistentHashMap.emptyMap());
+		this(name, Collections.emptyMap());
 	}
 
-	private ClassicalBMachine(final String name, final PersistentHashMap<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children) {
+	private ClassicalBMachine(final String name, final Map<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children) {
 		super(name, children);
 	}
 

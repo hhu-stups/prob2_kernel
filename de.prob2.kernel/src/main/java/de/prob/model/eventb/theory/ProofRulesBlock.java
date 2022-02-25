@@ -1,6 +1,6 @@
 package de.prob.model.eventb.theory;
 
-import com.github.krukow.clj_lang.PersistentHashMap;
+import java.util.Map;
 
 import de.prob.model.representation.AbstractElement;
 import de.prob.model.representation.ModelElementList;
@@ -14,7 +14,7 @@ public class ProofRulesBlock extends AbstractElement implements Named {
 		this.name = name;
 	}
 
-	public ProofRulesBlock(final String name, PersistentHashMap<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children) {
+	public ProofRulesBlock(final String name, Map<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children) {
 		super(children);
 		this.name = name;
 	}

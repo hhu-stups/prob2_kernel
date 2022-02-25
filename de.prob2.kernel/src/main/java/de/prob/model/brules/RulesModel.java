@@ -1,11 +1,11 @@
 package de.prob.model.brules;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.github.krukow.clj_lang.PersistentHashMap;
 import com.google.inject.Inject;
 
 import de.be4.classicalb.core.parser.BParser;
@@ -32,17 +32,11 @@ public class RulesModel extends AbstractModel {
 
 	@Inject
 	public RulesModel(StateSpaceProvider stateSpaceProvider) {
-		super(stateSpaceProvider,
-				PersistentHashMap
-						.<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>>emptyMap(),
-				new DependencyGraph(), null);
+		super(stateSpaceProvider, Collections.emptyMap(), new DependencyGraph(), null);
 	}
 
 	public RulesModel(StateSpaceProvider stateSpaceProvider, File file, RulesProject project) {
-		super(stateSpaceProvider,
-				PersistentHashMap
-						.<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>>emptyMap(),
-				new DependencyGraph(), file);
+		super(stateSpaceProvider, Collections.emptyMap(), new DependencyGraph(), file);
 		this.project = project;
 	}
 

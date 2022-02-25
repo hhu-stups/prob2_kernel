@@ -1,6 +1,7 @@
 package de.prob.model.eventb;
 
-import com.github.krukow.clj_lang.PersistentHashMap;
+import java.util.Collections;
+import java.util.Map;
 
 import de.prob.model.representation.AbstractElement;
 import de.prob.model.representation.Axiom;
@@ -14,12 +15,12 @@ public class Context extends AbstractElement implements Named {
 	private final String name;
 
 	public Context(final String name) {
-		this(name, PersistentHashMap.emptyMap());
+		this(name, Collections.emptyMap());
 	}
 
 	private Context(
 			final String name,
-			PersistentHashMap<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children) {
+			Map<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children) {
 		super(children);
 		this.name = name;
 	}

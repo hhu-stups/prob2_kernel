@@ -1,6 +1,7 @@
 package de.prob.model.eventb;
 
-import com.github.krukow.clj_lang.PersistentHashMap;
+import java.util.Collections;
+import java.util.Map;
 
 import de.prob.model.representation.AbstractElement;
 import de.prob.model.representation.Action;
@@ -18,14 +19,14 @@ public class Event extends BEvent {
 	}
 
 	public Event(final String name, final EventType type, final boolean extended) {
-		this(name, type, extended, PersistentHashMap.emptyMap());
+		this(name, type, extended, Collections.emptyMap());
 	}
 
 	private Event(
 			final String name,
 			final EventType type,
 			final boolean extended,
-			PersistentHashMap<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children) {
+			Map<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children) {
 		super(name, children);
 		this.type = type;
 		this.extended = extended;

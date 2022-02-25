@@ -2,10 +2,9 @@ package de.prob.model.eventb.theory;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-
-import com.github.krukow.clj_lang.PersistentHashMap;
 
 import de.prob.model.eventb.EventBAxiom;
 import de.prob.model.representation.AbstractElement;
@@ -29,8 +28,7 @@ public class Theory extends AbstractElement implements Named {
 				parentDirectory,
 				mappings,
 				Collections.<IFormulaExtension> emptySet(),
-				PersistentHashMap
-						.<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> emptyMap());
+				Collections.emptyMap());
 	}
 
 	private Theory(
@@ -38,7 +36,7 @@ public class Theory extends AbstractElement implements Named {
 			final String parentDirectory,
 			final Collection<OperatorMapping> proBMappings,
 			Set<IFormulaExtension> typeEnvironment,
-			PersistentHashMap<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children) {
+			Map<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children) {
 		super(children);
 		this.name = name;
 		this.parentDirectory = parentDirectory;

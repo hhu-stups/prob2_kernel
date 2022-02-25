@@ -1,6 +1,5 @@
 package de.prob.model.eventb;
 
-import com.github.krukow.clj_lang.PersistentHashMap;
 import com.google.inject.Inject;
 import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.command.LoadEventBProjectCommand;
@@ -24,10 +23,10 @@ import static java.util.stream.Collectors.toMap;
 public class EventBModel extends AbstractModel {
 	@Inject
 	public EventBModel(final StateSpaceProvider stateSpaceProvider) {
-		this(stateSpaceProvider, PersistentHashMap.emptyMap(), new DependencyGraph(), null);
+		this(stateSpaceProvider, Collections.emptyMap(), new DependencyGraph(), null);
 	}
 
-	private EventBModel(StateSpaceProvider stateSpaceProvider, PersistentHashMap<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children, DependencyGraph graph, File modelFile) {
+	private EventBModel(StateSpaceProvider stateSpaceProvider, Map<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children, DependencyGraph graph, File modelFile) {
 		super(stateSpaceProvider, children, graph, modelFile);
 	}
 

@@ -1,9 +1,9 @@
 package de.prob.model.representation;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 
-import com.github.krukow.clj_lang.PersistentHashMap;
 import com.google.inject.Inject;
 
 import de.prob.animator.command.AbstractCommand;
@@ -21,7 +21,7 @@ public class ZModel extends AbstractModel {
 	}
 
 	public ZModel(final StateSpaceProvider ssProvider, File modelFile) {
-		super(ssProvider, PersistentHashMap.emptyMap(), new DependencyGraph(), modelFile);
+		super(ssProvider, Collections.emptyMap(), new DependencyGraph(), modelFile);
 	}
 
 	public ZModel create(final File modelFile) {

@@ -160,8 +160,9 @@ dependencies {
 
 	// Misc dependencies
 	implementation group: "com.fatboyindustrial.gson-javatime-serialisers", name: "gson-javatime-serialisers", version: "1.1.1" // MIT License
-	// The following dependency needs to be api because the constructor of de.prob.model.representation.AbstractElement (and some subclasses) takes a com.github.krukow.clj_lang.PersistentHashMap.
-	// TODO Should we assume that external users do not call these constructors, and change this to an implementation dependency?
+	// The following dependency needs to be api because the protected field children of de.prob.model.representation.AbstractElement has type com.github.krukow.clj_lang.PersistentHashMap.
+	// Some other classes might also still use clj-ds classes in non-private APIs.
+	// TODO Change APIs and non-private fields to use standard interfaces like Map and use PersistentHashMap only internally
 	api group: "com.github.krukow", name: "clj-ds", version: "0.0.4" // Eclipse Public License 1.0
 	implementation group: "com.google.guava", name: "guava", version: "30.1.1-jre" // Apache License 2.0
 	implementation group: "com.google.code.gson", name: "gson", version: "2.8.8"

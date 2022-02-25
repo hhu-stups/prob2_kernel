@@ -2,12 +2,12 @@ package de.prob.model.classicalb;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import com.github.krukow.clj_lang.PersistentHashMap;
 import com.google.inject.Inject;
 
 import de.be4.classicalb.core.parser.BParser;
@@ -37,12 +37,12 @@ public class ClassicalBModel extends AbstractModel {
 
 	@Inject
 	public ClassicalBModel(final StateSpaceProvider ssProvider) {
-		this(ssProvider, PersistentHashMap.emptyMap(), new DependencyGraph(), null, null, null, null);
+		this(ssProvider, Collections.emptyMap(), new DependencyGraph(), null, null, null, null);
 	}
 
 	public ClassicalBModel(
 		final StateSpaceProvider ssProvider,
-		final PersistentHashMap<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children,
+		final Map<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children,
 		final DependencyGraph graph,
 		final File modelFile,
 		final BParser bparser,

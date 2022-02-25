@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.github.krukow.clj_lang.PersistentHashMap;
-
 import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.domainobjects.EvaluationException;
 import de.prob.animator.domainobjects.FormulaExpand;
@@ -26,7 +24,7 @@ public abstract class AbstractModel extends AbstractElement {
 
 	public AbstractModel(
 			StateSpaceProvider stateSpaceProvider,
-			PersistentHashMap<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children,
+			Map<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children,
 			DependencyGraph graph, File modelFile) {
 		super(children);
 		this.stateSpaceProvider = stateSpaceProvider;

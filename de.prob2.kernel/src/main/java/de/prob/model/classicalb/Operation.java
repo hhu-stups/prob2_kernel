@@ -1,8 +1,8 @@
 package de.prob.model.classicalb;
 
+import java.util.Collections;
 import java.util.List;
-
-import com.github.krukow.clj_lang.PersistentHashMap;
+import java.util.Map;
 
 import de.prob.model.representation.AbstractElement;
 import de.prob.model.representation.BEvent;
@@ -11,14 +11,14 @@ import de.prob.model.representation.ModelElementList;
 
 public class Operation extends BEvent {
 	public Operation(final String name, final List<String> parameters, final List<String> output) {
-		this(name, parameters, output, PersistentHashMap.emptyMap());
+		this(name, parameters, output, Collections.emptyMap());
 	}
 
 	private Operation(
 		final String name,
 		final List<String> parameters,
 		final List<String> output,
-		PersistentHashMap<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children
+		Map<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children
 	) {
 		super(name, children);
 		this.parameters = parameters;
@@ -32,10 +32,7 @@ public class Operation extends BEvent {
 	}
 
 	public Operation set(Class<? extends AbstractElement> clazz, ModelElementList<? extends AbstractElement> elements) {
-		return new Operation(
-			getName(), parameters, output,
-			(PersistentHashMap<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>>) children.assoc(clazz, elements)
-		);
+		return new Operation(getName(), parameters, output, assoc(clazz, elements));
 	}
 
 	public ModelElementList<ClassicalBGuard> addGuards() {

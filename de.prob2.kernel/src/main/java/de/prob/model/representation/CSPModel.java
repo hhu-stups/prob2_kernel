@@ -1,9 +1,9 @@
 package de.prob.model.representation;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 
-import com.github.krukow.clj_lang.PersistentHashMap;
 import com.google.inject.Inject;
 
 import de.prob.animator.command.AbstractCommand;
@@ -28,7 +28,7 @@ public class CSPModel extends AbstractModel {
 	}
 
 	public CSPModel(final StateSpaceProvider ssProvider, final OsSpecificInfo osInfo, String content, File modelFile, CSPElement mainComponent) {
-		super(ssProvider, PersistentHashMap.emptyMap(), new DependencyGraph(), modelFile);
+		super(ssProvider, Collections.emptyMap(), new DependencyGraph(), modelFile);
 		this.osInfo = osInfo;
 		this.content = content;
 		this.mainComponent = mainComponent;

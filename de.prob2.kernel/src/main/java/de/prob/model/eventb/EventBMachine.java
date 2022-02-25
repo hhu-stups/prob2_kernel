@@ -1,6 +1,7 @@
 package de.prob.model.eventb;
 
-import com.github.krukow.clj_lang.PersistentHashMap;
+import java.util.Collections;
+import java.util.Map;
 
 import de.prob.model.representation.AbstractElement;
 import de.prob.model.representation.BEvent;
@@ -12,12 +13,12 @@ import de.prob.model.representation.Variable;
 public class EventBMachine extends Machine {
 
 	public EventBMachine(final String name) {
-		super(name, PersistentHashMap.emptyMap());
+		this(name, Collections.emptyMap());
 	}
 
 	private EventBMachine(
 			final String name,
-			PersistentHashMap<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children) {
+			Map<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children) {
 		super(name, children);
 	}
 

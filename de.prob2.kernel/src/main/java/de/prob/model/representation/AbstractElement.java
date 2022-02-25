@@ -26,9 +26,14 @@ public abstract class AbstractElement extends GroovyObjectSupport {
 		this(PersistentHashMap.emptyMap());
 	}
 
-	public AbstractElement(
-			PersistentHashMap<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children) {
-		this.children = children;
+	public AbstractElement(Map<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children) {
+		if (children instanceof PersistentHashMap<?, ?>) {
+			// Avoid copying already created PersistentHashMap if possible.
+			this.children = (PersistentHashMap<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>>)children;
+		} else {
+			// If the map has a different type, copy/convert it to PersistentHashMap.
+			this.children = PersistentHashMap.create(children);
+		}
 	}
 
 	/**
