@@ -199,9 +199,6 @@ public class TheoryTranslator {
 
 	private void printRecursiveCase(final EventB inductiveArgument,
 			final RecursiveDefinitionCase c, final IPrologTermOutput pto) {
-		c.getExpression();
-		c.getFormula();
-
 		pto.openTerm("case");
 		pto.printAtom(inductiveArgument.getCode());
 		pto.openList();
