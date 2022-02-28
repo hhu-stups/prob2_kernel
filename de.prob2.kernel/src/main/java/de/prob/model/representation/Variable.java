@@ -21,6 +21,11 @@ public abstract class Variable extends AbstractFormulaElement implements Named {
 	}
 
 	@Override
+	public String getName() {
+		return expression.getCode();
+	}
+
+	@Override
 	public String toString() {
 		return UnicodeTranslator.toUnicode(expression.getCode());
 	}
