@@ -27,7 +27,7 @@ variables:
       - "**/ProB.log.*.log"
     reports:
       junit:
-        - "*/build/test-results/TEST-*.xml"
+        - "*/build/test-results/**/TEST-*.xml"
     when: always
 
 .docker-tests:
