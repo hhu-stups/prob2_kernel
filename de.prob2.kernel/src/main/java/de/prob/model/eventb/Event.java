@@ -108,6 +108,10 @@ public class Event extends BEvent {
 		return extended;
 	}
 
+	public Event withName(final String name) {
+		return new Event(name, type, extended, getChildren());
+	}
+
 	public Event changeType(EventType type) {
 		return new Event(name, type, extended, getChildren());
 	}
