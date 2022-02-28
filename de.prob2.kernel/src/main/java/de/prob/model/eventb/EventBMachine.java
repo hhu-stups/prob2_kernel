@@ -94,8 +94,4 @@ public class EventBMachine extends Machine {
 	public Event getEvent(String name) {
 		return getEvents().getElement(name);
 	}
-
-	public static EventBMachine createEventBMachine(EventBMachine bMachine){
-		return bMachine;
-	}
 }
