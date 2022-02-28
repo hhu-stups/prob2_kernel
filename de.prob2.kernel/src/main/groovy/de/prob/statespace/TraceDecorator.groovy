@@ -15,7 +15,7 @@ class TraceDecorator {
 			pred =  args[0]()
 		}
 		else {
-			pred = make_predicate(mch.getOperations().find {it.name == name}.getParameters(),args)
+			pred = make_predicate(mch.getEvents().find {it.name == name}.getParameters(),args)
 		}
 
 		this.delegate = delegate.invokeMethod(name, [pred])

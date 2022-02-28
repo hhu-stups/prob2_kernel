@@ -57,10 +57,12 @@ public class EventBMachine extends Machine {
 		return getChildrenOfType(Context.class);
 	}
 
+	@Override
 	public ModelElementList<EventBVariable> getVariables() {
 		return getChildrenAndCast(Variable.class, EventBVariable.class);
 	}
 
+	@Override
 	public ModelElementList<EventBInvariant> getInvariants() {
 		return getChildrenAndCast(Invariant.class, EventBInvariant.class);
 	}
@@ -83,15 +85,21 @@ public class EventBMachine extends Machine {
 		return getChildrenOfType(ProofObligation.class);
 	}
 
+	@Override
 	public ModelElementList<Event> getEvents() {
 		return getChildrenAndCast(BEvent.class, Event.class);
 	}
 
+	/**
+	 * @deprecated Use {@link #getEvents()} instead, which matches Event-B terminology.
+	 */
+	@Deprecated
 	public ModelElementList<Event> getOperations() {
-		return getChildrenAndCast(BEvent.class, Event.class);
+		return this.getEvents();
 	}
 
-	public Event getEvent(String name) {
-		return getEvents().getElement(name);
+	@Override
+	public Event getEvent(final String eventName) {
+		return getEvents().getElement(eventName);
 	}
 }

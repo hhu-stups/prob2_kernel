@@ -6,11 +6,11 @@ import java.util.Map;
 import de.prob.model.representation.AbstractElement;
 import de.prob.model.representation.Axiom;
 import de.prob.model.representation.Constant;
+import de.prob.model.representation.ConstantsComponent;
 import de.prob.model.representation.ModelElementList;
-import de.prob.model.representation.Named;
 import de.prob.model.representation.Set;
 
-public class Context extends AbstractElement implements Named {
+public class Context extends AbstractElement implements ConstantsComponent {
 
 	private final String name;
 
@@ -57,10 +57,12 @@ public class Context extends AbstractElement implements Named {
 		return getChildrenOfType(Context.class);
 	}
 
+	@Override
 	public ModelElementList<EventBConstant> getConstants() {
 		return getChildrenAndCast(Constant.class, EventBConstant.class);
 	}
 
+	@Override
 	public ModelElementList<EventBAxiom> getAxioms() {
 		return getChildrenAndCast(Axiom.class, EventBAxiom.class);
 	}
@@ -74,6 +76,7 @@ public class Context extends AbstractElement implements Named {
 		return axms;
 	}
 
+	@Override
 	public ModelElementList<Set> getSets() {
 		return getChildrenOfType(Set.class);
 	}
