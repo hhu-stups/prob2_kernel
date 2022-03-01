@@ -94,7 +94,9 @@ public class Api {
 	 * Shutdown the specified {@link ProBInstance} object.
 	 *
 	 * @param instance the instance to shut down
+	 * @deprecated Use {@link ProBInstance#shutdown()} instead.
 	 */
+	@Deprecated
 	public void shutdown(final ProBInstance instance) {
 		instance.shutdown();
 	}
