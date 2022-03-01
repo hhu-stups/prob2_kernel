@@ -19,7 +19,7 @@ public class ModelElementList<E> extends GroovyObjectSupport implements List<E> 
 		this(PersistentVector.emptyVector(), PersistentHashMap.emptyMap());
 	}
 
-	public ModelElementList(final List<E> elements) {
+	public ModelElementList(final Collection<? extends E> elements) {
 		PersistentVector<E> list = PersistentVector.emptyVector();
 		PersistentHashMap<String, E> keys = PersistentHashMap.emptyMap();
 		for (final E e : elements) {
