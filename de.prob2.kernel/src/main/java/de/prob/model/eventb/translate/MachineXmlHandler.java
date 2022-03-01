@@ -57,7 +57,6 @@ public class MachineXmlHandler extends DefaultHandler {
 	private final List<Context> sees = new ArrayList<>();
 	private final List<EventBMachine> refines = new ArrayList<>();
 	private final List<EventBInvariant> invariants = new ArrayList<>();
-	private final List<EventBInvariant> inheritedInvariants = new ArrayList<>();
 	private final List<EventBVariable> variables = new ArrayList<>();
 	private final List<Event> events = new ArrayList<>();
 	private final List<Variant> variant = new ArrayList<>();
@@ -67,7 +66,6 @@ public class MachineXmlHandler extends DefaultHandler {
 	private List<Context> extendedContexts;
 	private List<de.prob.model.representation.Set> sets;
 	private List<EventBAxiom> axioms;
-	private List<EventBAxiom> inheritedAxioms;
 	private List<EventBConstant> constants;
 	private boolean extractingContext = false;
 
@@ -329,8 +327,6 @@ public class MachineXmlHandler extends DefaultHandler {
 					theorem, typeEnv);
 			invariants.add(inv);
 			invariantCache.get(machine.getName()).put(internalName, inv);
-		} else {
-			inheritedInvariants.add(invariantCache.get(machineName).get(internalName));
 		}
 	}
 
@@ -376,8 +372,6 @@ public class MachineXmlHandler extends DefaultHandler {
 					typeEnv);
 			axioms.add(axiom);
 			axiomCache.get(internalContext.getName()).put(internalName, axiom);
-		} else {
-			inheritedAxioms.add(axiomCache.get(contextName).get(internalName));
 		}
 	}
 
@@ -410,15 +404,12 @@ public class MachineXmlHandler extends DefaultHandler {
 
 		extendedContexts = new ArrayList<>();
 		axioms = new ArrayList<>();
-		inheritedAxioms = new ArrayList<>();
 		sets = new ArrayList<>();
 		constants = new ArrayList<>();
 	}
 
 	private void endContextExtraction() throws SAXException {
-		ModelElementList<EventBAxiom> axms = new ModelElementList<>(inheritedAxioms);
-		axms = axms.addMultiple(axioms);
-		internalContext = internalContext.set(Axiom.class, axms);
+		internalContext = internalContext.set(Axiom.class, new ModelElementList<>(axioms));
 		internalContext = internalContext.set(Constant.class, new ModelElementList<>(constants));
 		internalContext = internalContext.set(Context.class, new ModelElementList<>(extendedContexts));
 		internalContext = internalContext.set(de.prob.model.representation.Set.class,
@@ -439,9 +430,7 @@ public class MachineXmlHandler extends DefaultHandler {
 	@Override
 	public void endDocument() throws SAXException {
 		machine = machine.set(Event.class, new ModelElementList<>(events));
-		ModelElementList<EventBInvariant> invs = new ModelElementList<>(inheritedInvariants);
-		invs = invs.addMultiple(invariants);
-		machine = machine.set(Invariant.class, invs);
+		machine = machine.set(Invariant.class, new ModelElementList<>(invariants));
 		machine = machine.set(Machine.class, new ModelElementList<>(refines));
 		machine = machine.set(Context.class, new ModelElementList<>(sees));
 		machine = machine.set(Variable.class, new ModelElementList<>(variables));
