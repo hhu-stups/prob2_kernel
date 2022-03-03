@@ -7,6 +7,7 @@ import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import de.prob.animator.IAnimator;
+import de.prob.animator.IConsoleOutputListener;
 import de.prob.animator.IWarningListener;
 import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.command.CheckIfStateIdValidCommand;
@@ -941,5 +942,15 @@ public class StateSpace implements IAnimator {
 	@Override
 	public void removeWarningListener(final IWarningListener listener) {
 		animator.removeWarningListener(listener);
+	}
+
+	@Override
+	public void addConsoleOutputListener(final IConsoleOutputListener listener) {
+		animator.addConsoleOutputListener(listener);
+	}
+
+	@Override
+	public void removeConsoleOutputListener(final IConsoleOutputListener listener) {
+		animator.removeConsoleOutputListener(listener);
 	}
 }

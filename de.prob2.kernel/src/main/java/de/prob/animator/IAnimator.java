@@ -127,4 +127,7 @@ public interface IAnimator {
 
 	void addWarningListener(final IWarningListener listener);
 	void removeWarningListener(final IWarningListener listener);
+
+	void addConsoleOutputListener(final IConsoleOutputListener listener);
+	void removeConsoleOutputListener(final IConsoleOutputListener listener);
 }

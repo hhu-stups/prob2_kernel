@@ -2,9 +2,12 @@ package de.prob.cli;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import com.google.common.base.MoreObjects;
 
+import de.prob.animator.IConsoleOutputListener;
 import de.prob.exception.CliError;
 
 import org.slf4j.Logger;
@@ -23,19 +26,35 @@ public class ProBInstance {
 
 	private String[] interruptCommand;
 
+	private final Collection<IConsoleOutputListener> consoleOutputListeners;
+
 	public ProBInstance(final Process process, final BufferedReader stream, final Long userInterruptReference,
 			final ProBConnection connection, final String home, final OsSpecificInfo osInfo) {
 		this.process = process;
 		this.connection = connection;
 		final String command = home + osInfo.getUserInterruptCmd();
 		interruptCommand = new String[] { command, Long.toString(userInterruptReference) };
+		this.consoleOutputListeners = new ArrayList<>();
 		thread = makeOutputPublisher(stream);
 		thread.start();
 	}
 
+	private void logConsoleLine(final String line) {
+		logger.info("{}\u001b[0m", line);
+		this.consoleOutputListeners.forEach(l -> l.lineReceived(line));
+	}
+
 	private Thread makeOutputPublisher(final BufferedReader stream) {
-		return new Thread(new ConsoleListener(this, stream, logger),
+		return new Thread(new ConsoleListener(this, stream, this::logConsoleLine),
 				String.format("ProB Output Logger for instance %x", this.hashCode()));
+	}
+
+	public void addConsoleOutputListener(final IConsoleOutputListener listener) {
+		this.consoleOutputListeners.add(listener);
+	}
+
+	public void removeConsoleOutputListener(final IConsoleOutputListener listener) {
+		this.consoleOutputListeners.remove(listener);
 	}
 
 	public void shutdown() {

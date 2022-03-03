@@ -165,4 +165,14 @@ class AnimatorImpl implements IAnimator {
 	public void removeWarningListener(final IWarningListener listener) {
 		this.warningListeners.remove(listener);
 	}
+
+	@Override
+	public void addConsoleOutputListener(final IConsoleOutputListener listener) {
+		this.cli.addConsoleOutputListener(listener);
+	}
+
+	@Override
+	public void removeConsoleOutputListener(final IConsoleOutputListener listener) {
+		this.cli.removeConsoleOutputListener(listener);
+	}
 }
