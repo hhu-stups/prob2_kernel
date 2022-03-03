@@ -14,7 +14,7 @@ variables:
 
 .tests:
   stage: test
-  script: ./de.prob2.kernel/gradlew ${GRADLE_OPTIONS} -b de.prob2.kernel/build.gradle clean check jacocoTestReport
+  script: ./gradlew ${GRADLE_OPTIONS} clean check jacocoTestReport
   before_script:
     - export GRADLE_USER_HOME=`pwd`/.gradle
   artifacts:
@@ -62,7 +62,7 @@ tests:macos:
 tests:windows64:
   extends: .tests
   before_script: []
-  script: de.prob2.kernel\gradlew.bat %GRADLE_OPTIONS% -b de.prob2.kernel\build.gradle clean check jacocoTestReport
+  script: .\gradlew.bat %GRADLE_OPTIONS% clean check jacocoTestReport
   tags:
     - prob
     - win64
@@ -75,9 +75,9 @@ publish:
 
     - openssl aes-256-cbc -pass "env:ENCRYPTION_PASSWORD" -d -a -md md5 -in secring.gpg.enc       -out secring.gpg 
     - openssl aes-256-cbc -pass "env:ENCRYPTION_PASSWORD" -d -a -md md5 -in pubring.gpg.enc       -out pubring.gpg
-    - openssl aes-256-cbc -pass "env:ENCRYPTION_PASSWORD" -d -a -md md5 -in gradle.properties.enc -out de.prob2.kernel/gradle.properties
+    - openssl aes-256-cbc -pass "env:ENCRYPTION_PASSWORD" -d -a -md md5 -in gradle.properties.enc -out gradle.properties
   script:
-    - ./de.prob2.kernel/gradlew ${GRADLE_OPTIONS} -b de.prob2.kernel/build.gradle publish
+    - ./gradlew ${GRADLE_OPTIONS} publish
   only: 
     - master@stups/prob/prob2_kernel
     - develop@stups/prob/prob2_kernel

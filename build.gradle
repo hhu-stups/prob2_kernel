@@ -132,9 +132,21 @@ if (isSnapshot) {
 }
 
 
-// in order to compile the mix of java and groovy in this project we compile all files using the groovy compiler
-sourceSets.main.groovy.srcDirs = ['src/main/groovy', 'src/main/java'] // i.e. include the 'java' dir as groovy source
-sourceSets.main.java.srcDirs = [] // i.e. there's no stand-alone java source
+// Adjust all source directory paths of the root project to point into the de.prob2.kernel subdirectory.
+sourceSets {
+	main {
+		// in order to compile the mix of java and groovy in this project we compile all files using the groovy compiler
+		groovy.srcDirs = ['de.prob2.kernel/src/main/groovy', 'de.prob2.kernel/src/main/java'] // i.e. include the 'java' dir as groovy source
+		java.srcDirs = [] // i.e. there's no stand-alone java source
+		resources.srcDirs = ['de.prob2.kernel/src/main/resources']
+	}
+	
+	test {
+		groovy.srcDirs = ['de.prob2.kernel/src/test/groovy']
+		java.srcDirs = ['de.prob2.kernel/src/test/java']
+		resources.srcDirs = ['de.prob2.kernel/src/test/resources']
+	}
+}
 
 
 dependencies {
@@ -259,9 +271,13 @@ wrapper {
 	gradleVersion = "7.4"
 }
 
+tasks.withType(Test).configureEach {
+	workingDir = "de.prob2.kernel"
+}
+
 task groovyIntegrationTests(type: JavaExec) {
 	mainClass = "de.prob2.commandline.CommandLineMain"
-	inputs.dir("groovyTests")
+	inputs.dir("de.prob2.kernel/groovyTests")
 	classpath = project(":de.prob2.commandline").sourceSets.main.runtimeClasspath
 	args = ['-script', 'groovyTests']
 }

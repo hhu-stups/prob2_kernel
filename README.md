@@ -1,13 +1,16 @@
 # ProB 2.0
 
-**IMPORTANT:** The layout of the repository has changed! The Eclipse/Rodin plugin was moved to a separate repository: http://github.com/bendisposto/prob2-plugin. This repository only contains the Kernel of ProB 2.0.
+The sourcecode of the current ProB2 Java API release is located at https://gitlab.cs.uni-duesseldorf.de/stups/prob/prob2_kernel
+and mirrored to https://github.com/hhu-stups/prob2_kernel
 
-The last version before the restructuring is tagged as preRestructure.
+**Note:** The Gradle build files have been moved recently from the "de.prob2.kernel" subdirectory into the repository root.
+You may need to update your scripts or IDE projects.
 
 The project is intended for internal usage, do not rely on any of the features or interfaces in this project.
 
-The sourcecode of the current ProB2 Java API release is located at https://gitlab.cs.uni-duesseldorf.de/stups/prob/prob2_kernel
-and mirrored to https://github.com/hhu-stups/prob2_kernel
+This repository only contains the Kernel of ProB 2.0.
+The Eclipse/Rodin plugin was moved to a separate repository: https://github.com/hhu-stups/prob-rodinplugin.
+The last version before the restructuring is tagged as preRestructure.
 
 ## Documentation
 
@@ -29,12 +32,11 @@ to ensure that the expected Gradle version is used.
 Alternatively you can install a compatible Gradle version yourself,
 e. g. via your package manager.
 
-Note that the Gradle project is located in the subdirectory "de.prob2.kernel".
-You need to `cd` into this directory before running Gradle,
-or the build will not work.
-If you are using an IDE,
-the Gradle project in the subdirectory might be detected automatically,
-otherwise you need to select the "de.prob2.kernel" directory when importing the project.
+**Note:** the source code is found in the subdirectory "de.prob2.kernel".
+If your IDE does not recognize this location automatically,
+make sure that you have imported/linked the Gradle project correctly.
+The Gradle project files are located in the repository root,
+*not* in the "de.prob2.kernel" directory!
 
 To run the test suite: `./gradlew check`
 
