@@ -19,15 +19,15 @@ variables:
     - export GRADLE_USER_HOME=`pwd`/.gradle
   artifacts:
     paths:
-      - "*/build/jacoco"
-      - "*/build/jacocoHtml"
-      - "*/build/reports"
-      - "*/build/test-results"
+      - "build/jacoco"
+      - "build/jacocoHtml"
+      - "build/reports"
+      - "build/test-results"
       - "**/prob_log.txt"
       - "**/ProB.log.*.log"
     reports:
       junit:
-        - "*/build/test-results/**/TEST-*.xml"
+        - "build/test-results/**/TEST-*.xml"
     when: always
 
 .docker-tests:

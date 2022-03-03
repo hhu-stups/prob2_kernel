@@ -279,7 +279,7 @@ task groovyIntegrationTests(type: JavaExec) {
 	mainClass = "de.prob2.commandline.CommandLineMain"
 	inputs.dir("de.prob2.kernel/groovyTests")
 	classpath = project(":de.prob2.commandline").sourceSets.main.runtimeClasspath
-	args = ['-script', 'groovyTests']
+	args = ['-script', 'de.prob2.kernel/groovyTests']
 }
 
 // Run a single groovy Testcase
