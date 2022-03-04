@@ -521,14 +521,13 @@ public class TheoryExtractor extends DefaultHandler {
 
 	@Override
 	public void endDocument() {
-		theory = theory.set(DataType.class, dataTypes);
-		theory = theory.set(Theory.class, imported);
-		theory = theory.set(Operator.class, operators);
-		theory = theory.set(AxiomaticDefinitionBlock.class,
-				axiomaticDefinitionsBlocks);
-		theory = theory.set(ProofRulesBlock.class, proofRules);
-		theory = theory.set(EventBAxiom.class, theorems);
-		theory = theory.set(Type.class, typeParameters);
+		theory = theory.withDataTypes(dataTypes);
+		theory = theory.withImported(imported);
+		theory = theory.withOperators(operators);
+		theory = theory.withAxiomaticDefinitionBlocks(axiomaticDefinitionsBlocks);
+		theory = theory.withProofRules(proofRules);
+		theory = theory.withTheorems(theorems);
+		theory = theory.withTypeParameters(typeParameters);
 
 		theoryMap.put(project + File.separator + name, theory);
 		theory = theory.setTypeEnvironment(typeEnv);
