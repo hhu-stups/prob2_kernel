@@ -148,14 +148,13 @@ public class ModelToXML {
 	}
 
 	def extractContext(Context c, String directoryPath) {
-		String comment = c.getChildrenOfType(ElementComment.class).collect { it.getComment() }.iterator().join("\n")
 		String fileName = directoryPath + File.separator + c.getName() + ".buc"
 		new File(fileName).withWriter("UTF-8") { writer ->
 			MarkupBuilder xml = new MarkupBuilder(writer);
 
 			xml.mkp.xmlDeclaration(version: "1.0", encoding: "UTF-8", standalone: "no")
 			xml.'org.eventb.core.contextFile'('org.eventb.core.configuration': "org.eventb.core.fwd",
-			version:"3", 'org.eventb.core.comment': comment) {
+			version:"3", 'org.eventb.core.comment': c.comment ?: "") {
 				c.getExtends().each {
 					xml.'org.eventb.core.extendsContext'(name: genName(),
 					'org.eventb.core.target': it.getName())
