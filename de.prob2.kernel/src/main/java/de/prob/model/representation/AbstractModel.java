@@ -120,6 +120,12 @@ public abstract class AbstractModel extends AbstractElement {
 		return stateSpaceProvider;
 	}
 
+	/**
+	 * @deprecated This method is unsafe and can execute arbitrary Groovy code, depending on the argument.
+	 *     To look up a component by name, use {@link #getComponent(String)} instead.
+	 *     To look up sub-elements of a component, use {@link #getChildrenOfType(Class)} and {@link ModelElementList#getElement(String)}.
+	 */
+	@Deprecated
 	public AbstractElement get(List<String> path) {
 		if (path.isEmpty()) {
 			return null;
