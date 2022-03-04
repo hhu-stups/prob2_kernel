@@ -12,7 +12,6 @@ import de.prob.model.eventb.EventBMachine;
 import de.prob.model.eventb.EventBModel;
 import de.prob.model.eventb.EventBVariable;
 import de.prob.model.eventb.ProofObligation;
-import de.prob.model.eventb.theory.Theory;
 import de.prob.model.representation.AbstractElement;
 import de.prob.model.representation.Machine;
 import de.prob.prolog.output.IPrologTermOutput;
@@ -39,8 +38,7 @@ public class EventBModelTranslator {
 			proofObligations.addAll(context.getProofs());
 		}
 
-		theoryTranslator = new TheoryTranslator(
-				model.getChildrenOfType(Theory.class));
+		theoryTranslator = new TheoryTranslator(model.getTheories());
 	}
 
 	public List<EventBMachine> extractMachineHierarchy(
@@ -160,7 +158,7 @@ public class EventBModelTranslator {
 	}
 
 	private void printPragmas(final IPrologTermOutput pto) {
-		for (Machine machine : model.getChildrenOfType(Machine.class)) {
+		for (Machine machine : model.getMachines()) {
 			EventBMachine ebM = (EventBMachine) machine;
 			for (EventBVariable var : ebM.getVariables()) {
 				if (var.hasUnit()) {
@@ -176,7 +174,7 @@ public class EventBModelTranslator {
 			}
 		}
 
-		for (Context context : model.getChildrenOfType(Context.class)) {
+		for (Context context : model.getContexts()) {
 			for (EventBConstant constant : context.getConstants()) {
 				if (constant.hasUnit()) {
 					pto.openTerm("pragma");

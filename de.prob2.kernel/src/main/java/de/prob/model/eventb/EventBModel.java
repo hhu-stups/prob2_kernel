@@ -7,6 +7,7 @@ import de.prob.animator.domainobjects.EvaluationException;
 import de.prob.animator.domainobjects.EventB;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
+import de.prob.model.eventb.theory.Theory;
 import de.prob.model.eventb.translate.EventBModelTranslator;
 import de.prob.model.representation.*;
 import de.prob.scripting.StateSpaceProvider;
@@ -34,12 +35,28 @@ public class EventBModel extends AbstractModel {
 		return getChildrenAndCast(Machine.class, EventBMachine.class);
 	}
 
+	public EventBModel withMachines(final ModelElementList<EventBMachine> machines) {
+		return this.set(Machine.class, machines);
+	}
+
 	public ModelElementList<Context> getContexts() {
 		return getChildrenOfType(Context.class);
 	}
 
+	public EventBModel withContexts(final ModelElementList<Context> contexts) {
+		return this.set(Context.class, contexts);
+	}
+
 	public EventBModel setModelFile(final File modelFile) {
 		return new EventBModel(getStateSpaceProvider(), getChildren(), getGraph(), modelFile);
+	}
+
+	public ModelElementList<Theory> getTheories() {
+		return this.getChildrenOfType(Theory.class);
+	}
+
+	public EventBModel withTheories(final ModelElementList<Theory> theories) {
+		return this.set(Theory.class, theories);
 	}
 
 	@Override
@@ -72,13 +89,11 @@ public class EventBModel extends AbstractModel {
 	}
 
 	public EventBModel addMachine(final EventBMachine machine) {
-		ModelElementList<Machine> list = getChildrenOfType(Machine.class);
-		return new EventBModel(getStateSpaceProvider(), assoc(Machine.class, list.addElement(machine)), getGraph().addVertex(machine.getName()), getModelFile());
+		return new EventBModel(getStateSpaceProvider(), assoc(Machine.class, getMachines().addElement(machine)), getGraph().addVertex(machine.getName()), getModelFile());
 	}
 
 	public EventBModel addContext(final Context context) {
-		ModelElementList<Context> list = getChildrenOfType(Context.class);
-		return new EventBModel(getStateSpaceProvider(), assoc(Context.class, list.addElement(context)), getGraph().addVertex(context.getName()), getModelFile());
+		return new EventBModel(getStateSpaceProvider(), assoc(Context.class, getContexts().addElement(context)), getGraph().addVertex(context.getName()), getModelFile());
 	}
 
 	public EventBModel addRelationship(final String element1, final String element2, final DependencyGraph.ERefType relationship) {
@@ -132,20 +147,20 @@ public class EventBModel extends AbstractModel {
 
 	@Override
 	public AbstractElement getComponent(String name) {
-		final AbstractElement e = getChildrenOfType(Context.class).getElement(name);
+		final AbstractElement e = getContexts().getElement(name);
 		if (e == null) {
-			return getChildrenOfType(Machine.class).getElement(name);
+			return getMachines().getElement(name);
 		} else {
 			return e;
 		}
 	}
 
 	public EventBMachine getMachine(String name) {
-		return (EventBMachine) getChildrenOfType(Machine.class).getElement(name);
+		return getMachines().getElement(name);
 	}
 
 	public Context getContext(String name) {
-		return getChildrenOfType(Context.class).getElement(name);
+		return getContexts().getElement(name);
 	}
 
 	@Override

@@ -24,7 +24,7 @@ public class ModelToXML {
 		def directoryPath = path + File.separator + name
 		def dir = createProjectFile(name, directoryPath)
 
-		extractTheories(model.getChildrenOfType(Theory.class), directoryPath)
+		extractTheories(model.theories, directoryPath)
 
 		model.getMachines().each { m ->
 			extractMachine(m, directoryPath)
