@@ -4,12 +4,11 @@ import com.google.inject.Injector;
 import de.be4.classicalb.core.parser.BParser;
 import de.be4.classicalb.core.parser.exceptions.BCompoundException;
 import de.be4.classicalb.core.parser.node.Start;
-import de.prob.animator.ReusableAnimator;
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.TraceCheckerUtils;
 import de.prob.check.tracereplay.check.traceConstruction.AdvancedTraceConstructor;
 import de.prob.check.tracereplay.check.traceConstruction.TraceConstructionError;
-import de.prob.scripting.ClassicalBFactory;
+import de.prob.scripting.Api;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
 
@@ -29,19 +28,6 @@ public class HorizontalTraceRefiner extends AbstractTraceRefinement {
 	public HorizontalTraceRefiner(Injector injector, List<PersistentTransition> transitionList, Path adaptFrom, Path adaptTo) {
 		super(injector, transitionList, adaptFrom);
 		this.adaptTo = adaptTo;
-	}
-
-	/**
-	 * Loads an EventB File into a new StateSpace
-	 * @return the file loaded into the state space
-	 * @throws IOException file reading went wrong
-	 */
-	private StateSpace loadClassicalBFileAsStateSpace() throws IOException {
-		ReusableAnimator animator = injector.getInstance(ReusableAnimator.class);
-		StateSpace stateSpace = animator.createStateSpace();
-		ClassicalBFactory classicalBFactory = injector.getInstance(ClassicalBFactory.class);
-		classicalBFactory.extract(adaptFrom.toString()).loadIntoStateSpace(stateSpace);
-		return stateSpace;
 	}
 
 	private String removeFileExtension(Path path){
@@ -65,7 +51,7 @@ public class HorizontalTraceRefiner extends AbstractTraceRefinement {
 
 		StateSpace stateSpace = TraceCheckerUtils.createStateSpace(adaptTo.toString(), injector);
 
-		StateSpace stateSpace2 = loadClassicalBFileAsStateSpace();
+		StateSpace stateSpace2 = injector.getInstance(Api.class).b_load(adaptFrom.toString());
 		Map<String, OperationsFinder.RenamingContainer> promotedOperations =
 				handlePromotedOperations(operationsFinder.getPromoted(), removeFileExtension(adaptFrom), new ArrayList<>(stateSpace2.getLoadedMachine().getOperations().keySet()), operationsFinder.getExtendedMachines(), operationsFinder.getIncludedImportedMachines());
 

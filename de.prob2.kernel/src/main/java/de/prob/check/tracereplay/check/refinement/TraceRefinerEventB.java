@@ -1,12 +1,12 @@
 package de.prob.check.tracereplay.check.refinement;
 
 import com.google.inject.Injector;
-import de.prob.animator.ReusableAnimator;
+
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.traceConstruction.AdvancedTraceConstructor;
 import de.prob.check.tracereplay.check.traceConstruction.TraceConstructionError;
 import de.prob.model.eventb.EventBModel;
-import de.prob.scripting.EventBFactory;
+import de.prob.scripting.Api;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
 
@@ -26,7 +26,7 @@ public class TraceRefinerEventB extends AbstractTraceRefinement {
 
 	public TraceRefinerEventB(Injector injector, List<PersistentTransition> transitionList, Path adaptFrom) throws IOException {
 		super(injector, transitionList, adaptFrom);
-		this.stateSpace = loadEventBFileAsStateSpace();
+		this.stateSpace = injector.getInstance(Api.class).eventb_load(adaptFrom.toString());
 	}
 
 
@@ -63,20 +63,4 @@ public class TraceRefinerEventB extends AbstractTraceRefinement {
 
 		return PersistentTransition.createFromList(resultRaw);
 	}
-
-
-	/**
-	 * Loads an EventB File into a new StateSpace
-	 * @return the file loaded into the state space
-	 * @throws IOException file reading went wrong
-	 */
-	private StateSpace loadEventBFileAsStateSpace() throws IOException {
-		ReusableAnimator animator = injector.getInstance(ReusableAnimator.class);
-		StateSpace stateSpace = animator.createStateSpace();
-		EventBFactory eventBFactory = injector.getInstance(EventBFactory.class);
-		eventBFactory.extract(adaptFrom.toString()).loadIntoStateSpace(stateSpace);
-		return stateSpace;
-	}
-
-
 }
