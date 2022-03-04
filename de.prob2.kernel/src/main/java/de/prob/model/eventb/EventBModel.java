@@ -110,12 +110,6 @@ public class EventBModel extends AbstractModel {
 	}
 
 	@Override
-	public DependencyGraph.ERefType getRelationship(final String from, final String to) {
-		final List<DependencyGraph.ERefType> relationships = getGraph().getRelationships(from, to);
-		return relationships.isEmpty() ? null : relationships.get(0);
-	}
-
-	@Override
 	public FormalismType getFormalismType() {
 		return FormalismType.B;
 	}
