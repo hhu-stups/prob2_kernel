@@ -30,8 +30,8 @@ public class EventBModel extends AbstractModel {
 		super(stateSpaceProvider, children, graph, modelFile);
 	}
 
-	public ModelElementList<Machine> getMachines() {
-		return getChildrenOfType(Machine.class);
+	public ModelElementList<EventBMachine> getMachines() {
+		return getChildrenAndCast(Machine.class, EventBMachine.class);
 	}
 
 	public ModelElementList<Context> getContexts() {
@@ -91,12 +91,12 @@ public class EventBModel extends AbstractModel {
 
 	public EventBModel calculateDependencies() {
 		DependencyGraph graph = new DependencyGraph();
-		for (final Machine m : getMachines()) {
+		for (final EventBMachine m : getMachines()) {
 			graph = graph.addVertex(m.getName());
-			for (final EventBMachine m2 : ((EventBMachine)m).getRefines()) {
+			for (final EventBMachine m2 : m.getRefines()) {
 				graph = graph.addEdge(m.getName(), m2.getName(), DependencyGraph.ERefType.REFINES);
 			}
-			for (final Context c : ((EventBMachine)m).getSees()) {
+			for (final Context c : m.getSees()) {
 				graph = graph.addEdge(m.getName(), c.getName(), DependencyGraph.ERefType.SEES);
 			}
 		}
@@ -165,8 +165,8 @@ public class EventBModel extends AbstractModel {
 	/**
 	 * @return the most concrete machine
 	 */
-	public Machine getTopLevelMachine(){
-		return getChildrenOfType(Machine.class).get(getGraph().getStart());
+	public EventBMachine getTopLevelMachine(){
+		return getMachines().get(getGraph().getStart());
 	}
 
 	/**
