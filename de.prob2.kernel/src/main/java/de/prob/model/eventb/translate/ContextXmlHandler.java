@@ -13,15 +13,11 @@ import de.prob.model.eventb.Context;
 import de.prob.model.eventb.EventBAxiom;
 import de.prob.model.eventb.EventBConstant;
 import de.prob.model.eventb.EventBModel;
-import de.prob.model.eventb.ProofObligation;
 import de.prob.model.representation.AbstractElement;
-import de.prob.model.representation.Axiom;
-import de.prob.model.representation.Constant;
 import de.prob.model.representation.DependencyGraph.ERefType;
 import de.prob.model.representation.ModelElementList;
 
 import org.eventb.core.ast.extension.IFormulaExtension;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -194,14 +190,14 @@ public class ContextXmlHandler extends DefaultHandler {
 	private void endInternalContextExtraction() throws SAXException {
 		ModelElementList<EventBAxiom> axms = new ModelElementList<>(internalInheritedAxioms);
 		axms = axms.addMultiple(internalAxioms);
-		internalContext = internalContext.set(Axiom.class, axms);
-		internalContext = internalContext.set(Constant.class, new ModelElementList<>(internalConstants));
-		internalContext = internalContext.set(Context.class, new ModelElementList<>(internalExtends));
-		internalContext = internalContext.set(de.prob.model.representation.Set.class, new ModelElementList<>(internalSets));
+		internalContext = internalContext.withAxioms(axms);
+		internalContext = internalContext.withConstants(new ModelElementList<>(internalConstants));
+		internalContext = internalContext.withExtends(new ModelElementList<>(internalExtends));
+		internalContext = internalContext.withSets(new ModelElementList<>(internalSets));
 
 		ProofExtractor extractor = new ProofExtractor(internalContext,
 				directoryPath + File.separatorChar + internalContext.getName());
-		internalContext = internalContext.set(ProofObligation.class, extractor.getProofs());
+		internalContext = internalContext.withProofs(extractor.getProofs());
 		if (extendsNames.contains(internalContext.getName())) {
 			extendedContexts.add(internalContext);
 		}
@@ -214,14 +210,14 @@ public class ContextXmlHandler extends DefaultHandler {
 	public void endDocument() throws SAXException {
 		ModelElementList<EventBAxiom> axms = new ModelElementList<>(inheritedAxioms);
 		axms = axms.addMultiple(axioms);
-		context = context.set(Axiom.class, axms);
-		context = context.set(Constant.class, new ModelElementList<>(constants));
-		context = context.set(Context.class, new ModelElementList<>(extendedContexts));
-		context = context.set(de.prob.model.representation.Set.class, new ModelElementList<>(sets));
+		context = context.withAxioms(axms);
+		context = context.withConstants(new ModelElementList<>(constants));
+		context = context.withExtends(new ModelElementList<>(extendedContexts));
+		context = context.withSets(new ModelElementList<>(sets));
 
 		ProofExtractor extractor = new ProofExtractor(context, directoryPath
 				+ File.separatorChar + context.getName());
-		context = context.set(ProofObligation.class, extractor.getProofs());
+		context = context.withProofs(extractor.getProofs());
 
 		model = model.addContext(context);
 	}

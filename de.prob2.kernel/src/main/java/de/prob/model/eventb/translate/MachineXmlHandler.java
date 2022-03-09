@@ -253,11 +253,11 @@ public class MachineXmlHandler extends DefaultHandler {
 	}
 
 	private void endEventExtraction() {
-		event = event.set(Action.class, new ModelElementList<>(actions));
-		event = event.set(Guard.class, new ModelElementList<>(guards));
-		event = event.set(EventParameter.class, new ModelElementList<>(parameters));
-		event = event.set(Event.class, new ModelElementList<>(refinesForEvent));
-		event = event.set(Witness.class, new ModelElementList<>(witnesses));
+		event = event.withActions(new ModelElementList<>(actions));
+		event = event.withGuards(new ModelElementList<>(guards));
+		event = event.withParameters(new ModelElementList<>(parameters));
+		event = event.withRefinesEvent(refinesForEvent.isEmpty() ? null : refinesForEvent.get(0)); // TODO Throw an error if more than one event is refined?
+		event = event.withWitnesses(new ModelElementList<>(witnesses));
 
 		events.add(event);
 		extractingEvent = false;
@@ -409,15 +409,14 @@ public class MachineXmlHandler extends DefaultHandler {
 	}
 
 	private void endContextExtraction() throws SAXException {
-		internalContext = internalContext.set(Axiom.class, new ModelElementList<>(axioms));
-		internalContext = internalContext.set(Constant.class, new ModelElementList<>(constants));
-		internalContext = internalContext.set(Context.class, new ModelElementList<>(extendedContexts));
-		internalContext = internalContext.set(de.prob.model.representation.Set.class,
-			new ModelElementList<>(sets));
+		internalContext = internalContext.withAxioms(new ModelElementList<>(axioms));
+		internalContext = internalContext.withConstants(new ModelElementList<>(constants));
+		internalContext = internalContext.withExtends(new ModelElementList<>(extendedContexts));
+		internalContext = internalContext.withSets(new ModelElementList<>(sets));
 
 		ProofExtractor extractor = new ProofExtractor(internalContext,
 				directoryPath + File.separatorChar + internalContext.getName());
-		internalContext = internalContext.set(ProofObligation.class, extractor.getProofs());
+		internalContext = internalContext.withProofs(extractor.getProofs());
 
 		model = model.addContext(internalContext);
 		if (seesNames.contains(internalContext.getName())) {
@@ -429,17 +428,16 @@ public class MachineXmlHandler extends DefaultHandler {
 
 	@Override
 	public void endDocument() throws SAXException {
-		machine = machine.set(Event.class, new ModelElementList<>(events));
-		machine = machine.set(Invariant.class, new ModelElementList<>(invariants));
-		machine = machine.set(Machine.class, new ModelElementList<>(refines));
-		machine = machine.set(Context.class, new ModelElementList<>(sees));
-		machine = machine.set(Variable.class, new ModelElementList<>(variables));
-		machine = machine.set(Variant.class, new ModelElementList<>(variant));
-		machine = machine.set(BEvent.class, new ModelElementList<>(events));
+		machine = machine.withInvariants(new ModelElementList<>(invariants));
+		machine = machine.withRefinesMachine(refines.isEmpty() ? null : refines.get(0)); // TODO Throw an error if more than one machine is refined?
+		machine = machine.withSees(new ModelElementList<>(sees));
+		machine = machine.withVariables(new ModelElementList<>(variables));
+		machine = machine.withVariant(variant.isEmpty() ? null : variant.get(0)); // TODO Throw an error if there is more than one variant?
+		machine = machine.withEvents(new ModelElementList<>(events));
 
 		ProofExtractor proofExtractor = new ProofExtractor(machine,
 				directoryPath + File.separatorChar + machine.getName());
-		machine = machine.set(ProofObligation.class, proofExtractor.getProofs());
+		machine = machine.withProofs(proofExtractor.getProofs());
 		model = model.addMachine(machine);
 
 	}

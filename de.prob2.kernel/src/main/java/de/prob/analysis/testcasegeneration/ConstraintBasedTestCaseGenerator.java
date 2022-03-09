@@ -245,7 +245,7 @@ public class ConstraintBasedTestCaseGenerator {
 	private List<String> getAllOperationNames() {
 		Machine machine = (Machine) stateSpace.getMainComponent();
 		List<String> operations = new ArrayList<>();
-		for (BEvent operation : machine.getChildrenOfType(BEvent.class)) {
+		for (BEvent operation : machine.getEvents()) {
 			if (!infeasibleOperations.contains(operation.getName())) {
 				operations.add(operation.getName());
 			}
