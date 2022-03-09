@@ -28,7 +28,7 @@ public class ElementComment extends AbstractElement {
 	 */
 	public static String getCommentTextFromElement(final AbstractElement element) {
 		final ModelElementList<ElementComment> comments = element.getChildrenOfType(ElementComment.class);
-		if (comments == null) {
+		if (comments.isEmpty()) {
 			return null;
 		} else {
 			return comments.stream()
