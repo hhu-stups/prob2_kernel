@@ -1,13 +1,13 @@
 package de.prob.model.eventb.translate
 
-import groovy.xml.MarkupBuilder
 import de.prob.model.eventb.Context
 import de.prob.model.eventb.Event
 import de.prob.model.eventb.EventBMachine
 import de.prob.model.eventb.EventBModel
 import de.prob.model.eventb.theory.Theory
-import de.prob.model.representation.ElementComment
 import de.prob.model.representation.ModelElementList
+
+import groovy.xml.MarkupBuilder
 
 public class ModelToXML {
 
@@ -105,18 +105,14 @@ public class ModelToXML {
 				: e.type == Event.EventType.CONVERGENT ? "1"
 				: "2"
 		def extended = e.isExtended()
-		String comment = e.getChildrenOfType(ElementComment.class).collect { it.getComment() }.iterator().join("\n")
 		xml.'org.eventb.core.event'(name: genName(),
 		'org.eventb.core.convergence': convergence,
 		'org.eventb.core.extended': extended,
 		'org.eventb.core.label': e.getName(),
-		'org.eventb.core.comment': comment
+		'org.eventb.core.comment': e.comment
 		) {
-			if (!e.getName().equals("INITIALISATION")) {
-				e.getChildrenOfType(Event.class).each {
-					xml.'org.eventb.core.refinesEvent'(name: genName(),
-					'org.eventb.core.target': it.getName())
-				}
+			if (!e.getName().equals("INITIALISATION") && e.refinesEvent != null) {
+				xml.'org.eventb.core.refinesEvent'(name: genName(), 'org.eventb.core.target': e.refinesEvent.name)
 			}
 			e.parameters.each {
 				xml.'org.eventb.core.parameter'(name: genName(),

@@ -6,6 +6,7 @@ import java.util.Map;
 import de.prob.model.representation.AbstractElement;
 import de.prob.model.representation.Action;
 import de.prob.model.representation.BEvent;
+import de.prob.model.representation.ElementComment;
 import de.prob.model.representation.Guard;
 import de.prob.model.representation.ModelElementList;
 
@@ -57,6 +58,21 @@ public class Event extends BEvent {
 				list.replaceElement(oldElement, newElement)));
 	}
 
+	public String getComment() {
+		return ElementComment.getCommentTextFromElement(this);
+	}
+
+	public Event withComment(final String comment) {
+		return this.set(ElementComment.class, new ModelElementList<>(Collections.singletonList(new ElementComment(comment))));
+	}
+
+	/**
+	 * @deprecated Use {@link #getRefinesEvent()} instead. An Event-B event cannot refine more than one event.
+	 */
+	public ModelElementList<Event> getRefines() {
+		return getChildrenOfType(Event.class);
+	}
+
 	/**
 	 * The {@link Event} saves a reference to the name of the refined events.
 	 * However, this is just a reference, and in order to retrieve the actual
@@ -64,12 +80,31 @@ public class Event extends BEvent {
 	 *
 	 * @return the event that this event refines, if any. Otherwise null.
 	 */
-	public ModelElementList<Event> getRefines() {
-		return getChildrenOfType(Event.class);
+	public Event getRefinesEvent() {
+		final ModelElementList<Event> refines = getChildrenOfType(Event.class);
+		if (refines.isEmpty()) {
+			return null;
+		} else if (refines.size() == 1) {
+			return refines.get(0);
+		} else {
+			throw new IllegalStateException("An Event-B event cannot refine more than one event");
+		}
+	}
+
+	public Event withRefinesEvent(final Event refinesEvent) {
+		ModelElementList<Event> refines = new ModelElementList<>();
+		if (refinesEvent != null) {
+			refines = refines.addElement(refinesEvent);
+		}
+		return this.set(Event.class, refines);
 	}
 
 	public ModelElementList<EventBGuard> getGuards() {
 		return getChildrenAndCast(Guard.class, EventBGuard.class);
+	}
+
+	public Event withGuards(final ModelElementList<EventBGuard> guards) {
+		return this.set(Guard.class, guards);
 	}
 
 	public ModelElementList<EventBGuard> getAllGuards() {
@@ -84,6 +119,10 @@ public class Event extends BEvent {
 		return getChildrenAndCast(Action.class, EventBAction.class);
 	}
 
+	public Event withActions(final ModelElementList<EventBAction> actions) {
+		return this.set(Action.class, actions);
+	}
+
 	public ModelElementList<EventBAction> getAllActions() {
 		ModelElementList<EventBAction> acts = new ModelElementList<>();
 		for (Event e : getRefines()) {
@@ -96,8 +135,16 @@ public class Event extends BEvent {
 		return getChildrenOfType(Witness.class);
 	}
 
+	public Event withWitnesses(final ModelElementList<Witness> witnesses) {
+		return this.set(Witness.class, witnesses);
+	}
+
 	public ModelElementList<EventParameter> getParameters() {
 		return getChildrenOfType(EventParameter.class);
+	}
+
+	public Event withParameters(final ModelElementList<EventParameter> parameters) {
+		return this.set(EventParameter.class, parameters);
 	}
 
 	public EventType getType() {
