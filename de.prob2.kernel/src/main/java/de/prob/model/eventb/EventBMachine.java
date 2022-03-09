@@ -5,6 +5,7 @@ import java.util.Map;
 
 import de.prob.model.representation.AbstractElement;
 import de.prob.model.representation.BEvent;
+import de.prob.model.representation.ElementComment;
 import de.prob.model.representation.Invariant;
 import de.prob.model.representation.Machine;
 import de.prob.model.representation.ModelElementList;
@@ -49,12 +50,47 @@ public class EventBMachine extends Machine {
 				list.replaceElement(oldElement, newElement)));
 	}
 
+	public String getComment() {
+		return ElementComment.getCommentTextFromElement(this);
+	}
+
+	public EventBMachine withComment(final String comment) {
+		return this.set(ElementComment.class, new ModelElementList<>(Collections.singletonList(new ElementComment(comment))));
+	}
+
+	/**
+	 * @deprecated Use {@link #getRefinesMachine()} instead. An Event-B machine cannot refine more than one machine.
+	 */
+	@Deprecated
 	public ModelElementList<EventBMachine> getRefines() {
 		return getChildrenAndCast(Machine.class, EventBMachine.class);
 	}
 
+	public EventBMachine getRefinesMachine() {
+		final ModelElementList<EventBMachine> refines = getChildrenAndCast(Machine.class, EventBMachine.class);
+		if (refines.isEmpty()) {
+			return null;
+		} else if (refines.size() == 1) {
+			return refines.get(0);
+		} else {
+			throw new IllegalStateException("An Event-B machine cannot refine more than one machine");
+		}
+	}
+
+	public EventBMachine withRefinesMachine(final EventBMachine refinedMachine) {
+		ModelElementList<EventBMachine> refines = new ModelElementList<>();
+		if (refinedMachine != null) {
+			refines = refines.addElement(refinedMachine);
+		}
+		return this.set(Machine.class, refines);
+	}
+
 	public ModelElementList<Context> getSees() {
 		return getChildrenOfType(Context.class);
+	}
+
+	public EventBMachine withSees(final ModelElementList<Context> sees) {
+		return this.set(Context.class, sees);
 	}
 
 	@Override
@@ -62,15 +98,23 @@ public class EventBMachine extends Machine {
 		return getChildrenAndCast(Variable.class, EventBVariable.class);
 	}
 
+	public EventBMachine withVariables(final ModelElementList<EventBVariable> variables) {
+		return this.set(Variable.class, variables);
+	}
+
 	@Override
 	public ModelElementList<EventBInvariant> getInvariants() {
 		return getChildrenAndCast(Invariant.class, EventBInvariant.class);
 	}
 
+	public EventBMachine withInvariants(final ModelElementList<EventBInvariant> invariants) {
+		return this.set(Invariant.class, invariants);
+	}
+
 	public ModelElementList<EventBInvariant> getAllInvariants() {
 		ModelElementList<EventBInvariant> invs = new ModelElementList<>();
-		for (EventBMachine m : getRefines()) {
-			invs = invs.addMultiple(m.getAllInvariants());
+		if (getRefinesMachine() != null) {
+			invs = invs.addMultiple(getRefinesMachine().getAllInvariants());
 		}
 		invs = invs.addMultiple(getInvariants());
 		return invs;
@@ -81,13 +125,33 @@ public class EventBMachine extends Machine {
 		return variant.isEmpty() ? null : variant.get(0);
 	}
 
+	public EventBMachine withVariant(final Variant variant) {
+		ModelElementList<Variant> variants = new ModelElementList<>();
+		if (variant != null) {
+			variants = variants.addElement(variant);
+		}
+		return this.set(Variant.class, variants);
+	}
+
 	public ModelElementList<ProofObligation> getProofs() {
 		return getChildrenOfType(ProofObligation.class);
+	}
+
+	public EventBMachine withProofs(final ModelElementList<ProofObligation> proofs) {
+		return this.set(ProofObligation.class, proofs);
 	}
 
 	@Override
 	public ModelElementList<Event> getEvents() {
 		return getChildrenAndCast(BEvent.class, Event.class);
+	}
+
+	public EventBMachine withEvents(final ModelElementList<Event> events) {
+		// The proper class to use here is BEvent,
+		// but MachineXmlHandler also sets the same list under Event,
+		// so there might be existing code that expects either of the two classes.
+		// So to be safe, continue setting both.
+		return this.set(BEvent.class, events).set(Event.class, events);
 	}
 
 	/**

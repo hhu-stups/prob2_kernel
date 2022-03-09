@@ -133,9 +133,9 @@ public class TraceReverser {
 	 * @return the constants
 	 */
 	private static List<String> extractConst(EventBMachine target){
-		if(!target.getChildrenOfType(de.prob.model.eventb.Context.class).isEmpty())
+		if(!target.getSees().isEmpty())
 		{
-			return target.getChildrenOfType(Context.class).get(0).getConstants().stream().map(EventBConstant::getName).collect(toList());
+			return target.getSees().get(0).getConstants().stream().map(EventBConstant::getName).collect(toList());
 		}else{
 			return emptyList();
 		}

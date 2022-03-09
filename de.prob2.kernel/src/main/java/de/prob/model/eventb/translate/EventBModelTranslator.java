@@ -56,15 +56,14 @@ public class EventBModelTranslator {
 	}
 
 	private List<EventBMachine> extractMachines(final EventBMachine machine, EventBModel model) {
-		if (machine.getRefines().isEmpty()) {
+		final EventBMachine refines = machine.getRefinesMachine();
+		if (refines == null) {
 			return Collections.emptyList();
 		}
+		EventBMachine refinedMachine = model.getMachine(refines.getName());
 		List<EventBMachine> machines = new ArrayList<>();
-		for (EventBMachine eventBMachine : machine.getRefines()) {
-			EventBMachine refinedMachine = model.getMachine(eventBMachine.getName());
-			machines.add(refinedMachine);
-			machines.addAll(extractMachines(refinedMachine, model));
-		}
+		machines.add(refinedMachine);
+		machines.addAll(extractMachines(refinedMachine, model));
 		return machines;
 	}
 

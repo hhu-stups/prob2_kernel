@@ -2,7 +2,6 @@ package de.prob.model.eventb;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import de.prob.model.representation.AbstractElement;
 import de.prob.model.representation.Axiom;
@@ -60,14 +59,7 @@ public class Context extends AbstractElement implements ConstantsComponent {
 	}
 
 	public String getComment() {
-		final ModelElementList<ElementComment> comments = getChildrenOfType(ElementComment.class);
-		if (comments == null) {
-			return null;
-		} else {
-			return comments.stream()
-				.map(ElementComment::getComment)
-				.collect(Collectors.joining("\n"));
-		}
+		return ElementComment.getCommentTextFromElement(this);
 	}
 
 	public Context withComment(final String comment) {

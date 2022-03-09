@@ -108,8 +108,8 @@ public class EventBModel extends AbstractModel {
 		DependencyGraph graph = new DependencyGraph();
 		for (final EventBMachine m : getMachines()) {
 			graph = graph.addVertex(m.getName());
-			for (final EventBMachine m2 : m.getRefines()) {
-				graph = graph.addEdge(m.getName(), m2.getName(), DependencyGraph.ERefType.REFINES);
+			if (m.getRefinesMachine() != null) {
+				graph = graph.addEdge(m.getName(), m.getRefinesMachine().getName(), DependencyGraph.ERefType.REFINES);
 			}
 			for (final Context c : m.getSees()) {
 				graph = graph.addEdge(m.getName(), c.getName(), DependencyGraph.ERefType.SEES);

@@ -69,20 +69,18 @@ public class ModelToXML {
 	}
 
 	def extractMachine(EventBMachine m, String directoryPath) {
-		String comment = m.getChildrenOfType(ElementComment.class).collect { it.getComment() }.iterator().join("\n")
 		String fileName = directoryPath + File.separator + m.getName() + ".bum"
 		new File(fileName).withWriter("UTF-8") { writer ->
 			MarkupBuilder xml = new MarkupBuilder(writer);
 
 			xml.mkp.xmlDeclaration(version: "1.0", encoding: "UTF-8", standalone: "no")
 			xml.'org.eventb.core.machineFile'('org.eventb.core.configuration': "org.eventb.core.fwd", version:"5",
-			'org.eventb.core.comment': comment) {
+			'org.eventb.core.comment': m.comment) {
 				m.sees.each {
 					xml.'org.eventb.core.seesContext'(name: genName(), 'org.eventb.core.target': it.getName())
 				}
-				m.refines.each {
-					xml.'org.eventb.core.refinesMachine'(name: genName(),
-					'org.eventb.core.target': it.getName())
+				if (m.refinesMachine) {
+					xml.'org.eventb.core.refinesMachine'(name: genName(), 'org.eventb.core.target': m.refinesMachine.name)
 				}
 				m.variables.each {
 					xml.'org.eventb.core.variable'(name: genName(), 'org.eventb.core.identifier': it.getName())

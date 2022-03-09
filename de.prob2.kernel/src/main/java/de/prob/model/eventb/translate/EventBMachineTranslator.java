@@ -88,10 +88,9 @@ public class EventBMachineTranslator {
 	}
 
 	private ARefinesModelClause processRefines() {
-		List<EventBMachine> refines = machine.getRefines();
-		if (!refines.isEmpty()) {
-			return new ARefinesModelClause(new TIdentifierLiteral(refines
-					.get(0).getName()));
+		EventBMachine refines = machine.getRefinesMachine();
+		if (refines != null) {
+			return new ARefinesModelClause(new TIdentifierLiteral(refines.getName()));
 		}
 		return null;
 	}
