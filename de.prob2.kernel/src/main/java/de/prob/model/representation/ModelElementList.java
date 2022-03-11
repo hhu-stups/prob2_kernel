@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 import com.github.krukow.clj_lang.IPersistentMap;
 import com.github.krukow.clj_lang.PersistentHashMap;
@@ -30,9 +31,14 @@ public class ModelElementList<E> extends GroovyObjectSupport implements List<E> 
 		this.keys = keys;
 	}
 
-	private ModelElementList(final PersistentVector<E> list, final PersistentHashMap<String, E> keys) {
-		this.list = list;
-		this.keys = keys;
+	// For some reason, we can't use PersistentVector/PersistentHashMap as the parameter types -
+	// otherwise, external code that calls *any* ModelElementList constructor gives errors about those classes not being found.
+	// This is in some way related to clj-ds being declared as an implementation dependency,
+	// which means that clj-ds classes cannot be used as types in public API signatures.
+	// But this is a private constructor, so this *should* not be a problem here - except that for some reason it is.
+	private ModelElementList(final List<E> list, final Map<String, E> keys) {
+		this.list = (PersistentVector<E>)list;
+		this.keys = (PersistentHashMap<String, E>)keys;
 	}
 
 	@Override
