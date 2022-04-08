@@ -33,12 +33,12 @@ public class LTLChecker extends CheckerBase {
 
 	@Override
 	protected void execute() {
-		// Set the state limit to 0 (infinite) for now.
+		// Set the state limit to -1 (infinite) for now.
 		// Previously, we had set a state limit and called LtlCheckingCommand in a loop until it was done.
 		// However, ProB's LTL checker cannot always resume checking after the state limit is reached,
 		// so this could result in the same few states getting checked over and over again.
 		// TODO Allow LtlCheckingCommand to return some sort of progress information during checking
-		final LtlCheckingCommand cmd = new LtlCheckingCommand(this.getStateSpace(), formula, 0);
+		final LtlCheckingCommand cmd = new LtlCheckingCommand(this.getStateSpace(), formula, -1);
 		this.getStateSpace().withTransaction(() -> this.getStateSpace().execute(cmd));
 		this.isFinished(cmd.getResult(), null);
 	}
