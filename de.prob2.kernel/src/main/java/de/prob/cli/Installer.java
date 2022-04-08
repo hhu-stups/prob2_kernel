@@ -93,6 +93,7 @@ public final class Installer {
 			}
 			
 			setExecutable(DEFAULT_HOME.resolve(this.osInfo.getCliName()), true);
+			setExecutable(DEFAULT_HOME.resolve(this.osInfo.getUserInterruptCmd()), true);
 			setExecutable(DEFAULT_HOME.resolve(this.osInfo.getCspmfName()), true);
 			setExecutable(DEFAULT_HOME.resolve(this.osInfo.getFuzzName()), true);
 			
