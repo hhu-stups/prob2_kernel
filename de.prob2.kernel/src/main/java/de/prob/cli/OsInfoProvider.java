@@ -49,7 +49,10 @@ class OsInfoProvider implements Provider<OsSpecificInfo> {
 				throw new AssertionError("Unhandled operating system: " + os);
 			}
 			cliName = "probcli.sh";
-			userInterruptCmd = "send_user_interrupt";
+			// Since ProB 1.12.0, send_user_interrupt is in the lib directory on all platforms.
+			// On older versions, it was in the lib directory only on Windows
+			// and outside the lib directory on macOS and Linux.
+			userInterruptCmd = "lib/send_user_interrupt";
 			cspmfName = "lib/cspmf";
 			fuzzName = "lib/fuzz";
 		}
