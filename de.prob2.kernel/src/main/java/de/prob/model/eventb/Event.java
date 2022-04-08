@@ -69,6 +69,7 @@ public class Event extends BEvent {
 	/**
 	 * @deprecated Use {@link #getRefinesEvent()} instead. An Event-B event cannot refine more than one event.
 	 */
+	@Deprecated
 	public ModelElementList<Event> getRefines() {
 		return getChildrenOfType(Event.class);
 	}
