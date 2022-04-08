@@ -197,10 +197,10 @@ public class EventBModel extends AbstractModel {
 	 * @return the origin event
 	 */
 	public static Event findEventOrigin(Event event){
-		if(event.getRefines().isEmpty()){
+		if (event.getRefinesEvent() == null) {
 			return new Event("skip", Event.EventType.ORDINARY, true);
-		}else{
-			return event.getRefines().get(0); //In EventB there should only be one Event refined from
+		} else {
+			return event.getRefinesEvent();
 		}
 	}
 

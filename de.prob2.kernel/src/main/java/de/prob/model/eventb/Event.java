@@ -110,8 +110,8 @@ public class Event extends BEvent {
 
 	public ModelElementList<EventBGuard> getAllGuards() {
 		ModelElementList<EventBGuard> acts = new ModelElementList<>();
-		for (Event e : getRefines()) {
-			acts = acts.addMultiple(e.getAllGuards());
+		if (this.getRefinesEvent() != null) {
+			acts = acts.addMultiple(this.getRefinesEvent().getAllGuards());
 		}
 		return acts.addMultiple(getGuards());
 	}
@@ -126,8 +126,8 @@ public class Event extends BEvent {
 
 	public ModelElementList<EventBAction> getAllActions() {
 		ModelElementList<EventBAction> acts = new ModelElementList<>();
-		for (Event e : getRefines()) {
-			acts = acts.addMultiple(e.getAllActions());
+		if (this.getRefinesEvent() != null) {
+			acts = acts.addMultiple(this.getRefinesEvent().getAllActions());
 		}
 		return acts.addMultiple(getActions());
 	}

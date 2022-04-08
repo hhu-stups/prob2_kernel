@@ -1,6 +1,7 @@
 package de.prob.model.eventb.translate;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -143,11 +144,9 @@ public class EventBMachineTranslator {
 			event.setStatus(extractEventStatus(e));
 			nodeInfos.put(event, new Tuple2<>(machine.getName(), e.getName()));
 
-			List<TIdentifierLiteral> refined = new ArrayList<>();
-			for (Event ref : e.getRefines()) {
-				refined.add(new TIdentifierLiteral(ref.getName()));
+			if (e.getRefinesEvent() != null) {
+				event.setRefines(Collections.singletonList(new TIdentifierLiteral(e.getRefinesEvent().getName())));
 			}
-			event.setRefines(refined);
 
 			List<PExpression> params = new ArrayList<>();
 			for (EventParameter eventParameter : e.getParameters()) {
