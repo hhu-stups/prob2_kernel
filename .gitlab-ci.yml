@@ -64,8 +64,7 @@ tests:windows64:
   before_script: []
   script: .\gradlew.bat %GRADLE_OPTIONS% clean check jacocoTestReport
   tags:
-    - prob
-    - win64
+    - windows
 
 publish:
   stage: deploy
