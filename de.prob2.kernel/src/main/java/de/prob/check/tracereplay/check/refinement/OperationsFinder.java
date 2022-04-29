@@ -93,9 +93,9 @@ public class OperationsFinder extends DepthFirstAdapter {
 	public void caseAPromotesMachineClause(APromotesMachineClause node)
 	{
 		Set<RenamingContainer> result = new HashSet<>();
-		for(PExpression expression : node.getOperationNames()){
-			if(expression instanceof AIdentifierExpression){
-				LinkedList<TIdentifierLiteral> identifier = ((AIdentifierExpression) expression).getIdentifier();
+		for(POperationReference ref : node.getOperationNames()){
+			if(ref instanceof AOperationReference){
+				LinkedList<TIdentifierLiteral> identifier = ((AOperationReference) ref).getOperationName();
 				if(identifier.size() == 1){
 					result.add(new RenamingContainer("", identifier.get(0).getText()));
 				}else if(identifier.size() == 2){

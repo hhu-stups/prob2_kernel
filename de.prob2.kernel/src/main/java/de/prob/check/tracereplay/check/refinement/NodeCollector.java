@@ -18,9 +18,9 @@ public class NodeCollector extends DepthFirstAdapter{
 	private final LinkedList<PMachineReference> includesClauses;
 	private final LinkedList<PMachineReference> extendsClauses;
 	private final LinkedList<PMachineReference> importsClauses;
-	private final LinkedList<PExpression> seesClause;
-	private final LinkedList<PExpression> promotesClause;
-	private final LinkedList<PExpression> usesClause;
+	private final LinkedList<PMachineReferenceNoParams> seesClause;
+	private final LinkedList<POperationReference> promotesClause;
+	private final LinkedList<PMachineReferenceNoParams> usesClause;
 
 
 
@@ -152,15 +152,15 @@ public class NodeCollector extends DepthFirstAdapter{
 		return importsClauses;
 	}
 
-	public LinkedList<PExpression> getSeesClause() {
+	public LinkedList<PMachineReferenceNoParams> getSeesClause() {
 		return seesClause;
 	}
 
-	public LinkedList<PExpression> getPromotesClause() {
+	public LinkedList<POperationReference> getPromotesClause() {
 		return promotesClause;
 	}
 
-	public LinkedList<PExpression> getUsesClause() {
+	public LinkedList<PMachineReferenceNoParams> getUsesClause() {
 		return usesClause;
 	}
 }
