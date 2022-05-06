@@ -31,7 +31,7 @@ public class EventBParserBase implements ProBParserBase {
 		try {
 			ast = BParser.parse(BParser.OPERATION_PATTERN_PREFIX + transPredicate);
 		} catch (BCompoundException e) {
-			throw (ProBParseException)new ProBParseException(e.getLocalizedMessage()).initCause(e);
+			throw new ProBParseException(e.getLocalizedMessage(), e);
 		}
 		toPrologTerm(pto, ast, wrap, TRANS_WRAPPER);
 	}
