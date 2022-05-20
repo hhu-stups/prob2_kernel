@@ -19,9 +19,7 @@ public class LTLError implements IModelCheckingResult {
 	}
 
 	public LTLError(final LTL formula, final String reason) {
-		this(formula, Collections.singletonList(
-			new ErrorItem(reason, ErrorItem.Type.ERROR, Collections.emptyList())
-		));
+		this(formula, Collections.singletonList(ErrorItem.fromErrorMessage(reason)));
 	}
 
 	public List<ErrorItem> getErrors() {

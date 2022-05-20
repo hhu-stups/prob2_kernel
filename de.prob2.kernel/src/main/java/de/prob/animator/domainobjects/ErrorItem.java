@@ -149,6 +149,20 @@ public final class ErrorItem {
 		this.locations = new ArrayList<>(locations);
 	}
 	
+	/**
+	 * Shorthand for creating an {@link ErrorItem} from an error message with no location information.
+	 * Use this only when working with an API that doesn't provide error positions in any way.
+	 * If possible,
+	 * please use one of the other factory methods instead,
+	 * or call the regular {@link #ErrorItem(String, ErrorItem.Type, List)} constructor and supply location information manually.
+	 * 
+	 * @param message error message to wrap
+	 * @return new {@link ErrorItem} with type {@link ErrorItem.Type#ERROR} and no locations
+	 */
+	public static ErrorItem fromErrorMessage(final String message) {
+		return new ErrorItem(message, ErrorItem.Type.ERROR, Collections.emptyList());
+	}
+	
 	public static ErrorItem fromProlog(final PrologTerm error) {
 		if (!error.hasFunctor("error", 3)) {
 			throw new IllegalArgumentException(String.format(
