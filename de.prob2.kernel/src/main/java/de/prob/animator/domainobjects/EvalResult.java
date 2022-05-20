@@ -104,7 +104,9 @@ public class EvalResult extends AbstractEvalResult {
 			 */
 			final List<String> strings = PrologTerm.atomicStrings((ListPrologTerm)pt);
 			final String code = strings.get(0);
-			final List<String> errors = strings.subList(1, strings.size());
+			final List<ErrorItem> errors = strings.subList(1, strings.size()).stream()
+				.map(ErrorItem::fromErrorMessage)
+				.collect(Collectors.toList());
 			return new ComputationNotCompletedResult("Computation not completed", errors, code);
 		} else if ("result".equals(pt.getFunctor())) {
 			/*
@@ -157,27 +159,35 @@ public class EvalResult extends AbstractEvalResult {
 		} else if ("errors".equals(pt.getFunctor())) {
 			final CompoundPrologTerm errorsTerm = BindingGenerator.getCompoundTerm(pt, 2);
 			final String errorType = PrologTerm.atomicString(errorsTerm.getArgument(1));
-			final List<String> errors = PrologTerm.atomicStrings(BindingGenerator.getList(errorsTerm.getArgument(2)));
+			final List<ErrorItem> errors = BindingGenerator.getList(errorsTerm.getArgument(2)).stream()
+				.map(term -> {
+					if (term.isAtom()) {
+						return ErrorItem.fromErrorMessage(PrologTerm.atomicString(term));
+					} else {
+						return ErrorItem.fromProlog(term);
+					}
+				})
+				.collect(Collectors.toList());
 			switch (errorType) {
 				case "NOT-WELL-DEFINED":
-					return new WDError(errors);
+					return new WDError(errorType, errors);
 				
 				case "UNKNOWN":
-					return new UnknownEvaluationResult(errors);
+					return new UnknownEvaluationResult(errorType, errors);
 				
 				case "NOT-INITIALISED":
 				case "IDENTIFIER(S) NOT YET INITIALISED; INITIALISE MACHINE FIRST": // deprecated
-					return new IdentifierNotInitialised(errors);
+					return new IdentifierNotInitialised(errorType, errors);
 				
 				case "ERROR":
 				case "SYNTAX ERROR":
 				case "TYPE ERROR":
 				case "INTERNAL ERROR":
-					//return new UnknownEvaluationResult(errors); // TO DO: produce own class
+					// TO DO: produce own class
 					return new ComputationNotCompletedResult(errorType, errors);
 				
 				default:
-					errors.add(0, "Unknown error type: " + errorType);
+					errors.add(0, new ErrorItem("Unknown error type: " + errorType, ErrorItem.Type.INTERNAL_ERROR, Collections.emptyList()));
 					return new ComputationNotCompletedResult(errorType, errors);
 			}
 		} else if ("enum_warning".equals(pt.getFunctor())) {
