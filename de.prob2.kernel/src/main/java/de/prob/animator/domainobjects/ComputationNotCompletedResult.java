@@ -1,27 +1,36 @@
 package de.prob.animator.domainobjects;
 
-public class ComputationNotCompletedResult extends AbstractEvalResult {
+import java.util.Collections;
+import java.util.List;
 
-	private final String reason;
+public class ComputationNotCompletedResult extends EvaluationErrorResult {
 	private final String code;
 
-	public ComputationNotCompletedResult(final String code, final String reason) {
-		super();
+	public ComputationNotCompletedResult(final String result, final List<String> errors, final String code) {
+		super(result, errors);
 		this.code = code;
-		this.reason = reason;
+	}
+
+	public ComputationNotCompletedResult(final String result, final List<String> errors) {
+		this(result, errors, "formula");
+	}
+
+	/**
+	 * Old constructor for backwards compatibility.
+	 * Consider using {@link #ComputationNotCompletedResult(String, List, String)} instead.
+	 * 
+	 * @param code the formula that could not be evaluated
+	 * @param reason error message
+	 */
+	public ComputationNotCompletedResult(final String code, final String reason) {
+		this("Computation not completed", Collections.singletonList(reason), code);
 	}
 
 	public String getReason() {
-		return reason;
+		return String.join(",", this.getErrors());
 	}
 
 	public String getCode() {
 		return code;
 	}
-
-	@Override
-	public String toString() {
-		return "Computation of " + code + " not completed because of " + reason;
-	}
-
 }

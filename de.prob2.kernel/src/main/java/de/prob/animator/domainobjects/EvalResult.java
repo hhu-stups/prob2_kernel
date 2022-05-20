@@ -105,7 +105,7 @@ public class EvalResult extends AbstractEvalResult {
 			final List<String> strings = PrologTerm.atomicStrings((ListPrologTerm)pt);
 			final String code = strings.get(0);
 			final List<String> errors = strings.subList(1, strings.size());
-			return new ComputationNotCompletedResult(code, String.join(",", errors));
+			return new ComputationNotCompletedResult("Computation not completed", errors, code);
 		} else if ("result".equals(pt.getFunctor())) {
 			/*
 			 * The result term will have the form result(Value,Solutions).
@@ -174,12 +174,11 @@ public class EvalResult extends AbstractEvalResult {
 				case "TYPE ERROR":
 				case "INTERNAL ERROR":
 					//return new UnknownEvaluationResult(errors); // TO DO: produce own class
-					return new ComputationNotCompletedResult("formula", String.join(",", errors));
+					return new ComputationNotCompletedResult(errorType, errors);
 				
 				default:
-					// throw new IllegalArgumentException("Unknown error type: " + errorType);
-					return new ComputationNotCompletedResult("formula",
-						"Unknown error type: " + errorType + " " + String.join(",", errors));
+					errors.add(0, "Unknown error type: " + errorType);
+					return new ComputationNotCompletedResult(errorType, errors);
 			}
 		} else if ("enum_warning".equals(pt.getFunctor())) {
 			return new EnumerationWarning();
