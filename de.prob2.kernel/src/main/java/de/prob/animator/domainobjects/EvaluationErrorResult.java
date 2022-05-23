@@ -42,7 +42,7 @@ public abstract class EvaluationErrorResult extends AbstractEvalResult {
 	public String toString() {
 		final StringBuilder sb = new StringBuilder(this.getResult());
 		if (!this.getErrorItems().isEmpty()) {
-			sb.append(": ");
+			sb.append(':');
 			for (final ErrorItem error : this.getErrorItems()) {
 				sb.append('\n');
 				sb.append(error.toString());
