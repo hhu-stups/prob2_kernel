@@ -128,15 +128,16 @@ public class EvalResult extends AbstractEvalResult {
 			final CompoundPrologTerm resultTerm = BindingGenerator.getCompoundTerm(pt, 2);
 			final String value = PrologTerm.atomicString(resultTerm.getArgument(1));
 			final ListPrologTerm solutionList = BindingGenerator.getList(resultTerm.getArgument(2));
-			if ("TRUE".equals(value) && solutionList.isEmpty()) {
-				return TRUE;
-			}
-			if ("FALSE".equals(value) && solutionList.isEmpty()) {
-				return FALSE;
-			}
-			if (!"TRUE".equals(value) && !"FALSE".equals(value) && formulaCache.containsKey(value)) {
-				assert solutionList.isEmpty();
-				return formulaCache.get(value);
+			assert "TRUE".equals(value) || "FALSE".equals(value) || solutionList.isEmpty();
+			final boolean canCacheResult = solutionList.isEmpty();
+			if (canCacheResult) {
+				if ("TRUE".equals(value)) {
+					return TRUE;
+				} else if ("FALSE".equals(value)) {
+					return FALSE;
+				} else if (formulaCache.containsKey(value)) {
+					return formulaCache.get(value);
+				}
 			}
 
 			final Map<String, String> solutions;
@@ -151,8 +152,7 @@ public class EvalResult extends AbstractEvalResult {
 			}
 
 			EvalResult res = new EvalResult(value, solutions);
-			if (!"TRUE".equals(value) && !"FALSE".equals(value)) {
-				assert solutionList.isEmpty();
+			if (canCacheResult) {
 				formulaCache.put(value, res);
 			}
 			return res;
