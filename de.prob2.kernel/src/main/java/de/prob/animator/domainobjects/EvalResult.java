@@ -66,7 +66,7 @@ public class EvalResult extends AbstractEvalResult {
 			sb.append(" (");
 			sb.append(solutions.entrySet().stream()
 				.map(e -> e.getKey() + " = " + e.getValue())
-				.collect(Collectors.joining(" ∧ ", " (", ")")));
+				.collect(Collectors.joining(" ∧ ")));
 			sb.append(")");
 		}
 
