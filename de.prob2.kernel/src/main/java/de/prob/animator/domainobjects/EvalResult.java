@@ -24,11 +24,17 @@ public class EvalResult extends AbstractEvalResult {
 
 	private final String value;
 	private final Map<String, String> solutions;
+	private final List<ErrorItem> errors;
 
-	public EvalResult(final String value, final Map<String, String> solutions) {
+	public EvalResult(final String value, final Map<String, String> solutions, final List<ErrorItem> errors) {
 		super();
 		this.value = value;
 		this.solutions = solutions;
+		this.errors = errors;
+	}
+	
+	public EvalResult(final String value, final Map<String, String> solutions) {
+		this(value, solutions, Collections.emptyList());
 	}
 
 	public Map<String, String> getSolutions() {
@@ -39,15 +45,37 @@ public class EvalResult extends AbstractEvalResult {
 		return value;
 	}
 
+	/**
+	 * Get any errors that occurred during evaluation,
+	 * but were not severe enough to make the evaluation fail entirely.
+	 * This should only contain warnings and messages,
+	 * not actual errors.
+	 * Usually this list will be empty.
+	 * 
+	 * @return non-fatal errors that occurred during evaluation
+	 */
+	public List<ErrorItem> getErrors() {
+		return errors;
+	}
+
 	@Override
 	public String toString() {
-		if (solutions.isEmpty()) {
-			return value;
+		final StringBuilder sb = new StringBuilder(value);
+
+		if (!solutions.isEmpty()) {
+			sb.append(" (");
+			sb.append(solutions.entrySet().stream()
+				.map(e -> e.getKey() + " = " + e.getValue())
+				.collect(Collectors.joining(" ∧ ", " (", ")")));
+			sb.append(")");
 		}
 
-		return solutions.entrySet().stream()
-			.map(e -> e.getKey() + " = " + e.getValue())
-			.collect(Collectors.joining(" ∧ ", value + " (", ")"));
+		for (final ErrorItem error : this.getErrors()) {
+			sb.append('\n');
+			sb.append(error);
+		}
+
+		return sb.toString();
 	}
 
 	/**
@@ -110,7 +138,7 @@ public class EvalResult extends AbstractEvalResult {
 			return new ComputationNotCompletedResult("Computation not completed", errors, code);
 		} else if ("result".equals(pt.getFunctor())) {
 			/*
-			 * The result term will have the form result(Value,Solutions).
+			 * The result term will have the form result(Value,Solutions,Errors).
 			 * 
 			 * If the formula in question was a predicate, Value is
 			 * 'TRUE', or 'FALSE' Solutions is then a list of
@@ -121,15 +149,23 @@ public class EvalResult extends AbstractEvalResult {
 			 * If the formula in question was an expression,
 			 * Value is the string representation of the result calculated by
 			 * ProB and Solutions is an empty list.
+			 * 
+			 * Errors is a list of non-fatal errors that occurred during evaluation
+			 * (should only contain warnings and messages, not actual errors).
 			 *
 			 * From this information, an EvalResult object is created.
 			 */
 
-			final CompoundPrologTerm resultTerm = BindingGenerator.getCompoundTerm(pt, 2);
-			final String value = PrologTerm.atomicString(resultTerm.getArgument(1));
-			final ListPrologTerm solutionList = BindingGenerator.getList(resultTerm.getArgument(2));
+			final String value = PrologTerm.atomicString(pt.getArgument(1));
+			final ListPrologTerm solutionList = BindingGenerator.getList(pt.getArgument(2));
+			final List<PrologTerm> errorsList;
+			if (pt.getArity() >= 3) {
+				errorsList = BindingGenerator.getList(pt.getArgument(3));
+			} else {
+				errorsList = Collections.emptyList();
+			}
 			assert "TRUE".equals(value) || "FALSE".equals(value) || solutionList.isEmpty();
-			final boolean canCacheResult = solutionList.isEmpty();
+			final boolean canCacheResult = solutionList.isEmpty() && errorsList.isEmpty();
 			if (canCacheResult) {
 				if ("TRUE".equals(value)) {
 					return TRUE;
@@ -151,7 +187,16 @@ public class EvalResult extends AbstractEvalResult {
 				}
 			}
 
-			EvalResult res = new EvalResult(value, solutions);
+			final List<ErrorItem> errors;
+			if (errorsList.isEmpty()) {
+				errors = Collections.emptyList();
+			} else {
+				errors = errorsList.stream()
+					.map(ErrorItem::fromProlog)
+					.collect(Collectors.toList());
+			}
+
+			EvalResult res = new EvalResult(value, solutions, errors);
 			if (canCacheResult) {
 				formulaCache.put(value, res);
 			}
