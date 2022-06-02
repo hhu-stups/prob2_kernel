@@ -36,6 +36,28 @@ public interface IEvalElement {
 	public abstract void printProlog(IPrologTermOutput pout);
 
 	/**
+	 * Write the formula as a Prolog term for use in evaluation commands.
+	 * 
+	 * @param pout the {@link IPrologTermOutput} to write to
+	 */
+	default void printEvalTerm(IPrologTermOutput pout) {
+		switch (this.getKind()) {
+			case PREDICATE:
+				pout.openTerm("bpred");
+				break;
+			
+			case EXPRESSION:
+				pout.openTerm("bexpr");
+				break;
+			
+			default:
+				throw new EvaluationException("Formula type not supported for evaluation: " + this.getKind());
+		}
+		this.printProlog(pout);
+		pout.closeTerm();
+	}
+
+	/**
 	 * @return The kind of the formula. For B formulas, this needs to be either formula or expression. For other formula types, new kinds need to be defined to recognize the formula.
 	 */
 	public abstract EvalElementType getKind();

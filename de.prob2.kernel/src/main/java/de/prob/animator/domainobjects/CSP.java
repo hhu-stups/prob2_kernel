@@ -49,6 +49,13 @@ public class CSP extends AbstractEvalElement {
 		callCSPMF(pout, "translate", "--expressionToPrologTerm=" + this.getCode(), fileName);
 	}
 
+	@Override
+	public void printEvalTerm(final IPrologTermOutput pout) {
+		pout.openTerm("csp");
+		this.printProlog(pout);
+		pout.closeTerm();
+	}
+
 	public void printPrologAssertion(IPrologTermOutput pout) {
 		callCSPMF(pout, "translate", "--declarationToPrologTerm=" + this.getCode(), fileName);
 	}
