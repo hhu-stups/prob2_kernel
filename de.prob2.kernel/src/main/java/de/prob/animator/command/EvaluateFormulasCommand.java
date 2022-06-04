@@ -32,13 +32,13 @@ public class EvaluateFormulasCommand extends AbstractCommand {
 
 	private static final String EVALUATE_RESULT_VARIABLE = "Res";
 
-	private final List<IEvalElement> evalElements;
+	private final List<? extends IEvalElement> evalElements;
 	private final List<AbstractEvalResult> values = new ArrayList<>();
 
 	private String stateId;
 	private final FormulaExpand expand;
 
-	public EvaluateFormulasCommand(final List<IEvalElement> evalElements, final String stateId, final FormulaExpand expand) {
+	public EvaluateFormulasCommand(final List<? extends IEvalElement> evalElements, final String stateId, final FormulaExpand expand) {
 		this.evalElements = evalElements;
 		this.stateId = stateId;
 		if (expand != null) {
@@ -60,7 +60,7 @@ public class EvaluateFormulasCommand extends AbstractCommand {
 		}
 	}
 
-	public EvaluateFormulasCommand(final List<IEvalElement> evalElements, final String stateId) {
+	public EvaluateFormulasCommand(final List<? extends IEvalElement> evalElements, final String stateId) {
 		this(evalElements, stateId, null);
 	}
 
