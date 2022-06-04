@@ -6,6 +6,7 @@ import de.prob.animator.command.ExecuteOperationException;
 import de.prob.animator.command.ExploreStateCommand;
 import de.prob.animator.command.GetBStateCommand;
 import de.prob.animator.domainobjects.AbstractEvalResult;
+import de.prob.animator.domainobjects.EvalOptions;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.animator.domainobjects.StateError;
@@ -48,7 +49,25 @@ public class State extends GroovyObjectSupport {
 	private Set<String> transitionsWithTimeout;
 	private boolean maxTransitionsCalculated;
 	private Collection<StateError> stateErrors;
+
+	// TODO Merge the two separate caches again!
+	// (Might require adding EvalOptions support to registered formulas first.)
+
+	/**
+	 * Cache for evaluated formula values in the current state.
+	 * This cache doesn't take {@link EvalOptions} into account -
+	 * the only supported option is the TRUNCATE/EXPAND setting
+	 * stored in {@link IEvalElement#expansion()}.
+	 * This cache is used for registered/subscribed formulas.
+	 */
 	private Map<IEvalElement, AbstractEvalResult> values;
+
+	/**
+	 * New cache that correctly handles the full set of {@link EvalOptions}
+	 * but ignores the {@link IEvalElement#expansion()} setting.
+	 * This cache is used by the different eval methods.
+	 */
+	private Map<EvalOptions, Map<IEvalElement, AbstractEvalResult>> evalCache;
 
 	public State(String id, StateSpace space) {
 		this.id = id;
@@ -56,6 +75,7 @@ public class State extends GroovyObjectSupport {
 		this.explored = false;
 		this.transitions = new ArrayList<>();
 		this.values = new HashMap<>();
+		this.evalCache = new HashMap<>();
 	}
 
 	/**
@@ -181,6 +201,20 @@ public class State extends GroovyObjectSupport {
 		return anyOperation(filter);
 	}
 
+	private Map<IEvalElement, AbstractEvalResult> getEvalCacheForOptions(final EvalOptions options) {
+		return this.evalCache.computeIfAbsent(options, k -> new HashMap<>());
+	}
+
+	/**
+	 * Takes a formula and evaluates it via the {@link State#eval(IEvalElement)}
+	 * method. The formula is parsed via the {@link AbstractModel#parseFormula(String)} method.
+	 * @param formula representation of a formula
+	 * @return the {@link AbstractEvalResult} calculated from ProB
+	 */
+	public AbstractEvalResult eval(String formula, EvalOptions options) {
+		return eval(stateSpace.getModel().parseFormula(formula, options.getExpand()), options);
+	}
+
 	/**
 	 * Takes a formula and evaluates it via the {@link State#eval(IEvalElement)}
 	 * method. The formula is parsed via the {@link AbstractModel#parseFormula(String)} method.
@@ -188,7 +222,7 @@ public class State extends GroovyObjectSupport {
 	 * @return the {@link AbstractEvalResult} calculated from ProB
 	 */
 	public AbstractEvalResult eval(String formula, FormulaExpand expand) {
-		return eval(stateSpace.getModel().parseFormula(formula, expand), expand);
+		return eval(formula, EvalOptions.DEFAULT.withExpand(expand));
 	}
 	
 	/**
@@ -206,11 +240,11 @@ public class State extends GroovyObjectSupport {
 	/**
 	 * Takes a formula and evaluates it via the {@link State#eval(List)} method.
 	 * @param formula as IEvalElement
-	 * @param expand whether to truncate results (if {@code null}, then {@link IEvalElement#expansion()} determines the expansion mode)
+	 * @param options options for evaluation
 	 * @return the {@link AbstractEvalResult} calculated by ProB
 	 */
-	public AbstractEvalResult eval(IEvalElement formula, FormulaExpand expand) {
-		return eval(Collections.singletonList(formula), expand).get(0);
+	public AbstractEvalResult eval(IEvalElement formula, EvalOptions options) {
+		return eval(Collections.singletonList(formula), options).get(0);
 	}
 
 	/**
@@ -219,44 +253,53 @@ public class State extends GroovyObjectSupport {
 	 * @return the {@link AbstractEvalResult} calculated by ProB
 	 */
 	public AbstractEvalResult eval(IEvalElement formula) {
-		return this.eval(formula, null);
+		return this.eval(formula, EvalOptions.DEFAULT.withExpand(formula.expansion()));
 	}
 
 	public List<AbstractEvalResult> eval(IEvalElement... formulas) {
 		return eval(Arrays.asList(formulas));
 	}
 
+	public Map<IEvalElement, AbstractEvalResult> getVariableValues(final EvalOptions options) {
+		return evalFormulas(stateSpace.getLoadedMachine().getVariableEvalElements(options.getExpand()), options);
+	}
+
 	public Map<IEvalElement, AbstractEvalResult> getVariableValues(final FormulaExpand expand) {
-		return evalFormulas(stateSpace.getLoadedMachine().getVariableEvalElements(expand), expand);
+		return this.getVariableValues(EvalOptions.DEFAULT.withExpand(expand));
+	}
+
+	public Map<IEvalElement, AbstractEvalResult> getConstantValues(final EvalOptions options) {
+		return evalFormulas(stateSpace.getLoadedMachine().getConstantEvalElements(options.getExpand()), options);
 	}
 
 	public Map<IEvalElement, AbstractEvalResult> getConstantValues(final FormulaExpand expand) {
-		return evalFormulas(stateSpace.getLoadedMachine().getConstantEvalElements(expand), expand);
+		return this.getConstantValues(EvalOptions.DEFAULT.withExpand(expand));
 	}
 
 	/**
 	 * Evaluate multiple formulas in this state.
 	 * 
 	 * @param formulas the formulas to evaluate
-	 * @param expand whether to truncate results (if {@code null}, then {@link IEvalElement#expansion()} determines the expansion mode)
+	 * @param options options for evaluation
 	 * @return map of formulas to their values in this state
 	 */
-	public Map<IEvalElement, AbstractEvalResult> evalFormulas(List<? extends IEvalElement> formulas, FormulaExpand expand) {
+	public Map<IEvalElement, AbstractEvalResult> evalFormulas(List<? extends IEvalElement> formulas, EvalOptions options) {
+		final Map<IEvalElement, AbstractEvalResult> cache = this.getEvalCacheForOptions(options);
 		final List<IEvalElement> notEvaluatedElements = new ArrayList<>();
 		for (IEvalElement element : formulas) {
-			if (!values.containsKey(element)) {
+			if (!cache.containsKey(element)) {
 				notEvaluatedElements.add(element);
 			}
 		}
 		if (!notEvaluatedElements.isEmpty()) {
-			final EvaluateFormulasCommand cmd = new EvaluateFormulasCommand(notEvaluatedElements, this.getId(), expand);
+			final EvaluateFormulasCommand cmd = new EvaluateFormulasCommand(notEvaluatedElements, this.getId(), options);
 			stateSpace.execute(cmd);
-			values.putAll(cmd.getResultMap());
+			cache.putAll(cmd.getResultMap());
 		}
 
 		Map<IEvalElement, AbstractEvalResult> result = new LinkedHashMap<>();
 		for (IEvalElement element : formulas) {
-			result.put(element, values.get(element));
+			result.put(element, cache.get(element));
 		}
 		return result;
 	}
@@ -268,16 +311,16 @@ public class State extends GroovyObjectSupport {
 	 * @return map of formulas to their values in this state
 	 */
 	public Map<IEvalElement, AbstractEvalResult> evalFormulas(List<? extends IEvalElement> formulas) {
-		return this.evalFormulas(formulas, null);
+		return this.evalFormulas(formulas, EvalOptions.DEFAULT.withExpandFromFormulas(formulas));
 	}
 
 	/**
 	 * @param formulas to be evaluated
-	 * @param expand whether to truncate results (if {@code null}, then {@link IEvalElement#expansion()} determines the expansion mode)
+	 * @param options options for evaluation
 	 * @return list of results calculated by ProB for a given formula
 	 */
-	public List<AbstractEvalResult> eval(List<? extends IEvalElement> formulas, FormulaExpand expand) {
-		return new ArrayList<>(evalFormulas(formulas, expand).values());
+	public List<AbstractEvalResult> eval(List<? extends IEvalElement> formulas, EvalOptions options) {
+		return new ArrayList<>(evalFormulas(formulas, options).values());
 	}
 
 	/**
