@@ -12,6 +12,7 @@ import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.model.representation.DependencyGraph.ERefType;
 import de.prob.scripting.StateSpaceProvider;
 import de.prob.statespace.FormalismType;
+import de.prob.statespace.Language;
 import de.prob.statespace.StateSpace;
 
 import groovy.util.Eval;
@@ -111,6 +112,8 @@ public abstract class AbstractModel extends AbstractElement {
 	}
 
 	public abstract FormalismType getFormalismType();
+
+	public abstract Language getLanguage();
 
 	public File getModelFile() {
 		return modelFile;

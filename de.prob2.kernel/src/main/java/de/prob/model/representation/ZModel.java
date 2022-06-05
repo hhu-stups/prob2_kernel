@@ -13,6 +13,7 @@ import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.scripting.StateSpaceProvider;
 import de.prob.statespace.FormalismType;
+import de.prob.statespace.Language;
 
 public class ZModel extends AbstractModel {
 	@Inject
@@ -41,6 +42,11 @@ public class ZModel extends AbstractModel {
 	@Override
 	public FormalismType getFormalismType() {
 		return FormalismType.Z;
+	}
+
+	@Override
+	public Language getLanguage() {
+		return Language.Z;
 	}
 
 	@Override

@@ -5,6 +5,8 @@ import java.util.Objects;
 
 import com.google.common.base.MoreObjects;
 
+import de.prob.statespace.Language;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,14 +26,16 @@ public final class EvalOptions {
 	
 	private final FormulaExpand expand;
 	private final FormulaTranslationMode mode;
+	private final Language language;
 	
-	private EvalOptions(final FormulaExpand expand, final FormulaTranslationMode mode) {
+	private EvalOptions(final FormulaExpand expand, final FormulaTranslationMode mode, final Language language) {
 		this.expand = expand;
 		this.mode = mode;
+		this.language = language;
 	}
 	
 	private EvalOptions() {
-		this(FormulaExpand.TRUNCATE, FormulaTranslationMode.UNICODE);
+		this(FormulaExpand.TRUNCATE, FormulaTranslationMode.UNICODE, null);
 	}
 	
 	public FormulaExpand getExpand() {
@@ -47,7 +51,7 @@ public final class EvalOptions {
 	 * @return copy of {@code this} with the expansion mode changed
 	 */
 	public EvalOptions withExpand(final FormulaExpand expand) {
-		return new EvalOptions(expand, this.getMode());
+		return new EvalOptions(expand, this.getMode(), this.getLanguage());
 	}
 	
 	/**
@@ -99,7 +103,15 @@ public final class EvalOptions {
 	 * @return copy of {@code this} with the translation mode changed
 	 */
 	public EvalOptions withMode(final FormulaTranslationMode mode) {
-		return new EvalOptions(this.getExpand(), mode);
+		return new EvalOptions(this.getExpand(), mode, this.getLanguage());
+	}
+	
+	public Language getLanguage() {
+		return this.language;
+	}
+	
+	public EvalOptions withLanguage(final Language language) {
+		return new EvalOptions(this.getExpand(), this.getMode(), language);
 	}
 	
 	@Override
@@ -112,12 +124,13 @@ public final class EvalOptions {
 		}
 		final EvalOptions other = (EvalOptions)obj;
 		return this.getExpand() == other.getExpand()
-			&& this.getMode() == other.getMode();
+			&& this.getMode() == other.getMode()
+			&& this.getLanguage() == other.getLanguage();
 	}
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.getExpand(), this.getMode());
+		return Objects.hash(this.getExpand(), this.getMode(), this.getLanguage());
 	}
 	
 	@Override
@@ -125,6 +138,7 @@ public final class EvalOptions {
 		return MoreObjects.toStringHelper(this)
 			.add("expand", this.getExpand())
 			.add("mode", this.getMode())
+			.add("language", this.getLanguage())
 			.toString();
 	}
 }

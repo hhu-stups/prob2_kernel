@@ -13,6 +13,7 @@ import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.scripting.StateSpaceProvider;
 import de.prob.statespace.FormalismType;
+import de.prob.statespace.Language;
 
 public class XTLModel extends AbstractModel {
 	@Inject
@@ -41,6 +42,11 @@ public class XTLModel extends AbstractModel {
 	@Override
 	public FormalismType getFormalismType() {
 		return FormalismType.XTL;
+	}
+
+	@Override
+	public Language getLanguage() {
+		return Language.XTL;
 	}
 
 	@Override

@@ -24,6 +24,7 @@ import de.prob.model.representation.DependencyGraph;
 import de.prob.model.representation.ModelElementList;
 import de.prob.scripting.StateSpaceProvider;
 import de.prob.statespace.FormalismType;
+import de.prob.statespace.Language;
 
 public class RulesModel extends AbstractModel {
 
@@ -71,6 +72,11 @@ public class RulesModel extends AbstractModel {
 	@Override
 	public FormalismType getFormalismType() {
 		return FormalismType.B;
+	}
+
+	@Override
+	public Language getLanguage() {
+		return Language.B_RULES;
 	}
 
 	@Override

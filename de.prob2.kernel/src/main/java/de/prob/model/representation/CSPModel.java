@@ -18,6 +18,7 @@ import de.prob.cli.OsSpecificInfo;
 import de.prob.prolog.output.PrologTermStringOutput;
 import de.prob.scripting.StateSpaceProvider;
 import de.prob.statespace.FormalismType;
+import de.prob.statespace.Language;
 
 public class CSPModel extends AbstractModel {
 	private final Path cspmfPath;
@@ -71,6 +72,11 @@ public class CSPModel extends AbstractModel {
 	@Override
 	public FormalismType getFormalismType() {
 		return FormalismType.CSP;
+	}
+
+	@Override
+	public Language getLanguage() {
+		return Language.CSP;
 	}
 
 	@Override

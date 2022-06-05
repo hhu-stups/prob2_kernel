@@ -29,6 +29,7 @@ import de.prob.model.representation.Machine;
 import de.prob.model.representation.ModelElementList;
 import de.prob.scripting.StateSpaceProvider;
 import de.prob.statespace.FormalismType;
+import de.prob.statespace.Language;
 
 public class ClassicalBModel extends AbstractModel {
 	private final ClassicalBMachine mainMachine;
@@ -103,6 +104,11 @@ public class ClassicalBModel extends AbstractModel {
 	@Override
 	public FormalismType getFormalismType() {
 		return FormalismType.B;
+	}
+
+	@Override
+	public Language getLanguage() {
+		return Language.CLASSICAL_B;
 	}
 
 	@Override

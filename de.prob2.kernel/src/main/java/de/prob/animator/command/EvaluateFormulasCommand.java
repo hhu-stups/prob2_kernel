@@ -15,6 +15,7 @@ import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
+import de.prob.statespace.Language;
 
 /**
  * Calculates the values of Classical-B Predicates and Expressions.
@@ -76,6 +77,17 @@ public class EvaluateFormulasCommand extends AbstractCommand {
 		pout.openTerm("translation_mode");
 		pout.printAtom(this.options.getMode().getPrologName());
 		pout.closeTerm();
+
+		final Language language = this.options.getLanguage();
+		if (language != null) {
+			if (language.getTranslatedTo() != null) {
+				throw new IllegalArgumentException("Cannot format evaluation results in " + language + " syntax, because it is internally translated to " + language.getTranslatedTo());
+			}
+
+			pout.openTerm("language");
+			pout.printAtom(language.getPrologName());
+			pout.closeTerm();
+		}
 
 		pout.closeList();
 

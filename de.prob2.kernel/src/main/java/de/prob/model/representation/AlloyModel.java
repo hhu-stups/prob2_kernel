@@ -13,6 +13,7 @@ import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.scripting.StateSpaceProvider;
 import de.prob.statespace.FormalismType;
+import de.prob.statespace.Language;
 
 public class AlloyModel extends AbstractModel {
 	private final String term;
@@ -45,6 +46,11 @@ public class AlloyModel extends AbstractModel {
 	@Override
 	public FormalismType getFormalismType() {
 		return FormalismType.B;
+	}
+
+	@Override
+	public Language getLanguage() {
+		return Language.ALLOY;
 	}
 
 	@Override
