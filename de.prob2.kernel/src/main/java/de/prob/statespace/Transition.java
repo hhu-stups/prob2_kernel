@@ -18,14 +18,9 @@ import com.google.common.collect.Maps;
 import de.hhu.stups.prob.translator.BValue;
 import de.hhu.stups.prob.translator.Translator;
 import de.hhu.stups.prob.translator.exceptions.TranslationException;
+import de.prob.animator.domainobjects.EvalOptions;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.formula.PredicateBuilder;
-import de.prob.model.classicalb.ClassicalBMachine;
-import de.prob.model.classicalb.Operation;
-import de.prob.model.eventb.Event;
-import de.prob.model.eventb.EventBMachine;
-import de.prob.model.eventb.EventParameter;
-import de.prob.model.representation.AbstractElement;
 import de.prob.parser.BindingGenerator;
 import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.IntegerPrologTerm;
@@ -323,6 +318,13 @@ public class Transition {
 			stateSpace.execute(command);
 		}
 		return this;
+	}
+
+	public EvaluatedTransitionInfo evaluate(final EvalOptions options) {
+		// TODO Support caching results like in the other overload
+		final GetOpFromId cmd = new GetOpFromId(this, options);
+		stateSpace.execute(cmd);
+		return cmd.getInfo();
 	}
 
 	/**

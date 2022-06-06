@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import com.google.common.base.MoreObjects;
 
+import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.statespace.Language;
 
 import org.slf4j.Logger;
@@ -140,5 +141,25 @@ public final class EvalOptions {
 			.add("mode", this.getMode())
 			.add("language", this.getLanguage())
 			.toString();
+	}
+	
+	public void printProlog(final IPrologTermOutput pout) {
+		pout.openTerm("truncate");
+		pout.printAtom(this.getExpand().getPrologName());
+		pout.closeTerm();
+
+		pout.openTerm("translation_mode");
+		pout.printAtom(this.getMode().getPrologName());
+		pout.closeTerm();
+
+		if (this.getLanguage() != null) {
+			if (this.getLanguage().getTranslatedTo() != null) {
+				throw new IllegalArgumentException("Cannot format evaluation results in " + this.getLanguage() + " syntax, because it is internally translated to " + this.getLanguage().getTranslatedTo());
+			}
+
+			pout.openTerm("language");
+			pout.printAtom(this.getLanguage().getPrologName());
+			pout.closeTerm();
+		}
 	}
 }
