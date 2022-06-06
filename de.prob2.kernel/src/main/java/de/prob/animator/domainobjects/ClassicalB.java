@@ -68,9 +68,7 @@ public class ClassicalB extends AbstractEvalElement implements IBEvalElement {
 	 *            will be parsed and the resulting {@link Start} ast saved
 	 * @throws EvaluationException
 	 *             if the code could not be parsed
-	 * @deprecated Use {@link #ClassicalB(String, FormulaExpand)} with an explicit {@link FormulaExpand} argument instead
 	 */
-	@Deprecated
 	public ClassicalB(final String code) {
 		this(code, FormulaExpand.EXPAND);
 	}
