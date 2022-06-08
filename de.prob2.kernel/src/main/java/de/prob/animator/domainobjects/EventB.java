@@ -200,6 +200,14 @@ public class EventB extends AbstractEvalElement implements IBEvalElement {
 	}
 
 	@Override
+	public void printEvalTerm(final IPrologTermOutput pout) {
+		if (ast == null) {
+			ensureParsed();
+		}
+		super.printEvalTerm(pout);
+	}
+
+	@Override
 	public EvalElementType getKind() {
 		if (kind == null) {
 			IParseResult parseResult = ensurePredicateParsed();
