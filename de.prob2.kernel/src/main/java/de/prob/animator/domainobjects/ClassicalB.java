@@ -155,14 +155,4 @@ public class ClassicalB extends AbstractEvalElement implements IBEvalElement {
 	public IFormulaUUID getFormulaId() {
 		return uuid;
 	}
-
-	@Override
-	public <T extends BValue> T translate() {
-		if (!EvalElementType.EXPRESSION.equals(getKind())) {
-			throw new IllegalArgumentException();
-		}
-		TranslatingVisitor<T> v = new TranslatingVisitor<>();
-		getAst().apply(v);
-		return v.getResult();
-	}
 }

@@ -276,16 +276,6 @@ public class EventB extends AbstractEvalElement implements IBEvalElement {
 		}
 	}
 
-	@Override
-	public <T extends BValue> T translate() {
-		if (!EvalElementType.EXPRESSION.equals(getKind())) {
-			throw new IllegalArgumentException("EventB translation is only supported for expressions, not " + this.getKind());
-		}
-		TranslatingVisitor<T> v = new TranslatingVisitor<>();
-		getAst().apply(v);
-		return v.getResult();
-	}
-
 	public Set<IFormulaExtension> getTypes() {
 		return types;
 	}
