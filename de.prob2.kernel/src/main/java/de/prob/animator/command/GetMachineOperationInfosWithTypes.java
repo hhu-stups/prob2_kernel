@@ -28,7 +28,7 @@ public class GetMachineOperationInfosWithTypes extends AbstractCommand {
 	private static List<String> convertPossiblyUnknownAtomicStringList(final PrologTerm list) {
 		if (list instanceof ListPrologTerm) {
 			return PrologTerm.atomsToStrings((ListPrologTerm) list);
-		} else if ("unknown".equals(list.atomToString())) {
+		} else if ("unknown".equals(list.atomicToString())) {
 			return Collections.emptyList();
 		} else {
 			throw new AssertionError("Not a list or 'unknown': " + list);
