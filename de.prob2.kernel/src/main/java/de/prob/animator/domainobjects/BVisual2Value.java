@@ -124,7 +124,7 @@ public interface BVisual2Value {
 			
 			case "v":
 				BindingGenerator.getCompoundTerm(term, "v", 1);
-				return new BVisual2Value.ExpressionValue(term.getArgument(1).atomToString());
+				return new BVisual2Value.ExpressionValue(term.getArgument(1).atomicToString());
 			
 			case "e":
 				BindingGenerator.getCompoundTerm(term, "e", 1);
