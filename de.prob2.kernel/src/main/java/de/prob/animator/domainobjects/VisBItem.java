@@ -92,7 +92,7 @@ public class VisBItem {
 
 	public static VisBItem fromPrologTerm(final PrologTerm term) {
 		BindingGenerator.getCompoundTerm(term, "visb_item", 5);
-		final String id = term.getArgument(1).atomToString();
+		final String id = term.getArgument(1).atomicToString();
 		final String attribute = term.getArgument(2).atomToString();
 		final String expression = term.getArgument(3).atomToString();
 		final String description = term.getArgument(4).atomToString();

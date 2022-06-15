@@ -110,7 +110,7 @@ public interface BVisual2Value {
 		switch (functor) {
 			case "p":
 				BindingGenerator.getCompoundTerm(term, "p", 1);
-				final String value = term.getArgument(1).atomToString();
+				final String value = term.getArgument(1).atomicToString();
 				switch (value) {
 					case "false":
 						return BVisual2Value.PredicateValue.FALSE;

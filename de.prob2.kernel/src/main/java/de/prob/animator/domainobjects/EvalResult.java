@@ -156,7 +156,7 @@ public class EvalResult extends AbstractEvalResult {
 			 * From this information, an EvalResult object is created.
 			 */
 
-			final String value = pt.getArgument(1).atomToString();
+			final String value = pt.getArgument(1).atomicToString();
 			final ListPrologTerm solutionList = BindingGenerator.getList(pt.getArgument(2));
 			final List<PrologTerm> errorsList;
 			if (pt.getArity() >= 3) {

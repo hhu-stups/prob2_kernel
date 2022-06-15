@@ -41,11 +41,11 @@ public class VisBHover {
 
 	public static VisBHover fromPrologTerm(final PrologTerm term) {
 		BindingGenerator.getCompoundTerm(term, "hover", 5);
-		final String svgID = term.getArgument(1).atomToString();
-		final String hoverID = term.getArgument(2).atomToString();
+		final String svgID = term.getArgument(1).atomicToString();
+		final String hoverID = term.getArgument(2).atomicToString();
 		final String attribute = term.getArgument(3).atomToString();
-		final String enterVal = term.getArgument(4).atomToString();
-		final String leaveVal = term.getArgument(5).atomToString();
+		final String enterVal = term.getArgument(4).atomicToString();
+		final String leaveVal = term.getArgument(5).atomicToString();
 		return new VisBHover(svgID, hoverID, attribute, enterVal, leaveVal);
 	}
 
