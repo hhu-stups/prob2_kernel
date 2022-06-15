@@ -37,7 +37,7 @@ public class FormulaTypecheckCommand extends AbstractCommand {
 
 	@Override
 	public void processResult(ISimplifiedROMap<String, PrologTerm> bindings) {
-		String type = PrologTerm.atomicString(bindings.get(TYPE));
+		String type = bindings.get(TYPE).atomToString();
 		List<ErrorItem> errors = BindingGenerator.getList(bindings.get(ERRORS)).stream()
 			.map(ErrorItem::fromProlog)
 			.collect(Collectors.toList());

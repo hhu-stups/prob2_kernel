@@ -12,8 +12,7 @@ public class GetInternalRepresentationPrettyPrintUnicodeCommand extends Abstract
 	@Override
 	public void processResult(
 			final ISimplifiedROMap<String, PrologTerm> bindings) {
-		pp = PrologTerm.atomicString(bindings
-				.get(VARIABLE));
+		pp = bindings.get(VARIABLE).atomToString();
 	}
 
 	@Override

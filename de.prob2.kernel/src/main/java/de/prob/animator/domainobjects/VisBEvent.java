@@ -48,9 +48,9 @@ public class VisBEvent {
 
 	public static VisBEvent fromPrologTerm(final PrologTerm term, final Map<String, List<VisBHover>> hoverMap) {
 		BindingGenerator.getCompoundTerm(term, "execute_event", 3);
-		final String id = PrologTerm.atomicString(term.getArgument(1));
-		final String event = PrologTerm.atomicString(term.getArgument(2));
-		final List<String> predicates = PrologTerm.atomicStrings(BindingGenerator.getList(term.getArgument(3)));
+		final String id = term.getArgument(1).atomToString();
+		final String event = term.getArgument(2).atomToString();
+		final List<String> predicates = PrologTerm.atomsToStrings(BindingGenerator.getList(term.getArgument(3)));
 		final List<VisBHover> hovers = hoverMap.get(id) == null ? new ArrayList<>() : hoverMap.get(id);
 		return new VisBEvent(id, event, predicates, hovers);
 	}

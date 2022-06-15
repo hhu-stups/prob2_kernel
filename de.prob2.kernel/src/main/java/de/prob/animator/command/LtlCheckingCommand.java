@@ -69,7 +69,7 @@ public final class LtlCheckingCommand extends AbstractCommand implements
 			final List<ErrorItem> errors = errorTerm.stream()
 				.map(error -> {
 					if (error.isAtom()) {
-						return ErrorItem.fromErrorMessage(PrologTerm.atomicString(error));
+						return ErrorItem.fromErrorMessage(error.atomToString());
 					} else {
 						return ErrorItem.fromProlog(error);
 					}

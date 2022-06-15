@@ -30,7 +30,7 @@ public class GetOperationsWithTimeout extends AbstractCommand {
 			final ISimplifiedROMap<String, PrologTerm> bindings) {
 		ListPrologTerm list = BindingGenerator.getList(bindings,
 				TIMEOUT_VARIABLE);
-		timeouts = PrologTerm.atomicStrings(list);
+		timeouts = PrologTerm.atomsToStrings(list);
 	}
 
 	@Override

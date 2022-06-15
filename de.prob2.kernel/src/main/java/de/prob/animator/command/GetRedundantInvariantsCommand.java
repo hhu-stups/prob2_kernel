@@ -24,7 +24,7 @@ public class GetRedundantInvariantsCommand extends AbstractCommand {
 
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
-		redundant = PrologTerm.atomicStrings((ListPrologTerm) bindings.get(REDUNDANT_INVS));
+		redundant = PrologTerm.atomsToStrings((ListPrologTerm) bindings.get(REDUNDANT_INVS));
 		timeout = "true".equals(bindings.get(TIMEOUT_VAR).getFunctor());
 	}
 

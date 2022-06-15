@@ -52,7 +52,7 @@ public class DynamicRenamingAnalyzer implements RenamingAnalyzerInterface {
 			return new HashMap<>();
 		}
 
-		final List<String> oldIdentifiers = PrologTerm.atomicStrings(preparedOperation.getFoundVariables());
+		final List<String> oldIdentifiers = PrologTerm.atomsToStrings(preparedOperation.getFoundVariables());
 		final List<String> newIdentifiers = compareTwoOperations.getIdentifiers();
 		assert oldIdentifiers.size() == newIdentifiers.size();
 		return TraceCheckerUtils.zip(oldIdentifiers, newIdentifiers);

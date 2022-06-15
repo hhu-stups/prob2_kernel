@@ -1,10 +1,7 @@
 package de.prob.animator.domainobjects;
 
-
 import de.prob.parser.BindingGenerator;
 import de.prob.prolog.term.PrologTerm;
-
-import java.util.List;
 
 /**
  * The VisBEvent is designed for the JSON / VisB file
@@ -44,11 +41,11 @@ public class VisBHover {
 
 	public static VisBHover fromPrologTerm(final PrologTerm term) {
 		BindingGenerator.getCompoundTerm(term, "hover", 5);
-		final String svgID = PrologTerm.atomicString(term.getArgument(1));
-		final String hoverID = PrologTerm.atomicString(term.getArgument(2));
-		final String attribute = PrologTerm.atomicString(term.getArgument(3));
-		final String enterVal = PrologTerm.atomicString(term.getArgument(4));
-		final String leaveVal = PrologTerm.atomicString(term.getArgument(5));
+		final String svgID = term.getArgument(1).atomToString();
+		final String hoverID = term.getArgument(2).atomToString();
+		final String attribute = term.getArgument(3).atomToString();
+		final String enterVal = term.getArgument(4).atomToString();
+		final String leaveVal = term.getArgument(5).atomToString();
 		return new VisBHover(svgID, hoverID, attribute, enterVal, leaveVal);
 	}
 

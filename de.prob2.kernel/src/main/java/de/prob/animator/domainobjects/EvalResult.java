@@ -130,7 +130,7 @@ public class EvalResult extends AbstractEvalResult {
 			 * Prolog list with the code on the first index and a list of errors
 			 * This results therefore in a ComputationNotCompleted command
 			 */
-			final List<String> strings = PrologTerm.atomicStrings((ListPrologTerm)pt);
+			final List<String> strings = PrologTerm.atomsToStrings((ListPrologTerm)pt);
 			final String code = strings.get(0);
 			final List<ErrorItem> errors = strings.subList(1, strings.size()).stream()
 				.map(ErrorItem::fromErrorMessage)
@@ -156,7 +156,7 @@ public class EvalResult extends AbstractEvalResult {
 			 * From this information, an EvalResult object is created.
 			 */
 
-			final String value = PrologTerm.atomicString(pt.getArgument(1));
+			final String value = pt.getArgument(1).atomToString();
 			final ListPrologTerm solutionList = BindingGenerator.getList(pt.getArgument(2));
 			final List<PrologTerm> errorsList;
 			if (pt.getArity() >= 3) {
@@ -183,7 +183,7 @@ public class EvalResult extends AbstractEvalResult {
 				solutions = new HashMap<>();
 				for (PrologTerm t : solutionList) {
 					CompoundPrologTerm cpt = BindingGenerator.getCompoundTerm(t, "solution", 2);
-					solutions.put(PrologTerm.atomicString(cpt.getArgument(1)).intern(), PrologTerm.atomicString(cpt.getArgument(2)).intern());
+					solutions.put(cpt.getArgument(1).atomToString().intern(), cpt.getArgument(2).atomToString().intern());
 				}
 			}
 
@@ -203,11 +203,11 @@ public class EvalResult extends AbstractEvalResult {
 			return res;
 		} else if ("errors".equals(pt.getFunctor())) {
 			final CompoundPrologTerm errorsTerm = BindingGenerator.getCompoundTerm(pt, 2);
-			final String errorType = PrologTerm.atomicString(errorsTerm.getArgument(1));
+			final String errorType = errorsTerm.getArgument(1).atomToString();
 			final List<ErrorItem> errors = BindingGenerator.getList(errorsTerm.getArgument(2)).stream()
 				.map(term -> {
 					if (term.isAtom()) {
-						return ErrorItem.fromErrorMessage(PrologTerm.atomicString(term));
+						return ErrorItem.fromErrorMessage(term.atomToString());
 					} else {
 						return ErrorItem.fromProlog(term);
 					}

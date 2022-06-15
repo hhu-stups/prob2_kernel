@@ -27,8 +27,8 @@ public class GetMachineOperationInfosWithTypes extends AbstractCommand {
 
 	private static List<String> convertPossiblyUnknownAtomicStringList(final PrologTerm list) {
 		if (list instanceof ListPrologTerm) {
-			return PrologTerm.atomicStrings((ListPrologTerm) list);
-		} else if ("unknown".equals(PrologTerm.atomicString(list))) {
+			return PrologTerm.atomsToStrings((ListPrologTerm) list);
+		} else if ("unknown".equals(list.atomToString())) {
 			return Collections.emptyList();
 		} else {
 			throw new AssertionError("Not a list or 'unknown': " + list);
@@ -37,11 +37,11 @@ public class GetMachineOperationInfosWithTypes extends AbstractCommand {
 
 	private static OperationInfo operationInfoFromPrologTerm(final PrologTerm prologTerm) {
 		final CompoundPrologTerm cpt = BindingGenerator.getCompoundTerm(prologTerm, "operation_info", 9);
-		final String opName = PrologTerm.atomicString(cpt.getArgument(1));
-		final List<String> outputParameterNames = PrologTerm.atomicStrings(BindingGenerator.getList(cpt.getArgument(2)));
-		final List<String> parameterNames = PrologTerm.atomicStrings(BindingGenerator.getList(cpt.getArgument(3)));
-		final boolean topLevel = Boolean.parseBoolean(PrologTerm.atomicString(cpt.getArgument(4)));
-		final OperationInfo.Type type = OperationInfo.Type.fromProlog(PrologTerm.atomicString(cpt.getArgument(5)));
+		final String opName = cpt.getArgument(1).atomToString();
+		final List<String> outputParameterNames = PrologTerm.atomsToStrings(BindingGenerator.getList(cpt.getArgument(2)));
+		final List<String> parameterNames = PrologTerm.atomsToStrings(BindingGenerator.getList(cpt.getArgument(3)));
+		final boolean topLevel = Boolean.parseBoolean(cpt.getArgument(4).atomToString());
+		final OperationInfo.Type type = OperationInfo.Type.fromProlog(cpt.getArgument(5).atomToString());
 		final List<String> readVariables = convertPossiblyUnknownAtomicStringList(cpt.getArgument(6));
 		final List<String> writtenVariables = convertPossiblyUnknownAtomicStringList(cpt.getArgument(7));
 		final List<String> nonDetWrittenVariables = convertPossiblyUnknownAtomicStringList(cpt.getArgument(8));

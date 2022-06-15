@@ -53,7 +53,7 @@ public final class ErrorItem {
 				));
 			}
 			
-			final String filename = PrologTerm.atomicString(location.getArgument(1));
+			final String filename = location.getArgument(1).atomToString();
 			final int startLine = ((IntegerPrologTerm)location.getArgument(2)).getValue().intValueExact();
 			final int startColumn = ((IntegerPrologTerm)location.getArgument(3)).getValue().intValueExact();
 			final int endLine = ((IntegerPrologTerm)location.getArgument(4)).getValue().intValueExact();
@@ -172,9 +172,9 @@ public final class ErrorItem {
 			));
 		}
 		
-		final String message = PrologTerm.atomicString(error.getArgument(1));
+		final String message = error.getArgument(1).atomToString();
 		
-		final String typeName = PrologTerm.atomicString(error.getArgument(2));
+		final String typeName = error.getArgument(2).atomToString();
 		final Type type;
 		switch (typeName) {
 			case "warning":
