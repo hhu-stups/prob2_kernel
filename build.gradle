@@ -161,6 +161,7 @@ dependencies {
 	api group: "de.hhu.stups", name: "unicode", version: parserVersion
 	api group: "de.hhu.stups", name: "theorymapping", version: parserVersion
 	api group: "de.hhu.stups", name: "value-translator", version: "0.1.2"
+	api group: "de.hhu.stups", name: "voparser", version: parserVersion
 
 	// Groovy (Apache License 2.0)
 	api(platform(group: "org.codehaus.groovy", name: "groovy-bom", version: "3.0.9"))
