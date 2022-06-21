@@ -4,13 +4,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import de.prob.Main;
 import de.prob.model.representation.CSPModel;
 import de.prob.model.representation.FormulaUUID;
 import de.prob.model.representation.IFormulaUUID;
@@ -38,7 +36,7 @@ public class CSP extends AbstractEvalElement {
 		
 		this.uuid = new FormulaUUID();
 		this.fileName = model.getModelFile().getAbsolutePath();
-		this.cspmfPath = Paths.get(Main.getProBDirectory(), model.getOsInfo().getCspmfName());
+		this.cspmfPath = model.getCspmfPath();
 	}
 
 	@Override
@@ -49,6 +47,13 @@ public class CSP extends AbstractEvalElement {
 	@Override
 	public void printProlog(IPrologTermOutput pout) {
 		callCSPMF(pout, "translate", "--expressionToPrologTerm=" + this.getCode(), fileName);
+	}
+
+	@Override
+	public void printEvalTerm(final IPrologTermOutput pout) {
+		pout.openTerm("csp");
+		this.printProlog(pout);
+		pout.closeTerm();
 	}
 
 	public void printPrologAssertion(IPrologTermOutput pout) {

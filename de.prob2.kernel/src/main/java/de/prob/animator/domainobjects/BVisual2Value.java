@@ -110,7 +110,7 @@ public interface BVisual2Value {
 		switch (functor) {
 			case "p":
 				BindingGenerator.getCompoundTerm(term, "p", 1);
-				final String value = PrologTerm.atomicString(term.getArgument(1));
+				final String value = term.getArgument(1).atomicToString();
 				switch (value) {
 					case "false":
 						return BVisual2Value.PredicateValue.FALSE;
@@ -124,11 +124,11 @@ public interface BVisual2Value {
 			
 			case "v":
 				BindingGenerator.getCompoundTerm(term, "v", 1);
-				return new BVisual2Value.ExpressionValue(PrologTerm.atomicString(term.getArgument(1)));
+				return new BVisual2Value.ExpressionValue(term.getArgument(1).atomicToString());
 			
 			case "e":
 				BindingGenerator.getCompoundTerm(term, "e", 1);
-				return new BVisual2Value.Error(PrologTerm.atomicString(term.getArgument(1)));
+				return new BVisual2Value.Error(term.getArgument(1).atomToString());
 			
 			case "i":
 				BindingGenerator.getCompoundTerm(term, "i", 0);

@@ -1,24 +1,23 @@
 package de.prob.animator.command;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.Set;
+
 import de.prob.animator.domainobjects.AbstractEvalResult;
 import de.prob.animator.domainobjects.ClassicalB;
-import de.prob.animator.domainobjects.ComputationNotCompletedResult;
 import de.prob.animator.domainobjects.EvalResult;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.cli.CliTestCommon;
 import de.prob.scripting.Api;
 import de.prob.statespace.State;
 import de.prob.statespace.StateSpace;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,10 +31,10 @@ class CbcSolveCommandTest {
 	}
 
 	@BeforeEach
-	void beforeEach() throws IOException {
-		String example_mch = CbcSolveCommand.class.getClassLoader()
+	void beforeEach() throws IOException, URISyntaxException {
+		String example_mch = Paths.get(CbcSolveCommand.class.getClassLoader()
 				.getResource("de/prob/testmachines/b/VariablesOnly.mch")
-				.getFile();
+				.toURI()).toString();
 		stateSpace = api.b_load(example_mch);
 	}
 

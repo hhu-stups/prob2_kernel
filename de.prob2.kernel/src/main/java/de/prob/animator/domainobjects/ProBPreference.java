@@ -24,13 +24,12 @@ public final class ProBPreference {
 	private static final int DEFAULT_POSITION = 5;
 
 	public ProBPreference(final CompoundPrologTerm term) {
-		name = PrologTerm.atomicString(term.getArgument(NAME_POSITION));
+		name = term.getArgument(NAME_POSITION).atomToString();
 		type = term.getArgument(TYPE_POSITION);
-		description = PrologTerm.atomicString(term.getArgument(DESC_POSITION));
-		category = PrologTerm.atomicString(term.getArgument(CAT_POSITION));
+		description = term.getArgument(DESC_POSITION).atomToString();
+		category = term.getArgument(CAT_POSITION).atomToString();
 		final PrologTerm defaultTerm = term.getArgument(DEFAULT_POSITION);
-		defaultValue = defaultTerm.isAtom() ? PrologTerm
-				.atomicString(defaultTerm) : defaultTerm.toString();
+		defaultValue = defaultTerm.isAtom() ? defaultTerm.atomToString() : defaultTerm.toString();
 	}
 
 	@Override

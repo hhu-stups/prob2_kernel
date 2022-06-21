@@ -37,9 +37,9 @@ public final class GetVisBAttributeValuesCommand extends AbstractCommand {
 		this.values = new HashMap<>();
 		for (final PrologTerm term : BindingGenerator.getList(bindings, ATTRIBUTES_VARIABLE)) {
 			BindingGenerator.getCompoundTerm(term, "set_attr", 3);
-			final String id = PrologTerm.atomicString(term.getArgument(1));
-			final String attribute = PrologTerm.atomicString(term.getArgument(2));
-			final String value = PrologTerm.atomicString(term.getArgument(3));
+			final String id = term.getArgument(1).atomicToString();
+			final String attribute = term.getArgument(2).atomToString();
+			final String value = term.getArgument(3).atomicToString();
 			this.values.put(new VisBItem.VisBItemKey(id, attribute), value);
 		}
 	}

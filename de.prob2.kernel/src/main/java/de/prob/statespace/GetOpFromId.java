@@ -5,7 +5,9 @@ import java.util.Collections;
 import java.util.List;
 
 import de.prob.animator.command.AbstractCommand;
+import de.prob.animator.domainobjects.EvalOptions;
 import de.prob.animator.domainobjects.FormulaExpand;
+import de.prob.animator.domainobjects.FormulaTranslationMode;
 import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
@@ -20,18 +22,31 @@ public class GetOpFromId extends AbstractCommand {
 	private static final String RETURNVALUES_VARIABLE = "RetVals";
 	private List<String> params;
 	private List<String> returnValues;
-	private final FormulaExpand expansion;
+	private final EvalOptions options;
+
+	public GetOpFromId(final Transition transition, final EvalOptions options) {
+		this.op = transition;
+		this.options = options;
+	}
 
 	public GetOpFromId(final Transition opInfo, final FormulaExpand expansion) {
-		op = opInfo;
-		this.expansion = expansion;
+		this(opInfo, EvalOptions.DEFAULT.withExpand(expansion)
+			// Old code returned ASCII instead of Unicode - keep it that way for compatibility
+			.withMode(FormulaTranslationMode.ASCII));
 	}
 
 	@Override
 	public void writeCommand(final IPrologTermOutput pto) {
-		pto.openTerm(PROLOG_COMMAND_NAME).printAtomOrNumber(op.getId())
-				.printAtom(expansion.getPrologName()).printVariable(PARAMETERS_VARIABLE)
-				.printVariable(RETURNVALUES_VARIABLE).closeTerm();
+		pto.openTerm(PROLOG_COMMAND_NAME);
+		pto.printAtomOrNumber(op.getId());
+
+		pto.openList();
+		this.options.printProlog(pto);
+		pto.closeList();
+
+		pto.printVariable(PARAMETERS_VARIABLE);
+		pto.printVariable(RETURNVALUES_VARIABLE);
+		pto.closeTerm();
 	}
 
 	@Override
@@ -55,7 +70,10 @@ public class GetOpFromId extends AbstractCommand {
 			returnValues.add(r.getFunctor().intern());
 		}
 
-		op.setInfo(expansion, params, returnValues);
+		if (this.options.getMode() == FormulaTranslationMode.ASCII && this.options.getLanguage() == null) {
+			// TODO Support caching results for non-default options
+			op.setInfo(this.options.getExpand(), params, returnValues);
+		}
 	}
 
 	/**
@@ -74,4 +92,7 @@ public class GetOpFromId extends AbstractCommand {
 		return returnValues;
 	}
 
+	public EvaluatedTransitionInfo getInfo() {
+		return new EvaluatedTransitionInfo(this.op, this.getParameters(), this.getReturnValues());
+	}
 }

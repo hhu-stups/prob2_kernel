@@ -1,17 +1,20 @@
 package de.prob.animator.command;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
+
 import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.EventB;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.cli.CliTestCommon;
 import de.prob.scripting.Api;
 import de.prob.statespace.StateSpace;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,10 +28,10 @@ class NQPrimePredicateCommandTest {
 	}
 
 	@BeforeEach
-	void beforeEach() throws IOException {
-		String example_mch = NQPrimePredicateCommandTest.class.getClassLoader()
+	void beforeEach() throws IOException, URISyntaxException {
+		String example_mch = Paths.get(NQPrimePredicateCommandTest.class.getClassLoader()
 				.getResource("de/prob/testmachines/b/VariablesOnly.mch")
-				.getFile();
+				.toURI()).toString();
 		stateSpace = api.b_load(example_mch);
 	}
 

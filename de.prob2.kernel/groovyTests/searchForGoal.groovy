@@ -18,7 +18,7 @@ try {
 	final cmd2 = new SetBGoalCommand("1" as ClassicalB)
 	s.execute(cmd2)
 } catch (ProBError e) {
-	assert e.message.contains("typeerror")
+	assert e.message.contains("Type mismatch") || /* old error message */ e.message.contains("typeerror")
 	thrown = true
 }
 assert thrown

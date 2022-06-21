@@ -118,8 +118,7 @@ public class ConstraintBasedInvariantCheckCommand extends AbstractCommand
 		List<InvariantCheckCounterExample> examples = new ArrayList<>();
 		for (final PrologTerm t : ceTerm) {
 			final CompoundPrologTerm term = (CompoundPrologTerm) t;
-			final String eventName = PrologTerm.atomicString(term
-					.getArgument(1));
+			final String eventName = term.getArgument(1).atomToString();
 			final Transition step1 = Transition.createTransitionFromCompoundPrologTerm(
 				s, BindingGenerator.getCompoundTerm(term.getArgument(2), 4));
 			final Transition step2 = Transition.createTransitionFromCompoundPrologTerm(

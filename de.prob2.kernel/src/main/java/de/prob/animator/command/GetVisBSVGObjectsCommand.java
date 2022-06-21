@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class GetVisBSVGObjectsCommand extends AbstractCommand {
 
@@ -37,14 +36,14 @@ public class GetVisBSVGObjectsCommand extends AbstractCommand {
 		List<VisBSVGObject> svgObjects = new ArrayList<>();
 		for(PrologTerm svgObject : list) {
 			BindingGenerator.getCompoundTerm(svgObject, "visb_svg_object", 3);
-			String id = PrologTerm.atomicString(svgObject.getArgument(1));
+			String id = svgObject.getArgument(1).atomicToString();
 			String object = svgObject.getArgument(2).toString();
 			ListPrologTerm attributes = (ListPrologTerm) svgObject.getArgument(3);
 			Map<String, String> attributesMap = new HashMap<>();
 			for(PrologTerm attribute : attributes) {
 				BindingGenerator.getCompoundTerm(attribute, "svg_attribute", 2);
-				String key = PrologTerm.atomicString(attribute.getArgument(1));
-				String value = PrologTerm.atomicString(attribute.getArgument(2));
+				String key = attribute.getArgument(1).atomToString();
+				String value = attribute.getArgument(2).atomicToString();
 				attributesMap.put(key, value);
 			}
 			svgObjects.add(new VisBSVGObject(id, object, attributesMap));

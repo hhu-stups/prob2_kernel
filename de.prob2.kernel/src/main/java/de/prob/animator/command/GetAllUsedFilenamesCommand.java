@@ -28,9 +28,9 @@ public class GetAllUsedFilenamesCommand extends AbstractCommand {
 	public void processResult(ISimplifiedROMap<String, PrologTerm> bindings) {
 		ListPrologTerm res = (ListPrologTerm) bindings.get(FILES);
 		for (PrologTerm prologTerm : res) {
-			final String name = PrologTerm.atomicString(prologTerm.getArgument(1));
-			final String extension = PrologTerm.atomicString(prologTerm.getArgument(2));
-			final String path = PrologTerm.atomicString(prologTerm.getArgument(3));
+			final String name = prologTerm.getArgument(1).atomToString();
+			final String extension = prologTerm.getArgument(2).atomToString();
+			final String path = prologTerm.getArgument(3).atomToString();
 			files.add(new MachineFileInformation(name, extension, path));
 		}
 	}

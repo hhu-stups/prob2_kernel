@@ -12,6 +12,7 @@ import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.model.representation.DependencyGraph.ERefType;
 import de.prob.scripting.StateSpaceProvider;
 import de.prob.statespace.FormalismType;
+import de.prob.statespace.Language;
 import de.prob.statespace.StateSpace;
 
 import groovy.util.Eval;
@@ -71,9 +72,7 @@ public abstract class AbstractModel extends AbstractElement {
 	 * @param formula to be parsed
 	 * @return a valid formula
 	 * @throws RuntimeException if parsing is not successful
-	 * @deprecated Use {@link #parseFormula(String, FormulaExpand)} with an explicit {@link FormulaExpand} argument instead
 	 */
-	@Deprecated
 	public IEvalElement parseFormula(String formula) {
 		return this.parseFormula(formula, FormulaExpand.EXPAND);
 	}
@@ -111,6 +110,8 @@ public abstract class AbstractModel extends AbstractElement {
 	}
 
 	public abstract FormalismType getFormalismType();
+
+	public abstract Language getLanguage();
 
 	public File getModelFile() {
 		return modelFile;

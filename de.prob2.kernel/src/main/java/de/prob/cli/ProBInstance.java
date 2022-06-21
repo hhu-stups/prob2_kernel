@@ -28,7 +28,7 @@ public class ProBInstance {
 
 	private final Collection<IConsoleOutputListener> consoleOutputListeners;
 
-	public ProBInstance(final Process process, final BufferedReader stream, final Long userInterruptReference,
+	private ProBInstance(final Process process, final BufferedReader stream, final Long userInterruptReference,
 			final ProBConnection connection, final String home, final OsSpecificInfo osInfo) {
 		this.process = process;
 		this.connection = connection;
@@ -36,7 +36,17 @@ public class ProBInstance {
 		interruptCommand = new String[] { command, Long.toString(userInterruptReference) };
 		this.consoleOutputListeners = new ArrayList<>();
 		thread = makeOutputPublisher(stream);
-		thread.start();
+	}
+
+	public static ProBInstance create(final Process process, final BufferedReader stream, final Long userInterruptReference,
+			final ProBConnection connection, final String home, final OsSpecificInfo osInfo) {
+		final ProBInstance instance = new ProBInstance(process, stream, userInterruptReference, connection, home, osInfo);
+		// The output logger thread must be started after the constructor,
+		// to prevent the thread from possibly seeing final instance fields before they are initialized
+		// (in particular, logger and consoleOutputListeners).
+		// This is rare, but possible - see the Java Language Specification, section 17.5. "final Field Semantics".
+		instance.thread.start();
+		return instance;
 	}
 
 	private void logConsoleLine(final String line) {

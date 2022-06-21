@@ -83,7 +83,7 @@ public final class GetAnimationMatrixForStateCommand extends AbstractCommand {
 				} else if ("text".equals(valueTerm.getFunctor())) {
 					// Literal string label
 					BindingGenerator.getCompoundTerm(valueTerm, 1);
-					final String text = PrologTerm.atomicString(valueTerm.getArgument(1));
+					final String text = valueTerm.getArgument(1).atomToString();
 					value = new AnimationMatrixEntry.Text(row, column, text);
 				} else {
 					throw new IllegalArgumentException("Unknown animation matrix entry value (expected image/1 or text/1): " + valueTerm);

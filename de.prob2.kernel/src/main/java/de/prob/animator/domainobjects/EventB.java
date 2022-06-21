@@ -43,9 +43,7 @@ public class EventB extends AbstractEvalElement implements IBEvalElement {
 	 * @param code
 	 *            - The String which is a representation of the desired Event-B
 	 *            formula
-	 * @deprecated Use {@link #EventB(String, FormulaExpand)} with an explicit {@link FormulaExpand} argument instead
 	 */
-	@Deprecated
 	public EventB(final String code) {
 		this(code, Collections.emptySet());
 	}
@@ -54,10 +52,6 @@ public class EventB extends AbstractEvalElement implements IBEvalElement {
 		this(code, Collections.emptySet(), expand);
 	}
 
-	/**
-	 * @deprecated Use {@link #EventB(String, Set, FormulaExpand)} with an explicit {@link FormulaExpand} argument instead
-	 */
-	@Deprecated
 	public EventB(final String code, final Set<IFormulaExtension> types) {
 		this(code, types, FormulaExpand.EXPAND);
 	}
@@ -206,6 +200,14 @@ public class EventB extends AbstractEvalElement implements IBEvalElement {
 	}
 
 	@Override
+	public void printEvalTerm(final IPrologTermOutput pout) {
+		if (ast == null) {
+			ensureParsed();
+		}
+		super.printEvalTerm(pout);
+	}
+
+	@Override
 	public EvalElementType getKind() {
 		if (kind == null) {
 			IParseResult parseResult = ensurePredicateParsed();
@@ -272,16 +274,6 @@ public class EventB extends AbstractEvalElement implements IBEvalElement {
 			default:
 				throw new IllegalStateException("Unhandled kind: " + kind);
 		}
-	}
-
-	@Override
-	public <T extends BValue> T translate() {
-		if (!EvalElementType.EXPRESSION.equals(getKind())) {
-			throw new IllegalArgumentException("EventB translation is only supported for expressions, not " + this.getKind());
-		}
-		TranslatingVisitor<T> v = new TranslatingVisitor<>();
-		getAst().apply(v);
-		return v.getResult();
 	}
 
 	public Set<IFormulaExtension> getTypes() {

@@ -35,7 +35,7 @@ public class ConstraintBasedRefinementCheckCommand extends AbstractCommand {
 
 		final StringBuilder sb = new StringBuilder();
 		for (PrologTerm t : resultStringTerm) {
-			sb.append(PrologTerm.atomicString(t));
+			sb.append(t.atomToString());
 			sb.append('\n');
 		}
 		resultsString = sb.toString();

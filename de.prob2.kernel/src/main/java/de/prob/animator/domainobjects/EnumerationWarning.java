@@ -9,6 +9,6 @@ public class EnumerationWarning extends AbstractEvalResult {
 	
 	@Override
 	public String toString() {
-		return "An enumeration warning was observed";
+		return "UNKNOWN (enumeration warning)";
 	}
 }

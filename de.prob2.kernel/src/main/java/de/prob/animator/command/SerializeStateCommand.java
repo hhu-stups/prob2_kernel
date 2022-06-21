@@ -17,7 +17,7 @@ public class SerializeStateCommand extends AbstractCommand {
 	@Override
 	public void processResult(
 			final ISimplifiedROMap<String, PrologTerm> bindings) {
-		state = PrologTerm.atomicString(bindings.get("State"));
+		state = bindings.get("State").atomToString();
 	}
 
 	@Override

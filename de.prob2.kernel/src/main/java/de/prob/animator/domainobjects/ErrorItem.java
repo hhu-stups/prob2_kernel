@@ -53,7 +53,7 @@ public final class ErrorItem {
 				));
 			}
 			
-			final String filename = PrologTerm.atomicString(location.getArgument(1));
+			final String filename = location.getArgument(1).atomToString();
 			final int startLine = ((IntegerPrologTerm)location.getArgument(2)).getValue().intValueExact();
 			final int startColumn = ((IntegerPrologTerm)location.getArgument(3)).getValue().intValueExact();
 			final int endLine = ((IntegerPrologTerm)location.getArgument(4)).getValue().intValueExact();
@@ -149,6 +149,20 @@ public final class ErrorItem {
 		this.locations = new ArrayList<>(locations);
 	}
 	
+	/**
+	 * Shorthand for creating an {@link ErrorItem} from an error message with no location information.
+	 * Use this only when working with an API that doesn't provide error positions in any way.
+	 * If possible,
+	 * please use one of the other factory methods instead,
+	 * or call the regular {@link #ErrorItem(String, ErrorItem.Type, List)} constructor and supply location information manually.
+	 * 
+	 * @param message error message to wrap
+	 * @return new {@link ErrorItem} with type {@link ErrorItem.Type#ERROR} and no locations
+	 */
+	public static ErrorItem fromErrorMessage(final String message) {
+		return new ErrorItem(message, ErrorItem.Type.ERROR, Collections.emptyList());
+	}
+	
 	public static ErrorItem fromProlog(final PrologTerm error) {
 		if (!error.hasFunctor("error", 3)) {
 			throw new IllegalArgumentException(String.format(
@@ -158,9 +172,9 @@ public final class ErrorItem {
 			));
 		}
 		
-		final String message = PrologTerm.atomicString(error.getArgument(1));
+		final String message = error.getArgument(1).atomToString();
 		
-		final String typeName = PrologTerm.atomicString(error.getArgument(2));
+		final String typeName = error.getArgument(2).atomToString();
 		final Type type;
 		switch (typeName) {
 			case "warning":

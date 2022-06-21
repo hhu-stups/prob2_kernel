@@ -97,7 +97,7 @@ public final class DotVisualizationCommand extends DynamicCommandItem {
 		return this.getAdditionalInfo().stream()
 			.filter(t -> "preferred_dot_type".equals(t.getFunctor()))
 			.map(t -> BindingGenerator.getCompoundTerm(t, 1))
-			.map(t -> PrologTerm.atomicString(t.getArgument(1)))
+			.map(t -> t.getArgument(1).atomToString())
 			.findAny();
 	}
 	

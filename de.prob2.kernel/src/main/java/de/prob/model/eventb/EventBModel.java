@@ -12,6 +12,7 @@ import de.prob.model.eventb.translate.EventBModelTranslator;
 import de.prob.model.representation.*;
 import de.prob.scripting.StateSpaceProvider;
 import de.prob.statespace.FormalismType;
+import de.prob.statespace.Language;
 
 import java.io.File;
 import java.util.Collections;
@@ -127,6 +128,11 @@ public class EventBModel extends AbstractModel {
 	@Override
 	public FormalismType getFormalismType() {
 		return FormalismType.B;
+	}
+
+	@Override
+	public Language getLanguage() {
+		return Language.EVENT_B;
 	}
 
 	@Override

@@ -116,7 +116,7 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 		} catch (IOException e) {
 			throw new CliError("Error while opening socket connection to CLI", e);
 		}
-		ProBInstance cli = new ProBInstance(process, stream,
+		ProBInstance cli = ProBInstance.create(process, stream,
 				cliInformation.getUserInterruptReference(), connection, home, osInfo);
 		processes.add(new WeakReference<>(cli));
 		return cli;

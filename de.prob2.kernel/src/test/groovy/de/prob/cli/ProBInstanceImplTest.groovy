@@ -10,7 +10,7 @@ class ProBInstanceImplTest extends Specification {
 		final userInterruptRef = 1234L
 		final ProBConnection connection = Mock()
 		final OsSpecificInfo osinfo = Mock()
-		final ProBInstance cli = new ProBInstance(process, reader, userInterruptRef, connection, "", osinfo)
+		final ProBInstance cli = ProBInstance.create(process, reader, userInterruptRef, connection, "", osinfo)
 
 		expect:
 		!cli.shuttingDown

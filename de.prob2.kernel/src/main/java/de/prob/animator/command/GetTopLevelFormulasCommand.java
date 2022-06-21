@@ -3,7 +3,6 @@ package de.prob.animator.command;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
@@ -29,9 +28,7 @@ public class GetTopLevelFormulasCommand extends AbstractCommand {
 
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
-		BindingGenerator.getList(bindings, TOP_IDS).stream()
-			.map(PrologTerm::atomicString)
-			.collect(Collectors.toCollection(() -> ids));
+		ids.addAll(PrologTerm.atomsToStrings(BindingGenerator.getList(bindings, TOP_IDS)));
 	}
 
 	public List<String> getIds() {
