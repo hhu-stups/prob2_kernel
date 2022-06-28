@@ -17,7 +17,14 @@ public class ModelCheckingOptions {
 		FIND_DEADLOCKS("find_deadlocks", "deadlock check"),
 		FIND_INVARIANT_VIOLATIONS("find_invariant_violations", "invariant check"),
 		FIND_ASSERTION_VIOLATIONS("find_assertion_violations", "assertion check"),
+		/**
+		 * @deprecated This enum constant is named incorrectly.
+		 *     Use {@link #IGNORE_OTHER_ERRORS} instead,
+		 *     which has the same meaning with the correct name.
+		 */
+		@Deprecated
 		FIND_OTHER_ERRORS("ignore_state_errors", "find other errors"),
+		IGNORE_OTHER_ERRORS("ignore_state_errors", "ignore other errors"),
 		INSPECT_EXISTING_NODES("inspect_existing_nodes", "recheck existing states"),
 		STOP_AT_FULL_COVERAGE("stop_at_full_coverage", "stop at full coverage"),
 		PARTIAL_ORDER_REDUCTION("partial_order_reduction", "partial order reduction"),
@@ -53,6 +60,9 @@ public class ModelCheckingOptions {
 	public ModelCheckingOptions(final Set<Options> options) {
 		this.options = EnumSet.noneOf(Options.class);
 		this.options.addAll(options);
+		if (this.options.remove(Options.FIND_OTHER_ERRORS)) {
+			this.options.add(Options.IGNORE_OTHER_ERRORS);
+		}
 	}
 
 	public ModelCheckingOptions breadthFirst(final boolean value) {
@@ -77,7 +87,7 @@ public class ModelCheckingOptions {
 
 	public ModelCheckingOptions checkOtherErrors(final boolean value) {
 		//Prolog predicate asks to ignore state errors
-		return changeOption(!value, Options.FIND_OTHER_ERRORS);
+		return changeOption(!value, Options.IGNORE_OTHER_ERRORS);
 	}
 
 	public ModelCheckingOptions recheckExisting(final boolean value) {
