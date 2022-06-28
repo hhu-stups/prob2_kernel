@@ -6,11 +6,6 @@ import java.util.Objects;
 import java.util.Set;
 
 public class ModelCheckingOptions {
-
-	public static final ModelCheckingOptions DEFAULT = new ModelCheckingOptions()
-			.checkDeadlocks(true).checkInvariantViolations(true);
-	private final EnumSet<Options> options;
-
 	public enum Options {
 		BREADTH_FIRST_SEARCH("breadth_first_search", "breadth first"),
 		DEPTH_FIRST_SEARCH("depth_first_search", "depth first"),
@@ -48,6 +43,11 @@ public class ModelCheckingOptions {
 			return description;
 		}
 	}
+
+	public static final ModelCheckingOptions DEFAULT = new ModelCheckingOptions()
+		.checkDeadlocks(true).checkInvariantViolations(true);
+
+	private final EnumSet<Options> options;
 
 	public ModelCheckingOptions() {
 		options = EnumSet.noneOf(Options.class);
