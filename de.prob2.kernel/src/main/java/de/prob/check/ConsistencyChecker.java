@@ -23,7 +23,6 @@ public class ConsistencyChecker extends CheckerBase {
 
 	private ModelCheckingLimitConfiguration limitConfiguration;
 	private final ModelCheckingOptions options;
-	private final IEvalElement goal;
 
 	/**
 	 * calls {@link #ConsistencyChecker(StateSpace, ModelCheckingOptions)} with
@@ -48,7 +47,7 @@ public class ConsistencyChecker extends CheckerBase {
 	 *            {@link ModelCheckingOptions} specified by user
 	 */
 	public ConsistencyChecker(final StateSpace s, final ModelCheckingOptions options) {
-		this(s, options, null);
+		this(s, options, (IModelCheckListener)null);
 	}
 
 	public ConsistencyChecker(final StateSpace s, final ModelCheckingOptions options, final IEvalElement goal) {
@@ -66,10 +65,18 @@ public class ConsistencyChecker extends CheckerBase {
 	 *            updates. Otherwise, null.
 	 */
 	public ConsistencyChecker(final StateSpace s, final ModelCheckingOptions options, final IEvalElement goal, final IModelCheckListener ui) {
-		super(s, ui);
+		this(s, goal == null ? options : options.customGoal(goal), ui);
+	}
+
+	/**
+	 * @param s {@link StateSpace} in which to perform the consistency checking
+	 * @param options {@link ModelCheckingOptions} specified by the user
+	 * @param listener listener to inform about checking progress
+	 */
+	public ConsistencyChecker(final StateSpace s, final ModelCheckingOptions options, final IModelCheckListener listener) {
+		super(s, listener);
 		this.limitConfiguration = new ModelCheckingLimitConfiguration(getStateSpace(), stopwatch, TIMEOUT_MS,-1, -1);
-		this.options = goal == null ? options : options.checkGoal(true);
-		this.goal = goal;
+		this.options = options;
 	}
 
 	public ModelCheckingLimitConfiguration getLimitConfiguration() {
@@ -78,9 +85,9 @@ public class ConsistencyChecker extends CheckerBase {
 
 	@Override
 	protected void execute() {
-		if (goal != null) {
+		if (options.getCustomGoal() != null) {
 			try {
-				SetBGoalCommand cmd = new SetBGoalCommand(goal);
+				SetBGoalCommand cmd = new SetBGoalCommand(options.getCustomGoal());
 				this.getStateSpace().execute(cmd);
 			} catch (ProBError e) {
 				this.isFinished(new CheckError("Type error in specified goal."), null);

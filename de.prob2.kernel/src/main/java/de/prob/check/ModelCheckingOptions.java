@@ -7,6 +7,9 @@ import java.util.Set;
 
 import com.google.common.base.MoreObjects;
 
+import de.prob.animator.domainobjects.EvalElementType;
+import de.prob.animator.domainobjects.IEvalElement;
+
 public class ModelCheckingOptions {
 	public enum Options {
 		/**
@@ -61,15 +64,18 @@ public class ModelCheckingOptions {
 
 	private final ModelCheckingSearchStrategy searchStrategy;
 	private final EnumSet<Options> options;
+	private IEvalElement customGoal;
 
 	public ModelCheckingOptions() {
 		this.searchStrategy = ModelCheckingSearchStrategy.MIXED_BF_DF;
 		options = EnumSet.noneOf(Options.class);
+		this.customGoal = null;
 	}
 
-	private ModelCheckingOptions(final ModelCheckingSearchStrategy searchStrategy, final EnumSet<Options> options) {
+	private ModelCheckingOptions(final ModelCheckingSearchStrategy searchStrategy, final EnumSet<Options> options, final IEvalElement customGoal) {
 		this.searchStrategy = searchStrategy;
 		this.options = options;
+		this.customGoal = customGoal;
 	}
 
 	public ModelCheckingOptions(final Set<Options> options) {
@@ -79,6 +85,7 @@ public class ModelCheckingOptions {
 			this.options.add(Options.IGNORE_OTHER_ERRORS);
 		}
 		this.searchStrategy = searchStrategyFromOptions(this.options);
+		this.customGoal = null;
 	}
 	
 	private static ModelCheckingSearchStrategy searchStrategyFromOptions(final Set<Options> options) {
@@ -108,7 +115,7 @@ public class ModelCheckingOptions {
 		} else if (searchStrategy == ModelCheckingSearchStrategy.DEPTH_FIRST) {
 			newOptions.add(Options.DEPTH_FIRST_SEARCH);
 		}
-		return new ModelCheckingOptions(searchStrategy, newOptions);
+		return new ModelCheckingOptions(searchStrategy, newOptions, this.getCustomGoal());
 	}
 
 	/**
@@ -184,11 +191,41 @@ public class ModelCheckingOptions {
 		} else {
 			newSearchStrategy = this.getSearchStrategy();
 		}
-		return new ModelCheckingOptions(newSearchStrategy, copyOf);
+		final IEvalElement customGoal;
+		if (o == Options.FIND_GOAL && !value) {
+			// Remove custom goal when disabling search for goal.
+			customGoal = null;
+		} else {
+			customGoal = this.getCustomGoal();
+		}
+		return new ModelCheckingOptions(newSearchStrategy, copyOf, customGoal);
 	}
 
 	public Set<Options> getPrologOptions() {
 		return Collections.unmodifiableSet(options);
+	}
+
+	public IEvalElement getCustomGoal() {
+		return this.customGoal;
+	}
+
+	/**
+	 * Enable goal search with a custom goal predicate,
+	 * overriding any {@code GOAL} defined in the model.
+	 * 
+	 * @param customGoal the goal to search for,
+	 *     or {@code null} to use the {@code GOAL} definition from the model
+	 * @return modified copy of {@code this}
+	 */
+	public ModelCheckingOptions customGoal(final IEvalElement customGoal) {
+		if (Objects.equals(this.getCustomGoal(), customGoal)) {
+			return this;
+		}
+		if (customGoal != null && customGoal.getKind() != EvalElementType.PREDICATE) {
+			throw new IllegalArgumentException("Model checking goal must be a predicate, not " + customGoal.getKind());
+		}
+		return new ModelCheckingOptions(this.getSearchStrategy(), options, customGoal)
+			.checkGoal(true);
 	}
 	
 	@Override
@@ -201,12 +238,13 @@ public class ModelCheckingOptions {
 		}
 		ModelCheckingOptions other = (ModelCheckingOptions) obj;
 		return this.getSearchStrategy() == other.getSearchStrategy()
-			&& other.options.equals(this.options);
+			&& other.options.equals(this.options)
+			&& Objects.equals(this.getCustomGoal(), other.getCustomGoal());
 	}
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.getSearchStrategy(), options);
+		return Objects.hash(this.getSearchStrategy(), options, this.getCustomGoal());
 	}
 
 	@Override
@@ -214,6 +252,7 @@ public class ModelCheckingOptions {
 		return MoreObjects.toStringHelper(this)
 			.add("searchStrategy", this.getSearchStrategy())
 			.add("options", this.options)
+			.add("customGoal", this.getCustomGoal())
 			.toString();
 	}
 
