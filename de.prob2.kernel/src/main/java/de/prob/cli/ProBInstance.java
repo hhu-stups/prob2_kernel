@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 public class ProBInstance {
 
-	private final Thread thread;
+	private Thread thread;
 
 	private volatile boolean shuttingDown = false;
 
@@ -35,7 +35,6 @@ public class ProBInstance {
 		final String command = home + osInfo.getUserInterruptCmd();
 		interruptCommand = new String[] { command, Long.toString(userInterruptReference) };
 		this.consoleOutputListeners = new ArrayList<>();
-		thread = makeOutputPublisher(stream);
 	}
 
 	public static ProBInstance create(final Process process, final BufferedReader stream, final Long userInterruptReference,
@@ -45,7 +44,7 @@ public class ProBInstance {
 		// to prevent the thread from possibly seeing final instance fields before they are initialized
 		// (in particular, logger and consoleOutputListeners).
 		// This is rare, but possible - see the Java Language Specification, section 17.5. "final Field Semantics".
-		instance.thread.start();
+		instance.startOutputPublisher(stream);
 		return instance;
 	}
 
@@ -54,9 +53,10 @@ public class ProBInstance {
 		this.consoleOutputListeners.forEach(l -> l.lineReceived(line));
 	}
 
-	private Thread makeOutputPublisher(final BufferedReader stream) {
-		return new Thread(new ConsoleListener(this, stream, this::logConsoleLine),
+	private void startOutputPublisher(final BufferedReader stream) {
+		this.thread = new Thread(new ConsoleListener(this, stream, this::logConsoleLine),
 				String.format("ProB Output Logger for instance %x", this.hashCode()));
+		this.thread.start();
 	}
 
 	public void addConsoleOutputListener(final IConsoleOutputListener listener) {
@@ -70,7 +70,9 @@ public class ProBInstance {
 	public void shutdown() {
 		shuttingDown = true;
 		try {
-			thread.interrupt();
+			if (thread != null) {
+				thread.interrupt();
+			}
 			connection.disconnect();
 		} finally {
 			process.destroy();
