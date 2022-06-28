@@ -1,5 +1,6 @@
 package de.prob.check;
 
+import java.time.Duration;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Objects;
@@ -65,17 +66,23 @@ public class ModelCheckingOptions {
 	private final ModelCheckingSearchStrategy searchStrategy;
 	private final EnumSet<Options> options;
 	private IEvalElement customGoal;
+	private int stateLimit;
+	private Duration timeLimit;
 
 	public ModelCheckingOptions() {
 		this.searchStrategy = ModelCheckingSearchStrategy.MIXED_BF_DF;
 		options = EnumSet.noneOf(Options.class);
 		this.customGoal = null;
+		this.stateLimit = -1;
+		this.timeLimit = null;
 	}
 
-	private ModelCheckingOptions(final ModelCheckingSearchStrategy searchStrategy, final EnumSet<Options> options, final IEvalElement customGoal) {
+	private ModelCheckingOptions(final ModelCheckingSearchStrategy searchStrategy, final EnumSet<Options> options, final IEvalElement customGoal, final int stateLimit, final Duration timeLimit) {
 		this.searchStrategy = searchStrategy;
 		this.options = options;
 		this.customGoal = customGoal;
+		this.stateLimit = stateLimit;
+		this.timeLimit = timeLimit;
 	}
 
 	public ModelCheckingOptions(final Set<Options> options) {
@@ -86,6 +93,8 @@ public class ModelCheckingOptions {
 		}
 		this.searchStrategy = searchStrategyFromOptions(this.options);
 		this.customGoal = null;
+		this.stateLimit = -1;
+		this.timeLimit = null;
 	}
 	
 	private static ModelCheckingSearchStrategy searchStrategyFromOptions(final Set<Options> options) {
@@ -115,7 +124,7 @@ public class ModelCheckingOptions {
 		} else if (searchStrategy == ModelCheckingSearchStrategy.DEPTH_FIRST) {
 			newOptions.add(Options.DEPTH_FIRST_SEARCH);
 		}
-		return new ModelCheckingOptions(searchStrategy, newOptions, this.getCustomGoal());
+		return new ModelCheckingOptions(searchStrategy, newOptions, this.getCustomGoal(), this.getStateLimit(), this.getTimeLimit());
 	}
 
 	/**
@@ -198,7 +207,7 @@ public class ModelCheckingOptions {
 		} else {
 			customGoal = this.getCustomGoal();
 		}
-		return new ModelCheckingOptions(newSearchStrategy, copyOf, customGoal);
+		return new ModelCheckingOptions(newSearchStrategy, copyOf, customGoal, this.getStateLimit(), this.getTimeLimit());
 	}
 
 	public Set<Options> getPrologOptions() {
@@ -224,8 +233,24 @@ public class ModelCheckingOptions {
 		if (customGoal != null && customGoal.getKind() != EvalElementType.PREDICATE) {
 			throw new IllegalArgumentException("Model checking goal must be a predicate, not " + customGoal.getKind());
 		}
-		return new ModelCheckingOptions(this.getSearchStrategy(), options, customGoal)
+		return new ModelCheckingOptions(this.getSearchStrategy(), options, customGoal, this.getStateLimit(), this.getTimeLimit())
 			.checkGoal(true);
+	}
+
+	public int getStateLimit() {
+		return this.stateLimit;
+	}
+
+	public ModelCheckingOptions stateLimit(final int stateLimit) {
+		return new ModelCheckingOptions(this.getSearchStrategy(), options, this.getCustomGoal(), stateLimit < 0 ? -1 : stateLimit, this.getTimeLimit());
+	}
+
+	public Duration getTimeLimit() {
+		return this.timeLimit;
+	}
+
+	public ModelCheckingOptions timeLimit(final Duration timeLimit) {
+		return new ModelCheckingOptions(this.getSearchStrategy(), options, this.getCustomGoal(), this.getStateLimit(), timeLimit);
 	}
 	
 	@Override
@@ -239,12 +264,20 @@ public class ModelCheckingOptions {
 		ModelCheckingOptions other = (ModelCheckingOptions) obj;
 		return this.getSearchStrategy() == other.getSearchStrategy()
 			&& other.options.equals(this.options)
-			&& Objects.equals(this.getCustomGoal(), other.getCustomGoal());
+			&& Objects.equals(this.getCustomGoal(), other.getCustomGoal())
+			&& this.getStateLimit() == other.getStateLimit()
+			&& Objects.equals(this.getTimeLimit(), other.getTimeLimit());
 	}
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.getSearchStrategy(), options, this.getCustomGoal());
+		return Objects.hash(
+			this.getSearchStrategy(),
+			this.options,
+			this.getCustomGoal(),
+			this.getStateLimit(),
+			this.getTimeLimit()
+		);
 	}
 
 	@Override
@@ -253,6 +286,8 @@ public class ModelCheckingOptions {
 			.add("searchStrategy", this.getSearchStrategy())
 			.add("options", this.options)
 			.add("customGoal", this.getCustomGoal())
+			.add("stateLimit", this.getStateLimit())
+			.add("timeLimig", this.getTimeLimit())
 			.toString();
 	}
 

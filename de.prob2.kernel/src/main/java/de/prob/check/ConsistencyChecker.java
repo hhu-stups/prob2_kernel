@@ -1,5 +1,7 @@
 package de.prob.check;
 
+import java.time.Duration;
+
 import de.prob.animator.command.ModelCheckingStepCommand;
 import de.prob.animator.command.SetBGoalCommand;
 import de.prob.animator.domainobjects.IEvalElement;
@@ -75,10 +77,16 @@ public class ConsistencyChecker extends CheckerBase {
 	 */
 	public ConsistencyChecker(final StateSpace s, final ModelCheckingOptions options, final IModelCheckListener listener) {
 		super(s, listener);
-		this.limitConfiguration = new ModelCheckingLimitConfiguration(getStateSpace(), stopwatch, TIMEOUT_MS,-1, -1);
+		this.limitConfiguration = new ModelCheckingLimitConfiguration(getStateSpace(), stopwatch, TIMEOUT_MS,
+			options.getStateLimit(),
+			options.getTimeLimit() == null ? -1 : Math.toIntExact(options.getTimeLimit().getSeconds()));
 		this.options = options;
 	}
 
+	/**
+	 * @deprecated Use {@link ModelCheckingOptions#stateLimit(int)} and {@link ModelCheckingOptions#timeLimit(Duration)} to configure model checking limits.
+	 */
+	@Deprecated
 	public ModelCheckingLimitConfiguration getLimitConfiguration() {
 		return limitConfiguration;
 	}
