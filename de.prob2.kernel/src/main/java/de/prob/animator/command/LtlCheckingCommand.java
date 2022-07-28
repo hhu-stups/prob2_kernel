@@ -100,10 +100,7 @@ public final class LtlCheckingCommand extends AbstractCommand implements
 				loopEntry = ((IntegerPrologTerm) loopStatus.getArgument(1))
 						.getValue().intValue();
 			} else {
-				
-				throw new UnexpectedLoopStatusException(
-						"LTL model check returned unexpected loop status: "
-								+ loopStatus);
+				throw new AssertionError("LTL model check returned unexpected loop status: " + loopStatus);
 			}
 			
 			List<Transition> pathToCE = BindingGenerator.getList(cpt.getArgument(3)).stream()
@@ -113,7 +110,7 @@ public final class LtlCheckingCommand extends AbstractCommand implements
 			
 			result = new LTLCounterExample(ltlFormula, s, pathToCE, counterExample, loopEntry, pathType);
 		} else {
-			throw new UnknownLtlResult("Unknown result from LTL checking: " + term);
+			throw new AssertionError("Unknown result from LTL checking: " + term);
 		}
 	}
 

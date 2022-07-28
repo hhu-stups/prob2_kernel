@@ -1,5 +1,6 @@
 package de.prob.animator.command;
 
+@Deprecated
 public class UnknownLtlResult extends RuntimeException {
 	private static final long serialVersionUID = -867476809423698083L;
 

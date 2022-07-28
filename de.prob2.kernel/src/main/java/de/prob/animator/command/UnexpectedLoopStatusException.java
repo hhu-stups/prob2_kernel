@@ -1,5 +1,6 @@
 package de.prob.animator.command;
 
+@Deprecated
 public class UnexpectedLoopStatusException extends RuntimeException {
 	private static final long serialVersionUID = -431177400835031162L;
 
