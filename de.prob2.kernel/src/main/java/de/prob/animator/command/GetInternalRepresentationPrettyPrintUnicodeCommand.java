@@ -4,6 +4,10 @@ import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;
 
+/**
+ * @deprecated Use {@link GetInternalRepresentationCommand} instead.
+ */
+@Deprecated
 public class GetInternalRepresentationPrettyPrintUnicodeCommand extends AbstractCommand {
 	private static final String PROLOG_COMMAND_NAME = "get_pretty_print_unicode";
 	public static final String VARIABLE = "PP";
