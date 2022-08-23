@@ -66,6 +66,7 @@ final class JsonManagerRaw {
 		return new JsonMetadata(null, 0, creationDateTime, creator, proB2KernelVersion, proBCliVersion, modelName);
 	}
 
+	@Deprecated
 	static ObjectWithMetadata<JsonObject> readRaw(final Reader reader) {
 		final JsonReader jsonReader = new JsonReader(reader);
 		// Read the main object from the reader.
@@ -102,6 +103,7 @@ final class JsonManagerRaw {
 		return new ObjectWithMetadata<>(root, metadata);
 	}
 
+	@Deprecated
 	static void writeRaw(final Writer writer, final JsonObject src, final JsonMetadata metadata) {
 		final JsonWriter jsonWriter = new JsonWriter(writer);
 		jsonWriter.setHtmlSafe(false);
