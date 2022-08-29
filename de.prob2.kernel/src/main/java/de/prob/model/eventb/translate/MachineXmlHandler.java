@@ -27,20 +27,11 @@ import de.prob.model.eventb.EventBMachine;
 import de.prob.model.eventb.EventBModel;
 import de.prob.model.eventb.EventBVariable;
 import de.prob.model.eventb.EventParameter;
-import de.prob.model.eventb.ProofObligation;
 import de.prob.model.eventb.Variant;
 import de.prob.model.eventb.Witness;
 import de.prob.model.representation.AbstractElement;
-import de.prob.model.representation.Action;
-import de.prob.model.representation.Axiom;
-import de.prob.model.representation.BEvent;
-import de.prob.model.representation.Constant;
 import de.prob.model.representation.DependencyGraph.ERefType;
-import de.prob.model.representation.Guard;
-import de.prob.model.representation.Invariant;
-import de.prob.model.representation.Machine;
 import de.prob.model.representation.ModelElementList;
-import de.prob.model.representation.Variable;
 
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.xml.sax.Attributes;
@@ -95,8 +86,13 @@ public class MachineXmlHandler extends DefaultHandler {
 		eventCache.put(name, new HashMap<>());
 	}
 
+
+
+
+
 	@Override
 	public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
+		String name;
 		switch (qName) {
 			case "org.eventb.core.scRefinesMachine":
 				addRefinedMachine(attributes);
@@ -137,6 +133,7 @@ public class MachineXmlHandler extends DefaultHandler {
 				addVariant(attributes);
 				break;
 			case "org.eventb.core.scEvent":
+				name = attributes.getValue("org.eventb.core.scName");
 				beginEventExtraction(attributes);
 				break;
 			case "org.eventb.core.scAction":
@@ -167,6 +164,8 @@ public class MachineXmlHandler extends DefaultHandler {
 		}
 	}
 
+
+
 	private void addWitness(final Attributes attributes) {
 		String name = attributes.getValue("org.eventb.core.label");
 		String predicate = attributes.getValue("org.eventb.core.predicate");
@@ -174,6 +173,7 @@ public class MachineXmlHandler extends DefaultHandler {
 	}
 
 	private void addRefinedEvent(final Attributes attributes) {
+
 		String target = attributes.getValue("org.eventb.core.scTarget");
 		String internalName = target.substring(target.lastIndexOf('#') + 1);
 
@@ -185,8 +185,7 @@ public class MachineXmlHandler extends DefaultHandler {
 
 		String fileSource = target.substring(0, target.indexOf('|'));
 
-		String refinedMachineName = fileSource.substring(
-				fileSource.lastIndexOf('/') + 1, fileSource.lastIndexOf('.'));
+		String refinedMachineName = fileSource.substring(fileSource.lastIndexOf('/') + 1, fileSource.lastIndexOf('.'));
 		refinesForEvent.add(eventCache.get(refinedMachineName).get(internalName));
 	}
 
@@ -214,6 +213,7 @@ public class MachineXmlHandler extends DefaultHandler {
 		String name = attributes.getValue("org.eventb.core.label");
 		String convergence = attributes.getValue("org.eventb.core.convergence");
 		String extended = attributes.getValue("org.eventb.core.extended");
+
 		Event.EventType eventType;
 		if ("0".equals(convergence)) {
 			eventType = Event.EventType.ORDINARY;
@@ -222,7 +222,15 @@ public class MachineXmlHandler extends DefaultHandler {
 		} else {
 			eventType = Event.EventType.ANTICIPATED;
 		}
-		event = new Event(name, eventType, Boolean.parseBoolean(extended));
+
+
+		if(Boolean.parseBoolean(extended)){
+			event = new Event(name, eventType, Event.Inheritance.EXTENDS);
+		}else{
+			event = new Event(name, eventType, Event.Inheritance.NONE);
+		}
+
+
 		eventCache.get(machine.getName()).put(crazyRodinInternalName, event);
 
 		extractingEvent = true;
@@ -256,7 +264,8 @@ public class MachineXmlHandler extends DefaultHandler {
 		event = event.withActions(new ModelElementList<>(actions));
 		event = event.withGuards(new ModelElementList<>(guards));
 		event = event.withParameters(new ModelElementList<>(parameters));
-		event = event.withRefinesEvent(refinesForEvent.isEmpty() ? null : refinesForEvent.get(0)); // TODO Throw an error if more than one event is refined?
+		event = event.withParentEvent(refinesForEvent.isEmpty() ? null : refinesForEvent.get(0)); // TODO Throw an error if more than one event is refined
+		event = refinesForEvent.isEmpty()? event : event.changeInheritance(Event.Inheritance.REFINES);
 		event = event.withWitnesses(new ModelElementList<>(witnesses));
 
 		events.add(event);

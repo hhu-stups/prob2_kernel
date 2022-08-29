@@ -129,7 +129,7 @@ public class ProofExtractor {
 			List<Tuple2<String, String>> elements = new ArrayList<>();
 			if ("GRD".equals(type)) {
 				Event concreteEvent = m.getEvent(split[0]);
-				final Event event = concreteEvent.getRefinesEvent();
+				final Event event = concreteEvent.getParentEvent();
 				if (event != null && event.getGuards().getElement(split[1]) != null) {
 					EventBGuard guard = event.getGuards().getElement(split[1]);
 					elements.add(new Tuple2<>("event", event.getName()));

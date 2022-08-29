@@ -111,8 +111,8 @@ public class ModelToXML {
 		'org.eventb.core.label': e.getName(),
 		'org.eventb.core.comment': e.comment
 		) {
-			if (!e.getName().equals("INITIALISATION") && e.refinesEvent != null) {
-				xml.'org.eventb.core.refinesEvent'(name: genName(), 'org.eventb.core.target': e.refinesEvent.name)
+			if (!e.getName().equals("INITIALISATION") && e.parentEvent != null) {
+				xml.'org.eventb.core.refinesEvent'(name: genName(), 'org.eventb.core.target': e.parentEvent.name)
 			}
 			e.parameters.each {
 				xml.'org.eventb.core.parameter'(name: genName(),

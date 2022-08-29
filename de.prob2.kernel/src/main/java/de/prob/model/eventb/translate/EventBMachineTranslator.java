@@ -144,8 +144,8 @@ public class EventBMachineTranslator {
 			event.setStatus(extractEventStatus(e));
 			nodeInfos.put(event, new Tuple2<>(machine.getName(), e.getName()));
 
-			if (e.getRefinesEvent() != null) {
-				event.setRefines(Collections.singletonList(new TIdentifierLiteral(e.getRefinesEvent().getName())));
+			if (e.getParentEvent() != null) {
+				event.setRefines(Collections.singletonList(new TIdentifierLiteral(e.getParentEvent().getName())));
 			}
 
 			List<PExpression> params = new ArrayList<>();

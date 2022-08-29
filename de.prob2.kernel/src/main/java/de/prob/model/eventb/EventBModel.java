@@ -203,10 +203,10 @@ public class EventBModel extends AbstractModel {
 	 * @return the origin event
 	 */
 	public static Event findEventOrigin(Event event){
-		if (event.getRefinesEvent() == null) {
-			return new Event("skip", Event.EventType.ORDINARY, true);
+		if (event.getParentEvent() == null) {
+			return new Event("skip", Event.EventType.ORDINARY, Event.Inheritance.EXTENDS);
 		} else {
-			return event.getRefinesEvent();
+			return event.getParentEvent();
 		}
 	}
 
@@ -236,7 +236,7 @@ public class EventBModel extends AbstractModel {
 	public List<Event> refinedEvents(){
 		return getTopLevelMachine().getChildrenOfType(Event.class)
 				.stream()
-				.filter(entry -> !entry.isExtended())
+				.filter(entry -> entry.isExtended() != Event.Inheritance.EXTENDS)
 				.collect(toList());
 
 	}

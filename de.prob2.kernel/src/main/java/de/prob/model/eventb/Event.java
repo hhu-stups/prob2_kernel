@@ -10,51 +10,57 @@ import de.prob.model.representation.ElementComment;
 import de.prob.model.representation.Guard;
 import de.prob.model.representation.ModelElementList;
 
+import static java.util.Collections.singletonList;
+
 public class Event extends BEvent {
 
 	private final EventType type;
-	private final boolean extended;
+	private final Inheritance inheritance;
 
 	public enum EventType {
 		ORDINARY, CONVERGENT, ANTICIPATED
 	}
 
-	public Event(final String name, final EventType type, final boolean extended) {
-		this(name, type, extended, Collections.emptyMap());
+	public enum Inheritance{
+		REFINES, EXTENDS, NONE
+	}
+
+	public Event(final String name, final EventType type, final Inheritance inheritance) {
+		this(name, type, inheritance, Collections.emptyMap());
 	}
 
 	private Event(
 			final String name,
 			final EventType type,
-			final boolean extended,
+			final Inheritance inheritance,
 			Map<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children) {
 		super(name, children);
 		this.type = type;
-		this.extended = extended;
+		this.inheritance = inheritance;
 	}
 
 	public Event set(Class<? extends AbstractElement> clazz,
 			ModelElementList<? extends AbstractElement> elements) {
-		return new Event(name, type, extended, assoc(clazz, elements));
+		return new Event(name, type, inheritance, assoc(clazz, elements));
 	}
 
 	public <T extends AbstractElement> Event addTo(Class<T> clazz, T element) {
 		ModelElementList<T> list = getChildrenOfType(clazz);
-		return new Event(name, type, extended, assoc(clazz,
+		return new Event(name, type, inheritance, assoc(clazz,
 				list.addElement(element)));
 	}
 
 	public <T extends AbstractElement> Event removeFrom(Class<T> clazz,
 			T element) {
 		ModelElementList<T> list = getChildrenOfType(clazz);
-		return new Event(name, type, extended, assoc(clazz,
+		return new Event(name, type, inheritance, assoc(clazz,
 				list.removeElement(element)));
 	}
 
 	public <T extends AbstractElement> Event replaceIn(Class<T> clazz,
 			T oldElement, T newElement) {
 		ModelElementList<T> list = getChildrenOfType(clazz);
-		return new Event(name, type, extended, assoc(clazz,
+		return new Event(name, type, inheritance, assoc(clazz,
 				list.replaceElement(oldElement, newElement)));
 	}
 
@@ -63,24 +69,22 @@ public class Event extends BEvent {
 	}
 
 	public Event withComment(final String comment) {
-		return this.set(ElementComment.class, new ModelElementList<>(Collections.singletonList(new ElementComment(comment))));
+		return this.set(ElementComment.class, new ModelElementList<>(singletonList(new ElementComment(comment))));
 	}
 
 	/**
-	 * @deprecated Use {@link #getRefinesEvent()} instead. An Event-B event cannot refine more than one event.
+	 * @deprecated Use {@link #getParentEvent()} instead. An Event-B event cannot refine more than one event.
 	 */
 	@Deprecated
 	public ModelElementList<Event> getRefines() {
 		return getChildrenOfType(Event.class);
 	}
 
+
 	/**
-	 * The {@link Event} saves a reference to the name of the refined events.
-	 * However, this is just a reference, and in order to retrieve the actual
-	 * refined events the parent machine needs to be passed in as an argument.
-	 *
-	 * @return the event that this event refines, if any. Otherwise null.
+	 * @deprecated Use {@link #getRefinesEvent()} ()} instead.
 	 */
+	@Deprecated
 	public Event getRefinesEvent() {
 		final ModelElementList<Event> refines = getChildrenOfType(Event.class);
 		if (refines.isEmpty()) {
@@ -91,13 +95,42 @@ public class Event extends BEvent {
 			throw new IllegalStateException("An Event-B event cannot refine more than one event");
 		}
 	}
-
-	public Event withRefinesEvent(final Event refinesEvent) {
-		ModelElementList<Event> refines = new ModelElementList<>();
-		if (refinesEvent != null) {
-			refines = refines.addElement(refinesEvent);
+	
+	/**
+	 * The {@link Event} saves a reference to the name of the parent event.
+	 * However, this is just a reference, and in order to retrieve the actual
+	 * refined events the parent machine needs to be passed in as an argument.
+	 *
+	 * @return the event that this event refines, if any. Otherwise null.
+	 */
+	public Event getParentEvent() {
+		final ModelElementList<Event> refines = getChildrenOfType(Event.class);
+		if (refines.isEmpty()) {
+			return null;
+		} else if (refines.size() == 1) {
+			return refines.get(0);
+		} else {
+			throw new IllegalStateException("An Event-B event cannot refine more than one event");
 		}
-		return this.set(Event.class, refines);
+	}
+
+	/**
+	 * @deprecated Use {@link #withParentEvent(Event)} ()} ()} instead.
+	 */
+	@Deprecated
+	public Event withRefinesEvent(final Event parentEvent) {
+		if (parentEvent != null) {
+			return this.set(Event.class, new ModelElementList<>(singletonList(parentEvent)));
+		}
+		return this.set(Event.class, new ModelElementList<>());
+	}
+
+
+	public Event withParentEvent(final Event parentEvent) {
+		if (parentEvent != null) {
+			return this.set(Event.class, new ModelElementList<>(singletonList(parentEvent)));
+		}
+		return this.set(Event.class, new ModelElementList<>());
 	}
 
 	public ModelElementList<EventBGuard> getGuards() {
@@ -110,8 +143,8 @@ public class Event extends BEvent {
 
 	public ModelElementList<EventBGuard> getAllGuards() {
 		ModelElementList<EventBGuard> acts = new ModelElementList<>();
-		if (this.getRefinesEvent() != null) {
-			acts = acts.addMultiple(this.getRefinesEvent().getAllGuards());
+		if (this.getParentEvent() != null) {
+			acts = acts.addMultiple(this.getParentEvent().getAllGuards());
 		}
 		return acts.addMultiple(getGuards());
 	}
@@ -126,8 +159,8 @@ public class Event extends BEvent {
 
 	public ModelElementList<EventBAction> getAllActions() {
 		ModelElementList<EventBAction> acts = new ModelElementList<>();
-		if (this.getRefinesEvent() != null) {
-			acts = acts.addMultiple(this.getRefinesEvent().getAllActions());
+		if (this.getParentEvent() != null) {
+			acts = acts.addMultiple(this.getParentEvent().getAllActions());
 		}
 		return acts.addMultiple(getActions());
 	}
@@ -152,23 +185,31 @@ public class Event extends BEvent {
 		return type;
 	}
 
-	public boolean isExtended() {
-		return extended;
+	public Inheritance isExtended() {
+		return inheritance;
 	}
 
 	public Event withName(final String name) {
-		return new Event(name, type, extended, getChildren());
+		return new Event(name, type, inheritance, getChildren());
 	}
 
 	public Event changeType(EventType type) {
-		return new Event(name, type, extended, getChildren());
+		return new Event(name, type, inheritance, getChildren());
 	}
 
+	public Event changeInheritance(Inheritance inheritance){
+		return new Event(name, type, inheritance, getChildren());
+	}
+
+	/**
+	 * @deprecated Use {@link #changeInheritance(Inheritance)} ()} instead.
+	 */
+	@Deprecated
 	public Event toggleExtended(boolean extended) {
-		if (extended == this.extended) {
+		if (Inheritance.EXTENDS == this.inheritance && extended) {
 			return this;
 		}
-		return new Event(name, type, extended, getChildren());
+		return new Event(name, type, Inheritance.EXTENDS, getChildren());
 	}
 
 	@Override
