@@ -10,20 +10,21 @@ import de.prob.scripting.ClassicalBFactory;
 import de.prob.scripting.EventBFactory;
 import de.prob.statespace.StateSpace;
 
-public class ProBKernelStub {
-	private final ClassicalBFactory classicalBFactory;
+public class ProBEventBKernelStub {
+	private final EventBFactory eventBFactory;
 	private final ReusableAnimator reusableAnimator;
 
+
 	@Inject
-	public ProBKernelStub(ClassicalBFactory classicalBFactory, ReusableAnimator reusableAnimator){
-		this.classicalBFactory = classicalBFactory;
+	public ProBEventBKernelStub(EventBFactory eventBFactory, ReusableAnimator reusableAnimator){
+		this.eventBFactory = eventBFactory;
 		this.reusableAnimator = reusableAnimator;
 	}
 
 	public StateSpace createStateSpace(Path path) throws IOException {
 		killCurrentStateSpace();
 		StateSpace stateSpace = reusableAnimator.createStateSpace();
-		classicalBFactory.extract(path.toString()).loadIntoStateSpace(stateSpace);
+		eventBFactory.extract(path.toString()).loadIntoStateSpace(stateSpace);
 		return stateSpace;
 	}
 

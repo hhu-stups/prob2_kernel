@@ -21,6 +21,10 @@ public class Event extends BEvent {
 		ORDINARY, CONVERGENT, ANTICIPATED
 	}
 
+	/**
+	 * Per se extend all new events from skip. However, this is not always usefull so we distinguish three types
+	 * 'None' are those events that extend from skip (skip extends from itself)
+	 */
 	public enum Inheritance{
 		REFINES, EXTENDS, NONE
 	}
@@ -185,9 +189,19 @@ public class Event extends BEvent {
 		return type;
 	}
 
+	/**
+	 * @deprecated Use {@link #hasParent()}  instead.
+	 */
+	@Deprecated
 	public Inheritance isExtended() {
 		return inheritance;
 	}
+
+
+	public Inheritance hasParent() {
+		return inheritance;
+	}
+
 
 	public Event withName(final String name) {
 		return new Event(name, type, inheritance, getChildren());
@@ -212,8 +226,28 @@ public class Event extends BEvent {
 		return new Event(name, type, Inheritance.EXTENDS, getChildren());
 	}
 
+	/**
+	 * @return only the "header", i.e., name, termination and extension information of the event
+	 */
+	public Event stripBody(){
+		return new Event(this.name, this.type, this.inheritance).withParentEvent(this.getParentEvent());
+	}
+
+
+	@Override
+	public boolean equals(Object o){
+		if(o instanceof Event){
+			return ((Event) o).getName().equals(name) && ((Event) o).type == type && ((Event) o).inheritance == inheritance;
+		} //TODO add body comparison
+		return false;
+	}
+
+
+
 	@Override
 	public String toString() {
-		return getName();
+		return getName() + " " + getType() + " " + hasParent() + " " + getParentEvent();
 	}
+
+
 }
