@@ -57,7 +57,7 @@ public class TheoryTranslator {
 			printTypeParameters(theory.getTypeParameters(), pto);
 			printDataTypes(theory.getDataTypes(), pto);
 			printOperatorDefs(theory.getOperators(), pto);
-			printAxiomaticDefintionBlocks(
+			printAxiomaticDefinitionBlocks(
 					theory.getAxiomaticDefinitionBlocks(), pto);
 			printMappings(theory.getProBMappings(), pto);
 			pto.closeTerm();
@@ -230,7 +230,7 @@ public class TheoryTranslator {
 		pto.closeList();
 	}
 
-	private void printAxiomaticDefintionBlocks(
+	private void printAxiomaticDefinitionBlocks(
 			final ModelElementList<AxiomaticDefinitionBlock> axiomaticDefinitionBlocks,
 			final IPrologTermOutput pto) {
 		pto.openList();
