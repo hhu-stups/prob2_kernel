@@ -50,7 +50,9 @@ public class ProBInstance {
 
 	private void logConsoleLine(final String line) {
 		logger.info("{}\u001b[0m", line);
-		this.consoleOutputListeners.forEach(l -> l.lineReceived(line));
+		for (final IConsoleOutputListener l : this.consoleOutputListeners) {
+			l.lineReceived(line);
+		}
 	}
 
 	private void startOutputPublisher(final BufferedReader stream) {
