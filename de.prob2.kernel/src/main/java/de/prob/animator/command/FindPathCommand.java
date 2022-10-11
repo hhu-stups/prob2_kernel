@@ -60,7 +60,7 @@ public class FindPathCommand extends AbstractCommand implements
 		for (ClassicalB classicalB : predicates) {
 			if (!EvalElementType.PREDICATE.equals(classicalB.getKind())) {
 				throw new IllegalArgumentException(
-						"Formula must be a predicates: " + predicates);
+						"Formula must be a predicate, not " + classicalB.getKind() + ": " + classicalB);
 			}
 		}
 	}

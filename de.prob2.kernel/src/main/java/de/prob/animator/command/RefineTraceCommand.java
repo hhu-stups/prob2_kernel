@@ -85,7 +85,7 @@ public class RefineTraceCommand extends AbstractCommand implements
 		for (IEvalElement eval : predicates) {
 			if (!EvalElementType.PREDICATE.equals(eval.getKind())) {
 				throw new IllegalArgumentException(
-						"Formula must be a predicates: " + predicates);
+						"Formula must be a predicate, not " + eval.getKind() + ": " + eval);
 			}
 		}
 
