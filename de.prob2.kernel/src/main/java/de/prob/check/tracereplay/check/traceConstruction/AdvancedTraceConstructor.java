@@ -98,15 +98,15 @@ public class AdvancedTraceConstructor {
 				.filter(entry -> entry.getValue().stream().anyMatch(refinedAlternatives::contains))
 				.map(Map.Entry::getKey).collect(toList());
 
-		List<EventB> predicates = modifiedTrace.stream()
+		List<ClassicalB> predicates = modifiedTrace.stream()//Traces are always saved as Classical B
 				.map(entry -> {
 					if(refiningEvents.contains(entry.getOperationName())){ //A refining event does not now its former parameters, keeping them would lead to failing predicates
 						Map<String, String > mapWithoutParameters = entry.getAllPredicates().entrySet().stream()
 								.filter(innerEntry -> !entry.getParameters().containsKey(innerEntry.getKey()))
 								.collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
-						return new EventB(new PredicateBuilder().addMap(mapWithoutParameters).toString(), FormulaExpand.EXPAND);
+						return new ClassicalB(new PredicateBuilder().addMap(mapWithoutParameters).toString(), FormulaExpand.EXPAND);
 					}else {
-						return new EventB(new PredicateBuilder().addMap(entry.getAllPredicates()).toString(), FormulaExpand.EXPAND);
+						return new ClassicalB(new PredicateBuilder().addMap(entry.getAllPredicates()).toString(), FormulaExpand.EXPAND);
 					}
 				})
 				.collect(toList());
