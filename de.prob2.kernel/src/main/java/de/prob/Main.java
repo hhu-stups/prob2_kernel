@@ -16,6 +16,7 @@ import com.google.inject.Injector;
 import com.google.inject.Stage;
 
 import de.prob.animator.IAnimator;
+import de.prob.annotations.Home;
 import de.prob.cli.Installer;
 
 /**
@@ -91,7 +92,9 @@ public class Main {
 	 * </p>
 	 *
 	 * @return the directory in which the binary files and libraries for ProB are stored
+	 * @deprecated Use dependency injection instead - inject a {@link Path} annotated with {@link Home}. In the future, different injector instances may use different ProB home directories.
 	 */
+	@Deprecated
 	public static Path getProBHomePath() {
 		final String homePathOverride = System.getProperty("prob.home");
 		if (homePathOverride != null) {
@@ -106,7 +109,9 @@ public class Main {
 	 * Consider using {@link #getProBHomePath()} instead, which returns a {@link Path} object instead of a string.
 	 *
 	 * @return the return value of {@link #getProBHomePath()}, converted to a string, with {@link File#separator} appended
+	 * @deprecated Use dependency injection instead - inject a {@link Path} annotated with {@link Home}. In the future, different injector instances may use different ProB home directories.
 	 */
+	@Deprecated
 	public static String getProBDirectory() {
 		return getProBHomePath() + File.separator;
 	}
