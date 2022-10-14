@@ -13,7 +13,11 @@ public class MainConfiguration extends AbstractModule {
 	@Override
 	protected void configure() {
 		bind(String.class).annotatedWith(Version.class).toInstance(Main.getVersion());
-		bind(String.class).annotatedWith(Home.class).toInstance(Main.getProBDirectory());
-		bind(Path.class).annotatedWith(Home.class).toInstance(Main.getProBHomePath());
+		@SuppressWarnings("deprecation")
+		final String proBDirectory = Main.getProBDirectory();
+		bind(String.class).annotatedWith(Home.class).toInstance(proBDirectory);
+		@SuppressWarnings("deprecation")
+		final Path proBHomePath = Main.getProBHomePath();
+		bind(Path.class).annotatedWith(Home.class).toInstance(proBHomePath);
 	}
 }
