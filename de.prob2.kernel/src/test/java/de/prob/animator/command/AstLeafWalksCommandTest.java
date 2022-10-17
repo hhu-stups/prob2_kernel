@@ -59,7 +59,7 @@ class AstLeafWalksCommandTest {
 	@Test
 	void shouldGetPathsForExistsExpression() {
 		String predicate =
-				"#a,b . (a:INTEGER & b:INTEGER & c:INTEGER & d:INTEGER & c > d & e > 1)";
+				"a:INTEGER & a > 1 & #b . (b:INTEGER & a = 2 * b)";
 
 		ClassicalB bast = new ClassicalB(predicate, FormulaExpand.EXPAND);
 
@@ -67,24 +67,53 @@ class AstLeafWalksCommandTest {
 		stateSpace.execute(cmd);
 
 		Set<List<String>> expected = new HashSet<>();
-		expected.add(path(new String[]{"c", "identifier"},
-				"greater",
-				new String[]{"identifier", "d"}));
-		expected.add(path(new String[]{"c", "identifier", "greater"},
-				"conjunct",
-				new String[]{"greater", "identifier", "e"}));
-		expected.add(path(new String[]{"c", "identifier", "greater"},
-				"conjunct",
-				new String[]{"greater", "integer", "1"}));
-		expected.add(path(new String[]{"d", "identifier", "greater"},
-				"conjunct",
-				new String[]{"greater", "identifier", "e"}));
-		expected.add(path(new String[]{"d", "identifier", "greater"},
-				"conjunct",
-				new String[]{"greater", "integer", "1"}));
-		expected.add(path(new String[]{"e", "identifier"},
+		expected.add(path(new String[]{"a", "identifier"},
 				"greater",
 				new String[]{"integer", "1"}));
+		expected.add(path(new String[]{"a", "identifier", "greater"},
+				"conjunct",
+				new String[]{"exists", "equal", "identifier", "a"}));
+		expected.add(path(new String[]{"a", "identifier", "greater"},
+				"conjunct",
+				new String[]{"exists", "equal", "multiplication", "integer", "2"}));
+		expected.add(path(new String[]{"a", "identifier", "greater"},
+				"conjunct",
+				new String[]{"exists", "equal", "multiplication", "identifier", "b"}));
+		expected.add(path(new String[]{"a", "identifier", "greater"},
+				"conjunct",
+				new String[]{"exists", "identifier", "b"}));
+
+		expected.add(path(new String[]{"1", "integer", "greater"},
+				"conjunct",
+				new String[]{"exists", "equal", "identifier", "a"}));
+		expected.add(path(new String[]{"1", "integer", "greater"},
+				"conjunct",
+				new String[]{"exists", "equal", "multiplication", "integer", "2"}));
+		expected.add(path(new String[]{"1", "integer", "greater"},
+				"conjunct",
+				new String[]{"exists", "equal", "multiplication", "identifier", "b"}));
+		expected.add(path(new String[]{"1", "integer", "greater"},
+				"conjunct",
+				new String[]{"exists", "identifier", "b"}));
+
+		expected.add(path(new String[]{"a", "identifier"},
+				"equal",
+				new String[]{"multiplication", "integer", "2"}));
+		expected.add(path(new String[]{"a", "identifier"},
+				"equal",
+				new String[]{"multiplication", "identifier", "b"}));
+		expected.add(path(new String[]{"a", "identifier", "equal"},
+				"exists",
+				new String[]{"identifier", "b"}));
+		expected.add(path(new String[]{"2", "integer"},
+				"multiplication",
+				new String[]{"identifier", "b"}));
+		expected.add(path(new String[]{"2", "integer", "multiplication", "equal"},
+				"exists",
+				new String[]{"identifier", "b"}));
+		expected.add(path(new String[]{"b", "identifier", "multiplication", "equal"},
+				"exists",
+				new String[]{"identifier", "b"}));
 
 		Set<List<String>> actual = cmd.getWalks();
 
