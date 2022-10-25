@@ -163,27 +163,27 @@ dependencies {
 	api group: "de.hhu.stups", name: "value-translator", version: "0.1.2"
 
 	// Groovy (Apache License 2.0)
-	api(platform(group: "org.codehaus.groovy", name: "groovy-bom", version: "3.0.9"))
+	api(platform(group: "org.codehaus.groovy", name: "groovy-bom", version: "3.0.13"))
 	api group: "org.codehaus.groovy", name: "groovy"
 	api group: "org.codehaus.groovy", name: "groovy-jsr223"
 	api group: "org.codehaus.groovy", name: "groovy-nio"
 	api group: "org.codehaus.groovy", name: "groovy-xml"
 
 	// Logging
-	api group: "org.slf4j", name: "slf4j-api", version: "1.7.32" // MIT License
+	api group: "org.slf4j", name: "slf4j-api", version: "2.0.3" // MIT License
 
 	// Misc dependencies
-	implementation group: "com.fatboyindustrial.gson-javatime-serialisers", name: "gson-javatime-serialisers", version: "1.1.1" // MIT License
+	implementation group: "com.fatboyindustrial.gson-javatime-serialisers", name: "gson-javatime-serialisers", version: "1.1.2" // MIT License
 	implementation group: "com.github.krukow", name: "clj-ds", version: "0.0.4" // Eclipse Public License 1.0
-	implementation group: "com.google.guava", name: "guava", version: "30.1.1-jre" // Apache License 2.0
-	implementation group: "com.google.code.gson", name: "gson", version: "2.8.8"
-	api group: "com.google.inject", name: "guice", version: "5.0.1" // Apache License 2.0
+	implementation group: "com.google.guava", name: "guava", version: "31.1-jre" // Apache License 2.0
+	implementation group: "com.google.code.gson", name: "gson", version: "2.10"
+	api group: "com.google.inject", name: "guice", version: "5.1.0" // Apache License 2.0
 	implementation group: "de.hhu.stups", name: "alloy2b", version: "1.2"
 	api group: "de.hhu.stups", name: "ltl-dsl", version: "0.2.0-SNAPSHOT" // Eclipse Public License 1.0
 	api group: "de.hhu.stups", name: "rodin-eventb-ast", version: "3.2.0" // Eclipse Public License 1.0
 	implementation group: "de.hhu.stups", name: "tla2bAST", version: "1.1.4" // Eclipse Public License 1.0
 
-	api(platform(group: "com.fasterxml.jackson", name: "jackson-bom", version: "2.12.5"))
+	api(platform(group: "com.fasterxml.jackson", name: "jackson-bom", version: "2.13.4.20221013"))
 	// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
 	api group: 'com.fasterxml.jackson.core', name: 'jackson-databind'
 	// https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310
@@ -191,13 +191,13 @@ dependencies {
 
 
 	// Test dependencies
-	testImplementation group: "ch.qos.logback", name: "logback-classic", version: "1.2.5" // Eclipse Public License 1.0
-	testImplementation(platform('org.junit:junit-bom:5.7.2'))
+	testImplementation group: "ch.qos.logback", name: "logback-classic", version: "1.3.4" // Eclipse Public License 1.0
+	testImplementation(platform('org.junit:junit-bom:5.9.1'))
 	testImplementation('org.junit.jupiter:junit-jupiter')
-	testImplementation group: "org.spockframework", name: "spock-core", version: "2.0-groovy-3.0" // Apache License 2.0
+	testImplementation group: "org.spockframework", name: "spock-core", version: "2.3-groovy-3.0" // Apache License 2.0
 	// Byte Buddy and Objenesis are needed by Spock to mock classes
-	testRuntimeOnly group: "net.bytebuddy", name: "byte-buddy", version: "1.11.15" // Apache License 2.0
-	testRuntimeOnly group: "org.objenesis", name: "objenesis", version: "3.2" // Apache License 2.0
+	testRuntimeOnly group: "net.bytebuddy", name: "byte-buddy", version: "1.12.18" // Apache License 2.0
+	testRuntimeOnly group: "org.objenesis", name: "objenesis", version: "3.3" // Apache License 2.0
 }
 
 if (project.hasProperty("probHome")) {
@@ -270,7 +270,7 @@ groovydoc {
 }
 
 wrapper {
-	gradleVersion = "7.4.2"
+	gradleVersion = "7.5.1"
 }
 
 tasks.withType(Test).configureEach {
