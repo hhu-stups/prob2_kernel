@@ -61,7 +61,11 @@ public class TraceReplay {
 			stateSpace.execute(cmd);
 			return cmd.getTrace();
 		} catch (ProBError e) {
-			return cmd.getTrace().withErrors(e.getErrors());
+			if (cmd.getTrace() == null) {
+				throw e;
+			} else {
+				return cmd.getTrace().withErrors(e.getErrors());
+			}
 		}
 	}
 
