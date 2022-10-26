@@ -40,6 +40,10 @@ public class TraceReplay {
 		COMMAND, NO_OPERATION_POSSIBLE, TRACE_REPLAY, MISMATCH_OUTPUT
 	}
 
+	/**
+	 * @deprecated Use {@link #replayTraceFile(StateSpace, Path)} and {@link ReplayedTrace} instead.
+	 */
+	@Deprecated
 	public enum PostconditionResult {
 		SUCCESS, FAIL, PARSE_ERROR
 	}
@@ -70,13 +74,14 @@ public class TraceReplay {
 	}
 
 	/**
-	 * @deprecated Use {@link #replayTraceFile(StateSpace, Path)} and {@link #checkPostconditionsAfterReplay(PersistentTrace, Trace)} instead.
+	 * @deprecated Use {@link #replayTraceFile(StateSpace, Path)} instead.
 	 */
 	@Deprecated
 	public static Trace replayTrace(PersistentTrace persistentTrace, StateSpace stateSpace) {
 		return replayTrace(persistentTrace, stateSpace, true, new HashMap<>(), new DefaultTraceChecker());
 	}
 
+	@Deprecated
 	private static List<PostconditionResult> checkPostconditions(State state, List<Postcondition> postconditions) {
 		List<PostconditionResult> result = new ArrayList<>();
 		for(Postcondition postcondition : postconditions) {
@@ -127,7 +132,7 @@ public class TraceReplay {
 	 * @param replayInformation a reference to an map in which additional results will be stored
 	 * @param traceChecker an interface implementation for processing results
 	 * @return A Trace when the replay was successful else return null
-	 * @deprecated Use {@link #replayTraceFile(StateSpace, Path)} and {@link #checkPostconditionsAfterReplay(PersistentTrace, Trace)} instead.
+	 * @deprecated Use {@link #replayTraceFile(StateSpace, Path)} instead.
 	 */
 	@Deprecated
 	public static Trace replayTrace(PersistentTrace persistentTrace, StateSpace stateSpace, final boolean setCurrentAnimation,
@@ -251,6 +256,10 @@ public class TraceReplay {
 		return true;
 	}
 
+	/**
+	 * @deprecated Use {@link #replayTraceFile(StateSpace, Path)} instead, which now supports checking postconditions.
+	 */
+	@Deprecated
 	public static List<List<PostconditionResult>> checkPostconditionsAfterReplay(final PersistentTrace persistentTrace, final Trace replayedTrace) {
 		final List<PersistentTransition> persistentTransitions = persistentTrace.getTransitionList();
 		final List<Transition> replayedTransitions = replayedTrace.getTransitionList();
