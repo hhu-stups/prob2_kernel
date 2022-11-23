@@ -2,8 +2,8 @@ package de.prob.cli;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.google.common.base.MoreObjects;
 
@@ -34,7 +34,11 @@ public class ProBInstance {
 		this.connection = connection;
 		final String command = home + osInfo.getUserInterruptCmd();
 		interruptCommand = new String[] { command, Long.toString(userInterruptReference) };
-		this.consoleOutputListeners = new ArrayList<>();
+		// Because the console output logger is its own thread,
+		// we have to worry about thread safety when listeners are added/removed.
+		// CopyOnWriteArrayList makes more sense than explicit synchronization,
+		// because the list is read very often (for every line of output) and almost never changes.
+		this.consoleOutputListeners = new CopyOnWriteArrayList<>();
 	}
 
 	public static ProBInstance create(final Process process, final BufferedReader stream, final Long userInterruptReference,
@@ -50,7 +54,9 @@ public class ProBInstance {
 
 	private void logConsoleLine(final String line) {
 		logger.info("{}\u001b[0m", line);
-		this.consoleOutputListeners.forEach(l -> l.lineReceived(line));
+		for (final IConsoleOutputListener l : this.consoleOutputListeners) {
+			l.lineReceived(line);
+		}
 	}
 
 	private void startOutputPublisher(final BufferedReader stream) {

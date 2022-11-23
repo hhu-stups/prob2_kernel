@@ -74,7 +74,7 @@ public final class GetOperationByPredicateCommand extends AbstractCommand
 		this.nrOfSolutions = nrOfSolutions;
 		evalElement = predicate;
 		if (!EvalElementType.PREDICATE.equals(evalElement.getKind()) && !EvalElementType.NONE.equals(evalElement.getKind())) {
-			String message = "Formula must be a predicate: " + predicate;
+			String message = "Formula must be a predicate, not " + predicate.getKind() + ": " + predicate;
 			throw new ExecuteOperationException(message, Collections.singletonList(new GetOperationError(GetOperationErrorType.PARSE_ERROR, message)));
 		}
 	}
