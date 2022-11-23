@@ -30,6 +30,22 @@ public class ProofObligation extends AbstractElement implements Named {
 		return name;
 	}
 
+	public String getSourceName() {
+		return sourceName;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public List<Tuple2<String, String>> getElements() {
+		return elements;
+	}
+
+	public boolean isDischarged() {
+		return discharged;
+	}
+
 	/**
 	 * This method writes the source elements contained in a Proof Obligation in
 	 * the given {@link IPrologTermOutput}. If certain elements are needed for a
