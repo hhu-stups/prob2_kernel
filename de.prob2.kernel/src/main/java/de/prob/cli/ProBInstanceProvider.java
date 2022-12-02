@@ -94,6 +94,7 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 		command.add(executable);
 		command.add("-sf");
 		final ProcessBuilder pb = new ProcessBuilder(command);
+		pb.environment().put("PROB_HOME", this.home);
 		pb.redirectErrorStream(true);
 
 		final Process prologProcess;
