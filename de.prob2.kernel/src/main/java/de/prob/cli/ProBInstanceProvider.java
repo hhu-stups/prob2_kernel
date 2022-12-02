@@ -94,8 +94,6 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 		command.add(executable);
 		command.add("-sf");
 		final ProcessBuilder pb = new ProcessBuilder(command);
-		pb.environment().put("TRAILSTKSIZE", "1M");
-		pb.environment().put("PROLOGINCSIZE", "50M");
 		pb.environment().put("PROB_HOME", this.home);
 		pb.redirectErrorStream(true);
 
