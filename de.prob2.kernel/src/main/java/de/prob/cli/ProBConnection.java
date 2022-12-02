@@ -19,14 +19,12 @@ public class ProBConnection {
 	private final PrintWriter outputStream;
 	private final Logger logger = LoggerFactory.getLogger(ProBConnection.class);
 	private volatile boolean shutingDown;
-	private final String key;
 	private final int port;
 
-	public ProBConnection(final String key, final int port) throws IOException {
-		this.key = key;
+	public ProBConnection(final int port) throws IOException {
 		this.port = port;
 
-		logger.debug("Connecting to port {} using key {}", this.port, this.key);
+		logger.debug("Connecting to port {}", this.port);
 		// The socket is closed in .disconnect() by closing its input/output streams.
 		@SuppressWarnings({"resource", "IOResourceOpenedButNotSafelyClosed", "SocketOpenedButNotSafelyClosed"})
 		final Socket socket = new Socket(InetAddress.getByName(null), this.port);
@@ -37,7 +35,7 @@ public class ProBConnection {
 
 	@Override
 	public String toString() {
-		return MoreObjects.toStringHelper(ProBConnection.class).add("key", key)
+		return MoreObjects.toStringHelper(ProBConnection.class)
 				.add("port", port).toString();
 	}
 
@@ -77,8 +75,12 @@ public class ProBConnection {
 		outputStream.close();
 	}
 
+	/**
+	 * @deprecated The debugging key has no use anymore. probcli no longer supports the debug_console/2 command.
+	 */
+	@Deprecated
 	public String getKey() {
-		return key;
+		return "";
 	}
 
 }

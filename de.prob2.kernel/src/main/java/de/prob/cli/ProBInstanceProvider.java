@@ -89,9 +89,7 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 	}
 
 	private ProBInstance startProlog() {
-		ProcessHandle processTuple = processProvider.get();
-		Process process = processTuple.getProcess();
-		String key = processTuple.getKey();
+		Process process = processProvider.makeProcess();
 		final BufferedReader stream = new BufferedReader(new InputStreamReader(
 				process.getInputStream(), StandardCharsets.UTF_8));
 
@@ -112,7 +110,7 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 
 		final ProBConnection connection;
 		try {
-			connection = new ProBConnection(key, cliInformation.getPort());
+			connection = new ProBConnection(cliInformation.getPort());
 		} catch (IOException e) {
 			throw new CliError("Error while opening socket connection to CLI", e);
 		}

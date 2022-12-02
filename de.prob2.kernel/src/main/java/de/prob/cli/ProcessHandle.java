@@ -1,5 +1,9 @@
 package de.prob.cli;
 
+/**
+ * @deprecated No longer used, because the debugging key {@link #key} has no use anymore. probcli no longer supports the debug_console/2 command.
+ */
+@Deprecated
 public class ProcessHandle {
 
 	private final String key;
