@@ -280,7 +280,7 @@ tasks.withType(Test).configureEach {
 task groovyIntegrationTests(type: JavaExec) {
 	mainClass = "de.prob2.commandline.CommandLineMain"
 	inputs.dir("de.prob2.kernel/groovyTests")
-	classpath = project(":de.prob2.commandline").sourceSets.main.runtimeClasspath
+	classpath = project(":de.prob2.commandline").sourceSets.main.runtimeClasspath + project.sourceSets.test.runtimeClasspath
 	args = ['-script', 'de.prob2.kernel/groovyTests']
 }
 
