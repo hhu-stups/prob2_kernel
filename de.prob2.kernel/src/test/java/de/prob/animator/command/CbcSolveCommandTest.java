@@ -81,12 +81,12 @@ class CbcSolveCommandTest {
 
 
 	@Test
-	void should_solve_with_dpllt_solver() {
+	void should_solve_with_cdclt_solver() {
 		String predicate = "1=1";
 
 		ClassicalB pred = new ClassicalB(predicate, FormulaExpand.EXPAND);
 
-		CbcSolveCommand cmd = new CbcSolveCommand(pred, CbcSolveCommand.Solvers.DPLLT);
+		CbcSolveCommand cmd = new CbcSolveCommand(pred, CbcSolveCommand.Solvers.CDCLT);
 		stateSpace.execute(cmd);
 
 		AbstractEvalResult expected = EvalResult.TRUE;
@@ -96,12 +96,12 @@ class CbcSolveCommandTest {
 	}
 
 	@Test
-	void should_get_free_variables_and_solution_when_solving_with_DPLLT() {
+	void should_get_free_variables_and_solution_when_solving_with_cdclt() {
 		String predicate = "x:INTEGER & y:INTEGER & x>y";
 
 		ClassicalB pred = new ClassicalB(predicate, FormulaExpand.EXPAND);
 
-		CbcSolveCommand cmd = new CbcSolveCommand(pred, CbcSolveCommand.Solvers.DPLLT);
+		CbcSolveCommand cmd = new CbcSolveCommand(pred, CbcSolveCommand.Solvers.CDCLT);
 		stateSpace.execute(cmd);
 
 
@@ -121,14 +121,14 @@ class CbcSolveCommandTest {
 	}
 
 	@Test
-	void should_solve_in_state_when_dpllt() throws IOException {
+	void should_solve_in_state_when_cdclt() throws IOException {
 		State state = stateSpace.getRoot().explore();
 		state = state.getTransitions().get(0).getDestination().explore();
 		String predicate = "x:INTEGER & y:INTEGER & y=x+1";
 
 		ClassicalB pred = new ClassicalB(predicate, FormulaExpand.EXPAND);
 
-		CbcSolveCommand cmd = new CbcSolveCommand(pred, CbcSolveCommand.Solvers.DPLLT, state);
+		CbcSolveCommand cmd = new CbcSolveCommand(pred, CbcSolveCommand.Solvers.CDCLT, state);
 		stateSpace.execute(cmd);
 
 		EvalResult value = (EvalResult) cmd.getValue();

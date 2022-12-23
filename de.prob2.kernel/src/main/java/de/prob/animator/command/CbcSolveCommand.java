@@ -29,7 +29,7 @@ import de.prob.statespace.State;
  */
 public class CbcSolveCommand extends AbstractCommand {
 	public enum Solvers {
-		PROB, KODKOD, SMT_SUPPORTED_INTERPRETER, Z3, CVC4, DPLLT, Z3AXM, Z3CNS
+		PROB, KODKOD, SMT_SUPPORTED_INTERPRETER, Z3, CVC4, CDCLT, Z3AXM, Z3CNS
 	}
 
 	private static final String PROLOG_COMMAND_NAME = "cbc_timed_solve_with_opts";
