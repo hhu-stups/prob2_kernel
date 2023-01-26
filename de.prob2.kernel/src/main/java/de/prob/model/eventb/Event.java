@@ -33,6 +33,14 @@ public class Event extends BEvent {
 		this(name, type, inheritance, Collections.emptyMap());
 	}
 
+	/**
+	 * @deprecated Use {@link #Event(String, EventType, Inheritance)} instead.
+	 */
+	@Deprecated
+	public Event(final String name, final EventType type, final boolean extended) {
+		this(name, type, extended ? Inheritance.EXTENDS : Inheritance.NONE);
+	}
+
 	private Event(
 			final String name,
 			final EventType type,
@@ -86,18 +94,11 @@ public class Event extends BEvent {
 
 
 	/**
-	 * @deprecated Use {@link #getRefinesEvent()} ()} instead.
+	 * @deprecated Use {@link #getParentEvent()} instead.
 	 */
 	@Deprecated
 	public Event getRefinesEvent() {
-		final ModelElementList<Event> refines = getChildrenOfType(Event.class);
-		if (refines.isEmpty()) {
-			return null;
-		} else if (refines.size() == 1) {
-			return refines.get(0);
-		} else {
-			throw new IllegalStateException("An Event-B event cannot refine more than one event");
-		}
+		return this.getParentEvent();
 	}
 	
 	/**
@@ -119,7 +120,7 @@ public class Event extends BEvent {
 	}
 
 	/**
-	 * @deprecated Use {@link #withParentEvent(Event)} ()} ()} instead.
+	 * @deprecated Use {@link #withParentEvent(Event)} instead.
 	 */
 	@Deprecated
 	public Event withRefinesEvent(final Event parentEvent) {
@@ -132,9 +133,13 @@ public class Event extends BEvent {
 
 	public Event withParentEvent(final Event parentEvent) {
 		if (parentEvent != null) {
-			return this.set(Event.class, new ModelElementList<>(singletonList(parentEvent)));
+			Event changedEvent = this;
+			if (changedEvent.getInheritance() == Inheritance.NONE) {
+				changedEvent = changedEvent.changeInheritance(Inheritance.REFINES);
+			}
+			return changedEvent.set(Event.class, new ModelElementList<>(singletonList(parentEvent)));
 		}
-		return this.set(Event.class, new ModelElementList<>());
+		return this.set(Event.class, new ModelElementList<>()).changeInheritance(Inheritance.NONE);
 	}
 
 	public ModelElementList<EventBGuard> getGuards() {
@@ -190,18 +195,24 @@ public class Event extends BEvent {
 	}
 
 	/**
-	 * @deprecated Use {@link #hasParent()}  instead.
+	 * @deprecated Use {@link #getInheritance()} instead.
 	 */
 	@Deprecated
-	public Inheritance isExtended() {
-		return inheritance;
+	public boolean isExtended() {
+		return this.getInheritance() == Inheritance.EXTENDS;
 	}
 
-
+	/**
+	 * @deprecated Use {@link #getInheritance()} instead.
+	 */
+	@Deprecated
 	public Inheritance hasParent() {
-		return inheritance;
+		return this.getInheritance();
 	}
 
+	public Inheritance getInheritance() {
+		return this.inheritance;
+	}
 
 	public Event withName(final String name) {
 		return new Event(name, type, inheritance, getChildren());
@@ -216,14 +227,19 @@ public class Event extends BEvent {
 	}
 
 	/**
-	 * @deprecated Use {@link #changeInheritance(Inheritance)} ()} instead.
+	 * @deprecated Use {@link #changeInheritance(Inheritance)} instead.
 	 */
 	@Deprecated
 	public Event toggleExtended(boolean extended) {
-		if (Inheritance.EXTENDS == this.inheritance && extended) {
+		if (isExtended() == extended) {
 			return this;
+		} else if (extended) {
+			return this.changeInheritance(Inheritance.EXTENDS);
+		} else if (getParentEvent() == null) {
+			return this.changeInheritance(Inheritance.NONE);
+		} else {
+			return this.changeInheritance(Inheritance.REFINES);
 		}
-		return new Event(name, type, Inheritance.EXTENDS, getChildren());
 	}
 
 	/**
@@ -246,7 +262,7 @@ public class Event extends BEvent {
 
 	@Override
 	public String toString() {
-		return getName() + " " + getType() + " " + hasParent() + " " + getParentEvent();
+		return getName() + " " + getType() + " " + getInheritance() + " " + getParentEvent();
 	}
 
 
