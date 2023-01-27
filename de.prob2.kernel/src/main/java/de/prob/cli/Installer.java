@@ -64,7 +64,7 @@ public final class Installer {
 			view.setPermissions(perms);
 		} catch (UnsupportedOperationException e) {
 			// If POSIX attributes are unsupported, we're probably on Windows, so nothing needs to be done
-			logger.info("Could not set executable status of {} (this is usually not an error)", path, e);
+			logger.info("Could not set executable status of {} (this is usually not an error)", path);
 		}
 	}
 
