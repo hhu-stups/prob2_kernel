@@ -34,6 +34,48 @@ public class RefineTraceCommand extends AbstractCommand implements
 	private final int maxDepth;
 	private final int maxBreadth;
 
+
+
+	/**
+	 * Tries to satisfy the given path with given predicates. Will fail if path is not executable. Is provided with
+	 * alternatives to especially explore refinements.
+	 *
+	 * @param s            the state space - the machine to satisfy the trace on
+	 * @param stateId      the entry point
+	 * @param trace        the trace to satisfy
+	 * @param predicates   the constraints to put on each transition; maps 1:1 with trace
+	 * @param alternatives In cases where a transition can have alternatives (e.g. 1:n refinements of Event-B), otherwise empty
+	 * @param skips    All events/operations that are not introduced via a skip refinement, empty if using B
+	 * @param maxDepth maximum search depth
+	 * @param maxBreadth maximum search breadth
+	 */
+	public RefineTraceCommand(final StateSpace s, final State stateId,
+							  final List<String> trace, final List<? extends IEvalElement> predicates, final Map<String, List<String>> alternatives, final List<String> refinedAlternatives, final List<String> skips, final int maxBreadth, final int maxDepth) {
+		this.stateSpace = s;
+		this.stateId = stateId;
+		this.name = trace;
+		this.alternatives = alternatives;
+		this.refineAlternatives = refinedAlternatives;
+		this.skips = skips;
+		this.eval = predicates;
+		this.maxBreadth = maxBreadth;
+		this.maxDepth = maxDepth;
+
+
+		if (trace.size() != predicates.size()) {
+			throw new IllegalArgumentException(
+					"Must provide the same number of names and predicates.");
+		}
+		for (IEvalElement eval : predicates) {
+			if (!EvalElementType.PREDICATE.equals(eval.getKind())) {
+				throw new IllegalArgumentException(
+						"Formula must be a predicate, not " + eval.getKind() + ": " + eval);
+			}
+		}
+
+
+	}
+
 	/**
 	 * Tries to satisfy the given path with given predicates. Will fail if path is not executable
 	 *
@@ -42,6 +84,7 @@ public class RefineTraceCommand extends AbstractCommand implements
 	 * @param trace      the trace to satisfy
 	 * @param predicates the constraints to put on each transition; maps 1:1 with trace
 	 */
+	@Deprecated
 	public RefineTraceCommand(final StateSpace s, final State stateId,
 							  final List<String> trace, final List<? extends IEvalElement> predicates) {
 
@@ -68,6 +111,7 @@ public class RefineTraceCommand extends AbstractCommand implements
 	 *                     those are stored here, expects a 1:1 mapping else
 	 * @param skips    All events/operations that are not introduced via a skip refinement
 	 */
+	@Deprecated
 	public RefineTraceCommand(final StateSpace s, final State stateId,
 							  final List<String> trace, final List<? extends IEvalElement> predicates, final Map<String, List<String>> alternatives, final List<String> refinedAlternatives, final List<String> skips) {
 		this.stateSpace = s;

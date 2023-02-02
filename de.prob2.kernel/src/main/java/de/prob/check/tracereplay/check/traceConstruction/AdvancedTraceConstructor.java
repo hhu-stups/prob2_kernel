@@ -86,7 +86,25 @@ public class AdvancedTraceConstructor {
 	 * @return the adapted trace
 	 * @throws TraceConstructionError trace adaptation failed
 	 */
+	@Deprecated
 	public static List<Transition> constructTraceEventB(List<PersistentTransition> persistentTrace, StateSpace stateSpace, Map<String, List<String>> alternatives, List<String> refinedAlternatives, List<String> skips) throws TraceConstructionError {
+		return constructTraceEventB( persistentTrace,  stateSpace, alternatives, refinedAlternatives, skips, 10, 5) ;
+	}
+
+
+	/**
+	 * Prepares the adaptation for a trace for Event - B
+	 * @param persistentTrace the trace
+	 * @param stateSpace the state space to adapt the trace for
+	 * @param alternatives alternatives for each event, as events can be refined by multiple others or can change names
+	 * @param refinedAlternatives an collection that contains explicit those events that are refined multiple times
+	 * @param maxBreadth maximum search breadth
+	 * @param maxDepth maximum search depth
+	 * @param skips the events that refine a former skip
+	 * @return the adapted trace
+	 * @throws TraceConstructionError trace adaptation failed
+	 */
+	public static List<Transition> constructTraceEventB(List<PersistentTransition> persistentTrace, StateSpace stateSpace, Map<String, List<String>> alternatives, List<String> refinedAlternatives, List<String> skips, int maxBreadth, int maxDepth) throws TraceConstructionError {
 
 		List<PersistentTransition> modifiedTrace = prepareTrace(new Trace(stateSpace), persistentTrace);
 
@@ -111,7 +129,7 @@ public class AdvancedTraceConstructor {
 				})
 				.collect(toList());
 
-		RefineTraceCommand refineTraceCommand = new RefineTraceCommand(stateSpace, stateSpace.getRoot(), transitionNames, predicates, alternatives, refinedAlternatives,  skips);
+		RefineTraceCommand refineTraceCommand = new RefineTraceCommand(stateSpace, stateSpace.getRoot(), transitionNames, predicates, alternatives, refinedAlternatives,  skips, maxBreadth, maxDepth);
 		stateSpace.execute(refineTraceCommand);
 
 		if (refineTraceCommand.hasErrors() && refineTraceCommand.getNewTransitions().size() < persistentTrace.size()) { //The command failed in finding an complete Trace

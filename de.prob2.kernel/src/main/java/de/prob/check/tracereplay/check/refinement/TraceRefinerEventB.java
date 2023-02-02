@@ -24,10 +24,18 @@ public class TraceRefinerEventB extends AbstractTraceRefinement {
 
 	private final StateSpace stateSpace;
 
-	public TraceRefinerEventB(Injector injector, List<PersistentTransition> transitionList, Path adaptFrom) throws IOException {
-		super(injector, transitionList, adaptFrom);
+
+	public TraceRefinerEventB(Injector injector, List<PersistentTransition> transitionList, Path adaptFrom, int maxBreadth, int maxDepth) throws IOException {
+		super(injector, transitionList, adaptFrom, maxBreadth, maxDepth);
 		this.stateSpace = injector.getInstance(Api.class).eventb_load(adaptFrom.toString());
 	}
+
+
+	public TraceRefinerEventB(Injector injector, List<PersistentTransition> transitionList, Path adaptFrom) throws IOException {
+		this(injector, transitionList, adaptFrom,10,5);
+	}
+
+
 
 
 	/**
@@ -58,7 +66,7 @@ public class TraceRefinerEventB extends AbstractTraceRefinement {
 		alternatives.put(Transition.INITIALISE_MACHINE_NAME, singletonList(Transition.INITIALISE_MACHINE_NAME));
 		alternatives.put(Transition.SETUP_CONSTANTS_NAME, singletonList(Transition.SETUP_CONSTANTS_NAME));
 
-		List<Transition> resultRaw = AdvancedTraceConstructor.constructTraceEventB(transitionList, stateSpace, alternatives, model.extendEvents(), model.introducedBySkip());
+		List<Transition> resultRaw = AdvancedTraceConstructor.constructTraceEventB(transitionList, stateSpace, alternatives, model.extendEvents(), model.introducedBySkip(), maxBreadth, maxDepth);
 
 
 		return PersistentTransition.createFromList(resultRaw);
