@@ -31,6 +31,8 @@ public class RefineTraceCommand extends AbstractCommand implements
 	private final Map<String, List<String>> alternatives;
 	private final List<String> refineAlternatives;
 	private final List<String> skips;
+	private final int maxDepth;
+	private final int maxBreadth;
 
 	/**
 	 * Tries to satisfy the given path with given predicates. Will fail if path is not executable
@@ -50,8 +52,8 @@ public class RefineTraceCommand extends AbstractCommand implements
 		this.alternatives = new HashSet<>(trace).stream().collect(toMap(entry -> entry, Collections::singletonList));
 		this.refineAlternatives = emptyList();
 		this.skips = emptyList();
-
-
+		maxBreadth = 10;
+		maxDepth = 5;
 	}
 
 	/**
@@ -75,7 +77,8 @@ public class RefineTraceCommand extends AbstractCommand implements
 		this.refineAlternatives = refinedAlternatives;
 		this.skips = skips;
 		this.eval = predicates;
-
+		maxBreadth = 10;
+		maxDepth = 5;
 
 
 		if (trace.size() != predicates.size()) {
@@ -146,6 +149,10 @@ public class RefineTraceCommand extends AbstractCommand implements
 
 
 		pto.printVariable(RESULT_VARIABLE);
+
+		pto.printNumber(maxDepth);
+		pto.printNumber(maxBreadth);
+
 		pto.closeTerm();
 
 	}
