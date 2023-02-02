@@ -22,7 +22,7 @@ public class Event extends BEvent {
 	}
 
 	/**
-	 * Per se extend all new events from skip. However, this is not always usefull so we distinguish three types
+	 * Per se extend all new events from skip. However, this is not always useful so we distinguish the three types
 	 * 'None' are those events that extend from skip (skip extends from itself)
 	 */
 	public enum Inheritance{
