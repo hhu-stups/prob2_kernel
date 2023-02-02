@@ -15,7 +15,7 @@ The last version before the restructuring is tagged as preRestructure.
 ## Documentation
 
 * [Tutorial](https://prob.hhu.de/w/index.php/Tutorial13)
-* Developer Handbook: [HTML](https://www3.hhu.de/stups/handbook/prob2/prob_handbook.html) [PDF](https://www3.hhu.de/stups/handbook/prob2/prob_handbook.pdf)
+* Developer Handbook: [HTML](https://stups.hhu-hosting.de/handbook/prob2/prob_handbook.html) [PDF](https://stups.hhu-hosting.de/handbook/prob2/prob_handbook.pdf)
 
 ## Bugs
 
