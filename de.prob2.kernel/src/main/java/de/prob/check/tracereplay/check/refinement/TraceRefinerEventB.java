@@ -50,7 +50,6 @@ public class TraceRefinerEventB extends AbstractTraceRefinement {
 	 * T to be [[p_ee, p_eee][p_g]....
 	 * Further the method will prepare the difference between explicit refined and extended events and skip events.
 	 * @return The adapted Trace
-	 * @throws IOException File reading went wrong
 	 * @throws TraceConstructionError no suitable adaptation was found
 	 */
 	@Deprecated
