@@ -2,12 +2,15 @@ package de.prob.check.tracereplay.check.refinement;
 
 import com.google.inject.Injector;
 
+import de.be4.classicalb.core.parser.exceptions.BCompoundException;
+import de.prob.animator.command.RefineTraceCommand;
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.traceConstruction.AdvancedTraceConstructor;
 import de.prob.check.tracereplay.check.traceConstruction.TraceConstructionError;
 import de.prob.model.eventb.EventBModel;
 import de.prob.scripting.Api;
 import de.prob.statespace.StateSpace;
+import de.prob.statespace.Trace;
 import de.prob.statespace.Transition;
 
 
@@ -50,8 +53,13 @@ public class TraceRefinerEventB extends AbstractTraceRefinement {
 	 * @throws IOException File reading went wrong
 	 * @throws TraceConstructionError no suitable adaptation was found
 	 */
-	public List<PersistentTransition> refineTrace() throws IOException, TraceConstructionError {
+	@Deprecated
+	public List<PersistentTransition> refineTrace() throws  TraceConstructionError {
+		return refineTraceExtendedFeedback().getResultTracePersistentTransition();
+	}
 
+	@Override
+	public TraceRefinementResult refineTraceExtendedFeedback() throws TraceConstructionError {
 		EventBModel model = (EventBModel) stateSpace.getModel();
 
 		Map<String, List<String>> alternatives = model.pairNameChanges().entrySet().stream()
@@ -66,9 +74,8 @@ public class TraceRefinerEventB extends AbstractTraceRefinement {
 		alternatives.put(Transition.INITIALISE_MACHINE_NAME, singletonList(Transition.INITIALISE_MACHINE_NAME));
 		alternatives.put(Transition.SETUP_CONSTANTS_NAME, singletonList(Transition.SETUP_CONSTANTS_NAME));
 
-		List<Transition> resultRaw = AdvancedTraceConstructor.constructTraceEventB(transitionList, stateSpace, alternatives, model.extendEvents(), model.introducedBySkip(), maxBreadth, maxDepth);
+		return AdvancedTraceConstructor.constructTraceEventB(transitionList, stateSpace, alternatives, model.extendEvents(), model.introducedBySkip(), maxBreadth, maxDepth);
 
-
-		return PersistentTransition.createFromList(resultRaw);
 	}
+
 }

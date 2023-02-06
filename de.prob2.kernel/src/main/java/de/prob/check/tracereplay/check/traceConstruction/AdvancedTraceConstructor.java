@@ -6,7 +6,9 @@ import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.EventB;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.check.tracereplay.PersistentTransition;
+import de.prob.check.tracereplay.TraceReplay;
 import de.prob.check.tracereplay.check.exploration.ReplayOptions;
+import de.prob.check.tracereplay.check.refinement.TraceRefinementResult;
 import de.prob.formula.PredicateBuilder;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
@@ -88,7 +90,7 @@ public class AdvancedTraceConstructor {
 	 */
 	@Deprecated
 	public static List<Transition> constructTraceEventB(List<PersistentTransition> persistentTrace, StateSpace stateSpace, Map<String, List<String>> alternatives, List<String> refinedAlternatives, List<String> skips) throws TraceConstructionError {
-		return constructTraceEventB( persistentTrace,  stateSpace, alternatives, refinedAlternatives, skips, 10, 5) ;
+		return constructTraceEventB( persistentTrace,  stateSpace, alternatives, refinedAlternatives, skips, 10, 5).resultTrace;
 	}
 
 
@@ -104,7 +106,7 @@ public class AdvancedTraceConstructor {
 	 * @return the adapted trace
 	 * @throws TraceConstructionError trace adaptation failed
 	 */
-	public static List<Transition> constructTraceEventB(List<PersistentTransition> persistentTrace, StateSpace stateSpace, Map<String, List<String>> alternatives, List<String> refinedAlternatives, List<String> skips, int maxBreadth, int maxDepth) throws TraceConstructionError {
+	public static TraceRefinementResult constructTraceEventB(List<PersistentTransition> persistentTrace, StateSpace stateSpace, Map<String, List<String>> alternatives, List<String> refinedAlternatives, List<String> skips, int maxBreadth, int maxDepth) throws TraceConstructionError {
 
 		List<PersistentTransition> modifiedTrace = prepareTrace(new Trace(stateSpace), persistentTrace);
 
@@ -135,7 +137,7 @@ public class AdvancedTraceConstructor {
 		if (refineTraceCommand.hasErrors() && refineTraceCommand.getNewTransitions().size() < persistentTrace.size()) { //The command failed in finding an complete Trace
 			throw new TraceConstructionError(refineTraceCommand.getErrors(), refineTraceCommand.getNewTransitions());
 		} else {
-			return refineTraceCommand.getNewTransitions();
+			return refineTraceCommand.getResult();
 		}
 	}
 

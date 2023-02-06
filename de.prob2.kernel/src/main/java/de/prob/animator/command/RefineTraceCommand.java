@@ -2,6 +2,7 @@ package de.prob.animator.command;
 
 import de.be4.classicalb.core.parser.analysis.prolog.ASTProlog;
 import de.prob.animator.domainobjects.*;
+import de.prob.check.tracereplay.check.refinement.TraceRefinementResult;
 import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
@@ -22,11 +23,12 @@ public class RefineTraceCommand extends AbstractCommand implements
 	private static final String PROLOG_COMMAND_NAME = "prob2_refine_trace";
 	private static final String RESULT_VARIABLE = "Res";
 
+
 	private final List<? extends IEvalElement> eval;
 	private final State stateId;
 	private final List<String> name;
 	private final StateSpace stateSpace;
-	private final List<Transition> resultTrace = new ArrayList<>();
+
 	private final List<String> errors = new ArrayList<>();
 	private final Map<String, List<String>> alternatives;
 	private final List<String> refineAlternatives;
@@ -34,7 +36,7 @@ public class RefineTraceCommand extends AbstractCommand implements
 	private final int maxDepth;
 	private final int maxBreadth;
 
-
+	private TraceRefinementResult result;
 
 	/**
 	 * Tries to satisfy the given path with given predicates. Will fail if path is not executable. Is provided with
@@ -203,30 +205,44 @@ public class RefineTraceCommand extends AbstractCommand implements
 
 
 	@Override
-	public void processResult(
-			final ISimplifiedROMap<String, PrologTerm> bindings) {
-		ListPrologTerm trace = BindingGenerator.getList(bindings
-				.get(RESULT_VARIABLE));
+	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
 
-		for (PrologTerm term : trace) {
-			CompoundPrologTerm t = BindingGenerator.getCompoundTerm(term, 4);
-			Transition operation = Transition.createTransitionFromCompoundPrologTerm(
-					stateSpace, t);
+		PrologTerm term = bindings.get(RESULT_VARIABLE);
+
+		ListPrologTerm trace = (ListPrologTerm) term.getArgument(1);
+
+		final List<Transition> resultTrace = new ArrayList<>();
+		for (PrologTerm traceElement : trace) {
+			CompoundPrologTerm t = BindingGenerator.getCompoundTerm(traceElement, 4);
+			Transition operation = Transition.createTransitionFromCompoundPrologTerm(stateSpace, t);
 			resultTrace.add(operation);
 		}
 
+		//TODO add trace_fail as a viable option to the prolog code, collect best fail
+		if (term.hasFunctor("trace", 1)) {
+			result = new TraceRefinementResult(true, resultTrace);
+		} else if (term.hasFunctor("trace_fail", 1)) {
+			result = new TraceRefinementResult(false, resultTrace);
+
+		}
+	}
+
+
+	public TraceRefinementResult getResult(){
+		return result;
 	}
 
 	@Override
 	public List<Transition> getNewTransitions() {
-		return resultTrace;
+		return result.resultTrace;
 	}
+
 
 
 	@Override
 	public Trace getTrace(final StateSpace s) {
 		Trace t = s.getTrace(stateId.getId());
-		return t.addTransitions(resultTrace);
+		return t.addTransitions(result.resultTrace);
 	}
 
 	public List<String> getErrors() {

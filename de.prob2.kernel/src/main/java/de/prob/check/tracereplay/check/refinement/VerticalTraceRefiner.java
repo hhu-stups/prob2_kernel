@@ -68,4 +68,9 @@ public class VerticalTraceRefiner extends AbstractTraceRefinement{
 
 		return PersistentTransition.createFromList(resultRaw);
 	}
+
+	@Override
+	public TraceRefinementResult refineTraceExtendedFeedback() throws IOException, TraceConstructionError, BCompoundException {
+		return null;
+	}
 }

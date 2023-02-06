@@ -34,5 +34,9 @@ public abstract class AbstractTraceRefinement {
 		this.maxBreadth = 10;
 		this.maxDepth = 5;
 	}
+
+	@Deprecated
 	public abstract List<PersistentTransition> refineTrace() throws IOException, TraceConstructionError, BCompoundException;
+
+	public abstract TraceRefinementResult refineTraceExtendedFeedback() throws IOException, TraceConstructionError, BCompoundException;
 }
