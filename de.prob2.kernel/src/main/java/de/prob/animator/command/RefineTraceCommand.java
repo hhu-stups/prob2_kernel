@@ -38,6 +38,8 @@ public class RefineTraceCommand extends AbstractCommand implements
 
 	private TraceRefinementResult result;
 
+
+
 	/**
 	 * Tries to satisfy the given path with given predicates. Will fail if path is not executable. Is provided with
 	 * alternatives to especially explore refinements.
@@ -207,9 +209,11 @@ public class RefineTraceCommand extends AbstractCommand implements
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
 
+
+
 		PrologTerm term = bindings.get(RESULT_VARIABLE);
 
-		ListPrologTerm trace = (ListPrologTerm) term.getArgument(1);
+		ListPrologTerm trace = (ListPrologTerm) term;
 
 		final List<Transition> resultTrace = new ArrayList<>();
 		for (PrologTerm traceElement : trace) {
@@ -219,12 +223,8 @@ public class RefineTraceCommand extends AbstractCommand implements
 		}
 
 		//TODO add trace_fail as a viable option to the prolog code, collect best fail
-		if (term.hasFunctor("trace", 1)) {
-			result = new TraceRefinementResult(true, resultTrace);
-		} else if (term.hasFunctor("trace_fail", 1)) {
-			result = new TraceRefinementResult(false, resultTrace);
+		result = new TraceRefinementResult(true, resultTrace);
 
-		}
 	}
 
 
