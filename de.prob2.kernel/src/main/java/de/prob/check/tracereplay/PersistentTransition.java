@@ -45,6 +45,7 @@ public class PersistentTransition {
 	private String description = "";
 
 
+	// FIXME Why is the default value of storeDestinationState null for constructor with 1 argument?
 	public PersistentTransition(Transition transition) {
 		this(transition, false, null);
 	}
@@ -83,6 +84,7 @@ public class PersistentTransition {
 	}
 
 
+	// FIXME While for 2 arguments, the default value of storeDestinationState is true
 	public PersistentTransition(Transition transition, PersistentTransition transitionBefore) {
 		this.name = transition.getName();
 		final LoadedMachine loadedMachine = transition.getStateSpace().getLoadedMachine();
