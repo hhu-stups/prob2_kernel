@@ -78,6 +78,11 @@ public class HorizontalTraceRefiner extends AbstractTraceRefinement {
 		return PersistentTransition.createFromList(resultRaw);
 	}
 
+	@Override
+	public TraceRefinementResult refineTraceExtendedFeedback() throws IOException, TraceConstructionError, BCompoundException {
+		return null;
+	}
+
 	/**
 	 * Provided with the necessary input this function calculates which operations are exposed via promotes
 	 * The problem this method deals with is renaming of machines in the promotes clause and thus resulting name clashes

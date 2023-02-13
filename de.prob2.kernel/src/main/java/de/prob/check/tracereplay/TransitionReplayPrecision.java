@@ -4,6 +4,7 @@ import de.prob.prolog.term.PrologTerm;
 
 public enum TransitionReplayPrecision {
 	FAILED,
+	KEEP_NAME,
 	PARAMETERS_ONLY,
 	PARAMETERS_AND_RESULTS,
 	PRECISE,
@@ -13,6 +14,9 @@ public enum TransitionReplayPrecision {
 		switch (term.getFunctor()) {
 			case "failed":
 				return FAILED;
+			
+			case "keep_name":
+				return KEEP_NAME;
 			
 			case "parameters_only":
 				return PARAMETERS_ONLY;

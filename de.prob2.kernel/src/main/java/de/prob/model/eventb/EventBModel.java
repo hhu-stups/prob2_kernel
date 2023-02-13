@@ -236,7 +236,7 @@ public class EventBModel extends AbstractModel {
 	public List<Event> refinedEvents(){
 		return getTopLevelMachine().getChildrenOfType(Event.class)
 				.stream()
-				.filter(entry -> entry.isExtended() != Event.Inheritance.EXTENDS)
+				.filter(entry -> entry.getInheritance() != Event.Inheritance.EXTENDS)
 				.collect(toList());
 
 	}

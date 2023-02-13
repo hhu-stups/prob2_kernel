@@ -104,7 +104,7 @@ public class ModelToXML {
 		def convergence = e.type == Event.EventType.ORDINARY ? "0"
 				: e.type == Event.EventType.CONVERGENT ? "1"
 				: "2"
-		def extended = e.isExtended()
+		def extended = e.inheritance == Event.Inheritance.EXTENDS
 		xml.'org.eventb.core.event'(name: genName(),
 		'org.eventb.core.convergence': convergence,
 		'org.eventb.core.extended': extended,

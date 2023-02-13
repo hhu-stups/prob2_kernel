@@ -3,7 +3,6 @@ package de.prob.cli;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
-import java.security.SecureRandom;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.BindingAnnotation;
@@ -27,22 +26,10 @@ public class ModuleCli extends AbstractModule {
 		return OsFamily.fromName(osName);
 	}
 
-	@Provides
-	@DebuggingKey
-	private static String createDebuggingKey() {
-		return Long.toHexString(new SecureRandom().nextLong());
-	}
-
 	@Retention(RUNTIME)
 	@Target({ ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
 	@BindingAnnotation
 	@interface OsName {
-	}
-
-	@Retention(RUNTIME)
-	@Target({ ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
-	@BindingAnnotation
-	@interface DebuggingKey {
 	}
 
 	/**

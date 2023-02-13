@@ -265,10 +265,6 @@ public class MachineXmlHandler extends DefaultHandler {
 		event = event.withGuards(new ModelElementList<>(guards));
 		event = event.withParameters(new ModelElementList<>(parameters));
 		event = event.withParentEvent(refinesForEvent.isEmpty() ? null : refinesForEvent.get(0)); // TODO Throw an error if more than one event is refined
-		if(event.hasParent() == Event.Inheritance.NONE){
-			event = refinesForEvent.isEmpty()? event : event.changeInheritance(Event.Inheritance.REFINES);
-		}
-
 		event = event.withWitnesses(new ModelElementList<>(witnesses));
 
 		events.add(event);

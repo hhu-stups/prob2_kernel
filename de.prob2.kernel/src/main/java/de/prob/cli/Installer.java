@@ -64,7 +64,7 @@ public final class Installer {
 			view.setPermissions(perms);
 		} catch (UnsupportedOperationException e) {
 			// If POSIX attributes are unsupported, we're probably on Windows, so nothing needs to be done
-			logger.info("Could not set executable status of {} (this is usually not an error)", path, e);
+			logger.info("Could not set executable status of {} (this is usually not an error)", path);
 		}
 	}
 
@@ -79,6 +79,13 @@ public final class Installer {
 		}
 
 		logger.info("Attempting to install CLI binaries");
+		try {
+			// Create ProB home directory if necessary.
+			Files.createDirectories(DEFAULT_HOME);
+		} catch (IOException e) {
+			logger.error("Failed to create ProB home directory", e);
+			return;
+		}
 		try (
 			final FileChannel lockFileChannel = FileChannel.open(LOCK_FILE_PATH, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
 			final FileLock lock = lockFileChannel.lock();
