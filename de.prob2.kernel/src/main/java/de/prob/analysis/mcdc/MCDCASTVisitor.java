@@ -1,25 +1,26 @@
 package de.prob.analysis.mcdc;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import de.be4.classicalb.core.parser.analysis.DepthFirstAdapter;
 import de.be4.classicalb.core.parser.node.*;
 import de.prob.analysis.Conversion;
 import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.animator.domainobjects.Join;
-import de.prob.model.classicalb.ClassicalBModel;
 import de.prob.model.representation.AbstractModel;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Traverses the AST of a predicate to recursively determine the MCDC test cases for this predicate.
  */
 public class MCDCASTVisitor extends DepthFirstAdapter {
 
-	private final static Logger log = Logger.getLogger(MCDCASTVisitor.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(MCDCASTVisitor.class);
 
 	private List<ConcreteMCDCTestCase> tempTestCases = new ArrayList<>();
 	private int maxLevel;
@@ -206,7 +207,7 @@ public class MCDCASTVisitor extends DepthFirstAdapter {
 				} else if (exists != null) {
 					tempTestCases.add(new ConcreteMCDCTestCase(exists, testCase.getTruthValue()));
 				} else {
-					log.warning("Broken ForallPredicate");
+					LOGGER.warn("Broken ForallPredicate");
 				}
 			}
 		}
