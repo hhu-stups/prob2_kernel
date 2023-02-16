@@ -11,6 +11,7 @@ public class PersistenceDelta {
 	private final List<PersistentTransition> newTransitions;
 
 
+	@Deprecated
 	public PersistenceDelta(PersistentTransition oldTransition, List<PersistentTransition> newTransitions){
 		this.oldTransition = oldTransition;
 		this.newTransitions = newTransitions;

@@ -8,6 +8,7 @@ public class TransitionHasNoSuccessorException extends TraceExplorerExceptions {
 	PersistentTransition transition;
 	
 
+	@Deprecated
 	public TransitionHasNoSuccessorException(PersistentTransition transition){
 		this.transition = transition;
 	}

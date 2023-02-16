@@ -34,6 +34,7 @@ public class TraceChecker {
 	private final RenamingAnalyzerInterface renamingAnalyzer;
 
 
+	@Deprecated
 	public TraceChecker(List<PersistentTransition> transitionList,
 						Map<String, OperationInfo> oldInfos,
 						Map<String, OperationInfo> newInfos,
@@ -49,7 +50,7 @@ public class TraceChecker {
 
 	}
 
-
+	@Deprecated
 	public TraceChecker(List<PersistentTransition> transitionList,
 						Map<String, OperationInfo> oldInfos,
 						Map<String, OperationInfo> newInfos,
@@ -122,9 +123,6 @@ public class TraceChecker {
 	}
 
 
-	private void createTypeFinder(){
-
-	}
 
 
 	public TypeFinder getTypeFinder() {

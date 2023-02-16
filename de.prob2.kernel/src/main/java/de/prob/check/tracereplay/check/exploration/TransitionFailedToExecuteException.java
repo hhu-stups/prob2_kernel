@@ -6,6 +6,7 @@ public class TransitionFailedToExecuteException extends Throwable {
 	PersistentTransition transition;
 
 
+	@Deprecated
 	public TransitionFailedToExecuteException(PersistentTransition transition){
 		this.transition = transition;
 	}
