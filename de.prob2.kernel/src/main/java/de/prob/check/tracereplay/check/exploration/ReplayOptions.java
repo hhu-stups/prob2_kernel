@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Collections.*;
 
+
 public class ReplayOptions {
 
 
@@ -17,7 +18,6 @@ public class ReplayOptions {
 	private final Map<String, List<String>> operationBlacklist;
 
 
-	@Deprecated
 	public ReplayOptions(Set<OptionFlags> globalOptions, List<String> identifierBlacklist, Map<String, Set<OptionFlags>> operationOptions,
 						 Map<String, List<String>> operationBlacklist){
 		this.globalOptions = globalOptions;
@@ -27,7 +27,7 @@ public class ReplayOptions {
 		if(!operationOptions.keySet().equals(operationBlacklist.keySet())) throw new IllegalStateException("Key set of operationOptions and operationBlacklist needs to be equal");
 	}
 
-	@Deprecated
+
 	public ReplayOptions(){
 		this.globalOptions = emptySet();
 		this.identifierBlacklist = emptyList();

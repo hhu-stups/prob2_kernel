@@ -1,7 +1,7 @@
 package de.prob.check.tracereplay.check.exploration;
 
 import java.util.List;
-
+@Deprecated
 public class TraceExplorerExceptions extends Exception {
 	private static final long serialVersionUID = 1L;
 

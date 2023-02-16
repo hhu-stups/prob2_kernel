@@ -4,6 +4,7 @@ import de.prob.check.tracereplay.PersistentTransition;
 
 import java.util.List;
 
+@Deprecated
 public class PersistenceDelta {
 
 

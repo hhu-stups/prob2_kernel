@@ -23,6 +23,7 @@ import static java.util.stream.Collectors.*;
 /**
  * Finds a operation if it is renamed or contains renamed variables/parameter
  */
+@Deprecated
 public class DynamicRenamingAnalyzer implements RenamingAnalyzerInterface {
 
 	private final Set<String> typeIorII;

@@ -20,6 +20,7 @@ import java.util.*;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 
+@Deprecated
 public class TraceExplorer {
 
 
