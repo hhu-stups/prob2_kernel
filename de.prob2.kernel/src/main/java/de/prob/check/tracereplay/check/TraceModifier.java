@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 
+@Deprecated
 public class TraceModifier {
 
 	private final List<List<PersistentTransition>> changelogPhase1 = new LinkedList<>();

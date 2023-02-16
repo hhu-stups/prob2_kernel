@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 import static de.prob.check.tracereplay.check.TraceAnalyser.AnalyserResult.*;
 import static java.util.stream.Collectors.toMap;
-
+@Deprecated
 public class TraceAnalyser {
 
 

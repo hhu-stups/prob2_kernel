@@ -4,6 +4,7 @@ import java.util.Map;
 
 import de.prob.prolog.term.CompoundPrologTerm;
 
+@Deprecated
 public interface CheckerInterface {
 
 	/**

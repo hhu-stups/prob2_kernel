@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
 
+@Deprecated
 public class StaticRenamingAnalyzer implements RenamingAnalyzerInterface{
 
 	private final Set<String> simpleCandidates;

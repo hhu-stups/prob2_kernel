@@ -25,6 +25,7 @@ import de.prob.statespace.StateSpace;
 import static java.util.stream.Collectors.toMap;
 
 
+@Deprecated
 public class TraceChecker {
 
 	private final TypeFinder typeFinder;
