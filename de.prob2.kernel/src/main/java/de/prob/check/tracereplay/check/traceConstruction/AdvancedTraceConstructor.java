@@ -24,7 +24,15 @@ import static java.util.stream.Collectors.toMap;
 
 public class AdvancedTraceConstructor {
 
-	@Deprecated
+
+	/**
+	 * Removes specified predicates, variables and events from a trace and tries to run it
+	 * @param persistentTrace the trace to be adapted
+	 * @param stateSpace the machine to adapt the trace for
+	 * @return the adapted trace
+	 *
+	 * @throws TraceConstructionError trace could not be adapted
+	 */
 	public static List<Transition> constructTraceWithOptions(List<PersistentTransition> persistentTrace, StateSpace stateSpace, ReplayOptions replayOptions) throws TraceConstructionError {
 
 		List<PersistentTransition> modifiedTrace = prepareTrace(new Trace(stateSpace), persistentTrace);
@@ -49,7 +57,7 @@ public class AdvancedTraceConstructor {
 
 
 	/**
-	 * Prepares the adaptation for a trace for Event - B
+	 * Prepares the adaptation for a trace for B
 	 * @param persistentTrace the trace to be adapted
 	 * @param stateSpace the machine to adapt the trace for
 	 * @return the adapted trace
@@ -87,6 +95,8 @@ public class AdvancedTraceConstructor {
 	 * @param skips the events that refine a former skip
 	 * @return the adapted trace
 	 * @throws TraceConstructionError trace adaptation failed
+	 *
+	 * Deprecated, use method with dynamic parameters
 	 */
 	@Deprecated
 	public static List<Transition> constructTraceEventB(List<PersistentTransition> persistentTrace, StateSpace stateSpace, Map<String, List<String>> alternatives, List<String> refinedAlternatives, List<String> skips) throws TraceConstructionError {
