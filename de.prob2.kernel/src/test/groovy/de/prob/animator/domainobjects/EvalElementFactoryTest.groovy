@@ -2,6 +2,7 @@ package de.prob.animator.domainobjects
 
 import spock.lang.Specification
 
+@Deprecated
 class EvalElementFactoryTest extends Specification {
 	private EventB eventB
 	private ClassicalB classicalB
