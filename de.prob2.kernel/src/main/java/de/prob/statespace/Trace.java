@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import com.github.krukow.clj_lang.PersistentVector;
 
 import de.prob.animator.command.ComposedCommand;
-import de.prob.animator.command.EvaluateFormulaCommand;
+import de.prob.animator.command.EvaluateFormulasCommand;
 import de.prob.animator.domainobjects.AbstractEvalResult;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
@@ -100,18 +100,18 @@ public class Trace extends GroovyObjectSupport {
 	}
 
 	public List<Tuple2<String, AbstractEvalResult>> eval(IEvalElement formula) {
-		final List<EvaluateFormulaCommand> cmds = new ArrayList<>();
+		final List<EvaluateFormulasCommand> cmds = new ArrayList<>();
 		for (Transition t : transitionList) {
 			if (getStateSpace().canBeEvaluated(t.getDestination())) {
-				cmds.add(new EvaluateFormulaCommand(formula, t.getDestination().getId()));
+				cmds.add(new EvaluateFormulasCommand(Collections.singletonList(formula), t.getDestination().getId()));
 			}
 		}
 
 		stateSpace.execute(new ComposedCommand(cmds));
 
 		final List<Tuple2<String, AbstractEvalResult>> res = new ArrayList<>();
-		for (EvaluateFormulaCommand cmd : cmds) {
-			res.add(new Tuple2<>(cmd.getStateId(), cmd.getValue()));
+		for (EvaluateFormulasCommand cmd : cmds) {
+			res.add(new Tuple2<>(cmd.getStateId(), cmd.getValues().get(0)));
 		}
 		return res;
 	}

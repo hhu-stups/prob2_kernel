@@ -9,11 +9,12 @@ import de.prob.prolog.term.PrologTerm;
 /**
  * Calculates the values of Classical-B Predicates and Expressions.
  * 
+ * @deprecated Use {@link EvaluateFormulasCommand} instead.
+ * 
  * @author joy
  * 
  */
-// After next release, merge EvaluationCommand into this class and remove the SuppressWarnings.
-@SuppressWarnings("deprecation")
+@Deprecated
 public class EvaluateFormulaCommand extends EvaluationCommand {
 
 	private static final String PROLOG_COMMAND_NAME = "evaluate_formula";

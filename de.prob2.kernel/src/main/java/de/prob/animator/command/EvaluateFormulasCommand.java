@@ -77,6 +77,10 @@ public class EvaluateFormulasCommand extends AbstractCommand {
 		pout.closeTerm();
 	}
 
+	public String getStateId() {
+		return this.stateId;
+	}
+
 	public List<AbstractEvalResult> getValues() {
 		return Collections.unmodifiableList(values);
 	}
