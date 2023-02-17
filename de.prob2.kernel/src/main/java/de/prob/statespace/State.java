@@ -230,9 +230,7 @@ public class State extends GroovyObjectSupport {
 	 * method. The formula is parsed via the {@link AbstractModel#parseFormula(String)} method.
 	 * @param formula representation of a formula
 	 * @return the {@link AbstractEvalResult} calculated from ProB
-	 * @deprecated Use {@link #eval(String, FormulaExpand)} with an explicit {@link FormulaExpand} argument instead
 	 */
-	@Deprecated
 	public AbstractEvalResult eval(String formula) {
 		return this.eval(formula, FormulaExpand.TRUNCATE);
 	}
@@ -436,10 +434,6 @@ public class State extends GroovyObjectSupport {
 		return getOutTransitions(false, FormulaExpand.TRUNCATE);
 	}
 
-	/**
-	 * @deprecated Use {@link #getOutTransitions(boolean, FormulaExpand)} with an explicit {@link FormulaExpand} argument instead
-	 */
-	@Deprecated
 	public synchronized List<Transition> getOutTransitions(boolean evaluate) {
 		return this.getOutTransitions(evaluate, FormulaExpand.TRUNCATE);
 	}

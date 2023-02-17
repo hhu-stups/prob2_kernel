@@ -83,10 +83,6 @@ public class Trace extends GroovyObjectSupport {
 		return getCurrentState().eval(formula, expand);
 	}
 	
-	/**
-	 * @deprecated Use {@link #evalCurrent(String, FormulaExpand)} with an explicit {@link FormulaExpand} argument instead
-	 */
-	@Deprecated
 	public AbstractEvalResult evalCurrent(String formula) {
 		return getCurrentState().eval(formula, FormulaExpand.TRUNCATE);
 	}
@@ -120,10 +116,6 @@ public class Trace extends GroovyObjectSupport {
 		return this.eval(stateSpace.getModel().parseFormula(formula, expand));
 	}
 	
-	/**
-	 * @deprecated Use {@link #eval(String, FormulaExpand)} with an explicit {@link FormulaExpand} argument instead
-	 */
-	@Deprecated
 	public List<Tuple2<String, AbstractEvalResult>> eval(String formula) {
 		return this.eval(formula, FormulaExpand.TRUNCATE);
 	}
@@ -377,10 +369,6 @@ public class Trace extends GroovyObjectSupport {
 		return getNextTransitions(false, FormulaExpand.TRUNCATE);
 	}
 
-	/**
-	 * @deprecated Use {@link #getNextTransitions(boolean, FormulaExpand)} with an explicit {@link FormulaExpand} argument instead
-	 */
-	@Deprecated
 	public synchronized Set<Transition> getNextTransitions(boolean evaluate) {
 		return this.getNextTransitions(evaluate, FormulaExpand.TRUNCATE);
 	}
@@ -425,10 +413,6 @@ public class Trace extends GroovyObjectSupport {
 		return getTransitionList(false, FormulaExpand.TRUNCATE);
 	}
 
-	/**
-	 * @deprecated Use {@link #getTransitionList(boolean, FormulaExpand)} with an explicit {@link FormulaExpand} argument instead
-	 */
-	@Deprecated
 	public List<Transition> getTransitionList(boolean evaluate) {
 		return this.getTransitionList(evaluate, FormulaExpand.TRUNCATE);
 	}
