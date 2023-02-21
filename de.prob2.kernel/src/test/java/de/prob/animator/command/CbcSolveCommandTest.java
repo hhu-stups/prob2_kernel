@@ -122,8 +122,8 @@ class CbcSolveCommandTest {
 
 	@Test
 	void should_solve_in_state_when_cdclt() throws IOException {
-		State state = stateSpace.getRoot().explore();
-		state = state.getTransitions().get(0).getDestination().explore();
+		State state = stateSpace.getRoot().exploreIfNeeded();
+		state = state.getTransitions().get(0).getDestination().exploreIfNeeded();
 		String predicate = "x:INTEGER & y:INTEGER & y=x+1";
 
 		ClassicalB pred = new ClassicalB(predicate, FormulaExpand.EXPAND);

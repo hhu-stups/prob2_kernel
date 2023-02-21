@@ -174,7 +174,7 @@ public class TraceReplay {
 		traceChecker.showTestError(persistentTrace, postcondtionsResults);
 		traceChecker.setResult(success, postcondtionsResults, replayInformation);
 		trace.setExploreStateByDefault(true);
-		trace.getCurrentState().explore();
+		trace.getCurrentState().exploreIfNeeded();
 
 		return trace;
 	}

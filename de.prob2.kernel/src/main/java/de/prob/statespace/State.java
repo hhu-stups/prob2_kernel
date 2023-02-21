@@ -191,7 +191,7 @@ public class State extends GroovyObjectSupport {
 			Collections.shuffle(ops);
 			final Transition op = ops.get(0);
 			final State newState = op.getDestination();
-			newState.explore();
+			newState.exploreIfNeeded();
 			return newState;
 		}
 		return this;
