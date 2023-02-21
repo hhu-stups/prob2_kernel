@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
 public class State extends GroovyObjectSupport {
 	private String id;
 	private StateSpace stateSpace;
-	private boolean explored;
+	private volatile boolean explored;
 	private List<Transition> transitions;
 	private boolean constantsSetUp;
 	private boolean initialised;
@@ -381,51 +381,37 @@ public class State extends GroovyObjectSupport {
 	}
 
 	public boolean isConstantsSetUp() {
-		if (!explored) {
-			explore();
-		}
+		this.exploreIfNeeded();
 		return constantsSetUp;
 	}
 
 	public boolean isInitialised() {
-		if (!explored) {
-			explore();
-		}
+		this.exploreIfNeeded();
 		return initialised;
 	}
 
 	public boolean isInvariantOk() {
-		if (!explored) {
-			explore();
-		}
+		this.exploreIfNeeded();
 		return invariantOk;
 	}
 
 	public boolean isMaxTransitionsCalculated() {
-		if (!explored) {
-			explore();
-		}
+		this.exploreIfNeeded();
 		return maxTransitionsCalculated;
 	}
 
 	public boolean isTimeoutOccurred() {
-		if (!explored) {
-			explore();
-		}
+		this.exploreIfNeeded();
 		return timeoutOccurred;
 	}
 
 	public Set<String> getTransitionsWithTimeout() {
-		if (!explored) {
-			explore();
-		}
+		this.exploreIfNeeded();
 		return transitionsWithTimeout;
 	}
 
 	public Collection<StateError> getStateErrors() {
-		if (!explored) {
-			explore();
-		}
+		this.exploreIfNeeded();
 		return stateErrors;
 	}
 
@@ -452,9 +438,7 @@ public class State extends GroovyObjectSupport {
 	 * @return the outgoing transitions from this state
 	 */
 	public List<Transition> getOutTransitions(boolean evaluate, FormulaExpand expansion) {
-		if (!explored) {
-			explore();
-		}
+		this.exploreIfNeeded();
 		if (evaluate) {
 			stateSpace.evaluateTransitions(transitions, expansion);
 		}
@@ -474,6 +458,26 @@ public class State extends GroovyObjectSupport {
 		stateErrors = cmd.getStateErrors();
 		transitionsWithTimeout = cmd.getOperationsWithTimeout();
 		explored = true;
+		return this;
+	}
+
+	/**
+	 * Ensures that this state is explored.
+	 * Calls {@link #explore()} if the state hasn't been explored yet,
+	 * otherwise does nothing.
+	 * 
+	 * @return {@code this}
+	 */
+	public State exploreIfNeeded() {
+		// Avoid locking if the state has already been explored.
+		if (!explored) {
+			synchronized (this) {
+				// Check again in case another thread already explored the state while this thread waited on the lock.
+				if (!explored) {
+					this.explore();
+				}
+			}
+		}
 		return this;
 	}
 

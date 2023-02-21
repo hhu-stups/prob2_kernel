@@ -126,8 +126,8 @@ public class Trace extends GroovyObjectSupport {
 		final PersistentVector<Transition> transitionList = branchTransitionListIfNecessary(op);
 		final Trace newTrace = new Trace(stateSpace, newHE, transitionList, this.uuid);
 		newTrace.setExploreStateByDefault(this.exploreStateByDefault);
-		if (exploreStateByDefault && !op.getDestination().isExplored()) {
-			op.getDestination().explore();
+		if (exploreStateByDefault) {
+			op.getDestination().exploreIfNeeded();
 		}
 		return newTrace;
 	}
