@@ -356,7 +356,9 @@ public class StateSpace implements IAnimator {
 	 * @param formulas
 	 *            to be evaluated
 	 * @return a list of {@link AbstractEvalResult}s
+	 * @deprecated Use {@link State#eval(List)} directly instead.
 	 */
+	@Deprecated
 	public List<AbstractEvalResult> eval(final State state, final List<? extends IEvalElement> formulas) {
 		return state.eval(formulas);
 	}
@@ -370,7 +372,10 @@ public class StateSpace implements IAnimator {
 	 *            for which the values are to be retrieved
 	 * @return map from {@link IEvalElement} object to
 	 *         {@link AbstractEvalResult} objects
+	 * @deprecated Use {@link State#getValues()} directly instead,
+	 *     possibly together with {@link State#explore()} or {@link State#exploreIfNeeded()}.
 	 */
+	@Deprecated
 	public Map<IEvalElement, AbstractEvalResult> valuesAt(final State state) {
 		state.explore();
 		return state.getValues();
@@ -383,7 +388,9 @@ public class StateSpace implements IAnimator {
 	 * @param state
 	 *            which is to be tested
 	 * @return whether or not formulas should be evaluated in this state
+	 * @deprecated Use {@link State#isInitialised()} directly instead.
 	 */
+	@Deprecated
 	public boolean canBeEvaluated(final State state) {
 		return state.isInitialised();
 	}
@@ -730,9 +737,15 @@ public class StateSpace implements IAnimator {
 	}
 
 	/**
+	 * <p>
 	 * This allows developers to programmatically describe a Trace that should
 	 * be created. {@link ITraceDescription#getTrace(StateSpace)} will then be
 	 * called in order to generate the correct Trace.
+	 * </p>
+	 * <p>
+	 * This overload is meant for use from Groovy.
+	 * Java code should call {@link ITraceDescription#getTrace(StateSpace)} directly instead.
+	 * </p>
 	 *
 	 * @param description
 	 *            of the trace to be created
@@ -853,9 +866,8 @@ public class StateSpace implements IAnimator {
 
 	/**
 	 * Evaluates all of the formulas for every specified state (if they can be
-	 * evaluated). Internally calls {@link #canBeEvaluated(State)}. If the
-	 * formulas are of interest to a class (i.e. the an object has subscribed to
-	 * the formula) the formula is cached.
+	 * evaluated). If the formulas are of interest to a class
+	 * (i.e. the an object has subscribed to the formula) the formula is cached.
 	 *
 	 * @param states
 	 *            for which the formula is to be evaluated

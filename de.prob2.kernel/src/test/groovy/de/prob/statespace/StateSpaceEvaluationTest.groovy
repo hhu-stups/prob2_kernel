@@ -39,7 +39,7 @@ class StateSpaceEvaluationTest extends Specification {
 	}
 
 	def "it is possible to evaluate formulas in a state"() {
-		final res = s.eval(firstState, [
+		final res = firstState.eval([
 			new ClassicalB("waiting"),
 			new ClassicalB("ready")
 		]).collect { it.getValue() }
@@ -143,14 +143,15 @@ class StateSpaceEvaluationTest extends Specification {
 	}
 
 	def "formulas should not be evaluated in the root state"() {
-		expect: !s.canBeEvaluated(root)
+		expect: !root.initialised
 	}
 
 	def "after subscribing a formula, its values can be retrieved using valuesAt"() {
 		when:
 		def formula = new ClassicalB("card(waiting) + 1")
 		s.subscribe("mmm",formula)
-		def values = s.valuesAt(firstState)
+		firstState.explore()
+		def values = firstState.values
 		then:
 		values.containsKey(formula)
 		values[formula].getValue() == "1"

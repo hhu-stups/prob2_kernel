@@ -98,7 +98,8 @@ public class Trace extends GroovyObjectSupport {
 	public List<Tuple2<String, AbstractEvalResult>> eval(IEvalElement formula) {
 		final List<EvaluateFormulasCommand> cmds = new ArrayList<>();
 		for (Transition t : transitionList) {
-			if (getStateSpace().canBeEvaluated(t.getDestination())) {
+			// FIXME This check is safe, but not optimal - some formulas can also be evaluated in non-initialised states.
+			if (t.getDestination().isInitialised()) {
 				cmds.add(new EvaluateFormulasCommand(Collections.singletonList(formula), t.getDestination().getId()));
 			}
 		}
