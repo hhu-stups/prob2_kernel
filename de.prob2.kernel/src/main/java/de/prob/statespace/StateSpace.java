@@ -1,11 +1,24 @@
 package de.prob.statespace;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.WeakHashMap;
+import java.util.concurrent.ExecutionException;
+
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+
 import de.prob.animator.IAnimator;
 import de.prob.animator.IConsoleOutputListener;
 import de.prob.animator.IWarningListener;
@@ -38,28 +51,15 @@ import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.animator.domainobjects.ProBPreference;
 import de.prob.animator.domainobjects.TypeCheckResult;
 import de.prob.annotations.MaxCacheSize;
-import de.prob.exception.ProBError;
 import de.prob.formula.PredicateBuilder;
 import de.prob.model.classicalb.ClassicalBModel;
 import de.prob.model.eventb.EventBModel;
 import de.prob.model.representation.AbstractElement;
 import de.prob.model.representation.AbstractModel;
 import de.prob.model.representation.CSPModel;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.WeakHashMap;
-import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.concurrent.ExecutionException;
 
 /**
  *
@@ -844,11 +844,11 @@ public class StateSpace implements IAnimator {
 	 *            how formulas should be expanded
 	 * @return a set containing all of the evaluated transitions
 	 */
-	public synchronized Set<Transition> evaluateTransitions(final Collection<Transition> transitions,
+	public Set<Transition> evaluateTransitions(final Collection<Transition> transitions,
 			final FormulaExpand expansion) {
 		GetOpsFromIds cmd = new GetOpsFromIds(transitions, expansion);
 		execute(cmd);
-		return new CopyOnWriteArraySet<>(transitions);
+		return new LinkedHashSet<>(transitions);
 	}
 
 	/**

@@ -3,10 +3,10 @@ package de.prob.statespace;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -365,16 +365,16 @@ public class Trace extends GroovyObjectSupport {
 		return stateSpace;
 	}
 
-	public synchronized Set<Transition> getNextTransitions() {
+	public Set<Transition> getNextTransitions() {
 		return getNextTransitions(false, FormulaExpand.TRUNCATE);
 	}
 
-	public synchronized Set<Transition> getNextTransitions(boolean evaluate) {
+	public Set<Transition> getNextTransitions(boolean evaluate) {
 		return this.getNextTransitions(evaluate, FormulaExpand.TRUNCATE);
 	}
 
-	public synchronized Set<Transition> getNextTransitions(boolean evaluate, FormulaExpand expansion) {
-		return new CopyOnWriteArraySet<>(getCurrentState().getOutTransitions(evaluate, expansion));
+	public Set<Transition> getNextTransitions(boolean evaluate, FormulaExpand expansion) {
+		return new LinkedHashSet<>(getCurrentState().getOutTransitions(evaluate, expansion));
 	}
 
 	public State getCurrentState() {

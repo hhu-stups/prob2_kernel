@@ -2,7 +2,6 @@ package de.prob.animator.command;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import de.prob.animator.domainobjects.FormulaExpand;
@@ -17,10 +16,7 @@ public class GetOpsFromIds extends AbstractCommand {
 
 	public GetOpsFromIds(final Collection<Transition> edges, final FormulaExpand expansion) {
 		List<GetOpFromId> opInfos = new ArrayList<>();
-
-		//copy edges to avoid race condition
-		List<Transition> copiedEdges = new ArrayList<>(edges);
-		for(Transition opInfo : copiedEdges) {
+		for(Transition opInfo : edges) {
 			if(opInfo.canBeEvaluated(expansion)) {
 				opInfos.add(new GetOpFromId(opInfo, expansion));
 			}
