@@ -1,6 +1,6 @@
 package de.prob.animator.command;
 
-import java.util.List;
+import java.util.Collection;
 
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.parser.ISimplifiedROMap;
@@ -9,9 +9,9 @@ import de.prob.prolog.term.PrologTerm;
 
 public class UnregisterFormulasCommand extends AbstractCommand {
 	private static final String PROLOG_COMMAND_NAME = "unregister_prob2_formulas";
-	private final List<IEvalElement> formulas;
+	private final Collection<? extends IEvalElement> formulas;
 
-	public UnregisterFormulasCommand(final List<IEvalElement> formulas) {
+	public UnregisterFormulasCommand(final Collection<? extends IEvalElement> formulas) {
 		this.formulas = formulas;
 	}
 

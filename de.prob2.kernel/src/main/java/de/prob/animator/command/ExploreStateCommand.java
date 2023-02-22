@@ -44,7 +44,7 @@ public final class ExploreStateCommand extends AbstractCommand implements
 	private final GetOperationsWithTimeout checkTimeoutOpsCmd;
 
 	public ExploreStateCommand(final StateSpace s, final String stateID,
-			final Collection<IEvalElement> formulas) {
+			final Collection<? extends IEvalElement> formulas) {
 		stateId = stateID;
 		getOpsCmd = new GetEnabledOperationsCommand(s, stateId);
 		evalFormulasCmd = new EvaluateRegisteredFormulasCommand(stateID,

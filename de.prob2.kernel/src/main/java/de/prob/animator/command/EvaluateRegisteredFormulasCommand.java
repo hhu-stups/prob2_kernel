@@ -20,10 +20,10 @@ public class EvaluateRegisteredFormulasCommand extends AbstractCommand {
 	private static final String RESULTS_VARIABLE = "Results";
 	private final String stateId;
 	private final Map<IEvalElement, AbstractEvalResult> results = new HashMap<>();
-	private final List<IEvalElement> formulas;
+	private final List<? extends IEvalElement> formulas;
 
 	public EvaluateRegisteredFormulasCommand(final String stateId,
-			final Collection<IEvalElement> formulas) {
+			final Collection<? extends IEvalElement> formulas) {
 		this.stateId = stateId;
 		this.formulas = new ArrayList<>(formulas);
 	}
