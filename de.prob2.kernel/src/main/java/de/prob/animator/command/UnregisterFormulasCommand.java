@@ -1,27 +1,28 @@
 package de.prob.animator.command;
 
+import java.util.List;
+
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;
 
-/**
- * @deprecated Use {@link UnregisterFormulasCommand} instead.
- */
-@Deprecated
-public class UnregisterFormulaCommand extends AbstractCommand {
+public class UnregisterFormulasCommand extends AbstractCommand {
+	private static final String PROLOG_COMMAND_NAME = "unregister_prob2_formulas";
+	private final List<IEvalElement> formulas;
 
-	private static final String PROLOG_COMMAND_NAME = "unregister_prob2_formula";
-	private final IEvalElement formula;
-
-	public UnregisterFormulaCommand(final IEvalElement formula) {
-		this.formula = formula;
+	public UnregisterFormulasCommand(final List<IEvalElement> formulas) {
+		this.formulas = formulas;
 	}
 
 	@Override
 	public void writeCommand(final IPrologTermOutput pto) {
 		pto.openTerm(PROLOG_COMMAND_NAME);
-		formula.getFormulaId().printUUID(pto);
+		pto.openList();
+		for (final IEvalElement formula : this.formulas) {
+			formula.getFormulaId().printUUID(pto);
+		}
+		pto.closeList();
 		pto.closeTerm();
 	}
 

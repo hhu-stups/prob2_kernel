@@ -41,7 +41,7 @@ import de.prob.animator.command.GetStatesFromPredicate;
 import de.prob.animator.command.IStateSpaceModifier;
 import de.prob.animator.command.RegisterFormulasCommand;
 import de.prob.animator.command.SetPreferenceCommand;
-import de.prob.animator.command.UnregisterFormulaCommand;
+import de.prob.animator.command.UnregisterFormulasCommand;
 import de.prob.animator.domainobjects.AbstractEvalResult;
 import de.prob.animator.domainobjects.CSP;
 import de.prob.animator.domainobjects.ClassicalB;
@@ -481,19 +481,19 @@ public class StateSpace implements IAnimator {
 
 	public boolean unsubscribe(final Object subscriber, final Collection<? extends IEvalElement> formulas, boolean unregister) {
 		boolean success = false;
-		final List<AbstractCommand> unsubscribeCmds = new ArrayList<>();
+		final List<IEvalElement> unsubscribeFormulas = new ArrayList<>();
 		for (IEvalElement formula : formulas) {
 			if (formulaRegistry.containsKey(formula)) {
 				final Set<Object> subscribers = formulaRegistry.get(formula);
 				subscribers.remove(subscriber);
 				if (subscribers.isEmpty() && unregister) {
-					unsubscribeCmds.add(new UnregisterFormulaCommand(formula));
+					unsubscribeFormulas.add(formula);
 				}
 				success = true;
 			}
 		}
-		if (!unsubscribeCmds.isEmpty()) {
-			execute(new ComposedCommand(unsubscribeCmds));
+		if (!unsubscribeFormulas.isEmpty()) {
+			execute(new UnregisterFormulasCommand(unsubscribeFormulas));
 		}
 		return success;
 	}
