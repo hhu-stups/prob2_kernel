@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import de.prob.animator.domainobjects.EvalOptions;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
@@ -14,14 +15,18 @@ import de.prob.statespace.Transition;
 public class GetOpsFromIds extends AbstractCommand {
 	private final ComposedCommand allCommands;
 
-	public GetOpsFromIds(final Collection<Transition> edges, final FormulaExpand expansion) {
+	public GetOpsFromIds(final Collection<Transition> edges, final EvalOptions options) {
 		List<GetOpFromId> opInfos = new ArrayList<>();
 		for(Transition opInfo : edges) {
-			if(opInfo.canBeEvaluated(expansion)) {
-				opInfos.add(new GetOpFromId(opInfo, expansion));
+			if(!opInfo.isEvaluated(options)) {
+				opInfos.add(new GetOpFromId(opInfo, options));
 			}
 		}
 		allCommands = new ComposedCommand(opInfos);
+	}
+
+	public GetOpsFromIds(final Collection<Transition> edges, final FormulaExpand expansion) {
+		this(edges, Transition.OLD_DEFAULT_EVAL_OPTIONS.withExpand(expansion));
 	}
 
 	@Override

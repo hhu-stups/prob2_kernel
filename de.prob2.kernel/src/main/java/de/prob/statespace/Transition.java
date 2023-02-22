@@ -6,8 +6,10 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -20,6 +22,7 @@ import de.hhu.stups.prob.translator.Translator;
 import de.hhu.stups.prob.translator.exceptions.TranslationException;
 import de.prob.animator.domainobjects.EvalOptions;
 import de.prob.animator.domainobjects.FormulaExpand;
+import de.prob.animator.domainobjects.FormulaTranslationMode;
 import de.prob.formula.PredicateBuilder;
 import de.prob.parser.BindingGenerator;
 import de.prob.prolog.term.CompoundPrologTerm;
@@ -60,21 +63,18 @@ public class Transition {
 	private static final Set<String> ARTIFICIAL_NAMES = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
 		PARTIAL_SETUP_CONSTANTS_NAME, SETUP_CONSTANTS_NAME, INITIALISE_MACHINE_NAME
 	)));
+	
+	// Old code returned ASCII instead of Unicode - keep it that way for compatibility.
+	public static final EvalOptions OLD_DEFAULT_EVAL_OPTIONS = EvalOptions.DEFAULT.withMode(FormulaTranslationMode.ASCII);
 
 	private final StateSpace stateSpace;
 	private final String id;
 	private final String name;
 	private final State src;
 	private final State dest;
-	private List<String> params;
-	private List<String> returnValues;
+	private final Map<EvalOptions, EvaluatedTransitionInfo> evaluatedInfos;
 	private List<BValue> translatedParams;
 	private List<BValue> translatedRetV;
-	private String rep;
-	private String prettyRep;
-	private boolean evaluated;
-	private FormulaExpand formulaExpansion;
-	private final FormalismType formalismType;
 	private String predicateString;
 
 	private Transition(final StateSpace stateSpace, final String id, final String name, final State src,
@@ -84,9 +84,7 @@ public class Transition {
 		this.name = name;
 		this.src = src;
 		this.dest = dest;
-		this.evaluated = false;
-		this.rep = name;
-		formalismType = stateSpace.getModel().getFormalismType();
+		this.evaluatedInfos = new HashMap<>();
 	}
 
 	public static String prettifyName(final String name) {
@@ -147,9 +145,22 @@ public class Transition {
 		return getParameterValues();
 	}
 
+	/**
+	 * <p>
+	 * The list of parameters is not filled by default. If the parameter list
+	 * has not yet been filled, ProB will be contacted to lazily fill the
+	 * parameter list via the {@link #evaluate()} method.
+	 * </p>
+	 * <p>
+	 * This method always fully expands and evaluates all parameter values.
+	 * Although this is safe, it may be very slow for large or complex values.
+	 * Consider using {@link #evaluate(EvalOptions)} instead for more control over the evaluation options.
+	 * </p>
+	 *
+	 * @return list of values for the parameters represented as strings
+	 */
 	public List<String> getParameterValues() {
-		evaluate(FormulaExpand.EXPAND);
-		return params;
+		return evaluate(OLD_DEFAULT_EVAL_OPTIONS.withExpand(FormulaExpand.EXPAND)).getParameterValues();
 	}
 
 	public List<BValue> getTranslatedParams() throws TranslationException {
@@ -164,15 +175,21 @@ public class Transition {
 	}
 
 	/**
+	 * <p>
 	 * The list of return values is not filled by default. If the return value
 	 * list has not yet been filled, ProB will be contacted to lazily fill the
 	 * list via the {@link #evaluate()} method.
+	 * </p>
+	 * <p>
+	 * This method always fully expands and evaluates all return values.
+	 * Although this is safe, it may be very slow for large or complex values.
+	 * Consider using {@link #evaluate(EvalOptions)} instead for more control over the evaluation options.
+	 * </p>
 	 * 
 	 * @return list of return values of the operation represented as strings.
 	 */
 	public List<String> getReturnValues() {
-		evaluate(FormulaExpand.EXPAND);
-		return returnValues;
+		return evaluate(OLD_DEFAULT_EVAL_OPTIONS.withExpand(FormulaExpand.EXPAND)).getReturnValues();
 	}
 
 	public StateSpace getStateSpace() {
@@ -195,11 +212,34 @@ public class Transition {
 		return name;
 	}
 
+	// TODO Replace this with evaluate(OLD_DEFAULT_EVAL_OPTIONS) once evaluate supports fuzzy matching
+	private EvaluatedTransitionInfo getCachedEvalInfoForRep() {
+		if (this.isEvaluated(OLD_DEFAULT_EVAL_OPTIONS.withExpand(FormulaExpand.EXPAND))) {
+			return this.evaluate(OLD_DEFAULT_EVAL_OPTIONS.withExpand(FormulaExpand.EXPAND));
+		} else if (this.isEvaluated(OLD_DEFAULT_EVAL_OPTIONS)) {
+			return this.evaluate(OLD_DEFAULT_EVAL_OPTIONS);
+		} else {
+			return null;
+		}
+	}
+
 	/**
+	 * Return a string representation of the transition,
+	 * including all parameter and return values if known.
+	 * This method does <i>not</i> evaluate parameter and return values automatically.
+	 * If this transition hasn't been evaluated yet,
+	 * only the operation name is returned.
+	 * Consider using {@link #evaluate(EvalOptions)} instead to ensure that the transition has been evaluated with the desired options.
+	 * 
 	 * @return the String representation of the operation.
 	 */
 	public String getRep() {
-		return rep;
+		final EvaluatedTransitionInfo info = this.getCachedEvalInfoForRep();
+		if (info == null) {
+			return this.getName();
+		} else {
+			return info.getRep();
+		}
 	}
 
 	/**
@@ -228,9 +268,10 @@ public class Transition {
 		evaluate(FormulaExpand.EXPAND);
 		List<String> predicates = new ArrayList<>();
 		List<String> paramNames = getParameterNames();
-		if (paramNames.size() == this.params.size()) {
+		List<String> paramValues = getParameterValues();
+		if (paramNames.size() == paramValues.size()) {
 			for (int i = 0; i < paramNames.size(); i++) {
-				predicates.add(paramNames.get(i) + " = " + this.params.get(i));
+				predicates.add(paramNames.get(i) + " = " + paramValues.get(i));
 			}
 		}
 		return predicates;
@@ -241,21 +282,22 @@ public class Transition {
 		return operationInfo == null ? new ArrayList<>() : operationInfo.getParameterNames();
 	}
 
-	private String createRep(final String name, final List<String> params, final List<String> returnVals) {
-		if (formalismType.equals(FormalismType.CSP)) {
-			if (params.isEmpty()) {
-				return name;
-			} else {
-				return name + '.' + String.join(".", params);
-			}
-		} else {
-			String retVals = returnVals.isEmpty() ? "" : String.join(",", returnVals) + " <-- ";
-			return retVals + name + '(' + String.join(",", params) + ')';
-		}
-	}
-
+	/**
+	 * Like {@link #getRep()}, but uses {@link #getPrettyName()} for the transition name.
+	 * This method does <i>not</i> evaluate parameter and return values automatically.
+	 * If this transition hasn't been evaluated yet,
+	 * only the operation name is returned.
+	 * Consider using {@link #evaluate(EvalOptions)} instead to ensure that the transition has been evaluated with the desired options.
+	 * 
+	 * @return the pretty string representation of the operation
+	 */
 	public String getPrettyRep() {
-		return this.prettyRep;
+		final EvaluatedTransitionInfo info = this.getCachedEvalInfoForRep();
+		if (info == null) {
+			return this.getPrettyName();
+		} else {
+			return info.getPrettyRep();
+		}
 	}
 
 	public boolean isArtificialTransition() {
@@ -291,7 +333,17 @@ public class Transition {
 	public boolean isSame(final Transition that) {
 		evaluate(FormulaExpand.EXPAND);
 		that.evaluate(FormulaExpand.EXPAND);
-		return that.getName().equals(name) && that.getParameterValues().equals(params);
+		return that.getName().equals(this.getName()) && that.getParameterValues().equals(this.getParameterValues());
+	}
+
+	/**
+	 * For use only by {@link GetOpFromId} to cache the {@link EvaluatedTransitionInfo} in the transition object.
+	 * 
+	 * @param options evaluation options that were passed to {@link GetOpFromId}
+	 * @param info result of the {@link GetOpFromId} command
+	 */
+	void addEvaluatedInfo(final EvalOptions options, final EvaluatedTransitionInfo info) {
+		this.evaluatedInfos.put(options, info);
 	}
 
 	/**
@@ -306,37 +358,82 @@ public class Transition {
 		return evaluate(FormulaExpand.TRUNCATE);
 	}
 
+	/**
+	 * @deprecated {@link #evaluate(EvalOptions)} now supports more options than just "truncated" and "expanded".
+	 *     Use {@link #isEvaluated(EvalOptions)} instead to check whether the transition has been evaluated with the desired options.
+	 */
+	@Deprecated
 	public boolean canBeEvaluated(final FormulaExpand expansion) {
-		return !evaluated || this.formulaExpansion == FormulaExpand.TRUNCATE && expansion == FormulaExpand.EXPAND;
+		return !this.isEvaluated(OLD_DEFAULT_EVAL_OPTIONS.withExpand(expansion));
 	}
 
 	public Transition evaluate(final FormulaExpand expansion) {
-		if (canBeEvaluated(expansion)) {
-			GetOpFromId command = new GetOpFromId(this, expansion);
-			stateSpace.execute(command);
-		}
+		this.evaluate(OLD_DEFAULT_EVAL_OPTIONS.withExpand(expansion));
 		return this;
 	}
 
+	/**
+	 * Retrieve the transition's parameter and return values from ProB.
+	 * The results are cached,
+	 * so if the transition has already ben evaluated before with the same options,
+	 * that result is returned directly without calling ProB again.
+	 * 
+	 * @param options options to use when pretty-printing the parameter and return values
+	 * @return the transition's parameter and return values
+	 */
 	public EvaluatedTransitionInfo evaluate(final EvalOptions options) {
-		// TODO Support caching results like in the other overload
-		final GetOpFromId cmd = new GetOpFromId(this, options);
-		stateSpace.execute(cmd);
-		return cmd.getInfo();
+		// TODO Reuse cached values where the options don't match exactly, but are strictly better, e. g.:
+		// If FormulaExpand.TRUNCATE was requested
+		// and the transition was already evaluated with FormulaExpand.EXPAND,
+		// then that result should be returned instead of re-evaluating with TRUNCATE.
+		// If FormulaExpand.EXPAND was requested
+		// and the transition was already evaluated with FormulaExpand.TRUNCATE,
+		// then the TRUNCATE result should be replaced by the EXPAND result instead of caching both.
+		if (!this.isEvaluated(options)) {
+			stateSpace.execute(new GetOpFromId(this, options));
+		}
+		return this.evaluatedInfos.get(options);
 	}
 
 	/**
+	 * Check whether this transition has already been evaluated with the given options.
+	 * If {@code true} is returned,
+	 * calling {@link #evaluate(EvalOptions)} with the same options
+	 * will return the cached results instead of re-evaluating the transition.
+	 * 
+	 * @param options desired evaluation options for parameter and return values
+	 * @return whether evaluation results have already been cached for the given options
+	 */
+	public boolean isEvaluated(final EvalOptions options) {
+		return this.evaluatedInfos.containsKey(options);
+	}
+
+	/**
+	 * <p>
 	 * Check whether this transition has been evaluated.
+	 * </p>
+	 * <p>
+	 * For compatibility, this method only recognizes evaluation using the old default options used by {@link #evaluate()} and {@link #evaluate(FormulaExpand)}.
+	 * This may change in the future.
+	 * Consider using {@link #isEvaluated(EvalOptions)} instead to check whether the transition has been evaluated with the desired options.
+	 * </p>
 	 * 
 	 * @return whether or not the name, parameters, and return values have yet
 	 *         been retrieved from ProB
 	 */
 	public boolean isEvaluated() {
-		return evaluated;
+		return isEvaluated(OLD_DEFAULT_EVAL_OPTIONS.withExpand(FormulaExpand.TRUNCATE))
+			|| isEvaluated(OLD_DEFAULT_EVAL_OPTIONS.withExpand(FormulaExpand.EXPAND));
 	}
 
+	/**
+	 * @deprecated {@link #evaluate(EvalOptions)} now supports more options than just "truncated" and "expanded".
+	 *     Use {@link #isEvaluated(EvalOptions)} instead to check whether the transition has been evaluated with the desired options.
+	 */
+	@Deprecated
 	public boolean isTruncated() {
-		return formulaExpansion == FormulaExpand.TRUNCATE;
+		return isEvaluated(OLD_DEFAULT_EVAL_OPTIONS.withExpand(FormulaExpand.TRUNCATE))
+			&& !isEvaluated(OLD_DEFAULT_EVAL_OPTIONS.withExpand(FormulaExpand.EXPAND));
 	}
 
 	/**
@@ -352,25 +449,6 @@ public class Transition {
 		MessageDigest md = MessageDigest.getInstance("SHA-1");
 		md.update(getDestination().getStateRep().getBytes());
 		return new BigInteger(1, md.digest()).toString(Character.MAX_RADIX);
-	}
-
-	/**
-	 * Sets the values for the fields in this class. This should ONLY be called
-	 * by the {@link GetOpFromId} command during retrieval of the values from
-	 * Prolog. For this reason, it is package private
-	 * 
-	 * @param params
-	 *            - {@link List} of {@link String} parameters
-	 * @param returnValues
-	 *            - {@link List} of {@link String} return values
-	 */
-	void setInfo(final FormulaExpand expansion, final List<String> params, final List<String> returnValues) {
-		this.formulaExpansion = expansion;
-		this.params = params;
-		this.returnValues = returnValues;
-		this.rep = createRep(name, params, returnValues);
-		this.prettyRep = createRep(this.getPrettyName(), params, returnValues);
-		evaluated = true;
 	}
 
 	/**
