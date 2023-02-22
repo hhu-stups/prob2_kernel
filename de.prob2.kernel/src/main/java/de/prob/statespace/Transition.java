@@ -443,7 +443,17 @@ public class Transition {
 	 * @return A SHA-1 hash of the target state in String format.
 	 * @throws NoSuchAlgorithmException
 	 *             if no SHA-1 provider is found
+	 * @deprecated This method has a few pitfalls and should be avoided.
+	 *     The hash only takes the transition's destination state into account,
+	 *     not any other aspects of the transition itself
+	 *     (like the operation name and parameter values),
+	 *     and is potentially dependent on the system default charset
+	 *     (e. g. if the model contains non-ASCII identifiers).
+	 *     The hash value is also returned in a non-standard format (base 36).
+	 *     This method is currently kept to support Groovy trace files (see {@link TraceConverter}),
+	 *     but shouldn't be used in any new code.
 	 */
+	@Deprecated
 	public String sha() throws NoSuchAlgorithmException {
 		evaluate(FormulaExpand.EXPAND);
 		MessageDigest md = MessageDigest.getInstance("SHA-1");
