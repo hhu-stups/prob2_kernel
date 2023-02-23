@@ -98,9 +98,6 @@ public class ModelElementList<E> extends GroovyObjectSupport implements List<E> 
 		if (e instanceof Named) {
 			newkeys = newkeys.assoc(((Named)e).getName(), e);
 		}
-		if (e instanceof AbstractFormulaElement) {
-			newkeys = newkeys.assoc('_' + ((AbstractFormulaElement)e).getFormula().getFormulaId().getUUID(), e);
-		}
 		return (PersistentHashMap<String, E>)newkeys;
 	}
 
@@ -108,9 +105,6 @@ public class ModelElementList<E> extends GroovyObjectSupport implements List<E> 
 		IPersistentMap<String, E> newkeys = keys;
 		if (e instanceof Named) {
 			newkeys = newkeys.without(((Named)e).getName());
-		}
-		if (e instanceof AbstractFormulaElement) {
-			newkeys = newkeys.without('_' + ((AbstractFormulaElement)e).getFormula().getFormulaId().getUUID());
 		}
 		return (PersistentHashMap<String, E>)newkeys;
 	}
