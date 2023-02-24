@@ -2,6 +2,7 @@ package de.prob.statespace;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -372,13 +373,25 @@ public class Trace extends GroovyObjectSupport {
 	}
 
 	public Set<Transition> getNextTransitions() {
-		return getNextTransitions(false, FormulaExpand.TRUNCATE);
+		return new LinkedHashSet<>(getCurrentState().getOutTransitions());
 	}
 
+	/**
+	 * @deprecated Use {@link #getNextTransitions()} instead.
+	 *     If {@code evaluate} was set to {@code true},
+	 *     also call {@link StateSpace#evaluateTransitions(Collection, FormulaExpand)} on the returned set.
+	 */
+	@Deprecated
 	public Set<Transition> getNextTransitions(boolean evaluate) {
 		return this.getNextTransitions(evaluate, FormulaExpand.TRUNCATE);
 	}
 
+	/**
+	 * @deprecated Use {@link #getNextTransitions()} instead.
+	 *     If {@code evaluate} was set to {@code true},
+	 *     also call {@link StateSpace#evaluateTransitions(Collection, FormulaExpand)} on the returned set.
+	 */
+	@Deprecated
 	public Set<Transition> getNextTransitions(boolean evaluate, FormulaExpand expansion) {
 		return new LinkedHashSet<>(getCurrentState().getOutTransitions(evaluate, expansion));
 	}
@@ -416,13 +429,25 @@ public class Trace extends GroovyObjectSupport {
 	}
 
 	public List<Transition> getTransitionList() {
-		return getTransitionList(false, FormulaExpand.TRUNCATE);
+		return transitionList;
 	}
 
+	/**
+	 * @deprecated Use {@link #getTransitionList()} instead.
+	 *     If {@code evaluate} was set to {@code true},
+	 *     also call {@link StateSpace#evaluateTransitions(Collection, FormulaExpand)} on the returned list.
+	 */
+	@Deprecated
 	public List<Transition> getTransitionList(boolean evaluate) {
 		return this.getTransitionList(evaluate, FormulaExpand.TRUNCATE);
 	}
 
+	/**
+	 * @deprecated Use {@link #getTransitionList()} instead.
+	 *     If {@code evaluate} was set to {@code true},
+	 *     also call {@link StateSpace#evaluateTransitions(Collection, FormulaExpand)} on the returned list.
+	 */
+	@Deprecated
 	public List<Transition> getTransitionList(boolean evaluate, FormulaExpand expansion) {
 		final List<Transition> ops = transitionList;
 		if (evaluate) {

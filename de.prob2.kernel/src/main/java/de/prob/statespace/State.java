@@ -418,11 +418,28 @@ public class State extends GroovyObjectSupport {
 		return stateErrors;
 	}
 
+	/**
+	 * If the state has not yet been explored (i.e. the default number
+	 * of outgoing transitions has not yet been calculated by ProB), this
+	 * is done via the {@link State#explore()} method. The list of
+	 * {@link Transition} objects created will not be evaluated, i.e. certain
+	 * information about the transition will be lazily retrieved from ProB
+	 * at a later time. To evaluate the {@link Transition} objects eagerly,
+	 * pass the returned list to {@link StateSpace#evaluateTransitions(Collection, FormulaExpand)}.
+	 * 
+	 * @return the outgoing transitions from this state
+	 */
 	public List<Transition> getOutTransitions() {
-		// The FormulaExpand argument is ignored if evaluate is false
-		return getOutTransitions(false, FormulaExpand.TRUNCATE);
+		this.exploreIfNeeded();
+		return this.transitions;
 	}
 
+	/**
+	 * @deprecated Use {@link #getOutTransitions()} instead.
+	 *     If {@code evaluate} was set to {@code true},
+	 *     also call {@link StateSpace#evaluateTransitions(Collection, FormulaExpand)} on the returned list.
+	 */
+	@Deprecated
 	public List<Transition> getOutTransitions(boolean evaluate) {
 		return this.getOutTransitions(evaluate, FormulaExpand.TRUNCATE);
 	}
@@ -439,7 +456,11 @@ public class State extends GroovyObjectSupport {
 	 * method.
 	 * @param evaluate whether or not the list of transitions should be evaluated. By default this is set to false.
 	 * @return the outgoing transitions from this state
+	 * @deprecated Use {@link #getOutTransitions()} instead.
+	 *     If {@code evaluate} was set to {@code true},
+	 *     also call {@link StateSpace#evaluateTransitions(Collection, FormulaExpand)} on the returned list.
 	 */
+	@Deprecated
 	public List<Transition> getOutTransitions(boolean evaluate, FormulaExpand expansion) {
 		this.exploreIfNeeded();
 		if (evaluate) {

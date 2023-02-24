@@ -14,7 +14,8 @@ final cmd1 = new ExecuteUntilCommand(s1, t.currentState, cond1)
 s1.execute(cmd1)
 assert cmd1.success
 t = t.addTransitions(cmd1.newTransitions)
-assert t.getTransitionList(true, FormulaExpand.EXPAND).collect {it.rep} == ["\$initialise_machine()", "1 <-- read(1)", "nothing()", "end()"]
+s1.evaluateTransitions(t.transitionList, FormulaExpand.EXPAND)
+assert t.transitionList.collect {it.rep} == ["\$initialise_machine()", "1 <-- read(1)", "nothing()", "end()"]
 
 /*
 TODO: The command is too slow to do this.

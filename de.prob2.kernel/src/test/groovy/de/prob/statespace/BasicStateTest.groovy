@@ -321,28 +321,6 @@ class BasicStateTest extends Specification {
 		transitions.every {!it.isEvaluated()}
 	}
 
-	def "don't evaluate transitions"() {
-		setup:
-		firstState.explored = false
-
-		when:
-		def transitions = firstState.getOutTransitions(false)
-
-		then:
-		transitions.every {!it.isEvaluated()}
-	}
-
-	def "evaluate transitions"() {
-		setup:
-		firstState.explored = false
-
-		when:
-		def transitions = firstState.getOutTransitions(true)
-
-		then:
-		transitions.every {it.isEvaluated()}
-	}
-
 	def "explore changes all the values"() {
 		setup:
 		def f = new ClassicalB("1+2")
