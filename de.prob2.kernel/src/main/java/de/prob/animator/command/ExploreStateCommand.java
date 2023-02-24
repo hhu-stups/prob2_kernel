@@ -100,8 +100,6 @@ public final class ExploreStateCommand extends AbstractCommand implements
 		return evalFormulasCmd.getResultMap();
 	}
 
-	// TODO: The state errors calculated by ProB are never referenced by any
-	// class
 	public Collection<StateError> getStateErrors() {
 		return getStateErrCmd.getResult();
 	}
