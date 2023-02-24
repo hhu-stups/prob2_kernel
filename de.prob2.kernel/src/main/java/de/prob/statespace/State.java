@@ -1,19 +1,5 @@
 package de.prob.statespace;
 
-import de.prob.animator.command.EvaluateFormulasCommand;
-import de.prob.animator.command.EvaluateRegisteredFormulasCommand;
-import de.prob.animator.command.ExecuteOperationException;
-import de.prob.animator.command.ExploreStateCommand;
-import de.prob.animator.command.GetBStateCommand;
-import de.prob.animator.domainobjects.AbstractEvalResult;
-import de.prob.animator.domainobjects.EvalOptions;
-import de.prob.animator.domainobjects.FormulaExpand;
-import de.prob.animator.domainobjects.IEvalElement;
-import de.prob.animator.domainobjects.StateError;
-import de.prob.model.representation.AbstractModel;
-import groovy.lang.GroovyObjectSupport;
-import org.codehaus.groovy.runtime.DefaultGroovyMethods;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -27,6 +13,22 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import de.prob.animator.command.EvaluateFormulasCommand;
+import de.prob.animator.command.ExecuteOperationException;
+import de.prob.animator.command.ExploreStateCommand;
+import de.prob.animator.command.GetBStateCommand;
+import de.prob.animator.domainobjects.AbstractEvalResult;
+import de.prob.animator.domainobjects.EvalOptions;
+import de.prob.animator.domainobjects.FormulaExpand;
+import de.prob.animator.domainobjects.IEvalElement;
+import de.prob.animator.domainobjects.RegisteredFormula;
+import de.prob.animator.domainobjects.StateError;
+import de.prob.model.representation.AbstractModel;
+
+import groovy.lang.GroovyObjectSupport;
+
+import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 
 /**
  * A reference to the state object in the ProB core.
@@ -446,10 +448,16 @@ public class State extends GroovyObjectSupport {
 	}
 
 	public synchronized State explore() {
-		final ExploreStateCommand cmd = new ExploreStateCommand(stateSpace, id, stateSpace.getSubscribedFormulas());
+		final List<RegisteredFormula> registered = stateSpace.getSubscribedFormulas().stream()
+			.map(stateSpace.getRegisteredFormulas()::get)
+			.collect(Collectors.toList());
+		final ExploreStateCommand cmd = new ExploreStateCommand(stateSpace, id, registered);
 		stateSpace.execute(cmd);
 		transitions = cmd.getNewTransitions();
-		values.putAll(cmd.getFormulaResults());
+		final Map<IEvalElement, AbstractEvalResult> results = cmd.getFormulaResults();
+		for (final RegisteredFormula rf : registered) {
+			values.put(rf.getFormula(), results.get(rf));
+		}
 		constantsSetUp = cmd.isConstantsSetUp();
 		initialised = cmd.isInitialised();
 		invariantOk = cmd.isInvariantOk();
@@ -490,9 +498,15 @@ public class State extends GroovyObjectSupport {
 			}
 		}
 		if (!toEvaluate.isEmpty()) {
-			final EvaluateRegisteredFormulasCommand cmd = new EvaluateRegisteredFormulasCommand(this.getId(), toEvaluate);
+			final List<RegisteredFormula> registered = toEvaluate.stream()
+				.map(stateSpace.getRegisteredFormulas()::get)
+				.collect(Collectors.toList());
+			final EvaluateFormulasCommand cmd = new EvaluateFormulasCommand(registered, this.getId());
 			stateSpace.execute(cmd);
-			values.putAll(cmd.getResults());
+			final Map<IEvalElement, AbstractEvalResult> results = cmd.getResultMap();
+			for (final RegisteredFormula rf : registered) {
+				values.put(rf.getFormula(), results.get(rf));
+			}
 		}
 		return new HashMap<>(values);
 	}

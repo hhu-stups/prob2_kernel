@@ -33,7 +33,7 @@ public final class ExploreStateCommand extends AbstractCommand implements
 		IStateSpaceModifier {
 	private final String stateId;
 	private final GetEnabledOperationsCommand getOpsCmd;
-	private final EvaluateRegisteredFormulasCommand evalFormulasCmd;
+	private final EvaluateFormulasCommand evalFormulasCmd;
 	private final CheckBooleanPropertyCommand checkConstantsSetUpCmd;
 	private final CheckBooleanPropertyCommand checkInitialisedCmd;
 	private final CheckInvariantStatusCommand checkInvCmd;
@@ -44,11 +44,10 @@ public final class ExploreStateCommand extends AbstractCommand implements
 	private final GetOperationsWithTimeout checkTimeoutOpsCmd;
 
 	public ExploreStateCommand(final StateSpace s, final String stateID,
-			final Collection<? extends IEvalElement> formulas) {
+			final List<? extends IEvalElement> formulas) {
 		stateId = stateID;
 		getOpsCmd = new GetEnabledOperationsCommand(s, stateId);
-		evalFormulasCmd = new EvaluateRegisteredFormulasCommand(stateID,
-				formulas);
+		evalFormulasCmd = new EvaluateFormulasCommand(formulas, stateID);
 		checkConstantsSetUpCmd = new CheckConstantsSetUpStatusCommand(stateId);
 		checkInitialisedCmd = new CheckInitialisationStatusCommand(stateId);
 		checkInvCmd = new CheckInvariantStatusCommand(stateId);
@@ -98,7 +97,7 @@ public final class ExploreStateCommand extends AbstractCommand implements
 	}
 
 	public Map<IEvalElement, AbstractEvalResult> getFormulaResults() {
-		return evalFormulasCmd.getResults();
+		return evalFormulasCmd.getResultMap();
 	}
 
 	// TODO: The state errors calculated by ProB are never referenced by any

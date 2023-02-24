@@ -9,12 +9,18 @@ import java.util.Map;
 import de.prob.animator.domainobjects.AbstractEvalResult;
 import de.prob.animator.domainobjects.EvalResult;
 import de.prob.animator.domainobjects.IEvalElement;
+import de.prob.animator.domainobjects.RegisteredFormula;
 import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 
+/**
+ * @deprecated Registered formulas can now be evaluated using normal evaluation.
+ *     Use {@link RegisteredFormula} together with {@link EvaluateFormulasCommand}.
+ */
+@Deprecated
 public class EvaluateRegisteredFormulasCommand extends AbstractCommand {
 	private static final String PROLOG_COMMAND_NAME = "evaluate_registered_formulas";
 	private static final String RESULTS_VARIABLE = "Results";

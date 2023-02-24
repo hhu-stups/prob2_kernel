@@ -49,6 +49,7 @@ import de.prob.animator.domainobjects.ErrorItem;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.animator.domainobjects.ProBPreference;
+import de.prob.animator.domainobjects.RegisteredFormula;
 import de.prob.animator.domainobjects.TypeCheckResult;
 import de.prob.annotations.MaxCacheSize;
 import de.prob.formula.PredicateBuilder;
@@ -86,6 +87,7 @@ public class StateSpace implements IAnimator {
 	Logger logger = LoggerFactory.getLogger(StateSpace.class);
 	private IAnimator animator;
 
+	private final Map<IEvalElement, RegisteredFormula> registeredFormulas = new HashMap<>();
 	private final Map<IEvalElement, Set<Object>> formulaRegistry = new HashMap<>();
 
 	private LoadedMachine loadedMachine;
@@ -396,6 +398,79 @@ public class StateSpace implements IAnimator {
 	}
 
 	/**
+	 * Get all formulas currently registered for efficient evaluation.
+	 * All {@linkplain #getSubscribedFormulas() subscribed formulas} are also automatically registered,
+	 * but not vice versa.
+	 * 
+	 * @return map of all formulas currently registered for efficient evaluation
+	 */
+	public Map<IEvalElement, RegisteredFormula> getRegisteredFormulas() {
+		return Collections.unmodifiableMap(this.registeredFormulas);
+	}
+
+	/**
+	 * <p>
+	 * Register one or multiple formulas for efficient evaluation.
+	 * Any formulas that were already registered previously will not be registered again.
+	 * Regardless of whether a formula was already registered or not,
+	 * all formulas passed to this method can be looked up in {@link #getRegisteredFormulas()} afterwards.
+	 * </p>
+	 * <p>
+	 * The registered version of a formula can be evaluated more efficiently,
+	 * because the formula term is sent to Prolog and type-checked only once at registration time.
+	 * However, registered formulas still need to be evaluated manually as needed.
+	 * To evaluate formulas automatically in every new state, use {@link #subscribe(Object, Collection)}.
+	 * </p>
+	 * 
+	 * @param formulas formulas to register for evaluation
+	 * @return all formulas that were newly registered
+	 */
+	public Collection<IEvalElement> registerFormulas(final Collection<? extends IEvalElement> formulas) {
+		final List<IEvalElement> toRegister = new ArrayList<>();
+		for (final IEvalElement formula : formulas) {
+			IEvalElement f = formula;
+			if (f instanceof RegisteredFormula) {
+				f = ((RegisteredFormula)f).getFormula();
+			}
+			if (!this.registeredFormulas.containsKey(f)) {
+				toRegister.add(f);
+			}
+		}
+		
+		if (!toRegister.isEmpty()) {
+			final RegisterFormulasCommand cmd = new RegisterFormulasCommand(toRegister);
+			this.execute(cmd);
+			this.registeredFormulas.putAll(cmd.getRegistered());
+		}
+		
+		return toRegister;
+	}
+
+	/**
+	 * Unregister one or multiple formulas for efficient evaluation.
+	 * Any non-registered formulas in the list are silently ignored.
+	 * 
+	 * @param formulas formulas to unregister
+	 */
+	public void unregisterFormulas(final Collection<? extends IEvalElement> formulas) {
+		final List<IEvalElement> toUnregister = new ArrayList<>();
+		for (final IEvalElement formula : formulas) {
+			IEvalElement f = formula;
+			if (f instanceof RegisteredFormula) {
+				f = ((RegisteredFormula)f).getFormula();
+			}
+			if (this.registeredFormulas.containsKey(f)) {
+				toUnregister.add(f);
+			}
+		}
+		
+		if (!toUnregister.isEmpty()) {
+			this.execute(new UnregisterFormulasCommand(toUnregister));
+			toUnregister.forEach(this.registeredFormulas.keySet()::remove);
+		}
+	}
+
+	/**
 	 * This method lets ProB know that the subscriber is interested in the
 	 * specified formulas. ProB will then evaluate the formulas for every state
 	 * (after which the values can be retrieved from the
@@ -429,9 +504,7 @@ public class StateSpace implements IAnimator {
 				}
 			}
 		}
-		if (!toSubscribe.isEmpty()) {
-			execute(new RegisterFormulasCommand(toSubscribe));
-		}
+		this.registerFormulas(toSubscribe);
 		return success;
 	}
 
@@ -492,9 +565,7 @@ public class StateSpace implements IAnimator {
 				success = true;
 			}
 		}
-		if (!unsubscribeFormulas.isEmpty()) {
-			execute(new UnregisterFormulasCommand(unsubscribeFormulas));
-		}
+		this.unregisterFormulas(unsubscribeFormulas);
 		return success;
 	}
 
