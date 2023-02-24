@@ -22,7 +22,6 @@ import de.prob.animator.domainobjects.AbstractEvalResult;
 import de.prob.animator.domainobjects.EvalOptions;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
-import de.prob.animator.domainobjects.RegisteredFormula;
 import de.prob.animator.domainobjects.StateError;
 import de.prob.model.representation.AbstractModel;
 
@@ -293,7 +292,7 @@ public class State extends GroovyObjectSupport {
 			}
 		}
 		if (!notEvaluatedElements.isEmpty()) {
-			final EvaluateFormulasCommand cmd = new EvaluateFormulasCommand(notEvaluatedElements, this.getId(), options);
+			final EvaluateFormulasCommand cmd = new EvaluateFormulasCommand(notEvaluatedElements, this, options);
 			stateSpace.execute(cmd);
 			cache.putAll(cmd.getResultMap());
 		}
@@ -470,16 +469,9 @@ public class State extends GroovyObjectSupport {
 	}
 
 	public synchronized State explore() {
-		final List<RegisteredFormula> registered = stateSpace.getSubscribedFormulas().stream()
-			.map(stateSpace.getRegisteredFormulas()::get)
-			.collect(Collectors.toList());
-		final ExploreStateCommand cmd = new ExploreStateCommand(stateSpace, id, registered);
+		final ExploreStateCommand cmd = new ExploreStateCommand(stateSpace, id, Collections.emptyList());
 		stateSpace.execute(cmd);
 		transitions = cmd.getNewTransitions();
-		final Map<IEvalElement, AbstractEvalResult> results = cmd.getFormulaResults();
-		for (final RegisteredFormula rf : registered) {
-			values.put(rf.getFormula(), results.get(rf));
-		}
 		constantsSetUp = cmd.isConstantsSetUp();
 		initialised = cmd.isInitialised();
 		invariantOk = cmd.isInvariantOk();
@@ -487,6 +479,9 @@ public class State extends GroovyObjectSupport {
 		maxTransitionsCalculated = cmd.isMaxOperationsReached();
 		stateErrors = cmd.getStateErrors();
 		transitionsWithTimeout = cmd.getOperationsWithTimeout();
+
+		values.putAll(this.evalFormulas(new ArrayList<>(stateSpace.getSubscribedFormulas())));
+
 		explored = true;
 		return this;
 	}
@@ -520,15 +515,7 @@ public class State extends GroovyObjectSupport {
 			}
 		}
 		if (!toEvaluate.isEmpty()) {
-			final List<RegisteredFormula> registered = toEvaluate.stream()
-				.map(stateSpace.getRegisteredFormulas()::get)
-				.collect(Collectors.toList());
-			final EvaluateFormulasCommand cmd = new EvaluateFormulasCommand(registered, this.getId());
-			stateSpace.execute(cmd);
-			final Map<IEvalElement, AbstractEvalResult> results = cmd.getResultMap();
-			for (final RegisteredFormula rf : registered) {
-				values.put(rf.getFormula(), results.get(rf));
-			}
+			values.putAll(this.evalFormulas(toEvaluate));
 		}
 		return new HashMap<>(values);
 	}

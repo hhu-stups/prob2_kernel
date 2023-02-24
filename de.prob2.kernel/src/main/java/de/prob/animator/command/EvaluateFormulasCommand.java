@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import de.prob.animator.domainobjects.AbstractEvalResult;
 import de.prob.animator.domainobjects.EvalOptions;
@@ -15,6 +16,7 @@ import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
+import de.prob.statespace.State;
 
 /**
  * Calculates the values of Classical-B Predicates and Expressions.
@@ -31,16 +33,21 @@ public class EvaluateFormulasCommand extends AbstractCommand {
 	private final List<AbstractEvalResult> values = new ArrayList<>();
 
 	private String stateId;
+	private final State state;
 	private final EvalOptions options;
 
-	public EvaluateFormulasCommand(final List<? extends IEvalElement> evalElements, final String stateId, final EvalOptions options) {
+	public EvaluateFormulasCommand(final List<? extends IEvalElement> evalElements, final State state, final EvalOptions options) {
 		this.evalElements = evalElements;
-		this.stateId = stateId;
+		this.stateId = state.getId();
+		this.state = state;
 		this.options = options;
 	}
 
 	public EvaluateFormulasCommand(final List<? extends IEvalElement> evalElements, final String stateId) {
-		this(evalElements, stateId, EvalOptions.DEFAULT.withExpandFromFormulas(evalElements));
+		this.evalElements = evalElements;
+		this.stateId = stateId;
+		this.state = null;
+		this.options = EvalOptions.DEFAULT.withExpandFromFormulas(evalElements);
 	}
 
 	@Override
@@ -54,11 +61,24 @@ public class EvaluateFormulasCommand extends AbstractCommand {
 
 	@Override
 	public void writeCommand(final IPrologTermOutput pout) {
+		final Set<IEvalElement> registered;
+		if (state == null) {
+			registered = Collections.emptySet();
+		} else {
+			registered = state.getStateSpace().getRegisteredFormulas();
+		}
+
 		pout.openTerm(PROLOG_COMMAND_NAME);
 
 		pout.openList();
 		for (IEvalElement evalElement : evalElements) {
-			evalElement.printEvalTerm(pout);
+			if (registered.contains(evalElement)) {
+				pout.openTerm("registered");
+				evalElement.getFormulaId().printUUID(pout);
+				pout.closeTerm();
+			} else {
+				evalElement.printEvalTerm(pout);
+			}
 		}
 		pout.closeList();
 

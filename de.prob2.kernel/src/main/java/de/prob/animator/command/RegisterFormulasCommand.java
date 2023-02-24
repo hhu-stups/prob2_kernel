@@ -1,12 +1,8 @@
 package de.prob.animator.command;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import de.prob.animator.domainobjects.IEvalElement;
-import de.prob.animator.domainobjects.RegisteredFormula;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;
@@ -15,11 +11,9 @@ public class RegisterFormulasCommand extends AbstractCommand {
 
 	private static final String PROLOG_COMMAND_NAME = "register_prob2_formulas";
 	private final Collection<? extends IEvalElement> formulas;
-	private final Map<IEvalElement, RegisteredFormula> registered;
 
 	public RegisterFormulasCommand(final Collection<? extends IEvalElement> formulas) {
 		this.formulas = formulas;
-		this.registered = new LinkedHashMap<>();
 	}
 
 	@Override
@@ -44,14 +38,6 @@ public class RegisterFormulasCommand extends AbstractCommand {
 
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
-		// Currently, every formula has an UUID automatically assigned by the Java side.
-		// This could be changed in the future to make the Prolog side assign IDs only once the formulas are actually registered.
-		for (final IEvalElement formula : this.formulas) {
-			this.registered.put(formula, new RegisteredFormula(formula));
-		}
-	}
-
-	public Map<IEvalElement, RegisteredFormula> getRegistered() {
-		return Collections.unmodifiableMap(this.registered);
+		// There are no output variables.
 	}
 }
