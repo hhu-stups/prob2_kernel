@@ -7,7 +7,7 @@ import de.prob.statespace.Trace
 final s = api.b_load(Paths.get(dir, "machines", "scheduler.mch").toString())
 
 final formula = "waiting \\/ ready" as ClassicalB
-assert !s.formulaRegistry.containsKey(formula)
+assert !s.formulaSubscribers.containsKey(formula)
 s.subscribe(s, formula)
 
 def h = new Trace(s)

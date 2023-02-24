@@ -88,7 +88,7 @@ public class StateSpace implements IAnimator {
 	private IAnimator animator;
 
 	private final Map<IEvalElement, RegisteredFormula> registeredFormulas = new HashMap<>();
-	private final Map<IEvalElement, Set<Object>> formulaRegistry = new HashMap<>();
+	private final Map<IEvalElement, Set<Object>> formulaSubscribers = new HashMap<>();
 
 	private LoadedMachine loadedMachine;
 
@@ -492,13 +492,13 @@ public class StateSpace implements IAnimator {
 						"CSP formula {} not subscribed because CSP evaluation is not state based. Use eval method instead",
 						formulaOfInterest.getCode());
 			} else {
-				if (formulaRegistry.containsKey(formulaOfInterest)) {
-					formulaRegistry.get(formulaOfInterest).add(subscriber);
+				if (formulaSubscribers.containsKey(formulaOfInterest)) {
+					formulaSubscribers.get(formulaOfInterest).add(subscriber);
 					success = true;
 				} else {
 					Set<Object> subscribers = Collections.newSetFromMap(new WeakHashMap<>());
 					subscribers.add(subscriber);
-					formulaRegistry.put(formulaOfInterest, subscribers);
+					formulaSubscribers.put(formulaOfInterest, subscribers);
 					toSubscribe.add(formulaOfInterest);
 					success = true;
 				}
@@ -533,7 +533,7 @@ public class StateSpace implements IAnimator {
 	 * @return whether or not a subscriber is interested in this formula
 	 */
 	public boolean isSubscribed(final IEvalElement formula) {
-		return formulaRegistry.containsKey(formula) && !formulaRegistry.get(formula).isEmpty();
+		return formulaSubscribers.containsKey(formula) && !formulaSubscribers.get(formula).isEmpty();
 	}
 
 	/**
@@ -556,8 +556,8 @@ public class StateSpace implements IAnimator {
 		boolean success = false;
 		final List<IEvalElement> unsubscribeFormulas = new ArrayList<>();
 		for (IEvalElement formula : formulas) {
-			if (formulaRegistry.containsKey(formula)) {
-				final Set<Object> subscribers = formulaRegistry.get(formula);
+			if (formulaSubscribers.containsKey(formula)) {
+				final Set<Object> subscribers = formulaSubscribers.get(formula);
 				subscribers.remove(subscriber);
 				if (subscribers.isEmpty() && unregister) {
 					unsubscribeFormulas.add(formula);
@@ -590,7 +590,7 @@ public class StateSpace implements IAnimator {
 	 */
 	public Set<IEvalElement> getSubscribedFormulas() {
 		Set<IEvalElement> result = new HashSet<>();
-		for (Map.Entry<IEvalElement, Set<Object>> entry : formulaRegistry.entrySet()) {
+		for (Map.Entry<IEvalElement, Set<Object>> entry : formulaSubscribers.entrySet()) {
 			if (!entry.getValue().isEmpty()) {
 				result.add(entry.getKey());
 			}
