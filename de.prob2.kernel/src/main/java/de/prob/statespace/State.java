@@ -180,8 +180,9 @@ public class State extends GroovyObjectSupport {
 		return newOps;
 	}
 
+	// TODO This duplicates Trace.anyOperation (almost, but not exactly)
 	public State anyOperation(final Object filter) {
-		List<Transition> ops = getOutTransitions(true, FormulaExpand.TRUNCATE);
+		List<Transition> ops = getOutTransitions();
 		if (filter instanceof String) {
 			final Pattern filterPattern = Pattern.compile((String)filter);
 			ops = ops.stream().filter(t -> filterPattern.matcher(t.getName()).matches()).collect(Collectors.toList());

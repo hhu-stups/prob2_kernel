@@ -153,8 +153,12 @@ public class Trace extends GroovyObjectSupport {
 	 * @return a new trace with the operation added.
 	 */
 	public Trace addTransitionWith(final String name, final List<String> parameters) {
-		Transition op = getCurrentState().getOutTransitions(true, FormulaExpand.EXPAND).stream()
-			.filter(it -> it.getName().equals(name) && it.getParameterValues().equals(parameters))
+		final List<Transition> transitions = getCurrentState().getOutTransitions().stream()
+			.filter(it -> it.getName().equals(name))
+			.collect(Collectors.toList());
+		stateSpace.evaluateTransitions(transitions, FormulaExpand.EXPAND);
+		Transition op = transitions.stream()
+			.filter(it -> it.getParameterValues().equals(parameters))
 			.findAny()
 			.orElseThrow(() -> new IllegalArgumentException("Could not find operation " + name + " with parameters " + parameters));
 		/* TODO: call GetOperationByPredicateCommand when MAX_OPERATIONS reached */
@@ -341,8 +345,9 @@ public class Trace extends GroovyObjectSupport {
 		}
 	}
 
+	// TODO This duplicates State.anyOperation (almost, but not exactly)
 	public Trace anyOperation(final Object filter) {
-		List<Transition> ops = current.getCurrentState().getOutTransitions(true, FormulaExpand.EXPAND);
+		List<Transition> ops = current.getCurrentState().getOutTransitions();
 		if (filter instanceof String) {
 			final Pattern filterPattern = Pattern.compile((String)filter);
 			ops = ops.stream().filter(t -> filterPattern.matcher(t.getName()).matches()).collect(Collectors.toList());
