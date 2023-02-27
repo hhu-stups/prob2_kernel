@@ -982,47 +982,43 @@ public class StateSpace implements IAnimator {
 	}
 
 	/**
-	 * Evaluates all of the formulas for every specified state (if they can be
-	 * evaluated). If the formulas are of interest to a class
-	 * (i.e. the an object has subscribed to the formula) the formula is cached.
+	 * Evaluates all of the formulas for every specified state.
+	 * If a formula has already been evaluated in a state,
+	 * e. g. because an object has subscribed to the formula,
+	 * the cached value is reused and the formula is not re-evaluated.
 	 *
 	 * @param states
 	 *            for which the formula is to be evaluated
 	 * @param formulas
 	 *            which are to be evaluated
+	 * @param options options for evaluation
 	 * @return a map of the formulas and their results for all of the specified
 	 *         states
 	 */
 	public Map<State, Map<IEvalElement, AbstractEvalResult>> evaluateForGivenStates(final Collection<State> states,
-			final List<IEvalElement> formulas) {
+			final List<IEvalElement> formulas, final EvalOptions options) {
 		Map<State, Map<IEvalElement, AbstractEvalResult>> result = new HashMap<>();
-		Map<State, EvaluateFormulasCommand> evalCommandsByState = new HashMap<>();
 
 		for (State state : states) {
-			Map<IEvalElement, AbstractEvalResult> res = new HashMap<>();
-			result.put(state, res);
-
-			// Check for cached values
-			Map<IEvalElement, AbstractEvalResult> map = state.getValues();
-			final List<IEvalElement> toEvaluateInState = new ArrayList<>();
-			for (IEvalElement f : formulas) {
-				if (map.containsKey(f)) {
-					res.put(f, map.get(f));
-				} else {
-					toEvaluateInState.add(f);
-				}
-			}
-			if (!toEvaluateInState.isEmpty()) {
-				evalCommandsByState.put(state, new EvaluateFormulasCommand(toEvaluateInState, state.getId()));
-			}
+			// TODO Optimize this again by sending all evaluation commands at once
+			result.put(state, state.evalFormulas(formulas, options));
 		}
 
-		execute(new ComposedCommand(new ArrayList<>(evalCommandsByState.values())));
-
-		evalCommandsByState.forEach((state, evalCommand) ->
-			result.get(state).putAll(evalCommand.getResultMap())
-		);
 		return result;
+	}
+	
+	/**
+	 * Evaluates all of the formulas for every specified state.
+	 * If a formula has already been evaluated in a state,
+	 * e. g. because an object has subscribed to the formula,
+	 * the cached value is reused and the formula is not re-evaluated.
+	 *
+	 * @param states for which the formula is to be evaluated
+	 * @param formulas which are to be evaluated
+	 * @return a map of the formulas and their results for all of the specified states
+	 */
+	public Map<State, Map<IEvalElement, AbstractEvalResult>> evaluateForGivenStates(final Collection<State> states, final List<IEvalElement> formulas) {
+		return this.evaluateForGivenStates(states, formulas, EvalOptions.DEFAULT.withExpandFromFormulas(formulas));
 	}
 
 	/**
