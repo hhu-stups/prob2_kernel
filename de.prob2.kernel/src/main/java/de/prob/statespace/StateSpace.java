@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +26,6 @@ import de.prob.animator.IWarningListener;
 import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.command.CheckIfStateIdValidCommand;
 import de.prob.animator.command.ComposedCommand;
-import de.prob.animator.command.EvaluateFormulasCommand;
 import de.prob.animator.command.ExecuteOperationException;
 import de.prob.animator.command.ExtendedStaticCheckCommand;
 import de.prob.animator.command.FindStateCommand;
@@ -966,6 +966,26 @@ public class StateSpace implements IAnimator {
 	 * Takes a collection of transitions and retrieves any information that
 	 * needs to be retrieved (i.e. parameters, return values, etc.) if the
 	 * transitions have not yet been evaluated
+	 * ({@link Transition#isEvaluated(EvalOptions)}).
+	 *
+	 * @param transitions the transitions to be evaluated
+	 * @param options options for evaluation
+	 * @return map of all transitions and the corresponding evaluated infos
+	 */
+	public Map<Transition, EvaluatedTransitionInfo> evaluateTransitions(final Collection<Transition> transitions, final EvalOptions options) {
+		GetOpsFromIds cmd = new GetOpsFromIds(transitions, options);
+		execute(cmd);
+		final Map<Transition, EvaluatedTransitionInfo> result = new LinkedHashMap<>(transitions.size());
+		for (final Transition transition : transitions) {
+			result.put(transition, transition.evaluate(options));
+		}
+		return result;
+	}
+
+	/**
+	 * Takes a collection of transitions and retrieves any information that
+	 * needs to be retrieved (i.e. parameters, return values, etc.) if the
+	 * transitions have not yet been evaluated
 	 * ({@link Transition#isEvaluated()}).
 	 *
 	 * @param transitions
@@ -976,8 +996,7 @@ public class StateSpace implements IAnimator {
 	 */
 	public Set<Transition> evaluateTransitions(final Collection<Transition> transitions,
 			final FormulaExpand expansion) {
-		GetOpsFromIds cmd = new GetOpsFromIds(transitions, expansion);
-		execute(cmd);
+		this.evaluateTransitions(transitions, Transition.OLD_DEFAULT_EVAL_OPTIONS.withExpand(expansion));
 		return new LinkedHashSet<>(transitions);
 	}
 

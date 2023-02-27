@@ -412,7 +412,7 @@ public class State extends GroovyObjectSupport {
 	 * {@link Transition} objects created will not be evaluated, i.e. certain
 	 * information about the transition will be lazily retrieved from ProB
 	 * at a later time. To evaluate the {@link Transition} objects eagerly,
-	 * pass the returned list to {@link StateSpace#evaluateTransitions(Collection, FormulaExpand)}.
+	 * pass the returned list to {@link StateSpace#evaluateTransitions(Collection, EvalOptions)}.
 	 * 
 	 * @return the outgoing transitions from this state
 	 */
@@ -424,7 +424,7 @@ public class State extends GroovyObjectSupport {
 	/**
 	 * @deprecated Use {@link #getOutTransitions()} instead.
 	 *     If {@code evaluate} was set to {@code true},
-	 *     also call {@link StateSpace#evaluateTransitions(Collection, FormulaExpand)} on the returned list.
+	 *     also call {@link StateSpace#evaluateTransitions(Collection, EvalOptions)} on the returned list.
 	 */
 	@Deprecated
 	public List<Transition> getOutTransitions(boolean evaluate) {

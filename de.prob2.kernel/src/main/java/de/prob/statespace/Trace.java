@@ -101,12 +101,16 @@ public class Trace extends GroovyObjectSupport {
 		return elements;
 	}
 
+	public AbstractEvalResult evalCurrent(String formula, EvalOptions options) {
+		return getCurrentState().eval(formula, options);
+	}
+
 	public AbstractEvalResult evalCurrent(String formula, FormulaExpand expand) {
 		return getCurrentState().eval(formula, expand);
 	}
 	
 	public AbstractEvalResult evalCurrent(String formula) {
-		return getCurrentState().eval(formula, FormulaExpand.TRUNCATE);
+		return getCurrentState().eval(formula);
 	}
 
 	public AbstractEvalResult evalCurrent(IEvalElement formula) {
@@ -465,7 +469,7 @@ public class Trace extends GroovyObjectSupport {
 	/**
 	 * @deprecated Use {@link #getNextTransitions()} instead.
 	 *     If {@code evaluate} was set to {@code true},
-	 *     also call {@link StateSpace#evaluateTransitions(Collection, FormulaExpand)} on the returned set.
+	 *     also call {@link StateSpace#evaluateTransitions(Collection, EvalOptions)} on the returned set.
 	 */
 	@Deprecated
 	public Set<Transition> getNextTransitions(boolean evaluate) {
