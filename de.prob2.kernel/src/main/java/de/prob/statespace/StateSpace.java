@@ -46,6 +46,7 @@ import de.prob.animator.domainobjects.AbstractEvalResult;
 import de.prob.animator.domainobjects.CSP;
 import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.ErrorItem;
+import de.prob.animator.domainobjects.EvalOptions;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.animator.domainobjects.ProBPreference;
@@ -88,6 +89,13 @@ public class StateSpace implements IAnimator {
 
 	private final Set<IEvalElement> registeredFormulas = new HashSet<>();
 	private final Map<IEvalElement, Set<Object>> formulaSubscribers = new HashMap<>();
+
+	/**
+	 * The options to use for evaluating each subscribed formula.
+	 * For now, it's not possible to subscribe the same formula multiple times with different options
+	 * (but this probably isn't an important feature).
+	 */
+	private final Map<IEvalElement, EvalOptions> subscribedFormulaOptions = new HashMap<>();
 
 	private LoadedMachine loadedMachine;
 
@@ -469,10 +477,11 @@ public class StateSpace implements IAnimator {
 	 *            who is interested in the given formulas
 	 * @param formulas
 	 *            that are of interest
+	 * @param options options to use when automatically evaluating the formulas - must be the same for all subscriptions of the same formula
 	 * @return whether or not the subscription was successful (will return true
 	 *         if at least one of the formulas was successfully subscribed)
 	 */
-	public boolean subscribe(final Object subscriber, final Collection<? extends IEvalElement> formulas) {
+	public boolean subscribe(final Object subscriber, final Collection<? extends IEvalElement> formulas, final EvalOptions options) {
 		boolean success = false;
 		List<IEvalElement> toSubscribe = new ArrayList<>();
 		for (IEvalElement formulaOfInterest : formulas) {
@@ -482,12 +491,28 @@ public class StateSpace implements IAnimator {
 						formulaOfInterest.getCode());
 			} else {
 				if (formulaSubscribers.containsKey(formulaOfInterest)) {
+					// Formula already exists in the map of subscribers - check that the options are compatible.
+					assert subscribedFormulaOptions.containsKey(formulaOfInterest);
+					final EvalOptions existingOptions = subscribedFormulaOptions.get(formulaOfInterest);
+
+					if (!existingOptions.equals(options)) {
+						// Formula already exists in the map and has incompatible options...
+						if (formulaSubscribers.get(formulaOfInterest).isEmpty()) {
+							// ...but has no subscribers anymore,
+							// so it's safe to remove and replace with the new options.
+							subscribedFormulaOptions.put(formulaOfInterest, options);
+						} else {
+							throw new IllegalArgumentException("Formula " + formulaOfInterest + " has already been subscribed in this state space with different evaluation options. Use the same evaluation options for all subscribers or remove the existing subscriber(s) first.");
+						}
+					}
+
 					formulaSubscribers.get(formulaOfInterest).add(subscriber);
 					success = true;
 				} else {
 					Set<Object> subscribers = Collections.newSetFromMap(new WeakHashMap<>());
 					subscribers.add(subscriber);
 					formulaSubscribers.put(formulaOfInterest, subscribers);
+					subscribedFormulaOptions.put(formulaOfInterest, options);
 					toSubscribe.add(formulaOfInterest);
 					success = true;
 				}
@@ -495,6 +520,23 @@ public class StateSpace implements IAnimator {
 		}
 		this.registerFormulas(toSubscribe);
 		return success;
+	}
+
+	/**
+	 * This method lets ProB know that the subscriber is interested in the
+	 * specified formulas. ProB will then evaluate the formulas for every state
+	 * (after which the values can be retrieved from the
+	 * {@link State#getValues()} method).
+	 *
+	 * @param subscriber
+	 *            who is interested in the given formulas
+	 * @param formulas
+	 *            that are of interest
+	 * @return whether or not the subscription was successful (will return true
+	 *         if at least one of the formulas was successfully subscribed)
+	 */
+	public boolean subscribe(final Object subscriber, final Collection<? extends IEvalElement> formulas) {
+		return this.subscribe(subscriber, formulas, EvalOptions.DEFAULT.withExpandFromFormulas(formulas));
 	}
 
 	/**
@@ -583,6 +625,21 @@ public class StateSpace implements IAnimator {
 			if (!entry.getValue().isEmpty()) {
 				result.add(entry.getKey());
 			}
+		}
+		return result;
+	}
+
+	/**
+	 * Get all formulas that currently have subscribers,
+	 * grouped by the {@link EvalOptions} that were used when subscribing.
+	 * 
+	 * @return map of {@link EvalOptions} to all formulas that were subscribed with those options
+	 */
+	Map<EvalOptions, Set<IEvalElement>> getSubscribedFormulasByOptions() {
+		final Map<EvalOptions, Set<IEvalElement>> result = new HashMap<>();
+		for (final IEvalElement formula : this.getSubscribedFormulas()) {
+			final EvalOptions options = subscribedFormulaOptions.get(formula);
+			result.computeIfAbsent(options, k -> new HashSet<>()).add(formula);
 		}
 		return result;
 	}

@@ -51,22 +51,11 @@ public class State extends GroovyObjectSupport {
 	private boolean maxTransitionsCalculated;
 	private Collection<StateError> stateErrors;
 
-	// TODO Merge the two separate caches again!
-	// (Might require adding EvalOptions support to registered formulas first.)
-
 	/**
-	 * Cache for evaluated formula values in the current state.
-	 * This cache doesn't take {@link EvalOptions} into account -
-	 * the only supported option is the TRUNCATE/EXPAND setting
-	 * stored in {@link IEvalElement#expansion()}.
-	 * This cache is used for registered/subscribed formulas.
-	 */
-	private Map<IEvalElement, AbstractEvalResult> values;
-
-	/**
-	 * New cache that correctly handles the full set of {@link EvalOptions}
-	 * but ignores the {@link IEvalElement#expansion()} setting.
-	 * This cache is used by the different eval methods.
+	 * Internal cache of evaluated formula values in this state,
+	 * grouped by the {@link EvalOptions} that were used for evaluation.
+	 * The {@link IEvalElement#expansion()} is <i>not</i> directly used here.
+	 * Code that uses this cache is expected to integrate that setting into the {@link EvalOptions} as appropriate.
 	 */
 	private Map<EvalOptions, Map<IEvalElement, AbstractEvalResult>> evalCache;
 
@@ -75,7 +64,6 @@ public class State extends GroovyObjectSupport {
 		this.stateSpace = space;
 		this.explored = false;
 		this.transitions = new ArrayList<>();
-		this.values = new HashMap<>();
 		this.evalCache = new HashMap<>();
 	}
 
@@ -479,9 +467,8 @@ public class State extends GroovyObjectSupport {
 		maxTransitionsCalculated = cmd.isMaxOperationsReached();
 		stateErrors = cmd.getStateErrors();
 		transitionsWithTimeout = cmd.getOperationsWithTimeout();
-
-		values.putAll(this.evalFormulas(new ArrayList<>(stateSpace.getSubscribedFormulas())));
-
+		// TODO Combine the subscribed formula evaluation commands into ExploreStateCommand again
+		this.getValues();
 		explored = true;
 		return this;
 	}
@@ -506,17 +493,18 @@ public class State extends GroovyObjectSupport {
 		return this;
 	}
 
+	/**
+	 * Get the values of all formulas subscribed in the {@link StateSpace}.
+	 * The values are cached if possible.
+	 * Evaluation uses the {@link EvalOptions} that were specified when the formula was subscribed.
+	 * 
+	 * @return values of all subscribed formulas
+	 */
 	public Map<IEvalElement, AbstractEvalResult> getValues() {
-		Set<IEvalElement> formulas = stateSpace.getSubscribedFormulas();
-		List<IEvalElement> toEvaluate = new ArrayList<>();
-		for (IEvalElement f : formulas) {
-			if (!values.containsKey(f)) {
-				toEvaluate.add(f);
-			}
-		}
-		if (!toEvaluate.isEmpty()) {
-			values.putAll(this.evalFormulas(toEvaluate));
-		}
-		return new HashMap<>(values);
+		final Map<IEvalElement, AbstractEvalResult> flatValues = new HashMap<>();
+		stateSpace.getSubscribedFormulasByOptions().forEach((options, formulas) ->
+			flatValues.putAll(this.evalFormulas(new ArrayList<>(formulas), options))
+		);
+		return flatValues;
 	}
 }

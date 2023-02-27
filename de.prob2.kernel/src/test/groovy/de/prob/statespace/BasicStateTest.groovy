@@ -326,7 +326,6 @@ class BasicStateTest extends Specification {
 		def f = new ClassicalB("1+2")
 		s.subscribe(root, [f])
 		root.transitions = []
-		root.values = [:]
 		root.constantsSetUp = false
 		root.initialised = true
 		root.invariantOk = false
