@@ -26,11 +26,7 @@ public class RegisterFormulasCommand extends AbstractCommand {
 		pto.closeList();
 		pto.openList();
 		for (final IEvalElement formula : this.formulas) {
-			pto.openTerm("eval");
-			formula.printProlog(pto);
-			pto.printAtom(formula.getKind().getPrologName());
-			pto.printAtom(formula.expansion().getPrologName());
-			pto.closeTerm();
+			formula.printEvalTerm(pto);
 		}
 		pto.closeList();
 		pto.closeTerm();
