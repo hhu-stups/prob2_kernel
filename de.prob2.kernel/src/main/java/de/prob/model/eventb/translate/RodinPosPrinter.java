@@ -11,10 +11,18 @@ import de.prob.util.Tuple2;
 public class RodinPosPrinter implements PositionPrinter {
 
 	private IPrologTermOutput pout;
-	private final Map<Node, Tuple2<String, String>> nodeInfos = new HashMap<>();
+	private final Map<Node, RodinPosition> positions = new HashMap<>();
 
+	public void addPositions(final Map<Node, RodinPosition> positions) {
+		this.positions.putAll(positions);
+	}
+
+	/**
+	 * @deprecated Use {@link #addPositions(Map)} instead.
+	 */
+	@Deprecated
 	public void addNodeInfos(final Map<Node, Tuple2<String, String>> infos) {
-		nodeInfos.putAll(infos);
+		infos.forEach((node, tuple) -> this.positions.put(node, new RodinPosition(tuple.getFirst(), tuple.getSecond())));
 	}
 
 	@Override
@@ -24,13 +32,13 @@ public class RodinPosPrinter implements PositionPrinter {
 
 	@Override
 	public void printPosition(final Node node) {
-		Tuple2<String, String> tuple = nodeInfos.get(node);
-		if (tuple == null) {
+		final RodinPosition pos = positions.get(node);
+		if (pos == null) {
 			pout.printAtom("none");
 		} else {
 			pout.openTerm("rodinpos");
-			pout.printAtom(tuple.getFirst());
-			pout.printAtom(tuple.getSecond());
+			pout.printAtom(pos.getModelName());
+			pout.printAtom(pos.getLabel());
 			pout.emptyList();
 			pout.closeTerm();
 		}

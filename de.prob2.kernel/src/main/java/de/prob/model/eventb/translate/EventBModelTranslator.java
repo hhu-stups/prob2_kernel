@@ -116,11 +116,11 @@ public class EventBModelTranslator {
 		List<Node> contextNodes = new ArrayList<>();
 		for (EventBMachineTranslator trans : machineTranslators) {
 			machineNodes.add(trans.translateMachine());
-			labelPrinter.addNodeInfos(trans.getNodeInfos());
+			labelPrinter.addPositions(trans.getPositions());
 		}
 		for (ContextTranslator t : contextTranslators) {
 			contextNodes.add(t.translateContext());
-			labelPrinter.addNodeInfos(t.getNodeInfos());
+			labelPrinter.addPositions(t.getPositions());
 		}
 
 		ASTProlog printer = new ASTProlog(pto, labelPrinter);
