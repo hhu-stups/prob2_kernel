@@ -4,8 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -16,6 +20,7 @@ import com.github.krukow.clj_lang.PersistentVector;
 import de.prob.animator.command.ComposedCommand;
 import de.prob.animator.command.EvaluateFormulasCommand;
 import de.prob.animator.domainobjects.AbstractEvalResult;
+import de.prob.animator.domainobjects.EvalOptions;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.model.representation.AbstractModel;
@@ -80,6 +85,22 @@ public class Trace extends GroovyObjectSupport {
 		return uuid;
 	}
 
+	/**
+	 * Get a list of all {@link TraceElement}s that make up this trace.
+	 * Currently, this list is newly constructed on every call to this method and is <i>not</i> cached.
+	 * To iterate over the trace more efficiently,
+	 * traverse the {@link TraceElement}s manually starting at {@link #getHead()} or {@link #getCurrent()}.
+	 * 
+	 * @return list of all elements of this trace
+	 */
+	public List<TraceElement> getElements() {
+		final LinkedList<TraceElement> elements = new LinkedList<>();
+		for (TraceElement element = this.getHead(); element != null; element = element.getPrevious()) {
+			elements.addFirst(element);
+		}
+		return elements;
+	}
+
 	public AbstractEvalResult evalCurrent(String formula, FormulaExpand expand) {
 		return getCurrentState().eval(formula, expand);
 	}
@@ -96,6 +117,63 @@ public class Trace extends GroovyObjectSupport {
 		return transitionList.size();
 	}
 
+	/**
+	 * Evaluate a formula over all states in this trace
+	 * (including uninitialized states like the root state).
+	 * If multiple {@link TraceElement}s correspond to the same state,
+	 * all of them are included in the result map,
+	 * but internally the formula is only evaluated once per state.
+	 * 
+	 * @param formula the formula to evaluate
+	 * @param options options for evaluation
+	 * @return ordered map of all {@link TraceElement}s and the value of {@code formula} in the corresponding state
+	 */
+	public Map<TraceElement, AbstractEvalResult> evalAll(final IEvalElement formula, final EvalOptions options) {
+		final List<TraceElement> elements = this.getElements();
+		final Set<State> states = new HashSet<>();
+		for (final TraceElement element : elements) {
+			states.add(element.getCurrentState());
+		}
+		final Map<State, Map<IEvalElement, AbstractEvalResult>> resultsByState = stateSpace.evaluateForGivenStates(states, Collections.singletonList(formula), options);
+		final Map<TraceElement, AbstractEvalResult> result = new LinkedHashMap<>();
+		for (final TraceElement element : elements) {
+			result.put(element, resultsByState.get(element.getCurrentState()).get(formula));
+		}
+		return result;
+	}
+
+	/**
+	 * Evaluate a formula over all states in this trace
+	 * (including uninitialized states like the root state).
+	 * If multiple {@link TraceElement}s correspond to the same state,
+	 * all of them are included in the result map,
+	 * but internally the formula is only evaluated once per state.
+	 * 
+	 * @param formula the formula to evaluate
+	 * @return ordered map of all {@link TraceElement}s and the value of {@code formula} in the corresponding state
+	 */
+	public Map<TraceElement, AbstractEvalResult> evalAll(final IEvalElement formula) {
+		return this.evalAll(formula, EvalOptions.DEFAULT);
+	}
+
+	/**
+	 * Evaluate a formula over all states in this trace
+	 * (including uninitialized states like the root state).
+	 * If multiple {@link TraceElement}s correspond to the same state,
+	 * all of them are included in the result map,
+	 * but internally the formula is only evaluated once per state.
+	 * 
+	 * @param formula the formula to evaluate
+	 * @return ordered map of all {@link TraceElement}s and the value of {@code formula} in the corresponding state
+	 */
+	public Map<TraceElement, AbstractEvalResult> evalAll(final String formula) {
+		return this.evalAll(stateSpace.getModel().parseFormula(formula), EvalOptions.DEFAULT);
+	}
+
+	/**
+	 * @deprecated Use {@link #evalAll(IEvalElement)} instead.
+	 */
+	@Deprecated
 	public List<Tuple2<String, AbstractEvalResult>> eval(IEvalElement formula) {
 		final List<EvaluateFormulasCommand> cmds = new ArrayList<>();
 		for (Transition t : transitionList) {
@@ -114,10 +192,18 @@ public class Trace extends GroovyObjectSupport {
 		return res;
 	}
 
+	/**
+	 * @deprecated Use {@link #evalAll(String)} instead.
+	 */
+	@Deprecated
 	public List<Tuple2<String, AbstractEvalResult>> eval(String formula, FormulaExpand expand) {
 		return this.eval(stateSpace.getModel().parseFormula(formula, expand));
 	}
 	
+	/**
+	 * @deprecated Use {@link #evalAll(String)} instead.
+	 */
+	@Deprecated
 	public List<Tuple2<String, AbstractEvalResult>> eval(String formula) {
 		return this.eval(formula, FormulaExpand.TRUNCATE);
 	}
