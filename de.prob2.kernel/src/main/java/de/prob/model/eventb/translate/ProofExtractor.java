@@ -5,11 +5,9 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
@@ -26,7 +24,6 @@ import de.prob.util.Tuple2;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -35,7 +32,7 @@ public class ProofExtractor {
 	private static final Logger logger = LoggerFactory.getLogger(ProofExtractor.class);
 
 	private Map<String, String> descriptions;
-	private Set<String> discharged;
+	private Map<String, Integer> proofConfidences;
 
 	private final List<ProofObligation> proofs = new ArrayList<>();
 
@@ -78,16 +75,14 @@ public class ProofExtractor {
 
 			String bpsFileName = baseFileName + ".bps";
 			File bpsFile = new File(bpsFileName);
-			discharged = new HashSet<>();
+			proofConfidences = new HashMap<>();
 			if (bpsFile.exists()) {
 				saxParser.parse(bpsFile, new DefaultHandler() {
 					@Override
 					public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) {
 						if ("org.eventb.core.psStatus".equals(qName)) {
 							String name = attributes.getValue("name");
-							if ("1000".equals(attributes.getValue("org.eventb.core.confidence"))) {
-								discharged.add(name);
-							}
+							proofConfidences.put(name, Integer.parseInt(attributes.getValue("org.eventb.core.confidence")));
 						}
 					}
 				});
@@ -105,8 +100,7 @@ public class ProofExtractor {
 		for (Map.Entry<String, String> entry : descriptions.entrySet()) {
 			String name = entry.getKey();
 			String desc = entry.getValue();
-
-			boolean isDischarged = discharged.contains(name);
+			final int confidence = proofConfidences.getOrDefault(name, 0);
 
 			String[] split = name.split("/");
 			String type;
@@ -123,7 +117,7 @@ public class ProofExtractor {
 			if ("THM".equals(type) || "WD".equals(type)) {
 				elements.add(new Tuple2<>("axiom", split[0]));
 			}
-			proofs.add(new ProofObligation(source, name, isDischarged, desc, elements));
+			proofs.add(new ProofObligation(source, name, confidence, desc, elements));
 		}
 	}
 
@@ -131,8 +125,7 @@ public class ProofExtractor {
 		for (Map.Entry<String, String> entry : descriptions.entrySet()) {
 			String name = entry.getKey();
 			String desc = entry.getValue();
-
-			boolean isDischarged = discharged.contains(name);
+			final int confidence = proofConfidences.getOrDefault(name, 0);
 
 			String[] split = name.split("/");
 			String type;
@@ -155,10 +148,10 @@ public class ProofExtractor {
 					elements.add(new Tuple2<>("guard", guard.getName()));
 				}
 				elements.add(new Tuple2<>("event", concreteEvent.getName()));
-				proofs.add(new ProofObligation(source, name, isDischarged, desc, elements));
+				proofs.add(new ProofObligation(source, name, confidence, desc, elements));
 			} else if ("INV".equals(type)) {
 				elements.add(new Tuple2<>("event", "invariant"));
-				proofs.add(new ProofObligation(source, name, isDischarged, desc, elements));
+				proofs.add(new ProofObligation(source, name, confidence, desc, elements));
 			} else if ("THM".equals(type)) {
 				if (split.length == 2) {
 					elements.add(new Tuple2<>("invariant", split[0]));
@@ -166,7 +159,7 @@ public class ProofExtractor {
 					elements.add(new Tuple2<>("guard", split[1]));
 					elements.add(new Tuple2<>("event", split[0]));
 				}
-				proofs.add(new ProofObligation(source, name, isDischarged, desc, elements));
+				proofs.add(new ProofObligation(source, name, confidence, desc, elements));
 			} else if ("WD".equals(type)) {
 				if (split.length == 2) {
 					elements.add(new Tuple2<>("invariant", split[0]));
@@ -179,10 +172,10 @@ public class ProofExtractor {
 						elements.add(new Tuple2<>("event", event.getName()));
 						elements.add(new Tuple2<>("guard", split[1]));
 					}
-					proofs.add(new ProofObligation(source, name, isDischarged, desc, elements));
+					proofs.add(new ProofObligation(source, name, confidence, desc, elements));
 				}
 			} else {
-				proofs.add(new ProofObligation(source, name, isDischarged, desc, elements));
+				proofs.add(new ProofObligation(source, name, confidence, desc, elements));
 			}
 		}
 

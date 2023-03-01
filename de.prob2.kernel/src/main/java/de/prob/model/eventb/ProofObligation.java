@@ -10,19 +10,27 @@ import de.prob.util.Tuple2;
 public class ProofObligation extends AbstractElement implements Named {
 
 	private final String name;
-	private final boolean discharged;
+	private final int confidence;
 	private final String description;
 	private final String sourceName;
 	private final List<Tuple2<String, String>> elements;
 
+	public ProofObligation(final String sourceName, final String name, final int confidence, final String description, final List<Tuple2<String, String>> elements) {
+		this.sourceName = sourceName;
+		this.name = name;
+		this.confidence = confidence;
+		this.description = description;
+		this.elements = elements;
+	}
+
+	/**
+	 * @deprecated Use {@link #ProofObligation(String, String, int, String, List)} instead.
+	 */
+	@Deprecated
 	public ProofObligation(final String sourceName, final String name,
 			final boolean discharged, final String description,
 			final List<Tuple2<String, String>> elements) {
-		this.sourceName = sourceName;
-		this.name = name;
-		this.discharged = discharged;
-		this.description = description;
-		this.elements = elements;
+		this(sourceName, name, discharged ? 1000 : 0, description, elements);
 	}
 
 	@Override
@@ -38,8 +46,24 @@ public class ProofObligation extends AbstractElement implements Named {
 		return description;
 	}
 
+	/**
+	 * Get the confidence of the proof for this PO.
+	 * See org.eventb.core.seqprover.IConfidence in the Rodin source code for details about the possible valid confidence values.
+	 * If you simply want to know whether the PO was proven or not,
+	 * use {@link #isDischarged()} and/or {@link #isReviewed()} instead.
+	 * 
+	 * @return the confidence for this PO's proof
+	 */
+	public int getConfidence() {
+		return this.confidence;
+	}
+
 	public boolean isDischarged() {
-		return discharged;
+		return this.getConfidence() > 500 && this.getConfidence() <= 1000;
+	}
+
+	public boolean isReviewed() {
+		return this.getConfidence() > 100 && this.getConfidence() <= 500;
 	}
 
 	/**
@@ -61,7 +85,15 @@ public class ProofObligation extends AbstractElement implements Named {
 			pto.closeTerm();
 		}
 		pto.closeList();
-		pto.printAtom(String.valueOf(discharged));
+		
+		if (this.isDischarged()) {
+			pto.printAtom("true");
+		} else if (this.isReviewed()) {
+			pto.printAtom("reviewed");
+		} else {
+			pto.printAtom("false");
+		}
+		
 		pto.closeTerm();
 	}
 }
