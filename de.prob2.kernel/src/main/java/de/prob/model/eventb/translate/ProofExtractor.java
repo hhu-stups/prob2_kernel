@@ -148,10 +148,8 @@ public class ProofExtractor {
 					elements.add(new Tuple2<>("guard", guard.getName()));
 				}
 				elements.add(new Tuple2<>("event", concreteEvent.getName()));
-				proofs.add(new ProofObligation(source, name, confidence, desc, elements));
 			} else if ("INV".equals(type)) {
 				elements.add(new Tuple2<>("event", "invariant"));
-				proofs.add(new ProofObligation(source, name, confidence, desc, elements));
 			} else if ("THM".equals(type)) {
 				if (split.length == 2) {
 					elements.add(new Tuple2<>("invariant", split[0]));
@@ -159,7 +157,6 @@ public class ProofExtractor {
 					elements.add(new Tuple2<>("guard", split[1]));
 					elements.add(new Tuple2<>("event", split[0]));
 				}
-				proofs.add(new ProofObligation(source, name, confidence, desc, elements));
 			} else if ("WD".equals(type)) {
 				if (split.length == 2) {
 					elements.add(new Tuple2<>("invariant", split[0]));
@@ -172,11 +169,9 @@ public class ProofExtractor {
 						elements.add(new Tuple2<>("event", event.getName()));
 						elements.add(new Tuple2<>("guard", split[1]));
 					}
-					proofs.add(new ProofObligation(source, name, confidence, desc, elements));
 				}
-			} else {
-				proofs.add(new ProofObligation(source, name, confidence, desc, elements));
 			}
+			proofs.add(new ProofObligation(source, name, confidence, desc, elements));
 		}
 
 	}
