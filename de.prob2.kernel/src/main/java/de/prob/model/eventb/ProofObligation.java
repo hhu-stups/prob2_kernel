@@ -38,10 +38,6 @@ public class ProofObligation extends AbstractElement implements Named {
 		return description;
 	}
 
-	public List<Tuple2<String, String>> getElements() {
-		return elements;
-	}
-
 	public boolean isDischarged() {
 		return discharged;
 	}
