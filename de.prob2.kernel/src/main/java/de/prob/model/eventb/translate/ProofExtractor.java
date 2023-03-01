@@ -20,7 +20,8 @@ import de.prob.model.eventb.EventBGuard;
 import de.prob.model.eventb.EventBMachine;
 import de.prob.model.eventb.ProofObligation;
 import de.prob.model.representation.ModelElementList;
-import de.prob.util.Tuple2;
+import de.prob.prolog.term.CompoundPrologTerm;
+import de.prob.prolog.term.PrologTerm;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,6 +97,10 @@ public class ProofExtractor {
 		}
 	}
 
+	private static CompoundPrologTerm makeSource(final String type, final String label) {
+		return new CompoundPrologTerm(type, new CompoundPrologTerm(label));
+	}
+
 	private void addProofs(final Context c) {
 		for (Map.Entry<String, String> entry : descriptions.entrySet()) {
 			String name = entry.getKey();
@@ -113,11 +118,11 @@ public class ProofExtractor {
 			}
 			String source = c.getName();
 
-			List<Tuple2<String, String>> elements = new ArrayList<>();
+			List<PrologTerm> sourceInfos = new ArrayList<>();
 			if ("THM".equals(type) || "WD".equals(type)) {
-				elements.add(new Tuple2<>("axiom", split[0]));
+				sourceInfos.add(makeSource("axiom", split[0]));
 			}
-			proofs.add(new ProofObligation(source, name, confidence, desc, elements));
+			proofs.add(new ProofObligation(source, name, confidence, desc, sourceInfos));
 		}
 	}
 
@@ -138,40 +143,40 @@ public class ProofExtractor {
 			}
 			String source = m.getName();
 
-			List<Tuple2<String, String>> elements = new ArrayList<>();
+			List<PrologTerm> sourceInfos = new ArrayList<>();
 			if ("GRD".equals(type)) {
 				Event concreteEvent = m.getEvent(split[0]);
 				final Event event = concreteEvent.getParentEvent();
 				if (event != null && event.getGuards().getElement(split[1]) != null) {
 					EventBGuard guard = event.getGuards().getElement(split[1]);
-					elements.add(new Tuple2<>("event", event.getName()));
-					elements.add(new Tuple2<>("guard", guard.getName()));
+					sourceInfos.add(makeSource("event", event.getName()));
+					sourceInfos.add(makeSource("guard", guard.getName()));
 				}
-				elements.add(new Tuple2<>("event", concreteEvent.getName()));
+				sourceInfos.add(makeSource("event", concreteEvent.getName()));
 			} else if ("INV".equals(type)) {
-				elements.add(new Tuple2<>("event", "invariant"));
+				sourceInfos.add(makeSource("event", "invariant"));
 			} else if ("THM".equals(type)) {
 				if (split.length == 2) {
-					elements.add(new Tuple2<>("invariant", split[0]));
+					sourceInfos.add(makeSource("invariant", split[0]));
 				} else {
-					elements.add(new Tuple2<>("guard", split[1]));
-					elements.add(new Tuple2<>("event", split[0]));
+					sourceInfos.add(makeSource("guard", split[1]));
+					sourceInfos.add(makeSource("event", split[0]));
 				}
 			} else if ("WD".equals(type)) {
 				if (split.length == 2) {
-					elements.add(new Tuple2<>("invariant", split[0]));
+					sourceInfos.add(makeSource("invariant", split[0]));
 				} else {
 					Event event = m.getEvent(split[0]);
 					if (event.getActions().getElement(split[1]) != null) {
-						elements.add(new Tuple2<>("event", event.getName()));
-						elements.add(new Tuple2<>("action", split[1]));
+						sourceInfos.add(makeSource("event", event.getName()));
+						sourceInfos.add(makeSource("action", split[1]));
 					} else {
-						elements.add(new Tuple2<>("event", event.getName()));
-						elements.add(new Tuple2<>("guard", split[1]));
+						sourceInfos.add(makeSource("event", event.getName()));
+						sourceInfos.add(makeSource("guard", split[1]));
 					}
 				}
 			}
-			proofs.add(new ProofObligation(source, name, confidence, desc, elements));
+			proofs.add(new ProofObligation(source, name, confidence, desc, sourceInfos));
 		}
 
 	}
