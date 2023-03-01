@@ -3,7 +3,6 @@ package de.prob.model.eventb.translate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import de.prob.animator.domainobjects.EventB;
@@ -11,6 +10,8 @@ import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.model.eventb.EventBAxiom;
 import de.prob.model.eventb.theory.AxiomaticDefinitionBlock;
 import de.prob.model.eventb.theory.DataType;
+import de.prob.model.eventb.theory.DataTypeConstructor;
+import de.prob.model.eventb.theory.DataTypeDestructor;
 import de.prob.model.eventb.theory.DirectDefinition;
 import de.prob.model.eventb.theory.IOperatorDefinition;
 import de.prob.model.eventb.theory.Operator;
@@ -22,7 +23,6 @@ import de.prob.model.eventb.theory.Type;
 import de.prob.model.representation.ModelElementList;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.tmparser.OperatorMapping;
-import de.prob.util.Tuple2;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FreeIdentifier;
@@ -109,9 +109,8 @@ public class TheoryTranslator {
 		}
 		pto.closeList();
 		pto.openList();
-		for (Entry<String, List<Tuple2<String, String>>> cons : dataType
-				.getConstructors().entrySet()) {
-			printConstructor(cons.getKey(), cons.getValue(), pto);
+		for (final DataTypeConstructor constructor : dataType.getConstructorsByName().values()) {
+			printConstructor(constructor, pto);
 		}
 		pto.closeList();
 		pto.closeTerm();
@@ -121,15 +120,14 @@ public class TheoryTranslator {
 		new EventB(type, typeEnv, FormulaExpand.EXPAND).printProlog(pto);
 	}
 
-	private void printConstructor(String name,
-			List<Tuple2<String, String>> destructors,
+	private void printConstructor(final DataTypeConstructor constructor,
 			final IPrologTermOutput pto) {
 		pto.openTerm("constructor");
-		pto.printAtom(name);
+		pto.printAtom(constructor.getName());
 		pto.openList();
-		for (Tuple2<String, String> arg : destructors) {
-			printTypedIdentifier("destructor", arg.getFirst(),
-					new EventB(arg.getSecond(), typeEnv, FormulaExpand.EXPAND), pto);
+		for (final DataTypeDestructor arg : constructor.getArguments()) {
+			printTypedIdentifier("destructor", arg.getName(),
+					new EventB(arg.getType(), typeEnv, FormulaExpand.EXPAND), pto);
 		}
 		pto.closeList();
 		pto.closeTerm();
