@@ -12,7 +12,7 @@ import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;
 
 public class FormulaTypecheckCommand extends AbstractCommand {
-	private static final String PROLOG_COMMAND_NAME = "evaluate_formula_typecheck";
+	private static final String PROLOG_COMMAND_NAME = "prob2_get_formula_type";
 	private static final String TYPE = "Type";
 	private static final String ERRORS = "Errors";
 
@@ -26,10 +26,7 @@ public class FormulaTypecheckCommand extends AbstractCommand {
 	@Override
 	public void writeCommand(IPrologTermOutput pto) {
 		pto.openTerm(PROLOG_COMMAND_NAME);
-		pto.printAtom(formula.getKind().getPrologName());
-		formula.printProlog(pto);
-		// we don't need the typed formula back and eliminating it decreases the size of the result prolog term
-		pto.printVariable("_");
+		formula.printEvalTerm(pto);
 		pto.printVariable(TYPE);
 		pto.printVariable(ERRORS);
 		pto.closeTerm();

@@ -2,7 +2,7 @@ package de.prob.check.tracereplay.check.renamig;
 
 import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
-
+@Deprecated
 public final class PreparedOperation {
 	private final ListPrologTerm foundVariables;
 	private final ListPrologTerm freeVariables;

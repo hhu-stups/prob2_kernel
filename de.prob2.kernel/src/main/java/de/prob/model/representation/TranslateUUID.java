@@ -2,6 +2,7 @@ package de.prob.model.representation;
 
 import de.prob.prolog.output.IPrologTermOutput;
 
+@Deprecated
 public class TranslateUUID implements IFormulaUUID {
 	private final String uuid;
 

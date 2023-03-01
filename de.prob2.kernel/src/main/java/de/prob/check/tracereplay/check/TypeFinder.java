@@ -15,6 +15,7 @@ import static java.util.Collections.emptySet;
  * Performs static checks on a trace and finds potential incompatibilities
  * After running checks this class holds the found incompatibilities
  */
+@Deprecated
 public class TypeFinder {
 
 	private final List<PersistentTransition> trace;

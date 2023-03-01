@@ -146,6 +146,7 @@ public class ClassicalB extends AbstractEvalElement implements IBEvalElement {
 		ASTProlog.printFormula(ast, pout);
 	}
 
+	@Deprecated
 	@Override
 	public String serialized() {
 		return "#ClassicalB:" + this.getCode();

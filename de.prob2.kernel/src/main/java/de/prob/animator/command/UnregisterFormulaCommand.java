@@ -5,6 +5,10 @@ import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;
 
+/**
+ * @deprecated Use {@link UnregisterFormulasCommand} instead.
+ */
+@Deprecated
 public class UnregisterFormulaCommand extends AbstractCommand {
 
 	private static final String PROLOG_COMMAND_NAME = "unregister_prob2_formula";

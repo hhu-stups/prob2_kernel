@@ -21,7 +21,6 @@ import static java.util.stream.Collectors.toMap;
 /**
  * Use RefineTraceCommand instead; Can be removed after removing dependency in UI
  */
-@Deprecated
 public class FindPathCommand extends AbstractCommand implements
 		IStateSpaceModifier, ITraceDescription {
 

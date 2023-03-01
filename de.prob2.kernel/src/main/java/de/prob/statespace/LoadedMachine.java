@@ -125,8 +125,16 @@ public class LoadedMachine {
 		return constantEvalElements.computeIfAbsent(expand, k -> namesToEvalElements(getConstantNames(), k));
 	}
 
-	public List<IEvalElement> getConstatsEvalElements() {
+	public List<IEvalElement> getConstantEvalElements() {
 		return getConstantEvalElements(FormulaExpand.EXPAND);
+	}
+
+	/**
+	 * @deprecated Typo in name. Use {@link #getConstantEvalElements()} instead.
+	 */
+	@Deprecated
+	public List<IEvalElement> getConstatsEvalElements() {
+		return getConstantEvalElements();
 	}
 
 	public List<String> getSetNames() {

@@ -20,6 +20,7 @@ import java.util.*;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 
+@Deprecated
 public class TraceExplorer {
 
 
@@ -30,6 +31,7 @@ public class TraceExplorer {
 	private final ProgressMemoryInterface progressMemoryInterface;
 	private final List<List<PersistenceDelta>> ungracefulTraces = new ArrayList<>();
 
+	@Deprecated
 	public TraceExplorer(boolean initWasSet, MappingFactoryInterface mappingFactory, ReplayOptions replayOptions, ProgressMemoryInterface progressMemoryInterface) {
 		this.initWasSet = initWasSet;
 		this.mappingFactory = mappingFactory;
@@ -37,6 +39,7 @@ public class TraceExplorer {
 		this.progressMemoryInterface = progressMemoryInterface;
 	}
 
+	@Deprecated
 	public TraceExplorer(boolean initWasSet, MappingFactoryInterface mappingFactory, ProgressMemoryInterface progressMemoryInterface) {
 		this.initWasSet = initWasSet;
 		this.mappingFactory = mappingFactory;

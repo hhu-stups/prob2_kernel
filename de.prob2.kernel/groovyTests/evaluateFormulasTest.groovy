@@ -7,7 +7,7 @@ import de.prob.statespace.Trace
 final s = api.b_load(Paths.get(dir, "machines", "scheduler.mch").toString())
 
 final formula = "waiting \\/ ready" as ClassicalB
-assert !s.formulaRegistry.containsKey(formula)
+assert !s.formulaSubscribers.containsKey(formula)
 s.subscribe(s, formula)
 
 def h = new Trace(s)
@@ -18,14 +18,14 @@ final a = h.currentState
 assert a == s[4]
 assert a.class == State
 
-final values1 = s.valuesAt(a)
+final values1 = a.values
 assert values1.containsKey(formula)
 assert values1[formula].value == "{PID1,PID3}"
 h = h.back()
 h = h.back()
 final b = h.currentState
 assert b == s[0]
-final values2 = s.valuesAt(b)
+final values2 = b.values
 assert values2.containsKey(formula)
 res = values2[formula].value
 assert res == "{}" || res == "\u2205"

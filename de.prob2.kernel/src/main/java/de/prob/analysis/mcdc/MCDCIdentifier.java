@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import de.be4.classicalb.core.parser.node.APredicateParseUnit;
 import de.be4.classicalb.core.parser.node.PPredicate;
@@ -23,13 +22,16 @@ import de.prob.model.representation.Extraction;
 import de.prob.model.representation.Machine;
 import de.prob.statespace.StateSpace;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Determines the MCDC test cases for all guards of all operations of a given model extracted from the current state space up to a
  * specified {@link #maxLevel} (levels start at 0).
  */
 public class MCDCIdentifier {
 
-	private final static Logger log = Logger.getLogger(MCDCIdentifier.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(MCDCIdentifier.class);
 
 	private final StateSpace stateSpace;
 	private final int maxLevel;
@@ -78,7 +80,7 @@ public class MCDCIdentifier {
 			CbcSolveCommand cmd = new CbcSolveCommand(Conversion.classicalBFromPredicate(model, t.getPredicate()));
 			stateSpace.execute(cmd);
 			if (cmd.getValue() == EvalResult.FALSE) {
-				log.info("Infeasible: " + t.toString());
+				LOGGER.info("Infeasible: {}", t);
 			} else {
 				feasibleTestCases.add(t);
 			}

@@ -4,6 +4,7 @@ import de.prob.check.tracereplay.PersistentTransition;
 
 import java.util.List;
 
+@Deprecated
 public class PersistenceDelta {
 
 
@@ -11,6 +12,7 @@ public class PersistenceDelta {
 	private final List<PersistentTransition> newTransitions;
 
 
+	@Deprecated
 	public PersistenceDelta(PersistentTransition oldTransition, List<PersistentTransition> newTransitions){
 		this.oldTransition = oldTransition;
 		this.newTransitions = newTransitions;

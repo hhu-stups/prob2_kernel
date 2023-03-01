@@ -1,9 +1,12 @@
 package de.prob.model.eventb.theory;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import de.prob.model.representation.AbstractElement;
 import de.prob.util.Tuple2;
@@ -18,15 +21,35 @@ import org.eventb.core.ast.extension.IFormulaExtension;
 public class DataType extends AbstractElement {
 
 	final String identifierString;
-	private final Map<String, List<Tuple2<String, String>>> constructors;
+	private final Map<String, DataTypeConstructor> constructorsByName;
 	private final List<String> typeArguments;
 
+	public DataType(final String identifierString, final List<DataTypeConstructor> constructors, final List<String> typeArguments) {
+		this.identifierString = identifierString;
+		this.constructorsByName = constructors.stream().collect(Collectors.toMap(DataTypeConstructor::getName, c -> c));
+		this.typeArguments = typeArguments;
+	}
+
+	/**
+	 * @deprecated Use {@link #DataType(String, List, List)} instead.
+	 */
+	@Deprecated
 	public DataType(final String identifier,
 			Map<String, List<Tuple2<String, String>>> constructors,
 			List<String> types) {
-		identifierString = identifier;
-		this.constructors = constructors;
-		this.typeArguments = types;
+		this(identifier, constructorsFromMap(constructors), types);
+	}
+
+	@Deprecated
+	private static List<DataTypeConstructor> constructorsFromMap(final Map<String, List<Tuple2<String, String>>> constructors) {
+		final List<DataTypeConstructor> convertedConstructors = new ArrayList<>();
+		constructors.forEach((name, args) -> {
+			final List<DataTypeDestructor> convertedArgs = args.stream()
+				.map(tuple -> new DataTypeDestructor(tuple.getFirst(), tuple.getSecond()))
+				.collect(Collectors.toList());
+			convertedConstructors.add(new DataTypeConstructor(name, convertedArgs));
+		});
+		return convertedConstructors;
 	}
 
 	public String getTypeIdentifier() {
@@ -54,8 +77,23 @@ public class DataType extends AbstractElement {
 		return identifierString.hashCode();
 	}
 
+	/**
+	 * @deprecated Use {@link #getConstructorsByName()} instead.
+	 */
+	@Deprecated
 	public Map<String, List<Tuple2<String, String>>> getConstructors() {
+		final Map<String, List<Tuple2<String, String>>> constructors = new HashMap<>();
+		for (final DataTypeConstructor constructor : this.getConstructorsByName().values()) {
+			final List<Tuple2<String, String>> args = constructor.getArguments().stream()
+				.map(arg -> new Tuple2<>(arg.getName(), arg.getType()))
+				.collect(Collectors.toList());
+			constructors.put(constructor.getName(), args);
+		}
 		return constructors;
+	}
+
+	public Map<String, DataTypeConstructor> getConstructorsByName() {
+		return Collections.unmodifiableMap(this.constructorsByName);
 	}
 
 	public Set<IFormulaExtension> getFormulaExtensions(final FormulaFactory ff) {
@@ -71,11 +109,11 @@ public class DataType extends AbstractElement {
 		}
 		IDatatypeBuilder builder = ff.makeDatatypeBuilder(identifierString,
 				types.toArray(new GivenType[typeArguments.size()]));
-		for (Map.Entry<String, List<Tuple2<String, String>>> entry : constructors.entrySet()) {
-			IConstructorBuilder consBuilder = builder.addConstructor(entry.getKey());
-			for (Tuple2<String, String> destructor : entry.getValue()) {
-				IParseResult parseType = ff.parseType(destructor.getSecond());
-				consBuilder.addArgument(destructor.getFirst(),
+		for (final DataTypeConstructor constructor : this.getConstructorsByName().values()) {
+			IConstructorBuilder consBuilder = builder.addConstructor(constructor.getName());
+			for (final DataTypeDestructor destructor : constructor.getArguments()) {
+				IParseResult parseType = ff.parseType(destructor.getType());
+				consBuilder.addArgument(destructor.getName(),
 						parseType.getParsedType());
 			}
 		}

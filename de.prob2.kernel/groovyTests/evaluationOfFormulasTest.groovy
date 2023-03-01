@@ -1,26 +1,24 @@
-import de.hhu.stups.prob.translator.BAtom
-
 import java.nio.file.Paths
 
+import de.hhu.stups.prob.translator.BAtom
+import de.hhu.stups.prob.translator.BNumber
 import de.prob.animator.domainobjects.ClassicalB
 import de.prob.animator.domainobjects.EvalResult
 import de.prob.animator.domainobjects.TranslatedEvalResult
 import de.prob.statespace.Trace
-import de.hhu.stups.prob.translator.BAtom
-import de.hhu.stups.prob.translator.BNumber
 
 final s = api.b_load(Paths.get(dir, "machines", "scheduler.mch").toString())
 def h = new Trace(s)
 h = h.add(0)
 h = h.add(3)
 assert h.currentState.id == "2"
-assert s.eval(s[3], ["2-1" as ClassicalB]).collect {it.toString()} == ['1']
-res = s.eval(s[0], ["waiting" as ClassicalB]).collect {it.value.toString()}
-assert res == ['{}'] || res == ['\u2205']
-assert s.eval(s[2], ["waiting" as ClassicalB]).collect {it.toString()} == ['{PID2}']
+assert s[3].eval("2-1" as ClassicalB).toString() == '1'
+res = s[0].eval("waiting" as ClassicalB).toString()
+assert res == '{}' || res == '\u2205'
+assert s[2].eval("waiting" as ClassicalB).toString() == '{PID2}'
 
 final formula = "x : waiting & x = PID2 & y : NAT & y = 1" as ClassicalB
-final res = s.eval(s[2], [formula])[0]
+final res = s[2].eval(formula)
 assert res instanceof EvalResult
 assert res.value == "TRUE"
 assert res.solutions.containsKey("x")

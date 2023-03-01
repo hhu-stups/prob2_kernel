@@ -89,16 +89,17 @@ class TraceEvaluationTest extends Specification {
 		final t = t.$initialise_machine().new("pp = PID1").new("pp = PID2")
 
 		when:
-		final x = t.eval("waiting", FormulaExpand.EXPAND)
+		final x = t.evalAll("waiting")
 
 		then:
-		x.size() == 3
-		final sIds = t.transitionList.collect {it.destination.id}
-		final results = x.collect {[it.first, it.second.value]}
+		x.size() == 4
+		x.keySet() as List == t.elements
 
-		results[0] == [sIds[0], "{}"] || results[0] == [sIds[0], "\u2205"]
-		results[1] == [sIds[1], "{PID1}"]
-		results[2] == [sIds[2], "{PID1,PID2}"]
+		final values = x.values() as List
+		values[0] instanceof IdentifierNotInitialised
+		values[1].value == "{}" || values[1].value == "\u2205"
+		values[2].value == "{PID1}"
+		values[3].value == "{PID1,PID2}"
 	}
 
 	def "It is possible to evaluate a parsed formula over the course of a Trace"() {
@@ -106,16 +107,17 @@ class TraceEvaluationTest extends Specification {
 		final t = t.$initialise_machine().new("pp = PID1").new("pp = PID2")
 
 		when:
-		final x = t.eval(new ClassicalB("waiting", FormulaExpand.EXPAND))
+		final x = t.evalAll(new ClassicalB("waiting"))
 
 		then:
-		x.size() == 3
-		final sIds = t.transitionList.collect {it.destination.id}
-		final results = x.collect {[it.first, it.second.getValue()]}
+		x.size() == 4
+		x.keySet() as List == t.elements
 
-		results[0] == [sIds[0], "{}"] || results[0] == [sIds[0], "\u2205"]
-		results[1] == [sIds[1], "{PID1}"]
-		results[2] == [sIds[2], "{PID1,PID2}"]
+		final values = x.values() as List
+		values[0] instanceof IdentifierNotInitialised
+		values[1].value == "{}" || values[1].value == "\u2205"
+		values[2].value == "{PID1}"
+		values[3].value == "{PID1,PID2}"
 	}
 
 	def "Evaluating a formula over a trace also works for EventB"() {
@@ -127,12 +129,17 @@ class TraceEvaluationTest extends Specification {
 		final t2 = t.$setup_constants().$initialise_machine().up()
 
 		when:
-		final x = t2.eval(new EventB("level", FormulaExpand.EXPAND))
+		final x = t2.evalAll(new EventB("level"))
 
 		then:
-		x.size() == 2
-		x[0].second.value == "L0"
-		x[1].second.value == "L1"
+		x.size() == 4
+		x.keySet() as List == t2.elements
+
+		final values = x.values() as List
+		values[0] instanceof IdentifierNotInitialised
+		values[1] instanceof IdentifierNotInitialised
+		values[2].value == "L0"
+		values[3].value == "L1"
 
 		cleanup:
 		if (s != null) {

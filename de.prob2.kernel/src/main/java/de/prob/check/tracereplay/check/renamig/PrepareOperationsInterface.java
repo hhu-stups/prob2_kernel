@@ -2,6 +2,7 @@ package de.prob.check.tracereplay.check.renamig;
 
 import de.prob.prolog.term.CompoundPrologTerm;
 
+@Deprecated
 public interface PrepareOperationsInterface {
 
 

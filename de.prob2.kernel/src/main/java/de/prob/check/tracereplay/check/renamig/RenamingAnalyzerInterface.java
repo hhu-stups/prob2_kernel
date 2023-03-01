@@ -3,6 +3,7 @@ package de.prob.check.tracereplay.check.renamig;
 import java.util.List;
 import java.util.Map;
 
+@Deprecated
 public interface RenamingAnalyzerInterface {
 
 

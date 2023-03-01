@@ -2,6 +2,12 @@ package de.prob.animator.domainobjects;
 
 import com.google.inject.Singleton;
 
+import de.prob.model.representation.AbstractModel;
+
+/**
+ * @deprecated No direct replacement is provided. Use {@link AbstractModel#parseFormula(String)} or the {@link IEvalElement} constructors instead and store the formula language separately if needed.
+ */
+@Deprecated
 @Singleton
 public class EvalElementFactory {
 

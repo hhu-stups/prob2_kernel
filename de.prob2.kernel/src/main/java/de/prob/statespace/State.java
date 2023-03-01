@@ -1,19 +1,5 @@
 package de.prob.statespace;
 
-import de.prob.animator.command.EvaluateFormulasCommand;
-import de.prob.animator.command.EvaluateRegisteredFormulasCommand;
-import de.prob.animator.command.ExecuteOperationException;
-import de.prob.animator.command.ExploreStateCommand;
-import de.prob.animator.command.GetBStateCommand;
-import de.prob.animator.domainobjects.AbstractEvalResult;
-import de.prob.animator.domainobjects.EvalOptions;
-import de.prob.animator.domainobjects.FormulaExpand;
-import de.prob.animator.domainobjects.IEvalElement;
-import de.prob.animator.domainobjects.StateError;
-import de.prob.model.representation.AbstractModel;
-import groovy.lang.GroovyObjectSupport;
-import org.codehaus.groovy.runtime.DefaultGroovyMethods;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -28,6 +14,21 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import de.prob.animator.command.EvaluateFormulasCommand;
+import de.prob.animator.command.ExecuteOperationException;
+import de.prob.animator.command.ExploreStateCommand;
+import de.prob.animator.command.GetBStateCommand;
+import de.prob.animator.domainobjects.AbstractEvalResult;
+import de.prob.animator.domainobjects.EvalOptions;
+import de.prob.animator.domainobjects.FormulaExpand;
+import de.prob.animator.domainobjects.IEvalElement;
+import de.prob.animator.domainobjects.StateError;
+import de.prob.model.representation.AbstractModel;
+
+import groovy.lang.GroovyObjectSupport;
+
+import org.codehaus.groovy.runtime.DefaultGroovyMethods;
+
 /**
  * A reference to the state object in the ProB core.
  *
@@ -40,7 +41,7 @@ import java.util.stream.Collectors;
 public class State extends GroovyObjectSupport {
 	private String id;
 	private StateSpace stateSpace;
-	private boolean explored;
+	private volatile boolean explored;
 	private List<Transition> transitions;
 	private boolean constantsSetUp;
 	private boolean initialised;
@@ -50,22 +51,11 @@ public class State extends GroovyObjectSupport {
 	private boolean maxTransitionsCalculated;
 	private Collection<StateError> stateErrors;
 
-	// TODO Merge the two separate caches again!
-	// (Might require adding EvalOptions support to registered formulas first.)
-
 	/**
-	 * Cache for evaluated formula values in the current state.
-	 * This cache doesn't take {@link EvalOptions} into account -
-	 * the only supported option is the TRUNCATE/EXPAND setting
-	 * stored in {@link IEvalElement#expansion()}.
-	 * This cache is used for registered/subscribed formulas.
-	 */
-	private Map<IEvalElement, AbstractEvalResult> values;
-
-	/**
-	 * New cache that correctly handles the full set of {@link EvalOptions}
-	 * but ignores the {@link IEvalElement#expansion()} setting.
-	 * This cache is used by the different eval methods.
+	 * Internal cache of evaluated formula values in this state,
+	 * grouped by the {@link EvalOptions} that were used for evaluation.
+	 * The {@link IEvalElement#expansion()} is <i>not</i> directly used here.
+	 * Code that uses this cache is expected to integrate that setting into the {@link EvalOptions} as appropriate.
 	 */
 	private Map<EvalOptions, Map<IEvalElement, AbstractEvalResult>> evalCache;
 
@@ -74,7 +64,6 @@ public class State extends GroovyObjectSupport {
 		this.stateSpace = space;
 		this.explored = false;
 		this.transitions = new ArrayList<>();
-		this.values = new HashMap<>();
 		this.evalCache = new HashMap<>();
 	}
 
@@ -178,8 +167,9 @@ public class State extends GroovyObjectSupport {
 		return newOps;
 	}
 
+	// TODO This duplicates Trace.anyOperation (almost, but not exactly)
 	public State anyOperation(final Object filter) {
-		List<Transition> ops = getOutTransitions(true, FormulaExpand.TRUNCATE);
+		List<Transition> ops = getOutTransitions();
 		if (filter instanceof String) {
 			final Pattern filterPattern = Pattern.compile((String)filter);
 			ops = ops.stream().filter(t -> filterPattern.matcher(t.getName()).matches()).collect(Collectors.toList());
@@ -191,7 +181,7 @@ public class State extends GroovyObjectSupport {
 			Collections.shuffle(ops);
 			final Transition op = ops.get(0);
 			final State newState = op.getDestination();
-			newState.explore();
+			newState.exploreIfNeeded();
 			return newState;
 		}
 		return this;
@@ -230,9 +220,7 @@ public class State extends GroovyObjectSupport {
 	 * method. The formula is parsed via the {@link AbstractModel#parseFormula(String)} method.
 	 * @param formula representation of a formula
 	 * @return the {@link AbstractEvalResult} calculated from ProB
-	 * @deprecated Use {@link #eval(String, FormulaExpand)} with an explicit {@link FormulaExpand} argument instead
 	 */
-	@Deprecated
 	public AbstractEvalResult eval(String formula) {
 		return this.eval(formula, FormulaExpand.TRUNCATE);
 	}
@@ -292,7 +280,7 @@ public class State extends GroovyObjectSupport {
 			}
 		}
 		if (!notEvaluatedElements.isEmpty()) {
-			final EvaluateFormulasCommand cmd = new EvaluateFormulasCommand(notEvaluatedElements, this.getId(), options);
+			final EvaluateFormulasCommand cmd = new EvaluateFormulasCommand(notEvaluatedElements, this, options);
 			stateSpace.execute(cmd);
 			cache.putAll(cmd.getResultMap());
 		}
@@ -383,64 +371,63 @@ public class State extends GroovyObjectSupport {
 	}
 
 	public boolean isConstantsSetUp() {
-		if (!explored) {
-			explore();
-		}
+		this.exploreIfNeeded();
 		return constantsSetUp;
 	}
 
 	public boolean isInitialised() {
-		if (!explored) {
-			explore();
-		}
+		this.exploreIfNeeded();
 		return initialised;
 	}
 
 	public boolean isInvariantOk() {
-		if (!explored) {
-			explore();
-		}
+		this.exploreIfNeeded();
 		return invariantOk;
 	}
 
 	public boolean isMaxTransitionsCalculated() {
-		if (!explored) {
-			explore();
-		}
+		this.exploreIfNeeded();
 		return maxTransitionsCalculated;
 	}
 
 	public boolean isTimeoutOccurred() {
-		if (!explored) {
-			explore();
-		}
+		this.exploreIfNeeded();
 		return timeoutOccurred;
 	}
 
 	public Set<String> getTransitionsWithTimeout() {
-		if (!explored) {
-			explore();
-		}
+		this.exploreIfNeeded();
 		return transitionsWithTimeout;
 	}
 
 	public Collection<StateError> getStateErrors() {
-		if (!explored) {
-			explore();
-		}
+		this.exploreIfNeeded();
 		return stateErrors;
 	}
 
-	public synchronized List<Transition> getOutTransitions() {
-		// The FormulaExpand argument is ignored if evaluate is false
-		return getOutTransitions(false, FormulaExpand.TRUNCATE);
+	/**
+	 * If the state has not yet been explored (i.e. the default number
+	 * of outgoing transitions has not yet been calculated by ProB), this
+	 * is done via the {@link State#explore()} method. The list of
+	 * {@link Transition} objects created will not be evaluated, i.e. certain
+	 * information about the transition will be lazily retrieved from ProB
+	 * at a later time. To evaluate the {@link Transition} objects eagerly,
+	 * pass the returned list to {@link StateSpace#evaluateTransitions(Collection, EvalOptions)}.
+	 * 
+	 * @return the outgoing transitions from this state
+	 */
+	public List<Transition> getOutTransitions() {
+		this.exploreIfNeeded();
+		return this.transitions;
 	}
 
 	/**
-	 * @deprecated Use {@link #getOutTransitions(boolean, FormulaExpand)} with an explicit {@link FormulaExpand} argument instead
+	 * @deprecated Use {@link #getOutTransitions()} instead.
+	 *     If {@code evaluate} was set to {@code true},
+	 *     also call {@link StateSpace#evaluateTransitions(Collection, EvalOptions)} on the returned list.
 	 */
 	@Deprecated
-	public synchronized List<Transition> getOutTransitions(boolean evaluate) {
+	public List<Transition> getOutTransitions(boolean evaluate) {
 		return this.getOutTransitions(evaluate, FormulaExpand.TRUNCATE);
 	}
 
@@ -456,22 +443,23 @@ public class State extends GroovyObjectSupport {
 	 * method.
 	 * @param evaluate whether or not the list of transitions should be evaluated. By default this is set to false.
 	 * @return the outgoing transitions from this state
+	 * @deprecated Use {@link #getOutTransitions()} instead.
+	 *     If {@code evaluate} was set to {@code true},
+	 *     also call {@link StateSpace#evaluateTransitions(Collection, FormulaExpand)} on the returned list.
 	 */
-	public synchronized List<Transition> getOutTransitions(boolean evaluate, FormulaExpand expansion) {
-		if (!explored) {
-			explore();
-		}
+	@Deprecated
+	public List<Transition> getOutTransitions(boolean evaluate, FormulaExpand expansion) {
+		this.exploreIfNeeded();
 		if (evaluate) {
 			stateSpace.evaluateTransitions(transitions, expansion);
 		}
 		return transitions;
 	}
 
-	public State explore() {
-		final ExploreStateCommand cmd = new ExploreStateCommand(stateSpace, id, stateSpace.getSubscribedFormulas());
+	public synchronized State explore() {
+		final ExploreStateCommand cmd = new ExploreStateCommand(stateSpace, id, Collections.emptyList());
 		stateSpace.execute(cmd);
 		transitions = cmd.getNewTransitions();
-		values.putAll(cmd.getFormulaResults());
 		constantsSetUp = cmd.isConstantsSetUp();
 		initialised = cmd.isInitialised();
 		invariantOk = cmd.isInvariantOk();
@@ -479,23 +467,44 @@ public class State extends GroovyObjectSupport {
 		maxTransitionsCalculated = cmd.isMaxOperationsReached();
 		stateErrors = cmd.getStateErrors();
 		transitionsWithTimeout = cmd.getOperationsWithTimeout();
+		// TODO Combine the subscribed formula evaluation commands into ExploreStateCommand again
+		this.getValues();
 		explored = true;
 		return this;
 	}
 
-	public Map<IEvalElement, AbstractEvalResult> getValues() {
-		Set<IEvalElement> formulas = stateSpace.getSubscribedFormulas();
-		List<IEvalElement> toEvaluate = new ArrayList<>();
-		for (IEvalElement f : formulas) {
-			if (!values.containsKey(f)) {
-				toEvaluate.add(f);
+	/**
+	 * Ensures that this state is explored.
+	 * Calls {@link #explore()} if the state hasn't been explored yet,
+	 * otherwise does nothing.
+	 * 
+	 * @return {@code this}
+	 */
+	public State exploreIfNeeded() {
+		// Avoid locking if the state has already been explored.
+		if (!explored) {
+			synchronized (this) {
+				// Check again in case another thread already explored the state while this thread waited on the lock.
+				if (!explored) {
+					this.explore();
+				}
 			}
 		}
-		if (!toEvaluate.isEmpty()) {
-			final EvaluateRegisteredFormulasCommand cmd = new EvaluateRegisteredFormulasCommand(this.getId(), toEvaluate);
-			stateSpace.execute(cmd);
-			values.putAll(cmd.getResults());
-		}
-		return new HashMap<>(values);
+		return this;
+	}
+
+	/**
+	 * Get the values of all formulas subscribed in the {@link StateSpace}.
+	 * The values are cached if possible.
+	 * Evaluation uses the {@link EvalOptions} that were specified when the formula was subscribed.
+	 * 
+	 * @return values of all subscribed formulas
+	 */
+	public Map<IEvalElement, AbstractEvalResult> getValues() {
+		final Map<IEvalElement, AbstractEvalResult> flatValues = new HashMap<>();
+		stateSpace.getSubscribedFormulasByOptions().forEach((options, formulas) ->
+			flatValues.putAll(this.evalFormulas(new ArrayList<>(formulas), options))
+		);
+		return flatValues;
 	}
 }

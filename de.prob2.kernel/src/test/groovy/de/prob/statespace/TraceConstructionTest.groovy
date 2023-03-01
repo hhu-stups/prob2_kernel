@@ -90,30 +90,16 @@ class TraceConstructionTest extends Specification {
 		t.currentTransition.name == "\$initialise_machine"
 	}
 
-	def "you can view the transitions from the trace (which will not be evaluated by default)"() {
+	def "you can view the transitions from the trace (which will not be evaluated)"() {
 		given:
 		final t = new Trace(s).$initialise_machine()
 
 		when:
 		final outtrans = t.nextTransitions
-		final outtrans2 = t.getNextTransitions(false, FormulaExpand.TRUNCATE) // this is identical to the above call
-
-		then:
-		outtrans.size() == outtrans2.size()
-		outtrans.every {!it.evaluated}
-		outtrans2.every {!it.evaluated}
-	}
-
-	def "you can view the transitions from the trace (which can be evaluated)"() {
-		given:
-		final t = new Trace(s).$initialise_machine()
-
-		when:
-		final outtrans = t.getNextTransitions(true, FormulaExpand.EXPAND)
 
 		then:
 		outtrans.size() == 4
-		outtrans.every {it.evaluated}
+		outtrans.every {!it.evaluated}
 	}
 
 	def "the list of transitions can be accessed from the trace"() {
@@ -122,27 +108,10 @@ class TraceConstructionTest extends Specification {
 
 		when:
 		final transitions = t.transitionList
-		final transitions2 = t.getTransitionList(false, FormulaExpand.TRUNCATE) // identical to other call
 
 		then:
 		transitions.collect {it.name} == ["\$initialise_machine", "new"]
-		transitions2.collect {it.name} == ["\$initialise_machine", "new"]
-
 		transitions.every {!it.evaluated}
-		transitions2.every {!it.evaluated}
-
-	}
-
-	def "the list of transitions can be accessed from the trace (and evaluated at the same time)"() {
-		given:
-		final t = new Trace(s).$initialise_machine().new("pp=PID1")
-
-		when:
-		final transitions = t.getTransitionList(true, FormulaExpand.EXPAND)
-
-		then:
-		transitions.collect {it.name} == ["\$initialise_machine", "new"]
-		transitions.every {it.evaluated}
 	}
 
 	def "A trace can be copied (everything identical except UUID)"() {

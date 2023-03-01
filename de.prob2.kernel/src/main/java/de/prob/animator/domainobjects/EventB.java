@@ -243,6 +243,7 @@ public class EventB extends AbstractEvalElement implements IBEvalElement {
 		return ast;
 	}
 
+	@Deprecated
 	@Override
 	public String serialized() {
 		return "#EventB:" + this.getCode();

@@ -2,6 +2,7 @@ package de.prob.check.tracereplay.check.renamig;
 
 import de.prob.prolog.term.PrologTerm;
 
+@Deprecated
 public class PrologTermNotDefinedException extends Exception {
 	private static final long serialVersionUID = 1L;
 

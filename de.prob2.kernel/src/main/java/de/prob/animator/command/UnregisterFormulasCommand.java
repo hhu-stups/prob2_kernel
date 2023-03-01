@@ -7,12 +7,11 @@ import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;
 
-public class RegisterFormulasCommand extends AbstractCommand {
-
-	private static final String PROLOG_COMMAND_NAME = "register_prob2_formulas";
+public class UnregisterFormulasCommand extends AbstractCommand {
+	private static final String PROLOG_COMMAND_NAME = "unregister_prob2_formulas";
 	private final Collection<? extends IEvalElement> formulas;
 
-	public RegisterFormulasCommand(final Collection<? extends IEvalElement> formulas) {
+	public UnregisterFormulasCommand(final Collection<? extends IEvalElement> formulas) {
 		this.formulas = formulas;
 	}
 
@@ -24,11 +23,6 @@ public class RegisterFormulasCommand extends AbstractCommand {
 			formula.getFormulaId().printUUID(pto);
 		}
 		pto.closeList();
-		pto.openList();
-		for (final IEvalElement formula : this.formulas) {
-			formula.printEvalTerm(pto);
-		}
-		pto.closeList();
 		pto.closeTerm();
 	}
 
@@ -36,4 +30,5 @@ public class RegisterFormulasCommand extends AbstractCommand {
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
 		// There are no output variables.
 	}
+
 }

@@ -1,5 +1,6 @@
 package de.prob.animator.domainobjects;
 
+import java.time.Duration;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -25,18 +26,52 @@ public final class EvalOptions {
 	
 	public static final EvalOptions DEFAULT = new EvalOptions();
 	
+	private final EvalExpandMode evalExpand;
+	private final Duration timeout;
 	private final FormulaExpand expand;
 	private final FormulaTranslationMode mode;
 	private final Language language;
 	
-	private EvalOptions(final FormulaExpand expand, final FormulaTranslationMode mode, final Language language) {
+	private EvalOptions(final EvalExpandMode evalExpand, final Duration timeout, final FormulaExpand expand, final FormulaTranslationMode mode, final Language language) {
+		this.evalExpand = evalExpand;
+		this.timeout = timeout;
 		this.expand = expand;
 		this.mode = mode;
 		this.language = language;
 	}
 	
 	private EvalOptions() {
-		this(FormulaExpand.TRUNCATE, FormulaTranslationMode.UNICODE, null);
+		this(EvalExpandMode.FORCE, Duration.ofSeconds(30), FormulaExpand.TRUNCATE, FormulaTranslationMode.UNICODE, null);
+	}
+	
+	public EvalExpandMode getEvalExpand() {
+		return this.evalExpand;
+	}
+	
+	/**
+	 * Change the evaluation expansion mode,
+	 * which controls if/when sets in the evaluation result should be expanded or left symbolic.
+	 * Not to be confused with the pretty-print expand/truncate mode - see {@link #withExpand(FormulaExpand)}.
+	 * 
+	 * @param evalExpand the evaluation expansion mode to use
+	 * @return copy of {@code this} with the evaluation expansion mode changed
+	 */
+	public EvalOptions withEvalExpand(final EvalExpandMode evalExpand) {
+		return new EvalOptions(evalExpand, this.getTimeout(), this.getExpand(), this.getMode(), this.getLanguage());
+	}
+	
+	public Duration getTimeout() {
+		return this.timeout;
+	}
+	
+	/**
+	 * Change the per-formula evaluation timeout.
+	 * 
+	 * @param timeout the per-formula evaluation timeout
+	 * @return copy of {@code this} with the timeout changed
+	 */
+	public EvalOptions withTimeout(final Duration timeout) {
+		return new EvalOptions(this.getEvalExpand(), timeout, this.getExpand(), this.getMode(), this.getLanguage());
 	}
 	
 	public FormulaExpand getExpand() {
@@ -44,20 +79,21 @@ public final class EvalOptions {
 	}
 	
 	/**
-	 * Change the expansion mode,
+	 * Change the pretty-print expansion mode,
 	 * i. e. whether evaluation results should be {@linkplain FormulaExpand#TRUNCATE truncated} after a certain length
 	 * or {@linkplain FormulaExpand#EXPAND fully expanded}.
+	 * Not to be confused with the evaluation expansion mode - see {@link #withEvalExpand(EvalExpandMode)}.
 	 * 
-	 * @param expand the expansion mode to use
-	 * @return copy of {@code this} with the expansion mode changed
+	 * @param expand the pretty-print expansion mode to use
+	 * @return copy of {@code this} with the pretty-print expansion mode changed
 	 */
 	public EvalOptions withExpand(final FormulaExpand expand) {
-		return new EvalOptions(expand, this.getMode(), this.getLanguage());
+		return new EvalOptions(this.getEvalExpand(), this.getTimeout(), expand, this.getMode(), this.getLanguage());
 	}
 	
 	/**
 	 * <p>
-	 * Determine the expansion mode based on {@link IEvalElement#expansion()} of all {@code formulas}.
+	 * Determine the pretty-print expansion mode based on {@link IEvalElement#expansion()} of all {@code formulas}.
 	 * If all formulas use the same expansion mode, that mode is chosen.
 	 * If some formulas use different expansion modes,
 	 * mode {@link FormulaExpand#EXPAND} is chosen and a warning is logged.
@@ -104,7 +140,7 @@ public final class EvalOptions {
 	 * @return copy of {@code this} with the translation mode changed
 	 */
 	public EvalOptions withMode(final FormulaTranslationMode mode) {
-		return new EvalOptions(this.getExpand(), mode, this.getLanguage());
+		return new EvalOptions(this.getEvalExpand(), this.getTimeout(), this.getExpand(), mode, this.getLanguage());
 	}
 	
 	public Language getLanguage() {
@@ -112,7 +148,7 @@ public final class EvalOptions {
 	}
 	
 	public EvalOptions withLanguage(final Language language) {
-		return new EvalOptions(this.getExpand(), this.getMode(), language);
+		return new EvalOptions(this.getEvalExpand(), this.getTimeout(), this.getExpand(), this.getMode(), language);
 	}
 	
 	@Override
@@ -124,19 +160,23 @@ public final class EvalOptions {
 			return false;
 		}
 		final EvalOptions other = (EvalOptions)obj;
-		return this.getExpand() == other.getExpand()
+		return this.getEvalExpand() == other.getEvalExpand()
+			&& this.getTimeout() == other.getTimeout()
+			&& this.getExpand() == other.getExpand()
 			&& this.getMode() == other.getMode()
 			&& this.getLanguage() == other.getLanguage();
 	}
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.getExpand(), this.getMode(), this.getLanguage());
+		return Objects.hash(this.getEvalExpand(), this.getTimeout(), this.getExpand(), this.getMode(), this.getLanguage());
 	}
 	
 	@Override
 	public String toString() {
 		return MoreObjects.toStringHelper(this)
+			.add("evalExpand", this.getEvalExpand())
+			.add("timeout", this.getTimeout())
 			.add("expand", this.getExpand())
 			.add("mode", this.getMode())
 			.add("language", this.getLanguage())
@@ -144,6 +184,14 @@ public final class EvalOptions {
 	}
 	
 	public void printProlog(final IPrologTermOutput pout) {
+		pout.openTerm("eval_expand");
+		this.getEvalExpand().printProlog(pout);
+		pout.closeTerm();
+		
+		pout.openTerm("timeout");
+		pout.printNumber(this.getTimeout().toMillis());
+		pout.closeTerm();
+		
 		pout.openTerm("truncate");
 		pout.printAtom(this.getExpand().getPrologName());
 		pout.closeTerm();

@@ -1,18 +1,31 @@
 package de.prob.statespace;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.WeakHashMap;
+import java.util.concurrent.ExecutionException;
+
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+
 import de.prob.animator.IAnimator;
 import de.prob.animator.IConsoleOutputListener;
 import de.prob.animator.IWarningListener;
 import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.command.CheckIfStateIdValidCommand;
 import de.prob.animator.command.ComposedCommand;
-import de.prob.animator.command.EvaluateFormulasCommand;
 import de.prob.animator.command.ExecuteOperationException;
 import de.prob.animator.command.ExtendedStaticCheckCommand;
 import de.prob.animator.command.FindStateCommand;
@@ -28,38 +41,26 @@ import de.prob.animator.command.GetStatesFromPredicate;
 import de.prob.animator.command.IStateSpaceModifier;
 import de.prob.animator.command.RegisterFormulasCommand;
 import de.prob.animator.command.SetPreferenceCommand;
-import de.prob.animator.command.UnregisterFormulaCommand;
+import de.prob.animator.command.UnregisterFormulasCommand;
 import de.prob.animator.domainobjects.AbstractEvalResult;
 import de.prob.animator.domainobjects.CSP;
 import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.ErrorItem;
+import de.prob.animator.domainobjects.EvalOptions;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.animator.domainobjects.ProBPreference;
 import de.prob.animator.domainobjects.TypeCheckResult;
 import de.prob.annotations.MaxCacheSize;
-import de.prob.exception.ProBError;
 import de.prob.formula.PredicateBuilder;
 import de.prob.model.classicalb.ClassicalBModel;
 import de.prob.model.eventb.EventBModel;
 import de.prob.model.representation.AbstractElement;
 import de.prob.model.representation.AbstractModel;
 import de.prob.model.representation.CSPModel;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.WeakHashMap;
-import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.concurrent.ExecutionException;
 
 /**
  *
@@ -86,7 +87,15 @@ public class StateSpace implements IAnimator {
 	Logger logger = LoggerFactory.getLogger(StateSpace.class);
 	private IAnimator animator;
 
-	private final Map<IEvalElement, Set<Object>> formulaRegistry = new HashMap<>();
+	private final Set<IEvalElement> registeredFormulas = new HashSet<>();
+	private final Map<IEvalElement, Set<Object>> formulaSubscribers = new HashMap<>();
+
+	/**
+	 * The options to use for evaluating each subscribed formula.
+	 * For now, it's not possible to subscribe the same formula multiple times with different options
+	 * (but this probably isn't an important feature).
+	 */
+	private final Map<IEvalElement, EvalOptions> subscribedFormulaOptions = new HashMap<>();
 
 	private LoadedMachine loadedMachine;
 
@@ -356,7 +365,9 @@ public class StateSpace implements IAnimator {
 	 * @param formulas
 	 *            to be evaluated
 	 * @return a list of {@link AbstractEvalResult}s
+	 * @deprecated Use {@link State#eval(List)} directly instead.
 	 */
+	@Deprecated
 	public List<AbstractEvalResult> eval(final State state, final List<? extends IEvalElement> formulas) {
 		return state.eval(formulas);
 	}
@@ -370,7 +381,10 @@ public class StateSpace implements IAnimator {
 	 *            for which the values are to be retrieved
 	 * @return map from {@link IEvalElement} object to
 	 *         {@link AbstractEvalResult} objects
+	 * @deprecated Use {@link State#getValues()} directly instead,
+	 *     possibly together with {@link State#explore()} or {@link State#exploreIfNeeded()}.
 	 */
+	@Deprecated
 	public Map<IEvalElement, AbstractEvalResult> valuesAt(final State state) {
 		state.explore();
 		return state.getValues();
@@ -383,9 +397,129 @@ public class StateSpace implements IAnimator {
 	 * @param state
 	 *            which is to be tested
 	 * @return whether or not formulas should be evaluated in this state
+	 * @deprecated Use {@link State#isInitialised()} directly instead.
 	 */
+	@Deprecated
 	public boolean canBeEvaluated(final State state) {
 		return state.isInitialised();
+	}
+
+	/**
+	 * Get all formulas currently registered for efficient evaluation.
+	 * All {@linkplain #getSubscribedFormulas() subscribed formulas} are also automatically registered,
+	 * but not vice versa.
+	 * 
+	 * @return set of all formulas currently registered for efficient evaluation
+	 */
+	public Set<IEvalElement> getRegisteredFormulas() {
+		return Collections.unmodifiableSet(this.registeredFormulas);
+	}
+
+	/**
+	 * <p>
+	 * Register one or multiple formulas for efficient evaluation.
+	 * Any formulas that were already registered previously will not be registered again.
+	 * </p>
+	 * <p>
+	 * Registered formulas can be evaluated more efficiently,
+	 * because the formula term is sent to Prolog and type-checked only once at registration time.
+	 * However, registered formulas still need to be evaluated manually as needed.
+	 * To evaluate formulas automatically in every new state, use {@link #subscribe(Object, Collection)}.
+	 * </p>
+	 * 
+	 * @param formulas formulas to register for evaluation
+	 * @return all formulas that were newly registered
+	 */
+	public Collection<IEvalElement> registerFormulas(final Collection<? extends IEvalElement> formulas) {
+		final List<IEvalElement> toRegister = new ArrayList<>();
+		for (final IEvalElement formula : formulas) {
+			if (!this.registeredFormulas.contains(formula)) {
+				toRegister.add(formula);
+			}
+		}
+		
+		if (!toRegister.isEmpty()) {
+			final RegisterFormulasCommand cmd = new RegisterFormulasCommand(toRegister);
+			this.execute(cmd);
+			this.registeredFormulas.addAll(toRegister);
+		}
+		
+		return toRegister;
+	}
+
+	/**
+	 * Unregister one or multiple formulas for efficient evaluation.
+	 * Any non-registered formulas in the list are silently ignored.
+	 * 
+	 * @param formulas formulas to unregister
+	 */
+	public void unregisterFormulas(final Collection<? extends IEvalElement> formulas) {
+		final List<IEvalElement> toUnregister = new ArrayList<>();
+		for (final IEvalElement formula : formulas) {
+			if (this.registeredFormulas.contains(formula)) {
+				toUnregister.add(formula);
+			}
+		}
+		
+		if (!toUnregister.isEmpty()) {
+			this.execute(new UnregisterFormulasCommand(toUnregister));
+			this.registeredFormulas.removeAll(toUnregister);
+		}
+	}
+
+	/**
+	 * This method lets ProB know that the subscriber is interested in the
+	 * specified formulas. ProB will then evaluate the formulas for every state
+	 * (after which the values can be retrieved from the
+	 * {@link State#getValues()} method).
+	 *
+	 * @param subscriber
+	 *            who is interested in the given formulas
+	 * @param formulas
+	 *            that are of interest
+	 * @param options options to use when automatically evaluating the formulas - must be the same for all subscriptions of the same formula
+	 * @return whether or not the subscription was successful (will return true
+	 *         if at least one of the formulas was successfully subscribed)
+	 */
+	public boolean subscribe(final Object subscriber, final Collection<? extends IEvalElement> formulas, final EvalOptions options) {
+		boolean success = false;
+		List<IEvalElement> toSubscribe = new ArrayList<>();
+		for (IEvalElement formulaOfInterest : formulas) {
+			if (formulaOfInterest instanceof CSP) {
+				logger.info(
+						"CSP formula {} not subscribed because CSP evaluation is not state based. Use eval method instead",
+						formulaOfInterest.getCode());
+			} else {
+				if (formulaSubscribers.containsKey(formulaOfInterest)) {
+					// Formula already exists in the map of subscribers - check that the options are compatible.
+					assert subscribedFormulaOptions.containsKey(formulaOfInterest);
+					final EvalOptions existingOptions = subscribedFormulaOptions.get(formulaOfInterest);
+
+					if (!existingOptions.equals(options)) {
+						// Formula already exists in the map and has incompatible options...
+						if (formulaSubscribers.get(formulaOfInterest).isEmpty()) {
+							// ...but has no subscribers anymore,
+							// so it's safe to remove and replace with the new options.
+							subscribedFormulaOptions.put(formulaOfInterest, options);
+						} else {
+							throw new IllegalArgumentException("Formula " + formulaOfInterest + " has already been subscribed in this state space with different evaluation options. Use the same evaluation options for all subscribers or remove the existing subscriber(s) first.");
+						}
+					}
+
+					formulaSubscribers.get(formulaOfInterest).add(subscriber);
+					success = true;
+				} else {
+					Set<Object> subscribers = Collections.newSetFromMap(new WeakHashMap<>());
+					subscribers.add(subscriber);
+					formulaSubscribers.put(formulaOfInterest, subscribers);
+					subscribedFormulaOptions.put(formulaOfInterest, options);
+					toSubscribe.add(formulaOfInterest);
+					success = true;
+				}
+			}
+		}
+		this.registerFormulas(toSubscribe);
+		return success;
 	}
 
 	/**
@@ -402,30 +536,7 @@ public class StateSpace implements IAnimator {
 	 *         if at least one of the formulas was successfully subscribed)
 	 */
 	public boolean subscribe(final Object subscriber, final Collection<? extends IEvalElement> formulas) {
-		boolean success = false;
-		List<IEvalElement> toSubscribe = new ArrayList<>();
-		for (IEvalElement formulaOfInterest : formulas) {
-			if (formulaOfInterest instanceof CSP) {
-				logger.info(
-						"CSP formula {} not subscribed because CSP evaluation is not state based. Use eval method instead",
-						formulaOfInterest.getCode());
-			} else {
-				if (formulaRegistry.containsKey(formulaOfInterest)) {
-					formulaRegistry.get(formulaOfInterest).add(subscriber);
-					success = true;
-				} else {
-					Set<Object> subscribers = Collections.newSetFromMap(new WeakHashMap<>());
-					subscribers.add(subscriber);
-					formulaRegistry.put(formulaOfInterest, subscribers);
-					toSubscribe.add(formulaOfInterest);
-					success = true;
-				}
-			}
-		}
-		if (!toSubscribe.isEmpty()) {
-			execute(new RegisterFormulasCommand(toSubscribe));
-		}
-		return success;
+		return this.subscribe(subscriber, formulas, EvalOptions.DEFAULT.withExpandFromFormulas(formulas));
 	}
 
 	/**
@@ -453,7 +564,7 @@ public class StateSpace implements IAnimator {
 	 * @return whether or not a subscriber is interested in this formula
 	 */
 	public boolean isSubscribed(final IEvalElement formula) {
-		return formulaRegistry.containsKey(formula) && !formulaRegistry.get(formula).isEmpty();
+		return formulaSubscribers.containsKey(formula) && !formulaSubscribers.get(formula).isEmpty();
 	}
 
 	/**
@@ -474,20 +585,18 @@ public class StateSpace implements IAnimator {
 
 	public boolean unsubscribe(final Object subscriber, final Collection<? extends IEvalElement> formulas, boolean unregister) {
 		boolean success = false;
-		final List<AbstractCommand> unsubscribeCmds = new ArrayList<>();
+		final List<IEvalElement> unsubscribeFormulas = new ArrayList<>();
 		for (IEvalElement formula : formulas) {
-			if (formulaRegistry.containsKey(formula)) {
-				final Set<Object> subscribers = formulaRegistry.get(formula);
+			if (formulaSubscribers.containsKey(formula)) {
+				final Set<Object> subscribers = formulaSubscribers.get(formula);
 				subscribers.remove(subscriber);
 				if (subscribers.isEmpty() && unregister) {
-					unsubscribeCmds.add(new UnregisterFormulaCommand(formula));
+					unsubscribeFormulas.add(formula);
 				}
 				success = true;
 			}
 		}
-		if (!unsubscribeCmds.isEmpty()) {
-			execute(new ComposedCommand(unsubscribeCmds));
-		}
+		this.unregisterFormulas(unsubscribeFormulas);
 		return success;
 	}
 
@@ -512,10 +621,25 @@ public class StateSpace implements IAnimator {
 	 */
 	public Set<IEvalElement> getSubscribedFormulas() {
 		Set<IEvalElement> result = new HashSet<>();
-		for (Map.Entry<IEvalElement, Set<Object>> entry : formulaRegistry.entrySet()) {
+		for (Map.Entry<IEvalElement, Set<Object>> entry : formulaSubscribers.entrySet()) {
 			if (!entry.getValue().isEmpty()) {
 				result.add(entry.getKey());
 			}
+		}
+		return result;
+	}
+
+	/**
+	 * Get all formulas that currently have subscribers,
+	 * grouped by the {@link EvalOptions} that were used when subscribing.
+	 * 
+	 * @return map of {@link EvalOptions} to all formulas that were subscribed with those options
+	 */
+	Map<EvalOptions, Set<IEvalElement>> getSubscribedFormulasByOptions() {
+		final Map<EvalOptions, Set<IEvalElement>> result = new HashMap<>();
+		for (final IEvalElement formula : this.getSubscribedFormulas()) {
+			final EvalOptions options = subscribedFormulaOptions.get(formula);
+			result.computeIfAbsent(options, k -> new HashSet<>()).add(formula);
 		}
 		return result;
 	}
@@ -730,9 +854,15 @@ public class StateSpace implements IAnimator {
 	}
 
 	/**
+	 * <p>
 	 * This allows developers to programmatically describe a Trace that should
 	 * be created. {@link ITraceDescription#getTrace(StateSpace)} will then be
 	 * called in order to generate the correct Trace.
+	 * </p>
+	 * <p>
+	 * This overload is meant for use from Groovy.
+	 * Java code should call {@link ITraceDescription#getTrace(StateSpace)} directly instead.
+	 * </p>
 	 *
 	 * @param description
 	 *            of the trace to be created
@@ -836,6 +966,26 @@ public class StateSpace implements IAnimator {
 	 * Takes a collection of transitions and retrieves any information that
 	 * needs to be retrieved (i.e. parameters, return values, etc.) if the
 	 * transitions have not yet been evaluated
+	 * ({@link Transition#isEvaluated(EvalOptions)}).
+	 *
+	 * @param transitions the transitions to be evaluated
+	 * @param options options for evaluation
+	 * @return map of all transitions and the corresponding evaluated infos
+	 */
+	public Map<Transition, EvaluatedTransitionInfo> evaluateTransitions(final Collection<Transition> transitions, final EvalOptions options) {
+		GetOpsFromIds cmd = new GetOpsFromIds(transitions, options);
+		execute(cmd);
+		final Map<Transition, EvaluatedTransitionInfo> result = new LinkedHashMap<>(transitions.size());
+		for (final Transition transition : transitions) {
+			result.put(transition, transition.evaluate(options));
+		}
+		return result;
+	}
+
+	/**
+	 * Takes a collection of transitions and retrieves any information that
+	 * needs to be retrieved (i.e. parameters, return values, etc.) if the
+	 * transitions have not yet been evaluated
 	 * ({@link Transition#isEvaluated()}).
 	 *
 	 * @param transitions
@@ -844,56 +994,50 @@ public class StateSpace implements IAnimator {
 	 *            how formulas should be expanded
 	 * @return a set containing all of the evaluated transitions
 	 */
-	public synchronized Set<Transition> evaluateTransitions(final Collection<Transition> transitions,
+	public Set<Transition> evaluateTransitions(final Collection<Transition> transitions,
 			final FormulaExpand expansion) {
-		GetOpsFromIds cmd = new GetOpsFromIds(transitions, expansion);
-		execute(cmd);
-		return new CopyOnWriteArraySet<>(transitions);
+		this.evaluateTransitions(transitions, Transition.OLD_DEFAULT_EVAL_OPTIONS.withExpand(expansion));
+		return new LinkedHashSet<>(transitions);
 	}
 
 	/**
-	 * Evaluates all of the formulas for every specified state (if they can be
-	 * evaluated). Internally calls {@link #canBeEvaluated(State)}. If the
-	 * formulas are of interest to a class (i.e. the an object has subscribed to
-	 * the formula) the formula is cached.
+	 * Evaluates all of the formulas for every specified state.
+	 * If a formula has already been evaluated in a state,
+	 * e. g. because an object has subscribed to the formula,
+	 * the cached value is reused and the formula is not re-evaluated.
 	 *
 	 * @param states
 	 *            for which the formula is to be evaluated
 	 * @param formulas
 	 *            which are to be evaluated
+	 * @param options options for evaluation
 	 * @return a map of the formulas and their results for all of the specified
 	 *         states
 	 */
 	public Map<State, Map<IEvalElement, AbstractEvalResult>> evaluateForGivenStates(final Collection<State> states,
-			final List<IEvalElement> formulas) {
+			final List<IEvalElement> formulas, final EvalOptions options) {
 		Map<State, Map<IEvalElement, AbstractEvalResult>> result = new HashMap<>();
-		Map<State, EvaluateFormulasCommand> evalCommandsByState = new HashMap<>();
 
 		for (State state : states) {
-			Map<IEvalElement, AbstractEvalResult> res = new HashMap<>();
-			result.put(state, res);
-
-			// Check for cached values
-			Map<IEvalElement, AbstractEvalResult> map = state.getValues();
-			final List<IEvalElement> toEvaluateInState = new ArrayList<>();
-			for (IEvalElement f : formulas) {
-				if (map.containsKey(f)) {
-					res.put(f, map.get(f));
-				} else {
-					toEvaluateInState.add(f);
-				}
-			}
-			if (!toEvaluateInState.isEmpty()) {
-				evalCommandsByState.put(state, new EvaluateFormulasCommand(toEvaluateInState, state.getId()));
-			}
+			// TODO Optimize this again by sending all evaluation commands at once
+			result.put(state, state.evalFormulas(formulas, options));
 		}
 
-		execute(new ComposedCommand(new ArrayList<>(evalCommandsByState.values())));
-
-		evalCommandsByState.forEach((state, evalCommand) ->
-			result.get(state).putAll(evalCommand.getResultMap())
-		);
 		return result;
+	}
+	
+	/**
+	 * Evaluates all of the formulas for every specified state.
+	 * If a formula has already been evaluated in a state,
+	 * e. g. because an object has subscribed to the formula,
+	 * the cached value is reused and the formula is not re-evaluated.
+	 *
+	 * @param states for which the formula is to be evaluated
+	 * @param formulas which are to be evaluated
+	 * @return a map of the formulas and their results for all of the specified states
+	 */
+	public Map<State, Map<IEvalElement, AbstractEvalResult>> evaluateForGivenStates(final Collection<State> states, final List<IEvalElement> formulas) {
+		return this.evaluateForGivenStates(states, formulas, EvalOptions.DEFAULT.withExpandFromFormulas(formulas));
 	}
 
 	/**

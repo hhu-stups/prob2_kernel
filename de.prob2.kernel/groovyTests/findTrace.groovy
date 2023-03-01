@@ -3,7 +3,6 @@ import java.nio.file.Paths
 import de.prob.animator.command.FindStateCommand
 import de.prob.animator.command.GetShortestTraceCommand
 import de.prob.animator.domainobjects.ClassicalB
-import de.prob.animator.domainobjects.FormulaExpand
 import de.prob.statespace.Trace
 
 final s = api.b_load(Paths.get(dir, "machines", "scheduler.mch").toString())
@@ -33,13 +32,13 @@ final len = ops2.size()
 final cmd3 = new FindStateCommand(s, "card(waiting) = 2" as ClassicalB, true)
 s.execute(cmd3)
 t = cmd3.getTrace(s)
-final opList3 = t.getTransitionList(true, FormulaExpand.EXPAND)
+final opList3 = t.transitionList
 assert opList3.size() == 1
 assert opList3[0].name == "find_valid_state"
 
 t = s.getTraceToState("pp : waiting" as ClassicalB)
 assert t != null
-final ops3 = t.getTransitionList(true, FormulaExpand.EXPAND)
+final ops3 = t.transitionList
 assert opList3.size() == 1
 assert opList3[0].name == "find_valid_state"
 

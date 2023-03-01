@@ -7,7 +7,6 @@ import java.util.List;
 import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.domainobjects.EvalOptions;
 import de.prob.animator.domainobjects.FormulaExpand;
-import de.prob.animator.domainobjects.FormulaTranslationMode;
 import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
@@ -20,9 +19,8 @@ public class GetOpFromId extends AbstractCommand {
 	private final Transition op;
 	private static final String PARAMETERS_VARIABLE = "Params";
 	private static final String RETURNVALUES_VARIABLE = "RetVals";
-	private List<String> params;
-	private List<String> returnValues;
 	private final EvalOptions options;
+	private EvaluatedTransitionInfo info;
 
 	public GetOpFromId(final Transition transition, final EvalOptions options) {
 		this.op = transition;
@@ -30,9 +28,7 @@ public class GetOpFromId extends AbstractCommand {
 	}
 
 	public GetOpFromId(final Transition opInfo, final FormulaExpand expansion) {
-		this(opInfo, EvalOptions.DEFAULT.withExpand(expansion)
-			// Old code returned ASCII instead of Unicode - keep it that way for compatibility
-			.withMode(FormulaTranslationMode.ASCII));
+		this(opInfo, Transition.OLD_DEFAULT_EVAL_OPTIONS.withExpand(expansion));
 	}
 
 	@Override
@@ -52,8 +48,10 @@ public class GetOpFromId extends AbstractCommand {
 	@Override
 	public void processResult(
 			final ISimplifiedROMap<String, PrologTerm> bindings) {
+		// FIXME Is it a good idea to intern *every* parameter/return value? They can be very long if truncation is disabled.
+
 		ListPrologTerm plist = BindingGenerator.getList(bindings.get(PARAMETERS_VARIABLE));
-		params = Collections.emptyList();
+		List<String> params = Collections.emptyList();
 		if (!plist.isEmpty()) {
 			params = new ArrayList<>();
 		}
@@ -62,7 +60,7 @@ public class GetOpFromId extends AbstractCommand {
 		}
 
 		ListPrologTerm rlist = BindingGenerator.getList(bindings.get(RETURNVALUES_VARIABLE));
-		returnValues = Collections.emptyList();
+		List<String> returnValues = Collections.emptyList();
 		if (!rlist.isEmpty()) {
 			returnValues = new ArrayList<>();
 		}
@@ -70,10 +68,8 @@ public class GetOpFromId extends AbstractCommand {
 			returnValues.add(r.getFunctor().intern());
 		}
 
-		if (this.options.getMode() == FormulaTranslationMode.ASCII && this.options.getLanguage() == null) {
-			// TODO Support caching results for non-default options
-			op.setInfo(this.options.getExpand(), params, returnValues);
-		}
+		this.info = new EvaluatedTransitionInfo(this.op, params, returnValues);
+		op.addEvaluatedInfo(this.options, this.info);
 	}
 
 	/**
@@ -81,18 +77,18 @@ public class GetOpFromId extends AbstractCommand {
 	 */
 	@Deprecated
 	public List<String> getParams() {
-		return this.getParameters();
+		return this.getInfo().getParameterValues();
 	}
 
 	public List<String> getParameters() {
-		return params;
+		return this.getInfo().getParameterValues();
 	}
 
 	public List<String> getReturnValues() {
-		return returnValues;
+		return this.getInfo().getReturnValues();
 	}
 
 	public EvaluatedTransitionInfo getInfo() {
-		return new EvaluatedTransitionInfo(this.op, this.getParameters(), this.getReturnValues());
+		return this.info;
 	}
 }
