@@ -6,6 +6,7 @@ import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,7 +27,9 @@ import de.prob.util.Tuple2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 public class ProofExtractor {
 	private static final Logger logger = LoggerFactory.getLogger(ProofExtractor.class);
@@ -56,23 +59,39 @@ public class ProofExtractor {
 
 			String bpoFileName = baseFileName + ".bpo";
 			File bpoFile = new File(bpoFileName);
+			// Use LinkedHashMap to preserve the order of proof descriptions from the Rodin project.
+			descriptions = new LinkedHashMap<>();
 			if (bpoFile.exists()) {
-				ProofDescriptionExtractor ext1 = new ProofDescriptionExtractor();
-				saxParser.parse(bpoFile, ext1);
-				descriptions = ext1.getProofDescriptions();
+				saxParser.parse(bpoFile, new DefaultHandler() {
+					@Override
+					public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) {
+						if ("org.eventb.core.poSequent".equals(qName)) {
+							String name = attributes.getValue("name");
+							String desc = attributes.getValue("org.eventb.core.poDesc");
+							descriptions.put(name, desc);
+						}
+					}
+				});
 			} else {
-				descriptions = new HashMap<>();
 				logger.info("Could not find file {}. Assuming that no proofs have been generated for model element.", bpoFileName);
 			}
 
 			String bpsFileName = baseFileName + ".bps";
 			File bpsFile = new File(bpsFileName);
+			discharged = new HashSet<>();
 			if (bpsFile.exists()) {
-				ProofStatusExtractor ext2 = new ProofStatusExtractor();
-				saxParser.parse(bpsFile, ext2);
-				discharged = ext2.getDischargedProofs();
+				saxParser.parse(bpsFile, new DefaultHandler() {
+					@Override
+					public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) {
+						if ("org.eventb.core.psStatus".equals(qName)) {
+							String name = attributes.getValue("name");
+							if ("1000".equals(attributes.getValue("org.eventb.core.confidence"))) {
+								discharged.add(name);
+							}
+						}
+					}
+				});
 			} else {
-				discharged = new HashSet<>();
 				logger.info("Could not find file {}. Assuming that no proofs are discharged for model element.", bpsFileName);
 			}
 		} catch (ParserConfigurationException e) {
