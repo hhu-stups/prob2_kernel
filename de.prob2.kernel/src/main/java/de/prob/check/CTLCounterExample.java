@@ -25,4 +25,7 @@ public class CTLCounterExample implements IModelCheckingResult {
 		return getMessage();
 	}
 
+
+	// TODO: Currently, the ProB Prolog Kernel does not compute a trace as counterexample
+
 }

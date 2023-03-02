@@ -67,6 +67,7 @@ public final class CtlCheckingCommand extends AbstractCommand implements
 		if (res.hasFunctor("true", 0)) {
 			this.result = new CTLOk(ctlFormula);
 		} else if(res.hasFunctor("false", 0)) {
+			// TODO: Currently, the ProB Prolog Kernel does not compute a trace as counterexample
 			this.result = new CTLCounterExample(ctlFormula);
 		} else if(res.hasFunctor("incomplete", 0)) {
 			this.result = new CTLNotYetFinished(ctlFormula);
@@ -110,6 +111,6 @@ public final class CtlCheckingCommand extends AbstractCommand implements
 
 	@Override
 	public List<Transition> getNewTransitions() {
-		return new ArrayList<>(); // TODO
+		return new ArrayList<>(); // TODO: Currently, the ProB Prolog Kernel does not compute a trace as counterexample
 	}
 }
