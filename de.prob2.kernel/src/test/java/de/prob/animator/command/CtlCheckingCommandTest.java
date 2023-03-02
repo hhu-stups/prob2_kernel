@@ -8,6 +8,7 @@ import de.prob.cli.CliTestCommon;
 import de.prob.scripting.Api;
 import de.prob.statespace.StateSpace;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,14 +33,12 @@ class CtlCheckingCommandTest {
 	}
 
 	@Test
-	void empty_formula() throws URISyntaxException, IOException, LtlParseException {
+	void empty_formula() throws URISyntaxException, IOException {
 		Path path = Paths.get(CtlCheckingCommand.class.getClassLoader()
 				.getResource("de/prob/testmachines/b/Lift.mch")
 				.toURI());
-		StateSpace stateSpace = stub.createStateSpace(path);
-		CTL ctl = new CTL("");
-		CtlCheckingCommand cmd = new CtlCheckingCommand(stateSpace, ctl, 1000);
-		stateSpace.execute(cmd);
+		stub.createStateSpace(path);
+		Assertions.assertThrows(LtlParseException.class, () -> new CTL(""));
 	}
 
 	@Test
