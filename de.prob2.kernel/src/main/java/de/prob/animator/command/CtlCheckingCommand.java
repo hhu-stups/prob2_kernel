@@ -21,6 +21,7 @@ import de.prob.check.CTLNotYetFinished;
 import de.prob.check.CTLOk;
 import de.prob.check.CheckInterrupted;
 import de.prob.check.IModelCheckingResult;
+import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.CompoundPrologTerm;
@@ -59,9 +60,8 @@ public final class CtlCheckingCommand extends AbstractCommand implements
 		if (res.hasFunctor("true", 0)) {
 			this.result = new CTLOk(ctlFormula);
 		} else if(res.hasFunctor("false", 0)) {
-			ListPrologTerm transitionTerms = (ListPrologTerm) counterExample.getArgument(1);
-			final List<Transition> transitions = transitionTerms.stream()
-					.map(term -> Transition.createTransitionFromCompoundPrologTerm(s, (CompoundPrologTerm) term))
+			final List<Transition> transitions = BindingGenerator.getList(counterExample.getArgument(1)).stream()
+					.map(term -> Transition.createTransitionFromCompoundPrologTerm(s, BindingGenerator.getCompoundTerm(term, 4)))
 					.collect(Collectors.toList());
 			this.result = new CTLCounterExample(s, ctlFormula, transitions);
 		} else if(res.hasFunctor("incomplete", 0)) {
