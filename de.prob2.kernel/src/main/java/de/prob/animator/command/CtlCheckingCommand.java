@@ -6,7 +6,6 @@
 
 package de.prob.animator.command;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,7 +14,6 @@ import de.prob.animator.IPrologResult;
 import de.prob.animator.InterruptedResult;
 import de.prob.animator.domainobjects.CTL;
 import de.prob.animator.domainobjects.ErrorItem;
-import de.prob.animator.domainobjects.LTL;
 import de.prob.check.CTLCouldNotDecide;
 import de.prob.check.CTLCounterExample;
 import de.prob.check.CTLError;
@@ -23,15 +21,9 @@ import de.prob.check.CTLNotYetFinished;
 import de.prob.check.CTLOk;
 import de.prob.check.CheckInterrupted;
 import de.prob.check.IModelCheckingResult;
-import de.prob.check.LTLCounterExample;
-import de.prob.check.LTLError;
-import de.prob.check.LTLNotYetFinished;
-import de.prob.check.LTLOk;
-import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.CompoundPrologTerm;
-import de.prob.prolog.term.IntegerPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.StateSpace;
@@ -114,6 +106,10 @@ public final class CtlCheckingCommand extends AbstractCommand implements
 
 	@Override
 	public List<Transition> getNewTransitions() {
-		return new ArrayList<>(); // TODO: Currently, the ProB Prolog Kernel does not compute a trace as counterexample
+		if (result instanceof CTLCounterExample) {
+			return ((CTLCounterExample) result).getTransitions();
+		} else {
+			return Collections.emptyList();
+		}
 	}
 }
