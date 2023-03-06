@@ -67,8 +67,11 @@ public final class CtlCheckingCommand extends AbstractCommand implements
 		if (res.hasFunctor("true", 0)) {
 			this.result = new CTLOk(ctlFormula);
 		} else if(res.hasFunctor("false", 0)) {
-			// TODO: Currently, the ProB Prolog Kernel does not compute a trace as counterexample
-			this.result = new CTLCounterExample(ctlFormula);
+			ListPrologTerm transitionTerms = (ListPrologTerm) counterExample.getArgument(1);
+			final List<Transition> transitions = transitionTerms.stream()
+					.map(term -> Transition.createTransitionFromCompoundPrologTerm(s, (CompoundPrologTerm) term))
+					.collect(Collectors.toList());
+			this.result = new CTLCounterExample(s, ctlFormula, transitions);
 		} else if(res.hasFunctor("incomplete", 0)) {
 			this.result = new CTLNotYetFinished(ctlFormula);
 		} else if(counterExample.hasFunctor("unexpected_result", 0)) {

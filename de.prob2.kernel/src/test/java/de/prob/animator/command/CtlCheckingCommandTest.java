@@ -73,4 +73,15 @@ class CtlCheckingCommandTest {
 		CtlCheckingCommand cmd = new CtlCheckingCommand(stateSpace, ctl, 1000);
 		stateSpace.execute(cmd);
 	}
+
+	@Test
+	void lift_4() throws URISyntaxException, IOException, LtlParseException {
+		Path path = Paths.get(CtlCheckingCommand.class.getClassLoader()
+				.getResource("de/prob/testmachines/b/Lift.mch")
+				.toURI());
+		StateSpace stateSpace = stub.createStateSpace(path);
+		CTL ctl = new CTL("AF EG{1 = 2}");
+		CtlCheckingCommand cmd = new CtlCheckingCommand(stateSpace, ctl, 1000);
+		stateSpace.execute(cmd);
+	}
 }
