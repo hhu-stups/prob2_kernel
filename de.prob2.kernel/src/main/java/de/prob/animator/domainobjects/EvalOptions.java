@@ -41,7 +41,7 @@ public final class EvalOptions {
 	}
 	
 	private EvalOptions() {
-		this(EvalExpandMode.FORCE, Duration.ofSeconds(30), FormulaExpand.TRUNCATE, FormulaTranslationMode.UNICODE, null);
+		this(null, null, null, null, null);
 	}
 	
 	public EvalExpandMode getEvalExpand() {
@@ -184,21 +184,29 @@ public final class EvalOptions {
 	}
 	
 	public void printProlog(final IPrologTermOutput pout) {
-		pout.openTerm("eval_expand");
-		this.getEvalExpand().printProlog(pout);
-		pout.closeTerm();
+		if (this.getEvalExpand() != null) {
+			pout.openTerm("eval_expand");
+			this.getEvalExpand().printProlog(pout);
+			pout.closeTerm();
+		}
 		
-		pout.openTerm("timeout");
-		pout.printNumber(this.getTimeout().toMillis());
-		pout.closeTerm();
+		if (this.getTimeout() != null) {
+			pout.openTerm("timeout");
+			pout.printNumber(this.getTimeout().toMillis());
+			pout.closeTerm();
+		}
 		
-		pout.openTerm("truncate");
-		pout.printAtom(this.getExpand().getPrologName());
-		pout.closeTerm();
+		if (this.getExpand() != null) {
+			pout.openTerm("truncate");
+			pout.printAtom(this.getExpand().getPrologName());
+			pout.closeTerm();
+		}
 
-		pout.openTerm("translation_mode");
-		pout.printAtom(this.getMode().getPrologName());
-		pout.closeTerm();
+		if (this.getMode() != null) {
+			pout.openTerm("translation_mode");
+			pout.printAtom(this.getMode().getPrologName());
+			pout.closeTerm();
+		}
 
 		if (this.getLanguage() != null) {
 			if (this.getLanguage().getTranslatedTo() != null) {
