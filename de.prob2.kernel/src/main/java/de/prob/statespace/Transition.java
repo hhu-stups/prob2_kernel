@@ -64,8 +64,10 @@ public class Transition {
 		PARTIAL_SETUP_CONSTANTS_NAME, SETUP_CONSTANTS_NAME, INITIALISE_MACHINE_NAME
 	)));
 	
-	// Old code returned ASCII instead of Unicode - keep it that way for compatibility.
-	public static final EvalOptions OLD_DEFAULT_EVAL_OPTIONS = EvalOptions.DEFAULT.withMode(FormulaTranslationMode.ASCII);
+	public static final EvalOptions OLD_DEFAULT_EVAL_OPTIONS = EvalOptions.DEFAULT
+		.withExpand(FormulaExpand.TRUNCATE)
+		// Old code returned ASCII instead of Unicode - keep it that way for compatibility.
+		.withMode(FormulaTranslationMode.ASCII);
 
 	private final StateSpace stateSpace;
 	private final String id;
