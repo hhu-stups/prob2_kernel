@@ -13,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import de.prob.animator.domainobjects.AbstractEvalResult;
+import de.prob.animator.domainobjects.EvalExpandMode;
 import de.prob.animator.domainobjects.EvalOptions;
 import de.prob.animator.domainobjects.EvalResult;
 import de.prob.animator.domainobjects.FormulaExpand;
@@ -29,7 +30,9 @@ import static java.util.Collections.*;
 
 @JsonPropertyOrder({"name", "params", "results", "destState", "destStateNotChanged", "preds", "postconditions", "description"})
 public class PersistentTransition {
-	private static final EvalOptions TRACE_SAVE_EVAL_OPTIONS = EvalOptions.DEFAULT.withExpand(FormulaExpand.EXPAND)
+	private static final EvalOptions TRACE_SAVE_EVAL_OPTIONS = EvalOptions.DEFAULT
+		.withEvalExpand(EvalExpandMode.EFFICIENT)
+		.withExpand(FormulaExpand.EXPAND)
 		.withMode(FormulaTranslationMode.UNICODE)
 		// TODO Support formalisms that are not B or translated to B
 		.withLanguage(Language.CLASSICAL_B);
