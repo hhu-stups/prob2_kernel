@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 public final class EvalOptions {
 	private static final Logger LOGGER = LoggerFactory.getLogger(EvalOptions.class);
 	
-	public static final EvalOptions DEFAULT = new EvalOptions();
+	public static final EvalOptions DEFAULT = new EvalOptions(null, null, null, null, null);
 	
 	private final EvalExpandMode evalExpand;
 	private final Duration timeout;
@@ -38,10 +38,6 @@ public final class EvalOptions {
 		this.expand = expand;
 		this.mode = mode;
 		this.language = language;
-	}
-	
-	private EvalOptions() {
-		this(null, null, null, null, null);
 	}
 	
 	public EvalExpandMode getEvalExpand() {
