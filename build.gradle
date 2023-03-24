@@ -126,10 +126,10 @@ ext {
 def parserVersion
 def cliDownloadURL
 if (isSnapshot) {
-	parserVersion = '2.12.3-SNAPSHOT'
+	parserVersion = '2.12.4-SNAPSHOT'
 	cliDownloadURL = "https://stups.hhu-hosting.de/downloads/prob/cli/nightly"
 } else {
-	parserVersion = '2.12.2'
+	parserVersion = '2.12.3'
 	cliDownloadURL = "https://stups.hhu-hosting.de/downloads/prob/cli/releases/${cli_version}"
 }
 
