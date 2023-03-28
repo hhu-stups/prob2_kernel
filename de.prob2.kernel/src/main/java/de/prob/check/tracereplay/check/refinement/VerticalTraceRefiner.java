@@ -10,6 +10,7 @@ import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.TraceCheckerUtils;
 import de.prob.check.tracereplay.check.traceConstruction.AdvancedTraceConstructor;
 import de.prob.check.tracereplay.check.traceConstruction.TraceConstructionError;
+import de.prob.scripting.ClassicalBFactory;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
 
@@ -54,7 +55,7 @@ public class VerticalTraceRefiner extends AbstractTraceRefinement{
 		PrettyPrinter prettyPrinter = new PrettyPrinter();
 		prettyPrinter.caseAAbstractMachineParseUnit(aAbstractMachineParseUnit);
 
-		File tempFile = File.createTempFile("machine", ".mch", adaptFrom.getParent().toFile());
+		File tempFile = File.createTempFile("machine", "." + ClassicalBFactory.CLASSICAL_B_MACHINE_EXTENSION, adaptFrom.getParent().toFile());
 
 
 		FileWriter writer = new FileWriter(tempFile);

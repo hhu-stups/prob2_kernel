@@ -7,14 +7,14 @@ import java.io.InputStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
+import com.google.common.io.MoreFiles;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -28,9 +28,15 @@ import org.codehaus.groovy.runtime.ResourceGroovyMethods;
 public class EventBFactory implements ModelFactory<EventBModel> {
 	private final Provider<EventBModel> modelCreator;
 	private final EventBPackageFactory eventBPackageFactory;
-	public static final String ATELIER_B_EXTENSION = "eventb";
+	/**
+	 * @deprecated This constant is misnamed. Use {@link EventBPackageFactory#EXTENSION} instead.
+	 */
+	@Deprecated
+	public static final String ATELIER_B_EXTENSION = EventBPackageFactory.EXTENSION;
 	public static final String RODIN_MACHINE_EXTENSION = "bum";
 	public static final String RODIN_CONTEXT_EXTENSION = "buc";
+	public static final String CHECKED_RODIN_MACHINE_EXTENSION = "bcm";
+	public static final String CHECKED_RODIN_CONTEXT_EXTENSION = "bcc";
 
 	@Inject
 	public EventBFactory(final Provider<EventBModel> modelCreator, final EventBPackageFactory eventBPackageFactory) {
@@ -40,7 +46,7 @@ public class EventBFactory implements ModelFactory<EventBModel> {
 
 	@Override
 	public ExtractedModel<EventBModel> extract(String modelPath) throws IOException {
-		if (modelPath.endsWith(".eventb")) {
+		if (EventBPackageFactory.EXTENSION.equals(MoreFiles.getFileExtension(Paths.get(modelPath)))) {
 			throw new IllegalArgumentException("This is an EventB package file, it must be loaded using EventBPackageFactory instead of EventBFactory.\nPath: " + modelPath);
 		}
 		File file = new File(modelPath);
@@ -54,16 +60,16 @@ public class EventBFactory implements ModelFactory<EventBModel> {
 	}
 
 	private String getValidFileName(String fileName) {
-		if (fileName.endsWith("."+RODIN_CONTEXT_EXTENSION)) {
-			fileName = fileName.replaceAll("\\.buc$", ".bcc");
-		}
-		if (fileName.endsWith("."+RODIN_MACHINE_EXTENSION)) {
-			fileName = fileName.replaceAll("\\.bum$", ".bcm");
-		}
-		if (!(fileName.endsWith(".bcc") || fileName.endsWith(".bcm"))) {
+		String extension = MoreFiles.getFileExtension(Paths.get(fileName));
+		if (CHECKED_RODIN_CONTEXT_EXTENSION.equals(extension) || CHECKED_RODIN_MACHINE_EXTENSION.equals(extension)) {
+			return fileName;
+		} else if (RODIN_CONTEXT_EXTENSION.equals(extension)) {
+			return fileName.substring(0, fileName.length() - RODIN_CONTEXT_EXTENSION.length()) + CHECKED_RODIN_CONTEXT_EXTENSION;
+		} else if (RODIN_MACHINE_EXTENSION.equals(extension)) {
+			return fileName.substring(0, fileName.length() - RODIN_MACHINE_EXTENSION.length()) + CHECKED_RODIN_MACHINE_EXTENSION;
+		} else {
 			throw new IllegalArgumentException(fileName + " is not a valid Event-B file");
 		}
-		return fileName;
 	}
 
 	/**
@@ -80,12 +86,12 @@ public class EventBFactory implements ModelFactory<EventBModel> {
 			FileHandler.extractZip(is, tempdir.toPath());
 		}
 
-		final Pattern pattern = Pattern.compile(".*.bcc$|.*.bcm$");
 		final List<File> modelFiles = new ArrayList<>();
 		Files.walkFileTree(tempdir.toPath(), new SimpleFileVisitor<Path>() {
 			@Override
 			public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) {
-				if (pattern.matcher(file.getFileName().toString()).matches()) {
+				String extension = MoreFiles.getFileExtension(file);
+				if (CHECKED_RODIN_CONTEXT_EXTENSION.equals(extension) || CHECKED_RODIN_MACHINE_EXTENSION.equals(extension)) {
 					modelFiles.add(file.toFile());
 				}
 				return FileVisitResult.CONTINUE;

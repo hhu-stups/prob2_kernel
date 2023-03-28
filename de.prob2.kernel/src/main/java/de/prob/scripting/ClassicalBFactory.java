@@ -79,7 +79,7 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 
 	public ExtractedModel<ClassicalBModel> create(final String name, final String model) {
 		ClassicalBModel classicalBModel = modelCreator.get();
-		BParser bparser = new BParser(name + ".mch");
+		BParser bparser = new BParser(name + "." + CLASSICAL_B_MACHINE_EXTENSION);
 
 		Start ast;
 		final RecursiveMachineLoader rml;
@@ -89,7 +89,7 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 		} catch (BCompoundException e) {
 			throw new ProBError(e);
 		}
-		classicalBModel = classicalBModel.create(ast, rml, new File(name + ".mch"), bparser);
+		classicalBModel = classicalBModel.create(ast, rml, new File(name + "." + CLASSICAL_B_MACHINE_EXTENSION), bparser);
 		return new ExtractedModel<>(classicalBModel, classicalBModel.getMainMachine());
 	}
 
@@ -99,7 +99,7 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 	
 	public ExtractedModel<ClassicalBModel> create(final String name, final Start model) {
 		ClassicalBModel classicalBModel = modelCreator.get();
-		BParser bparser = new BParser(name + ".mch");
+		BParser bparser = new BParser(name + "." + CLASSICAL_B_MACHINE_EXTENSION);
 
 		final RecursiveMachineLoader rml;
 		try {
@@ -107,7 +107,7 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 		} catch (BCompoundException e) {
 			throw new ProBError(e);
 		}
-		classicalBModel = classicalBModel.create(model, rml, new File(name + ".mch"), bparser);
+		classicalBModel = classicalBModel.create(model, rml, new File(name + "." + CLASSICAL_B_MACHINE_EXTENSION), bparser);
 		return new ExtractedModel<>(classicalBModel, classicalBModel.getMainMachine());
 	}
 

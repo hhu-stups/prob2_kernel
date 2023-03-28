@@ -32,6 +32,7 @@ import de.prob.model.eventb.Witness;
 import de.prob.model.representation.AbstractElement;
 import de.prob.model.representation.DependencyGraph.ERefType;
 import de.prob.model.representation.ModelElementList;
+import de.prob.scripting.EventBFactory;
 
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.xml.sax.Attributes;
@@ -299,7 +300,7 @@ public class MachineXmlHandler extends DefaultHandler {
 				SAXParser saxParser = parserFactory.newSAXParser();
 
 				String fileName = directoryPath + File.separatorChar
-						+ machineName + ".bcm";
+						+ machineName + "." + EventBFactory.CHECKED_RODIN_MACHINE_EXTENSION;
 				MachineXmlHandler handler = new MachineXmlHandler(model,
 						fileName, typeEnv);
 				saxParser.parse(new File(fileName), handler);

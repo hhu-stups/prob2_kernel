@@ -1,5 +1,6 @@
 package de.prob.scripting;
 
+import com.google.common.io.MoreFiles;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import de.prob.model.eventb.EventBModel;
@@ -10,6 +11,8 @@ import de.prob.model.representation.Named;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -38,6 +41,8 @@ public final class EventBPackageFactory implements ModelFactory<EventBModel> {
 			this.name = name;
 		}
 	}
+	
+	public static final String EXTENSION = "eventb";
 	
 	private final Provider<EventBPackageModel> modelCreator;
 
@@ -68,7 +73,13 @@ public final class EventBPackageFactory implements ModelFactory<EventBModel> {
 			throw new IllegalArgumentException(fileName + " contained no valid Event-B Load command");
 		}
 
-		final String componentName = file.getName().replaceAll("\\.eventb$", "");
+		final Path path = Paths.get(fileName);
+		final String componentName;
+		if (EXTENSION.equals(MoreFiles.getFileExtension(path))) {
+			componentName = MoreFiles.getNameWithoutExtension(path).toString();
+		} else {
+			componentName = path.getFileName().toString();
+		}
 		// TODO: Extract machines, contexts, axioms, ...
 		// Currently, the list of children is empty for EventBPackageModel
 		EventBModel eventBModel = modelCreator.get().setLoadCommandPrologCode(loadcmd);

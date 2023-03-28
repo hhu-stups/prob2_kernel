@@ -6,6 +6,7 @@ import de.prob.model.eventb.EventBMachine
 import de.prob.model.eventb.EventBModel
 import de.prob.model.eventb.theory.Theory
 import de.prob.model.representation.ModelElementList
+import de.prob.scripting.EventBFactory
 
 import groovy.xml.MarkupBuilder
 
@@ -69,7 +70,7 @@ public class ModelToXML {
 	}
 
 	def extractMachine(EventBMachine m, String directoryPath) {
-		String fileName = directoryPath + File.separator + m.getName() + ".bum"
+		String fileName = directoryPath + File.separator + m.getName() + "." + EventBFactory.RODIN_MACHINE_EXTENSION
 		new File(fileName).withWriter("UTF-8") { writer ->
 			MarkupBuilder xml = new MarkupBuilder(writer);
 
@@ -142,7 +143,7 @@ public class ModelToXML {
 	}
 
 	def extractContext(Context c, String directoryPath) {
-		String fileName = directoryPath + File.separator + c.getName() + ".buc"
+		String fileName = directoryPath + File.separator + c.getName() + "." + EventBFactory.RODIN_CONTEXT_EXTENSION
 		new File(fileName).withWriter("UTF-8") { writer ->
 			MarkupBuilder xml = new MarkupBuilder(writer);
 
