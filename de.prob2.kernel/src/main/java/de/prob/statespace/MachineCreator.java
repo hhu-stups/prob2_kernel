@@ -7,11 +7,15 @@ import java.util.function.Function;
 import com.google.inject.Inject;
 
 import de.prob.animator.ReusableAnimator;
+import de.prob.scripting.Api;
 import de.prob.scripting.ClassicalBFactory;
 
 /**
  * Creates a Loaded Machine
+ * 
+ * @deprecated Use {@link Api#b_load(String)} or {@link ClassicalBFactory#extract(String)} instead.
  */
+@Deprecated
 public class MachineCreator {
 	private final ClassicalBFactory classicalBFactory;
 	private final AnimationSelector animationSelector;
