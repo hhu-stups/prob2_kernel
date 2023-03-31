@@ -1,4 +1,4 @@
-image: openjdk:8-jdk-slim
+image: openjdk:17-jdk-slim
 
 stages:
   - test
@@ -38,17 +38,10 @@ variables:
   before_script:
     - export GRADLE_USER_HOME=`pwd`/.gradle
     - apt-get update &&  apt-get install -y git locales
-    - sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen 
+    - sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
     - dpkg-reconfigure --frontend=noninteractive locales
     - update-locale LANG=en_US.UTF-8
 
-
-tests:jdk-8:
-  extends: .docker-tests
-
-tests:jdk-11:
-  extends: .docker-tests
-  image: openjdk:11-jdk-slim
 
 tests:jdk-17:
   extends: .docker-tests
@@ -70,13 +63,13 @@ publish:
   stage: deploy
   before_script:
     - export GRADLE_USER_HOME=`pwd`/.gradle
-    - apt-get update && apt-get install -y git 
+    - apt-get update && apt-get install -y git
 
-    - openssl aes-256-cbc -pass "env:ENCRYPTION_PASSWORD" -d -a -md md5 -in secring.gpg.enc       -out secring.gpg 
+    - openssl aes-256-cbc -pass "env:ENCRYPTION_PASSWORD" -d -a -md md5 -in secring.gpg.enc       -out secring.gpg
     - openssl aes-256-cbc -pass "env:ENCRYPTION_PASSWORD" -d -a -md md5 -in pubring.gpg.enc       -out pubring.gpg
     - openssl aes-256-cbc -pass "env:ENCRYPTION_PASSWORD" -d -a -md md5 -in gradle.properties.enc -out gradle.properties
   script:
     - ./gradlew ${GRADLE_OPTIONS} publish
-  only: 
+  only:
     - master@stups/prob/prob2_kernel
     - develop@stups/prob/prob2_kernel
