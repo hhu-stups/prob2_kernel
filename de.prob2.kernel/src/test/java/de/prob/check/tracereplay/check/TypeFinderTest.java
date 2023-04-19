@@ -34,6 +34,7 @@ import static de.prob.statespace.OperationInfo.Type.CLASSICAL_B;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singleton;
 
+@Deprecated
 public class TypeFinderTest {
 	private static TraceManager traceManager;
 	private static ProBKernelStub proBKernelStub;

@@ -12,6 +12,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+@Deprecated
 public class PrepareOperationsTest {
 	private static ProBKernelStub proBKernelStub;
 

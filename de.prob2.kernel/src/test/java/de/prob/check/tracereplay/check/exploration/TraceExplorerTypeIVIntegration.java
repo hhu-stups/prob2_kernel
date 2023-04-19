@@ -39,6 +39,7 @@ import org.junit.jupiter.api.Test;
 
 import static java.util.Collections.*;
 
+@Deprecated
 public class TraceExplorerTypeIVIntegration {
 	private static TraceManager traceManager;
 	private static ProBKernelStub proBKernelStub;
