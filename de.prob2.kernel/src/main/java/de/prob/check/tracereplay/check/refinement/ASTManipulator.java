@@ -199,7 +199,7 @@ public class ASTManipulator extends DepthFirstAdapter{
 	{
 		if(!nodeCollector.getIncludesClauses().isEmpty()) {
 			LinkedList<PMachineReference> newList = compareAndEqualizeMachineReferences_PMachineReference(node.getMachineReferences(), nodeCollector.getIncludesClauses());
-			List<PMachineReference> newListCopy = newList.stream().map(entry -> (PMachineReference) entry.clone()).collect(Collectors.toList());
+			List<PMachineReference> newListCopy = newList.stream().map(PMachineReference::clone).collect(Collectors.toList());
 			node.setMachineReferences(newListCopy);
 
 		}
@@ -211,7 +211,7 @@ public class ASTManipulator extends DepthFirstAdapter{
 	{
 		if(!nodeCollector.getExtendsClauses().isEmpty()) {
 			LinkedList<PMachineReference> newList = compareAndEqualizeMachineReferences_PMachineReference(node.getMachineReferences(), nodeCollector.getExtendsClauses());
-			List<PMachineReference> newListCopy = newList.stream().map(entry -> (PMachineReference) entry.clone()).collect(Collectors.toList());
+			List<PMachineReference> newListCopy = newList.stream().map(PMachineReference::clone).collect(Collectors.toList());
 			node.setMachineReferences(newListCopy);
 		}
 	}
@@ -221,7 +221,7 @@ public class ASTManipulator extends DepthFirstAdapter{
 	{
 		if(!nodeCollector.getImportsClauses().isEmpty()) {
 			LinkedList<PMachineReference> newList = compareAndEqualizeMachineReferences_PMachineReference(node.getMachineReferences(), nodeCollector.getImportsClauses());
-			List<PMachineReference> newListCopy = newList.stream().map(entry -> (PMachineReference) entry.clone()).collect(Collectors.toList());
+			List<PMachineReference> newListCopy = newList.stream().map(PMachineReference::clone).collect(Collectors.toList());
 			node.setMachineReferences(newListCopy);
 		}
 	}
