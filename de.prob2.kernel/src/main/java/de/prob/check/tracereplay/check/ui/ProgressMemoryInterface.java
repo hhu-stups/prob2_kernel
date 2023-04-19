@@ -9,6 +9,7 @@ package de.prob.check.tracereplay.check.ui;
  * the step. Of course the progress needs to be decided in intervals, representing the steps and those intervals again
  * can be split to the size of the task...
  */
+@Deprecated
 public interface ProgressMemoryInterface {
 
 	/**

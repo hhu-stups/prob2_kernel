@@ -5,6 +5,7 @@ import de.prob.check.tracereplay.check.exploration.TraceExplorer;
 import java.util.List;
 import java.util.Map;
 
+@Deprecated
 public interface ToManyOptionsIdentifierMapping {
 
 

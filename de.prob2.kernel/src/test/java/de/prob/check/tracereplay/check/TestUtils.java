@@ -5,6 +5,7 @@ import de.prob.check.tracereplay.check.TraceCheckerUtils;
 import de.prob.check.tracereplay.check.ui.MappingFactoryInterface;
 import de.prob.check.tracereplay.check.ui.ToManyOptionsIdentifierMapping;
 
+@Deprecated
 public class TestUtils {
 
 	public static class StubFactoryImplementation implements MappingFactoryInterface {

@@ -285,6 +285,7 @@ public class TraceCheckerUtils {
 	 * @param b the second "vector"
 	 * @return the cartesian product
 	 */
+	@Deprecated
 	public static List<HashMap<String, Map<TraceExplorer.MappingNames, Map<String, String>>>> product(
 			List<HashMap<String, Map<TraceExplorer.MappingNames, Map<String, String>>>> a,
 			List<HashMap<String, Map<TraceExplorer.MappingNames, Map<String, String>>>> b) {
