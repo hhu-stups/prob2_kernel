@@ -52,11 +52,6 @@ public class TraceRefinerEventB extends AbstractTraceRefinement {
 	 * @return The adapted Trace
 	 * @throws TraceConstructionError no suitable adaptation was found
 	 */
-	@Deprecated
-	public List<PersistentTransition> refineTrace() throws  TraceConstructionError {
-		return refineTraceExtendedFeedback().getResultTracePersistentTransition();
-	}
-
 	@Override
 	public TraceRefinementResult refineTraceExtendedFeedback() throws TraceConstructionError {
 		EventBModel model = (EventBModel) stateSpace.getModel();

@@ -98,8 +98,8 @@ public class VerticalTraceRefinerTest {
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "refinements", "TrafficLightRef.prob2trace"));
 
 		List<String> result = new VerticalTraceRefiner(CliTestCommon.getInjector(), jsonFile.getTransitionList(), file, file2)
-				.refineTrace()
-				.stream().map(PersistentTransition::getOperationName)
+				.refineTraceExtendedFeedback().resultTrace
+				.stream().map(Transition::getName)
 				.collect(Collectors.toList());
 
 		List<String> expected = jsonFile.getTransitionList().stream().map(PersistentTransition::getOperationName).collect(Collectors.toList());

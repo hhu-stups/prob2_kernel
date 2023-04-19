@@ -42,7 +42,8 @@ public class HorizontalTraceRefiner extends AbstractTraceRefinement {
 	 * @throws BCompoundException construction of predicates for kernel went wrong
 	 * @throws TraceConstructionError no possible trace was found
 	 */
-	public List<PersistentTransition> refineTrace() throws IOException, BCompoundException, TraceConstructionError {
+	@Override
+	public TraceRefinementResult refineTraceExtendedFeedback() throws IOException, BCompoundException, TraceConstructionError {
 		BParser betaParser = new BParser(adaptTo.toString());
 		Start betaStart = betaParser.parseFile(adaptTo.toFile(), false);
 
@@ -75,12 +76,7 @@ public class HorizontalTraceRefiner extends AbstractTraceRefinement {
 
 		List<Transition> resultRaw = AdvancedTraceConstructor.constructTrace(transitionList, stateSpace);
 
-		return PersistentTransition.createFromList(resultRaw);
-	}
-
-	@Override
-	public TraceRefinementResult refineTraceExtendedFeedback() throws IOException, TraceConstructionError, BCompoundException {
-		return null;
+		return new TraceRefinementResult(true, resultRaw);
 	}
 
 	/**

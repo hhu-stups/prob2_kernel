@@ -1,22 +1,22 @@
 package de.prob.check.tracereplay.check.refinement;
 
-import de.be4.classicalb.core.parser.exceptions.BCompoundException;
-import de.prob.ProBKernelStub;
-import de.prob.check.tracereplay.PersistentTransition;
-import de.prob.check.tracereplay.check.traceConstruction.TraceConstructionError;
-import de.prob.check.tracereplay.json.TraceManager;
-import de.prob.check.tracereplay.json.storage.TraceJsonFile;
-import de.prob.cli.CliTestCommon;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import de.prob.ProBKernelStub;
+import de.prob.check.tracereplay.check.traceConstruction.TraceConstructionError;
+import de.prob.check.tracereplay.json.TraceManager;
+import de.prob.check.tracereplay.json.storage.TraceJsonFile;
+import de.prob.cli.CliTestCommon;
+import de.prob.statespace.Transition;
+
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class TraceRefinerEventBTest {
 	private static TraceManager traceManager;
@@ -44,9 +44,9 @@ public class TraceRefinerEventBTest {
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB",  "trafficLight", "test1234.prob2trace"));
 
 
-		List<PersistentTransition> result = new TraceRefinerEventB(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1).refineTrace();
+		int resultSize = new TraceRefinerEventB(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1).refineTraceExtendedFeedback().resultTrace.size();
 
-		Assertions.assertEquals(jsonFile.getTransitionList().size(), result.size());
+		Assertions.assertEquals(jsonFile.getTransitionList().size(), resultSize);
 	}
 
 
@@ -60,13 +60,13 @@ public class TraceRefinerEventBTest {
 
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB",  "trafficLight", "test1234.prob2trace"));
 
-		List<PersistentTransition> result = new TraceRefinerEventB(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1).refineTrace();
+		List<Transition> result = new TraceRefinerEventB(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1).refineTraceExtendedFeedback().resultTrace;
 
 
 		String comparison1 = "activateSystem";
 
 
-		List<String> nameList = result.stream().map(PersistentTransition::getOperationName).collect(Collectors.toList());
+		List<String> nameList = result.stream().map(Transition::getName).collect(Collectors.toList());
 		List<String> nameListWithoutSkip = nameList.stream().filter(entry -> !entry.equals(comparison1)).collect(Collectors.toList());
 
 

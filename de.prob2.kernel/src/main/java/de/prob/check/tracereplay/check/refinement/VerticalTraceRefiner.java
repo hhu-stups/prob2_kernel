@@ -40,7 +40,8 @@ public class VerticalTraceRefiner extends AbstractTraceRefinement{
 	 * @throws BCompoundException predicate translation went wrong
 	 * @throws TraceConstructionError trace could not be found
 	 */
-	public List<PersistentTransition> refineTrace() throws IOException, BCompoundException, TraceConstructionError {
+	@Override
+	public TraceRefinementResult refineTraceExtendedFeedback() throws IOException, BCompoundException, TraceConstructionError {
 		BParser alphaParser = new BParser(adaptFrom.toString());
 		Start alphaStart = alphaParser.parseFile(adaptFrom.toFile(), false);
 
@@ -67,11 +68,6 @@ public class VerticalTraceRefiner extends AbstractTraceRefinement{
 
 		List<Transition> resultRaw = AdvancedTraceConstructor.constructTrace(transitionList, stateSpace);
 
-		return PersistentTransition.createFromList(resultRaw);
-	}
-
-	@Override
-	public TraceRefinementResult refineTraceExtendedFeedback() throws IOException, TraceConstructionError, BCompoundException {
-		return null;
+		return new TraceRefinementResult(true, resultRaw);
 	}
 }
