@@ -26,7 +26,7 @@ public class ReadVisBSvgPathCommand extends AbstractCommand {
 
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
-		this.svgPath = PrologTerm.atomicString(bindings.get(SVG_PATH));
+		this.svgPath = bindings.get(SVG_PATH).atomToString();
 	}
 
 	public String getSvgPath() {

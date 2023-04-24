@@ -7,11 +7,12 @@ import de.prob.ProBKernelStub;
 import de.prob.cli.CliTestCommon;
 import de.prob.statespace.StateSpace;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+@Deprecated
 public class PrepareOperationsTest {
 	private static ProBKernelStub proBKernelStub;
 
@@ -38,11 +39,11 @@ public class PrepareOperationsTest {
 		stateSpace.execute(prepareOperations);
 
 
-		Assert.assertEquals(3, prepareOperations.getFreeVars().size());
-		Assert.assertEquals(3, prepareOperations.getFoundVars().size());
-		Assert.assertEquals("maxCars", prepareOperations.getFoundVars().get(0).getFunctor());
-		Assert.assertEquals("cars", prepareOperations.getFoundVars().get(1).getFunctor());
-		Assert.assertEquals("on", prepareOperations.getFoundVars().get(2).getFunctor());
+		Assertions.assertEquals(3, prepareOperations.getFreeVars().size());
+		Assertions.assertEquals(3, prepareOperations.getFoundVars().size());
+		Assertions.assertEquals("maxCars", prepareOperations.getFoundVars().get(0).getFunctor());
+		Assertions.assertEquals("cars", prepareOperations.getFoundVars().get(1).getFunctor());
+		Assertions.assertEquals("on", prepareOperations.getFoundVars().get(2).getFunctor());
 
 	}
 

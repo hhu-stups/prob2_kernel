@@ -12,7 +12,6 @@ import de.prob.model.eventb.EventBMachine;
 import de.prob.model.eventb.EventBModel;
 import de.prob.model.eventb.EventBVariable;
 import de.prob.model.eventb.ProofObligation;
-import de.prob.model.eventb.theory.Theory;
 import de.prob.model.representation.AbstractElement;
 import de.prob.model.representation.Machine;
 import de.prob.prolog.output.IPrologTermOutput;
@@ -39,8 +38,7 @@ public class EventBModelTranslator {
 			proofObligations.addAll(context.getProofs());
 		}
 
-		theoryTranslator = new TheoryTranslator(
-				model.getChildrenOfType(Theory.class));
+		theoryTranslator = new TheoryTranslator(model.getTheories());
 	}
 
 	public List<EventBMachine> extractMachineHierarchy(
@@ -58,15 +56,14 @@ public class EventBModelTranslator {
 	}
 
 	private List<EventBMachine> extractMachines(final EventBMachine machine, EventBModel model) {
-		if (machine.getRefines().isEmpty()) {
+		final EventBMachine refines = machine.getRefinesMachine();
+		if (refines == null) {
 			return Collections.emptyList();
 		}
+		EventBMachine refinedMachine = model.getMachine(refines.getName());
 		List<EventBMachine> machines = new ArrayList<>();
-		for (EventBMachine eventBMachine : machine.getRefines()) {
-			EventBMachine refinedMachine = model.getMachine(eventBMachine.getName());
-			machines.add(refinedMachine);
-			machines.addAll(extractMachines(refinedMachine, model));
-		}
+		machines.add(refinedMachine);
+		machines.addAll(extractMachines(refinedMachine, model));
 		return machines;
 	}
 
@@ -119,11 +116,11 @@ public class EventBModelTranslator {
 		List<Node> contextNodes = new ArrayList<>();
 		for (EventBMachineTranslator trans : machineTranslators) {
 			machineNodes.add(trans.translateMachine());
-			labelPrinter.addNodeInfos(trans.getNodeInfos());
+			labelPrinter.addPositions(trans.getPositions());
 		}
 		for (ContextTranslator t : contextTranslators) {
 			contextNodes.add(t.translateContext());
-			labelPrinter.addNodeInfos(t.getNodeInfos());
+			labelPrinter.addPositions(t.getPositions());
 		}
 
 		ASTProlog printer = new ASTProlog(pto, labelPrinter);
@@ -160,7 +157,7 @@ public class EventBModelTranslator {
 	}
 
 	private void printPragmas(final IPrologTermOutput pto) {
-		for (Machine machine : model.getChildrenOfType(Machine.class)) {
+		for (Machine machine : model.getMachines()) {
 			EventBMachine ebM = (EventBMachine) machine;
 			for (EventBVariable var : ebM.getVariables()) {
 				if (var.hasUnit()) {
@@ -176,7 +173,7 @@ public class EventBModelTranslator {
 			}
 		}
 
-		for (Context context : model.getChildrenOfType(Context.class)) {
+		for (Context context : model.getContexts()) {
 			for (EventBConstant constant : context.getConstants()) {
 				if (constant.hasUnit()) {
 					pto.openTerm("pragma");

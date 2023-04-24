@@ -1,23 +1,41 @@
 package de.prob.check.tracereplay;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 import de.prob.animator.domainobjects.AbstractEvalResult;
+import de.prob.animator.domainobjects.EvalExpandMode;
+import de.prob.animator.domainobjects.EvalOptions;
 import de.prob.animator.domainobjects.EvalResult;
 import de.prob.animator.domainobjects.FormulaExpand;
+import de.prob.animator.domainobjects.FormulaTranslationMode;
 import de.prob.animator.domainobjects.IEvalElement;
+import de.prob.statespace.EvaluatedTransitionInfo;
+import de.prob.statespace.Language;
 import de.prob.statespace.LoadedMachine;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.State;
 import de.prob.statespace.Transition;
 
-import java.util.*;
-
 import static java.util.Collections.*;
 
 @JsonPropertyOrder({"name", "params", "results", "destState", "destStateNotChanged", "preds", "postconditions", "description"})
 public class PersistentTransition {
+	private static final EvalOptions TRACE_SAVE_EVAL_OPTIONS = EvalOptions.DEFAULT
+		.withEvalExpand(EvalExpandMode.EFFICIENT)
+		.withExpand(FormulaExpand.EXPAND)
+		.withMode(FormulaTranslationMode.UNICODE)
+		// TODO Support formalisms that are not B or translated to B
+		.withLanguage(Language.CLASSICAL_B);
 
 	private final String name;
 
@@ -30,9 +48,12 @@ public class PersistentTransition {
 	private String description = "";
 
 
+	// FIXME Why is the default value of storeDestinationState false for constructor with 1 argument?
 	public PersistentTransition(Transition transition) {
 		this(transition, false, null);
 	}
+
+	// FIXME Why is the following constructor duplicated? What's the difference between the two variants?
 
 	public PersistentTransition(Transition transition, boolean storeDestinationState, PersistentTransition transitionAfter) {
 		this.name = transition.getName();
@@ -40,53 +61,56 @@ public class PersistentTransition {
 		final State destinationState = transition.getDestination();
 		if (Transition.SETUP_CONSTANTS_NAME.equals(name)) {
 			if (storeDestinationState) {
-				addValuesToDestState(destinationState.getConstantValues(FormulaExpand.EXPAND), null);
+				addValuesToDestState(destinationState.getConstantValues(TRACE_SAVE_EVAL_OPTIONS), null);
 			}
 		} else {
 			if (storeDestinationState) {
-				addValuesToDestState(destinationState.getVariableValues(FormulaExpand.EXPAND), transitionAfter
+				addValuesToDestState(destinationState.getVariableValues(TRACE_SAVE_EVAL_OPTIONS), transitionAfter
 				);
 			}
 
 			if (!Transition.INITIALISE_MACHINE_NAME.equals(name)) {
 				// for each operation
 				OperationInfo machineOperationInfo = loadedMachine.getMachineOperationInfo(name);
+				final EvaluatedTransitionInfo evaluated = transition.evaluate(TRACE_SAVE_EVAL_OPTIONS);
 
 				for (int i = 0; i < machineOperationInfo.getParameterNames().size(); i++) {
-					params.put(machineOperationInfo.getParameterNames().get(i), transition.getParameterValues().get(i));
+					params.put(machineOperationInfo.getParameterNames().get(i), evaluated.getParameterValues().get(i));
 				}
 
 				for (int i = 0; i < machineOperationInfo.getOutputParameterNames().size(); i++) {
 					results.put(machineOperationInfo.getOutputParameterNames().get(i),
-							transition.getReturnValues().get(i));
+							evaluated.getReturnValues().get(i));
 				}
 			}
 		}
 	}
 
 
+	// FIXME While for 2 arguments, the default value of storeDestinationState is true
 	public PersistentTransition(Transition transition, PersistentTransition transitionBefore) {
 		this.name = transition.getName();
 		final LoadedMachine loadedMachine = transition.getStateSpace().getLoadedMachine();
 		final State destinationState = transition.getDestination();
 		if (Transition.SETUP_CONSTANTS_NAME.equals(name) ) {
-			addValuesToDestState2(destinationState.getConstantValues(FormulaExpand.EXPAND), null);
+			addValuesToDestState2(destinationState.getConstantValues(TRACE_SAVE_EVAL_OPTIONS), null);
 		} else {
 
-			addValuesToDestState2(destinationState.getVariableValues(FormulaExpand.EXPAND), transitionBefore);
+			addValuesToDestState2(destinationState.getVariableValues(TRACE_SAVE_EVAL_OPTIONS), transitionBefore);
 
 
 			if (!Transition.INITIALISE_MACHINE_NAME.equals(name)) {
 				// for each operation
 				OperationInfo machineOperationInfo = loadedMachine.getMachineOperationInfo(name);
+				final EvaluatedTransitionInfo evaluated = transition.evaluate(TRACE_SAVE_EVAL_OPTIONS);
 
 				for (int i = 0; i < machineOperationInfo.getParameterNames().size(); i++) {
-					params.put(machineOperationInfo.getParameterNames().get(i), transition.getParameterValues().get(i));
+					params.put(machineOperationInfo.getParameterNames().get(i), evaluated.getParameterValues().get(i));
 				}
 
 				for (int i = 0; i < machineOperationInfo.getOutputParameterNames().size(); i++) {
 					results.put(machineOperationInfo.getOutputParameterNames().get(i),
-							transition.getReturnValues().get(i));
+							evaluated.getReturnValues().get(i));
 				}
 			}
 		}

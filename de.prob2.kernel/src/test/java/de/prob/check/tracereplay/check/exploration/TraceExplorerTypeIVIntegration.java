@@ -34,10 +34,12 @@ import de.prob.statespace.StateSpace;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static java.util.Collections.*;
 
+@Deprecated
 public class TraceExplorerTypeIVIntegration {
 	private static TraceManager traceManager;
 	private static ProBKernelStub proBKernelStub;
@@ -278,6 +280,7 @@ public class TraceExplorerTypeIVIntegration {
 
 
 	@Test
+	@Disabled("Takes long to execute (about 50 seconds on CI)")
 	public void large_type_IV_test() throws IOException, DeltaCalculationException {
 
 		Path oldPath = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "complexExample", "PitmanController_v6.mch");

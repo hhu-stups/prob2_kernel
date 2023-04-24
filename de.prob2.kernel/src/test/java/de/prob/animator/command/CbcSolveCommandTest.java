@@ -1,24 +1,23 @@
 package de.prob.animator.command;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.Set;
+
 import de.prob.animator.domainobjects.AbstractEvalResult;
 import de.prob.animator.domainobjects.ClassicalB;
-import de.prob.animator.domainobjects.ComputationNotCompletedResult;
 import de.prob.animator.domainobjects.EvalResult;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.cli.CliTestCommon;
 import de.prob.scripting.Api;
 import de.prob.statespace.State;
 import de.prob.statespace.StateSpace;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,10 +31,10 @@ class CbcSolveCommandTest {
 	}
 
 	@BeforeEach
-	void beforeEach() throws IOException {
-		String example_mch = CbcSolveCommand.class.getClassLoader()
+	void beforeEach() throws IOException, URISyntaxException {
+		String example_mch = Paths.get(CbcSolveCommand.class.getClassLoader()
 				.getResource("de/prob/testmachines/b/VariablesOnly.mch")
-				.getFile();
+				.toURI()).toString();
 		stateSpace = api.b_load(example_mch);
 	}
 
@@ -82,12 +81,12 @@ class CbcSolveCommandTest {
 
 
 	@Test
-	void should_solve_with_dpllt_solver() {
+	void should_solve_with_cdclt_solver() {
 		String predicate = "1=1";
 
 		ClassicalB pred = new ClassicalB(predicate, FormulaExpand.EXPAND);
 
-		CbcSolveCommand cmd = new CbcSolveCommand(pred, CbcSolveCommand.Solvers.DPLLT);
+		CbcSolveCommand cmd = new CbcSolveCommand(pred, CbcSolveCommand.Solvers.CDCLT);
 		stateSpace.execute(cmd);
 
 		AbstractEvalResult expected = EvalResult.TRUE;
@@ -97,12 +96,12 @@ class CbcSolveCommandTest {
 	}
 
 	@Test
-	void should_get_free_variables_and_solution_when_solving_with_DPLLT() {
+	void should_get_free_variables_and_solution_when_solving_with_cdclt() {
 		String predicate = "x:INTEGER & y:INTEGER & x>y";
 
 		ClassicalB pred = new ClassicalB(predicate, FormulaExpand.EXPAND);
 
-		CbcSolveCommand cmd = new CbcSolveCommand(pred, CbcSolveCommand.Solvers.DPLLT);
+		CbcSolveCommand cmd = new CbcSolveCommand(pred, CbcSolveCommand.Solvers.CDCLT);
 		stateSpace.execute(cmd);
 
 
@@ -122,14 +121,14 @@ class CbcSolveCommandTest {
 	}
 
 	@Test
-	void should_solve_in_state_when_dpllt() throws IOException {
-		State state = stateSpace.getRoot().explore();
-		state = state.getTransitions().get(0).getDestination().explore();
+	void should_solve_in_state_when_cdclt() throws IOException {
+		State state = stateSpace.getRoot().exploreIfNeeded();
+		state = state.getTransitions().get(0).getDestination().exploreIfNeeded();
 		String predicate = "x:INTEGER & y:INTEGER & y=x+1";
 
 		ClassicalB pred = new ClassicalB(predicate, FormulaExpand.EXPAND);
 
-		CbcSolveCommand cmd = new CbcSolveCommand(pred, CbcSolveCommand.Solvers.DPLLT, state);
+		CbcSolveCommand cmd = new CbcSolveCommand(pred, CbcSolveCommand.Solvers.CDCLT, state);
 		stateSpace.execute(cmd);
 
 		EvalResult value = (EvalResult) cmd.getValue();

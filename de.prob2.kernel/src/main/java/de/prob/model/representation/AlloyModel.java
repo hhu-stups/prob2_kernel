@@ -1,9 +1,9 @@
 package de.prob.model.representation;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 
-import com.github.krukow.clj_lang.PersistentHashMap;
 import com.google.inject.Inject;
 
 import de.prob.animator.command.AbstractCommand;
@@ -13,6 +13,7 @@ import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.scripting.StateSpaceProvider;
 import de.prob.statespace.FormalismType;
+import de.prob.statespace.Language;
 
 public class AlloyModel extends AbstractModel {
 	private final String term;
@@ -23,7 +24,7 @@ public class AlloyModel extends AbstractModel {
 	}
 
 	public AlloyModel(final StateSpaceProvider ssProvider, final File modelFile, final String term) {
-		super(ssProvider, PersistentHashMap.emptyMap(), new DependencyGraph(), modelFile);
+		super(ssProvider, Collections.emptyMap(), new DependencyGraph(), modelFile);
 
 		this.term = term;
 	}
@@ -45,6 +46,11 @@ public class AlloyModel extends AbstractModel {
 	@Override
 	public FormalismType getFormalismType() {
 		return FormalismType.B;
+	}
+
+	@Override
+	public Language getLanguage() {
+		return Language.ALLOY;
 	}
 
 	@Override

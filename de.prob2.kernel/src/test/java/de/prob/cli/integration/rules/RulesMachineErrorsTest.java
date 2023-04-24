@@ -7,12 +7,12 @@ import de.prob.model.brules.RuleStatus;
 import de.prob.model.brules.RulesMachineRun;
 import de.prob.model.brules.RulesMachineRun.ERROR_TYPES;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static de.prob.cli.integration.rules.RulesTestUtil.createRulesMachineFile;
 import static de.prob.cli.integration.rules.RulesTestUtil.startRulesMachineRun;
 import static de.prob.cli.integration.rules.RulesTestUtil.startRulesMachineRunWithOperations;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RulesMachineErrorsTest {
 

@@ -4,7 +4,7 @@ import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.animator.domainobjects.AbstractEvalResult;
 
 /**
- * @deprecated Use {@link EvaluateFormulaCommand} instead.
+ * @deprecated Use {@link EvaluateFormulasCommand} instead.
  */
 @Deprecated
 public abstract class EvaluationCommand extends AbstractCommand {

@@ -28,9 +28,6 @@ import org.slf4j.LoggerFactory;
  * (first to extract the format version, then again to read the actual data),
  * which is not always possible with arbitrary readers.
  * </p>
- * <p>
- * This is a Jackson-based replacement for {@link JsonManager}.
- * </p>
  */
 public final class JacksonManager<T extends HasMetadata> {
 	public static class Context<T extends HasMetadata> {

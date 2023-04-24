@@ -19,7 +19,7 @@ import de.prob.model.brules.RuleStatus;
 import de.prob.model.brules.RulesMachineRun;
 import de.prob.model.brules.RulesMachineRunner;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public final class RulesTestUtil {
 	private RulesTestUtil() {
@@ -85,18 +85,18 @@ public final class RulesTestUtil {
 		for (AbstractOperation abstractOperation : rulesProject.getOperationsMap().values()) {
 			if (abstractOperation instanceof RuleOperation) {
 				String ruleName = abstractOperation.getName();
-				assertTrue(String.format("Rule operation '%s' is not contained in the result map.", ruleName),
-						ruleResultMap.containsKey(ruleName));
+				assertTrue(ruleResultMap.containsKey(ruleName),
+						String.format("Rule operation '%s' is not contained in the result map.", ruleName));
 				RuleResult ruleResult = ruleResultMap.get(ruleName);
 				if (ruleResult.getRuleState() == RuleStatus.FAIL) {
-					assertTrue(String.format("No violation found but rule failed: '%s'", ruleName),
-							ruleResult.getNumberOfViolations() > 0);
+					assertTrue(ruleResult.getNumberOfViolations() > 0,
+							String.format("No violation found but rule failed: '%s'", ruleName));
 				}
 
 				if (ruleResult.getRuleState() == RuleStatus.NOT_CHECKED) {
 					List<String> notCheckedCauses = ruleResult.getFailedDependencies();
-					assertTrue(String.format("There is no cause why rule '%s' is not checked.", ruleName),
-							!notCheckedCauses.isEmpty());
+					assertTrue(!notCheckedCauses.isEmpty(),
+							String.format("There is no cause why rule '%s' is not checked.", ruleName));
 				}
 			}
 

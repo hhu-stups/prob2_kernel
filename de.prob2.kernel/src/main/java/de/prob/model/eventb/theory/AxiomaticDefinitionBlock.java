@@ -1,6 +1,6 @@
 package de.prob.model.eventb.theory;
 
-import com.github.krukow.clj_lang.PersistentHashMap;
+import java.util.Map;
 
 import de.prob.model.eventb.EventBAxiom;
 import de.prob.model.representation.AbstractElement;
@@ -15,7 +15,7 @@ public class AxiomaticDefinitionBlock extends AbstractElement implements Named {
 		this.name = name;
 	}
 
-	private AxiomaticDefinitionBlock(final String name, PersistentHashMap<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children) {
+	private AxiomaticDefinitionBlock(final String name, Map<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children) {
 		super(children);
 		this.name = name;
 	}

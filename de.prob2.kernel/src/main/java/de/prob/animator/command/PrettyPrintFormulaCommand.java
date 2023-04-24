@@ -70,6 +70,6 @@ public final class PrettyPrintFormulaCommand extends AbstractCommand {
 	
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
-		this.prettyPrint = PrologTerm.atomicString(bindings.get(PP_STRING));
+		this.prettyPrint = bindings.get(PP_STRING).atomToString();
 	}
 }

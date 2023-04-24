@@ -2,7 +2,6 @@ package de.prob.animator.domainobjects;
 
 import java.util.Objects;
 
-import de.prob.animator.command.GetVisBAttributeValuesCommand;
 import de.prob.parser.BindingGenerator;
 import de.prob.prolog.term.PrologTerm;
 
@@ -93,10 +92,10 @@ public class VisBItem {
 
 	public static VisBItem fromPrologTerm(final PrologTerm term) {
 		BindingGenerator.getCompoundTerm(term, "visb_item", 5);
-		final String id = PrologTerm.atomicString(term.getArgument(1));
-		final String attribute = PrologTerm.atomicString(term.getArgument(2));
-		final String expression = PrologTerm.atomicString(term.getArgument(3));
-		final String description = PrologTerm.atomicString(term.getArgument(4));
+		final String id = term.getArgument(1).atomicToString();
+		final String attribute = term.getArgument(2).atomToString();
+		final String expression = term.getArgument(3).atomToString();
+		final String description = term.getArgument(4).atomToString();
 		// TODO: Implement VisB Source
 		final String source = term.getArgument(5).toString();
 		return new VisBItem(id, attribute, expression, description, source);

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<org.eventb.core.machineFile org.eventb.core.configuration="org.eventb.core.fwd;uk.ac.ncl.eventb.ref.seq.filter" org.eventb.core.generated="false" org.eventb.texttools.text_lastmodified="1655300490434" org.eventb.texttools.text_representation="machine train_1 refines train_0  sees train_ctx0&#10;&#10;variables resrt // set of reserved routes&#10;          resbl // set of reserved blocks&#10;          rsrtbl // reserved route of reserved block&#10;          OCC // occupied block&#10;          TRK // physical track&#10;          frm // set of formed routes&#10;          LBT // last block of the train&#10;&#10;invariants&#10;  @inv1 TRK ∈ BLOCKS ⤔ BLOCKS // TRK is a partial injection between blocks&#10;  @inv2 frm ⊆ resrt // formed routes are reserved routes FUN-7&#10;  @inv3 rsrtbl[OCC] ⊆ frm // reserved routes of occupied block are formed routes&#10;  @inv4 ∀r· r∈resrt∖frm ⇒  rtbl▷{r} = rsrtbl▷{r} // for routes which are reserved but not yet formed: we resrve the full route&#10;  @inv5 ∀x,y· x↦y∈TRK ⇒ (∃r·r∈ROUTES ∧ x↦y∈nxt(r))&#10;  @inv6 ∀r· r∈frm ⇒ rsrtbl∼[{r}]◁nxt(r)  = rsrtbl∼[{r}]◁TRK // for each formed route the route corresponds to the physical track&#10;  @inv7 LBT ⊆ OCC // the last blocks of the trains are all occupied&#10;  @inv8 ∀a,b· b∈LBT ∧ b∈ran(nxt(rsrtbl(b)))&#10;        ∧ a=(nxt(rsrtbl(b)))∼(b)&#10;        ∧ a∈dom(rsrtbl) ⇒ rsrtbl(a)≠rsrtbl(b) // all predecessors of last blocks are not reserved or reserved for another route&#10;  theorem @thm1 ∀b·b∈OCC ∧ b∈dom(TRK) ⇒ (nxt(rsrtbl(b)))(b)=TRK(b)&#10;  theorem @thm2 ran(lst)∩(dom(TRK)∖ran(fst))=∅&#10;  theorem @thm3 ran(fst)∩(ran(TRK)∖ran(lst))=∅&#10;&#10;events&#10;  event INITIALISATION&#10;    then&#10;      @act1 resrt ≔ ∅&#10;      @act2 resbl ≔ ∅&#10;      @act3 rsrtbl ≔ ∅&#10;      @act4 OCC ≔ ∅&#10;      @act5 TRK ≔ ∅&#10;      @act6 frm ≔ ∅&#10;      @act7 LBT ≔ ∅&#10;  end&#10;&#10;  event route_reservation extends route_reservation&#10;  end&#10;&#10;  event route_freeing extends route_freeing&#10;    then&#10;      @act2 frm ≔ frm∖{r}&#10;  end&#10;&#10;  event FRONT_MOVE_1 // the train enters its route&#10;  refines FRONT_MOVE_1&#10;    any r&#10;    where&#10;      @grd1 r ∈ frm&#10;      @grd2 fst(r) ∈ resbl∖OCC&#10;      @grd3 rsrtbl(fst(r)) = r&#10;    then&#10;      @act1 OCC ≔ OCC ∪ {fst(r)}&#10;      @act2 LBT ≔ LBT ∪ {fst(r)}&#10;  end&#10;&#10;  event FRONT_MOVE_2 // the front of the train moves&#10;  refines FRONT_MOVE_2&#10;    any b&#10;    where&#10;      @grd1 b∈OCC&#10;      @grd2 b∈dom(TRK)&#10;      @grd3 TRK(b) ∉ OCC&#10;    with&#10;      @c c=TRK(b)&#10;    then&#10;      @act1 OCC ≔ OCC∪{TRK(b)}&#10;  end&#10;&#10;  event BACK_MOVE_1 // the train leaves its route&#10;  refines BACK_MOVE&#10;    any b&#10;    where&#10;      @grd1 b∈LBT&#10;      @grd2 b ∉ dom(TRK)&#10;    with&#10;      @n n=nxt(rsrtbl(b))&#10;    then&#10;      @act1 OCC ≔ OCC∖{b}&#10;      @act2 rsrtbl ≔ {b}⩤rsrtbl&#10;      @act3 resbl ≔ resbl∖{b}&#10;      @act4 LBT ≔ LBT∖{b}&#10;  end&#10;&#10;  event BACK_MOVE_2 // the back of the train moves&#10;  refines BACK_MOVE&#10;    any b&#10;    where&#10;      @grd1 b∈LBT&#10;      @grd2 b∈dom(TRK)&#10;      @grd3 TRK(b)∈OCC&#10;    with&#10;      @n n=nxt(rsrtbl(b))&#10;    then&#10;      @act1 OCC ≔ OCC∖{b}&#10;      @act2 rsrtbl ≔ {b}⩤rsrtbl&#10;      @act3 resbl ≔ resbl∖{b}&#10;      @act4 LBT ≔ (LBT∖{b})∪{TRK(b)}&#10;  end&#10;&#10;  event point_positionning&#10;    any r&#10;    where&#10;      @grd1 r∈resrt∖frm&#10;    then&#10;      @act1 TRK ≔ ((dom(nxt(r))⩤TRK)⩥ran(nxt(r))) ∪ nxt(r)&#10;  end&#10;&#10;  event route_formation&#10;    any r&#10;    where&#10;      @grd1 r∈resrt∖frm&#10;      @grd2 rsrtbl∼[{r}]◁nxt(r) = rsrtbl∼[{r}]◁TRK&#10;    then&#10;      @act1 frm≔frm∪{r}&#10;  end&#10;end&#10;" version="5">
+    <org.eventb.core.refinesMachine name="internal_refines1" org.eventb.core.target="train_0"/>
+    <org.eventb.core.seesContext name="internal_sees1" org.eventb.core.target="train_ctx0"/>
+    <org.eventb.core.event name="internal_evt1" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.generated="false" org.eventb.core.label="INITIALISATION">
+        <org.eventb.core.action name="internal_act1" org.eventb.core.assignment="resrt ≔ ∅" org.eventb.core.generated="false" org.eventb.core.label="act1"/>
+        <org.eventb.core.action name="internal_act2" org.eventb.core.assignment="resbl ≔ ∅" org.eventb.core.generated="false" org.eventb.core.label="act2"/>
+        <org.eventb.core.action name="internal_act3" org.eventb.core.assignment="rsrtbl ≔ ∅" org.eventb.core.generated="false" org.eventb.core.label="act3"/>
+        <org.eventb.core.action name="internal_act4" org.eventb.core.assignment="OCC ≔ ∅" org.eventb.core.generated="false" org.eventb.core.label="act4"/>
+        <org.eventb.core.action name="internal_element1" org.eventb.core.assignment="TRK ≔ ∅" org.eventb.core.generated="false" org.eventb.core.label="act5"/>
+        <org.eventb.core.action name="internal_element2" org.eventb.core.assignment="frm ≔ ∅" org.eventb.core.generated="false" org.eventb.core.label="act6"/>
+        <org.eventb.core.action name="internal_element3" org.eventb.core.assignment="LBT ≔ ∅" org.eventb.core.generated="false" org.eventb.core.label="act7"/>
+    </org.eventb.core.event>
+    <org.eventb.core.event name="internal_element1" org.eventb.core.convergence="0" org.eventb.core.extended="true" org.eventb.core.generated="false" org.eventb.core.label="route_reservation">
+        <org.eventb.core.refinesEvent name="internal_refines1" org.eventb.core.target="route_reservation"/>
+    </org.eventb.core.event>
+    <org.eventb.core.event name="internal_element2" org.eventb.core.convergence="0" org.eventb.core.extended="true" org.eventb.core.generated="false" org.eventb.core.label="route_freeing">
+        <org.eventb.core.refinesEvent name="internal_refines1" org.eventb.core.target="route_freeing"/>
+        <org.eventb.core.action name="internal_element2" org.eventb.core.assignment="frm ≔ frm∖{r}" org.eventb.core.generated="false" org.eventb.core.label="act2"/>
+    </org.eventb.core.event>
+    <org.eventb.core.event name="internal_element3" org.eventb.core.comment="the train enters its route" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.generated="false" org.eventb.core.label="FRONT_MOVE_1">
+        <org.eventb.core.refinesEvent name="_Gq6UgYdMEeOSfLkA9HaR6w" org.eventb.core.target="FRONT_MOVE_1"/>
+        <org.eventb.core.parameter name="_QdStMIdPEeOSfLkA9HaR6w" org.eventb.core.generated="false" org.eventb.core.identifier="r"/>
+        <org.eventb.core.guard name="_QdStMYdPEeOSfLkA9HaR6w" org.eventb.core.generated="false" org.eventb.core.label="grd1" org.eventb.core.predicate="r ∈ frm"/>
+        <org.eventb.core.guard name="_QdStModPEeOSfLkA9HaR6w" org.eventb.core.generated="false" org.eventb.core.label="grd2" org.eventb.core.predicate="fst(r) ∈ resbl∖OCC"/>
+        <org.eventb.core.guard name="_QdTUQIdPEeOSfLkA9HaR6w" org.eventb.core.generated="false" org.eventb.core.label="grd3" org.eventb.core.predicate="rsrtbl(fst(r)) = r"/>
+        <org.eventb.core.action name="_QdTUQYdPEeOSfLkA9HaR6w" org.eventb.core.assignment="OCC ≔ OCC ∪ {fst(r)}" org.eventb.core.generated="false" org.eventb.core.label="act1"/>
+        <org.eventb.core.action name="internal_element2" org.eventb.core.assignment="LBT ≔ LBT ∪ {fst(r)}" org.eventb.core.generated="false" org.eventb.core.label="act2"/>
+    </org.eventb.core.event>
+    <org.eventb.core.event name="internal_element4" org.eventb.core.comment="the front of the train moves" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.generated="false" org.eventb.core.label="FRONT_MOVE_2">
+        <org.eventb.core.refinesEvent name="_Gq7ioIdMEeOSfLkA9HaR6w" org.eventb.core.target="FRONT_MOVE_2"/>
+        <org.eventb.core.parameter name="internal_element1" org.eventb.core.generated="false" org.eventb.core.identifier="b"/>
+        <org.eventb.core.guard name="internal_element1" org.eventb.core.generated="false" org.eventb.core.label="grd1" org.eventb.core.predicate="b∈OCC"/>
+        <org.eventb.core.guard name="internal_element2" org.eventb.core.generated="false" org.eventb.core.label="grd2" org.eventb.core.predicate="b∈dom(TRK)"/>
+        <org.eventb.core.guard name="internal_element3" org.eventb.core.generated="false" org.eventb.core.label="grd3" org.eventb.core.predicate="TRK(b) ∉ OCC"/>
+        <org.eventb.core.witness name="internal_wit1" org.eventb.core.generated="false" org.eventb.core.label="c" org.eventb.core.predicate="c=TRK(b)"/>
+        <org.eventb.core.action name="internal_element1" org.eventb.core.assignment="OCC ≔ OCC∪{TRK(b)}" org.eventb.core.generated="false" org.eventb.core.label="act1"/>
+    </org.eventb.core.event>
+    <org.eventb.core.event name="internal_element5" org.eventb.core.comment="the train leaves its route" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.generated="false" org.eventb.core.label="BACK_MOVE_1">
+        <org.eventb.core.refinesEvent name="internal_refines1" org.eventb.core.target="BACK_MOVE"/>
+        <org.eventb.core.parameter name="internal_element1" org.eventb.core.generated="false" org.eventb.core.identifier="b"/>
+        <org.eventb.core.guard name="internal_element1" org.eventb.core.generated="false" org.eventb.core.label="grd1" org.eventb.core.predicate="b∈LBT"/>
+        <org.eventb.core.guard name="internal_element2" org.eventb.core.generated="false" org.eventb.core.label="grd2" org.eventb.core.predicate="b ∉ dom(TRK)"/>
+        <org.eventb.core.witness name="internal_wit1" org.eventb.core.generated="false" org.eventb.core.label="n" org.eventb.core.predicate="n=nxt(rsrtbl(b))"/>
+        <org.eventb.core.action name="internal_element1" org.eventb.core.assignment="OCC ≔ OCC∖{b}" org.eventb.core.generated="false" org.eventb.core.label="act1"/>
+        <org.eventb.core.action name="internal_element2" org.eventb.core.assignment="rsrtbl ≔ {b}⩤rsrtbl" org.eventb.core.generated="false" org.eventb.core.label="act2"/>
+        <org.eventb.core.action name="internal_element3" org.eventb.core.assignment="resbl ≔ resbl∖{b}" org.eventb.core.generated="false" org.eventb.core.label="act3"/>
+        <org.eventb.core.action name="internal_element4" org.eventb.core.assignment="LBT ≔ LBT∖{b}" org.eventb.core.generated="false" org.eventb.core.label="act4"/>
+    </org.eventb.core.event>
+    <org.eventb.core.event name="internal_element6" org.eventb.core.comment="the back of the train moves" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.generated="false" org.eventb.core.label="BACK_MOVE_2">
+        <org.eventb.core.refinesEvent name="internal_element1" org.eventb.core.target="BACK_MOVE"/>
+        <org.eventb.core.parameter name="internal_element1" org.eventb.core.generated="false" org.eventb.core.identifier="b"/>
+        <org.eventb.core.guard name="internal_element1" org.eventb.core.generated="false" org.eventb.core.label="grd1" org.eventb.core.predicate="b∈LBT"/>
+        <org.eventb.core.guard name="internal_element2" org.eventb.core.generated="false" org.eventb.core.label="grd2" org.eventb.core.predicate="b∈dom(TRK)"/>
+        <org.eventb.core.guard name="internal_element3" org.eventb.core.generated="false" org.eventb.core.label="grd3" org.eventb.core.predicate="TRK(b)∈OCC"/>
+        <org.eventb.core.witness name="internal_wit1" org.eventb.core.generated="false" org.eventb.core.label="n" org.eventb.core.predicate="n=nxt(rsrtbl(b))"/>
+        <org.eventb.core.action name="internal_element1" org.eventb.core.assignment="OCC ≔ OCC∖{b}" org.eventb.core.generated="false" org.eventb.core.label="act1"/>
+        <org.eventb.core.action name="internal_element2" org.eventb.core.assignment="rsrtbl ≔ {b}⩤rsrtbl" org.eventb.core.generated="false" org.eventb.core.label="act2"/>
+        <org.eventb.core.action name="internal_element3" org.eventb.core.assignment="resbl ≔ resbl∖{b}" org.eventb.core.generated="false" org.eventb.core.label="act3"/>
+        <org.eventb.core.action name="internal_element4" org.eventb.core.assignment="LBT ≔ (LBT∖{b})∪{TRK(b)}" org.eventb.core.generated="false" org.eventb.core.label="act4"/>
+    </org.eventb.core.event>
+    <org.eventb.core.event name="internal_element7" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.generated="false" org.eventb.core.label="point_positionning">
+        <org.eventb.core.parameter name="internal_element1" org.eventb.core.generated="false" org.eventb.core.identifier="r"/>
+        <org.eventb.core.guard name="internal_element1" org.eventb.core.generated="false" org.eventb.core.label="grd1" org.eventb.core.predicate="r∈resrt∖frm"/>
+        <org.eventb.core.action name="internal_element1" org.eventb.core.assignment="TRK ≔ ((dom(nxt(r))⩤TRK)⩥ran(nxt(r))) ∪ nxt(r)" org.eventb.core.generated="false" org.eventb.core.label="act1"/>
+    </org.eventb.core.event>
+    <org.eventb.core.invariant name="internal_element1I" org.eventb.core.comment="TRK is a partial injection between blocks" org.eventb.core.generated="false" org.eventb.core.label="inv1" org.eventb.core.predicate="TRK ∈ BLOCKS ⤔ BLOCKS"/>
+    <org.eventb.core.invariant name="internal_element2I" org.eventb.core.comment="formed routes are reserved routes FUN-7" org.eventb.core.generated="false" org.eventb.core.label="inv2" org.eventb.core.predicate="frm ⊆ resrt"/>
+    <org.eventb.core.invariant name="internal_element3I" org.eventb.core.comment="reserved routes of occupied block are formed routes" org.eventb.core.generated="false" org.eventb.core.label="inv3" org.eventb.core.predicate="rsrtbl[OCC] ⊆ frm"/>
+    <org.eventb.core.invariant name="internal_element4I" org.eventb.core.comment="for routes which are reserved but not yet formed: we resrve the full route" org.eventb.core.generated="false" org.eventb.core.label="inv4" org.eventb.core.predicate="∀r· r∈resrt∖frm ⇒  rtbl▷{r} = rsrtbl▷{r}"/>
+    <org.eventb.core.invariant name="internal_element5I" org.eventb.core.generated="false" org.eventb.core.label="inv5" org.eventb.core.predicate="∀x,y· x↦y∈TRK ⇒ (∃r·r∈ROUTES ∧ x↦y∈nxt(r))"/>
+    <org.eventb.core.invariant name="internal_element6I" org.eventb.core.comment="for each formed route the route corresponds to the physical track" org.eventb.core.generated="false" org.eventb.core.label="inv6" org.eventb.core.predicate="∀r· r∈frm ⇒ rsrtbl∼[{r}]◁nxt(r)  = rsrtbl∼[{r}]◁TRK"/>
+    <org.eventb.core.invariant name="internal_element7I" org.eventb.core.comment="the last blocks of the trains are all occupied" org.eventb.core.generated="false" org.eventb.core.label="inv7" org.eventb.core.predicate="LBT ⊆ OCC"/>
+    <org.eventb.core.invariant name="internal_element8I" org.eventb.core.comment="all predecessors of last blocks are not reserved or reserved for another route" org.eventb.core.generated="false" org.eventb.core.label="inv8" org.eventb.core.predicate="∀a,b· b∈LBT ∧ b∈ran(nxt(rsrtbl(b)))&#10;        ∧ a=(nxt(rsrtbl(b)))∼(b)&#10;        ∧ a∈dom(rsrtbl) ⇒ rsrtbl(a)≠rsrtbl(b)"/>
+    <org.eventb.core.invariant name="internal_element1T" org.eventb.core.generated="false" org.eventb.core.label="thm1" org.eventb.core.predicate="∀b·b∈OCC ∧ b∈dom(TRK) ⇒ (nxt(rsrtbl(b)))(b)=TRK(b)" org.eventb.core.theorem="true"/>
+    <org.eventb.core.variable name="internal_var1" org.eventb.core.comment="set of reserved routes" org.eventb.core.generated="false" org.eventb.core.identifier="resrt"/>
+    <org.eventb.core.variable name="internal_var2" org.eventb.core.comment="set of reserved blocks" org.eventb.core.generated="false" org.eventb.core.identifier="resbl"/>
+    <org.eventb.core.variable name="internal_var3" org.eventb.core.comment="reserved route of reserved block" org.eventb.core.generated="false" org.eventb.core.identifier="rsrtbl"/>
+    <org.eventb.core.variable name="internal_var4" org.eventb.core.comment="occupied block" org.eventb.core.generated="false" org.eventb.core.identifier="OCC"/>
+    <org.eventb.core.variable name="internal_element1" org.eventb.core.comment="physical track" org.eventb.core.generated="false" org.eventb.core.identifier="TRK"/>
+    <org.eventb.core.variable name="internal_element2" org.eventb.core.comment="set of formed routes" org.eventb.core.generated="false" org.eventb.core.identifier="frm"/>
+    <org.eventb.core.variable name="internal_element3" org.eventb.core.comment="last block of the train" org.eventb.core.generated="false" org.eventb.core.identifier="LBT"/>
+    <org.eventb.core.event name="internal_element8J" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.generated="false" org.eventb.core.label="route_formation">
+        <org.eventb.core.parameter name="'" org.eventb.core.generated="false" org.eventb.core.identifier="r"/>
+        <org.eventb.core.guard name="(" org.eventb.core.generated="false" org.eventb.core.label="grd1" org.eventb.core.predicate="r∈resrt∖frm"/>
+        <org.eventb.core.guard name=")" org.eventb.core.generated="false" org.eventb.core.label="grd2" org.eventb.core.predicate="rsrtbl∼[{r}]◁nxt(r) = rsrtbl∼[{r}]◁TRK"/>
+        <org.eventb.core.action name="*" org.eventb.core.assignment="frm≔frm∪{r}" org.eventb.core.generated="false" org.eventb.core.label="act1"/>
+    </org.eventb.core.event>
+    <org.eventb.core.invariant name="internal_element8K" org.eventb.core.generated="false" org.eventb.core.label="thm2" org.eventb.core.predicate="ran(lst)∩(dom(TRK)∖ran(fst))=∅" org.eventb.core.theorem="true"/>
+    <org.eventb.core.invariant name="internal_element8L" org.eventb.core.generated="false" org.eventb.core.label="thm3" org.eventb.core.predicate="ran(fst)∩(ran(TRK)∖ran(lst))=∅" org.eventb.core.theorem="true"/>
+</org.eventb.core.machineFile>

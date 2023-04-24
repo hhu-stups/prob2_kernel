@@ -42,7 +42,7 @@ public class CompareTwoOperations extends AbstractCommand {
 		this.identifiers = new ArrayList<>();
 		for (final PrologTerm term : this.freeVariables) {
 			final VariablePrologTerm var = (VariablePrologTerm)term;
-			this.identifiers.add(PrologTerm.atomicString(bindings.get(var.getName())));
+			this.identifiers.add(bindings.get(var.getName()).atomToString());
 		}
 	}
 	

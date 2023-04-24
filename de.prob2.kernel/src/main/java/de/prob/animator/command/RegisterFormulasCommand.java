@@ -1,6 +1,6 @@
 package de.prob.animator.command;
 
-import java.util.List;
+import java.util.Collection;
 
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.parser.ISimplifiedROMap;
@@ -10,9 +10,9 @@ import de.prob.prolog.term.PrologTerm;
 public class RegisterFormulasCommand extends AbstractCommand {
 
 	private static final String PROLOG_COMMAND_NAME = "register_prob2_formulas";
-	private final List<IEvalElement> formulas;
+	private final Collection<? extends IEvalElement> formulas;
 
-	public RegisterFormulasCommand(final List<IEvalElement> formulas) {
+	public RegisterFormulasCommand(final Collection<? extends IEvalElement> formulas) {
 		this.formulas = formulas;
 	}
 
@@ -26,11 +26,7 @@ public class RegisterFormulasCommand extends AbstractCommand {
 		pto.closeList();
 		pto.openList();
 		for (final IEvalElement formula : this.formulas) {
-			pto.openTerm("eval");
-			formula.printProlog(pto);
-			pto.printAtom(formula.getKind().getPrologName());
-			pto.printAtom(formula.expansion().getPrologName());
-			pto.closeTerm();
+			formula.printEvalTerm(pto);
 		}
 		pto.closeList();
 		pto.closeTerm();
@@ -40,5 +36,4 @@ public class RegisterFormulasCommand extends AbstractCommand {
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
 		// There are no output variables.
 	}
-
 }

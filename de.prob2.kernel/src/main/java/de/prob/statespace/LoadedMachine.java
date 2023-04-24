@@ -107,10 +107,6 @@ public class LoadedMachine {
 		return variableEvalElements.computeIfAbsent(expand, k -> namesToEvalElements(getVariableNames(), k));
 	}
 
-	/**
-	 * @deprecated Use {@link #getVariableEvalElements(FormulaExpand)} with an explicit {@link FormulaExpand} argument instead
-	 */
-	@Deprecated
 	public List<IEvalElement> getVariableEvalElements() {
 		return getVariableEvalElements(FormulaExpand.EXPAND);
 	}
@@ -129,12 +125,16 @@ public class LoadedMachine {
 		return constantEvalElements.computeIfAbsent(expand, k -> namesToEvalElements(getConstantNames(), k));
 	}
 
+	public List<IEvalElement> getConstantEvalElements() {
+		return getConstantEvalElements(FormulaExpand.EXPAND);
+	}
+
 	/**
-	 * @deprecated Use {@link #getConstantEvalElements(FormulaExpand)} with an explicit {@link FormulaExpand} argument instead
+	 * @deprecated Typo in name. Use {@link #getConstantEvalElements()} instead.
 	 */
 	@Deprecated
 	public List<IEvalElement> getConstatsEvalElements() {
-		return getConstantEvalElements(FormulaExpand.EXPAND);
+		return getConstantEvalElements();
 	}
 
 	public List<String> getSetNames() {
@@ -151,10 +151,6 @@ public class LoadedMachine {
 		return setEvalElements.computeIfAbsent(expand, k -> namesToEvalElements(getSetNames(), k));
 	}
 
-	/**
-	 * @deprecated Use {@link #getSetEvalElements(FormulaExpand)} with an explicit {@link FormulaExpand} argument instead
-	 */
-	@Deprecated
 	public List<IEvalElement> getSetEvalElements() {
 		return getSetEvalElements(FormulaExpand.EXPAND);
 	}

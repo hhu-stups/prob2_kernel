@@ -27,6 +27,7 @@ public final class DotVisualizationCommand extends DynamicCommandItem {
 	public static final String STATE_AS_GRAPH_NAME = "state_as_graph";
 	public static final String STATE_SPACE_NAME = "state_space";
 	public static final String STATE_SPACE_FAST_NAME = "state_space_sfdp";
+	public static final String STATE_SPACE_PROJECTION_NAME = "transition_diagram";
 	
 	private DotVisualizationCommand(
 		final State state,
@@ -97,7 +98,7 @@ public final class DotVisualizationCommand extends DynamicCommandItem {
 		return this.getAdditionalInfo().stream()
 			.filter(t -> "preferred_dot_type".equals(t.getFunctor()))
 			.map(t -> BindingGenerator.getCompoundTerm(t, 1))
-			.map(t -> PrologTerm.atomicString(t.getArgument(1)))
+			.map(t -> t.getArgument(1).atomToString())
 			.findAny();
 	}
 	

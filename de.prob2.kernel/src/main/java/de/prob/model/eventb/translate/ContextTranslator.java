@@ -1,6 +1,7 @@
 package de.prob.model.eventb.translate;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,13 +30,23 @@ import de.prob.util.Tuple2;
 public class ContextTranslator {
 
 	private final Context context;
-	private final Map<Node, Tuple2<String, String>> nodeInfos = new HashMap<>();
+	private final Map<Node, RodinPosition> positions = new HashMap<>();
 
 	public ContextTranslator(final Context context) {
 		this.context = context;
 	}
 
+	public Map<Node, RodinPosition> getPositions() {
+		return Collections.unmodifiableMap(this.positions);
+	}
+
+	/**
+	 * @deprecated Use {@link #getPositions()} instead.
+	 */
+	@Deprecated
 	public Map<Node, Tuple2<String, String>> getNodeInfos() {
+		final HashMap<Node, Tuple2<String, String>> nodeInfos = new HashMap<>();
+		this.getPositions().forEach((node, pos) -> nodeInfos.put(node, new Tuple2<>(pos.getModelName(), pos.getLabel())));
 		return nodeInfos;
 	}
 
@@ -86,10 +97,10 @@ public class ContextTranslator {
 		List<PPredicate> axioms = new ArrayList<>();
 		List<PPredicate> thms = new ArrayList<>();
 
-		for (EventBAxiom axiom : context.getAxioms()) {
+		for (EventBAxiom axiom : context.getAllAxioms()) {
 			PPredicate ppred = (PPredicate) ((EventB) axiom.getPredicate())
 					.getAst();
-			nodeInfos.put(ppred, new Tuple2<>(context.getName(), axiom.getName()));
+			positions.put(ppred, new RodinPosition(context.getName(), axiom.getName()));
 			if (axiom.isTheorem()) {
 				thms.add(ppred);
 			} else {

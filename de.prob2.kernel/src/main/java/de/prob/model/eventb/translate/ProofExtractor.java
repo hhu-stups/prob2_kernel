@@ -5,10 +5,9 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
@@ -21,18 +20,20 @@ import de.prob.model.eventb.EventBGuard;
 import de.prob.model.eventb.EventBMachine;
 import de.prob.model.eventb.ProofObligation;
 import de.prob.model.representation.ModelElementList;
-import de.prob.util.Tuple2;
+import de.prob.prolog.term.CompoundPrologTerm;
+import de.prob.prolog.term.PrologTerm;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 public class ProofExtractor {
 	private static final Logger logger = LoggerFactory.getLogger(ProofExtractor.class);
 
 	private Map<String, String> descriptions;
-	private Set<String> discharged;
+	private Map<String, Integer> proofConfidences;
 
 	private final List<ProofObligation> proofs = new ArrayList<>();
 
@@ -56,23 +57,37 @@ public class ProofExtractor {
 
 			String bpoFileName = baseFileName + ".bpo";
 			File bpoFile = new File(bpoFileName);
+			// Use LinkedHashMap to preserve the order of proof descriptions from the Rodin project.
+			descriptions = new LinkedHashMap<>();
 			if (bpoFile.exists()) {
-				ProofDescriptionExtractor ext1 = new ProofDescriptionExtractor();
-				saxParser.parse(bpoFile, ext1);
-				descriptions = ext1.getProofDescriptions();
+				saxParser.parse(bpoFile, new DefaultHandler() {
+					@Override
+					public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) {
+						if ("org.eventb.core.poSequent".equals(qName)) {
+							String name = attributes.getValue("name");
+							String desc = attributes.getValue("org.eventb.core.poDesc");
+							descriptions.put(name, desc);
+						}
+					}
+				});
 			} else {
-				descriptions = new HashMap<>();
 				logger.info("Could not find file {}. Assuming that no proofs have been generated for model element.", bpoFileName);
 			}
 
 			String bpsFileName = baseFileName + ".bps";
 			File bpsFile = new File(bpsFileName);
+			proofConfidences = new HashMap<>();
 			if (bpsFile.exists()) {
-				ProofStatusExtractor ext2 = new ProofStatusExtractor();
-				saxParser.parse(bpsFile, ext2);
-				discharged = ext2.getDischargedProofs();
+				saxParser.parse(bpsFile, new DefaultHandler() {
+					@Override
+					public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) {
+						if ("org.eventb.core.psStatus".equals(qName)) {
+							String name = attributes.getValue("name");
+							proofConfidences.put(name, Integer.parseInt(attributes.getValue("org.eventb.core.confidence")));
+						}
+					}
+				});
 			} else {
-				discharged = new HashSet<>();
 				logger.info("Could not find file {}. Assuming that no proofs are discharged for model element.", bpsFileName);
 			}
 		} catch (ParserConfigurationException e) {
@@ -82,12 +97,15 @@ public class ProofExtractor {
 		}
 	}
 
+	private static CompoundPrologTerm makeSource(final String type, final String label) {
+		return new CompoundPrologTerm(type, new CompoundPrologTerm(label));
+	}
+
 	private void addProofs(final Context c) {
 		for (Map.Entry<String, String> entry : descriptions.entrySet()) {
 			String name = entry.getKey();
 			String desc = entry.getValue();
-
-			boolean isDischarged = discharged.contains(name);
+			final int confidence = proofConfidences.getOrDefault(name, 0);
 
 			String[] split = name.split("/");
 			String type;
@@ -100,11 +118,11 @@ public class ProofExtractor {
 			}
 			String source = c.getName();
 
-			List<Tuple2<String, String>> elements = new ArrayList<>();
+			List<PrologTerm> sourceInfos = new ArrayList<>();
 			if ("THM".equals(type) || "WD".equals(type)) {
-				elements.add(new Tuple2<>("axiom", split[0]));
+				sourceInfos.add(makeSource("axiom", split[0]));
 			}
-			proofs.add(new ProofObligation(source, name, isDischarged, desc, elements));
+			proofs.add(new ProofObligation(source, name, confidence, desc, sourceInfos));
 		}
 	}
 
@@ -112,8 +130,7 @@ public class ProofExtractor {
 		for (Map.Entry<String, String> entry : descriptions.entrySet()) {
 			String name = entry.getKey();
 			String desc = entry.getValue();
-
-			boolean isDischarged = discharged.contains(name);
+			final int confidence = proofConfidences.getOrDefault(name, 0);
 
 			String[] split = name.split("/");
 			String type;
@@ -126,46 +143,40 @@ public class ProofExtractor {
 			}
 			String source = m.getName();
 
-			List<Tuple2<String, String>> elements = new ArrayList<>();
+			List<PrologTerm> sourceInfos = new ArrayList<>();
 			if ("GRD".equals(type)) {
 				Event concreteEvent = m.getEvent(split[0]);
-				for (Event event : concreteEvent.getRefines()) {
-					if (event.getGuards().getElement(split[1]) != null) {
-						EventBGuard guard = event.getGuards().getElement(split[1]);
-						elements.add(new Tuple2<>("event", event.getName()));
-						elements.add(new Tuple2<>("guard", guard.getName()));
-					}
+				final Event event = concreteEvent.getParentEvent();
+				if (event != null && event.getGuards().getElement(split[1]) != null) {
+					EventBGuard guard = event.getGuards().getElement(split[1]);
+					sourceInfos.add(makeSource("event", event.getName()));
+					sourceInfos.add(makeSource("guard", guard.getName()));
 				}
-				elements.add(new Tuple2<>("event", concreteEvent.getName()));
-				proofs.add(new ProofObligation(source, name, isDischarged, desc, elements));
+				sourceInfos.add(makeSource("event", concreteEvent.getName()));
 			} else if ("INV".equals(type)) {
-				elements.add(new Tuple2<>("event", "invariant"));
-				proofs.add(new ProofObligation(source, name, isDischarged, desc, elements));
+				sourceInfos.add(makeSource("event", "invariant"));
 			} else if ("THM".equals(type)) {
 				if (split.length == 2) {
-					elements.add(new Tuple2<>("invariant", split[0]));
+					sourceInfos.add(makeSource("invariant", split[0]));
 				} else {
-					elements.add(new Tuple2<>("guard", split[1]));
-					elements.add(new Tuple2<>("event", split[0]));
+					sourceInfos.add(makeSource("guard", split[1]));
+					sourceInfos.add(makeSource("event", split[0]));
 				}
-				proofs.add(new ProofObligation(source, name, isDischarged, desc, elements));
 			} else if ("WD".equals(type)) {
 				if (split.length == 2) {
-					elements.add(new Tuple2<>("invariant", split[0]));
+					sourceInfos.add(makeSource("invariant", split[0]));
 				} else {
 					Event event = m.getEvent(split[0]);
 					if (event.getActions().getElement(split[1]) != null) {
-						elements.add(new Tuple2<>("event", event.getName()));
-						elements.add(new Tuple2<>("action", split[1]));
+						sourceInfos.add(makeSource("event", event.getName()));
+						sourceInfos.add(makeSource("action", split[1]));
 					} else {
-						elements.add(new Tuple2<>("event", event.getName()));
-						elements.add(new Tuple2<>("guard", split[1]));
+						sourceInfos.add(makeSource("event", event.getName()));
+						sourceInfos.add(makeSource("guard", split[1]));
 					}
-					proofs.add(new ProofObligation(source, name, isDischarged, desc, elements));
 				}
-			} else {
-				proofs.add(new ProofObligation(source, name, isDischarged, desc, elements));
 			}
+			proofs.add(new ProofObligation(source, name, confidence, desc, sourceInfos));
 		}
 
 	}

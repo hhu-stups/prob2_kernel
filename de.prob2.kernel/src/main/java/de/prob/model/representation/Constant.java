@@ -8,6 +8,7 @@ import de.prob.unicode.UnicodeTranslator;
 public abstract class Constant extends AbstractFormulaElement implements Named {
 
 	protected final IEvalElement expression;
+	@Deprecated
 	protected AbstractEvalResult result;
 
 	public Constant(final IEvalElement expression) {
@@ -28,8 +29,10 @@ public abstract class Constant extends AbstractFormulaElement implements Named {
 		return UnicodeTranslator.toUnicode(expression.getCode());
 	}
 
-	// Experimental. Would allow the user to calculate the value once and cache
-	// it.
+	/**
+	 * @deprecated This method does not behave correctly if the constant has multiple possible values (more than one SETUP_CONSTANTS transition).
+	 */
+	@Deprecated
 	public AbstractEvalResult getValue(final Trace h) {
 		if (result == null) {
 			result = h.evalCurrent(getFormula());

@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 
+@Deprecated
 public class TraceExplorerIntegrationTest {
 	private static ProBKernelStub proBKernelStub;
 

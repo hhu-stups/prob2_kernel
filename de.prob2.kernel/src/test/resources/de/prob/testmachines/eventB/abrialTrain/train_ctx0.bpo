@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<org.eventb.core.poFile org.eventb.core.poStamp="0">
+    <org.eventb.core.poPredicateSet name="ABSHYP" org.eventb.core.poStamp="0">
+        <org.eventb.core.poIdentifier name="ROUTES" org.eventb.core.type="ℙ(ROUTES)"/>
+        <org.eventb.core.poIdentifier name="BLOCKS" org.eventb.core.type="ℙ(BLOCKS)"/>
+        <org.eventb.core.poIdentifier name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
+        <org.eventb.core.poIdentifier name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+        <org.eventb.core.poIdentifier name="nxt" org.eventb.core.type="ℙ(ROUTES×ℙ(BLOCKS×BLOCKS))"/>
+        <org.eventb.core.poIdentifier name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poSequent name="axm11/WD" org.eventb.core.accurate="true" org.eventb.core.poDesc="Well-definedness of Axiom" org.eventb.core.poStamp="0">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_ctx0.bpo|org.eventb.core.poFile#train_ctx0|org.eventb.core.poPredicateSet#HYP."/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒r∈dom(fst)∧fst∈ROUTES ⇸ BLOCKS∧r∈dom(lst)∧lst∈ROUTES ⇸ BLOCKS" org.eventb.core.source="/Train_Abrial/train_ctx0.buc|org.eventb.core.contextFile#train_ctx0|org.eventb.core.axiom#internal_axm11A"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_ctx0.buc|org.eventb.core.contextFile#train_ctx0|org.eventb.core.axiom#internal_axm11A"/>
+        <org.eventb.core.poSelHint name="SEQHYS" org.eventb.core.poSelHintFst="/Train_Abrial/train_ctx0.bpo|org.eventb.core.poFile#train_ctx0|org.eventb.core.poPredicateSet#ABSHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_ctx0.bpo|org.eventb.core.poFile#train_ctx0|org.eventb.core.poPredicateSet#HYP."/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poSequent name="axm10/WD" org.eventb.core.accurate="true" org.eventb.core.poDesc="Well-definedness of Axiom" org.eventb.core.poStamp="0">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_ctx0.bpo|org.eventb.core.poFile#train_ctx0|org.eventb.core.poPredicateSet#HYP\/"/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒r∈dom(nxt)∧nxt∈ROUTES ⇸ ℙ(BLOCKS × BLOCKS)" org.eventb.core.source="/Train_Abrial/train_ctx0.buc|org.eventb.core.contextFile#train_ctx0|org.eventb.core.axiom#internal_axm10A"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_ctx0.buc|org.eventb.core.contextFile#train_ctx0|org.eventb.core.axiom#internal_axm10A"/>
+        <org.eventb.core.poSelHint name="SEQHYS" org.eventb.core.poSelHintFst="/Train_Abrial/train_ctx0.bpo|org.eventb.core.poFile#train_ctx0|org.eventb.core.poPredicateSet#ABSHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_ctx0.bpo|org.eventb.core.poFile#train_ctx0|org.eventb.core.poPredicateSet#HYP\/"/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poSequent name="axm9/WD" org.eventb.core.accurate="true" org.eventb.core.poDesc="Well-definedness of Axiom" org.eventb.core.poStamp="0">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_ctx0.bpo|org.eventb.core.poFile#train_ctx0|org.eventb.core.poPredicateSet#HYP0"/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒r∈dom(nxt)∧nxt∈ROUTES ⇸ ℙ(BLOCKS × BLOCKS)∧r∈dom(lst)∧lst∈ROUTES ⇸ BLOCKS∧r∈dom(fst)∧fst∈ROUTES ⇸ BLOCKS" org.eventb.core.source="/Train_Abrial/train_ctx0.buc|org.eventb.core.contextFile#train_ctx0|org.eventb.core.axiom#internal_axm9A"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_ctx0.buc|org.eventb.core.contextFile#train_ctx0|org.eventb.core.axiom#internal_axm9A"/>
+        <org.eventb.core.poSelHint name="SEQHYS" org.eventb.core.poSelHintFst="/Train_Abrial/train_ctx0.bpo|org.eventb.core.poFile#train_ctx0|org.eventb.core.poPredicateSet#ABSHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_ctx0.bpo|org.eventb.core.poFile#train_ctx0|org.eventb.core.poPredicateSet#HYP0"/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poSequent name="axm12/WD" org.eventb.core.accurate="true" org.eventb.core.poDesc="Well-definedness of Axiom" org.eventb.core.poStamp="0">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_ctx0.bpo|org.eventb.core.poFile#train_ctx0|org.eventb.core.poPredicateSet#HYP1"/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧r≠s⇒r∈dom(fst)∧fst∈ROUTES ⇸ BLOCKS∧s∈dom(fst)∧s∈dom(lst)∧lst∈ROUTES ⇸ BLOCKS" org.eventb.core.source="/Train_Abrial/train_ctx0.buc|org.eventb.core.contextFile#train_ctx0|org.eventb.core.axiom#internal_axm12A"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_ctx0.buc|org.eventb.core.contextFile#train_ctx0|org.eventb.core.axiom#internal_axm12A"/>
+        <org.eventb.core.poSelHint name="SEQHYS" org.eventb.core.poSelHintFst="/Train_Abrial/train_ctx0.bpo|org.eventb.core.poFile#train_ctx0|org.eventb.core.poPredicateSet#ABSHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_ctx0.bpo|org.eventb.core.poFile#train_ctx0|org.eventb.core.poPredicateSet#HYP1"/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poSequent name="axm13/WD" org.eventb.core.accurate="true" org.eventb.core.poDesc="Well-definedness of Axiom" org.eventb.core.poStamp="0">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_ctx0.bpo|org.eventb.core.poFile#train_ctx0|org.eventb.core.poPredicateSet#HYP2"/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧r≠s⇒r∈dom(lst)∧lst∈ROUTES ⇸ BLOCKS∧s∈dom(fst)∧fst∈ROUTES ⇸ BLOCKS∧s∈dom(lst)" org.eventb.core.source="/Train_Abrial/train_ctx0.buc|org.eventb.core.contextFile#train_ctx0|org.eventb.core.axiom#internal_axm13A"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_ctx0.buc|org.eventb.core.contextFile#train_ctx0|org.eventb.core.axiom#internal_axm13A"/>
+        <org.eventb.core.poSelHint name="SEQHYS" org.eventb.core.poSelHintFst="/Train_Abrial/train_ctx0.bpo|org.eventb.core.poFile#train_ctx0|org.eventb.core.poPredicateSet#ABSHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_ctx0.bpo|org.eventb.core.poFile#train_ctx0|org.eventb.core.poPredicateSet#HYP2"/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poPredicateSet name="HYP." org.eventb.core.parentSet="/Train_Abrial/train_ctx0.bpo|org.eventb.core.poFile#train_ctx0|org.eventb.core.poPredicateSet#ABSHYP" org.eventb.core.poStamp="0">
+        <org.eventb.core.poPredicate name="PRD0" org.eventb.core.predicate="rtbl∈BLOCKS ↔ ROUTES" org.eventb.core.source="/Train_Abrial/train_ctx0.buc|org.eventb.core.contextFile#train_ctx0|org.eventb.core.axiom#internal_axm1A"/>
+        <org.eventb.core.poPredicate name="PRD1" org.eventb.core.predicate="dom(rtbl)=BLOCKS" org.eventb.core.source="/Train_Abrial/train_ctx0.buc|org.eventb.core.contextFile#train_ctx0|org.eventb.core.axiom#internal_axm2A"/>
+        <org.eventb.core.poPredicate name="PRD2" org.eventb.core.predicate="ran(rtbl)=ROUTES" org.eventb.core.source="/Train_Abrial/train_ctx0.buc|org.eventb.core.contextFile#train_ctx0|org.eventb.core.axiom#internal_axm3A"/>
+        <org.eventb.core.poPredicate name="PRD3" org.eventb.core.predicate="nxt∈ROUTES → (BLOCKS ⤔ BLOCKS)" org.eventb.core.source="/Train_Abrial/train_ctx0.buc|org.eventb.core.contextFile#train_ctx0|org.eventb.core.axiom#internal_axm4A"/>
+        <org.eventb.core.poPredicate name="PRD4" org.eventb.core.predicate="fst∈ROUTES → BLOCKS" org.eventb.core.source="/Train_Abrial/train_ctx0.buc|org.eventb.core.contextFile#train_ctx0|org.eventb.core.axiom#internal_axm5A"/>
+        <org.eventb.core.poPredicate name="PRD5" org.eventb.core.predicate="lst∈ROUTES → BLOCKS" org.eventb.core.source="/Train_Abrial/train_ctx0.buc|org.eventb.core.contextFile#train_ctx0|org.eventb.core.axiom#internal_axm6A"/>
+        <org.eventb.core.poPredicate name="PRD6" org.eventb.core.predicate="fst∼⊆rtbl" org.eventb.core.source="/Train_Abrial/train_ctx0.buc|org.eventb.core.contextFile#train_ctx0|org.eventb.core.axiom#internal_axm7A"/>
+        <org.eventb.core.poPredicate name="PRD7" org.eventb.core.predicate="lst∼⊆rtbl" org.eventb.core.source="/Train_Abrial/train_ctx0.buc|org.eventb.core.contextFile#train_ctx0|org.eventb.core.axiom#internal_axm8A"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poPredicateSet name="HYP/" org.eventb.core.parentSet="/Train_Abrial/train_ctx0.bpo|org.eventb.core.poFile#train_ctx0|org.eventb.core.poPredicateSet#HYP." org.eventb.core.poStamp="0">
+        <org.eventb.core.poPredicate name="PRD8" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒fst(r)≠lst(r)" org.eventb.core.source="/Train_Abrial/train_ctx0.buc|org.eventb.core.contextFile#train_ctx0|org.eventb.core.axiom#internal_axm11A"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poPredicateSet name="HYP0" org.eventb.core.parentSet="/Train_Abrial/train_ctx0.bpo|org.eventb.core.poFile#train_ctx0|org.eventb.core.poPredicateSet#HYP\/" org.eventb.core.poStamp="0">
+        <org.eventb.core.poPredicate name="PRD9" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(∀S⦂ℙ(BLOCKS)·S⊆ran(nxt(r))∧S⊆(nxt(r))[S]⇒S=(∅ ⦂ ℙ(BLOCKS)))" org.eventb.core.source="/Train_Abrial/train_ctx0.buc|org.eventb.core.contextFile#train_ctx0|org.eventb.core.axiom#internal_axm10A"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poPredicateSet name="HYP1" org.eventb.core.parentSet="/Train_Abrial/train_ctx0.bpo|org.eventb.core.poFile#train_ctx0|org.eventb.core.poPredicateSet#HYP0" org.eventb.core.poStamp="0">
+        <org.eventb.core.poPredicate name="PRD10" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}" org.eventb.core.source="/Train_Abrial/train_ctx0.buc|org.eventb.core.contextFile#train_ctx0|org.eventb.core.axiom#internal_axm9A"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poPredicateSet name="HYP2" org.eventb.core.parentSet="/Train_Abrial/train_ctx0.bpo|org.eventb.core.poFile#train_ctx0|org.eventb.core.poPredicateSet#HYP1" org.eventb.core.poStamp="0">
+        <org.eventb.core.poPredicate name="PRD11" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧r≠s⇒fst(r)∉rtbl∼[{s}] ∖ {fst(s),lst(s)}" org.eventb.core.source="/Train_Abrial/train_ctx0.buc|org.eventb.core.contextFile#train_ctx0|org.eventb.core.axiom#internal_axm12A"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poPredicateSet name="ALLHYP" org.eventb.core.parentSet="/Train_Abrial/train_ctx0.bpo|org.eventb.core.poFile#train_ctx0|org.eventb.core.poPredicateSet#HYP2" org.eventb.core.poStamp="0">
+        <org.eventb.core.poPredicate name="PRD12" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧r≠s⇒lst(r)∉rtbl∼[{s}] ∖ {fst(s),lst(s)}" org.eventb.core.source="/Train_Abrial/train_ctx0.buc|org.eventb.core.contextFile#train_ctx0|org.eventb.core.axiom#internal_axm13A"/>
+    </org.eventb.core.poPredicateSet>
+</org.eventb.core.poFile>

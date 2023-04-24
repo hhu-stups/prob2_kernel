@@ -1,25 +1,27 @@
 package de.prob.model.eventb;
 
-import com.github.krukow.clj_lang.PersistentHashMap;
+import java.util.Collections;
+import java.util.Map;
 
 import de.prob.model.representation.AbstractElement;
 import de.prob.model.representation.Axiom;
 import de.prob.model.representation.Constant;
+import de.prob.model.representation.ConstantsComponent;
+import de.prob.model.representation.ElementComment;
 import de.prob.model.representation.ModelElementList;
-import de.prob.model.representation.Named;
 import de.prob.model.representation.Set;
 
-public class Context extends AbstractElement implements Named {
+public class Context extends AbstractElement implements ConstantsComponent {
 
 	private final String name;
 
 	public Context(final String name) {
-		this(name, PersistentHashMap.emptyMap());
+		this(name, Collections.emptyMap());
 	}
 
 	private Context(
 			final String name,
-			PersistentHashMap<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children) {
+			Map<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children) {
 		super(children);
 		this.name = name;
 	}
@@ -27,6 +29,10 @@ public class Context extends AbstractElement implements Named {
 	@Override
 	public String getName() {
 		return name;
+	}
+
+	public Context withName(final String name) {
+		return new Context(name, this.getChildren());
 	}
 
 	public Context set(Class<? extends AbstractElement> clazz,
@@ -52,16 +58,38 @@ public class Context extends AbstractElement implements Named {
 				list.replaceElement(oldElement, newElement)));
 	}
 
+	public String getComment() {
+		return ElementComment.getCommentTextFromElement(this);
+	}
+
+	public Context withComment(final String comment) {
+		return this.set(ElementComment.class, new ModelElementList<>(Collections.singletonList(new ElementComment(comment))));
+	}
+
 	public ModelElementList<Context> getExtends() {
 		return getChildrenOfType(Context.class);
 	}
 
+	public Context withExtends(final ModelElementList<Context> contexts) {
+		return this.set(Context.class, contexts);
+	}
+
+	@Override
 	public ModelElementList<EventBConstant> getConstants() {
 		return getChildrenAndCast(Constant.class, EventBConstant.class);
 	}
 
+	public Context withConstants(final ModelElementList<EventBConstant> constants) {
+		return this.set(Constant.class, constants);
+	}
+
+	@Override
 	public ModelElementList<EventBAxiom> getAxioms() {
 		return getChildrenAndCast(Axiom.class, EventBAxiom.class);
+	}
+
+	public Context withAxioms(final ModelElementList<EventBAxiom> axioms) {
+		return this.set(Axiom.class, axioms);
 	}
 
 	public ModelElementList<EventBAxiom> getAllAxioms() {
@@ -73,12 +101,21 @@ public class Context extends AbstractElement implements Named {
 		return axms;
 	}
 
+	@Override
 	public ModelElementList<Set> getSets() {
 		return getChildrenOfType(Set.class);
 	}
 
+	public Context withSets(final ModelElementList<Set> sets) {
+		return this.set(Set.class, sets);
+	}
+
 	public ModelElementList<ProofObligation> getProofs() {
 		return getChildrenOfType(ProofObligation.class);
+	}
+
+	public Context withProofs(final ModelElementList<ProofObligation> proofs) {
+		return this.set(ProofObligation.class, proofs);
 	}
 
 	@Override

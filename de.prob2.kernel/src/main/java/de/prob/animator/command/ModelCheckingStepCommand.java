@@ -138,6 +138,9 @@ public class ModelCheckingStepCommand extends AbstractCommand implements IStateS
 			return new ModelCheckErrorUncovered(
 					"A well definedness error occured.", cpt.getArgument(1)
 							.getFunctor());
+		case "xtl_error":
+			return new ModelCheckErrorUncovered("XTL error (unsafe state) found.", cpt
+					.getArgument(1).getFunctor());
 		case "general_error":
 			if (cpt.getArity() == 2) {
 				return new ModelCheckErrorUncovered(

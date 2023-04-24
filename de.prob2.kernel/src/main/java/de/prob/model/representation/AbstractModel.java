@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.github.krukow.clj_lang.PersistentHashMap;
-
 import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.domainobjects.EvaluationException;
 import de.prob.animator.domainobjects.FormulaExpand;
@@ -14,6 +12,7 @@ import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.model.representation.DependencyGraph.ERefType;
 import de.prob.scripting.StateSpaceProvider;
 import de.prob.statespace.FormalismType;
+import de.prob.statespace.Language;
 import de.prob.statespace.StateSpace;
 
 import groovy.util.Eval;
@@ -26,7 +25,7 @@ public abstract class AbstractModel extends AbstractElement {
 
 	public AbstractModel(
 			StateSpaceProvider stateSpaceProvider,
-			PersistentHashMap<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children,
+			Map<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children,
 			DependencyGraph graph, File modelFile) {
 		super(children);
 		this.stateSpaceProvider = stateSpaceProvider;
@@ -73,9 +72,7 @@ public abstract class AbstractModel extends AbstractElement {
 	 * @param formula to be parsed
 	 * @return a valid formula
 	 * @throws RuntimeException if parsing is not successful
-	 * @deprecated Use {@link #parseFormula(String, FormulaExpand)} with an explicit {@link FormulaExpand} argument instead
 	 */
-	@Deprecated
 	public IEvalElement parseFormula(String formula) {
 		return this.parseFormula(formula, FormulaExpand.EXPAND);
 	}
@@ -114,6 +111,8 @@ public abstract class AbstractModel extends AbstractElement {
 
 	public abstract FormalismType getFormalismType();
 
+	public abstract Language getLanguage();
+
 	public File getModelFile() {
 		return modelFile;
 	}
@@ -122,6 +121,12 @@ public abstract class AbstractModel extends AbstractElement {
 		return stateSpaceProvider;
 	}
 
+	/**
+	 * @deprecated This method is unsafe and can execute arbitrary Groovy code, depending on the argument.
+	 *     To look up a component by name, use {@link #getComponent(String)} instead.
+	 *     To look up sub-elements of a component, use {@link #getChildrenOfType(Class)} and {@link ModelElementList#getElement(String)}.
+	 */
+	@Deprecated
 	public AbstractElement get(List<String> path) {
 		if (path.isEmpty()) {
 			return null;

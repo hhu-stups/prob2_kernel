@@ -46,13 +46,13 @@ public class DynamicCommandItem {
 	
 	public static DynamicCommandItem fromPrologTerm(final State state, final PrologTerm term) {
 		BindingGenerator.getCompoundTerm(term, "command", 7);
-		final String command = PrologTerm.atomicString(term.getArgument(1));
-		final String name = PrologTerm.atomicString(term.getArgument(2));
-		final String description = PrologTerm.atomicString(term.getArgument(3));
+		final String command = term.getArgument(1).atomToString();
+		final String name = term.getArgument(2).atomToString();
+		final String description = term.getArgument(3).atomToString();
 		final int arity = BindingGenerator.getInteger(term.getArgument(4)).getValue().intValue();
-		final List<String> relevantPreferences = PrologTerm.atomicStrings(BindingGenerator.getList(term.getArgument(5)));
+		final List<String> relevantPreferences = PrologTerm.atomsToStrings(BindingGenerator.getList(term.getArgument(5)));
 		final List<PrologTerm> additionalInfo = BindingGenerator.getList(term.getArgument(6));
-		final String available = PrologTerm.atomicString(term.getArgument(7));
+		final String available = term.getArgument(7).atomToString();
 		
 		return new DynamicCommandItem(
 			state,

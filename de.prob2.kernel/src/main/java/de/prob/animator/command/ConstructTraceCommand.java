@@ -59,7 +59,7 @@ public final class ConstructTraceCommand extends AbstractCommand implements
 		for (ClassicalB classicalB : predicate) {
 			if (!EvalElementType.PREDICATE.equals(classicalB.getKind())) {
 				throw new IllegalArgumentException(
-						"Formula must be a predicate: " + predicate);
+						"Formula must be a predicate, not " + classicalB.getKind() + ": " + classicalB);
 			}
 		}
 		int size = this.name.size();

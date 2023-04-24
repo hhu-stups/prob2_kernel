@@ -21,6 +21,7 @@ public class TypeCheckResult {
 	}
 
 	public boolean isOk() {
-		return errors.isEmpty();
+		// Type check is OK if the list of errors is empty or none of them are real errors.
+		return this.getErrors().stream().noneMatch(err -> err.getType().compareTo(ErrorItem.Type.ERROR) >= 0);
 	}
 }

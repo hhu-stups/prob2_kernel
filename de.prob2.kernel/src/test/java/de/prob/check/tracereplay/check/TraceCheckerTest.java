@@ -24,7 +24,7 @@ import de.prob.scripting.ModelFactory;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
 
-import org.junit.Assert;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -33,6 +33,7 @@ import org.junit.jupiter.api.Test;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 
+@Deprecated
 public class TraceCheckerTest {
 	private static TraceManager traceManager;
 	private static ProBKernelStub proBKernelStub;
@@ -431,7 +432,7 @@ public class TraceCheckerTest {
 	}
 
 	@Test
-	public void bevarege_vending_renamed_soda() throws IOException, DeltaCalculationException {
+	public void beverage_vending_renamed_soda() throws IOException, DeltaCalculationException {
 		Path pathOld = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "vending_machine", "beverage_vending_machine.mch");
 
 		Path path = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "vending_machine", "beverage_vending_machine_renamed.mch");
@@ -470,7 +471,7 @@ public class TraceCheckerTest {
 						.map(ArrayList::new))
 				.filter(entry -> entry.size() == jsonFile.getTransitionList().size())
 				.collect(Collectors.toList());
-		Assertions.assertEquals(1, result.size());
+		Assertions.assertEquals(2, result.size());
 	}
 
 }

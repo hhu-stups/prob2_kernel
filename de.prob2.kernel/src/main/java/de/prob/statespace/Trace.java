@@ -2,19 +2,25 @@ package de.prob.statespace;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.github.krukow.clj_lang.PersistentVector;
 
 import de.prob.animator.command.ComposedCommand;
-import de.prob.animator.command.EvaluateFormulaCommand;
+import de.prob.animator.command.EvaluateFormulasCommand;
 import de.prob.animator.domainobjects.AbstractEvalResult;
+import de.prob.animator.domainobjects.EvalOptions;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.model.representation.AbstractModel;
@@ -43,15 +49,19 @@ public class Trace extends GroovyObjectSupport {
 		this(startState.getStateSpace(), new TraceElement(startState), PersistentVector.emptyVector(), UUID.randomUUID());
 	}
 
-	public Trace(final StateSpace s, final TraceElement head, PersistentVector<Transition> transitionList, UUID uuid) {
+	public Trace(final StateSpace s, final TraceElement head, List<Transition> transitionList, UUID uuid) {
 		this(s, head, head, transitionList, uuid);
 	}
 
-	private Trace(final StateSpace s, final TraceElement head, final TraceElement current, PersistentVector<Transition> transitionList, UUID uuid) {
+	private Trace(final StateSpace s, final TraceElement head, final TraceElement current, List<Transition> transitionList, UUID uuid) {
 		this.stateSpace = s;
 		this.head = head;
 		this.current = current;
-		this.transitionList = transitionList;
+		if (transitionList instanceof PersistentVector<?>) {
+			this.transitionList = (PersistentVector<Transition>)transitionList;
+		} else {
+			this.transitionList = PersistentVector.create(transitionList);
+		}
 		this.uuid = uuid;
 	}
 
@@ -75,16 +85,32 @@ public class Trace extends GroovyObjectSupport {
 		return uuid;
 	}
 
+	/**
+	 * Get a list of all {@link TraceElement}s that make up this trace.
+	 * Currently, this list is newly constructed on every call to this method and is <i>not</i> cached.
+	 * To iterate over the trace more efficiently,
+	 * traverse the {@link TraceElement}s manually starting at {@link #getHead()} or {@link #getCurrent()}.
+	 * 
+	 * @return list of all elements of this trace
+	 */
+	public List<TraceElement> getElements() {
+		final LinkedList<TraceElement> elements = new LinkedList<>();
+		for (TraceElement element = this.getHead(); element != null; element = element.getPrevious()) {
+			elements.addFirst(element);
+		}
+		return elements;
+	}
+
+	public AbstractEvalResult evalCurrent(String formula, EvalOptions options) {
+		return getCurrentState().eval(formula, options);
+	}
+
 	public AbstractEvalResult evalCurrent(String formula, FormulaExpand expand) {
 		return getCurrentState().eval(formula, expand);
 	}
 	
-	/**
-	 * @deprecated Use {@link #evalCurrent(String, FormulaExpand)} with an explicit {@link FormulaExpand} argument instead
-	 */
-	@Deprecated
 	public AbstractEvalResult evalCurrent(String formula) {
-		return getCurrentState().eval(formula, FormulaExpand.TRUNCATE);
+		return getCurrentState().eval(formula);
 	}
 
 	public AbstractEvalResult evalCurrent(IEvalElement formula) {
@@ -95,29 +121,91 @@ public class Trace extends GroovyObjectSupport {
 		return transitionList.size();
 	}
 
+	/**
+	 * Evaluate a formula over all states in this trace
+	 * (including uninitialized states like the root state).
+	 * If multiple {@link TraceElement}s correspond to the same state,
+	 * all of them are included in the result map,
+	 * but internally the formula is only evaluated once per state.
+	 * 
+	 * @param formula the formula to evaluate
+	 * @param options options for evaluation
+	 * @return ordered map of all {@link TraceElement}s and the value of {@code formula} in the corresponding state
+	 */
+	public Map<TraceElement, AbstractEvalResult> evalAll(final IEvalElement formula, final EvalOptions options) {
+		final List<TraceElement> elements = this.getElements();
+		final Set<State> states = new HashSet<>();
+		for (final TraceElement element : elements) {
+			states.add(element.getCurrentState());
+		}
+		final Map<State, Map<IEvalElement, AbstractEvalResult>> resultsByState = stateSpace.evaluateForGivenStates(states, Collections.singletonList(formula), options);
+		final Map<TraceElement, AbstractEvalResult> result = new LinkedHashMap<>();
+		for (final TraceElement element : elements) {
+			result.put(element, resultsByState.get(element.getCurrentState()).get(formula));
+		}
+		return result;
+	}
+
+	/**
+	 * Evaluate a formula over all states in this trace
+	 * (including uninitialized states like the root state).
+	 * If multiple {@link TraceElement}s correspond to the same state,
+	 * all of them are included in the result map,
+	 * but internally the formula is only evaluated once per state.
+	 * 
+	 * @param formula the formula to evaluate
+	 * @return ordered map of all {@link TraceElement}s and the value of {@code formula} in the corresponding state
+	 */
+	public Map<TraceElement, AbstractEvalResult> evalAll(final IEvalElement formula) {
+		return this.evalAll(formula, EvalOptions.DEFAULT);
+	}
+
+	/**
+	 * Evaluate a formula over all states in this trace
+	 * (including uninitialized states like the root state).
+	 * If multiple {@link TraceElement}s correspond to the same state,
+	 * all of them are included in the result map,
+	 * but internally the formula is only evaluated once per state.
+	 * 
+	 * @param formula the formula to evaluate
+	 * @return ordered map of all {@link TraceElement}s and the value of {@code formula} in the corresponding state
+	 */
+	public Map<TraceElement, AbstractEvalResult> evalAll(final String formula) {
+		return this.evalAll(stateSpace.getModel().parseFormula(formula), EvalOptions.DEFAULT);
+	}
+
+	/**
+	 * @deprecated Use {@link #evalAll(IEvalElement)} instead.
+	 */
+	@Deprecated
 	public List<Tuple2<String, AbstractEvalResult>> eval(IEvalElement formula) {
-		final List<EvaluateFormulaCommand> cmds = new ArrayList<>();
+		final List<EvaluateFormulasCommand> cmds = new ArrayList<>();
 		for (Transition t : transitionList) {
-			if (getStateSpace().canBeEvaluated(t.getDestination())) {
-				cmds.add(new EvaluateFormulaCommand(formula, t.getDestination().getId()));
+			// FIXME This check is safe, but not optimal - some formulas can also be evaluated in non-initialised states.
+			if (t.getDestination().isInitialised()) {
+				cmds.add(new EvaluateFormulasCommand(Collections.singletonList(formula), t.getDestination().getId()));
 			}
 		}
 
 		stateSpace.execute(new ComposedCommand(cmds));
 
 		final List<Tuple2<String, AbstractEvalResult>> res = new ArrayList<>();
-		for (EvaluateFormulaCommand cmd : cmds) {
-			res.add(new Tuple2<>(cmd.getStateId(), cmd.getValue()));
+		for (EvaluateFormulasCommand cmd : cmds) {
+			res.add(new Tuple2<>(cmd.getStateId(), cmd.getValues().get(0)));
 		}
 		return res;
 	}
 
+	/**
+	 * @deprecated Use {@link #evalAll(String)} instead.
+	 */
+	@Deprecated
 	public List<Tuple2<String, AbstractEvalResult>> eval(String formula, FormulaExpand expand) {
 		return this.eval(stateSpace.getModel().parseFormula(formula, expand));
 	}
 	
 	/**
-	 * @deprecated Use {@link #eval(String, FormulaExpand)} with an explicit {@link FormulaExpand} argument instead
+	 * @deprecated Use {@link #evalAll(String)} instead.
 	 */
 	@Deprecated
 	public List<Tuple2<String, AbstractEvalResult>> eval(String formula) {
@@ -130,8 +218,8 @@ public class Trace extends GroovyObjectSupport {
 		final PersistentVector<Transition> transitionList = branchTransitionListIfNecessary(op);
 		final Trace newTrace = new Trace(stateSpace, newHE, transitionList, this.uuid);
 		newTrace.setExploreStateByDefault(this.exploreStateByDefault);
-		if (exploreStateByDefault && !op.getDestination().isExplored()) {
-			op.getDestination().explore();
+		if (exploreStateByDefault) {
+			op.getDestination().exploreIfNeeded();
 		}
 		return newTrace;
 	}
@@ -156,8 +244,12 @@ public class Trace extends GroovyObjectSupport {
 	 * @return a new trace with the operation added.
 	 */
 	public Trace addTransitionWith(final String name, final List<String> parameters) {
-		Transition op = getCurrentState().getOutTransitions(true, FormulaExpand.EXPAND).stream()
-			.filter(it -> it.getName().equals(name) && it.getParameterValues().equals(parameters))
+		final List<Transition> transitions = getCurrentState().getOutTransitions().stream()
+			.filter(it -> it.getName().equals(name))
+			.collect(Collectors.toList());
+		stateSpace.evaluateTransitions(transitions, FormulaExpand.EXPAND);
+		Transition op = transitions.stream()
+			.filter(it -> it.getParameterValues().equals(parameters))
 			.findAny()
 			.orElseThrow(() -> new IllegalArgumentException("Could not find operation " + name + " with parameters " + parameters));
 		/* TODO: call GetOperationByPredicateCommand when MAX_OPERATIONS reached */
@@ -344,8 +436,9 @@ public class Trace extends GroovyObjectSupport {
 		}
 	}
 
+	// TODO This duplicates State.anyOperation (almost, but not exactly)
 	public Trace anyOperation(final Object filter) {
-		List<Transition> ops = current.getCurrentState().getOutTransitions(true, FormulaExpand.EXPAND);
+		List<Transition> ops = current.getCurrentState().getOutTransitions();
 		if (filter instanceof String) {
 			final Pattern filterPattern = Pattern.compile((String)filter);
 			ops = ops.stream().filter(t -> filterPattern.matcher(t.getName()).matches()).collect(Collectors.toList());
@@ -369,20 +462,28 @@ public class Trace extends GroovyObjectSupport {
 		return stateSpace;
 	}
 
-	public synchronized Set<Transition> getNextTransitions() {
-		return getNextTransitions(false, FormulaExpand.TRUNCATE);
+	public Set<Transition> getNextTransitions() {
+		return new LinkedHashSet<>(getCurrentState().getOutTransitions());
 	}
 
 	/**
-	 * @deprecated Use {@link #getNextTransitions(boolean, FormulaExpand)} with an explicit {@link FormulaExpand} argument instead
+	 * @deprecated Use {@link #getNextTransitions()} instead.
+	 *     If {@code evaluate} was set to {@code true},
+	 *     also call {@link StateSpace#evaluateTransitions(Collection, EvalOptions)} on the returned set.
 	 */
 	@Deprecated
-	public synchronized Set<Transition> getNextTransitions(boolean evaluate) {
+	public Set<Transition> getNextTransitions(boolean evaluate) {
 		return this.getNextTransitions(evaluate, FormulaExpand.TRUNCATE);
 	}
 
-	public synchronized Set<Transition> getNextTransitions(boolean evaluate, FormulaExpand expansion) {
-		return new CopyOnWriteArraySet<>(getCurrentState().getOutTransitions(evaluate, expansion));
+	/**
+	 * @deprecated Use {@link #getNextTransitions()} instead.
+	 *     If {@code evaluate} was set to {@code true},
+	 *     also call {@link StateSpace#evaluateTransitions(Collection, FormulaExpand)} on the returned set.
+	 */
+	@Deprecated
+	public Set<Transition> getNextTransitions(boolean evaluate, FormulaExpand expansion) {
+		return new LinkedHashSet<>(getCurrentState().getOutTransitions(evaluate, expansion));
 	}
 
 	public State getCurrentState() {
@@ -418,17 +519,25 @@ public class Trace extends GroovyObjectSupport {
 	}
 
 	public List<Transition> getTransitionList() {
-		return getTransitionList(false, FormulaExpand.TRUNCATE);
+		return transitionList;
 	}
 
 	/**
-	 * @deprecated Use {@link #getTransitionList(boolean, FormulaExpand)} with an explicit {@link FormulaExpand} argument instead
+	 * @deprecated Use {@link #getTransitionList()} instead.
+	 *     If {@code evaluate} was set to {@code true},
+	 *     also call {@link StateSpace#evaluateTransitions(Collection, FormulaExpand)} on the returned list.
 	 */
 	@Deprecated
 	public List<Transition> getTransitionList(boolean evaluate) {
 		return this.getTransitionList(evaluate, FormulaExpand.TRUNCATE);
 	}
 
+	/**
+	 * @deprecated Use {@link #getTransitionList()} instead.
+	 *     If {@code evaluate} was set to {@code true},
+	 *     also call {@link StateSpace#evaluateTransitions(Collection, FormulaExpand)} on the returned list.
+	 */
+	@Deprecated
 	public List<Transition> getTransitionList(boolean evaluate, FormulaExpand expansion) {
 		final List<Transition> ops = transitionList;
 		if (evaluate) {

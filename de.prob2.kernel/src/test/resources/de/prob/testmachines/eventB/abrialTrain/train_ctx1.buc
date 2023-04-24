@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<org.eventb.core.contextFile org.eventb.core.configuration="org.eventb.core.fwd" org.eventb.texttools.text_lastmodified="1390836283238" org.eventb.texttools.text_representation="context train_ctx1 extends train_ctx0&#10;&#10;sets S&#10;&#10;constants SIG&#10;&#10;axioms&#10;   @axm1 SIG ∈ ran(fst) ⤖ S&#10;end&#10;" version="3">
+<org.eventb.core.extendsContext name="internal_extendsContext1" org.eventb.core.target="train_ctx0"/>
+<org.eventb.core.axiom name="internal_axm1A" org.eventb.core.label="axm1" org.eventb.core.predicate="SIG ∈ ran(fst) ⤖ S"/>
+<org.eventb.core.carrierSet name="internal_cst1" org.eventb.core.identifier="S"/>
+<org.eventb.core.constant name="internal_cst1" org.eventb.core.identifier="SIG"/>
+</org.eventb.core.contextFile>

@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 
 import static java.util.Collections.emptyMap;
 
+@Deprecated
 public class StaticRenamingAnalyzerTest {
 
 	@Test

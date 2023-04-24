@@ -21,7 +21,6 @@ import static java.util.stream.Collectors.toMap;
 /**
  * Use RefineTraceCommand instead; Can be removed after removing dependency in UI
  */
-@Deprecated
 public class FindPathCommand extends AbstractCommand implements
 		IStateSpaceModifier, ITraceDescription {
 
@@ -60,7 +59,7 @@ public class FindPathCommand extends AbstractCommand implements
 		for (ClassicalB classicalB : predicates) {
 			if (!EvalElementType.PREDICATE.equals(classicalB.getKind())) {
 				throw new IllegalArgumentException(
-						"Formula must be a predicates: " + predicates);
+						"Formula must be a predicate, not " + classicalB.getKind() + ": " + classicalB);
 			}
 		}
 	}

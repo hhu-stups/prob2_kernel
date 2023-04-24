@@ -3,16 +3,15 @@ package de.prob.model.eventb.translate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
-
-import de.be4.classicalb.core.parser.analysis.prolog.ASTProlog;
 
 import de.prob.animator.domainobjects.EventB;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.model.eventb.EventBAxiom;
 import de.prob.model.eventb.theory.AxiomaticDefinitionBlock;
 import de.prob.model.eventb.theory.DataType;
+import de.prob.model.eventb.theory.DataTypeConstructor;
+import de.prob.model.eventb.theory.DataTypeDestructor;
 import de.prob.model.eventb.theory.DirectDefinition;
 import de.prob.model.eventb.theory.IOperatorDefinition;
 import de.prob.model.eventb.theory.Operator;
@@ -24,7 +23,6 @@ import de.prob.model.eventb.theory.Type;
 import de.prob.model.representation.ModelElementList;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.tmparser.OperatorMapping;
-import de.prob.util.Tuple2;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FreeIdentifier;
@@ -59,7 +57,7 @@ public class TheoryTranslator {
 			printTypeParameters(theory.getTypeParameters(), pto);
 			printDataTypes(theory.getDataTypes(), pto);
 			printOperatorDefs(theory.getOperators(), pto);
-			printAxiomaticDefintionBlocks(
+			printAxiomaticDefinitionBlocks(
 					theory.getAxiomaticDefinitionBlocks(), pto);
 			printMappings(theory.getProBMappings(), pto);
 			pto.closeTerm();
@@ -111,27 +109,25 @@ public class TheoryTranslator {
 		}
 		pto.closeList();
 		pto.openList();
-		for (Entry<String, List<Tuple2<String, String>>> cons : dataType
-				.getConstructors().entrySet()) {
-			printConstructor(cons.getKey(), cons.getValue(), pto);
+		for (final DataTypeConstructor constructor : dataType.getConstructorsByName().values()) {
+			printConstructor(constructor, pto);
 		}
 		pto.closeList();
 		pto.closeTerm();
 	}
 
 	private void printType(final String type, final IPrologTermOutput pto) {
-		printEventBElement(new EventB(type, typeEnv, FormulaExpand.EXPAND), pto);
+		new EventB(type, typeEnv, FormulaExpand.EXPAND).printProlog(pto);
 	}
 
-	private void printConstructor(String name,
-			List<Tuple2<String, String>> destructors,
+	private void printConstructor(final DataTypeConstructor constructor,
 			final IPrologTermOutput pto) {
 		pto.openTerm("constructor");
-		pto.printAtom(name);
+		pto.printAtom(constructor.getName());
 		pto.openList();
-		for (Tuple2<String, String> arg : destructors) {
-			printTypedIdentifier("destructor", arg.getFirst(),
-					new EventB(arg.getSecond(), typeEnv, FormulaExpand.EXPAND), pto);
+		for (final DataTypeDestructor arg : constructor.getArguments()) {
+			printTypedIdentifier("destructor", arg.getName(),
+					new EventB(arg.getType(), typeEnv, FormulaExpand.EXPAND), pto);
 		}
 		pto.closeList();
 		pto.closeTerm();
@@ -142,13 +138,8 @@ public class TheoryTranslator {
 			final IPrologTermOutput pto) {
 		pto.openTerm(functor);
 		pto.printAtom(idString);
-		printEventBElement(type, pto);
+		type.printProlog(pto);
 		pto.closeTerm();
-	}
-
-	private void printEventBElement(final EventB eventB,
-			final IPrologTermOutput pto) {
-		eventB.getAst().apply(new ASTProlog(pto, null));
 	}
 
 	private void printOperatorDefs(final ModelElementList<Operator> operators,
@@ -166,7 +157,7 @@ public class TheoryTranslator {
 		pto.printAtom(operator.toString());
 
 		printOperatorArguments(operator.getArguments(), pto);
-		printEventBElement(operator.getWD(), pto);
+		operator.getWD().printProlog(pto);
 
 		processDefinition(operator.getDefinition(), pto);
 
@@ -206,9 +197,6 @@ public class TheoryTranslator {
 
 	private void printRecursiveCase(final EventB inductiveArgument,
 			final RecursiveDefinitionCase c, final IPrologTermOutput pto) {
-		c.getExpression();
-		c.getFormula();
-
 		pto.openTerm("case");
 		pto.printAtom(inductiveArgument.getCode());
 		pto.openList();
@@ -218,15 +206,15 @@ public class TheoryTranslator {
 			pto.printAtom(fi.getName());
 		}
 		pto.closeList();
-		printEventBElement(c.getExpression(), pto);
-		printEventBElement(c.getFormula(), pto);
+		c.getExpression().printProlog(pto);
+		c.getFormula().printProlog(pto);
 		pto.closeTerm();
 	}
 
 	private void printDirectDefinition(final DirectDefinition definition,
 			final IPrologTermOutput pto) {
 		pto.openList();
-		printEventBElement((EventB) definition.getFormula(), pto);
+		definition.getFormula().printProlog(pto);
 		pto.closeList();
 	}
 
@@ -240,7 +228,7 @@ public class TheoryTranslator {
 		pto.closeList();
 	}
 
-	private void printAxiomaticDefintionBlocks(
+	private void printAxiomaticDefinitionBlocks(
 			final ModelElementList<AxiomaticDefinitionBlock> axiomaticDefinitionBlocks,
 			final IPrologTermOutput pto) {
 		pto.openList();
@@ -265,7 +253,7 @@ public class TheoryTranslator {
 
 		pto.openList();
 		for (EventBAxiom axiom : block.getAxioms()) {
-			printEventBElement((EventB) axiom.getPredicate(), pto);
+			axiom.getPredicate().printProlog(pto);
 		}
 		pto.closeList();
 
@@ -278,7 +266,7 @@ public class TheoryTranslator {
 		pto.printAtom(operator.toString());
 		printOperatorArguments(operator.getArguments(), pto);
 		pto.openList();
-		printEventBElement(operator.getWD(), pto);
+		operator.getWD().printProlog(pto);
 		pto.closeList();
 		pto.closeTerm();
 	}

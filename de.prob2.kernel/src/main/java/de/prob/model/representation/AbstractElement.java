@@ -20,15 +20,20 @@ public abstract class AbstractElement extends GroovyObjectSupport {
 	 * Maps from a subclass of {@link AbstractElement} to a set containing all
 	 * elements for that subclass
 	 */
-	protected final PersistentHashMap<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children;
+	private final PersistentHashMap<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children;
 
 	public AbstractElement() {
 		this(PersistentHashMap.emptyMap());
 	}
 
-	public AbstractElement(
-			PersistentHashMap<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children) {
-		this.children = children;
+	public AbstractElement(Map<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children) {
+		if (children instanceof PersistentHashMap<?, ?>) {
+			// Avoid copying already created PersistentHashMap if possible.
+			this.children = (PersistentHashMap<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>>)children;
+		} else {
+			// If the map has a different type, copy/convert it to PersistentHashMap.
+			this.children = PersistentHashMap.create(children);
+		}
 	}
 
 	/**
@@ -45,7 +50,7 @@ public abstract class AbstractElement extends GroovyObjectSupport {
 	@SuppressWarnings("unchecked")
 	public <T extends AbstractElement> ModelElementList<T> getChildrenOfType(
 			final Class<T> c) {
-		ModelElementList<? extends AbstractElement> list = children.get(c);
+		ModelElementList<? extends AbstractElement> list = getChildren().get(c);
 		if (list == null) {
 			return new ModelElementList<>();
 		}
@@ -54,14 +59,14 @@ public abstract class AbstractElement extends GroovyObjectSupport {
 
 	@SuppressWarnings("unchecked")
 	protected <T extends AbstractElement, S extends T> ModelElementList<S> getChildrenAndCast(Class<T> key, Class<S> realType) {
-		ModelElementList<? extends AbstractElement> list = children.get(key);
+		ModelElementList<? extends AbstractElement> list = getChildren().get(key);
 		if (list == null) {
 			return new ModelElementList<>();
 		}
 		return (ModelElementList<S>) list;
 	}
 
-	public PersistentHashMap<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>>assoc(
+	protected Map<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>>assoc(
 			Class<? extends AbstractElement> key, ModelElementList<? extends AbstractElement> val) {
 		return (PersistentHashMap<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>>) children.assoc(key, val);
 	}

@@ -15,10 +15,6 @@ public class TLA extends AbstractEvalElement implements IBEvalElement {
 	private final Start ast;
 	private final ClassicalB classicalB;
 
-	/**
-	 * @deprecated Use {@link #TLA(String, FormulaExpand)} with an explicit {@link FormulaExpand} argument instead
-	 */
-	@Deprecated
 	public TLA(String code) {
 		this(code, FormulaExpand.EXPAND);
 	}
@@ -50,6 +46,7 @@ public class TLA extends AbstractEvalElement implements IBEvalElement {
 		return classicalB.getKind();
 	}
 
+	@Deprecated
 	@Override
 	public String serialized() {
 		throw new UnsupportedOperationException("TLA formulas cannot be serialized");

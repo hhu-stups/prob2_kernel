@@ -1,13 +1,14 @@
 package de.prob.model.eventb.translate
 
-import groovy.xml.MarkupBuilder
 import de.prob.model.eventb.Context
 import de.prob.model.eventb.Event
 import de.prob.model.eventb.EventBMachine
 import de.prob.model.eventb.EventBModel
 import de.prob.model.eventb.theory.Theory
-import de.prob.model.representation.ElementComment
 import de.prob.model.representation.ModelElementList
+import de.prob.scripting.EventBFactory
+
+import groovy.xml.MarkupBuilder
 
 public class ModelToXML {
 
@@ -24,7 +25,7 @@ public class ModelToXML {
 		def directoryPath = path + File.separator + name
 		def dir = createProjectFile(name, directoryPath)
 
-		extractTheories(model.getChildrenOfType(Theory.class), directoryPath)
+		extractTheories(model.theories, directoryPath)
 
 		model.getMachines().each { m ->
 			extractMachine(m, directoryPath)
@@ -69,20 +70,18 @@ public class ModelToXML {
 	}
 
 	def extractMachine(EventBMachine m, String directoryPath) {
-		String comment = m.getChildrenOfType(ElementComment.class).collect { it.getComment() }.iterator().join("\n")
-		String fileName = directoryPath + File.separator + m.getName() + ".bum"
+		String fileName = directoryPath + File.separator + m.getName() + "." + EventBFactory.RODIN_MACHINE_EXTENSION
 		new File(fileName).withWriter("UTF-8") { writer ->
 			MarkupBuilder xml = new MarkupBuilder(writer);
 
 			xml.mkp.xmlDeclaration(version: "1.0", encoding: "UTF-8", standalone: "no")
 			xml.'org.eventb.core.machineFile'('org.eventb.core.configuration': "org.eventb.core.fwd", version:"5",
-			'org.eventb.core.comment': comment) {
+			'org.eventb.core.comment': m.comment) {
 				m.sees.each {
 					xml.'org.eventb.core.seesContext'(name: genName(), 'org.eventb.core.target': it.getName())
 				}
-				m.refines.each {
-					xml.'org.eventb.core.refinesMachine'(name: genName(),
-					'org.eventb.core.target': it.getName())
+				if (m.refinesMachine) {
+					xml.'org.eventb.core.refinesMachine'(name: genName(), 'org.eventb.core.target': m.refinesMachine.name)
 				}
 				m.variables.each {
 					xml.'org.eventb.core.variable'(name: genName(), 'org.eventb.core.identifier': it.getName())
@@ -106,19 +105,15 @@ public class ModelToXML {
 		def convergence = e.type == Event.EventType.ORDINARY ? "0"
 				: e.type == Event.EventType.CONVERGENT ? "1"
 				: "2"
-		def extended = e.isExtended()
-		String comment = e.getChildrenOfType(ElementComment.class).collect { it.getComment() }.iterator().join("\n")
+		def extended = e.inheritance == Event.Inheritance.EXTENDS
 		xml.'org.eventb.core.event'(name: genName(),
 		'org.eventb.core.convergence': convergence,
 		'org.eventb.core.extended': extended,
 		'org.eventb.core.label': e.getName(),
-		'org.eventb.core.comment': comment
+		'org.eventb.core.comment': e.comment
 		) {
-			if (!e.getName().equals("INITIALISATION")) {
-				e.getChildrenOfType(Event.class).each {
-					xml.'org.eventb.core.refinesEvent'(name: genName(),
-					'org.eventb.core.target': it.getName())
-				}
+			if (!e.getName().equals("INITIALISATION") && e.parentEvent != null) {
+				xml.'org.eventb.core.refinesEvent'(name: genName(), 'org.eventb.core.target': e.parentEvent.name)
 			}
 			e.parameters.each {
 				xml.'org.eventb.core.parameter'(name: genName(),
@@ -148,14 +143,13 @@ public class ModelToXML {
 	}
 
 	def extractContext(Context c, String directoryPath) {
-		String comment = c.getChildrenOfType(ElementComment.class).collect { it.getComment() }.iterator().join("\n")
-		String fileName = directoryPath + File.separator + c.getName() + ".buc"
+		String fileName = directoryPath + File.separator + c.getName() + "." + EventBFactory.RODIN_CONTEXT_EXTENSION
 		new File(fileName).withWriter("UTF-8") { writer ->
 			MarkupBuilder xml = new MarkupBuilder(writer);
 
 			xml.mkp.xmlDeclaration(version: "1.0", encoding: "UTF-8", standalone: "no")
 			xml.'org.eventb.core.contextFile'('org.eventb.core.configuration': "org.eventb.core.fwd",
-			version:"3", 'org.eventb.core.comment': comment) {
+			version:"3", 'org.eventb.core.comment': c.comment ?: "") {
 				c.getExtends().each {
 					xml.'org.eventb.core.extendsContext'(name: genName(),
 					'org.eventb.core.target': it.getName())

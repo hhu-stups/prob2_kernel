@@ -2,12 +2,12 @@ package de.prob.model.classicalb;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import com.github.krukow.clj_lang.PersistentHashMap;
 import com.google.inject.Inject;
 
 import de.be4.classicalb.core.parser.BParser;
@@ -29,6 +29,7 @@ import de.prob.model.representation.Machine;
 import de.prob.model.representation.ModelElementList;
 import de.prob.scripting.StateSpaceProvider;
 import de.prob.statespace.FormalismType;
+import de.prob.statespace.Language;
 
 public class ClassicalBModel extends AbstractModel {
 	private final ClassicalBMachine mainMachine;
@@ -37,12 +38,12 @@ public class ClassicalBModel extends AbstractModel {
 
 	@Inject
 	public ClassicalBModel(final StateSpaceProvider ssProvider) {
-		this(ssProvider, PersistentHashMap.emptyMap(), new DependencyGraph(), null, null, null, null);
+		this(ssProvider, Collections.emptyMap(), new DependencyGraph(), null, null, null, null);
 	}
 
 	public ClassicalBModel(
 		final StateSpaceProvider ssProvider,
-		final PersistentHashMap<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children,
+		final Map<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children,
 		final DependencyGraph graph,
 		final File modelFile,
 		final BParser bparser,
@@ -103,6 +104,11 @@ public class ClassicalBModel extends AbstractModel {
 	@Override
 	public FormalismType getFormalismType() {
 		return FormalismType.B;
+	}
+
+	@Override
+	public Language getLanguage() {
+		return Language.CLASSICAL_B;
 	}
 
 	@Override

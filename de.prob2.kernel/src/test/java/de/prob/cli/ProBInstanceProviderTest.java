@@ -3,8 +3,8 @@ package de.prob.cli;
 import java.io.BufferedReader;
 import java.io.StringReader;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class ProBInstanceProviderTest {
 
@@ -21,8 +21,8 @@ public class ProBInstanceProviderTest {
 
 		ProBInstanceProvider.CliInformation info = factory.extractCliInformation(reader);
 
-		Assert.assertNotNull(info);
-		Assert.assertEquals(61013, info.getPort());
-		Assert.assertEquals(57124, info.getUserInterruptReference());
+		Assertions.assertNotNull(info);
+		Assertions.assertEquals(61013, info.getPort());
+		Assertions.assertEquals(57124, info.getUserInterruptReference());
 	}
 }

@@ -8,7 +8,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyMap;
-
+@Deprecated
 public class RenamingDelta {
 
 	private final String originalName;

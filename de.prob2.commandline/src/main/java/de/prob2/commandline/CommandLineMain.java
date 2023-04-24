@@ -5,14 +5,13 @@ import java.io.IOException;
 
 import javax.script.ScriptException;
 
-import ch.qos.logback.classic.util.ContextInitializer;
+import ch.qos.logback.classic.ClassicConstants;
 
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Stage;
 
-import de.prob.Main;
 import de.prob.MainModule;
 
 import org.apache.commons.cli.CommandLine;
@@ -78,8 +77,8 @@ public final class CommandLineMain {
 	 * @param args command-line arguments
 	 */
 	public static void main(final String[] args) {
-		if (!System.getProperties().containsKey(ContextInitializer.CONFIG_FILE_PROPERTY)) {
-			System.setProperty(ContextInitializer.CONFIG_FILE_PROPERTY, "de/prob/logging/production.xml");
+		if (!System.getProperties().containsKey(ClassicConstants.CONFIG_FILE_PROPERTY)) {
+			System.setProperty(ClassicConstants.CONFIG_FILE_PROPERTY, "de/prob/logging/production.xml");
 		}
 		logger = LoggerFactory.getLogger(CommandLineMain.class);
 		

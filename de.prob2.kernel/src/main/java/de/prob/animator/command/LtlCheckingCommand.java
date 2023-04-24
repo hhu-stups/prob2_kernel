@@ -66,9 +66,16 @@ public final class LtlCheckingCommand extends AbstractCommand implements
 					"Could not find initialisation. Try to animating the model.");
 		} else if (term.hasFunctor("typeerror", 0)) {
 			ListPrologTerm errorTerm = (ListPrologTerm) bindings.get(VARIABLE_NAME_ERRORS);
-			result = new LTLError(ltlFormula, String.join("\n", errorTerm.stream()
-				.map(PrologTerm::atomicString)
-				.collect(Collectors.toList())));
+			final List<ErrorItem> errors = errorTerm.stream()
+				.map(error -> {
+					if (error.isAtom()) {
+						return ErrorItem.fromErrorMessage(error.atomToString());
+					} else {
+						return ErrorItem.fromProlog(error);
+					}
+				})
+				.collect(Collectors.toList());
+			result = new LTLError(ltlFormula, errors);
 		} else if (term.hasFunctor("incomplete", 0)) {
 			result = new LTLNotYetFinished(ltlFormula);
 		} else if (term.hasFunctor("counterexample", 3)) {
@@ -93,10 +100,7 @@ public final class LtlCheckingCommand extends AbstractCommand implements
 				loopEntry = ((IntegerPrologTerm) loopStatus.getArgument(1))
 						.getValue().intValue();
 			} else {
-				
-				throw new UnexpectedLoopStatusException(
-						"LTL model check returned unexpected loop status: "
-								+ loopStatus);
+				throw new AssertionError("LTL model check returned unexpected loop status: " + loopStatus);
 			}
 			
 			List<Transition> pathToCE = BindingGenerator.getList(cpt.getArgument(3)).stream()
@@ -106,7 +110,7 @@ public final class LtlCheckingCommand extends AbstractCommand implements
 			
 			result = new LTLCounterExample(ltlFormula, s, pathToCE, counterExample, loopEntry, pathType);
 		} else {
-			throw new UnknownLtlResult("Unknown result from LTL checking: " + term);
+			throw new AssertionError("Unknown result from LTL checking: " + term);
 		}
 	}
 

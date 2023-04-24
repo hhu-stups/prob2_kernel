@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+@Deprecated
 public class CompareTwoOperationsTest {
 	private static ProBKernelStub proBKernelStub;
 
@@ -55,7 +56,7 @@ public class CompareTwoOperationsTest {
 		CompareTwoOperations compareTwoOperations =
 				new CompareTwoOperations(prepareOperations1.getPreparedOperation(), compoundPrologTerm1, prepareOperations1.getFreeVars());
 		stateSpace.execute(compareTwoOperations);
-		final Map<String, String> delta = TraceCheckerUtils.zip(PrologTerm.atomicStrings(prepareOperations1.getFoundVars()), compareTwoOperations.getIdentifiers());
+		final Map<String, String> delta = TraceCheckerUtils.zip(PrologTerm.atomsToStrings(prepareOperations1.getFoundVars()), compareTwoOperations.getIdentifiers());
 		Map<String, String> expected = new HashMap<>();
 		expected.put("inccc", "inccc");
 		expected.put("floors", "floors");
@@ -100,7 +101,7 @@ public class CompareTwoOperationsTest {
 		CompareTwoOperations compareTwoOperations =
 				new CompareTwoOperations(prepareOperations1.getPreparedOperation(), compoundPrologTerm2, prepareOperations1.getFreeVars());
 		stateSpace.execute(compareTwoOperations);
-		final Map<String, String> delta = TraceCheckerUtils.zip(PrologTerm.atomicStrings(prepareOperations1.getFoundVars()), compareTwoOperations.getIdentifiers());
+		final Map<String, String> delta = TraceCheckerUtils.zip(PrologTerm.atomsToStrings(prepareOperations1.getFoundVars()), compareTwoOperations.getIdentifiers());
 		Map<String, String> expected = new HashMap<>();
 		expected.put("inccc", "dinccc");
 		expected.put("floors", "floors");

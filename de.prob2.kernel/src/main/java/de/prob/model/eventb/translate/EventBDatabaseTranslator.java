@@ -11,9 +11,12 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import com.google.common.io.MoreFiles;
+
 import de.prob.exception.ProBError;
 import de.prob.model.eventb.EventBModel;
 import de.prob.model.representation.AbstractElement;
+import de.prob.scripting.EventBFactory;
 
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.xml.sax.SAXException;
@@ -47,7 +50,7 @@ public class EventBDatabaseTranslator {
 			}
 
 			mainComponent = null;
-			if (fileName.endsWith(".bcc")) {
+			if (EventBFactory.CHECKED_RODIN_CONTEXT_EXTENSION.equals(MoreFiles.getFileExtension(modelFile.toPath()))) {
 				final ContextXmlHandler xmlHandler = new ContextXmlHandler(this.model, fullFileName, typeEnv);
 				saxParser.parse(modelFile, xmlHandler);
 				mainComponent = xmlHandler.getContext();

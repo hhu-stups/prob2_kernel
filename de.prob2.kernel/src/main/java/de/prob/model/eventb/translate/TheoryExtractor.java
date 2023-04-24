@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +22,8 @@ import de.prob.exception.ProBError;
 import de.prob.model.eventb.EventBAxiom;
 import de.prob.model.eventb.theory.AxiomaticDefinitionBlock;
 import de.prob.model.eventb.theory.DataType;
+import de.prob.model.eventb.theory.DataTypeConstructor;
+import de.prob.model.eventb.theory.DataTypeDestructor;
 import de.prob.model.eventb.theory.DirectDefinition;
 import de.prob.model.eventb.theory.IOperatorDefinition;
 import de.prob.model.eventb.theory.InferenceRule;
@@ -40,14 +41,11 @@ import de.prob.model.representation.ModelElementList;
 import de.prob.tmparser.OperatorMapping;
 import de.prob.tmparser.TheoryMappingException;
 import de.prob.tmparser.TheoryMappingParser;
-import de.prob.util.Tuple2;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -68,7 +66,8 @@ public class TheoryExtractor extends DefaultHandler {
 	// For adding DataType
 	private String dataTypeName;
 	private String currentConstructor;
-	private Map<String, List<Tuple2<String, String>>> constructors;
+	private List<DataTypeDestructor> currentDestructors;
+	private List<DataTypeConstructor> constructors;
 	private List<String> types;
 
 	private ModelElementList<Type> typeArguments; // Also used for axiomatic
@@ -366,22 +365,20 @@ public class TheoryExtractor extends DefaultHandler {
 		String name = attributes.getValue("name");
 		String type = attributes.getValue("org.eventb.core.type");
 
-		constructors.get(currentConstructor).add(
-			new Tuple2<>(name, type));
+		currentDestructors.add(new DataTypeDestructor(name, type));
 	}
 
 	private void beginAddingDataTypeConstructor(final Attributes attributes) {
 		String name = attributes.getValue("name");
 
 		currentConstructor = name;
-		constructors.put(currentConstructor,
-			new ArrayList<>());
+		currentDestructors = new ArrayList<>();
 	}
 
 	private void beginAddingDataType(final Attributes attributes) {
 		String name = attributes.getValue("name");
 		dataTypeName = name;
-		constructors = new HashMap<>();
+		constructors = new ArrayList<>();
 		types = new ArrayList<>();
 
 	}
@@ -431,6 +428,9 @@ public class TheoryExtractor extends DefaultHandler {
 		switch (qName) {
 			case "org.eventb.theory.core.scDatatypeDefinition":
 				finishDataType();
+				break;
+			case "org.eventb.theory.core.scDatatypeConstructor":
+				finishDataTypeConstructor();
 				break;
 			case "org.eventb.theory.core.scNewOperatorDefinition":
 				finishOperator();
@@ -510,6 +510,10 @@ public class TheoryExtractor extends DefaultHandler {
 		}
 	}
 
+	private void finishDataTypeConstructor() {
+		constructors.add(new DataTypeConstructor(currentConstructor, currentDestructors));
+	}
+
 	private void finishDataType() {
 		DataType dataType = new DataType(dataTypeName, constructors, types);
 
@@ -521,14 +525,13 @@ public class TheoryExtractor extends DefaultHandler {
 
 	@Override
 	public void endDocument() {
-		theory = theory.set(DataType.class, dataTypes);
-		theory = theory.set(Theory.class, imported);
-		theory = theory.set(Operator.class, operators);
-		theory = theory.set(AxiomaticDefinitionBlock.class,
-				axiomaticDefinitionsBlocks);
-		theory = theory.set(ProofRulesBlock.class, proofRules);
-		theory = theory.set(EventBAxiom.class, theorems);
-		theory = theory.set(Type.class, typeParameters);
+		theory = theory.withDataTypes(dataTypes);
+		theory = theory.withImported(imported);
+		theory = theory.withOperators(operators);
+		theory = theory.withAxiomaticDefinitionBlocks(axiomaticDefinitionsBlocks);
+		theory = theory.withProofRules(proofRules);
+		theory = theory.withTheorems(theorems);
+		theory = theory.withTypeParameters(typeParameters);
 
 		theoryMap.put(project + File.separator + name, theory);
 		theory = theory.setTypeEnvironment(typeEnv);

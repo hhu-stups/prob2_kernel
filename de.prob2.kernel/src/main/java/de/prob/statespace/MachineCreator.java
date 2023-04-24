@@ -5,26 +5,24 @@ import java.nio.file.Path;
 import java.util.function.Function;
 
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 
 import de.prob.animator.ReusableAnimator;
+import de.prob.scripting.Api;
 import de.prob.scripting.ClassicalBFactory;
-import de.prob.scripting.FactoryProvider;
-import de.prob.scripting.ModelFactory;
 
 /**
  * Creates a Loaded Machine
+ * 
+ * @deprecated Use {@link Api#b_load(String)} or {@link ClassicalBFactory#extract(String)} instead.
  */
+@Deprecated
 public class MachineCreator {
-
-	private final Injector injector;
 	private final ClassicalBFactory classicalBFactory;
 	private final AnimationSelector animationSelector;
 	private final ReusableAnimator reusableAnimator;
 
 	@Inject
-	public MachineCreator(Injector injector, ClassicalBFactory classicalBFactory, AnimationSelector animationSelector, ReusableAnimator reusableAnimator){
-		this.injector = injector;
+	public MachineCreator(ClassicalBFactory classicalBFactory, AnimationSelector animationSelector, ReusableAnimator reusableAnimator){
 		this.classicalBFactory = classicalBFactory;
 		this.animationSelector = animationSelector;
 		this.reusableAnimator = reusableAnimator;
@@ -36,11 +34,10 @@ public class MachineCreator {
 	 * @return the loaded machine
 	 */
 	public LoadedMachine load(Path path){
-		ModelFactory<?> factory = injector.getInstance(FactoryProvider.factoryClassFromExtension("mch"));
 		StateSpace stateSpace = reusableAnimator.createStateSpace();
 		Function<StateSpace, Trace> function = stateSpace1 -> {
 			try {
-				factory.extract(path.toString()).loadIntoStateSpace(stateSpace);
+				classicalBFactory.extract(path.toString()).loadIntoStateSpace(stateSpace);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

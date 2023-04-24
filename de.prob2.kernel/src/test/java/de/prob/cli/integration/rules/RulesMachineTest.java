@@ -20,12 +20,12 @@ import de.prob.model.brules.RuleStatus;
 import de.prob.model.brules.RulesMachineRun;
 import de.prob.statespace.State;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static de.prob.cli.integration.rules.RulesTestUtil.createRulesMachineFile;
 import static de.prob.cli.integration.rules.RulesTestUtil.startRulesMachineRun;
 import static de.prob.cli.integration.rules.RulesTestUtil.startRulesMachineRunWithOperations;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RulesMachineTest {
 
@@ -49,7 +49,7 @@ public class RulesMachineTest {
 		assertEquals(RuleStatus.SUCCESS, rule1Result.getRuleState());
 		RuleOperation rule1Operation = rule1Result.getRuleOperation();
 		assertEquals("Rule1", rule1Operation.getName());
-		assertTrue("Should be empty", rule1Result.getNotCheckedDependencies().isEmpty());
+		assertTrue(rule1Result.getNotCheckedDependencies().isEmpty(), "Should be empty");
 
 		RuleResult result2 = ruleResults.getRuleResult("Rule2");
 		assertEquals(RuleStatus.FAIL, result2.getRuleState());

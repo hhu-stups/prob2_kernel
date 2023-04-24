@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import de.prob.animator.command.AbstractCommand;
+import de.prob.animator.domainobjects.EvalOptions;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
@@ -18,27 +19,39 @@ public class GetOpFromId extends AbstractCommand {
 	private final Transition op;
 	private static final String PARAMETERS_VARIABLE = "Params";
 	private static final String RETURNVALUES_VARIABLE = "RetVals";
-	private List<String> params;
-	private List<String> returnValues;
-	private final FormulaExpand expansion;
+	private final EvalOptions options;
+	private EvaluatedTransitionInfo info;
+
+	public GetOpFromId(final Transition transition, final EvalOptions options) {
+		this.op = transition;
+		this.options = options;
+	}
 
 	public GetOpFromId(final Transition opInfo, final FormulaExpand expansion) {
-		op = opInfo;
-		this.expansion = expansion;
+		this(opInfo, Transition.OLD_DEFAULT_EVAL_OPTIONS.withExpand(expansion));
 	}
 
 	@Override
 	public void writeCommand(final IPrologTermOutput pto) {
-		pto.openTerm(PROLOG_COMMAND_NAME).printAtomOrNumber(op.getId())
-				.printAtom(expansion.getPrologName()).printVariable(PARAMETERS_VARIABLE)
-				.printVariable(RETURNVALUES_VARIABLE).closeTerm();
+		pto.openTerm(PROLOG_COMMAND_NAME);
+		pto.printAtomOrNumber(op.getId());
+
+		pto.openList();
+		this.options.printProlog(pto);
+		pto.closeList();
+
+		pto.printVariable(PARAMETERS_VARIABLE);
+		pto.printVariable(RETURNVALUES_VARIABLE);
+		pto.closeTerm();
 	}
 
 	@Override
 	public void processResult(
 			final ISimplifiedROMap<String, PrologTerm> bindings) {
+		// FIXME Is it a good idea to intern *every* parameter/return value? They can be very long if truncation is disabled.
+
 		ListPrologTerm plist = BindingGenerator.getList(bindings.get(PARAMETERS_VARIABLE));
-		params = Collections.emptyList();
+		List<String> params = Collections.emptyList();
 		if (!plist.isEmpty()) {
 			params = new ArrayList<>();
 		}
@@ -47,7 +60,7 @@ public class GetOpFromId extends AbstractCommand {
 		}
 
 		ListPrologTerm rlist = BindingGenerator.getList(bindings.get(RETURNVALUES_VARIABLE));
-		returnValues = Collections.emptyList();
+		List<String> returnValues = Collections.emptyList();
 		if (!rlist.isEmpty()) {
 			returnValues = new ArrayList<>();
 		}
@@ -55,7 +68,8 @@ public class GetOpFromId extends AbstractCommand {
 			returnValues.add(r.getFunctor().intern());
 		}
 
-		op.setInfo(expansion, params, returnValues);
+		this.info = new EvaluatedTransitionInfo(this.op, params, returnValues);
+		op.addEvaluatedInfo(this.options, this.info);
 	}
 
 	/**
@@ -63,15 +77,18 @@ public class GetOpFromId extends AbstractCommand {
 	 */
 	@Deprecated
 	public List<String> getParams() {
-		return this.getParameters();
+		return this.getInfo().getParameterValues();
 	}
 
 	public List<String> getParameters() {
-		return params;
+		return this.getInfo().getParameterValues();
 	}
 
 	public List<String> getReturnValues() {
-		return returnValues;
+		return this.getInfo().getReturnValues();
 	}
 
+	public EvaluatedTransitionInfo getInfo() {
+		return this.info;
+	}
 }

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<org.eventb.core.contextFile org.eventb.core.configuration="org.eventb.core.fwd;de.prob.symbolic.ctxBase;de.prob.units.mchBase" org.eventb.texttools.text_lastmodified="1390838812830" org.eventb.texttools.text_representation="context train_ctx0&#10;&#10;sets BLOCKS ROUTES&#10;&#10;constants rtbl nxt fst lst&#10;&#10;axioms&#10;&#10;   @axm1 rtbl ∈ BLOCKS ↔ ROUTES&#10;   @axm2 dom(rtbl) = BLOCKS&#10;   @axm3 ran(rtbl) = ROUTES&#10;   @axm4 nxt ∈ ROUTES → (BLOCKS ⤔ BLOCKS)&#10;   @axm5 fst ∈ ROUTES → BLOCKS&#10;   @axm6 lst ∈ ROUTES → BLOCKS&#10;   @axm7 fst∼ ⊆ rtbl // each first block is part of the corresponding route&#10;   @axm8 lst∼ ⊆ rtbl // each last block is part of the corresponding route&#10;   @axm11 ∀r·r∈ROUTES ⇒ fst(r)≠lst(r) // first and last block of a route are distinct&#10;   @axm10 ∀r·r∈ROUTES ⇒ (∀S·S⊆ran(r) ∧ S⊆nxt(r)[S] ⇒ S=∅) // ENV-11 : no cycles; replaced BLOCKS by ran(r) for ProB&#10;   @axm9 ∀r·r∈ROUTES ⇒ nxt(r) ∈ rtbl∼[{r}]∖{lst(r)} ⤖ rtbl∼[{r}]∖{fst(r)} // ENV-10: continuous path from first to last&#10;   @axm12 ∀r,s·r∈ROUTES ∧ s∈ROUTES ∧ r≠s ⇒ fst(r)∉rtbl∼[{s}]∖{fst(s),lst(s)} // ENV-8: first block cannot be in middle of other route&#10;   @axm13 ∀r,s·r∈ROUTES ∧ s∈ROUTES ∧ r≠s ⇒ lst(r)∉rtbl∼[{s}]∖{fst(s),lst(s)} // ENV-9: last block cannot be in middle of other route&#10;&#10;end&#10;" version="3">
+<org.eventb.core.constant name="internal_cst1" org.eventb.core.identifier="rtbl"/>
+<org.eventb.core.constant name="internal_cst2" org.eventb.core.identifier="nxt"/>
+<org.eventb.core.constant name="internal_cst3" org.eventb.core.identifier="fst"/>
+<org.eventb.core.constant name="internal_cst4" org.eventb.core.identifier="lst"/>
+<org.eventb.core.carrierSet name="internal_axm13}" org.eventb.core.identifier="BLOCKS"/>
+<org.eventb.core.carrierSet name="internal_axm145" org.eventb.core.identifier="ROUTES"/>
+<org.eventb.core.axiom name="internal_axm1A" org.eventb.core.label="axm1" org.eventb.core.predicate="rtbl ∈ BLOCKS ↔ ROUTES"/>
+<org.eventb.core.axiom name="internal_axm2A" org.eventb.core.label="axm2" org.eventb.core.predicate="dom(rtbl) = BLOCKS"/>
+<org.eventb.core.axiom name="internal_axm3A" org.eventb.core.label="axm3" org.eventb.core.predicate="ran(rtbl) = ROUTES"/>
+<org.eventb.core.axiom name="internal_axm4A" org.eventb.core.label="axm4" org.eventb.core.predicate="nxt ∈ ROUTES → (BLOCKS ⤔ BLOCKS)"/>
+<org.eventb.core.axiom name="internal_axm5A" org.eventb.core.label="axm5" org.eventb.core.predicate="fst ∈ ROUTES → BLOCKS"/>
+<org.eventb.core.axiom name="internal_axm6A" org.eventb.core.label="axm6" org.eventb.core.predicate="lst ∈ ROUTES → BLOCKS"/>
+<org.eventb.core.axiom name="internal_axm7A" org.eventb.core.comment="each first block is part of the corresponding route" org.eventb.core.label="axm7" org.eventb.core.predicate="fst∼ ⊆ rtbl"/>
+<org.eventb.core.axiom name="internal_axm8A" org.eventb.core.comment="each last block is part of the corresponding route" org.eventb.core.label="axm8" org.eventb.core.predicate="lst∼ ⊆ rtbl"/>
+<org.eventb.core.axiom name="internal_axm11A" org.eventb.core.comment="first and last block of a route are distinct" org.eventb.core.label="axm11" org.eventb.core.predicate="∀r·r∈ROUTES ⇒ fst(r)≠lst(r)"/>
+<org.eventb.core.axiom name="internal_axm10A" org.eventb.core.comment="ENV-11 : no cycles; replaced BLOCKS by ran(r) for ProB" org.eventb.core.label="axm10" org.eventb.core.predicate="∀r·r∈ROUTES ⇒ (∀S·S⊆ran(nxt(r)) ∧ S⊆nxt(r)[S] ⇒ S=∅)"/>
+<org.eventb.core.axiom name="internal_axm9A" org.eventb.core.comment="ENV-10: continuous path from first to last" org.eventb.core.label="axm9" org.eventb.core.predicate="∀r·r∈ROUTES ⇒ nxt(r) ∈ rtbl∼[{r}]∖{lst(r)} ⤖ rtbl∼[{r}]∖{fst(r)}"/>
+<org.eventb.core.axiom name="internal_axm12A" org.eventb.core.comment="ENV-8: first block cannot be in middle of other route" org.eventb.core.label="axm12" org.eventb.core.predicate="∀r,s·r∈ROUTES ∧ s∈ROUTES ∧ r≠s ⇒ fst(r)∉rtbl∼[{s}]∖{fst(s),lst(s)}"/>
+<org.eventb.core.axiom name="internal_axm13A" org.eventb.core.comment="ENV-9: last block cannot be in middle of other route" org.eventb.core.label="axm13" org.eventb.core.predicate="∀r,s·r∈ROUTES ∧ s∈ROUTES ∧ r≠s ⇒ lst(r)∉rtbl∼[{s}]∖{fst(s),lst(s)}"/>
+</org.eventb.core.contextFile>

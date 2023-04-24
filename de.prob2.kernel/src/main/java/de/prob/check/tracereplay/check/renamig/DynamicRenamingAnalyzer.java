@@ -23,6 +23,7 @@ import static java.util.stream.Collectors.*;
 /**
  * Finds a operation if it is renamed or contains renamed variables/parameter
  */
+@Deprecated
 public class DynamicRenamingAnalyzer implements RenamingAnalyzerInterface {
 
 	private final Set<String> typeIorII;
@@ -52,7 +53,7 @@ public class DynamicRenamingAnalyzer implements RenamingAnalyzerInterface {
 			return new HashMap<>();
 		}
 
-		final List<String> oldIdentifiers = PrologTerm.atomicStrings(preparedOperation.getFoundVariables());
+		final List<String> oldIdentifiers = PrologTerm.atomsToStrings(preparedOperation.getFoundVariables());
 		final List<String> newIdentifiers = compareTwoOperations.getIdentifiers();
 		assert oldIdentifiers.size() == newIdentifiers.size();
 		return TraceCheckerUtils.zip(oldIdentifiers, newIdentifiers);

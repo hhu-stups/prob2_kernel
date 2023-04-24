@@ -12,7 +12,7 @@ import static de.prob.check.tracereplay.check.TraceCheckerUtils.product;
 import static java.util.Collections.*;
 import static java.util.Collections.singleton;
 import static java.util.stream.Collectors.*;
-
+@Deprecated
 public class IdentifierMatcher {
 
 

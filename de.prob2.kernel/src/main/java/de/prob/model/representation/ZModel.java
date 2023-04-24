@@ -1,9 +1,9 @@
 package de.prob.model.representation;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 
-import com.github.krukow.clj_lang.PersistentHashMap;
 import com.google.inject.Inject;
 
 import de.prob.animator.command.AbstractCommand;
@@ -13,6 +13,7 @@ import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.scripting.StateSpaceProvider;
 import de.prob.statespace.FormalismType;
+import de.prob.statespace.Language;
 
 public class ZModel extends AbstractModel {
 	@Inject
@@ -21,7 +22,7 @@ public class ZModel extends AbstractModel {
 	}
 
 	public ZModel(final StateSpaceProvider ssProvider, File modelFile) {
-		super(ssProvider, PersistentHashMap.emptyMap(), new DependencyGraph(), modelFile);
+		super(ssProvider, Collections.emptyMap(), new DependencyGraph(), modelFile);
 	}
 
 	public ZModel create(final File modelFile) {
@@ -41,6 +42,11 @@ public class ZModel extends AbstractModel {
 	@Override
 	public FormalismType getFormalismType() {
 		return FormalismType.Z;
+	}
+
+	@Override
+	public Language getLanguage() {
+		return Language.Z;
 	}
 
 	@Override

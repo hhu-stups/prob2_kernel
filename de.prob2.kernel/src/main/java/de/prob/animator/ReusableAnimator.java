@@ -37,12 +37,14 @@ public final class ReusableAnimator implements IAnimator {
 	private final class InternalAnimator implements IAnimator {
 		private final AtomicBoolean isKilled;
 		private final Collection<IWarningListener> warningListeners;
+		private final Collection<IConsoleOutputListener> consoleOutputListeners;
 		
 		private InternalAnimator() {
 			super();
 			
 			this.isKilled = new AtomicBoolean(false);
 			this.warningListeners = new ArrayList<>();
+			this.consoleOutputListeners = new ArrayList<>();
 		}
 		
 		private void checkAlive() {
@@ -73,6 +75,7 @@ public final class ReusableAnimator implements IAnimator {
 				ReusableAnimator.this.endTransaction();
 			}
 			this.warningListeners.forEach(ReusableAnimator.this::removeWarningListener);
+			this.consoleOutputListeners.forEach(ReusableAnimator.this::removeConsoleOutputListener);
 			synchronized (ReusableAnimator.this.currentStateSpaceLock) {
 				assert ReusableAnimator.this.getCurrentStateSpace() != null;
 				ReusableAnimator.this.currentStateSpace = null;
@@ -120,6 +123,18 @@ public final class ReusableAnimator implements IAnimator {
 		public void removeWarningListener(final IWarningListener listener) {
 			ReusableAnimator.this.removeWarningListener(listener);
 			this.warningListeners.remove(listener);
+		}
+		
+		@Override
+		public void addConsoleOutputListener(final IConsoleOutputListener listener) {
+			this.consoleOutputListeners.add(listener);
+			ReusableAnimator.this.addConsoleOutputListener(listener);
+		}
+		
+		@Override
+		public void removeConsoleOutputListener(final IConsoleOutputListener listener) {
+			ReusableAnimator.this.removeConsoleOutputListener(listener);
+			this.consoleOutputListeners.remove(listener);
 		}
 	}
 	
@@ -227,5 +242,15 @@ public final class ReusableAnimator implements IAnimator {
 	@Override
 	public void removeWarningListener(final IWarningListener listener) {
 		this.animator.removeWarningListener(listener);
+	}
+	
+	@Override
+	public void addConsoleOutputListener(final IConsoleOutputListener listener) {
+		this.animator.addConsoleOutputListener(listener);
+	}
+	
+	@Override
+	public void removeConsoleOutputListener(final IConsoleOutputListener listener) {
+		this.animator.removeConsoleOutputListener(listener);
 	}
 }

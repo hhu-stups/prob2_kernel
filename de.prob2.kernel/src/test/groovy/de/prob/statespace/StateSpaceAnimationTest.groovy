@@ -34,7 +34,7 @@ class StateSpaceAnimationTest extends Specification {
 		final states = s.getStatesFromPredicate(formula)
 
 		then:
-		final evaluated = states.collect {s.eval(it, [formula])[0]}
+		final evaluated = states.collect {it.eval(formula)}
 		evaluated.every {it instanceof IdentifierNotInitialised || it.value == "TRUE"}
 	}
 

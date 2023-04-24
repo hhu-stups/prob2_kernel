@@ -1,5 +1,12 @@
 package de.prob.model.representation;
 
+/**
+ * @deprecated ProB 2 never throws this exception anymore.
+ *     If you are using this exception yourself,
+ *     please replace it with your own exception class
+ *     or a standard one like {@link IllegalStateException}.
+ */
+@Deprecated
 public class IllegalModificationException extends RuntimeException {
 	private static final long serialVersionUID = -5460101958681905582L;
 

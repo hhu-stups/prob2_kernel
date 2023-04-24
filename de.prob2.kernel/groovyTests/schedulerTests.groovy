@@ -34,8 +34,8 @@ res2 = varsAt6[m.scheduler.variables.ready.formula].value
 assert res2 == "{}" || res2 == "\u2205"
 final f1 = "1+1=2" as ClassicalB
 s.subscribe(m, f1)
-assert s.valuesAt(h2.currentState).containsKey(f1)
-assert s.valuesAt(h2.currentState)[f1].value == "TRUE"
+assert h2.currentState.values.containsKey(f1)
+assert h2.currentState.values[f1].value == "TRUE"
 
 final root = s.root
 assert s.isValidOperation(s[0],"new", "pp = PID1")

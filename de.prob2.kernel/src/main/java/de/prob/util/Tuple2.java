@@ -2,6 +2,13 @@ package de.prob.util;
 
 import java.util.Objects;
 
+/**
+ * @deprecated All uses of this class in ProB 2 itself have been deprecated and replaced with other data structures.
+ *     If you are using this class in your own code,
+ *     consider creating a dedicated class for your use case instead,
+ *     or switch to an established implementation like {@code Tuple2} from Groovy or {@code Pair} from Apache Commons or JavaFX.
+ */
+@Deprecated
 public class Tuple2<S, T> {
 	private final S first;
 	private final T second;

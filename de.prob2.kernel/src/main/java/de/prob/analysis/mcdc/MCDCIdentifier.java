@@ -1,20 +1,29 @@
 package de.prob.analysis.mcdc;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
-import de.be4.classicalb.core.parser.node.*;
+import de.be4.classicalb.core.parser.node.APredicateParseUnit;
+import de.be4.classicalb.core.parser.node.PPredicate;
+import de.be4.classicalb.core.parser.node.Start;
 import de.prob.analysis.Conversion;
 import de.prob.animator.command.CbcSolveCommand;
-import de.prob.animator.domainobjects.*;
+import de.prob.animator.domainobjects.ClassicalB;
+import de.prob.animator.domainobjects.EvalResult;
+import de.prob.animator.domainobjects.FormulaExpand;
+import de.prob.animator.domainobjects.IEvalElement;
+import de.prob.animator.domainobjects.Join;
+import de.prob.model.representation.AbstractModel;
+import de.prob.model.representation.BEvent;
 import de.prob.model.representation.Extraction;
-import de.prob.model.classicalb.ClassicalBModel;
-import de.prob.model.classicalb.Operation;
-import de.prob.model.representation.*;
+import de.prob.model.representation.Machine;
 import de.prob.statespace.StateSpace;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Determines the MCDC test cases for all guards of all operations of a given model extracted from the current state space up to a
@@ -22,7 +31,7 @@ import de.prob.statespace.StateSpace;
  */
 public class MCDCIdentifier {
 
-	private final static Logger log = Logger.getLogger(MCDCIdentifier.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(MCDCIdentifier.class);
 
 	private final StateSpace stateSpace;
 	private final int maxLevel;
@@ -33,12 +42,15 @@ public class MCDCIdentifier {
 	}
 
 	public Map<BEvent, List<ConcreteMCDCTestCase>> identifyMCDC() {
-		AbstractElement machine = stateSpace.getMainComponent();
+		if (!(stateSpace.getMainComponent() instanceof Machine)) {
+			return Collections.emptyMap();
+		}
+
+		Machine machine = (Machine)stateSpace.getMainComponent();
 		AbstractModel model = stateSpace.getModel();
 
 		Map<BEvent, List<ConcreteMCDCTestCase>> testCases = new HashMap<>();
-		ModelElementList<BEvent> operations = machine.getChildrenOfType(BEvent.class);
-		for (BEvent operation : operations) {
+		for (BEvent operation : machine.getEvents()) {
 			List<IEvalElement> guards = Extraction.getGuardPredicates(machine, operation.getName());
 			ClassicalB predicate;
 			if(guards.isEmpty()) {
@@ -68,7 +80,7 @@ public class MCDCIdentifier {
 			CbcSolveCommand cmd = new CbcSolveCommand(Conversion.classicalBFromPredicate(model, t.getPredicate()));
 			stateSpace.execute(cmd);
 			if (cmd.getValue() == EvalResult.FALSE) {
-				log.info("Infeasible: " + t.toString());
+				LOGGER.info("Infeasible: {}", t);
 			} else {
 				feasibleTestCases.add(t);
 			}

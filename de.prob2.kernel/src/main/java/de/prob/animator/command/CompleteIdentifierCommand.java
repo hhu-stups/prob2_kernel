@@ -69,6 +69,6 @@ public final class CompleteIdentifierCommand extends AbstractCommand {
 	
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
-		this.completions = PrologTerm.atomicStrings(BindingGenerator.getList(bindings, COMPLETIONS_VAR));
+		this.completions = PrologTerm.atomsToStrings(BindingGenerator.getList(bindings, COMPLETIONS_VAR));
 	}
 }

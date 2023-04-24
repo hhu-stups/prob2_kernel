@@ -24,7 +24,7 @@ final filtered = cmd.filtered
 assert filtered != null
 sIds.each {
 	if (filtered.contains(it.id)) {
-		assert !s.canBeEvaluated(it) || s.eval(it, [formula])[0].value == "TRUE"
+		assert !it.initialised || it.eval(formula).value == "TRUE"
 	} else {
 		final x = it.eval("waiting")
 		assert it.eval(formula).value == "FALSE"

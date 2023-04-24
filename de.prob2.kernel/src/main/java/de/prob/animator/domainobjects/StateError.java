@@ -1,7 +1,6 @@
 package de.prob.animator.domainobjects;
 
 import de.prob.prolog.term.CompoundPrologTerm;
-import de.prob.prolog.term.PrologTerm;
 
 /**
  * An instance of this class represents a state based error. Such errors
@@ -27,9 +26,9 @@ public class StateError {
 	}
 
 	public StateError(final CompoundPrologTerm term) {
-		this.event = PrologTerm.atomicString(term.getArgument(1));
-		this.shortDescription = PrologTerm.atomicString(term.getArgument(2));
-		this.longDescription = PrologTerm.atomicString(term.getArgument(3));
+		this.event = term.getArgument(1).atomToString();
+		this.shortDescription = term.getArgument(2).atomToString();
+		this.longDescription = term.getArgument(3).atomToString();
 	}
 
 	public String getEvent() {

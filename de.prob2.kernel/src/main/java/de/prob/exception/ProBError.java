@@ -19,20 +19,16 @@ public class ProBError extends RuntimeException {
 
 		if (message != null && !message.isEmpty()) {
 			out.append(message);
-			if (errors != null) {
+			if (!errors.isEmpty()) {
 				out.append('\n');
 			}
 		}
 
-		if (errors != null) {
-			if (errors.isEmpty()) {
-				out.append("ProB returned no error messages.");
-			} else {
-				out.append("ProB returned error messages:");
-				for (final ErrorItem err : errors) {
-					out.append('\n');
-					out.append(err);
-				}
+		if (!errors.isEmpty()) {
+			out.append("ProB returned error messages:");
+			for (final ErrorItem err : errors) {
+				out.append('\n');
+				out.append(err);
 			}
 		}
 
@@ -40,9 +36,11 @@ public class ProBError extends RuntimeException {
 	}
 
 	public ProBError(final String message, final List<ErrorItem> errors, final Throwable cause) {
-		super(formatMessageAndErrors(message, errors), cause);
+		// errors == null is deprecated, but still supported for compatibility (just in case).
+		// New code should pass an empty list instead.
+		super(formatMessageAndErrors(message, errors == null ? Collections.emptyList() : errors), cause);
 		this.originalMessage = message;
-		this.errorItems = errors == null ? null : new ArrayList<>(errors);
+		this.errorItems = errors == null ? Collections.emptyList() : new ArrayList<>(errors);
 	}
 
 	public ProBError(final String message, final List<ErrorItem> errors) {
@@ -54,15 +52,15 @@ public class ProBError extends RuntimeException {
 	}
 
 	public ProBError(final String message, final Throwable cause) {
-		this(message, null, cause);
+		this(message, Collections.emptyList(), cause);
 	}
 
 	public ProBError(final String message) {
-		this(message, null, null);
+		this(message, Collections.emptyList(), null);
 	}
 
 	public ProBError(final Throwable cause) {
-		this(cause.getMessage(), null, cause);
+		this(cause.getMessage(), Collections.emptyList(), cause);
 	}
 
 	public ProBError(BCompoundException e) {
@@ -80,6 +78,6 @@ public class ProBError extends RuntimeException {
 	}
 
 	public List<ErrorItem> getErrors() {
-		return this.errorItems == null ? null : Collections.unmodifiableList(this.errorItems);
+		return Collections.unmodifiableList(this.errorItems);
 	}
 }

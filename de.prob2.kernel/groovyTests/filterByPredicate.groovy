@@ -17,11 +17,11 @@ final allStates = s.getStatesFromPredicate("TRUE = TRUE" as ClassicalB)
 final validateResults = {List<State> stateL, IEvalElement formula ->
 	allStates.each {
 		if (stateL.contains(it)) {
-			if (s.canBeEvaluated(it)) {
-				assert s.eval(it, [formula])[0].value == "TRUE"
+			if (it.initialised) {
+				assert it.eval(formula).value == "TRUE"
 			}
 		} else {
-			assert s.canBeEvaluated(it) && s.eval(it, [formula])[0].value != "TRUE"
+			assert it.initialised && it.eval(formula).value != "TRUE"
 		}
 	}
 }

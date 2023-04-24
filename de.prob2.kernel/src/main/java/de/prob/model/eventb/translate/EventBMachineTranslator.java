@@ -1,6 +1,7 @@
 package de.prob.model.eventb.translate;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,13 +43,23 @@ import de.prob.util.Tuple2;
 public class EventBMachineTranslator {
 
 	private final EventBMachine machine;
-	private final Map<Node, Tuple2<String, String>> nodeInfos = new HashMap<>();
+	private final Map<Node, RodinPosition> positions = new HashMap<>();
 
 	public EventBMachineTranslator(final EventBMachine machine) {
 		this.machine = machine;
 	}
 
+	public Map<Node, RodinPosition> getPositions() {
+		return Collections.unmodifiableMap(this.positions);
+	}
+
+	/**
+	 * @deprecated Use {@link #getPositions()} instead.
+	 */
+	@Deprecated
 	public Map<Node, Tuple2<String, String>> getNodeInfos() {
+		final HashMap<Node, Tuple2<String, String>> nodeInfos = new HashMap<>();
+		this.getPositions().forEach((node, pos) -> nodeInfos.put(node, new Tuple2<>(pos.getModelName(), pos.getLabel())));
 		return nodeInfos;
 	}
 
@@ -88,10 +99,9 @@ public class EventBMachineTranslator {
 	}
 
 	private ARefinesModelClause processRefines() {
-		List<EventBMachine> refines = machine.getRefines();
-		if (!refines.isEmpty()) {
-			return new ARefinesModelClause(new TIdentifierLiteral(refines
-					.get(0).getName()));
+		EventBMachine refines = machine.getRefinesMachine();
+		if (refines != null) {
+			return new ARefinesModelClause(new TIdentifierLiteral(refines.getName()));
 		}
 		return null;
 	}
@@ -111,11 +121,11 @@ public class EventBMachineTranslator {
 		List<PPredicate> invs = new ArrayList<>();
 		List<PPredicate> thms = new ArrayList<>();
 
-		List<EventBInvariant> allInvs = machine.getInvariants();
+		List<EventBInvariant> allInvs = machine.getAllInvariants();
 		for (EventBInvariant ebInv : allInvs) {
 			PPredicate ppred = (PPredicate) ((EventB) ebInv.getPredicate())
 					.getAst();
-			nodeInfos.put(ppred, new Tuple2<>(machine.getName(), ebInv.getName()));
+			positions.put(ppred, new RodinPosition(machine.getName(), ebInv.getName()));
 			if (ebInv.isTheorem()) {
 				thms.add(ppred);
 			} else {
@@ -142,20 +152,17 @@ public class EventBMachineTranslator {
 			AEvent event = new AEvent();
 			event.setEventName(new TIdentifierLiteral(e.getName()));
 			event.setStatus(extractEventStatus(e));
-			nodeInfos.put(event, new Tuple2<>(machine.getName(), e.getName()));
+			positions.put(event, new RodinPosition(machine.getName(), e.getName()));
 
-			List<TIdentifierLiteral> refined = new ArrayList<>();
-			for (Event ref : e.getRefines()) {
-				refined.add(new TIdentifierLiteral(ref.getName()));
+			if (e.getParentEvent() != null) {
+				event.setRefines(Collections.singletonList(new TIdentifierLiteral(e.getParentEvent().getName())));
 			}
-			event.setRefines(refined);
 
 			List<PExpression> params = new ArrayList<>();
 			for (EventParameter eventParameter : e.getParameters()) {
 				PExpression pExpression = (PExpression) eventParameter
 						.getExpression().getAst();
-				nodeInfos.put(pExpression,
-					new Tuple2<>(machine.getName(), eventParameter.getName()));
+				positions.put(pExpression, new RodinPosition(machine.getName(), eventParameter.getName()));
 				params.add(pExpression);
 			}
 			event.setVariables(params);
@@ -165,8 +172,7 @@ public class EventBMachineTranslator {
 			for (EventBGuard eventBGuard : e.getGuards()) {
 				PPredicate ppred = (PPredicate) ((EventB) eventBGuard
 						.getPredicate()).getAst();
-				nodeInfos.put(ppred,
-					new Tuple2<>(machine.getName(), eventBGuard.getName()));
+				positions.put(ppred, new RodinPosition(machine.getName(), eventBGuard.getName()));
 				if (eventBGuard.isTheorem()) {
 					thms.add(ppred);
 				} else {
@@ -179,9 +185,7 @@ public class EventBMachineTranslator {
 			List<PWitness> witnesses = new ArrayList<>();
 			for (Witness witness : e.getWitnesses()) {
 				PPredicate ppred = (PPredicate) witness.getPredicate().getAst();
-				nodeInfos.put(
-						ppred,
-					new Tuple2<>(machine.getName(), witness.getName()));
+				positions.put(ppred, new RodinPosition(machine.getName(), witness.getName()));
 				witnesses.add(new AWitness(new TIdentifierLiteral(witness
 						.getName()), ppred));
 			}
@@ -191,8 +195,7 @@ public class EventBMachineTranslator {
 			for (EventBAction eventBAction : e.getActions()) {
 				PSubstitution psub = (PSubstitution) ((EventB) eventBAction
 						.getCode()).getAst();
-				nodeInfos.put(psub,
-					new Tuple2<>(machine.getName(), eventBAction.getName()));
+				positions.put(psub, new RodinPosition(machine.getName(), eventBAction.getName()));
 				actions.add(psub);
 			}
 			event.setAssignments(actions);

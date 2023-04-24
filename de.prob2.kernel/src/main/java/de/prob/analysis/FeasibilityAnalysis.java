@@ -1,6 +1,7 @@
 package de.prob.analysis;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import de.prob.animator.command.CbcSolveCommand;
@@ -9,9 +10,6 @@ import de.prob.animator.domainobjects.EvalResult;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.animator.domainobjects.Join;
-import de.prob.model.classicalb.ClassicalBModel;
-import de.prob.model.classicalb.Operation;
-import de.prob.model.representation.AbstractElement;
 import de.prob.model.representation.AbstractModel;
 import de.prob.model.representation.BEvent;
 import de.prob.model.representation.Extraction;
@@ -27,12 +25,16 @@ public class FeasibilityAnalysis {
 	}
 
 	public List<String> analyseFeasibility() {
-		AbstractElement machine = stateSpace.getMainComponent();
+		if (!(stateSpace.getMainComponent() instanceof Machine)) {
+			return Collections.emptyList();
+		}
+
+		Machine machine = (Machine)stateSpace.getMainComponent();
 		AbstractModel model = stateSpace.getModel();
 
 		List<String> infeasibleOperations = new ArrayList<>();
 		List<IEvalElement> invariantPredicates = Extraction.getInvariantPredicates(machine);
-		for (BEvent operation : machine.getChildrenOfType(BEvent.class)) {
+		for (BEvent operation : machine.getEvents()) {
 			List<IEvalElement> iEvalElements = new ArrayList<>(invariantPredicates);
 			iEvalElements.addAll(Extraction.getGuardPredicates(machine, operation.getName()));
 			ClassicalB predicate;

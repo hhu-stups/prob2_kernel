@@ -36,7 +36,7 @@ final cmd3 = new CheckInitialisationStatusCommand("0")
 s.execute(cmd3)
 assert cmd3.initialized
 
-assert s.eval(s[0], ["1+1" as ClassicalB])[0].value == "2" // If state 0 is initialized, we should be able to evaluate in that state
+assert s[0].eval("1+1" as ClassicalB).value == "2" // If state 0 is initialized, we should be able to evaluate in that state
 
 final cmd4 = new CheckInvariantStatusCommand("0")
 s.execute(cmd4)

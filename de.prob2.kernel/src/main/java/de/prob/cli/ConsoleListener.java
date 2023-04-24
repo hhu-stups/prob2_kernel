@@ -2,52 +2,37 @@ package de.prob.cli;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.lang.ref.WeakReference;
+
+import de.prob.animator.IConsoleOutputListener;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 final class ConsoleListener implements Runnable {
-	private final WeakReference<ProBInstance> cli;
-	private final BufferedReader stream;
-	private final Logger logger;
+	private static final Logger LOGGER = LoggerFactory.getLogger(ConsoleListener.class);
 
-	ConsoleListener(ProBInstance cli, BufferedReader stream, Logger logger) {
-		this.cli = new WeakReference<>(cli);
+	private final BufferedReader stream;
+	private final IConsoleOutputListener outputListener;
+
+	ConsoleListener(BufferedReader stream, IConsoleOutputListener outputListener) {
 		this.stream = stream;
-		this.logger = logger;
+		this.outputListener = outputListener;
 	}
 
 	@SuppressWarnings("try") // don't warn about unused resource in try
 	public void run() {
 		try (final BufferedReader ignored = this.stream) {
-			logLines();
+			String line = stream.readLine();
+			while (line != null) {
+				outputListener.lineReceived(line);
+				line = stream.readLine();
+			}
 		} catch (IOException e) {
 			if ("Stream closed".equals(e.getMessage())) {
-				logger.debug("CLI stdout stream closed - stopping ConsoleListener", e);
+				LOGGER.debug("CLI stdout stream closed - stopping ConsoleListener", e);
 			} else {
-				logger.info("ConsoleListener died with error", e);
+				LOGGER.info("ConsoleListener died with error", e);
 			}
 		}
 	}
-
-	void logLines() throws IOException {
-		String line;
-		do {
-			ProBInstance instance = cli.get();
-			if (instance == null || instance.isShuttingDown()) {
-				return;
-			}
-			line = readAndLog();
-		} while (line != null);
-	}
-
-	String readAndLog() throws IOException {
-		String line;
-		line = stream.readLine();
-		if (line != null) {
-			logger.info("{}\u001b[0m", line);
-		}
-		return line;
-	}
-
 }

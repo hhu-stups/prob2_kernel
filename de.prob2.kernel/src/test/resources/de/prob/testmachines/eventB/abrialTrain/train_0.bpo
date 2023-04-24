@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<org.eventb.core.poFile org.eventb.core.poStamp="1">
+    <org.eventb.core.poPredicateSet name="CTXHYP" org.eventb.core.poStamp="0">
+        <org.eventb.core.poIdentifier name="ROUTES" org.eventb.core.type="ℙ(ROUTES)"/>
+        <org.eventb.core.poIdentifier name="BLOCKS" org.eventb.core.type="ℙ(BLOCKS)"/>
+        <org.eventb.core.poIdentifier name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
+        <org.eventb.core.poIdentifier name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+        <org.eventb.core.poIdentifier name="nxt" org.eventb.core.type="ℙ(ROUTES×ℙ(BLOCKS×BLOCKS))"/>
+        <org.eventb.core.poIdentifier name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+        <org.eventb.core.poPredicate name="ROUTET" org.eventb.core.predicate="rtbl∈BLOCKS ↔ ROUTES" org.eventb.core.source="/Train_Abrial/train_ctx0.buc|org.eventb.core.contextFile#train_ctx0|org.eventb.core.axiom#internal_axm1A"/>
+        <org.eventb.core.poPredicate name="ROUTEU" org.eventb.core.predicate="dom(rtbl)=BLOCKS" org.eventb.core.source="/Train_Abrial/train_ctx0.buc|org.eventb.core.contextFile#train_ctx0|org.eventb.core.axiom#internal_axm2A"/>
+        <org.eventb.core.poPredicate name="ROUTEV" org.eventb.core.predicate="ran(rtbl)=ROUTES" org.eventb.core.source="/Train_Abrial/train_ctx0.buc|org.eventb.core.contextFile#train_ctx0|org.eventb.core.axiom#internal_axm3A"/>
+        <org.eventb.core.poPredicate name="ROUTEW" org.eventb.core.predicate="nxt∈ROUTES → (BLOCKS ⤔ BLOCKS)" org.eventb.core.source="/Train_Abrial/train_ctx0.buc|org.eventb.core.contextFile#train_ctx0|org.eventb.core.axiom#internal_axm4A"/>
+        <org.eventb.core.poPredicate name="ROUTEX" org.eventb.core.predicate="fst∈ROUTES → BLOCKS" org.eventb.core.source="/Train_Abrial/train_ctx0.buc|org.eventb.core.contextFile#train_ctx0|org.eventb.core.axiom#internal_axm5A"/>
+        <org.eventb.core.poPredicate name="ROUTEY" org.eventb.core.predicate="lst∈ROUTES → BLOCKS" org.eventb.core.source="/Train_Abrial/train_ctx0.buc|org.eventb.core.contextFile#train_ctx0|org.eventb.core.axiom#internal_axm6A"/>
+        <org.eventb.core.poPredicate name="ROUTEZ" org.eventb.core.predicate="fst∼⊆rtbl" org.eventb.core.source="/Train_Abrial/train_ctx0.buc|org.eventb.core.contextFile#train_ctx0|org.eventb.core.axiom#internal_axm7A"/>
+        <org.eventb.core.poPredicate name="ROUTE[" org.eventb.core.predicate="lst∼⊆rtbl" org.eventb.core.source="/Train_Abrial/train_ctx0.buc|org.eventb.core.contextFile#train_ctx0|org.eventb.core.axiom#internal_axm8A"/>
+        <org.eventb.core.poPredicate name="ROUTE\" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒fst(r)≠lst(r)" org.eventb.core.source="/Train_Abrial/train_ctx0.buc|org.eventb.core.contextFile#train_ctx0|org.eventb.core.axiom#internal_axm11A"/>
+        <org.eventb.core.poPredicate name="ROUTE]" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(∀S⦂ℙ(BLOCKS)·S⊆ran(nxt(r))∧S⊆(nxt(r))[S]⇒S=(∅ ⦂ ℙ(BLOCKS)))" org.eventb.core.source="/Train_Abrial/train_ctx0.buc|org.eventb.core.contextFile#train_ctx0|org.eventb.core.axiom#internal_axm10A"/>
+        <org.eventb.core.poPredicate name="ROUTE^" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}" org.eventb.core.source="/Train_Abrial/train_ctx0.buc|org.eventb.core.contextFile#train_ctx0|org.eventb.core.axiom#internal_axm9A"/>
+        <org.eventb.core.poPredicate name="ROUTE_" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧r≠s⇒fst(r)∉rtbl∼[{s}] ∖ {fst(s),lst(s)}" org.eventb.core.source="/Train_Abrial/train_ctx0.buc|org.eventb.core.contextFile#train_ctx0|org.eventb.core.axiom#internal_axm12A"/>
+        <org.eventb.core.poPredicate name="ROUTE`" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧r≠s⇒lst(r)∉rtbl∼[{s}] ∖ {fst(s),lst(s)}" org.eventb.core.source="/Train_Abrial/train_ctx0.buc|org.eventb.core.contextFile#train_ctx0|org.eventb.core.axiom#internal_axm13A"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poPredicateSet name="ABSHYP" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#CTXHYP" org.eventb.core.poStamp="0">
+        <org.eventb.core.poIdentifier name="resrt" org.eventb.core.type="ℙ(ROUTES)"/>
+        <org.eventb.core.poIdentifier name="OCC" org.eventb.core.type="ℙ(BLOCKS)"/>
+        <org.eventb.core.poIdentifier name="resbl" org.eventb.core.type="ℙ(BLOCKS)"/>
+        <org.eventb.core.poIdentifier name="rsrtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poSequent name="inv6/WD" org.eventb.core.accurate="true" org.eventb.core.poDesc="Well-definedness of Invariant" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#HYPtrain_ctx5"/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒r∈dom(nxt)∧nxt∈ROUTES ⇸ ℙ(BLOCKS × BLOCKS)" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_element1I"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_element1I"/>
+        <org.eventb.core.poSelHint name="SEQHYS" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ABSHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#HYPtrain_ctx5"/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poSequent name="inv7/WD" org.eventb.core.accurate="true" org.eventb.core.poDesc="Well-definedness of Invariant" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#HYPtrain_ctx6"/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒r∈dom(nxt)∧nxt∈ROUTES ⇸ ℙ(BLOCKS × BLOCKS)" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_element2I"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_element2I"/>
+        <org.eventb.core.poSelHint name="SEQHYS" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ABSHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#HYPtrain_ctx6"/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poSequent name="inv8/WD" org.eventb.core.accurate="true" org.eventb.core.poDesc="Well-definedness of Invariant" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#HYPtrain_ctx7"/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒r∈dom(nxt)∧nxt∈ROUTES ⇸ ℙ(BLOCKS × BLOCKS)" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_element3I"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_element3I"/>
+        <org.eventb.core.poSelHint name="SEQHYS" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ABSHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#HYPtrain_ctx7"/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poSequent name="INITIALISATION/inv3/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  establishment" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTALLHYPtrain_ctx9"/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="(∅ ⦂ ℙ(BLOCKS×ROUTES))∈(∅ ⦂ ℙ(BLOCKS)) → (∅ ⦂ ℙ(ROUTES))" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_inv3I"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_evt1"/>
+        <org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_inv3I"/>
+        <org.eventb.core.poSelHint name="SEQHYT" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#CTXHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poSequent#INITIALISATION\/inv3\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+        <org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#HYPtrain_ctx5|org.eventb.core.poPredicate#PRD2"/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poSequent name="INITIALISATION/inv5/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  establishment" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTALLHYPtrain_ctx9"/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="(∅ ⦂ ℙ(BLOCKS×ROUTES))⊆rtbl" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_inv5I"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_evt1"/>
+        <org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_inv5I"/>
+        <org.eventb.core.poSelHint name="SEQHYT" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#CTXHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poSequent#INITIALISATION\/inv5\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+        <org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#HYPtrain_ctx5|org.eventb.core.poPredicate#PRD3"/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poSequent name="INITIALISATION/inv4/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  establishment" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTALLHYPtrain_ctx9"/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="(∅ ⦂ ℙ(BLOCKS))⊆(∅ ⦂ ℙ(BLOCKS))" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_inv4I"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_evt1"/>
+        <org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_inv4I"/>
+        <org.eventb.core.poSelHint name="SEQHYT" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#CTXHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poSequent#INITIALISATION\/inv4\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+        <org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#HYPtrain_ctx5|org.eventb.core.poPredicate#PRD4"/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poSequent name="INITIALISATION/inv6/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  establishment" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTALLHYPtrain_ctx9"/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rtbl∼[{r}] ∖ (∅ ⦂ ℙ(BLOCKS×ROUTES))∼[{r}]]∩((∅ ⦂ ℙ(BLOCKS×ROUTES))∼[{r}] ∖ (∅ ⦂ ℙ(BLOCKS)))=(∅ ⦂ ℙ(BLOCKS))" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_element1I"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_evt1"/>
+        <org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_element1I"/>
+        <org.eventb.core.poSelHint name="SEQHYT" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#CTXHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poSequent#INITIALISATION\/inv6\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+        <org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#HYPtrain_ctx6|org.eventb.core.poPredicate#PRD5"/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poSequent name="INITIALISATION/inv7/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  establishment" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTALLHYPtrain_ctx9"/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[(∅ ⦂ ℙ(BLOCKS×ROUTES))∼[{r}]]⊆(∅ ⦂ ℙ(BLOCKS×ROUTES))∼[{r}]" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_element2I"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_evt1"/>
+        <org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_element2I"/>
+        <org.eventb.core.poSelHint name="SEQHYT" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#CTXHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poSequent#INITIALISATION\/inv7\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+        <org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#HYPtrain_ctx7|org.eventb.core.poPredicate#PRD6"/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poSequent name="INITIALISATION/inv8/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  establishment" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTALLHYPtrain_ctx9"/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[(∅ ⦂ ℙ(BLOCKS×ROUTES))∼[{r}] ∖ (∅ ⦂ ℙ(BLOCKS))]⊆(∅ ⦂ ℙ(BLOCKS×ROUTES))∼[{r}] ∖ (∅ ⦂ ℙ(BLOCKS))" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_element3I"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_evt1"/>
+        <org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_element3I"/>
+        <org.eventb.core.poSelHint name="SEQHYT" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#CTXHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poSequent#INITIALISATION\/inv8\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+        <org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ALLHYP|org.eventb.core.poPredicate#PRD7"/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poPredicateSet name="EVTIDENTtrain_ctx9" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#CTXHYP" org.eventb.core.poStamp="0">
+        <org.eventb.core.poIdentifier name="rsrtbl'" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
+        <org.eventb.core.poIdentifier name="OCC'" org.eventb.core.type="ℙ(BLOCKS)"/>
+        <org.eventb.core.poIdentifier name="resbl'" org.eventb.core.type="ℙ(BLOCKS)"/>
+        <org.eventb.core.poIdentifier name="resrt'" org.eventb.core.type="ℙ(ROUTES)"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poPredicateSet name="EVTALLHYPtrain_ctx9" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTIDENTtrain_ctx9" org.eventb.core.poStamp="0"/>
+    <org.eventb.core.poSequent name="route_reservation/inv3/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTALLHYPtrain_ctx:"/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="rsrtbl∪(rtbl ▷ {r})∈resbl∪rtbl∼[{r}] → resrt∪{r}" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_inv3I"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element1"/>
+        <org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_inv3I"/>
+        <org.eventb.core.poSelHint name="SEQHYT" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poSequent#route_reservation\/inv3\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+        <org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#HYPtrain_ctx5|org.eventb.core.poPredicate#PRD2"/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poSequent name="route_reservation/inv5/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTALLHYPtrain_ctx:"/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="rsrtbl∪(rtbl ▷ {r})⊆rtbl" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_inv5I"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element1"/>
+        <org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_inv5I"/>
+        <org.eventb.core.poSelHint name="SEQHYT" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poSequent#route_reservation\/inv5\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+        <org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#HYPtrain_ctx5|org.eventb.core.poPredicate#PRD3"/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poSequent name="route_reservation/inv4/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTALLHYPtrain_ctx:"/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="OCC⊆resbl∪rtbl∼[{r}]" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_inv4I"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element1"/>
+        <org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_inv4I"/>
+        <org.eventb.core.poSelHint name="SEQHYT" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poSequent#route_reservation\/inv4\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+        <org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#HYPtrain_ctx5|org.eventb.core.poPredicate#PRD4"/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poSequent name="route_reservation/inv6/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTALLHYPtrain_ctx:"/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="∀r0⦂ROUTES·r0∈ROUTES⇒(nxt(r0))[rtbl∼[{r0}] ∖ (rsrtbl∪(rtbl ▷ {r}))∼[{r0}]]∩((rsrtbl∪(rtbl ▷ {r}))∼[{r0}] ∖ OCC)=(∅ ⦂ ℙ(BLOCKS))" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_element1I"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element1"/>
+        <org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_element1I"/>
+        <org.eventb.core.poSelHint name="SEQHYT" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poSequent#route_reservation\/inv6\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+        <org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#HYPtrain_ctx6|org.eventb.core.poPredicate#PRD5"/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poSequent name="route_reservation/inv7/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTALLHYPtrain_ctx:"/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="∀r0⦂ROUTES·r0∈ROUTES⇒(nxt(r0))[(rsrtbl∪(rtbl ▷ {r}))∼[{r0}]]⊆(rsrtbl∪(rtbl ▷ {r}))∼[{r0}]" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_element2I"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element1"/>
+        <org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_element2I"/>
+        <org.eventb.core.poSelHint name="SEQHYT" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poSequent#route_reservation\/inv7\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+        <org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#HYPtrain_ctx7|org.eventb.core.poPredicate#PRD6"/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poSequent name="route_reservation/inv8/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTALLHYPtrain_ctx:"/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="∀r0⦂ROUTES·r0∈ROUTES⇒(nxt(r0))[(rsrtbl∪(rtbl ▷ {r}))∼[{r0}] ∖ OCC]⊆(rsrtbl∪(rtbl ▷ {r}))∼[{r0}] ∖ OCC" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_element3I"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element1"/>
+        <org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_element3I"/>
+        <org.eventb.core.poSelHint name="SEQHYT" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poSequent#route_reservation\/inv8\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+        <org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ALLHYP|org.eventb.core.poPredicate#PRD7"/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poPredicateSet name="EVTIDENTtrain_ctx:" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poStamp="0">
+        <org.eventb.core.poIdentifier name="r" org.eventb.core.type="ROUTES"/>
+        <org.eventb.core.poIdentifier name="rsrtbl'" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
+        <org.eventb.core.poIdentifier name="resbl'" org.eventb.core.type="ℙ(BLOCKS)"/>
+        <org.eventb.core.poIdentifier name="resrt'" org.eventb.core.type="ℙ(ROUTES)"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poPredicateSet name="EVTALLHYPtrain_ctx:" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTIDENTtrain_ctx:" org.eventb.core.poStamp="0">
+        <org.eventb.core.poPredicate name="PRD0" org.eventb.core.predicate="r∉resrt" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element1|org.eventb.core.guard#internal_element1"/>
+        <org.eventb.core.poPredicate name="PRD1" org.eventb.core.predicate="rtbl∼[{r}]∩resbl=(∅ ⦂ ℙ(BLOCKS))" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element1|org.eventb.core.guard#internal_element2"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poSequent name="route_freeing/inv3/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTALLHYPtrain_ctx;"/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="rsrtbl∈resbl → resrt ∖ {r}" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_inv3I"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element2"/>
+        <org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_inv3I"/>
+        <org.eventb.core.poSelHint name="SEQHYT" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poSequent#route_freeing\/inv3\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+        <org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#HYPtrain_ctx5|org.eventb.core.poPredicate#PRD2"/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poPredicateSet name="EVTIDENTtrain_ctx;" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poStamp="0">
+        <org.eventb.core.poIdentifier name="r" org.eventb.core.type="ROUTES"/>
+        <org.eventb.core.poIdentifier name="resrt'" org.eventb.core.type="ℙ(ROUTES)"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poPredicateSet name="EVTALLHYPtrain_ctx;" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTIDENTtrain_ctx;" org.eventb.core.poStamp="0">
+        <org.eventb.core.poPredicate name="PRD0" org.eventb.core.predicate="r∈resrt ∖ ran(rsrtbl)" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element2|org.eventb.core.guard#internal_element1"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poSequent name="FRONT_MOVE_1/grd2/WD" org.eventb.core.accurate="true" org.eventb.core.poDesc="Well-definedness of Guard" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTHYPtrain_ctx='"/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="r∈dom(fst)∧fst∈ROUTES ⇸ BLOCKS" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element3|org.eventb.core.guard#internal_element2"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element3|org.eventb.core.guard#internal_element2"/>
+        <org.eventb.core.poSelHint name="SEQHYS" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTHYPtrain_ctx='"/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poSequent name="FRONT_MOVE_1/grd3/WD" org.eventb.core.accurate="true" org.eventb.core.poDesc="Well-definedness of Guard" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTHYPtrain_ctx=("/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="r∈dom(fst)∧fst∈ROUTES ⇸ BLOCKS∧fst(r)∈dom(rsrtbl)∧rsrtbl∈BLOCKS ⇸ ROUTES" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element3|org.eventb.core.guard#internal_element3"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element3|org.eventb.core.guard#internal_element3"/>
+        <org.eventb.core.poSelHint name="SEQHYS" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTHYPtrain_ctx=("/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poSequent name="FRONT_MOVE_1/inv4/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTALLHYPtrain_ctx="/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="OCC∪{fst(r)}⊆resbl" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_inv4I"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element3"/>
+        <org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_inv4I"/>
+        <org.eventb.core.poSelHint name="SEQHYT" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poSequent#FRONT_MOVE_1\/inv4\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+        <org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#HYPtrain_ctx5|org.eventb.core.poPredicate#PRD4"/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poSequent name="FRONT_MOVE_1/inv6/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTALLHYPtrain_ctx="/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="∀r0⦂ROUTES·r0∈ROUTES⇒(nxt(r0))[rtbl∼[{r0}] ∖ rsrtbl∼[{r0}]]∩(rsrtbl∼[{r0}] ∖ (OCC∪{fst(r)}))=(∅ ⦂ ℙ(BLOCKS))" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_element1I"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element3"/>
+        <org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_element1I"/>
+        <org.eventb.core.poSelHint name="SEQHYT" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poSequent#FRONT_MOVE_1\/inv6\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+        <org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#HYPtrain_ctx6|org.eventb.core.poPredicate#PRD5"/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poSequent name="FRONT_MOVE_1/inv8/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTALLHYPtrain_ctx="/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="∀r0⦂ROUTES·r0∈ROUTES⇒(nxt(r0))[rsrtbl∼[{r0}] ∖ (OCC∪{fst(r)})]⊆rsrtbl∼[{r0}] ∖ (OCC∪{fst(r)})" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_element3I"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element3"/>
+        <org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_element3I"/>
+        <org.eventb.core.poSelHint name="SEQHYT" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poSequent#FRONT_MOVE_1\/inv8\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+        <org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ALLHYP|org.eventb.core.poPredicate#PRD7"/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poSequent name="FRONT_MOVE_1/act1/WD" org.eventb.core.accurate="true" org.eventb.core.poDesc="Well-definedness of action" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTALLHYPtrain_ctx="/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="r∈dom(fst)∧fst∈ROUTES ⇸ BLOCKS" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element3|org.eventb.core.action#internal_element1"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element3|org.eventb.core.action#internal_element1"/>
+        <org.eventb.core.poSelHint name="SEQHYS" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTALLHYPtrain_ctx="/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poPredicateSet name="EVTIDENTtrain_ctx=" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poStamp="0">
+        <org.eventb.core.poIdentifier name="r" org.eventb.core.type="ROUTES"/>
+        <org.eventb.core.poIdentifier name="OCC'" org.eventb.core.type="ℙ(BLOCKS)"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poPredicateSet name="EVTHYPtrain_ctx='" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTIDENTtrain_ctx=" org.eventb.core.poStamp="0">
+        <org.eventb.core.poPredicate name="PRD0" org.eventb.core.predicate="r∈resrt" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element3|org.eventb.core.guard#internal_element1"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poPredicateSet name="EVTHYPtrain_ctx=(" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTHYPtrain_ctx='" org.eventb.core.poStamp="0">
+        <org.eventb.core.poPredicate name="PRD1" org.eventb.core.predicate="fst(r)∈resbl ∖ OCC" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element3|org.eventb.core.guard#internal_element2"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poPredicateSet name="EVTALLHYPtrain_ctx=" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTHYPtrain_ctx=(" org.eventb.core.poStamp="0">
+        <org.eventb.core.poPredicate name="PRD2" org.eventb.core.predicate="rsrtbl(fst(r))=r" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element3|org.eventb.core.guard#internal_element3"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poSequent name="FRONT_MOVE_2/grd3/WD" org.eventb.core.accurate="true" org.eventb.core.poDesc="Well-definedness of Guard" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTHYPtrain_ctx&gt;("/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="b∈dom(rsrtbl)∧rsrtbl∈BLOCKS ⇸ ROUTES∧rsrtbl(b)∈dom(nxt)∧nxt∈ROUTES ⇸ ℙ(BLOCKS × BLOCKS)" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element4|org.eventb.core.guard#internal_element3"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element4|org.eventb.core.guard#internal_element3"/>
+        <org.eventb.core.poSelHint name="SEQHYS" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTHYPtrain_ctx&gt;("/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poSequent name="FRONT_MOVE_2/inv4/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTALLHYPtrain_ctx&gt;"/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="OCC∪{c}⊆resbl" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_inv4I"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element4"/>
+        <org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_inv4I"/>
+        <org.eventb.core.poSelHint name="SEQHYT" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poSequent#FRONT_MOVE_2\/inv4\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+        <org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#HYPtrain_ctx5|org.eventb.core.poPredicate#PRD4"/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poSequent name="FRONT_MOVE_2/inv6/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTALLHYPtrain_ctx&gt;"/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ (OCC∪{c}))=(∅ ⦂ ℙ(BLOCKS))" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_element1I"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element4"/>
+        <org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_element1I"/>
+        <org.eventb.core.poSelHint name="SEQHYT" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poSequent#FRONT_MOVE_2\/inv6\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+        <org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#HYPtrain_ctx6|org.eventb.core.poPredicate#PRD5"/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poSequent name="FRONT_MOVE_2/inv8/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTALLHYPtrain_ctx&gt;"/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rsrtbl∼[{r}] ∖ (OCC∪{c})]⊆rsrtbl∼[{r}] ∖ (OCC∪{c})" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_element3I"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element4"/>
+        <org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_element3I"/>
+        <org.eventb.core.poSelHint name="SEQHYT" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poSequent#FRONT_MOVE_2\/inv8\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+        <org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ALLHYP|org.eventb.core.poPredicate#PRD7"/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poPredicateSet name="EVTIDENTtrain_ctx&gt;" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poStamp="0">
+        <org.eventb.core.poIdentifier name="b" org.eventb.core.type="BLOCKS"/>
+        <org.eventb.core.poIdentifier name="c" org.eventb.core.type="BLOCKS"/>
+        <org.eventb.core.poIdentifier name="OCC'" org.eventb.core.type="ℙ(BLOCKS)"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poPredicateSet name="EVTHYPtrain_ctx&gt;(" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTIDENTtrain_ctx&gt;" org.eventb.core.poStamp="0">
+        <org.eventb.core.poPredicate name="PRD0" org.eventb.core.predicate="b∈OCC" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element4|org.eventb.core.guard#internal_element1"/>
+        <org.eventb.core.poPredicate name="PRD1" org.eventb.core.predicate="c∉OCC" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element4|org.eventb.core.guard#internal_element2"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poPredicateSet name="EVTALLHYPtrain_ctx&gt;" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTHYPtrain_ctx&gt;(" org.eventb.core.poStamp="0">
+        <org.eventb.core.poPredicate name="PRD2" org.eventb.core.predicate="b ↦ c∈nxt(rsrtbl(b))" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element4|org.eventb.core.guard#internal_element3"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poSequent name="BACK_MOVE/grd2/WD" org.eventb.core.accurate="true" org.eventb.core.poDesc="Well-definedness of Guard" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTHYPtrain_ctx?'"/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="b∈dom(rsrtbl)∧rsrtbl∈BLOCKS ⇸ ROUTES∧rsrtbl(b)∈dom(nxt)∧nxt∈ROUTES ⇸ ℙ(BLOCKS × BLOCKS)" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element5|org.eventb.core.guard#internal_element2"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element5|org.eventb.core.guard#internal_element2"/>
+        <org.eventb.core.poSelHint name="SEQHYS" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTHYPtrain_ctx?'"/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poSequent name="BACK_MOVE/grd3/WD" org.eventb.core.accurate="true" org.eventb.core.poDesc="Well-definedness of Guard" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTHYPtrain_ctx?("/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="b∈dom(n)⇒n∈BLOCKS ⇸ BLOCKS" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element5|org.eventb.core.guard#internal_element3"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element5|org.eventb.core.guard#internal_element3"/>
+        <org.eventb.core.poSelHint name="SEQHYS" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTHYPtrain_ctx?("/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poSequent name="BACK_MOVE/grd4/WD" org.eventb.core.accurate="true" org.eventb.core.poDesc="Well-definedness of Guard" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTHYPtrain_ctx?)"/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="(b∈ran(n)⇒b∈dom(n∼)∧n∼∈BLOCKS ⇸ BLOCKS)∧(b∈ran(n)∧n∼(b)∈dom(rsrtbl)⇒rsrtbl∈BLOCKS ⇸ ROUTES∧b∈dom(rsrtbl))" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element5|org.eventb.core.guard#internal_element4"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element5|org.eventb.core.guard#internal_element4"/>
+        <org.eventb.core.poSelHint name="SEQHYS" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTHYPtrain_ctx?)"/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poSequent name="BACK_MOVE/inv3/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTALLHYPtrain_ctx?"/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="{b} ⩤ rsrtbl∈resbl ∖ {b} → resrt" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_inv3I"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element5"/>
+        <org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_inv3I"/>
+        <org.eventb.core.poSelHint name="SEQHYT" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poSequent#BACK_MOVE\/inv3\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+        <org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#HYPtrain_ctx5|org.eventb.core.poPredicate#PRD2"/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poSequent name="BACK_MOVE/inv5/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTALLHYPtrain_ctx?"/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="{b} ⩤ rsrtbl⊆rtbl" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_inv5I"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element5"/>
+        <org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_inv5I"/>
+        <org.eventb.core.poSelHint name="SEQHYT" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poSequent#BACK_MOVE\/inv5\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+        <org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#HYPtrain_ctx5|org.eventb.core.poPredicate#PRD3"/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poSequent name="BACK_MOVE/inv4/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTALLHYPtrain_ctx?"/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="OCC ∖ {b}⊆resbl ∖ {b}" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_inv4I"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element5"/>
+        <org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_inv4I"/>
+        <org.eventb.core.poSelHint name="SEQHYT" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poSequent#BACK_MOVE\/inv4\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+        <org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#HYPtrain_ctx5|org.eventb.core.poPredicate#PRD4"/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poSequent name="BACK_MOVE/inv6/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTALLHYPtrain_ctx?"/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rtbl∼[{r}] ∖ ({b} ⩤ rsrtbl)∼[{r}]]∩(({b} ⩤ rsrtbl)∼[{r}] ∖ (OCC ∖ {b}))=(∅ ⦂ ℙ(BLOCKS))" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_element1I"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element5"/>
+        <org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_element1I"/>
+        <org.eventb.core.poSelHint name="SEQHYT" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poSequent#BACK_MOVE\/inv6\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+        <org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#HYPtrain_ctx6|org.eventb.core.poPredicate#PRD5"/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poSequent name="BACK_MOVE/inv7/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTALLHYPtrain_ctx?"/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[({b} ⩤ rsrtbl)∼[{r}]]⊆({b} ⩤ rsrtbl)∼[{r}]" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_element2I"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element5"/>
+        <org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_element2I"/>
+        <org.eventb.core.poSelHint name="SEQHYT" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poSequent#BACK_MOVE\/inv7\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+        <org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#HYPtrain_ctx7|org.eventb.core.poPredicate#PRD6"/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poSequent name="BACK_MOVE/inv8/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTALLHYPtrain_ctx?"/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[({b} ⩤ rsrtbl)∼[{r}] ∖ (OCC ∖ {b})]⊆({b} ⩤ rsrtbl)∼[{r}] ∖ (OCC ∖ {b})" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_element3I"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element5"/>
+        <org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_element3I"/>
+        <org.eventb.core.poSelHint name="SEQHYT" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poSequent#BACK_MOVE\/inv8\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+        <org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ALLHYP|org.eventb.core.poPredicate#PRD7"/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poPredicateSet name="EVTIDENTtrain_ctx?" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poStamp="0">
+        <org.eventb.core.poIdentifier name="b" org.eventb.core.type="BLOCKS"/>
+        <org.eventb.core.poIdentifier name="n" org.eventb.core.type="ℙ(BLOCKS×BLOCKS)"/>
+        <org.eventb.core.poIdentifier name="rsrtbl'" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
+        <org.eventb.core.poIdentifier name="OCC'" org.eventb.core.type="ℙ(BLOCKS)"/>
+        <org.eventb.core.poIdentifier name="resbl'" org.eventb.core.type="ℙ(BLOCKS)"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poPredicateSet name="EVTHYPtrain_ctx?'" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTIDENTtrain_ctx?" org.eventb.core.poStamp="0">
+        <org.eventb.core.poPredicate name="PRD0" org.eventb.core.predicate="b∈OCC" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element5|org.eventb.core.guard#internal_element1"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poPredicateSet name="EVTHYPtrain_ctx?(" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTHYPtrain_ctx?'" org.eventb.core.poStamp="0">
+        <org.eventb.core.poPredicate name="PRD1" org.eventb.core.predicate="n=nxt(rsrtbl(b))" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element5|org.eventb.core.guard#internal_element2"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poPredicateSet name="EVTHYPtrain_ctx?)" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTHYPtrain_ctx?(" org.eventb.core.poStamp="0">
+        <org.eventb.core.poPredicate name="PRD2" org.eventb.core.predicate="b∈dom(n)⇒n(b)∈OCC" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element5|org.eventb.core.guard#internal_element3"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poPredicateSet name="EVTALLHYPtrain_ctx?" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#EVTHYPtrain_ctx?)" org.eventb.core.poStamp="0">
+        <org.eventb.core.poPredicate name="PRD3" org.eventb.core.predicate="b∈ran(n)∧n∼(b)∈dom(rsrtbl)⇒rsrtbl(n∼(b))≠rsrtbl(b)" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.event#internal_element5|org.eventb.core.guard#internal_element4"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poPredicateSet name="HYPtrain_ctx5" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#ABSHYP" org.eventb.core.poStamp="0">
+        <org.eventb.core.poPredicate name="PRD0" org.eventb.core.predicate="resrt⊆ROUTES" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_inv1I"/>
+        <org.eventb.core.poPredicate name="PRD1" org.eventb.core.predicate="resbl⊆BLOCKS" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_inv2I"/>
+        <org.eventb.core.poPredicate name="PRD2" org.eventb.core.predicate="rsrtbl∈resbl → resrt" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_inv3I"/>
+        <org.eventb.core.poPredicate name="PRD3" org.eventb.core.predicate="rsrtbl⊆rtbl" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_inv5I"/>
+        <org.eventb.core.poPredicate name="PRD4" org.eventb.core.predicate="OCC⊆resbl" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_inv4I"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poPredicateSet name="HYPtrain_ctx6" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#HYPtrain_ctx5" org.eventb.core.poStamp="0">
+        <org.eventb.core.poPredicate name="PRD5" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=(∅ ⦂ ℙ(BLOCKS))" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_element1I"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poPredicateSet name="HYPtrain_ctx7" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#HYPtrain_ctx6" org.eventb.core.poStamp="0">
+        <org.eventb.core.poPredicate name="PRD6" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rsrtbl∼[{r}]]⊆rsrtbl∼[{r}]" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_element2I"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poPredicateSet name="ALLHYP" org.eventb.core.parentSet="/Train_Abrial/train_0.bpo|org.eventb.core.poFile#train_0|org.eventb.core.poPredicateSet#HYPtrain_ctx7" org.eventb.core.poStamp="0">
+        <org.eventb.core.poPredicate name="PRD7" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC" org.eventb.core.source="/Train_Abrial/train_0.bum|org.eventb.core.machineFile#train_0|org.eventb.core.invariant#internal_element3I"/>
+    </org.eventb.core.poPredicateSet>
+</org.eventb.core.poFile>

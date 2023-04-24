@@ -50,7 +50,7 @@ public final class ExpandedFormula {
 			
 			for (final PrologTerm entryTerm : BindingGenerator.getList(term)) {
 				final CompoundPrologTerm entry = BindingGenerator.getCompoundTerm(entryTerm, "-", 2);
-				switch (PrologTerm.atomicString(entry.getArgument(1))) {
+				switch (entry.getArgument(1).atomToString()) {
 					case "unchanged":
 						unchangedCount = BindingGenerator.getInteger(entry.getArgument(2)).getValue().intValue();
 						break;
@@ -284,11 +284,11 @@ public final class ExpandedFormula {
 					break;
 				
 				case "label":
-					builder.label(PrologTerm.atomicString(arg));
+					builder.label(arg.atomToString());
 					break;
 				
 				case "description":
-					builder.description(PrologTerm.atomicString(arg));
+					builder.description(arg.atomToString());
 					break;
 				
 				case "proof_info":
@@ -296,18 +296,18 @@ public final class ExpandedFormula {
 					break;
 				
 				case "functor_symbol":
-					builder.functorSymbol(PrologTerm.atomicString(arg));
+					builder.functorSymbol(arg.atomToString());
 					break;
 				
 				case "rodin_labels":
-					builder.rodinLabels(PrologTerm.atomicStrings(BindingGenerator.getList(arg)));
+					builder.rodinLabels(PrologTerm.atomsToStrings(BindingGenerator.getList(arg)));
 					break;
 				
 				case "value":
 					builder.value(BVisual2Value.fromPrologTerm(arg));
 					break;
 				case "type":
-					builder.type(ExpandedFormula.FormulaType.fromProlog(PrologTerm.atomicString(arg)));
+					builder.type(ExpandedFormula.FormulaType.fromProlog(arg.atomToString()));
 					break;
 				case "children_ids":
 					builder.subformulas(BindingGenerator.getList(arg).stream()

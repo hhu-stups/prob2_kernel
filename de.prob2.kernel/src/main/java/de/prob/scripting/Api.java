@@ -2,10 +2,12 @@ package de.prob.scripting;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.google.common.io.MoreFiles;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -94,7 +96,9 @@ public class Api {
 	 * Shutdown the specified {@link ProBInstance} object.
 	 *
 	 * @param instance the instance to shut down
+	 * @deprecated Use {@link ProBInstance#shutdown()} instead.
 	 */
+	@Deprecated
 	public void shutdown(final ProBInstance instance) {
 		instance.shutdown();
 	}
@@ -152,7 +156,7 @@ public class Api {
 	 */
 	public StateSpace eventb_load(final String file, final Map<String, String> prefs) throws IOException {
 		final ModelFactory<EventBModel> factory;
-		if (file.endsWith(".eventb")) {
+		if (EventBPackageFactory.EXTENSION.equals(MoreFiles.getFileExtension(Paths.get(file)))) {
 			factory = modelFactoryProvider.getEventBPackageFactory();
 		} else {
 			factory = modelFactoryProvider.getEventBFactory();

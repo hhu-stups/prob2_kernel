@@ -10,6 +10,7 @@ import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.TraceCheckerUtils;
 import de.prob.check.tracereplay.check.traceConstruction.AdvancedTraceConstructor;
 import de.prob.check.tracereplay.check.traceConstruction.TraceConstructionError;
+import de.prob.scripting.ClassicalBFactory;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
 
@@ -39,7 +40,8 @@ public class VerticalTraceRefiner extends AbstractTraceRefinement{
 	 * @throws BCompoundException predicate translation went wrong
 	 * @throws TraceConstructionError trace could not be found
 	 */
-	public List<PersistentTransition> refineTrace() throws IOException, BCompoundException, TraceConstructionError {
+	@Override
+	public TraceRefinementResult refineTraceExtendedFeedback() throws IOException, BCompoundException, TraceConstructionError {
 		BParser alphaParser = new BParser(adaptFrom.toString());
 		Start alphaStart = alphaParser.parseFile(adaptFrom.toFile(), false);
 
@@ -54,7 +56,7 @@ public class VerticalTraceRefiner extends AbstractTraceRefinement{
 		PrettyPrinter prettyPrinter = new PrettyPrinter();
 		prettyPrinter.caseAAbstractMachineParseUnit(aAbstractMachineParseUnit);
 
-		File tempFile = File.createTempFile("machine", ".mch", adaptFrom.getParent().toFile());
+		File tempFile = File.createTempFile("machine", "." + ClassicalBFactory.CLASSICAL_B_MACHINE_EXTENSION, adaptFrom.getParent().toFile());
 
 
 		FileWriter writer = new FileWriter(tempFile);
@@ -66,6 +68,6 @@ public class VerticalTraceRefiner extends AbstractTraceRefinement{
 
 		List<Transition> resultRaw = AdvancedTraceConstructor.constructTrace(transitionList, stateSpace);
 
-		return PersistentTransition.createFromList(resultRaw);
+		return new TraceRefinementResult(true, resultRaw);
 	}
 }

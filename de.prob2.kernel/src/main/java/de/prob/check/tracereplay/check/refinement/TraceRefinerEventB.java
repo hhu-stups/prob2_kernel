@@ -1,13 +1,16 @@
 package de.prob.check.tracereplay.check.refinement;
 
 import com.google.inject.Injector;
-import de.prob.animator.ReusableAnimator;
+
+import de.be4.classicalb.core.parser.exceptions.BCompoundException;
+import de.prob.animator.command.RefineTraceCommand;
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.traceConstruction.AdvancedTraceConstructor;
 import de.prob.check.tracereplay.check.traceConstruction.TraceConstructionError;
 import de.prob.model.eventb.EventBModel;
-import de.prob.scripting.EventBFactory;
+import de.prob.scripting.Api;
 import de.prob.statespace.StateSpace;
+import de.prob.statespace.Trace;
 import de.prob.statespace.Transition;
 
 
@@ -24,10 +27,18 @@ public class TraceRefinerEventB extends AbstractTraceRefinement {
 
 	private final StateSpace stateSpace;
 
-	public TraceRefinerEventB(Injector injector, List<PersistentTransition> transitionList, Path adaptFrom) throws IOException {
-		super(injector, transitionList, adaptFrom);
-		this.stateSpace = loadEventBFileAsStateSpace();
+
+	public TraceRefinerEventB(Injector injector, List<PersistentTransition> transitionList, Path adaptFrom, int maxBreadth, int maxDepth) throws IOException {
+		super(injector, transitionList, adaptFrom, maxBreadth, maxDepth);
+		this.stateSpace = injector.getInstance(Api.class).eventb_load(adaptFrom.toString());
 	}
+
+
+	public TraceRefinerEventB(Injector injector, List<PersistentTransition> transitionList, Path adaptFrom) throws IOException {
+		this(injector, transitionList, adaptFrom,10,5);
+	}
+
+
 
 
 	/**
@@ -39,11 +50,10 @@ public class TraceRefinerEventB extends AbstractTraceRefinement {
 	 * T to be [[p_ee, p_eee][p_g]....
 	 * Further the method will prepare the difference between explicit refined and extended events and skip events.
 	 * @return The adapted Trace
-	 * @throws IOException File reading went wrong
 	 * @throws TraceConstructionError no suitable adaptation was found
 	 */
-	public List<PersistentTransition> refineTrace() throws IOException, TraceConstructionError {
-
+	@Override
+	public TraceRefinementResult refineTraceExtendedFeedback() throws TraceConstructionError {
 		EventBModel model = (EventBModel) stateSpace.getModel();
 
 		Map<String, List<String>> alternatives = model.pairNameChanges().entrySet().stream()
@@ -58,25 +68,8 @@ public class TraceRefinerEventB extends AbstractTraceRefinement {
 		alternatives.put(Transition.INITIALISE_MACHINE_NAME, singletonList(Transition.INITIALISE_MACHINE_NAME));
 		alternatives.put(Transition.SETUP_CONSTANTS_NAME, singletonList(Transition.SETUP_CONSTANTS_NAME));
 
-		List<Transition> resultRaw = AdvancedTraceConstructor.constructTraceEventB(transitionList, stateSpace, alternatives, model.extendEvents(), model.introducedBySkip());
+		return AdvancedTraceConstructor.constructTraceEventB(transitionList, stateSpace, alternatives, model.extendEvents(), model.introducedBySkip(), maxBreadth, maxDepth);
 
-
-		return PersistentTransition.createFromList(resultRaw);
 	}
-
-
-	/**
-	 * Loads an EventB File into a new StateSpace
-	 * @return the file loaded into the state space
-	 * @throws IOException file reading went wrong
-	 */
-	private StateSpace loadEventBFileAsStateSpace() throws IOException {
-		ReusableAnimator animator = injector.getInstance(ReusableAnimator.class);
-		StateSpace stateSpace = animator.createStateSpace();
-		EventBFactory eventBFactory = injector.getInstance(EventBFactory.class);
-		eventBFactory.extract(adaptFrom.toString()).loadIntoStateSpace(stateSpace);
-		return stateSpace;
-	}
-
 
 }

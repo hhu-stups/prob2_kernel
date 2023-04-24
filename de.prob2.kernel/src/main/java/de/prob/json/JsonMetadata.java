@@ -9,7 +9,7 @@ import java.time.Instant;
 import java.util.Objects;
 
 /**
- * <p>Describes the format for the metadata stored in the ProB 2 UI's JSON files. This metadata is used by {@link JsonManager} to ensure that when JSON data is read, it is of the expected type and is compatible with the current UI version.</p>
+ * <p>Describes the format for the metadata stored in the ProB 2 UI's JSON files. This metadata is used by {@link JacksonManager} to ensure that when JSON data is read, it is of the expected type and is compatible with the current UI version.</p>
  *
  * <p>Some of the metadata (e. g. {@link #creator}) is not yet used by the UI code, but is included in newly written JSON files for possible future use.</p>
  */
