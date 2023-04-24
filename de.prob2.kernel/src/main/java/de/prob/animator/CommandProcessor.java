@@ -86,7 +86,6 @@ class CommandProcessor {
 		} else if (topnode instanceof AExceptionResult) {
 			AExceptionResult r = (AExceptionResult) topnode;
 			String message = r.getString().getText();
-			System.out.println(ast);
 			throw new PrologException(message);
 		} else {
 			throw new ProBError("unknown prolog result " + ast);

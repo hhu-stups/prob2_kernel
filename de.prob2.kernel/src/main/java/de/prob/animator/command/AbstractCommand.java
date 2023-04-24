@@ -127,7 +127,7 @@ public abstract class AbstractCommand {
 	 * but hasn't finished computation yet
 	 */
 	public void processProgressResult(final PrologTerm progressInfo) {
-		System.out.println("Progress info: " + progressInfo); // TO DO: replace by something more useful
+		// TODO
 	}
 	
 	
@@ -136,8 +136,6 @@ public abstract class AbstractCommand {
 	 * but hasn't finished computation yet
 	 */
 	public void processCallBack(final PrologTerm callBack, final IPrologTermOutput pout) {
-		// System.out.println("Callback request from Prolog: " + callBack);
-		
 		if (callBack.hasFunctor("interrupt_requested",0)) {
 			if (Thread.interrupted()) {
 				pout.printAtom("interrupt_is_requested");
