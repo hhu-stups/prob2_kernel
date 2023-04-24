@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.MoreObjects;
 
@@ -26,14 +27,22 @@ public class ProBInstance {
 
 	private String[] interruptCommand;
 
+	// ProBInstanceProvider needs to be notified when each instance shuts down,
+	// so that the instance and its process are removed from the respective collections.
+	private final ProBInstanceProvider provider;
+
 	private final Collection<IConsoleOutputListener> consoleOutputListeners;
 
-	private ProBInstance(final Process process, final BufferedReader stream, final Long userInterruptReference,
-			final ProBConnection connection, final String home, final OsSpecificInfo osInfo) {
+	private ProBInstance(
+		final Process process, final BufferedReader stream, final Long userInterruptReference,
+		final ProBConnection connection, final String home, final OsSpecificInfo osInfo,
+		final ProBInstanceProvider provider
+	) {
 		this.process = process;
 		this.connection = connection;
 		final String command = home + osInfo.getUserInterruptCmd();
 		interruptCommand = new String[] { command, Long.toString(userInterruptReference) };
+		this.provider = provider;
 		// Because the console output logger is its own thread,
 		// we have to worry about thread safety when listeners are added/removed.
 		// CopyOnWriteArrayList makes more sense than explicit synchronization,
@@ -41,9 +50,12 @@ public class ProBInstance {
 		this.consoleOutputListeners = new CopyOnWriteArrayList<>();
 	}
 
-	public static ProBInstance create(final Process process, final BufferedReader stream, final Long userInterruptReference,
-			final ProBConnection connection, final String home, final OsSpecificInfo osInfo) {
-		final ProBInstance instance = new ProBInstance(process, stream, userInterruptReference, connection, home, osInfo);
+	static ProBInstance create(
+		final Process process, final BufferedReader stream, final Long userInterruptReference,
+		final ProBConnection connection, final String home, final OsSpecificInfo osInfo,
+		final ProBInstanceProvider provider
+	) {
+		final ProBInstance instance = new ProBInstance(process, stream, userInterruptReference, connection, home, osInfo, provider);
 		// The output logger thread must be started after the constructor,
 		// to prevent the thread from possibly seeing final instance fields before they are initialized
 		// (in particular, logger and consoleOutputListeners).
@@ -60,8 +72,8 @@ public class ProBInstance {
 	}
 
 	private void startOutputPublisher(final BufferedReader stream) {
-		this.thread = new Thread(new ConsoleListener(this, stream, this::logConsoleLine),
-				String.format("ProB Output Logger for instance %x", this.hashCode()));
+		this.thread = new Thread(new ConsoleListener(stream, this::logConsoleLine),
+				"ProB Output Logger for " + this.process);
 		this.thread.start();
 	}
 
@@ -76,13 +88,41 @@ public class ProBInstance {
 	public void shutdown() {
 		shuttingDown = true;
 		try {
-			if (thread != null) {
-				thread.interrupt();
-			}
+			this.sendInterrupt();
 			connection.disconnect();
+
+			final boolean exited = process.waitFor(1, TimeUnit.SECONDS);
+			if (exited) {
+				final int exitCode = process.exitValue();
+				if (exitCode != 0) {
+					logger.warn("{} exited with non-zero status {}", this, exitCode);
+				}
+			} else {
+				logger.warn("{} is taking more than 1 second to exit - will destroy the process instead", this);
+			}
+		} catch (InterruptedException exc) {
+			logger.warn("Thread interrupted while waiting for {} to exit - will destroy the process instead", this, exc);
 		} finally {
 			process.destroy();
 		}
+
+		final boolean exited;
+		try {
+			exited = process.waitFor(1, TimeUnit.SECONDS);
+		} catch (InterruptedException exc) {
+			logger.warn("Thread interrupted while waiting for {} to exit after being destroyed - ignoring", this, exc);
+			return;
+		}
+		if (exited) {
+			final int exitCode = process.exitValue();
+			if (exitCode != 0) {
+				logger.warn("{} exited with non-zero status {} after being destroyed", this, exitCode);
+			}
+		} else {
+			logger.warn("{} is taking more than 1 second to exit after being destroyed - ignoring", this);
+		}
+
+		provider.instanceWasShutDown(this, this.process);
 	}
 
 	public void sendInterrupt() {
@@ -127,7 +167,10 @@ public class ProBInstance {
 
 	@Override
 	public String toString() {
-		return MoreObjects.toStringHelper(ProBInstance.class).addValue(connection).toString();
+		return MoreObjects.toStringHelper(ProBInstance.class)
+			.addValue(this.process)
+			.addValue(this.connection)
+			.toString();
 	}
 
 }

@@ -3,15 +3,14 @@ package de.prob.cli;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.ref.WeakReference;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,19 +51,15 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 
 	private final String home;
 	private final OsSpecificInfo osInfo;
-	private final Collection<Process> toDestroyOnShutdown = new CopyOnWriteArrayList<>();
-	private final Set<WeakReference<ProBInstance>> processes = new HashSet<>();
+	private final Collection<Process> runningProcesses = new CopyOnWriteArrayList<>();
+	private final Collection<ProBInstance> runningInstances = new CopyOnWriteArrayList<>();
 
 	@Inject
 	public ProBInstanceProvider(@Home final String home, final OsSpecificInfo osInfo, final Installer installer) {
 		this.home = home;
 		this.osInfo = osInfo;
 
-		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-			for (final Process process : toDestroyOnShutdown) {
-				process.destroy();
-			}
-		}, "Prolog Process Destroyer"));
+		Runtime.getRuntime().addShutdownHook(new Thread(this::shutdownAll, "Prolog Process Destroyer"));
 
 		installer.ensureCLIsInstalled();
 	}
@@ -74,17 +69,40 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 		return startProlog();
 	}
 
+	void instanceWasShutDown(ProBInstance instance, Process process) {
+		runningInstances.remove(instance);
+		runningProcesses.remove(process);
+	}
+
 	public void shutdownAll() {
-		for (WeakReference<ProBInstance> wr : processes) {
-			ProBInstance process = wr.get();
-			if (process != null) {
-				process.shutdown();
-			}
+		for (ProBInstance instance : runningInstances) {
+			// This also removes the instance and its process from the respective lists.
+			instance.shutdown();
 		}
 
 		// Clean up Process objects that were never wrapped in a ProBInstance for some reason.
-		for (final Process process : toDestroyOnShutdown) {
+		for (Iterator<Process> it = runningProcesses.iterator(); it.hasNext();) {
+			final Process process = it.next();
 			process.destroy();
+			it.remove();
+			
+			final boolean exited;
+			try {
+				exited = process.waitFor(1, TimeUnit.SECONDS);
+			} catch (InterruptedException exc) {
+				logger.warn("Thread interrupted while waiting for orphaned probcli process {} to exit after being destroyed", process, exc);
+				Thread.currentThread().interrupt();
+				continue;
+			}
+			
+			if (exited) {
+				final int exitCode = process.exitValue();
+				if (exitCode != 0) {
+					logger.warn("Orphaned probcli process {} exited with non-zero status {} after being destroyed", process, exitCode);
+				}
+			} else {
+				logger.warn("Orphaned probcli process {} is taking more than 1 second to exit after being destroyed - ignoring", process);
+			}
 		}
 	}
 
@@ -106,7 +124,7 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 			throw new CliError("Problem while starting up ProB CLI: " + e.getMessage(), e);
 		}
 
-		toDestroyOnShutdown.add(prologProcess);
+		runningProcesses.add(prologProcess);
 		return prologProcess;
 	}
 	
@@ -151,8 +169,8 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 			throw new CliError("Error while opening socket connection to CLI", e);
 		}
 		ProBInstance cli = ProBInstance.create(process, stream,
-				cliInformation.getUserInterruptReference(), connection, home, osInfo);
-		processes.add(new WeakReference<>(cli));
+				cliInformation.getUserInterruptReference(), connection, home, osInfo, this);
+		runningInstances.add(cli);
 		return cli;
 	}
 

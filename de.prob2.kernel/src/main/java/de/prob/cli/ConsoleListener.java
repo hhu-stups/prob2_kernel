@@ -2,7 +2,6 @@ package de.prob.cli;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 
 import de.prob.animator.IConsoleOutputListener;
 
@@ -12,12 +11,10 @@ import org.slf4j.LoggerFactory;
 final class ConsoleListener implements Runnable {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConsoleListener.class);
 
-	private final WeakReference<ProBInstance> cli;
 	private final BufferedReader stream;
 	private final IConsoleOutputListener outputListener;
 
-	ConsoleListener(ProBInstance cli, BufferedReader stream, IConsoleOutputListener outputListener) {
-		this.cli = new WeakReference<>(cli);
+	ConsoleListener(BufferedReader stream, IConsoleOutputListener outputListener) {
 		this.stream = stream;
 		this.outputListener = outputListener;
 	}
@@ -38,10 +35,6 @@ final class ConsoleListener implements Runnable {
 	void logLines() throws IOException {
 		String line;
 		do {
-			ProBInstance instance = cli.get();
-			if (instance == null || instance.isShuttingDown()) {
-				return;
-			}
 			line = readAndLog();
 		} while (line != null);
 	}
