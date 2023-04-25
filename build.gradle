@@ -15,8 +15,7 @@ allprojects {
 	
 	project.group = 'de.hhu.stups'
 	// IMPORTANT: Before releasing ProB 2, remember to set cli_version below to a release version!
-	//project.version = '3.15.0'
-	project.version = '4.0.0-SNAPSHOT'
+	project.version = '4.12.1-SNAPSHOT'
 	project.ext.isSnapshot = project.version.endsWith("-SNAPSHOT")
 	project.ext.SOURCE_ENCODING = "UTF-8"
 	
@@ -123,7 +122,7 @@ allprojects {
 // IMPORTANT !!!
 // Remember to release the cli
 ext {
-	cli_version = '1.12.0-beta1'
+	cli_version = '1.12.0'
 }
 // IMPORTANT !!!
 
@@ -174,7 +173,7 @@ dependencies {
 	api group: "org.apache.groovy", name: "groovy-xml"
 
 	// Logging
-	api group: "org.slf4j", name: "slf4j-api", version: "2.0.4" // MIT License
+	api group: "org.slf4j", name: "slf4j-api", version: "2.0.7" // MIT License
 
 	// Misc dependencies
 	implementation group: "com.fatboyindustrial.gson-javatime-serialisers", name: "gson-javatime-serialisers", version: "1.1.2" // MIT License
@@ -183,7 +182,7 @@ dependencies {
 	implementation group: "com.google.code.gson", name: "gson", version: "2.10.1" // Apache License 2.0
 	api group: "com.google.inject", name: "guice", version: "5.1.0" // Apache License 2.0
 	implementation group: "de.hhu.stups", name: "alloy2b", version: "1.2"
-	api group: "de.hhu.stups", name: "ltl-dsl", version: "0.2.0-SNAPSHOT" // Eclipse Public License 1.0
+	api group: "de.hhu.stups", name: "ltl-dsl", version: "0.2.0" // Eclipse Public License 1.0
 	api group: "de.hhu.stups", name: "rodin-eventb-ast", version: "3.2.0" // Eclipse Public License 1.0
 	implementation group: "de.hhu.stups", name: "tla2bAST", version: "1.1.4" // Eclipse Public License 1.0
 
@@ -200,7 +199,7 @@ dependencies {
 	testImplementation('org.junit.jupiter:junit-jupiter')
 	testImplementation group: "org.spockframework", name: "spock-core", version: "2.4-M1-groovy-4.0" // Apache License 2.0
 	// Byte Buddy and Objenesis are needed by Spock to mock classes
-	testRuntimeOnly group: "net.bytebuddy", name: "byte-buddy", version: "1.14.3" // Apache License 2.0
+	testRuntimeOnly group: "net.bytebuddy", name: "byte-buddy", version: "1.14.4" // Apache License 2.0
 	testRuntimeOnly group: "org.objenesis", name: "objenesis", version: "3.3" // Apache License 2.0
 }
 

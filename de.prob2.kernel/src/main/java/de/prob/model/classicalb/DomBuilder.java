@@ -281,7 +281,7 @@ public class DomBuilder extends MachineClauseAdapter {
 		AExpressionParseUnit node = new AExpressionParseUnit();
 		start.setPParseUnit(node);
 		start.setEOF(EOF);
-		node.setExpression((PExpression) expression.clone());
+		node.setExpression(expression.clone());
 		node.getExpression().apply(new RenameIdentifiers());
 		return start;
 	}
@@ -291,7 +291,7 @@ public class DomBuilder extends MachineClauseAdapter {
 		APredicateParseUnit node2 = new APredicateParseUnit();
 		start.setPParseUnit(node2);
 		start.setEOF(EOF);
-		node2.setPredicate((PPredicate) pPredicate.clone());
+		node2.setPredicate(pPredicate.clone());
 		node2.getPredicate().apply(new RenameIdentifiers());
 		return start;
 	}
@@ -301,7 +301,7 @@ public class DomBuilder extends MachineClauseAdapter {
 		ASubstitutionParseUnit node2 = new ASubstitutionParseUnit();
 		start.setPParseUnit(node2);
 		start.setEOF(EOF);
-		node2.setSubstitution((PSubstitution) pSub.clone());
+		node2.setSubstitution(pSub.clone());
 		node2.getSubstitution().apply(new RenameIdentifiers());
 		return start;
 	}

@@ -74,7 +74,9 @@ public class TraceManager  {
 				if (oldVersion <= 3) {
 					for (final JsonNode transitionNode : oldObject.get("transitionList")) {
 						final ObjectNode transition = (ObjectNode)transitionNode;
-						transition.put("description", "");
+						if(!transition.has("description")) {
+							transition.put("description", "");
+						}
 					}
 				}
 

@@ -49,9 +49,9 @@ public class HorizontalTraceRefinementTest {
 
 		HorizontalTraceRefiner traceRefiner = new HorizontalTraceRefiner(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace2);
 
-		List<PersistentTransition> result = traceRefiner.refineTrace();
+		int resultSize = traceRefiner.refineTraceExtendedFeedback().resultTrace.size();
 
-		Assertions.assertEquals(jsonFile.getTransitionList().size(), result.size());
+		Assertions.assertEquals(jsonFile.getTransitionList().size(), resultSize);
 	}
 
 
@@ -162,9 +162,9 @@ public class HorizontalTraceRefinementTest {
 
 		HorizontalTraceRefiner traceRefiner = new HorizontalTraceRefiner(CliTestCommon.getInjector(), jsonFile.getTransitionList(), pathStateSpace1, pathStateSpace2);
 
-		List<PersistentTransition> result = traceRefiner.refineTrace();
+		int resultSize = traceRefiner.refineTraceExtendedFeedback().resultTrace.size();
 
-		Assertions.assertEquals(jsonFile.getTransitionList().size()+1, result.size()); //Will add setup constants
+		Assertions.assertEquals(jsonFile.getTransitionList().size()+1, resultSize); //Will add setup constants
 	}
 
 }

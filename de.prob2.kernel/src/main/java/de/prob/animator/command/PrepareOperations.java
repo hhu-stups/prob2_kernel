@@ -10,6 +10,7 @@ import de.prob.prolog.term.PrologTerm;
 /**
  * Calls the prolog site to prepare an operation and contains the prepared operation and the extracted variables afterwards
  */
+@Deprecated
 public class PrepareOperations extends AbstractCommand {
 
 	private static final String PROLOG_COMMAND_NAME = "prepare_operations";

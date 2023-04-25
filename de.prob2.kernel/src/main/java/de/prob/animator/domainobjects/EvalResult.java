@@ -221,7 +221,6 @@ public class EvalResult extends AbstractEvalResult {
 					return new UnknownEvaluationResult(errorType, errors);
 				
 				case "NOT-INITIALISED":
-				case "IDENTIFIER(S) NOT YET INITIALISED; INITIALISE MACHINE FIRST": // deprecated
 					return new IdentifierNotInitialised(errorType, errors);
 				
 				case "ERROR":

@@ -39,7 +39,9 @@ public abstract class AbstractTraceRefinement {
 	}
 
 	@Deprecated
-	public abstract List<PersistentTransition> refineTrace() throws IOException, TraceConstructionError, BCompoundException;
+	public List<PersistentTransition> refineTrace() throws IOException, TraceConstructionError, BCompoundException {
+		return this.refineTraceExtendedFeedback().getResultTracePersistentTransition();
+	}
 
 	public abstract TraceRefinementResult refineTraceExtendedFeedback() throws IOException, TraceConstructionError, BCompoundException;
 }

@@ -29,6 +29,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.*;
 import static java.util.Collections.emptyMap;
 
+@Deprecated
 public class IdentifierMatcherTest {
 
 	private static ProBKernelStub proBKernelStub;

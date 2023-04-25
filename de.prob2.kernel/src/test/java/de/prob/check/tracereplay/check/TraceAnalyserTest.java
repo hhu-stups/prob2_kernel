@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 
+@Deprecated
 public class TraceAnalyserTest {
 	private static TraceManager traceManager;
 	private static ProBKernelStub proBKernelStub;
