@@ -122,13 +122,11 @@ ext {
 }
 // IMPORTANT !!!
 
-def parserVersion
+def parserVersion = "2.12.4"
 def cliDownloadURL
 if (isSnapshot) {
-	parserVersion = '2.12.4-SNAPSHOT'
 	cliDownloadURL = "https://stups.hhu-hosting.de/downloads/prob/cli/nightly"
 } else {
-	parserVersion = '2.12.3'
 	cliDownloadURL = "https://stups.hhu-hosting.de/downloads/prob/cli/releases/${cli_version}"
 }
 
