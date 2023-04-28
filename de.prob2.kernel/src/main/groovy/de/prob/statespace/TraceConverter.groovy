@@ -1,6 +1,7 @@
 package de.prob.statespace
 
 import de.prob.model.representation.AbstractModel
+import groovy.xml.XmlSlurper
 
 class TraceConverter {
 	def static File save(Trace trace, String fileName) {
