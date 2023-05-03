@@ -254,6 +254,11 @@ if (!project.hasProperty("probHome")) {
 	processResources.dependsOn(downloadBinaries)
 }
 
+sourcesJar {
+	// The downloaded binaries shouldn't go into the sources jar.
+	exclude("de/prob/cli/binaries")
+}
+
 test {
 	useJUnitPlatform()
 	systemProperty("logback.configurationFile", "de/prob/logging/production.xml")
