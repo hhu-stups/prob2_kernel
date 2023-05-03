@@ -266,10 +266,6 @@ groovydoc {
 	docTitle="ProB Core "+project.version
 }
 
-wrapper {
-	gradleVersion = "7.6"
-}
-
 tasks.withType(Test).configureEach {
 	workingDir = "de.prob2.kernel"
 }
