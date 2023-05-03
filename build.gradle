@@ -118,7 +118,7 @@ allprojects {
 // IMPORTANT !!!
 // Remember to release the cli
 ext {
-	cli_version = '1.12.0'
+	cli_version = '1.12.1'
 }
 // IMPORTANT !!!
 
@@ -223,7 +223,7 @@ sourceSets {
 }
 
 final platforms = [
-	"leopard64",
+	"macos",
 	"linux64",
 	"win64",
 ]
