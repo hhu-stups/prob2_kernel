@@ -84,6 +84,7 @@ public final class JacksonManager<T extends HasMetadata> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(JacksonManager.class);
 
+	private static final JsonMetadata MISSING_METADATA = new JsonMetadata(null, 0, null, null, null, null, null);
 	// Only used for parsing
 	private static final ObjectMapper METADATA_OBJECT_MAPPER = new ObjectMapper();
 	static {
@@ -186,7 +187,7 @@ public final class JacksonManager<T extends HasMetadata> {
 				// This only happens for JSON data from pre-1.0 snapshot versions of ProB 2 UI
 				// where metadata wasn't introduced yet.
 				// Substitute a blank metadata object instead.
-				return JsonManagerRaw.MISSING_METADATA;
+				return MISSING_METADATA;
 			}
 		}
 	}
