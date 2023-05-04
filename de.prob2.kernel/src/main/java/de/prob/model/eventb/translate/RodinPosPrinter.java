@@ -6,7 +6,6 @@ import java.util.Map;
 import de.be4.classicalb.core.parser.analysis.prolog.PositionPrinter;
 import de.be4.classicalb.core.parser.node.Node;
 import de.prob.prolog.output.IPrologTermOutput;
-import de.prob.util.Tuple2;
 
 public class RodinPosPrinter implements PositionPrinter {
 
@@ -15,14 +14,6 @@ public class RodinPosPrinter implements PositionPrinter {
 
 	public void addPositions(final Map<Node, RodinPosition> positions) {
 		this.positions.putAll(positions);
-	}
-
-	/**
-	 * @deprecated Use {@link #addPositions(Map)} instead.
-	 */
-	@Deprecated
-	public void addNodeInfos(final Map<Node, Tuple2<String, String>> infos) {
-		infos.forEach((node, tuple) -> this.positions.put(node, new RodinPosition(tuple.getFirst(), tuple.getSecond())));
 	}
 
 	@Override

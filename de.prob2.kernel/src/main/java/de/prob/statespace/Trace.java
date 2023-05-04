@@ -17,14 +17,11 @@ import java.util.stream.Collectors;
 
 import com.github.krukow.clj_lang.PersistentVector;
 
-import de.prob.animator.command.ComposedCommand;
-import de.prob.animator.command.EvaluateFormulasCommand;
 import de.prob.animator.domainobjects.AbstractEvalResult;
 import de.prob.animator.domainobjects.EvalOptions;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.model.representation.AbstractModel;
-import de.prob.util.Tuple2;
 
 import groovy.lang.GroovyObjectSupport;
 
@@ -172,44 +169,6 @@ public class Trace extends GroovyObjectSupport {
 	 */
 	public Map<TraceElement, AbstractEvalResult> evalAll(final String formula) {
 		return this.evalAll(stateSpace.getModel().parseFormula(formula), EvalOptions.DEFAULT);
-	}
-
-	/**
-	 * @deprecated Use {@link #evalAll(IEvalElement)} instead.
-	 */
-	@Deprecated
-	public List<Tuple2<String, AbstractEvalResult>> eval(IEvalElement formula) {
-		final List<EvaluateFormulasCommand> cmds = new ArrayList<>();
-		for (Transition t : transitionList) {
-			// FIXME This check is safe, but not optimal - some formulas can also be evaluated in non-initialised states.
-			if (t.getDestination().isInitialised()) {
-				cmds.add(new EvaluateFormulasCommand(Collections.singletonList(formula), t.getDestination().getId()));
-			}
-		}
-
-		stateSpace.execute(new ComposedCommand(cmds));
-
-		final List<Tuple2<String, AbstractEvalResult>> res = new ArrayList<>();
-		for (EvaluateFormulasCommand cmd : cmds) {
-			res.add(new Tuple2<>(cmd.getStateId(), cmd.getValues().get(0)));
-		}
-		return res;
-	}
-
-	/**
-	 * @deprecated Use {@link #evalAll(String)} instead.
-	 */
-	@Deprecated
-	public List<Tuple2<String, AbstractEvalResult>> eval(String formula, FormulaExpand expand) {
-		return this.eval(stateSpace.getModel().parseFormula(formula, expand));
-	}
-	
-	/**
-	 * @deprecated Use {@link #evalAll(String)} instead.
-	 */
-	@Deprecated
-	public List<Tuple2<String, AbstractEvalResult>> eval(String formula) {
-		return this.eval(formula, FormulaExpand.TRUNCATE);
 	}
 
 	public Trace add(final Transition op) {
