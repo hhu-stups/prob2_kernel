@@ -1,8 +1,5 @@
 package de.prob.check.tracereplay.check;
 
-import de.prob.check.tracereplay.check.TraceCheckerUtils;
-import de.prob.check.tracereplay.check.TraceModifier;
-import de.prob.statespace.Trace;
 import org.apache.groovy.util.Maps;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
