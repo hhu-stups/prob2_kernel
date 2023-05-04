@@ -7,8 +7,6 @@ import java.util.Set;
 
 import de.be4.classicalb.core.parser.analysis.prolog.ASTProlog;
 import de.be4.classicalb.core.parser.node.Node;
-import de.hhu.stups.prob.translator.BValue;
-import de.hhu.stups.prob.translator.TranslatingVisitor;
 import de.prob.formula.TranslationVisitor;
 import de.prob.model.representation.FormulaUUID;
 import de.prob.model.representation.IFormulaUUID;
@@ -241,12 +239,6 @@ public class EventB extends AbstractEvalElement implements IBEvalElement {
 		assert ast != null;
 
 		return ast;
-	}
-
-	@Deprecated
-	@Override
-	public String serialized() {
-		return "#EventB:" + this.getCode();
 	}
 
 	@Override

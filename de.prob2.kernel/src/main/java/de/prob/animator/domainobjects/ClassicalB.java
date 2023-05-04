@@ -20,8 +20,6 @@ import de.be4.classicalb.core.parser.node.Node;
 import de.be4.classicalb.core.parser.node.Start;
 import de.be4.classicalb.core.parser.node.TIdentifierLiteral;
 import de.be4.classicalb.core.parser.util.PrettyPrinter;
-import de.hhu.stups.prob.translator.BValue;
-import de.hhu.stups.prob.translator.TranslatingVisitor;
 import de.prob.model.representation.FormulaUUID;
 import de.prob.model.representation.IFormulaUUID;
 import de.prob.prolog.output.IPrologTermOutput;
@@ -144,12 +142,6 @@ public class ClassicalB extends AbstractEvalElement implements IBEvalElement {
 			ast.setEOF(new EOF());
 		}
 		ASTProlog.printFormula(ast, pout);
-	}
-
-	@Deprecated
-	@Override
-	public String serialized() {
-		return "#ClassicalB:" + this.getCode();
 	}
 
 	@Override

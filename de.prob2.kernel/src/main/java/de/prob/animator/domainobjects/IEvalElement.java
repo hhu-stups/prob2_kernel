@@ -62,12 +62,6 @@ public interface IEvalElement {
 	 */
 	public abstract EvalElementType getKind();
 
-	/**
-	 * @deprecated No direct replacement is provided. Use {@link #getCode()} instead and store the formula language separately if needed.
-	 */
-	@Deprecated
-	public String serialized();
-
 	public IFormulaUUID getFormulaId();
 
 	/**
