@@ -99,12 +99,6 @@ public class CSP extends AbstractEvalElement {
 		return EvalElementType.CSP;
 	}
 
-	@Deprecated
-	@Override
-	public String serialized() {
-		throw new UnsupportedOperationException("CSP formulas cannot be serialized");
-	}
-
 	@Override
 	public IFormulaUUID getFormulaId() {
 		return uuid;

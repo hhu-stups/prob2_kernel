@@ -42,7 +42,7 @@ class OsInfoProvider implements Provider<OsSpecificInfo> {
 			fuzzName = "lib\\fuzz.exe";
 		} else {
 			if (os == OsFamily.MACOS) {
-				dirName = "leopard64";
+				dirName = "macos";
 			} else if (os == OsFamily.LINUX) {
 				dirName = "linux64";
 			} else {

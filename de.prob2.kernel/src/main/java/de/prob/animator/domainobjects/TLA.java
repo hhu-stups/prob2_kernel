@@ -46,12 +46,6 @@ public class TLA extends AbstractEvalElement implements IBEvalElement {
 		return classicalB.getKind();
 	}
 
-	@Deprecated
-	@Override
-	public String serialized() {
-		throw new UnsupportedOperationException("TLA formulas cannot be serialized");
-	}
-
 	@Override
 	public IFormulaUUID getFormulaId() {
 		return classicalB.getFormulaId();

@@ -20,6 +20,10 @@ public enum EvalElementType {
 		this.prologName = prologName;
 	}
 	
+	/**
+	 * @deprecated These names are no longer used on the Prolog side.
+	 */
+	@Deprecated
 	public String getPrologName() {
 		return this.prologName;
 	}

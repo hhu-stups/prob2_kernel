@@ -12,12 +12,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.inject.Injector;
 
 import de.prob.animator.ReusableAnimator;
 import de.prob.check.tracereplay.PersistentTransition;
-import de.prob.check.tracereplay.check.exploration.TraceExplorer;
 import de.prob.scripting.FactoryProvider;
 import de.prob.scripting.ModelFactory;
 import de.prob.statespace.OperationInfo;
@@ -25,7 +23,6 @@ import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
 
 import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
 
 public class TraceCheckerUtils {
 
@@ -276,25 +273,4 @@ public class TraceCheckerUtils {
 
 		return result;
 	}
-
-
-	/**
-	 * Calculates the cartesian product for the special case of input
-	 *
-	 * @param a the first "vector"
-	 * @param b the second "vector"
-	 * @return the cartesian product
-	 */
-	@Deprecated
-	public static List<HashMap<String, Map<TraceExplorer.MappingNames, Map<String, String>>>> product(
-			List<HashMap<String, Map<TraceExplorer.MappingNames, Map<String, String>>>> a,
-			List<HashMap<String, Map<TraceExplorer.MappingNames, Map<String, String>>>> b) {
-		return a.stream().flatMap(entryA -> b.stream().map(entryB -> {
-			HashMap<String, Map<TraceExplorer.MappingNames, Map<String, String>>> result = Maps.newHashMap(entryA);
-			result.putAll(entryB);
-			return result;
-		})).collect(toList());
-	}
-
-
 }

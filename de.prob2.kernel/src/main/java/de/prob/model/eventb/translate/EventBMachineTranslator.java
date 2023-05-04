@@ -38,7 +38,6 @@ import de.prob.model.eventb.EventBMachine;
 import de.prob.model.eventb.EventBVariable;
 import de.prob.model.eventb.EventParameter;
 import de.prob.model.eventb.Witness;
-import de.prob.util.Tuple2;
 
 public class EventBMachineTranslator {
 
@@ -51,16 +50,6 @@ public class EventBMachineTranslator {
 
 	public Map<Node, RodinPosition> getPositions() {
 		return Collections.unmodifiableMap(this.positions);
-	}
-
-	/**
-	 * @deprecated Use {@link #getPositions()} instead.
-	 */
-	@Deprecated
-	public Map<Node, Tuple2<String, String>> getNodeInfos() {
-		final HashMap<Node, Tuple2<String, String>> nodeInfos = new HashMap<>();
-		this.getPositions().forEach((node, pos) -> nodeInfos.put(node, new Tuple2<>(pos.getModelName(), pos.getLabel())));
-		return nodeInfos;
 	}
 
 	public Node translateMachine() {

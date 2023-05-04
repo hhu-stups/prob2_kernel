@@ -25,7 +25,6 @@ import de.prob.model.eventb.Context;
 import de.prob.model.eventb.EventBAxiom;
 import de.prob.model.eventb.EventBConstant;
 import de.prob.model.representation.Set;
-import de.prob.util.Tuple2;
 
 public class ContextTranslator {
 
@@ -38,16 +37,6 @@ public class ContextTranslator {
 
 	public Map<Node, RodinPosition> getPositions() {
 		return Collections.unmodifiableMap(this.positions);
-	}
-
-	/**
-	 * @deprecated Use {@link #getPositions()} instead.
-	 */
-	@Deprecated
-	public Map<Node, Tuple2<String, String>> getNodeInfos() {
-		final HashMap<Node, Tuple2<String, String>> nodeInfos = new HashMap<>();
-		this.getPositions().forEach((node, pos) -> nodeInfos.put(node, new Tuple2<>(pos.getModelName(), pos.getLabel())));
-		return nodeInfos;
 	}
 
 	public Node translateContext() {
