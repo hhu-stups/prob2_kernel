@@ -54,12 +54,6 @@ allprojects {
 		options.encoding = SOURCE_ENCODING
 	}
 	
-	// Workaround for https://github.com/gradle/gradle/issues/5630
-	// See https://stackoverflow.com/a/52797107
-	javadoc {
-		options.addStringOption("sourcepath", "")
-	}
-	
 	publishing {
 		publications {
 			mavenJava(MavenPublication) {
