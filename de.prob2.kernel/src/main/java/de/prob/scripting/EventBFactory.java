@@ -86,10 +86,9 @@ public class EventBFactory implements ModelFactory<EventBModel> {
 		}
 		EventBModel model = modelCreator.get();
 		for (File f : modelFiles) {
-			String modelPath = f.getAbsolutePath();
-			String name = modelPath.substring(modelPath.lastIndexOf(File.separatorChar) + 1, modelPath.lastIndexOf("."));
+			String name = MoreFiles.getNameWithoutExtension(f.toPath());
 			if (model.getComponent(name) == null) {
-				EventBDatabaseTranslator translator = new EventBDatabaseTranslator(model, modelPath);
+				EventBDatabaseTranslator translator = new EventBDatabaseTranslator(model, f.getAbsolutePath());
 				model = translator.getModel();
 			}
 		}

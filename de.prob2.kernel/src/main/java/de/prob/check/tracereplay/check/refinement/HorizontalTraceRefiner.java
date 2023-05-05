@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.google.common.io.MoreFiles;
 import com.google.inject.Injector;
 
 import de.be4.classicalb.core.parser.BParser;
@@ -35,11 +36,6 @@ public class HorizontalTraceRefiner extends AbstractTraceRefinement {
 		this.adaptTo = adaptTo;
 	}
 
-	private String removeFileExtension(Path path){
-		return path.getFileName().toString().substring(0, path.getFileName().toString().lastIndexOf("."));
-	}
-
-
 	/**
 	 * Refines a classical B Trace horizontally. Respects Includes/Extends/Promotes/Imports
 	 * @return A trace replayable on the target machine if possible, preserving the originals traces properties
@@ -52,14 +48,14 @@ public class HorizontalTraceRefiner extends AbstractTraceRefinement {
 		BParser betaParser = new BParser(adaptTo.toString());
 		Start betaStart = betaParser.parseFile(adaptTo.toFile(), false);
 
-		OperationsFinder operationsFinder = new OperationsFinder(removeFileExtension(adaptFrom), betaStart);
+		OperationsFinder operationsFinder = new OperationsFinder(MoreFiles.getNameWithoutExtension(adaptFrom), betaStart);
 		operationsFinder.explore();
 
 		Api api = injector.getInstance(Api.class);
 		StateSpace stateSpace = api.b_load(adaptTo.toString());
 		StateSpace stateSpace2 = api.b_load(adaptFrom.toString());
 		Map<String, OperationsFinder.RenamingContainer> promotedOperations =
-				handlePromotedOperations(operationsFinder.getPromoted(), removeFileExtension(adaptFrom), new ArrayList<>(stateSpace2.getLoadedMachine().getOperations().keySet()), operationsFinder.getExtendedMachines(), operationsFinder.getIncludedImportedMachines());
+				handlePromotedOperations(operationsFinder.getPromoted(), MoreFiles.getNameWithoutExtension(adaptFrom), new ArrayList<>(stateSpace2.getLoadedMachine().getOperations().keySet()), operationsFinder.getExtendedMachines(), operationsFinder.getIncludedImportedMachines());
 
 		Map<String, Set<String>> internal = operationsFinder.usedOperationsReversed();
 
