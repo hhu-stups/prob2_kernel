@@ -1,23 +1,28 @@
 package de.prob.check.tracereplay.check.refinement;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import com.google.inject.Injector;
+
 import de.be4.classicalb.core.parser.BParser;
 import de.be4.classicalb.core.parser.exceptions.BCompoundException;
 import de.be4.classicalb.core.parser.node.Start;
 import de.prob.check.tracereplay.PersistentTransition;
-import de.prob.check.tracereplay.check.TraceCheckerUtils;
 import de.prob.check.tracereplay.check.traceConstruction.AdvancedTraceConstructor;
 import de.prob.check.tracereplay.check.traceConstruction.TraceConstructionError;
 import de.prob.scripting.Api;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static java.util.Collections.*;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
@@ -58,7 +63,9 @@ public class HorizontalTraceRefiner extends AbstractTraceRefinement {
 
 		Map<String, Set<String>> internal = operationsFinder.usedOperationsReversed();
 
-		Set<String> usedOperations = TraceCheckerUtils.usedOperations(transitionList);
+		Set<String> usedOperations = transitionList.stream()
+			.map(PersistentTransition::getOperationName)
+			.collect(Collectors.toSet());
 
 		Map<String, List<String>> alternatives = usedOperations.stream().collect(toMap(entry -> entry, entry -> {
 			Set<String> result = new HashSet<>();
