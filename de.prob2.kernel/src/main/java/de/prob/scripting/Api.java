@@ -333,4 +333,30 @@ public class Api {
 	public StateSpace alloy_load(final String file) throws IOException {
 		return alloy_load(file, Collections.emptyMap());
 	}
+
+	/**
+	 * Load a model from the given file.
+	 * The type/formalism of the model is determined automatically from the file extension.
+	 *
+	 * @param file the path of the file to load
+	 * @param prefs the preferences to use
+	 * @return the {@link StateSpace} for the loaded machine
+	 * @throws IllegalArgumentException if the file extension is not recognized or supported
+	 */
+	public StateSpace load(String file, Map<String, String> prefs) throws IOException {
+		String extension = MoreFiles.getFileExtension(Paths.get(file));
+		return modelFactoryProvider.getFactoryForExtension(extension).extract(file).load(prefs);
+	}
+
+	/**
+	 * Load a model from the given file.
+	 * The type/formalism of the model is determined automatically from the file extension.
+	 *
+	 * @param file the path of the file to load
+	 * @return the {@link StateSpace} for the loaded machine
+	 * @throws IllegalArgumentException if the file extension is not recognized or supported
+	 */
+	public StateSpace load(String file) throws IOException {
+		return load(file, Collections.emptyMap());
+	}
 }
