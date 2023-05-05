@@ -1,24 +1,25 @@
 package de.prob.check.tracereplay.check.refinement;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.List;
+
 import com.google.inject.Injector;
+
 import de.be4.classicalb.core.parser.BParser;
 import de.be4.classicalb.core.parser.exceptions.BCompoundException;
 import de.be4.classicalb.core.parser.node.AAbstractMachineParseUnit;
 import de.be4.classicalb.core.parser.node.Start;
 import de.be4.classicalb.core.parser.util.PrettyPrinter;
 import de.prob.check.tracereplay.PersistentTransition;
-import de.prob.check.tracereplay.check.TraceCheckerUtils;
 import de.prob.check.tracereplay.check.traceConstruction.AdvancedTraceConstructor;
 import de.prob.check.tracereplay.check.traceConstruction.TraceConstructionError;
+import de.prob.scripting.Api;
 import de.prob.scripting.ClassicalBFactory;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.List;
 
 public class VerticalTraceRefiner extends AbstractTraceRefinement{
 
@@ -64,7 +65,7 @@ public class VerticalTraceRefiner extends AbstractTraceRefinement{
 		writer.close();
 
 
-		StateSpace stateSpace = TraceCheckerUtils.createStateSpace(tempFile.toPath().toString(), injector);
+		StateSpace stateSpace = injector.getInstance(Api.class).b_load(tempFile.toPath().toString());
 
 		List<Transition> resultRaw = AdvancedTraceConstructor.constructTrace(transitionList, stateSpace);
 

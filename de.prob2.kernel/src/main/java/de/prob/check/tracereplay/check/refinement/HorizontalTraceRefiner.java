@@ -50,9 +50,9 @@ public class HorizontalTraceRefiner extends AbstractTraceRefinement {
 		OperationsFinder operationsFinder = new OperationsFinder(removeFileExtension(adaptFrom), betaStart);
 		operationsFinder.explore();
 
-		StateSpace stateSpace = TraceCheckerUtils.createStateSpace(adaptTo.toString(), injector);
-
-		StateSpace stateSpace2 = injector.getInstance(Api.class).b_load(adaptFrom.toString());
+		Api api = injector.getInstance(Api.class);
+		StateSpace stateSpace = api.b_load(adaptTo.toString());
+		StateSpace stateSpace2 = api.b_load(adaptFrom.toString());
 		Map<String, OperationsFinder.RenamingContainer> promotedOperations =
 				handlePromotedOperations(operationsFinder.getPromoted(), removeFileExtension(adaptFrom), new ArrayList<>(stateSpace2.getLoadedMachine().getOperations().keySet()), operationsFinder.getExtendedMachines(), operationsFinder.getIncludedImportedMachines());
 
