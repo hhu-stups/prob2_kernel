@@ -56,9 +56,6 @@ allprojects {
 
 	javadoc {
 		options {
-			// Workaround for https://github.com/gradle/gradle/issues/5630
-			// See https://stackoverflow.com/a/52797107
-			addStringOption("sourcepath", "")
 			// silence issues on missing javadocs
 			// the second '-quiet' is required because of a gradle oddity
 			addStringOption('Xdoclint:all,-missing', '-quiet')

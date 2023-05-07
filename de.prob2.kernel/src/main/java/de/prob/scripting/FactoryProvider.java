@@ -131,4 +131,34 @@ public class FactoryProvider {
 	public AlloyFactory getAlloyFactory() {
 		return this.alloyFactory;
 	}
+	
+	public ModelFactory<?> getFactoryForClass(Class<? extends ModelFactory<?>> clazz) {
+		if (clazz == ClassicalBFactory.class) {
+			return this.getClassicalBFactory();
+		} else if (clazz == EventBFactory.class) {
+			return this.getEventBFactory();
+		} else if (clazz == EventBPackageFactory.class) {
+			return this.getEventBPackageFactory();
+		} else if (clazz == CSPFactory.class) {
+			return this.getCspFactory();
+		} else if (clazz == TLAFactory.class) {
+			return this.getTLAFactory();
+		} else if (clazz == RulesModelFactory.class) {
+			return this.getBRulesFactory();
+		} else if (clazz == XTLFactory.class) {
+			return this.getXTLFactory();
+		} else if (clazz == ZFactory.class) {
+			return this.getZFactory();
+		} else if (clazz == ZFuzzFactory.class) {
+			return this.getZFuzzFactory();
+		} else if (clazz == AlloyFactory.class) {
+			return this.getAlloyFactory();
+		} else {
+			throw new IllegalArgumentException("Not a supported model factory class: " + clazz);
+		}
+	}
+	
+	public ModelFactory<?> getFactoryForExtension(String ext) {
+		return this.getFactoryForClass(factoryClassFromExtension(ext));
+	}
 }
