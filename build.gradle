@@ -266,10 +266,6 @@ test {
 	}
 }
 
-groovydoc {
-	docTitle="ProB Core "+project.version
-}
-
 tasks.withType(Test).configureEach {
 	workingDir = "de.prob2.kernel"
 }
