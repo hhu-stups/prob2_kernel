@@ -154,11 +154,11 @@ dependencies {
 	api group: "de.hhu.stups", name: "value-translator", version: "0.1.2"
 
 	// Groovy (Apache License 2.0)
-	api(platform(group: "org.codehaus.groovy", name: "groovy-bom", version: "3.0.17"))
-	api group: "org.codehaus.groovy", name: "groovy"
-	api group: "org.codehaus.groovy", name: "groovy-jsr223"
-	api group: "org.codehaus.groovy", name: "groovy-nio"
-	api group: "org.codehaus.groovy", name: "groovy-xml"
+	api(platform(group: "org.apache.groovy", name: "groovy-bom", version: "4.0.11"))
+	api group: "org.apache.groovy", name: "groovy"
+	api group: "org.apache.groovy", name: "groovy-jsr223"
+	api group: "org.apache.groovy", name: "groovy-nio"
+	api group: "org.apache.groovy", name: "groovy-xml"
 
 	// Logging
 	api group: "org.slf4j", name: "slf4j-api", version: "2.0.7" // MIT License
@@ -183,7 +183,7 @@ dependencies {
 	testImplementation group: "ch.qos.logback", name: "logback-classic", version: "1.3.7" // Eclipse Public License 1.0
 	testImplementation(platform('org.junit:junit-bom:5.9.3'))
 	testImplementation('org.junit.jupiter:junit-jupiter')
-	testImplementation group: "org.spockframework", name: "spock-core", version: "2.3-groovy-3.0" // Apache License 2.0
+	testImplementation group: "org.spockframework", name: "spock-core", version: "2.3-groovy-4.0" // Apache License 2.0
 	// Byte Buddy and Objenesis are needed by Spock to mock classes
 	testRuntimeOnly group: "net.bytebuddy", name: "byte-buddy", version: "1.14.4" // Apache License 2.0
 	testRuntimeOnly group: "org.objenesis", name: "objenesis", version: "3.3" // Apache License 2.0
