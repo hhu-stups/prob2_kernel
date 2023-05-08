@@ -6,13 +6,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.prob.ProBKernelStub;
 import de.prob.cli.CliTestCommon;
+import de.prob.scripting.Api;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
 
 import org.apache.groovy.util.Maps;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -21,21 +20,16 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
 public class GetMachineOperationInfosWithTypesTest {
-	private static ProBKernelStub proBKernelStub;
+	private static Api api;
 
 	@BeforeAll
 	static void beforeAll() {
-		proBKernelStub = CliTestCommon.getInjector().getInstance(ProBKernelStub.class);
-	}
-
-	@AfterAll
-	static void afterAll() {
-		proBKernelStub.killCurrentAnimator();
+		api = CliTestCommon.getInjector().getInstance(Api.class);
 	}
 
 	@Test
 	public void get_prepared_operation_test_1() throws IOException {
-		final StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "examplesForOperations", "machineWithOneOperation.mch"));
+		final StateSpace stateSpace = api.b_load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "examplesForOperations", "machineWithOneOperation.mch").toString());
 
 		GetMachineOperationInfosWithTypes getMachineOperationsFull = new GetMachineOperationInfosWithTypes();
 
@@ -46,15 +40,16 @@ public class GetMachineOperationInfosWithTypesTest {
 		Assertions.assertEquals(1, getMachineOperationsFull.getOperationInfos().size());
 		Assertions.assertEquals(expected, getMachineOperationsFull.getOperationInfos().get(0).getTypeMap());
 
+		stateSpace.kill();
 	}
 
 
 
 	@Test
 	public void get_prepared_operation_test_2() throws IOException {
-		//StateSpace statespace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "Lift.mch"));
+		//StateSpace statespace = api.b_load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "Lift", "Lift.mch").toString());
 
-		StateSpace statespace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "tropical_island", "version_1", "Island.mch"));
+		StateSpace statespace = api.b_load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "typeIV", "tropical_island", "version_1", "Island.mch").toString());
 
 		GetMachineOperationInfosWithTypes getMachineOperationsFull = new GetMachineOperationInfosWithTypes();
 
@@ -105,5 +100,6 @@ public class GetMachineOperationInfosWithTypesTest {
 		Assertions.assertEquals(arriveByBoat, statespace.getLoadedMachine().getMachineOperationInfo("arrive_by_boat"));
 		Assertions.assertEquals(arriveByFoot, statespace.getLoadedMachine().getMachineOperationInfo("arrive_by_foot"));
 
+		statespace.kill();
 	}
 }

@@ -6,34 +6,24 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import de.prob.ProBKernelStub;
 import de.prob.check.tracereplay.check.traceConstruction.TraceConstructionError;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.cli.CliTestCommon;
 import de.prob.statespace.Transition;
 
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class TraceRefinerEventBTest {
 	private static TraceManager traceManager;
-	private static ProBKernelStub proBKernelStub;
 
 	@BeforeAll
 	static void beforeAll() {
 
 		traceManager = CliTestCommon.getInjector().getInstance(TraceManager.class);
-		proBKernelStub = CliTestCommon.getInjector().getInstance(ProBKernelStub.class);
 	}
-
-	@AfterAll
-	static void afterAll() {
-		proBKernelStub.killCurrentAnimator();
-	}
-
 
 	@Test
 	public void simple_event_b_no_changes() throws IOException, TraceConstructionError {

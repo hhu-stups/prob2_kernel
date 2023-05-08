@@ -7,17 +7,16 @@ import java.nio.file.Paths;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 
-import de.prob.ProBKernelStub;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.cli.CliTestCommon;
 import de.prob.json.JsonConversionException;
 import de.prob.json.JsonMetadata;
 import de.prob.json.JsonMetadataBuilder;
+import de.prob.scripting.Api;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
 
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -26,24 +25,19 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TraceManagerTest {
 	private static TraceManager traceManager;
-	private static ProBKernelStub proBKernelStub;
+	private static Api api;
 
 	@BeforeAll
 	static void beforeAll() {
 		traceManager = CliTestCommon.getInjector().getInstance(TraceManager.class);
-		proBKernelStub = CliTestCommon.getInjector().getInstance(ProBKernelStub.class);
-	}
-
-	@AfterAll
-	static void afterAll() {
-		proBKernelStub.killCurrentAnimator();
+		api = CliTestCommon.getInjector().getInstance(Api.class);
 	}
 
 	@Test
 	public void serialize_correct_data_structure_test(@TempDir Path tempDir) throws IOException {
 
 		Path tempDirPath = tempDir.resolve("testFile.txt");
-		final StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "ExampleMachine.mch"));
+		final StateSpace stateSpace = api.b_load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "ExampleMachine.mch").toString());
 
 		JsonMetadata metadata = new JsonMetadataBuilder("Trace", 5)
 			.withSavedNow()
@@ -53,6 +47,8 @@ public class TraceManagerTest {
 			.build();
 		TraceJsonFile abstractJsonFile = new TraceJsonFile(new Trace(stateSpace), metadata);
 		traceManager.save(tempDirPath, abstractJsonFile);
+
+		stateSpace.kill();
 	}
 
 
@@ -60,7 +56,7 @@ public class TraceManagerTest {
 	public void serialize_correct_data_structure_test_2(@TempDir Path tempDir) throws IOException {
 
 		Path tempDirPath = tempDir.resolve("testFile.txt");
-		StateSpace stateSpace = proBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "ExampleMachine.mch"));
+		StateSpace stateSpace = api.b_load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "ExampleMachine.mch").toString());
 
 		JsonMetadata metadata = new JsonMetadataBuilder("Trace", 5)
 				.withSavedNow()
@@ -70,6 +66,8 @@ public class TraceManagerTest {
 				.build();
 		TraceJsonFile abstractJsonFile = new TraceJsonFile(new Trace(stateSpace), metadata);
 		traceManager.save(tempDirPath, abstractJsonFile);
+
+		stateSpace.kill();
 	}
 
 
