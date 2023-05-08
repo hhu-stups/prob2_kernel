@@ -53,6 +53,14 @@ allprojects {
 	tasks.withType(Javadoc) {
 		options.encoding = SOURCE_ENCODING
 	}
+
+	javadoc {
+		options {
+			// silence warnings on missing javadoc
+			// the second '-quiet' is required because of a gradle oddity
+			addStringOption('Xdoclint:all,-missing', '-quiet')
+		}
+	}
 	
 	publishing {
 		publications {
