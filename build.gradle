@@ -291,7 +291,7 @@ jacocoTestReport {
 	reports {
 		xml.required = false
 		csv.required = false
-		html.destination new File("${buildDir}/jacocoHtml")
+		html.outputLocation = new File(buildDir, "jacocoHtml")
 	}
 	executionData(test, groovyIntegrationTests)
 }
