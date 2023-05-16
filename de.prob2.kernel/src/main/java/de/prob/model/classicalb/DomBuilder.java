@@ -155,7 +155,7 @@ public class DomBuilder extends MachineClauseAdapter {
 	@Override
 	public void caseASetsMachineClause(final ASetsMachineClause node) {
 		for (final PSet set : node.getSetDefinitions()) {
-			final List<TIdentifierLiteral> identifier;
+			List<TIdentifierLiteral> identifier;
 			if (set instanceof ADeferredSetSet) {
 				identifier = ((ADeferredSetSet)set).getIdentifier();
 			} else if (set instanceof AEnumeratedSetSet) {
@@ -163,6 +163,10 @@ public class DomBuilder extends MachineClauseAdapter {
 			} else {
 				continue;
 			}
+			// Need to clone all tokens so that createExpressionAST doesn't modify the original AST...
+			identifier = identifier.stream()
+				.map(TIdentifierLiteral::clone)
+				.collect(Collectors.toList());
 			sets.add(new de.prob.model.representation.Set(new ClassicalB(createExpressionAST(new AIdentifierExpression(identifier)))));
 		}
 	}
