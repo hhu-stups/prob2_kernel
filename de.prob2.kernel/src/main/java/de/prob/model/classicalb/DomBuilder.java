@@ -121,8 +121,8 @@ public class DomBuilder extends MachineClauseAdapter {
 	@Override
 	public void caseAConstantsMachineClause(final AConstantsMachineClause node) {
 		for (PExpression pExpression : node.getIdentifiers()) {
-			constants.add(new ClassicalBConstant(
-					createExpressionAST(pExpression)));
+			AIdentifierExpression idExpr = extractIdentifierExpression(pExpression);
+			constants.add(new ClassicalBConstant(createExpressionAST(idExpr)));
 		}
 	}
 
@@ -136,11 +136,11 @@ public class DomBuilder extends MachineClauseAdapter {
 	@Override
 	public void caseAVariablesMachineClause(final AVariablesMachineClause node) {
 		for (PExpression pExpression : node.getIdentifiers()) {
+			AIdentifierExpression idExpr = extractIdentifierExpression(pExpression);
 			if (prefix != null) {
-				usedIds.add(extractIdentifierName(pExpression));
+				usedIds.add(extractIdentifierName(idExpr.getIdentifier()));
 			}
-			variables.add(new ClassicalBVariable(
-					createExpressionAST(pExpression)));
+			variables.add(new ClassicalBVariable(createExpressionAST(idExpr)));
 		}
 	}
 
@@ -240,16 +240,14 @@ public class DomBuilder extends MachineClauseAdapter {
 			.collect(Collectors.joining("."));
 	}
 	
-	private static String extractIdentifierName(PExpression pExpression) {
-		AIdentifierExpression identifierExpression = null;
+	private static AIdentifierExpression extractIdentifierExpression(PExpression pExpression) {
 		if(pExpression instanceof AIdentifierExpression) {
-			identifierExpression = (AIdentifierExpression) pExpression;
+			return (AIdentifierExpression) pExpression;
 		} else if(pExpression instanceof ADescriptionExpression) {
-			identifierExpression = (AIdentifierExpression) ((ADescriptionExpression) pExpression).getExpression();
+			return (AIdentifierExpression) ((ADescriptionExpression) pExpression).getExpression();
 		} else {
-			throw new ProBError("Invalid expression for extracting identifier name");
+			throw new ProBError("Not a valid constant/variable identifier expression: " + pExpression.getClass());
 		}
-		return identifierExpression.getIdentifier().get(0).getText();
 	}
 
 	private static List<String> extractIdentifiers(final List<PExpression> identifiers) {
