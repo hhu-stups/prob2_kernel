@@ -163,7 +163,7 @@ public class DomBuilder extends MachineClauseAdapter {
 			} else {
 				continue;
 			}
-			sets.add(new de.prob.model.representation.Set(new ClassicalB(Utils.getTIdentifierListAsString(identifier))));
+			sets.add(new de.prob.model.representation.Set(new ClassicalB(createExpressionAST(new AIdentifierExpression(identifier)))));
 		}
 	}
 
