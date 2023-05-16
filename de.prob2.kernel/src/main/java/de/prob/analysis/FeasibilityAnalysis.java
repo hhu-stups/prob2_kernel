@@ -5,9 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import de.prob.animator.command.CbcSolveCommand;
-import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.EvalResult;
-import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.animator.domainobjects.Join;
 import de.prob.model.representation.AbstractModel;
@@ -37,13 +35,7 @@ public class FeasibilityAnalysis {
 		for (BEvent operation : machine.getEvents()) {
 			List<IEvalElement> iEvalElements = new ArrayList<>(invariantPredicates);
 			iEvalElements.addAll(Extraction.getGuardPredicates(machine, operation.getName()));
-			ClassicalB predicate;
-			if(iEvalElements.isEmpty()) {
-				predicate = new ClassicalB("1=1", FormulaExpand.EXPAND);
-			} else {
-				predicate = new ClassicalB(Join.conjunct(model, iEvalElements).getCode(), FormulaExpand.EXPAND);
-			}
-			CbcSolveCommand cmd = new CbcSolveCommand(predicate);
+			CbcSolveCommand cmd = new CbcSolveCommand(Join.conjunct(model, iEvalElements));
 			stateSpace.execute(cmd);
 			
 			if (!(cmd.getValue() instanceof EvalResult) || !(((EvalResult) cmd.getValue()).getValue().equals("TRUE"))) {

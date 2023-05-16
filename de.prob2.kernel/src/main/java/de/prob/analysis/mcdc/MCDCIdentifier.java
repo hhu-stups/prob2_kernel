@@ -13,7 +13,6 @@ import de.prob.analysis.Conversion;
 import de.prob.animator.command.CbcSolveCommand;
 import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.EvalResult;
-import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.animator.domainobjects.Join;
 import de.prob.model.representation.AbstractModel;
@@ -52,12 +51,7 @@ public class MCDCIdentifier {
 		Map<BEvent, List<ConcreteMCDCTestCase>> testCases = new HashMap<>();
 		for (BEvent operation : machine.getEvents()) {
 			List<IEvalElement> guards = Extraction.getGuardPredicates(machine, operation.getName());
-			ClassicalB predicate;
-			if(guards.isEmpty()) {
-				predicate = new ClassicalB("1=1", FormulaExpand.EXPAND);
-			} else {
-				predicate = new ClassicalB(Join.conjunct(model, guards).getCode(), FormulaExpand.EXPAND);
-			}
+			ClassicalB predicate = (ClassicalB)Join.conjunct(model, guards);
 			Start ast = predicate.getAst();
 			PPredicate startNode = ((APredicateParseUnit) ast.getPParseUnit()).getPredicate();
 			testCases.put(operation, getMCDCTestCases(startNode));
