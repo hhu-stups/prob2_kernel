@@ -16,7 +16,6 @@ import de.be4.classicalb.core.parser.node.AExpressionParseUnit;
 import de.be4.classicalb.core.parser.node.AIdentifierExpression;
 import de.be4.classicalb.core.parser.node.APredicateParseUnit;
 import de.be4.classicalb.core.parser.node.EOF;
-import de.be4.classicalb.core.parser.node.Node;
 import de.be4.classicalb.core.parser.node.Start;
 import de.be4.classicalb.core.parser.node.TIdentifierLiteral;
 import de.be4.classicalb.core.parser.util.PrettyPrinter;
@@ -34,15 +33,17 @@ public class ClassicalB extends AbstractEvalElement implements IBEvalElement {
 	private final FormulaUUID uuid = new FormulaUUID();
 
 	private final Start ast;
+	private String code;
 
 	public ClassicalB(final Start ast, final FormulaExpand expansion, final String code) {
-		super(code, expansion);
+		super(null, expansion);
 
 		this.ast = ast;
+		this.code = code;
 	}
 
 	public ClassicalB(final Start ast, final FormulaExpand expansion) {
-		this(ast, expansion, prettyprint(ast));
+		this(ast, expansion, null);
 	}
 
 	/**
@@ -89,10 +90,14 @@ public class ClassicalB extends AbstractEvalElement implements IBEvalElement {
 		}
 	}
 
-	private static String prettyprint(final Node predicate) {
-		final PrettyPrinter prettyPrinter = new PrettyPrinter();
-		predicate.apply(prettyPrinter);
-		return prettyPrinter.getPrettyPrint();
+	@Override
+	public String getCode() {
+		if (this.code == null) {
+			final PrettyPrinter prettyPrinter = new PrettyPrinter();
+			this.ast.apply(prettyPrinter);
+			this.code = prettyPrinter.getPrettyPrint();
+		}
+		return this.code;
 	}
 
 	/**
