@@ -4,7 +4,6 @@ import java.util.Objects;
 import java.util.Set;
 
 import de.prob.animator.domainobjects.EventB;
-import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.model.representation.Guard;
 import de.prob.model.representation.Named;
 
@@ -18,7 +17,7 @@ public class EventBGuard extends Guard implements Named {
 
 	public EventBGuard(final String name, final String code,
 			final boolean theorem, final Set<IFormulaExtension> typeEnv) {
-		this(name, new EventB(code, typeEnv, FormulaExpand.EXPAND), theorem, "");
+		this(name, new EventB(code, typeEnv), theorem, "");
 	}
 
 	public EventBGuard(final String name, final EventB predicate,

@@ -16,11 +16,9 @@ import de.be4.classicalb.core.parser.node.AConjunctPredicate;
 import de.be4.classicalb.core.parser.node.AEqualPredicate;
 import de.be4.classicalb.core.parser.node.AIdentifierExpression;
 import de.be4.classicalb.core.parser.node.Node;
-
 import de.prob.animator.domainobjects.EvalElementType;
 import de.prob.animator.domainobjects.EvaluationException;
 import de.prob.animator.domainobjects.EventB;
-import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.unicode.UnicodeTranslator;
 
 import org.eventb.core.ast.BecomesEqualTo;
@@ -46,7 +44,7 @@ public class FormulaUtil {
 			final Expression expr = v.getRodinParsedResult().getParsedExpression();
 			substitutions.put(id, expr);
 		});
-		return new EventB(getRodinFormula(formula).substituteFreeIdents(substitutions).toString(), FormulaExpand.EXPAND);
+		return new EventB(getRodinFormula(formula).substituteFreeIdents(substitutions).toString());
 	}
 
 	public EventB substituteAssignment(final EventB formula, final Map<String, EventB> identifierMapping) {
@@ -71,12 +69,12 @@ public class FormulaUtil {
 		assert split.length == 2;
 
 		final String lhs = Arrays.stream(split[0].split(","))
-			.map(it -> substitute(new EventB(it, formula.getTypes(), FormulaExpand.EXPAND), identifierMapping).getCode())
+			.map(it -> substitute(new EventB(it, formula.getTypes()), identifierMapping).getCode())
 			.collect(Collectors.joining(","));
 		final String rhs = Arrays.stream(split[1].split(","))
-			.map(it -> substitute(new EventB(it, formula.getTypes(), FormulaExpand.EXPAND), identifierMapping).getCode())
+			.map(it -> substitute(new EventB(it, formula.getTypes()), identifierMapping).getCode())
 			.collect(Collectors.joining(","));
-		return new EventB(lhs + ":=" + rhs, FormulaExpand.EXPAND);
+		return new EventB(lhs + ":=" + rhs);
 	}
 
 	public EventB substituteBecomeElementOf(final EventB formula, final Map<String, EventB> identifierMapping) {
@@ -85,8 +83,8 @@ public class FormulaUtil {
 		final String[] split = code.split("::");
 		assert split.length == 2;
 
-		final String sub = substitute(new EventB(split[0], formula.getTypes(), FormulaExpand.EXPAND), identifierMapping).getCode() + "::" + substitute(new EventB(split[1], formula.getTypes(), FormulaExpand.EXPAND), identifierMapping).getCode();
-		return new EventB(sub, FormulaExpand.EXPAND);
+		final String sub = substitute(new EventB(split[0], formula.getTypes()), identifierMapping).getCode() + "::" + substitute(new EventB(split[1], formula.getTypes()), identifierMapping).getCode();
+		return new EventB(sub);
 	}
 
 	public EventB substituteBecomeSuchThat(final EventB formula, final Map<String, EventB> identifierMapping) {
@@ -98,14 +96,14 @@ public class FormulaUtil {
 		final Map<String, EventB> newMapping = new HashMap<>(identifierMapping);
 		identifierMapping.forEach((x, v) -> {
 			if (v.getKind().equals(EvalElementType.EXPRESSION) && v.getRodinParsedResult().getParsedExpression() instanceof FreeIdentifier) {
-				newMapping.put(x + '\'', new EventB(v.getCode().trim() + '\'', FormulaExpand.EXPAND));
+				newMapping.put(x + '\'', new EventB(v.getCode().trim() + '\''));
 			}
 		});
 
 		final String lhs = Arrays.stream(split[0].trim().split(","))
 			.map(it -> newMapping.get(it.trim()).toString())
 			.collect(Collectors.joining(","));
-		return new EventB(lhs + ":|" + substitute(new EventB(split[1], formula.getTypes(), FormulaExpand.EXPAND), newMapping).getCode(), FormulaExpand.EXPAND);
+		return new EventB(lhs + ":|" + substitute(new EventB(split[1], formula.getTypes()), newMapping).getCode());
 	}
 
 	public List<EventB> formulasWith(final List<EventB> formulas, final EventB identifier) {
@@ -165,21 +163,21 @@ public class FormulaUtil {
 			if (newVal == null) {
 				throw new IllegalArgumentException("Could not find value for " + var + " in assignment " + assignment);
 			}
-			return new EventB(split[0].trim() + ',' + newVar + " := " + split[1].trim() + ',' + newVal, assignment.getTypes(), FormulaExpand.EXPAND);
+			return new EventB(split[0].trim() + ',' + newVar + " := " + split[1].trim() + ',' + newVal, assignment.getTypes());
 		}
 		if (assignment.getAst() instanceof ABecomesSuchSubstitution) {
 			final String code = assignment.getCode();
 			final String[] split = code.split(":\\|");
 			final String lhs = split[0].trim() + ',' + newVar;
 			final String rhs = split[1] + " & " + var + "\' = " + newVar + '\'';
-			return new EventB(lhs + ":|" + rhs, assignment.getTypes(), FormulaExpand.EXPAND);
+			return new EventB(lhs + ":|" + rhs, assignment.getTypes());
 		}
 		if (assignment.getAst() instanceof ABecomesElementOfSubstitution) {
 			final String code = assignment.getCode();
 			final String[] split = code.split("::");
 			assert split[0].trim().equals(var);
 			final String formula = var + ',' + newVar + " :| " + var + "\' : " + split[1].trim() + " & " + var + "\' = " + newVar + '\'';
-			return new EventB(formula, assignment.getTypes(), FormulaExpand.EXPAND);
+			return new EventB(formula, assignment.getTypes());
 		}
 		throw new IllegalArgumentException(assignment + " must be of type assignment");
 	}
@@ -199,13 +197,13 @@ public class FormulaUtil {
 		}
 		try {
 			return Arrays.stream(formula.getCode().split("&")).map(code -> {
-				final EventB f = new EventB(code.trim(), formula.getTypes(), FormulaExpand.EXPAND);
+				final EventB f = new EventB(code.trim(), formula.getTypes());
 				if (!(f.getAst() instanceof AEqualPredicate)) {
 					throw new IllegalArgumentException("Expected predicate to be conjunct of equivalences.");
 				}
 				final String[] split2 = f.toUnicode().split(UnicodeTranslator.toRodinUnicode("="));
 				assert split2.length == 2;
-				final Node lhs = new EventB(split2[0], formula.getTypes(), FormulaExpand.EXPAND).getAst();
+				final Node lhs = new EventB(split2[0], formula.getTypes()).getAst();
 				if (!(lhs instanceof AIdentifierExpression)) {
 					throw new IllegalArgumentException("Left hand side must be a single identifier");
 				}
@@ -213,12 +211,12 @@ public class FormulaUtil {
 				if (!output.contains(identifier)) {
 					throw new IllegalArgumentException("output (" + output + ") must contain the identifiers (" + identifier + ") that are defined on the left hand side");
 				}
-				for (FreeIdentifier id : getRodinFormula(new EventB(split2[1], formula.getTypes(), FormulaExpand.EXPAND)).getFreeIdentifiers()) {
+				for (FreeIdentifier id : getRodinFormula(new EventB(split2[1], formula.getTypes())).getFreeIdentifiers()) {
 					if (!input.contains(id.getName())) {
 						throw new IllegalArgumentException(id + " is not defined as an input element");
 					}
 				}
-				return new EventB(identifier + " := " + split2[1], formula.getTypes(), FormulaExpand.EXPAND);
+				return new EventB(identifier + " := " + split2[1], formula.getTypes());
 			}).collect(Collectors.toList());
 		} catch (EvaluationException e) {
 			throw new IllegalArgumentException("Transformation was unsuccessful", e);
@@ -231,10 +229,10 @@ public class FormulaUtil {
 		}
 		final Map<String, EventB> subMap = new LinkedHashMap<>();
 		for (String id : lhsIdentifiers) {
-			subMap.put(id, new EventB(id + '\'', predicate.getTypes(), FormulaExpand.EXPAND));
+			subMap.put(id, new EventB(id + '\'', predicate.getTypes()));
 		}
 		final EventB substituted = substitute(predicate, subMap);
-		return new EventB(String.join(",", lhsIdentifiers) + " :| " + substituted.getCode(), predicate.getTypes(), FormulaExpand.EXPAND);
+		return new EventB(String.join(",", lhsIdentifiers) + " :| " + substituted.getCode(), predicate.getTypes());
 	}
 
 	public List<EventB> predicateToAssignments(final EventB predicate, final Set<String> input, final Set<String> output) {
@@ -250,7 +248,7 @@ public class FormulaUtil {
 	public EventB applyAssignment(final EventB predicate, final EventB assignment) {
 		final Predicate p = (Predicate)getRodinFormula(predicate);
 		final BecomesEqualTo a = (BecomesEqualTo)getRodinFormula(assignment);
-		return new EventB(p.applyAssignment(a).toString(), predicate.getTypes(), FormulaExpand.EXPAND);
+		return new EventB(p.applyAssignment(a).toString(), predicate.getTypes());
 	}
 
 	public EventB applyAssignments(final EventB predicate, final List<EventB> assignments) {

@@ -4,7 +4,6 @@ import java.util.Objects;
 import java.util.Set;
 
 import de.prob.animator.domainobjects.EventB;
-import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.model.representation.AbstractElement;
 
 import org.eventb.core.ast.extension.IFormulaExtension;
@@ -16,8 +15,8 @@ public class OperatorArgument extends AbstractElement {
 
 	public OperatorArgument(final String identifier, final String type,
 			final Set<IFormulaExtension> typeEnv) {
-		this.identifier = new EventB(identifier, typeEnv, FormulaExpand.EXPAND);
-		this.type = new EventB(type, typeEnv, FormulaExpand.EXPAND);
+		this.identifier = new EventB(identifier, typeEnv);
+		this.type = new EventB(type, typeEnv);
 	}
 
 	public EventB getIdentifier() {

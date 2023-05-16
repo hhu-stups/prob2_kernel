@@ -4,7 +4,6 @@ import java.util.Objects;
 import java.util.Set;
 
 import de.prob.animator.domainobjects.EventB;
-import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.model.representation.AbstractFormulaElement;
 import de.prob.model.representation.Named;
 
@@ -19,8 +18,8 @@ public class RewriteRuleRHS extends AbstractFormulaElement implements Named {
 	public RewriteRuleRHS(final String name, final String predicate,
 			final String formula, final Set<IFormulaExtension> typeEnv) {
 		this.name = name;
-		this.predicate = new EventB(predicate, typeEnv, FormulaExpand.EXPAND);
-		this.formula = new EventB(formula, typeEnv, FormulaExpand.EXPAND);
+		this.predicate = new EventB(predicate, typeEnv);
+		this.formula = new EventB(formula, typeEnv);
 	}
 
 	@Override

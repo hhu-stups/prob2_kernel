@@ -42,7 +42,6 @@ import de.be4.classicalb.core.parser.node.Start;
 import de.be4.classicalb.core.parser.node.TIdentifierLiteral;
 import de.be4.classicalb.core.parser.util.Utils;
 import de.prob.animator.domainobjects.ClassicalB;
-import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.exception.ProBError;
 import de.prob.model.representation.Action;
 import de.prob.model.representation.BEvent;
@@ -164,10 +163,7 @@ public class DomBuilder extends MachineClauseAdapter {
 			} else {
 				continue;
 			}
-			sets.add(new de.prob.model.representation.Set(new ClassicalB(
-				Utils.getTIdentifierListAsString(identifier),
-				FormulaExpand.EXPAND
-			)));
+			sets.add(new de.prob.model.representation.Set(new ClassicalB(Utils.getTIdentifierListAsString(identifier))));
 		}
 	}
 

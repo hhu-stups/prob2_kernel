@@ -12,7 +12,6 @@ import java.util.Set;
 import com.google.common.io.MoreFiles;
 
 import de.prob.animator.domainobjects.EventB;
-import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.model.eventb.Context;
 import de.prob.model.eventb.EventBAxiom;
 import de.prob.model.eventb.EventBConstant;
@@ -96,8 +95,7 @@ public class ContextXmlHandler extends DefaultHandler {
 
 	private void addSet(final Attributes attributes) {
 		String name = attributes.getValue("name");
-		de.prob.model.representation.Set bSet = new de.prob.model.representation.Set(
-				new EventB(name, FormulaExpand.EXPAND));
+		de.prob.model.representation.Set bSet = new de.prob.model.representation.Set(new EventB(name));
 		if (inInternalContext) {
 			internalSets.add(bSet);
 		} else {
