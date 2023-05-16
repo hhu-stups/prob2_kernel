@@ -40,7 +40,7 @@ import de.be4.classicalb.core.parser.node.PSet;
 import de.be4.classicalb.core.parser.node.PSubstitution;
 import de.be4.classicalb.core.parser.node.Start;
 import de.be4.classicalb.core.parser.node.TIdentifierLiteral;
-import de.be4.classicalb.core.parser.node.Token;
+import de.be4.classicalb.core.parser.util.Utils;
 import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.exception.ProBError;
@@ -100,7 +100,7 @@ public class DomBuilder extends MachineClauseAdapter {
 
 	@Override
 	public void caseAMachineHeader(final AMachineHeader node) {
-		final String nameInAst = extractIdentifierName(node.getName());
+		final String nameInAst = Utils.getTIdentifierListAsString(node.getName());
 		if (!nameInAst.equals(unprefixedName)) {
 			throw new ProBError("Machine name mismatch: expected name " + unprefixedName + ", but found name " + nameInAst + " in AST");
 		}
@@ -138,7 +138,7 @@ public class DomBuilder extends MachineClauseAdapter {
 		for (PExpression pExpression : node.getIdentifiers()) {
 			AIdentifierExpression idExpr = extractIdentifierExpression(pExpression);
 			if (prefix != null) {
-				usedIds.add(extractIdentifierName(idExpr.getIdentifier()));
+				usedIds.add(Utils.getAIdentifierAsString(idExpr));
 			}
 			variables.add(new ClassicalBVariable(createExpressionAST(idExpr)));
 		}
@@ -165,7 +165,7 @@ public class DomBuilder extends MachineClauseAdapter {
 				continue;
 			}
 			sets.add(new de.prob.model.representation.Set(new ClassicalB(
-				extractIdentifierName(identifier),
+				Utils.getTIdentifierListAsString(identifier),
 				FormulaExpand.EXPAND
 			)));
 		}
@@ -199,7 +199,7 @@ public class DomBuilder extends MachineClauseAdapter {
 	}
 
 	private void doOperation(final AOperation node) {
-		String name = extractIdentifierName(node.getOpName());
+		String name = Utils.getTIdentifierListAsString(node.getOpName());
 		if (prefix != null && !prefix.equals(name)) {
 			name = prefix + "." + name;
 		}
@@ -232,14 +232,6 @@ public class DomBuilder extends MachineClauseAdapter {
 		operations.add(operation);
 	}
 
-	// -------------------
-
-	private static String extractIdentifierName(final List<TIdentifierLiteral> nameL) {
-		return nameL.stream()
-			.map(Token::getText)
-			.collect(Collectors.joining("."));
-	}
-	
 	private static AIdentifierExpression extractIdentifierExpression(PExpression pExpression) {
 		if(pExpression instanceof AIdentifierExpression) {
 			return (AIdentifierExpression) pExpression;
@@ -252,8 +244,8 @@ public class DomBuilder extends MachineClauseAdapter {
 
 	private static List<String> extractIdentifiers(final List<PExpression> identifiers) {
 		return identifiers.stream()
-			.filter(pExpression -> pExpression instanceof AIdentifierExpression)
-			.map(pExpression -> extractIdentifierName(((AIdentifierExpression)pExpression).getIdentifier()))
+			.map(DomBuilder::extractIdentifierExpression)
+			.map(Utils::getAIdentifierAsString)
 			.collect(Collectors.toList());
 	}
 
@@ -308,7 +300,7 @@ public class DomBuilder extends MachineClauseAdapter {
 		@Override
 		public void inAIdentifierExpression(final AIdentifierExpression node) {
 			if (prefix != null) {
-				String id = node.getIdentifier().get(0).getText();
+				String id = Utils.getAIdentifierAsString(node);
 
 				if (usedIds.contains(id)) {
 					final List<TIdentifierLiteral> prefixTokens = Arrays.stream(prefix.split("\\."))
