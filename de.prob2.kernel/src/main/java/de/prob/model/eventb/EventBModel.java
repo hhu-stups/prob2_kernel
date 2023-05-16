@@ -138,7 +138,7 @@ public class EventBModel extends AbstractModel {
 	@Override
 	public boolean checkSyntax(final String formula) {
 		try {
-			final EventB element = (EventB)parseFormula(formula, FormulaExpand.TRUNCATE);
+			final EventB element = (EventB)parseFormula(formula);
 			element.ensureParsed();
 			return true;
 		} catch (EvaluationException e) {

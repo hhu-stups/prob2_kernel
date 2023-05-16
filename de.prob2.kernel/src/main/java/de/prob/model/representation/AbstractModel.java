@@ -91,6 +91,22 @@ public abstract class AbstractModel extends AbstractElement {
 	public abstract IEvalElement formulaFromIdentifier(final List<String> identifier, final FormulaExpand expansion);
 
 	/**
+	 * <p>Create a formula representing the given identifier.</p>
+	 * <p>
+	 * Unlike {@link #parseFormula(String)},
+	 * this method accepts arbitrary strings as identifiers,
+	 * even ones that are not syntactically valid in the language of the model
+	 * and would be unrepresentable or require quoting.
+	 * </p>
+	 *
+	 * @param identifier list of string parts that make up a dotted identifier
+	 * @return a formula representing the given identifier
+	 */
+	public IEvalElement formulaFromIdentifier(final List<String> identifier) {
+		return this.formulaFromIdentifier(identifier, FormulaExpand.TRUNCATE);
+	}
+
+	/**
 	 * Will check the syntax of a formula to see if it is valid in the scope of
 	 * this model.
 	 *
@@ -100,7 +116,7 @@ public abstract class AbstractModel extends AbstractElement {
 	 */
 	public boolean checkSyntax(final String formula) {
 		try {
-			parseFormula(formula, FormulaExpand.TRUNCATE);
+			parseFormula(formula);
 			return true;
 		} catch (EvaluationException ignored) {
 			return false;

@@ -290,7 +290,7 @@ public class StateSpace implements IAnimator {
 	 */
 	public List<Transition> transitionFromPredicate(final State state, final String opName, final String predicate,
 		final int nrOfSolutions) {
-		final IEvalElement pred = model.parseFormula(predicate, FormulaExpand.EXPAND);
+		final IEvalElement pred = model.parseFormula(predicate);
 		return this.transitionFromPredicate(state, opName, pred, nrOfSolutions);
 	}
 
@@ -334,7 +334,7 @@ public class StateSpace implements IAnimator {
 	 *         otherwise.
 	 */
 	public boolean isValidOperation(final State state, final String name, final String predicate) {
-		final ClassicalB pred = new ClassicalB(predicate, FormulaExpand.EXPAND);
+		final ClassicalB pred = new ClassicalB(predicate);
 		GetOperationByPredicateCommand command = new GetOperationByPredicateCommand(this, state.getId(), name, pred,
 				1);
 		execute(command);

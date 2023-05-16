@@ -2,13 +2,11 @@ package de.prob.statespace
 
 import java.nio.file.Paths
 
-import de.prob.animator.domainobjects.FormulaExpand
 import de.prob.cli.CliTestCommon
 import de.prob.model.classicalb.ClassicalBModel
 import de.prob.model.eventb.EventBModel
 import de.prob.model.representation.AbstractModel
 import de.prob.scripting.ClassicalBFactory
-
 import spock.lang.Specification
 
 class TraceConstructionTest extends Specification {

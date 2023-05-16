@@ -7,13 +7,11 @@ import de.prob.animator.domainobjects.ComputationNotCompletedResult
 import de.prob.animator.domainobjects.EnumerationWarning
 import de.prob.animator.domainobjects.EvalResult
 import de.prob.animator.domainobjects.EventB
-import de.prob.animator.domainobjects.FormulaExpand
 import de.prob.animator.domainobjects.IdentifierNotInitialised
 import de.prob.animator.domainobjects.WDError
 import de.prob.cli.CliTestCommon
 import de.prob.scripting.ClassicalBFactory
 import de.prob.scripting.EventBFactory
-
 import spock.lang.Specification
 
 class TraceEvaluationTest extends Specification {
@@ -36,7 +34,7 @@ class TraceEvaluationTest extends Specification {
 
 	def "when not initialised the result is IdentifierNotInitialised"() {
 		when:
-		final x = t.evalCurrent("waiting", FormulaExpand.EXPAND)
+		final x = t.evalCurrent("waiting")
 
 		then:
 		x instanceof IdentifierNotInitialised
@@ -44,7 +42,7 @@ class TraceEvaluationTest extends Specification {
 
 	def "evaluating infinite sets results in enumeration warning"() {
 		when:
-		final x = t.evalCurrent("card({x|x : NATURAL & x mod 2 = 0})", FormulaExpand.EXPAND)
+		final x = t.evalCurrent("card({x|x : NATURAL & x mod 2 = 0})")
 
 		then:
 		x instanceof EnumerationWarning
@@ -52,7 +50,7 @@ class TraceEvaluationTest extends Specification {
 
 	def "evaluating formulas with well-definedness problems results in WDError"() {
 		when:
-		final x = t.evalCurrent("1 / 0", FormulaExpand.EXPAND)
+		final x = t.evalCurrent("1 / 0")
 
 		then:
 		x instanceof WDError
@@ -60,7 +58,7 @@ class TraceEvaluationTest extends Specification {
 
 	def "evaluating formulas with type issues results in ComputationNotCompleted"() {
 		when:
-		final x = t.evalCurrent("1 + {}", FormulaExpand.EXPAND)
+		final x = t.evalCurrent("1 + {}")
 
 		then:
 		x instanceof ComputationNotCompletedResult
@@ -75,7 +73,7 @@ class TraceEvaluationTest extends Specification {
 		final t = t.$initialise_machine()
 
 		when:
-		final x = t.evalCurrent("x = waiting & y = card(x)", FormulaExpand.EXPAND)
+		final x = t.evalCurrent("x = waiting & y = card(x)")
 
 		then:
 		x instanceof EvalResult

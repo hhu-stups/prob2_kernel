@@ -1,12 +1,13 @@
 package de.prob.check.tracereplay.check.traceConstruction;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import de.prob.animator.command.FindPathCommand;
 import de.prob.animator.command.RefineTraceCommand;
 import de.prob.animator.domainobjects.ClassicalB;
-import de.prob.animator.domainobjects.EventB;
-import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.check.tracereplay.PersistentTransition;
-import de.prob.check.tracereplay.TraceReplay;
 import de.prob.check.tracereplay.check.exploration.ReplayOptions;
 import de.prob.check.tracereplay.check.refinement.TraceRefinementResult;
 import de.prob.formula.PredicateBuilder;
@@ -14,13 +15,8 @@ import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
 import de.prob.statespace.Transition;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
-
 
 public class AdvancedTraceConstructor {
 
@@ -42,7 +38,7 @@ public class AdvancedTraceConstructor {
 				.collect(toList());
 
 		List<ClassicalB> predicates = modifiedTrace.stream()
-				.map(entry -> new ClassicalB(replayOptions.createMapping(entry).toString(), FormulaExpand.EXPAND))
+				.map(entry -> new ClassicalB(replayOptions.createMapping(entry).toString()))
 				.collect(toList());
 
 		FindPathCommand constructTraceCommand = new FindPathCommand(stateSpace, stateSpace.getRoot(), transitionNames, predicates);
@@ -72,7 +68,7 @@ public class AdvancedTraceConstructor {
 				.collect(toList());
 
 		List<ClassicalB> predicates = modifiedTrace.stream()
-				.map(entry -> new ClassicalB(new PredicateBuilder().addMap(entry.getAllPredicates()).toString(), FormulaExpand.EXPAND))
+				.map(entry -> new ClassicalB(new PredicateBuilder().addMap(entry.getAllPredicates()).toString()))
 				.collect(toList());
 
 		RefineTraceCommand refineTraceCommand = new RefineTraceCommand(stateSpace, stateSpace.getRoot(), transitionNames, predicates);
@@ -134,9 +130,9 @@ public class AdvancedTraceConstructor {
 						Map<String, String > mapWithoutParameters = entry.getAllPredicates().entrySet().stream()
 								.filter(innerEntry -> !entry.getParameters().containsKey(innerEntry.getKey()))
 								.collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
-						return new ClassicalB(new PredicateBuilder().addMap(mapWithoutParameters).toString(), FormulaExpand.EXPAND);
+						return new ClassicalB(new PredicateBuilder().addMap(mapWithoutParameters).toString());
 					}else {
-						return new ClassicalB(new PredicateBuilder().addMap(entry.getAllPredicates()).toString(), FormulaExpand.EXPAND);
+						return new ClassicalB(new PredicateBuilder().addMap(entry.getAllPredicates()).toString());
 					}
 				})
 				.collect(toList());

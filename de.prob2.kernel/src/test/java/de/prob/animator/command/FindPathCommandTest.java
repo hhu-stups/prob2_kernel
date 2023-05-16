@@ -16,7 +16,6 @@ import de.be4.classicalb.core.parser.node.AAbstractMachineParseUnit;
 import de.be4.classicalb.core.parser.node.Start;
 import de.be4.classicalb.core.parser.util.PrettyPrinter;
 import de.prob.animator.domainobjects.ClassicalB;
-import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.exploration.ReplayOptions;
 import de.prob.check.tracereplay.check.refinement.ASTManipulator;
@@ -61,7 +60,7 @@ public class FindPathCommandTest {
 		List<PersistentTransition> transitionList = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "refinements",  "TrafficLight.prob2trace")).getTransitionList();
 
 		List<String> names = transitionList.stream().map(PersistentTransition::getOperationName).collect(Collectors.toList());
-		List<ClassicalB> predicates =transitionList.stream().map(entry -> new ClassicalB(ReplayOptions.allowAll().createMapping(entry).toString(), FormulaExpand.EXPAND)).collect(Collectors.toList());
+		List<ClassicalB> predicates =transitionList.stream().map(entry -> new ClassicalB(ReplayOptions.allowAll().createMapping(entry).toString())).collect(Collectors.toList());
 
 
 		FindPathCommand findPathCommand = new FindPathCommand(stateSpace,new Trace(stateSpace).getCurrentState(), names, predicates );
@@ -86,7 +85,7 @@ public class FindPathCommandTest {
 
 
 		List<String> names = Arrays.asList(Transition.INITIALISE_MACHINE_NAME, "set_cars", "set_peds_go");
-		List<ClassicalB> predicates = Arrays.asList(new ClassicalB("1=1", FormulaExpand.EXPAND), new ClassicalB("cars_go=TRUE", FormulaExpand.EXPAND), new ClassicalB("1=1", FormulaExpand.EXPAND));
+		List<ClassicalB> predicates = Arrays.asList(new ClassicalB("1=1"), new ClassicalB("cars_go=TRUE"), new ClassicalB("1=1"));
 
 		List<String>expected = new ArrayList<>(names);
 
@@ -142,7 +141,7 @@ public class FindPathCommandTest {
 		StateSpace stateSpace = api.b_load(tempFile.toString());
 
 		List<String> names = jsonFile.getTransitionList().stream().map(PersistentTransition::getOperationName).collect(Collectors.toList());
-		List<ClassicalB> predicates =jsonFile.getTransitionList().stream().map(entry -> new ClassicalB(ReplayOptions.allowAll().createMapping(entry).toString(), FormulaExpand.EXPAND)).collect(Collectors.toList());
+		List<ClassicalB> predicates =jsonFile.getTransitionList().stream().map(entry -> new ClassicalB(ReplayOptions.allowAll().createMapping(entry).toString())).collect(Collectors.toList());
 
 		FindPathCommand findPathCommand = new FindPathCommand(stateSpace,new Trace(stateSpace).getCurrentState(), names, predicates );
 

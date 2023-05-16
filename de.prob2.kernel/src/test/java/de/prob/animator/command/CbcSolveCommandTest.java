@@ -9,7 +9,6 @@ import java.util.Set;
 import de.prob.animator.domainobjects.AbstractEvalResult;
 import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.EvalResult;
-import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.cli.CliTestCommon;
 import de.prob.scripting.Api;
 import de.prob.statespace.State;
@@ -19,7 +18,10 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CbcSolveCommandTest {
 	private static Api api;
@@ -44,7 +46,7 @@ class CbcSolveCommandTest {
 		// of the call was correct and not introducing any Prolog-errors.
 		String predicate = "1=1";
 
-		ClassicalB pred = new ClassicalB(predicate, FormulaExpand.EXPAND);
+		ClassicalB pred = new ClassicalB(predicate);
 
 		CbcSolveCommand cmd = new CbcSolveCommand(pred);
 		stateSpace.execute(cmd);
@@ -59,7 +61,7 @@ class CbcSolveCommandTest {
 	void should_extract_solving_time() {
 		String predicate = "1=1";
 
-		ClassicalB pred = new ClassicalB(predicate, FormulaExpand.EXPAND);
+		ClassicalB pred = new ClassicalB(predicate);
 
 		CbcSolveCommand cmd = new CbcSolveCommand(pred);
 		stateSpace.execute(cmd);
@@ -71,7 +73,7 @@ class CbcSolveCommandTest {
 	void should_extract_solving_time_when_false_predicate() {
 		String predicate = "1=2";
 
-		ClassicalB pred = new ClassicalB(predicate, FormulaExpand.EXPAND);
+		ClassicalB pred = new ClassicalB(predicate);
 
 		CbcSolveCommand cmd = new CbcSolveCommand(pred);
 		stateSpace.execute(cmd);
@@ -84,7 +86,7 @@ class CbcSolveCommandTest {
 	void should_solve_with_cdclt_solver() {
 		String predicate = "1=1";
 
-		ClassicalB pred = new ClassicalB(predicate, FormulaExpand.EXPAND);
+		ClassicalB pred = new ClassicalB(predicate);
 
 		CbcSolveCommand cmd = new CbcSolveCommand(pred, CbcSolveCommand.Solvers.CDCLT);
 		stateSpace.execute(cmd);
@@ -99,7 +101,7 @@ class CbcSolveCommandTest {
 	void should_get_free_variables_and_solution_when_solving_with_cdclt() {
 		String predicate = "x:INTEGER & y:INTEGER & x>y";
 
-		ClassicalB pred = new ClassicalB(predicate, FormulaExpand.EXPAND);
+		ClassicalB pred = new ClassicalB(predicate);
 
 		CbcSolveCommand cmd = new CbcSolveCommand(pred, CbcSolveCommand.Solvers.CDCLT);
 		stateSpace.execute(cmd);
@@ -126,7 +128,7 @@ class CbcSolveCommandTest {
 		state = state.getTransitions().get(0).getDestination().exploreIfNeeded();
 		String predicate = "x:INTEGER & y:INTEGER & y=x+1";
 
-		ClassicalB pred = new ClassicalB(predicate, FormulaExpand.EXPAND);
+		ClassicalB pred = new ClassicalB(predicate);
 
 		CbcSolveCommand cmd = new CbcSolveCommand(pred, CbcSolveCommand.Solvers.CDCLT, state);
 		stateSpace.execute(cmd);

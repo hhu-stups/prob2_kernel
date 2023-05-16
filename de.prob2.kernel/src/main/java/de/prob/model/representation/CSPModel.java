@@ -82,7 +82,7 @@ public class CSPModel extends AbstractModel {
 	@Override
 	public boolean checkSyntax(final String formula) {
 		try {
-			CSP element = (CSP) parseFormula(formula, FormulaExpand.TRUNCATE);
+			CSP element = (CSP) parseFormula(formula);
 			element.printProlog(new PrologTermStringOutput());
 
 			return true;

@@ -3,11 +3,9 @@ package de.prob.statespace
 import java.nio.file.Paths
 
 import de.prob.animator.domainobjects.ClassicalB
-import de.prob.animator.domainobjects.FormulaExpand
 import de.prob.animator.domainobjects.IdentifierNotInitialised
 import de.prob.cli.CliTestCommon
 import de.prob.scripting.ClassicalBFactory
-
 import spock.lang.Specification
 
 class StateSpaceAnimationTest extends Specification {
@@ -30,7 +28,7 @@ class StateSpaceAnimationTest extends Specification {
 	def "it is possible to get states based on a given predicate"() {
 		when:
 		firstState.new("pp=PID1").new("pp=PID2")
-		final formula = new ClassicalB("card(waiting) > 0", FormulaExpand.EXPAND)
+		final formula = new ClassicalB("card(waiting) > 0")
 		final states = s.getStatesFromPredicate(formula)
 
 		then:
@@ -143,7 +141,7 @@ class StateSpaceAnimationTest extends Specification {
 
 	def "it is possible to generate a trace to a state in which a given predicate holds"() {
 		given:
-		final formula = new ClassicalB("waiting = {PID1,PID3}", FormulaExpand.EXPAND)
+		final formula = new ClassicalB("waiting = {PID1,PID3}")
 
 		when:
 		final t = s.getTraceToState(formula)

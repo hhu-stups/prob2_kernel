@@ -6,7 +6,6 @@ import java.util.List;
 import de.be4.classicalb.core.parser.node.PPredicate;
 import de.be4.classicalb.core.parser.util.PrettyPrinter;
 import de.prob.animator.domainobjects.ClassicalB;
-import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.exception.ProBError;
 import de.prob.parser.ISimplifiedROMap;
@@ -43,13 +42,13 @@ public class FindTestPathCommand extends AbstractCommand implements IStateSpaceM
 		this.stateSpace = stateSpace;
 		PrettyPrinter prettyPrinter = new PrettyPrinter();
 		endPredicate.apply(prettyPrinter);
-		this.endPredicate = stateSpace.getModel().parseFormula(prettyPrinter.getPrettyPrint(), FormulaExpand.EXPAND);
+		this.endPredicate = stateSpace.getModel().parseFormula(prettyPrinter.getPrettyPrint());
 	}
 
 	public FindTestPathCommand(final List<String> givenTransitions, final StateSpace stateSpace) {
 		this.givenTransitions = givenTransitions;
 		this.stateSpace = stateSpace;
-		this.endPredicate = new ClassicalB("1=1", FormulaExpand.EXPAND);
+		this.endPredicate = new ClassicalB("1=1");
 	}
 
 	public ResultType getResult() {

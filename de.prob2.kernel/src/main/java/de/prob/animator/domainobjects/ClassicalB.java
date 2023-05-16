@@ -42,6 +42,13 @@ public class ClassicalB extends AbstractEvalElement implements IBEvalElement {
 		this.code = code;
 	}
 
+	public ClassicalB(final Start ast, final String code) {
+		super(null, FormulaExpand.TRUNCATE);
+
+		this.ast = ast;
+		this.code = code;
+	}
+
 	public ClassicalB(final Start ast, final FormulaExpand expansion) {
 		this(ast, expansion, null);
 	}
@@ -66,7 +73,7 @@ public class ClassicalB extends AbstractEvalElement implements IBEvalElement {
 	 *     use {@link #ClassicalB(String)} instead.
 	 *     To parse a substitution,
 	 *     use {@link BParser#parseSubstitution(String)} instead
-	 *     (you can then pass the parsed AST into {@link #ClassicalB(Start, FormulaExpand, String)} if you really need to for some reason).
+	 *     (you can then pass the parsed AST into {@link #ClassicalB(Start, String)} if you really need to for some reason).
 	 */
 	@Deprecated
 	public ClassicalB(final String formula, final FormulaExpand expansion, final Boolean AllowSubst) {
@@ -128,6 +135,22 @@ public class ClassicalB extends AbstractEvalElement implements IBEvalElement {
 		final AIdentifierExpression idNode = new AIdentifierExpression(identifier.stream().map(TIdentifierLiteral::new).collect(Collectors.toList()));
 		final Start ast = new Start(new AExpressionParseUnit(idNode), new EOF());
 		return new ClassicalB(ast, expansion);
+	}
+
+	/**
+	 * <p>Create a classical B formula representing the given identifier.</p>
+	 * <p>
+	 * Unlike the normal constructors that parse the input string using the B parser,
+	 * this method accepts arbitrary strings as identifiers,
+	 * even ones that are not syntactically valid B identifiers
+	 * and would otherwise need to be quoted.
+	 * </p>
+	 * 
+	 * @param identifier list of string parts that make up a dotted identifier
+	 * @return a classical B formula representing the given identifier
+	 */
+	public static ClassicalB fromIdentifier(final List<String> identifier) {
+		return fromIdentifier(identifier, FormulaExpand.TRUNCATE);
 	}
 
 	@Override
