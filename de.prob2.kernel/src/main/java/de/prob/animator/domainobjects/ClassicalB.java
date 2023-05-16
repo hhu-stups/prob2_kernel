@@ -58,6 +58,17 @@ public class ClassicalB extends AbstractEvalElement implements IBEvalElement {
 	public ClassicalB(final String formula, final FormulaExpand expansion) {
 		this(parse(formula,false), expansion, formula); // false: does not allow substitutions
 	}
+
+	/**
+	 * @deprecated Parsing substitutions into an {@link IEvalElement} is not useful at the moment,
+	 *     because they cannot be evaluated.
+	 *     If you only need to work with expressions and predicates,
+	 *     use {@link #ClassicalB(String)} instead.
+	 *     To parse a substitution,
+	 *     use {@link BParser#parseSubstitution(String)} instead
+	 *     (you can then pass the parsed AST into {@link #ClassicalB(Start, FormulaExpand, String)} if you really need to for some reason).
+	 */
+	@Deprecated
 	public ClassicalB(final String formula, final FormulaExpand expansion, final Boolean AllowSubst) {
 		this(parse(formula,AllowSubst), expansion, formula);
 	}
