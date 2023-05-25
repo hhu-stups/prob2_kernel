@@ -174,9 +174,8 @@ public class DomBuilder extends MachineClauseAdapter {
 	@Override
 	public void caseAAssertionsMachineClause(final AAssertionsMachineClause node) {
 		for (final PPredicate preds : node.getPredicates()) {
-			for (PPredicate pPredicate : getPredicates(preds)) {
-				assertions.add(new Assertion(createPredicateAST(pPredicate)));
-			}
+		        // we used to add each conjunct of preds individually, but this will flatten the list of assertions
+				assertions.add(new Assertion(createPredicateAST(preds)));
 		}
 	}
 
