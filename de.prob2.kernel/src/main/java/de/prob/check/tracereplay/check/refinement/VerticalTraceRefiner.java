@@ -44,10 +44,10 @@ public class VerticalTraceRefiner extends AbstractTraceRefinement{
 	@Override
 	public TraceRefinementResult refineTraceExtendedFeedback() throws IOException, BCompoundException, TraceConstructionError {
 		BParser alphaParser = new BParser(adaptFrom.toString());
-		Start alphaStart = alphaParser.parseFile(adaptFrom.toFile(), false);
+		Start alphaStart = alphaParser.parseFile(adaptFrom.toFile());
 
 		BParser betaParser = new BParser(adaptTo.toString());
-		Start betaStart = betaParser.parseFile(adaptTo.toFile(), false);
+		Start betaStart = betaParser.parseFile(adaptTo.toFile());
 
 		NodeCollector nodeCollector = new NodeCollector(alphaStart);
 		ASTManipulator astManipulator = new ASTManipulator(betaStart, nodeCollector);

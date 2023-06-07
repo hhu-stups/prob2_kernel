@@ -2,17 +2,17 @@ package de.prob.scripting;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import de.be4.classicalb.core.parser.BParser;
 import de.be4.classicalb.core.parser.CachingDefinitionFileProvider;
-import de.be4.classicalb.core.parser.IDefinitionFileProvider;
 import de.be4.classicalb.core.parser.ParsingBehaviour;
-import de.be4.classicalb.core.parser.PlainFileContentProvider;
 import de.be4.classicalb.core.parser.analysis.prolog.RecursiveMachineLoader;
 import de.be4.classicalb.core.parser.exceptions.BCompoundException;
+import de.be4.classicalb.core.parser.exceptions.BException;
 import de.be4.classicalb.core.parser.node.Start;
 import de.prob.annotations.Home;
 import de.prob.exception.ProBError;
@@ -64,10 +64,15 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 		Start ast;
 		final RecursiveMachineLoader rml;
 		try {
-			ast = bparser.parseFile(f, false);
+			ast = bparser.parseFile(f);
 			rml = RecursiveMachineLoader.loadFromAst(bparser, ast, getDefaultParsingBehaviour(), bparser.getContentProvider());
 		} catch (BCompoundException e) {
-			throw new ProBError(e);
+			List<BException> exceptions = e.getBExceptions();
+			if (exceptions.size() == 1 && exceptions.get(0).getCause() instanceof IOException) {
+				throw (IOException)exceptions.get(0).getCause();
+			} else {
+				throw new ProBError(e);
+			}
 		}
 		classicalBModel = classicalBModel.create(ast, rml, f, bparser);
 		return new ExtractedModel<>(classicalBModel, classicalBModel.getMainMachine());
@@ -84,7 +89,7 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 		Start ast;
 		final RecursiveMachineLoader rml;
 		try {
-			ast = bparser.parse(model, false, new PlainFileContentProvider());
+			ast = bparser.parseMachine(model);
 			rml = RecursiveMachineLoader.loadFromAst(bparser, ast, getDefaultParsingBehaviour(), bparser.getContentProvider());
 		} catch (BCompoundException e) {
 			throw new ProBError(e);

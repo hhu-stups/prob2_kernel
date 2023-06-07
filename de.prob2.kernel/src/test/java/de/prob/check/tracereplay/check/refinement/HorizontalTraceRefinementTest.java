@@ -56,7 +56,7 @@ public class HorizontalTraceRefinementTest {
 		String alphaName = "M3";
 
 		BParser parser = new BParser(beta.toString());
-		Start betaFile = parser.parseFile(beta.toFile(), false);
+		Start betaFile = parser.parseFile(beta.toFile());
 
 
 
@@ -87,7 +87,7 @@ public class HorizontalTraceRefinementTest {
 		String alphaName = "M1";
 
 		BParser parser = new BParser(beta.toString());
-		Start betaFile = parser.parseFile(beta.toFile(), false);
+		Start betaFile = parser.parseFile(beta.toFile());
 
 
 
@@ -121,7 +121,7 @@ public class HorizontalTraceRefinementTest {
 		String alphaName = "M1";
 
 		BParser parser = new BParser(beta.toString());
-		Start betaFile = parser.parseFile(beta.toFile(), false);
+		Start betaFile = parser.parseFile(beta.toFile());
 
 
 

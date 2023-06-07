@@ -46,7 +46,7 @@ public class HorizontalTraceRefiner extends AbstractTraceRefinement {
 	@Override
 	public TraceRefinementResult refineTraceExtendedFeedback() throws IOException, BCompoundException, TraceConstructionError {
 		BParser betaParser = new BParser(adaptTo.toString());
-		Start betaStart = betaParser.parseFile(adaptTo.toFile(), false);
+		Start betaStart = betaParser.parseFile(adaptTo.toFile());
 
 		OperationsFinder operationsFinder = new OperationsFinder(MoreFiles.getNameWithoutExtension(adaptFrom), betaStart);
 		operationsFinder.explore();

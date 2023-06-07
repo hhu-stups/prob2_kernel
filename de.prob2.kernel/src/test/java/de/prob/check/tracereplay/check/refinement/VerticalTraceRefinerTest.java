@@ -44,14 +44,14 @@ public class VerticalTraceRefinerTest {
 		Path file = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "refinements",  "TrafficLightRef.ref");
 		BParser bParser = new BParser(file.toString());
 
-		Start start = bParser.parseFile(file.toFile(), false);
+		Start start = bParser.parseFile(file.toFile());
 
 		NodeCollector nodeCollector = new NodeCollector(start);
 
 		Path file2 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "refinements",  "TrafficLight.mch");
 		BParser bParser2 = new BParser(file2.toString());
 
-		Start start2 = bParser2.parseFile(file2.toFile(), false);
+		Start start2 = bParser2.parseFile(file2.toFile());
 
 		ASTManipulator astManipulator = new ASTManipulator(start2, nodeCollector);
 
