@@ -189,4 +189,17 @@ public class EventBModelTranslator {
 		}
 	}
 
+	/**
+	 * Variant of {@link #printProlog(IPrologTermOutput)} which prints a complete top-level {@code package/1} fact.
+	 * This is the format expected by ProB in .eventb files.
+	 * 
+	 * @param pto where to output the fact
+	 */
+	public void printPrologFact(IPrologTermOutput pto) {
+		pto.openTerm("package");
+		this.printProlog(pto);
+		pto.closeTerm();
+		pto.fullstop();
+		pto.flush();
+	}
 }
