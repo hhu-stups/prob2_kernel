@@ -85,7 +85,7 @@ public class Api {
 			+ " StateSpace b_load(String filePath, [Map<String, String> prefs]): load a classical B machine from a .mch file\n"
 			+ " StateSpace b_load(Start ast, [Map<String, String> prefs]): load aclassical B machine from an AST\n"
 			+ " StateSpace eventb_load(String filePath, [Map<String, String> prefs]): load an EventB machine from a file\n"
-			+ " void eventb_save(StateSpace stateSpace, String filePath): save an EventB state space to a file\n"
+			+ " void eventb_save(StateSpace stateSpace, String filePath, [boolean use_indentation]): save an EventB state space to a file\n"
 			+ " StateSpace tla_load(String filePath, [Map<String, String> prefs]): load a .tla file\n"
 			+ " StateSpace brules_load(String filePath, [Map<String, String> prefs]): load a B rules machine from a .rmch file\n"
 			+ " StateSpace csp_load(String filePath, [Map<String, String> prefs]): load a .csp file\n"
@@ -179,18 +179,29 @@ public class Api {
 	 * 
 	 * @param s the {@link StateSpace} to save, whose model must be an EventB model
 	 * @param path the path of the file to save to
+	 * @param use_indentation use compact representation or human-readable
 	 */
-	public void eventb_save(final StateSpace s, final String path) throws IOException {
+	public void eventb_save(final StateSpace s, final String path, final boolean use_indentation) throws IOException {
 		final EventBModelTranslator translator = new EventBModelTranslator((EventBModel) s.getModel(), s.getMainComponent());
 
 		try (final FileOutputStream fos = new FileOutputStream(path)) {
-			final PrologTermOutput pto = new PrologTermOutput(fos, false);
+			final PrologTermOutput pto = new PrologTermOutput(fos, use_indentation);
 			pto.openTerm("package");
 			translator.printProlog(pto);
 			pto.closeTerm();
 			pto.fullstop();
 			pto.flush();
 		}
+	}
+
+	/**
+	 * Save an EventB {@link StateSpace} to the given file without indentation.
+	 *
+	 * @param s the {@link StateSpace} to save, whose model must be an EventB model
+	 * @param path the path of the file to save to
+	 */
+	public void eventb_save(final StateSpace s, final String path) throws IOException {
+		eventb_save(s, path, false);
 	}
 
 	/**
