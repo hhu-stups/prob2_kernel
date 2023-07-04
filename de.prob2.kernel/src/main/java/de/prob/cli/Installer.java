@@ -30,10 +30,12 @@ public final class Installer {
 	private static final Path LOCK_FILE_PATH = DEFAULT_HOME.resolve("installer.lock");
 	private static final Logger logger = LoggerFactory.getLogger(Installer.class);
 	private final OsSpecificInfo osInfo;
+	private final Object installLock;
 
 	@Inject
 	private Installer(final OsSpecificInfo osInfo) {
 		this.osInfo = osInfo;
+		this.installLock = new Object();
 	}
 
 	/**
@@ -86,32 +88,42 @@ public final class Installer {
 			logger.error("Failed to create ProB home directory", e);
 			return;
 		}
-		try (
-			final FileChannel lockFileChannel = FileChannel.open(LOCK_FILE_PATH, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
-			final FileLock lock = lockFileChannel.lock();
-		) {
-			final String binariesZipResourceName = osInfo.getBinariesZipResourceName();
-			logger.trace("Extracting binaries from {}", binariesZipResourceName);
-			
-			try (final InputStream is = this.getClass().getResourceAsStream(binariesZipResourceName)) {
-				if (is == null) {
-					throw new IllegalArgumentException("Binaries zip not found in resources (make sure that you did not build ProB 2 with -PprobHome=... set): " + binariesZipResourceName);
+
+		// Ensure that the CLI isn't installed multiple times in parallel.
+		// The FileChannel/FileLock guards against multiple different processes installing at once.
+		// The installLock guards against multiple threads inside the same process installing at once.
+		// (FileChannel.lock works "on behalf of the entire Java virtual machine" according to the docs
+		// and can throw a OverlappingFileLockException when locking a file from two threads in the same process.)
+		synchronized (this.installLock) {
+			logger.trace("Acquired process-local lock for installing CLI binaries");
+			try (
+				final FileChannel lockFileChannel = FileChannel.open(LOCK_FILE_PATH, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
+				final FileLock lock = lockFileChannel.lock();
+			) {
+				logger.trace("Acquired lock file for installing CLI binaries");
+				final String binariesZipResourceName = osInfo.getBinariesZipResourceName();
+				logger.trace("Extracting binaries from {}", binariesZipResourceName);
+				
+				try (final InputStream is = this.getClass().getResourceAsStream(binariesZipResourceName)) {
+					if (is == null) {
+						throw new IllegalArgumentException("Binaries zip not found in resources (make sure that you did not build ProB 2 with -PprobHome=... set): " + binariesZipResourceName);
+					}
+					FileHandler.extractZip(is, DEFAULT_HOME);
 				}
-				FileHandler.extractZip(is, DEFAULT_HOME);
+				
+				for (final String path : Arrays.asList(
+					this.osInfo.getCliName(),
+					this.osInfo.getUserInterruptCmd(),
+					this.osInfo.getCspmfName(),
+					this.osInfo.getFuzzName()
+				)) {
+					setExecutable(DEFAULT_HOME.resolve(path), true);
+				}
+				
+				logger.info("CLI binaries successfully installed");
+			} catch (IOException e) {
+				logger.error("Failed to install CLI binaries", e);
 			}
-			
-			for (final String path : Arrays.asList(
-				this.osInfo.getCliName(),
-				this.osInfo.getUserInterruptCmd(),
-				this.osInfo.getCspmfName(),
-				this.osInfo.getFuzzName()
-			)) {
-				setExecutable(DEFAULT_HOME.resolve(path), true);
-			}
-			
-			logger.info("CLI binaries successfully installed");
-		} catch (IOException e) {
-			logger.error("Failed to install CLI binaries", e);
 		}
 	}
 }
