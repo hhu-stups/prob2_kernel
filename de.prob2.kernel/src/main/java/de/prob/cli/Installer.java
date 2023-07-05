@@ -29,13 +29,14 @@ public final class Installer {
 	public static final Path DEFAULT_HOME = Paths.get(System.getProperty("user.home"), ".prob", "prob2-" + Main.getVersion());
 	private static final Path LOCK_FILE_PATH = DEFAULT_HOME.resolve("installer.lock");
 	private static final Logger logger = LoggerFactory.getLogger(Installer.class);
+
+	private static final Object installLock = new Object();
+
 	private final OsSpecificInfo osInfo;
-	private final Object installLock;
 
 	@Inject
 	private Installer(final OsSpecificInfo osInfo) {
 		this.osInfo = osInfo;
-		this.installLock = new Object();
 	}
 
 	/**
@@ -94,7 +95,7 @@ public final class Installer {
 		// The installLock guards against multiple threads inside the same process installing at once.
 		// (FileChannel.lock works "on behalf of the entire Java virtual machine" according to the docs
 		// and can throw a OverlappingFileLockException when locking a file from two threads in the same process.)
-		synchronized (this.installLock) {
+		synchronized (installLock) {
 			logger.trace("Acquired process-local lock for installing CLI binaries");
 			try (
 				final FileChannel lockFileChannel = FileChannel.open(LOCK_FILE_PATH, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
