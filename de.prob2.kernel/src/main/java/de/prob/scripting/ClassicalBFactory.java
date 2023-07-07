@@ -68,7 +68,7 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 			rml = RecursiveMachineLoader.loadFromAst(bparser, ast, getDefaultParsingBehaviour(), bparser.getContentProvider());
 		} catch (BCompoundException e) {
 			List<BException> exceptions = e.getBExceptions();
-			if (exceptions.size() == 1 && exceptions.get(0).getCause() instanceof IOException) {
+			if (exceptions.size() == 1 && exceptions.get(0).getCause() instanceof IOException && exceptions.get(0).getLocations().isEmpty()) {
 				throw (IOException)exceptions.get(0).getCause();
 			} else {
 				throw new ProBError(e);
