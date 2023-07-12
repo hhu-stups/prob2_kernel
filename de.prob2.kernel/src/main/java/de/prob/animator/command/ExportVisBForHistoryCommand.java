@@ -3,8 +3,12 @@ package de.prob.animator.command;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;
+import de.prob.statespace.Trace;
+import de.prob.statespace.Transition;
 
+import java.nio.file.Path;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ExportVisBForHistoryCommand extends AbstractCommand {
 
@@ -17,6 +21,15 @@ public class ExportVisBForHistoryCommand extends AbstractCommand {
 	public ExportVisBForHistoryCommand(final List<String> transIDS, final String path) {
 		this.transIDS = transIDS;
 		this.path = path;
+	}
+
+	public ExportVisBForHistoryCommand(Trace trace, Path path) {
+		this(
+			trace.getTransitionList().stream()
+				.map(Transition::getId)
+				.collect(Collectors.toList()),
+			path.toString()
+		);
 	}
 
 	@Override
