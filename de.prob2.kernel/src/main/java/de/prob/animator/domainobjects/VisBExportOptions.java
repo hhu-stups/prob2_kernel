@@ -16,18 +16,28 @@ import de.prob.prolog.output.IPrologTermOutput;
  * </p>
  */
 public final class VisBExportOptions {
+	private final boolean showHeader;
 	private final boolean showSets;
 	private final boolean showConstants;
 	private final boolean showVariables;
 	private final boolean showVersionInfo;
 	
-	public static final VisBExportOptions DEFAULT = new VisBExportOptions(false, false, false, true);
+	public static final VisBExportOptions DEFAULT = new VisBExportOptions(true, false, false, false, true);
 	
-	private VisBExportOptions(boolean showSets, boolean showConstants, boolean showVariables, boolean showVersionInfo) {
+	private VisBExportOptions(boolean showHeader, boolean showSets, boolean showConstants, boolean showVariables, boolean showVersionInfo) {
+		this.showHeader = showHeader;
 		this.showSets = showSets;
 		this.showConstants = showConstants;
 		this.showVariables = showVariables;
 		this.showVersionInfo = showVersionInfo;
+	}
+	
+	public boolean isShowHeader() {
+		return showHeader;
+	}
+	
+	public VisBExportOptions withShowHeader(boolean showHeader) {
+		return new VisBExportOptions(showHeader, this.showSets, this.showConstants, this.showVariables, this.showVersionInfo);
 	}
 	
 	public boolean isShowSets() {
@@ -35,7 +45,7 @@ public final class VisBExportOptions {
 	}
 	
 	public VisBExportOptions withShowSets(boolean showSets) {
-		return new VisBExportOptions(showSets, this.showConstants, this.showVariables, this.showVersionInfo);
+		return new VisBExportOptions(this.showHeader, showSets, this.showConstants, this.showVariables, this.showVersionInfo);
 	}
 	
 	public boolean isShowConstants() {
@@ -43,7 +53,7 @@ public final class VisBExportOptions {
 	}
 	
 	public VisBExportOptions withShowConstants(boolean showConstants) {
-		return new VisBExportOptions(this.showSets, showConstants, this.showVariables, this.showVersionInfo);
+		return new VisBExportOptions(this.showHeader, this.showSets, showConstants, this.showVariables, this.showVersionInfo);
 	}
 	
 	public boolean isShowVariables() {
@@ -51,7 +61,7 @@ public final class VisBExportOptions {
 	}
 	
 	public VisBExportOptions withShowVariables(boolean showVariables) {
-		return new VisBExportOptions(this.showSets, this.showConstants, showVariables, this.showVersionInfo);
+		return new VisBExportOptions(this.showHeader, this.showSets, this.showConstants, showVariables, this.showVersionInfo);
 	}
 	
 	public boolean isShowVersionInfo() {
@@ -59,7 +69,7 @@ public final class VisBExportOptions {
 	}
 	
 	public VisBExportOptions withShowVersionInfo(boolean showVersionInfo) {
-		return new VisBExportOptions(this.showSets, this.showConstants, this.showVariables, showVersionInfo);
+		return new VisBExportOptions(this.showHeader, this.showSets, this.showConstants, this.showVariables, showVersionInfo);
 	}
 	
 	@Override
@@ -71,7 +81,8 @@ public final class VisBExportOptions {
 			return false;
 		}
 		VisBExportOptions other = (VisBExportOptions)obj;
-		return this.isShowSets() == other.isShowSets()
+		return this.isShowHeader() == other.isShowHeader()
+			&& this.isShowSets() == other.isShowSets()
 			&& this.isShowConstants() == other.isShowConstants()
 			&& this.isShowVariables() == other.isShowVariables()
 			&& this.isShowVersionInfo() == other.isShowVersionInfo();
@@ -80,6 +91,7 @@ public final class VisBExportOptions {
 	@Override
 	public int hashCode() {
 		return Objects.hash(
+			this.isShowHeader(),
 			this.isShowSets(),
 			this.isShowConstants(),
 			this.isShowVariables(),
@@ -90,6 +102,7 @@ public final class VisBExportOptions {
 	@Override
 	public String toString() {
 		return MoreObjects.toStringHelper(this)
+			.add("showHeader", this.isShowHeader())
 			.add("showSets", this.isShowSets())
 			.add("showConstants", this.isShowConstants())
 			.add("showVariables", this.isShowVariables())
@@ -98,6 +111,10 @@ public final class VisBExportOptions {
 	}
 	
 	public void printProlog(IPrologTermOutput pout) {
+		if (!this.isShowHeader()) {
+			pout.printAtom("no_header");
+		}
+		
 		if (this.isShowSets()) {
 			pout.openTerm("show_sets");
 			pout.printAtom("all");
