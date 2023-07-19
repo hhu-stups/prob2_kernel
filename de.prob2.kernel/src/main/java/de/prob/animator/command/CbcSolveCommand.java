@@ -11,7 +11,6 @@ import de.prob.animator.domainobjects.ComputationNotCompletedResult;
 import de.prob.animator.domainobjects.EvalResult;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
-import de.prob.exception.ProBError;
 import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
@@ -125,11 +124,6 @@ public class CbcSolveCommand extends AbstractCommand {
 		} else if (prologTerm.hasFunctor("no_solution_found", 1)) {
 			result = new ComputationNotCompletedResult(evalElement.getCode(),
 					"no solution found (but one might exist), reason: " + prologTerm.getArgument(1));
-		} else if (prologTerm.hasFunctor("error",0)) {
-			// FIXME Can this case actually happen?
-			// It seems that error/0 should only be returned if probcli has added an error to the error manager,
-			// in which case AnimatorImpl should have already thrown a ProBError.
-			throw new ProBError("Unexpected result when solving command. See Log for details.");
 		} else {
 			throw new AssertionError("Unhandled functor in result: " + prologTerm.getFunctor() + "/" + prologTerm.getArity());
 		}
