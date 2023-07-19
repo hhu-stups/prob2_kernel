@@ -111,7 +111,14 @@ public class CbcSolveCommand extends AbstractCommand {
 
 			for (PrologTerm b : solutionBindings) {
 				CompoundPrologTerm t = (CompoundPrologTerm) b;
-				solutions.put(t.getArgument(VAR_NAME).getFunctor(), t.getArgument(PRETTY_PRINT).getFunctor());
+				if (t.getArity() == 2) {
+					// New format: binding(VarName,PrettyPrint)
+					solutions.put(t.getArgument(0).atomToString(), t.getArgument(1).atomToString());
+				} else {
+					// Old format: binding(VarName,PrologRep,PrettyPrint)
+					// The PrologRep is ignored, because it's not usable by the Java side.
+					solutions.put(t.getArgument(VAR_NAME).getFunctor(), t.getArgument(PRETTY_PRINT).getFunctor());
+				}
 			}
 
 			result = new EvalResult("TRUE", solutions);
