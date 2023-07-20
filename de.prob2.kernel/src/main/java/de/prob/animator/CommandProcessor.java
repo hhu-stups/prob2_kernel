@@ -69,8 +69,10 @@ class CommandProcessor {
 		}
 		// command is finished, we can extract the result:
 		IPrologResult extractResult = extractResult(ast,topnode);
-		if (logger.isDebugEnabled()) {
-			logger.debug(shorten(extractResult.toString()));
+		if (logger.isDebugEnabled() || logger.isTraceEnabled()) {
+			String resultString = extractResult.toString();
+			logger.debug("Result: {}", shorten(resultString));
+			logger.trace("Full result: {}", resultString);
 		}
 		return extractResult;
 	}
