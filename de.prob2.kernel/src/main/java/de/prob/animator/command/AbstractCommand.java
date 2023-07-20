@@ -115,7 +115,12 @@ public abstract class AbstractCommand {
 		} else if (result instanceof InterruptedResult) {
 			throw new CommandInterruptedException("ProB was interrupted", errors);
 		} else if (result instanceof YesResult) {
-			processResult(((YesResult) result).getBindings());
+			try {
+				processResult(((YesResult) result).getBindings());
+			} catch (RuntimeException | Error exc) {
+				exc.addSuppressed(new ProBError("ProB reported Errors", errors));
+				throw exc;
+			}
 			throw new ProBError("ProB reported Errors", errors);
 		} else {
 			throw new ProBError("Errors were", errors);
