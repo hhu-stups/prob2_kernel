@@ -260,7 +260,7 @@ sourcesJar {
 
 test {
 	useJUnitPlatform()
-	systemProperty("logback.configurationFile", "de/prob/logging/production.xml")
+	systemProperty("logback.configurationFile", "de/prob/logging/fulltrace.xml")
 	testLogging {
 		exceptionFormat = 'full'
 	}
