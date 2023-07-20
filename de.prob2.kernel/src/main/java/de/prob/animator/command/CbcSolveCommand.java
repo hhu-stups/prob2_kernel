@@ -124,6 +124,11 @@ public class CbcSolveCommand extends AbstractCommand {
 		} else if (prologTerm.hasFunctor("no_solution_found", 1)) {
 			result = new ComputationNotCompletedResult(evalElement.getCode(),
 					"no solution found (but one might exist), reason: " + prologTerm.getArgument(1));
+		} else if (prologTerm.hasFunctor("error", 0)) {
+			// This result doesn't contain any information about the error(s).
+			// The Prolog side should only return it after adding errors to the error manager,
+			// so the actual error information will be thrown as a ProBError on the Java side.
+			result = new ComputationNotCompletedResult(evalElement.getCode(), "Solver returned error(s)");
 		} else {
 			throw new AssertionError("Unhandled functor in result: " + prologTerm.getFunctor() + "/" + prologTerm.getArity());
 		}
