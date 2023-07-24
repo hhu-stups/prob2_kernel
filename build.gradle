@@ -224,7 +224,7 @@ sourceSets {
 final platforms = [
 	"macos",
 	"linux64",
-	"win64",
+	"windows64",
 ]
 
 task downloadBinaries(type: Download) {
