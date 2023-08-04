@@ -110,6 +110,10 @@ public class Trace extends GroovyObjectSupport {
 		return getCurrentState().eval(formula);
 	}
 
+	public AbstractEvalResult evalCurrent(IEvalElement formula, EvalOptions options) {
+		return getCurrentState().eval(formula, options);
+	}
+
 	public AbstractEvalResult evalCurrent(IEvalElement formula) {
 		return getCurrentState().eval(formula);
 	}
