@@ -19,7 +19,7 @@ class DomWalkerTest extends Specification {
 		END
 		"""
 		final parser = new BParser("testcase")
-		final ast = parser.parse(testmachine, false)
+		final ast = parser.parseMachine(testmachine)
 		machine = new DomBuilder("SimplyStructure", null).build(ast)
 	}
 

@@ -93,7 +93,7 @@ public class RulesModel extends AbstractModel {
 			return operationStateFormulaCache.get(abstractOperation);
 		} else {
 			String name = abstractOperation.getName();
-			IEvalElement evalElement = this.parseFormula(name, FormulaExpand.EXPAND);
+			IEvalElement evalElement = this.parseFormula(name);
 			operationStateFormulaCache.put(abstractOperation, evalElement);
 			return evalElement;
 		}

@@ -6,7 +6,6 @@ import java.nio.file.Paths;
 
 import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.EventB;
-import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.cli.CliTestCommon;
 import de.prob.scripting.Api;
 import de.prob.statespace.StateSpace;
@@ -16,7 +15,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class NQPrimePredicateCommandTest {
 	private static Api api;
@@ -138,7 +137,7 @@ class NQPrimePredicateCommandTest {
 	 * Runs the basic test conducted in each of the test cases. Just boils down on boiler plate code.
 	 */
 	private void assertPriming(String formula, String expected) {
-		ClassicalB pred = new ClassicalB(formula, FormulaExpand.EXPAND);
+		ClassicalB pred = new ClassicalB(formula);
 
 		NQPrimePredicateCommand cmd = new NQPrimePredicateCommand(pred);
 		stateSpace.execute(cmd);
@@ -152,7 +151,7 @@ class NQPrimePredicateCommandTest {
 	 */
 	private void assertOldPriming(String formula, String expected) {
 		// The old implementation fails when ClassicalB is used, hence EventB.
-		EventB pred = new EventB(formula, FormulaExpand.EXPAND);
+		EventB pred = new EventB(formula);
 
 		PrimePredicateCommand cmd = new PrimePredicateCommand(pred);
 		stateSpace.execute(cmd);

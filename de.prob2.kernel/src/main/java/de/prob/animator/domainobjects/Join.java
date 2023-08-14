@@ -5,7 +5,6 @@ import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 import de.prob.formula.PredicateBuilder;
-import de.prob.model.classicalb.ClassicalBModel;
 import de.prob.model.representation.AbstractModel;
 
 // TODO The purpose of this class is similar to PredicateBuilder - should they be merged?
@@ -23,7 +22,7 @@ public final class Join {
 		for (String element : elements) {
 			pb.add("(" + element + ")");
 		}
-		return model.parseFormula(pb.toString(), FormulaExpand.EXPAND);
+		return model.parseFormula(pb.toString());
 	}
 
 	public static IEvalElement conjunct(AbstractModel model, List<IEvalElement> elements) {
@@ -35,7 +34,7 @@ public final class Join {
 		for (String element : elements) {
 			stringJoiner.add("(" + element + ")");
 		}
-		return model.parseFormula(stringJoiner.toString(), FormulaExpand.EXPAND);
+		return model.parseFormula(stringJoiner.toString());
 	}
 
 	public static IEvalElement disjunct(AbstractModel model, List<IEvalElement> elements) {

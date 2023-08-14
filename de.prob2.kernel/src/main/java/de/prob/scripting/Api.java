@@ -21,6 +21,7 @@ import de.prob.exception.ProBError;
 import de.prob.model.brules.RulesModelFactory;
 import de.prob.model.eventb.EventBModel;
 import de.prob.model.eventb.translate.EventBModelTranslator;
+import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.output.PrologTermOutput;
 import de.prob.statespace.StateSpace;
 
@@ -175,21 +176,25 @@ public class Api {
 	}
 
 	/**
+	 * Save an EventB {@link StateSpace} to the given {@link IPrologTermOutput}.
+	 * 
+	 * @param s the {@link StateSpace} to save, whose model must be an EventB model
+	 * @param pto where to output the saved Prolog term
+	 */
+	public void eventb_save(final StateSpace s, final IPrologTermOutput pto) {
+		final EventBModelTranslator translator = new EventBModelTranslator((EventBModel) s.getModel(), s.getMainComponent());
+		translator.printPrologFact(pto);
+	}
+
+	/**
 	 * Save an EventB {@link StateSpace} to the given file.
 	 * 
 	 * @param s the {@link StateSpace} to save, whose model must be an EventB model
 	 * @param path the path of the file to save to
 	 */
 	public void eventb_save(final StateSpace s, final String path) throws IOException {
-		final EventBModelTranslator translator = new EventBModelTranslator((EventBModel) s.getModel(), s.getMainComponent());
-
 		try (final FileOutputStream fos = new FileOutputStream(path)) {
-			final PrologTermOutput pto = new PrologTermOutput(fos, false);
-			pto.openTerm("package");
-			translator.printProlog(pto);
-			pto.closeTerm();
-			pto.fullstop();
-			pto.flush();
+			eventb_save(s, new PrologTermOutput(fos, false));
 		}
 	}
 
@@ -332,5 +337,31 @@ public class Api {
 	 */
 	public StateSpace alloy_load(final String file) throws IOException {
 		return alloy_load(file, Collections.emptyMap());
+	}
+
+	/**
+	 * Load a model from the given file.
+	 * The type/formalism of the model is determined automatically from the file extension.
+	 *
+	 * @param file the path of the file to load
+	 * @param prefs the preferences to use
+	 * @return the {@link StateSpace} for the loaded machine
+	 * @throws IllegalArgumentException if the file extension is not recognized or supported
+	 */
+	public StateSpace load(String file, Map<String, String> prefs) throws IOException {
+		String extension = MoreFiles.getFileExtension(Paths.get(file));
+		return modelFactoryProvider.getFactoryForExtension(extension).extract(file).load(prefs);
+	}
+
+	/**
+	 * Load a model from the given file.
+	 * The type/formalism of the model is determined automatically from the file extension.
+	 *
+	 * @param file the path of the file to load
+	 * @return the {@link StateSpace} for the loaded machine
+	 * @throws IllegalArgumentException if the file extension is not recognized or supported
+	 */
+	public StateSpace load(String file) throws IOException {
+		return load(file, Collections.emptyMap());
 	}
 }

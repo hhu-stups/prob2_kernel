@@ -395,20 +395,6 @@ public class MCDCASTVisitor extends DepthFirstAdapter {
 	}
 
 	@Override
-	public void caseAPredicateIdentifierPredicate(APredicateIdentifierPredicate node) {
-		inAPredicateIdentifierPredicate(node);
-		maxLevelOrLeafReached(node);
-		outAPredicateIdentifierPredicate(node);
-	}
-
-	@Override
-	public void caseAPredicateFunctionPredicate(APredicateFunctionPredicate node) {
-		inAPredicateFunctionPredicate(node);
-		maxLevelOrLeafReached(node);
-		outAPredicateFunctionPredicate(node);
-	}
-
-	@Override
 	public void caseALetPredicatePredicate(ALetPredicatePredicate node) {
 		inALetPredicatePredicate(node);
 		maxLevelOrLeafReached(node);

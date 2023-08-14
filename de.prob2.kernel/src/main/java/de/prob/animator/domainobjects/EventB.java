@@ -7,8 +7,6 @@ import java.util.Set;
 
 import de.be4.classicalb.core.parser.analysis.prolog.ASTProlog;
 import de.be4.classicalb.core.parser.node.Node;
-import de.hhu.stups.prob.translator.BValue;
-import de.hhu.stups.prob.translator.TranslatingVisitor;
 import de.prob.formula.TranslationVisitor;
 import de.prob.model.representation.FormulaUUID;
 import de.prob.model.representation.IFormulaUUID;
@@ -80,6 +78,21 @@ public class EventB extends AbstractEvalElement implements IBEvalElement {
 		eventBFormula.ast = bFormula.getAst();
 		eventBFormula.kind = EvalElementType.EXPRESSION;
 		return eventBFormula;
+	}
+	
+	/**
+	 * <p>Create an Event-B formula representing the given identifier.</p>
+	 * <p>
+	 * Unlike the normal constructors that parse the input string using the Rodin parser,
+	 * this method accepts arbitrary strings as identifiers,
+	 * even ones that are not syntactically valid Event-B identifiers.
+	 * </p>
+	 *
+	 * @param identifier list of string parts that make up a dotted identifier
+	 * @return an Event-B formula representing the given identifier
+	 */
+	public static EventB fromIdentifier(final List<String> identifier) {
+		return fromIdentifier(identifier, FormulaExpand.TRUNCATE);
 	}
 	
 	public IParseResult ensurePredicateParsed() {
@@ -241,12 +254,6 @@ public class EventB extends AbstractEvalElement implements IBEvalElement {
 		assert ast != null;
 
 		return ast;
-	}
-
-	@Deprecated
-	@Override
-	public String serialized() {
-		return "#EventB:" + this.getCode();
 	}
 
 	@Override

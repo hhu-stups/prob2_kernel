@@ -12,7 +12,6 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.google.common.io.MoreFiles;
 import com.google.inject.Inject;
@@ -21,27 +20,19 @@ import com.google.inject.Provider;
 import de.prob.model.eventb.EventBModel;
 import de.prob.model.eventb.translate.EventBDatabaseTranslator;
 import de.prob.model.eventb.translate.EventBFileNotFoundException;
-import de.prob.statespace.StateSpace;
 
 import org.codehaus.groovy.runtime.ResourceGroovyMethods;
 
 public class EventBFactory implements ModelFactory<EventBModel> {
 	private final Provider<EventBModel> modelCreator;
-	private final EventBPackageFactory eventBPackageFactory;
-	/**
-	 * @deprecated This constant is misnamed. Use {@link EventBPackageFactory#EXTENSION} instead.
-	 */
-	@Deprecated
-	public static final String ATELIER_B_EXTENSION = EventBPackageFactory.EXTENSION;
 	public static final String RODIN_MACHINE_EXTENSION = "bum";
 	public static final String RODIN_CONTEXT_EXTENSION = "buc";
 	public static final String CHECKED_RODIN_MACHINE_EXTENSION = "bcm";
 	public static final String CHECKED_RODIN_CONTEXT_EXTENSION = "bcc";
 
 	@Inject
-	public EventBFactory(final Provider<EventBModel> modelCreator, final EventBPackageFactory eventBPackageFactory) {
+	public EventBFactory(final Provider<EventBModel> modelCreator) {
 		this.modelCreator = modelCreator;
-		this.eventBPackageFactory = eventBPackageFactory;
 	}
 
 	@Override
@@ -72,14 +63,6 @@ public class EventBFactory implements ModelFactory<EventBModel> {
 		}
 	}
 
-	/**
-	 * @deprecated Use {@link EventBPackageFactory} instead: {@code factory.extract(fileName).load(prefs)}
-	 */
-	@Deprecated
-	public StateSpace loadModelFromEventBFile(final String fileName, final Map<String, String> prefs) throws IOException {
-		return this.eventBPackageFactory.extract(fileName).load(prefs);
-	}
-
 	public EventBModel extractModelFromZip(final String zipfile) throws IOException {
 		final File tempdir = createTempDir();
 		try (final InputStream is = new FileInputStream(zipfile)) {
@@ -103,10 +86,9 @@ public class EventBFactory implements ModelFactory<EventBModel> {
 		}
 		EventBModel model = modelCreator.get();
 		for (File f : modelFiles) {
-			String modelPath = f.getAbsolutePath();
-			String name = modelPath.substring(modelPath.lastIndexOf(File.separatorChar) + 1, modelPath.lastIndexOf("."));
+			String name = MoreFiles.getNameWithoutExtension(f.toPath());
 			if (model.getComponent(name) == null) {
-				EventBDatabaseTranslator translator = new EventBDatabaseTranslator(model, modelPath);
+				EventBDatabaseTranslator translator = new EventBDatabaseTranslator(model, f.getAbsolutePath());
 				model = translator.getModel();
 			}
 		}

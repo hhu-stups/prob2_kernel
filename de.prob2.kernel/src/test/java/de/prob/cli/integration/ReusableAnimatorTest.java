@@ -3,7 +3,6 @@ package de.prob.cli.integration;
 import de.prob.animator.IAnimator;
 import de.prob.animator.ReusableAnimator;
 import de.prob.animator.command.GetVersionCommand;
-import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.cli.CliTestCommon;
 import de.prob.scripting.ClassicalBFactory;
 import de.prob.statespace.StateSpace;
@@ -11,8 +10,8 @@ import de.prob.statespace.Trace;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public final class ReusableAnimatorTest {
@@ -59,7 +58,7 @@ public final class ReusableAnimatorTest {
 			modelFactory.create("Test" + i, String.format("MACHINE Test%d VARIABLES x INVARIANT x : INTEGER INITIALISATION x := %d END", i, i))
 				.loadIntoStateSpace(stateSpace);
 			final Trace trace = new Trace(stateSpace).randomAnimation(1);
-			Assertions.assertEquals(trace.evalCurrent("x", FormulaExpand.EXPAND).toString(), String.valueOf(i));
+			Assertions.assertEquals(trace.evalCurrent("x").toString(), String.valueOf(i));
 			stateSpace.kill();
 		}
 	}

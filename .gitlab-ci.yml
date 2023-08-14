@@ -1,4 +1,4 @@
-image: openjdk:8-jdk-slim
+image: eclipse-temurin:8
 
 stages:
   - test
@@ -48,11 +48,11 @@ tests:jdk-8:
 
 tests:jdk-11:
   extends: .docker-tests
-  image: openjdk:11-jdk-slim
+  image: eclipse-temurin:11
 
 tests:jdk-17:
   extends: .docker-tests
-  image: openjdk:17-jdk-slim
+  image: eclipse-temurin:17
 
 tests:macos:
   extends: .tests

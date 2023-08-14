@@ -35,7 +35,7 @@ class OsInfoProvider implements Provider<OsSpecificInfo> {
 		final String cspmfName;
 		final String fuzzName;
 		if (os == OsFamily.WINDOWS) {
-			dirName = "win64";
+			dirName = "windows64";
 			cliName = "probcli.exe";
 			userInterruptCmd = "lib\\send_user_interrupt.exe";
 			cspmfName = "lib\\cspmf.exe";

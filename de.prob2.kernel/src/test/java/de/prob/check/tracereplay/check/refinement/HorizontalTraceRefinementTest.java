@@ -1,44 +1,36 @@
 package de.prob.check.tracereplay.check.refinement;
 
-import de.be4.classicalb.core.parser.BParser;
-import de.be4.classicalb.core.parser.exceptions.BCompoundException;
-import de.be4.classicalb.core.parser.node.Start;
-import de.prob.ProBKernelStub;
-import de.prob.check.tracereplay.PersistentTransition;
-import de.prob.check.tracereplay.check.traceConstruction.TraceConstructionError;
-import de.prob.check.tracereplay.json.TraceManager;
-import de.prob.check.tracereplay.json.storage.TraceJsonFile;
-import de.prob.cli.CliTestCommon;
-import de.prob.statespace.StateSpace;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+
+import de.be4.classicalb.core.parser.BParser;
+import de.be4.classicalb.core.parser.exceptions.BCompoundException;
+import de.be4.classicalb.core.parser.node.Start;
+import de.prob.check.tracereplay.check.traceConstruction.TraceConstructionError;
+import de.prob.check.tracereplay.json.TraceManager;
+import de.prob.check.tracereplay.json.storage.TraceJsonFile;
+import de.prob.cli.CliTestCommon;
+import de.prob.scripting.Api;
+import de.prob.statespace.StateSpace;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class HorizontalTraceRefinementTest {
 
 	private static TraceManager traceManager;
-	private static ProBKernelStub proBKernelStub;
+	private static Api api;
 
 	@BeforeAll
 	static void beforeAll() {
 		traceManager = CliTestCommon.getInjector().getInstance(TraceManager.class);
-		proBKernelStub = CliTestCommon.getInjector().getInstance(ProBKernelStub.class);
+		api = CliTestCommon.getInjector().getInstance(Api.class);
 	}
-
-	@AfterAll
-	static void afterAll() {
-		proBKernelStub.killCurrentAnimator();
-	}
-
 
 	@Test
 	public void test_horizontal_refinement_simple_promotes() throws IOException, TraceConstructionError, BCompoundException {
@@ -64,7 +56,7 @@ public class HorizontalTraceRefinementTest {
 		String alphaName = "M3";
 
 		BParser parser = new BParser(beta.toString());
-		Start betaFile = parser.parseFile(beta.toFile(), false);
+		Start betaFile = parser.parseFile(beta.toFile());
 
 
 
@@ -72,7 +64,7 @@ public class HorizontalTraceRefinementTest {
 		operationsFinder.explore();
 
 
-		StateSpace stateSpace2 = proBKernelStub.createStateSpace(alpha);
+		StateSpace stateSpace2 = api.b_load(alpha.toString());
 		Map<String, OperationsFinder.RenamingContainer> promotedOperations =
 				HorizontalTraceRefiner.handlePromotedOperations(operationsFinder.getPromoted(), alphaName, new ArrayList<>(stateSpace2.getLoadedMachine().getOperations().keySet()), operationsFinder.getExtendedMachines(), operationsFinder.getIncludedImportedMachines());
 
@@ -84,6 +76,7 @@ public class HorizontalTraceRefinementTest {
 
 		Assertions.assertEquals(expected, promotedOperations);
 
+		stateSpace2.kill();
 	}
 
 	@Test
@@ -94,7 +87,7 @@ public class HorizontalTraceRefinementTest {
 		String alphaName = "M1";
 
 		BParser parser = new BParser(beta.toString());
-		Start betaFile = parser.parseFile(beta.toFile(), false);
+		Start betaFile = parser.parseFile(beta.toFile());
 
 
 
@@ -102,7 +95,7 @@ public class HorizontalTraceRefinementTest {
 		operationsFinder.explore();
 
 
-		StateSpace stateSpace2 = proBKernelStub.createStateSpace(alpha);
+		StateSpace stateSpace2 = api.b_load(alpha.toString());
 		Map<String, OperationsFinder.RenamingContainer> promotedOperations =
 				HorizontalTraceRefiner.handlePromotedOperations(operationsFinder.getPromoted(), alphaName, new ArrayList<>(stateSpace2.getLoadedMachine().getOperations().keySet()), operationsFinder.getExtendedMachines(), operationsFinder.getIncludedImportedMachines());
 
@@ -117,6 +110,7 @@ public class HorizontalTraceRefinementTest {
 
 		Assertions.assertEquals(expected, promotedOperations);
 
+		stateSpace2.kill();
 	}
 
 	@Test
@@ -127,7 +121,7 @@ public class HorizontalTraceRefinementTest {
 		String alphaName = "M1";
 
 		BParser parser = new BParser(beta.toString());
-		Start betaFile = parser.parseFile(beta.toFile(), false);
+		Start betaFile = parser.parseFile(beta.toFile());
 
 
 
@@ -135,7 +129,7 @@ public class HorizontalTraceRefinementTest {
 		operationsFinder.explore();
 
 
-		StateSpace stateSpace2 = proBKernelStub.createStateSpace(alpha);
+		StateSpace stateSpace2 = api.b_load(alpha.toString());
 		Map<String, OperationsFinder.RenamingContainer> promotedOperations =
 				HorizontalTraceRefiner.handlePromotedOperations(operationsFinder.getPromoted(), alphaName, new ArrayList<>(stateSpace2.getLoadedMachine().getOperations().keySet()), operationsFinder.getExtendedMachines(), operationsFinder.getIncludedImportedMachines());
 
@@ -150,6 +144,7 @@ public class HorizontalTraceRefinementTest {
 
 		Assertions.assertEquals(expected, promotedOperations);
 
+		stateSpace2.kill();
 	}
 
 

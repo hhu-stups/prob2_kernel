@@ -1,16 +1,5 @@
 package de.prob.animator.command;
 
-import de.prob.animator.domainobjects.ClassicalB;
-import de.prob.animator.domainobjects.FormulaExpand;
-import de.prob.cli.CliTestCommon;
-import de.prob.prolog.term.CompoundPrologTerm;
-import de.prob.prolog.term.PrologTerm;
-import de.prob.scripting.Api;
-import de.prob.statespace.StateSpace;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
@@ -19,7 +8,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import de.prob.animator.domainobjects.ClassicalB;
+import de.prob.cli.CliTestCommon;
+import de.prob.prolog.term.CompoundPrologTerm;
+import de.prob.prolog.term.PrologTerm;
+import de.prob.scripting.Api;
+import de.prob.statespace.StateSpace;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AstLeafWalksCommandTest {
 	private static Api api;
@@ -41,7 +41,7 @@ class AstLeafWalksCommandTest {
 	@Test
 	void shouldGetPaths() {
 		String predicate = "a:INTEGER & a > 5";
-		ClassicalB bast = new ClassicalB(predicate, FormulaExpand.EXPAND);
+		ClassicalB bast = new ClassicalB(predicate);
 
 		AstLeafWalksCommand cmd = new AstLeafWalksCommand(bast);
 		stateSpace.execute(cmd);
@@ -61,7 +61,7 @@ class AstLeafWalksCommandTest {
 		String predicate =
 				"a:INTEGER & a > 1 & #b . (b:INTEGER & a = 2 * b)";
 
-		ClassicalB bast = new ClassicalB(predicate, FormulaExpand.EXPAND);
+		ClassicalB bast = new ClassicalB(predicate);
 
 		AstLeafWalksCommand cmd = new AstLeafWalksCommand(bast);
 		stateSpace.execute(cmd);

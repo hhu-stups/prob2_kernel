@@ -15,8 +15,6 @@ import de.prob.statespace.FormalismType;
 import de.prob.statespace.Language;
 import de.prob.statespace.StateSpace;
 
-import groovy.util.Eval;
-
 public abstract class AbstractModel extends AbstractElement {
 
 	protected final StateSpaceProvider stateSpaceProvider;
@@ -93,6 +91,22 @@ public abstract class AbstractModel extends AbstractElement {
 	public abstract IEvalElement formulaFromIdentifier(final List<String> identifier, final FormulaExpand expansion);
 
 	/**
+	 * <p>Create a formula representing the given identifier.</p>
+	 * <p>
+	 * Unlike {@link #parseFormula(String)},
+	 * this method accepts arbitrary strings as identifiers,
+	 * even ones that are not syntactically valid in the language of the model
+	 * and would be unrepresentable or require quoting.
+	 * </p>
+	 *
+	 * @param identifier list of string parts that make up a dotted identifier
+	 * @return a formula representing the given identifier
+	 */
+	public IEvalElement formulaFromIdentifier(final List<String> identifier) {
+		return this.formulaFromIdentifier(identifier, FormulaExpand.TRUNCATE);
+	}
+
+	/**
 	 * Will check the syntax of a formula to see if it is valid in the scope of
 	 * this model.
 	 *
@@ -102,7 +116,7 @@ public abstract class AbstractModel extends AbstractElement {
 	 */
 	public boolean checkSyntax(final String formula) {
 		try {
-			parseFormula(formula, FormulaExpand.TRUNCATE);
+			parseFormula(formula);
 			return true;
 		} catch (EvaluationException ignored) {
 			return false;
@@ -119,19 +133,6 @@ public abstract class AbstractModel extends AbstractElement {
 
 	public StateSpaceProvider getStateSpaceProvider() {
 		return stateSpaceProvider;
-	}
-
-	/**
-	 * @deprecated This method is unsafe and can execute arbitrary Groovy code, depending on the argument.
-	 *     To look up a component by name, use {@link #getComponent(String)} instead.
-	 *     To look up sub-elements of a component, use {@link #getChildrenOfType(Class)} and {@link ModelElementList#getElement(String)}.
-	 */
-	@Deprecated
-	public AbstractElement get(List<String> path) {
-		if (path.isEmpty()) {
-			return null;
-		}
-		return (AbstractElement) Eval.x(this, "x." + String.join(".", path));
 	}
 
 	public abstract AbstractCommand getLoadCommand(final AbstractElement mainComponent);

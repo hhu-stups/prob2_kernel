@@ -1,44 +1,48 @@
 package de.prob.check.tracereplay.check.refinement;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import de.be4.classicalb.core.parser.BParser;
+import de.be4.classicalb.core.parser.analysis.DepthFirstAdapter;
 import de.be4.classicalb.core.parser.exceptions.BCompoundException;
 import de.be4.classicalb.core.parser.node.*;
 import de.prob.statespace.Transition;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import de.be4.classicalb.core.parser.analysis.DepthFirstAdapter;
-
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.stream.Collectors;
 
 public class ASTManipulatorTest {
 
 	@Test
-	public void test_correctConstruction_1() throws IOException, BCompoundException {
+	public void test_correctConstruction_1() throws BCompoundException {
 
 
 		Path alphaFile = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "refinements",  "TrafficLightRef.ref");
 		BParser alphaParser1 = new BParser(alphaFile.toString());
 
-		Start alphaStart1 = alphaParser1.parseFile(alphaFile.toFile(), false);
+		Start alphaStart1 = alphaParser1.parseFile(alphaFile.toFile());
 
 		NodeCollector nodeCollector = new NodeCollector(alphaStart1);
 
 		Path betaFile = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "refinements",  "TrafficLight.mch");
 		BParser betaParser1 = new BParser(betaFile.toString());
 
-		Start betaStart1 = betaParser1.parseFile(betaFile.toFile(), false);
+		Start betaStart1 = betaParser1.parseFile(betaFile.toFile());
 
 		ASTManipulator astManipulator = new ASTManipulator(betaStart1, nodeCollector);
 
 
 
-		Start alphaStart2 = alphaParser1.parseFile(alphaFile.toFile(), false);
+		Start alphaStart2 = alphaParser1.parseFile(alphaFile.toFile());
 
-		Start betaStart2 = betaParser1.parseFile(betaFile.toFile(), false);
+		Start betaStart2 = betaParser1.parseFile(betaFile.toFile());
 
 
 		ASTChecker astCheckerAlpha = new ASTChecker();
@@ -61,28 +65,28 @@ public class ASTManipulatorTest {
 
 
 	@Test
-	public void test_correctConstruction_2() throws IOException, BCompoundException {
+	public void test_correctConstruction_2() throws BCompoundException {
 
 
 		Path alphaFile = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",   "EmptyMachine.mch");
 		BParser alphaParser1 = new BParser(alphaFile.toString());
 
-		Start alphaStart1 = alphaParser1.parseFile(alphaFile.toFile(), false);
+		Start alphaStart1 = alphaParser1.parseFile(alphaFile.toFile());
 
 		NodeCollector nodeCollector = new NodeCollector(alphaStart1);
 
 		Path betaFile = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces",   "ContainsClauses.mch");
 		BParser betaParser1 = new BParser(betaFile.toString());
 
-		Start betaStart1 = betaParser1.parseFile(betaFile.toFile(), false);
+		Start betaStart1 = betaParser1.parseFile(betaFile.toFile());
 
 		ASTManipulator astManipulator = new ASTManipulator(betaStart1, nodeCollector);
 
 
 
-		Start alphaStart2 = alphaParser1.parseFile(alphaFile.toFile(), false);
+		Start alphaStart2 = alphaParser1.parseFile(alphaFile.toFile());
 
-		Start betaStart2 = betaParser1.parseFile(betaFile.toFile(), false);
+		Start betaStart2 = betaParser1.parseFile(betaFile.toFile());
 
 
 		ASTChecker astCheckerAlpha = new ASTChecker();
@@ -107,28 +111,28 @@ public class ASTManipulatorTest {
 	}
 
 	@Test
-	public void test_correctConstruction_3() throws IOException, BCompoundException {
+	public void test_correctConstruction_3() throws BCompoundException {
 
 
 		Path alphaFile = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "refinements",  "TrafficLight.mch");
 		BParser alphaParser1 = new BParser(alphaFile.toString());
 
-		Start alphaStart1 = alphaParser1.parseFile(alphaFile.toFile(), false);
+		Start alphaStart1 = alphaParser1.parseFile(alphaFile.toFile());
 
 		NodeCollector nodeCollector = new NodeCollector(alphaStart1);
 
 		Path betaFile = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "refinements",  "TrafficLightRef.ref");
 		BParser betaParser1 = new BParser(betaFile.toString());
 
-		Start betaStart1 = betaParser1.parseFile(betaFile.toFile(), false);
+		Start betaStart1 = betaParser1.parseFile(betaFile.toFile());
 
 		ASTManipulator astManipulator = new ASTManipulator(betaStart1, nodeCollector);
 
 
 
-		Start alphaStart2 = alphaParser1.parseFile(alphaFile.toFile(), false);
+		Start alphaStart2 = alphaParser1.parseFile(alphaFile.toFile());
 
-		Start betaStart2 = betaParser1.parseFile(betaFile.toFile(), false);
+		Start betaStart2 = betaParser1.parseFile(betaFile.toFile());
 
 
 		ASTChecker astCheckerAlpha = new ASTChecker();
@@ -151,26 +155,26 @@ public class ASTManipulatorTest {
 
 
 	@Test
-	public void test_correctConstruction_4() throws IOException, BCompoundException {
+	public void test_correctConstruction_4() throws BCompoundException {
 
 
 		Path alphaFile = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "refinements", "withIncludes",  "Abstract.mch");
 		BParser alphaParser1 = new BParser(alphaFile.toString());
 
-		Start alphaStart1 = alphaParser1.parseFile(alphaFile.toFile(), false);
+		Start alphaStart1 = alphaParser1.parseFile(alphaFile.toFile());
 
 		NodeCollector nodeCollector = new NodeCollector(alphaStart1);
 
 		Path betaFile = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "refinements", "withIncludes", "RefRef.ref");
 		BParser betaParser1 = new BParser(betaFile.toString());
 
-		Start betaStart1 = betaParser1.parseFile(betaFile.toFile(), false);
+		Start betaStart1 = betaParser1.parseFile(betaFile.toFile());
 
 		ASTManipulator astManipulator = new ASTManipulator(betaStart1, nodeCollector);
 
-		Start alphaStart2 = alphaParser1.parseFile(alphaFile.toFile(), false);
+		Start alphaStart2 = alphaParser1.parseFile(alphaFile.toFile());
 
-		Start betaStart2 = betaParser1.parseFile(betaFile.toFile(), false);
+		Start betaStart2 = betaParser1.parseFile(betaFile.toFile());
 
 
 		ASTChecker astCheckerAlpha = new ASTChecker();
@@ -192,27 +196,27 @@ public class ASTManipulatorTest {
 	}
 
 	@Test
-	public void test_correctConstruction_5() throws IOException, BCompoundException {
+	public void test_correctConstruction_5() throws BCompoundException {
 
 
 		Path alphaFile = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "refinements", "withSees",  "Abstract.mch");
 		BParser alphaParser1 = new BParser(alphaFile.toString());
 
-		Start alphaStart1 = alphaParser1.parseFile(alphaFile.toFile(), false);
+		Start alphaStart1 = alphaParser1.parseFile(alphaFile.toFile());
 
 		NodeCollector nodeCollector = new NodeCollector(alphaStart1);
 
 		Path betaFile = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "refinements", "withSees", "RefRef.ref");
 		BParser betaParser1 = new BParser(betaFile.toString());
 
-		Start betaStart1 = betaParser1.parseFile(betaFile.toFile(), false);
+		Start betaStart1 = betaParser1.parseFile(betaFile.toFile());
 
 		ASTManipulator astManipulator = new ASTManipulator(betaStart1, nodeCollector);
 
 
-		Start alphaStart2 = alphaParser1.parseFile(alphaFile.toFile(), false);
+		Start alphaStart2 = alphaParser1.parseFile(alphaFile.toFile());
 
-		Start betaStart2 = betaParser1.parseFile(betaFile.toFile(), false);
+		Start betaStart2 = betaParser1.parseFile(betaFile.toFile());
 
 
 		ASTChecker astCheckerAlpha = new ASTChecker();
@@ -236,26 +240,26 @@ public class ASTManipulatorTest {
 
 
 	@Test
-	public void test_correctConstruction_6() throws IOException, BCompoundException {
+	public void test_correctConstruction_6() throws BCompoundException {
 
 
 		Path alphaFile = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "refinements", "withSeesSameMachine",  "Abstract.mch");
 		BParser alphaParser1 = new BParser(alphaFile.toString());
 
-		Start alphaStart1 = alphaParser1.parseFile(alphaFile.toFile(), false);
+		Start alphaStart1 = alphaParser1.parseFile(alphaFile.toFile());
 
 		NodeCollector nodeCollector = new NodeCollector(alphaStart1);
 
 		Path betaFile = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "refinements", "withSeesSameMachine", "RefRef.ref");
 		BParser betaParser1 = new BParser(betaFile.toString());
 
-		Start betaStart1 = betaParser1.parseFile(betaFile.toFile(), false);
+		Start betaStart1 = betaParser1.parseFile(betaFile.toFile());
 
 		ASTManipulator astManipulator = new ASTManipulator(betaStart1, nodeCollector);
 
-		Start alphaStart2 = alphaParser1.parseFile(alphaFile.toFile(), false);
+		Start alphaStart2 = alphaParser1.parseFile(alphaFile.toFile());
 
-		Start betaStart2 = betaParser1.parseFile(betaFile.toFile(), false);
+		Start betaStart2 = betaParser1.parseFile(betaFile.toFile());
 
 
 		ASTChecker astCheckerAlpha = new ASTChecker();
@@ -277,27 +281,27 @@ public class ASTManipulatorTest {
 	}
 
 	@Test
-	public void test_correctConstruction_7() throws IOException, BCompoundException {
+	public void test_correctConstruction_7() throws BCompoundException {
 
 
 		Path alphaFile = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "refinements", "withSameIncludes",  "Abstract.mch");
 		BParser alphaParser1 = new BParser(alphaFile.toString());
 
-		Start alphaStart1 = alphaParser1.parseFile(alphaFile.toFile(), false);
+		Start alphaStart1 = alphaParser1.parseFile(alphaFile.toFile());
 
 		NodeCollector nodeCollector = new NodeCollector(alphaStart1);
 
 		Path betaFile = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "refinements", "withSameIncludes", "RefRef.ref");
 		BParser betaParser1 = new BParser(betaFile.toString());
 
-		Start betaStart1 = betaParser1.parseFile(betaFile.toFile(), false);
+		Start betaStart1 = betaParser1.parseFile(betaFile.toFile());
 
 		ASTManipulator astManipulator = new ASTManipulator(betaStart1, nodeCollector);
 
 
-		Start alphaStart2 = alphaParser1.parseFile(alphaFile.toFile(), false);
+		Start alphaStart2 = alphaParser1.parseFile(alphaFile.toFile());
 
-		Start betaStart2 = betaParser1.parseFile(betaFile.toFile(), false);
+		Start betaStart2 = betaParser1.parseFile(betaFile.toFile());
 
 
 		ASTChecker astCheckerAlpha = new ASTChecker();

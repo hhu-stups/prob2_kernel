@@ -74,13 +74,4 @@ public class ProBConnection {
 		inputScanner.close();
 		outputStream.close();
 	}
-
-	/**
-	 * @deprecated The debugging key has no use anymore. probcli no longer supports the debug_console/2 command.
-	 */
-	@Deprecated
-	public String getKey() {
-		return "";
-	}
-
 }

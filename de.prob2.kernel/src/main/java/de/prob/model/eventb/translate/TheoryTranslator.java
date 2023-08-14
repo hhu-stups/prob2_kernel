@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 
 import de.prob.animator.domainobjects.EventB;
-import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.model.eventb.EventBAxiom;
 import de.prob.model.eventb.theory.AxiomaticDefinitionBlock;
 import de.prob.model.eventb.theory.DataType;
@@ -117,7 +116,7 @@ public class TheoryTranslator {
 	}
 
 	private void printType(final String type, final IPrologTermOutput pto) {
-		new EventB(type, typeEnv, FormulaExpand.EXPAND).printProlog(pto);
+		new EventB(type, typeEnv).printProlog(pto);
 	}
 
 	private void printConstructor(final DataTypeConstructor constructor,
@@ -126,8 +125,7 @@ public class TheoryTranslator {
 		pto.printAtom(constructor.getName());
 		pto.openList();
 		for (final DataTypeDestructor arg : constructor.getArguments()) {
-			printTypedIdentifier("destructor", arg.getName(),
-					new EventB(arg.getType(), typeEnv, FormulaExpand.EXPAND), pto);
+			printTypedIdentifier("destructor", arg.getName(), new EventB(arg.getType(), typeEnv), pto);
 		}
 		pto.closeList();
 		pto.closeTerm();

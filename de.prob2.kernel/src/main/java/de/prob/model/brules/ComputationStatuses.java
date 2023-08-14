@@ -13,7 +13,6 @@ import de.be4.classicalb.core.parser.rules.RulesProject;
 import de.prob.animator.domainobjects.AbstractEvalResult;
 import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.EvalResult;
-import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.statespace.State;
 
@@ -40,7 +39,7 @@ public class ComputationStatuses {
 		final List<IEvalElement> evalElements = new ArrayList<>();
 		for (ComputationOperation comp : computations) {
 			compList.add(comp);
-			ClassicalB ruleObject = new ClassicalB(comp.getName(), FormulaExpand.EXPAND, true); // TODO: check if AllowSubst required
+			ClassicalB ruleObject = new ClassicalB(comp.getName());
 			evalElements.add(ruleObject);
 		}
 		List<AbstractEvalResult> evalResults = state.eval(evalElements);

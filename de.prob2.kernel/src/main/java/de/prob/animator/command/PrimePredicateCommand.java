@@ -2,7 +2,6 @@ package de.prob.animator.command;
 
 import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.EventB;
-import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
@@ -32,9 +31,9 @@ public class PrimePredicateCommand extends AbstractCommand {
 		String code = compoundTerm.getFunctor();
 		if (evalElement instanceof EventB) {
 			// probcli returns Unicode primes (Classical B syntax), which the Rodin parser doesn't support
-			result = new EventB(code.replace('′', '\''), FormulaExpand.EXPAND);
+			result = new EventB(code.replace('′', '\''));
 		} else {
-			result = new ClassicalB(code, FormulaExpand.EXPAND);
+			result = new ClassicalB(code);
 		}
 
 	}

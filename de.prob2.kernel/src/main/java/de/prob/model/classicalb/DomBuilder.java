@@ -40,9 +40,8 @@ import de.be4.classicalb.core.parser.node.PSet;
 import de.be4.classicalb.core.parser.node.PSubstitution;
 import de.be4.classicalb.core.parser.node.Start;
 import de.be4.classicalb.core.parser.node.TIdentifierLiteral;
-import de.be4.classicalb.core.parser.node.Token;
+import de.be4.classicalb.core.parser.util.Utils;
 import de.prob.animator.domainobjects.ClassicalB;
-import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.exception.ProBError;
 import de.prob.model.representation.Action;
 import de.prob.model.representation.BEvent;
@@ -100,7 +99,7 @@ public class DomBuilder extends MachineClauseAdapter {
 
 	@Override
 	public void caseAMachineHeader(final AMachineHeader node) {
-		final String nameInAst = extractIdentifierName(node.getName());
+		final String nameInAst = Utils.getTIdentifierListAsString(node.getName());
 		if (!nameInAst.equals(unprefixedName)) {
 			throw new ProBError("Machine name mismatch: expected name " + unprefixedName + ", but found name " + nameInAst + " in AST");
 		}
@@ -121,8 +120,8 @@ public class DomBuilder extends MachineClauseAdapter {
 	@Override
 	public void caseAConstantsMachineClause(final AConstantsMachineClause node) {
 		for (PExpression pExpression : node.getIdentifiers()) {
-			constants.add(new ClassicalBConstant(
-					createExpressionAST(pExpression)));
+			AIdentifierExpression idExpr = extractIdentifierExpression(pExpression);
+			constants.add(new ClassicalBConstant(createExpressionAST(idExpr)));
 		}
 	}
 
@@ -136,11 +135,11 @@ public class DomBuilder extends MachineClauseAdapter {
 	@Override
 	public void caseAVariablesMachineClause(final AVariablesMachineClause node) {
 		for (PExpression pExpression : node.getIdentifiers()) {
+			AIdentifierExpression idExpr = extractIdentifierExpression(pExpression);
 			if (prefix != null) {
-				usedIds.add(extractIdentifierName(pExpression));
+				usedIds.add(Utils.getAIdentifierAsString(idExpr));
 			}
-			variables.add(new ClassicalBVariable(
-					createExpressionAST(pExpression)));
+			variables.add(new ClassicalBVariable(createExpressionAST(idExpr)));
 		}
 	}
 
@@ -156,7 +155,7 @@ public class DomBuilder extends MachineClauseAdapter {
 	@Override
 	public void caseASetsMachineClause(final ASetsMachineClause node) {
 		for (final PSet set : node.getSetDefinitions()) {
-			final List<TIdentifierLiteral> identifier;
+			List<TIdentifierLiteral> identifier;
 			if (set instanceof ADeferredSetSet) {
 				identifier = ((ADeferredSetSet)set).getIdentifier();
 			} else if (set instanceof AEnumeratedSetSet) {
@@ -164,19 +163,19 @@ public class DomBuilder extends MachineClauseAdapter {
 			} else {
 				continue;
 			}
-			sets.add(new de.prob.model.representation.Set(new ClassicalB(
-				extractIdentifierName(identifier),
-				FormulaExpand.EXPAND
-			)));
+			// Need to clone all tokens so that createExpressionAST doesn't modify the original AST...
+			identifier = identifier.stream()
+				.map(TIdentifierLiteral::clone)
+				.collect(Collectors.toList());
+			sets.add(new de.prob.model.representation.Set(new ClassicalB(createExpressionAST(new AIdentifierExpression(identifier)))));
 		}
 	}
 
 	@Override
 	public void caseAAssertionsMachineClause(final AAssertionsMachineClause node) {
 		for (final PPredicate preds : node.getPredicates()) {
-			for (PPredicate pPredicate : getPredicates(preds)) {
-				assertions.add(new Assertion(createPredicateAST(pPredicate)));
-			}
+			// we used to add each conjunct of preds individually, but this will flatten the list of assertions
+			assertions.add(new Assertion(createPredicateAST(preds)));
 		}
 	}
 
@@ -199,7 +198,7 @@ public class DomBuilder extends MachineClauseAdapter {
 	}
 
 	private void doOperation(final AOperation node) {
-		String name = extractIdentifierName(node.getOpName());
+		String name = Utils.getTIdentifierListAsString(node.getOpName());
 		if (prefix != null && !prefix.equals(name)) {
 			name = prefix + "." + name;
 		}
@@ -232,30 +231,20 @@ public class DomBuilder extends MachineClauseAdapter {
 		operations.add(operation);
 	}
 
-	// -------------------
-
-	private static String extractIdentifierName(final List<TIdentifierLiteral> nameL) {
-		return nameL.stream()
-			.map(Token::getText)
-			.collect(Collectors.joining("."));
-	}
-	
-	private static String extractIdentifierName(PExpression pExpression) {
-		AIdentifierExpression identifierExpression = null;
+	private static AIdentifierExpression extractIdentifierExpression(PExpression pExpression) {
 		if(pExpression instanceof AIdentifierExpression) {
-			identifierExpression = (AIdentifierExpression) pExpression;
+			return (AIdentifierExpression) pExpression;
 		} else if(pExpression instanceof ADescriptionExpression) {
-			identifierExpression = (AIdentifierExpression) ((ADescriptionExpression) pExpression).getExpression();
+			return (AIdentifierExpression) ((ADescriptionExpression) pExpression).getExpression();
 		} else {
-			throw new ProBError("Invalid expression for extracting identifier name");
+			throw new ProBError("Not a valid constant/variable identifier expression: " + pExpression.getClass());
 		}
-		return identifierExpression.getIdentifier().get(0).getText();
 	}
 
 	private static List<String> extractIdentifiers(final List<PExpression> identifiers) {
 		return identifiers.stream()
-			.filter(pExpression -> pExpression instanceof AIdentifierExpression)
-			.map(pExpression -> extractIdentifierName(((AIdentifierExpression)pExpression).getIdentifier()))
+			.map(DomBuilder::extractIdentifierExpression)
+			.map(Utils::getAIdentifierAsString)
 			.collect(Collectors.toList());
 	}
 
@@ -310,7 +299,7 @@ public class DomBuilder extends MachineClauseAdapter {
 		@Override
 		public void inAIdentifierExpression(final AIdentifierExpression node) {
 			if (prefix != null) {
-				String id = node.getIdentifier().get(0).getText();
+				String id = Utils.getAIdentifierAsString(node);
 
 				if (usedIds.contains(id)) {
 					final List<TIdentifierLiteral> prefixTokens = Arrays.stream(prefix.split("\\."))

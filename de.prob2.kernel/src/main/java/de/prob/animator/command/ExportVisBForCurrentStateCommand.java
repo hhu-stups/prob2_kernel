@@ -4,6 +4,11 @@ import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;
 
+/**
+ * @deprecated Use {@link ExportVisBHtmlForStates} instead,
+ *     which doesn't rely on the Prolog side's "current state" (which may not match the Java side).
+ */
+@Deprecated
 public class ExportVisBForCurrentStateCommand extends AbstractCommand {
 
 	private static final String PROLOG_COMMAND_NAME = "prob2_export_visb_for_current_state";

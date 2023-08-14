@@ -1,12 +1,12 @@
 package de.prob.json;
 
+import java.nio.file.Path;
+import java.time.Instant;
+import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
-
-import java.io.Reader;
-import java.time.Instant;
-import java.util.Objects;
 
 /**
  * <p>Describes the format for the metadata stored in the ProB 2 UI's JSON files. This metadata is used by {@link JacksonManager} to ensure that when JSON data is read, it is of the expected type and is compatible with the current UI version.</p>
@@ -23,7 +23,7 @@ public final class JsonMetadata {
 	/**
 	 * <p>Identifies the type of data stored in the JSON data.</p>
 	 *
-	 * <p>When reading JSON data using {@link JsonManager#read(Reader)}, this value is compared against the expected file type (provided by the caller), and an exception is thrown if it does not match the expected type.</p>
+	 * <p>When reading JSON data using {@link JacksonManager#readFromFile(Path)}, this value is compared against the expected file type (provided by the caller), and an exception is thrown if it does not match the expected type.</p>
 	 *
 	 * <p>When reading old JSON files that have no file type metadata, this value is {@code null}. In all other cases, it should never be {@code null}.</p>
 	 */
@@ -32,7 +32,7 @@ public final class JsonMetadata {
 	/**
 	 * <p>Identifies the version of the data format. Newer UI versions can (in general) read older format versions, but not the other way around. This number must be incremented when an incompatible change is made to the data format (i. e. a change that makes the data unreadable to older UI versions).</p>
 	 *
-	 * <p>When reading JSON data using {@link JsonManager#read(Reader)}, this value is compared against the current format version (provided by the caller), and an exception is thrown if the version in the file is higher than the current supported version.</p>
+	 * <p>When reading JSON data using {@link JacksonManager#readFromFile(Path)}, this value is compared against the current format version (provided by the caller), and an exception is thrown if the version in the file is higher than the current supported version.</p>
 	 *
 	 * <p>When reading old JSON files that have no format version metadata, this value is {@code 0}.</p>
 	 */

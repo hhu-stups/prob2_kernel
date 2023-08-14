@@ -7,7 +7,6 @@ import de.prob.animator.IPrologResult;
 import de.prob.animator.InterruptedResult;
 import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.ErrorItem;
-import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.check.CBCDeadlockFound;
 import de.prob.check.CheckError;
@@ -78,7 +77,7 @@ public class ConstraintBasedDeadlockCheckCommand extends AbstractCommand
 		if (formula != null) {
 			formula.printProlog(pto);
 		} else {
-			new ClassicalB("1=1", FormulaExpand.EXPAND).printProlog(pto);
+			new ClassicalB("1=1").printProlog(pto);
 		}
 		pto.printVariable(RESULT_VARIABLE);
 		pto.closeTerm();

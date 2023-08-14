@@ -3,7 +3,6 @@ package de.prob.model.eventb.theory;
 import java.util.Set;
 
 import de.prob.animator.domainobjects.EventB;
-import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.model.representation.AbstractElement;
 import de.prob.unicode.UnicodeTranslator;
 
@@ -27,7 +26,7 @@ public class Type extends AbstractElement {
 	private IFormulaExtension ext;
 
 	public Type(final String identifier, final Set<IFormulaExtension> typeEnv) {
-		this.identifier = new EventB(identifier, typeEnv, FormulaExpand.EXPAND);
+		this.identifier = new EventB(identifier, typeEnv);
 	}
 
 	public EventB getIdentifier() {

@@ -14,7 +14,7 @@ assert trans.evaluate(FormulaExpand.TRUNCATE).rep == "4,{(5|->{2,4,6,8})},6 <-- 
 
 final truncated = new ClassicalB("{2,4,6,8,10}", FormulaExpand.TRUNCATE)
 assert t.evalCurrent(truncated).value == "#5:{2,...,10}"
-final expanded = new ClassicalB("{2,4,6,8,10}")
+final expanded = new ClassicalB("{2,4,6,8,10}", FormulaExpand.EXPAND)
 assert t.evalCurrent(expanded).value == "{2,4,6,8,10}"
 
 "Expanding and truncating a formila works correctly"

@@ -24,20 +24,43 @@ import org.slf4j.LoggerFactory;
 public final class EvalOptions {
 	private static final Logger LOGGER = LoggerFactory.getLogger(EvalOptions.class);
 	
-	public static final EvalOptions DEFAULT = new EvalOptions(null, null, null, null, null);
+	public static final EvalOptions DEFAULT = new EvalOptions(false, null, null, null, null, null);
 	
+	private final boolean provideStoredLetValues;
 	private final EvalExpandMode evalExpand;
 	private final Duration timeout;
 	private final FormulaExpand expand;
 	private final FormulaTranslationMode mode;
 	private final Language language;
 	
-	private EvalOptions(final EvalExpandMode evalExpand, final Duration timeout, final FormulaExpand expand, final FormulaTranslationMode mode, final Language language) {
+	private EvalOptions(
+		boolean provideStoredLetValues,
+		EvalExpandMode evalExpand,
+		Duration timeout,
+		FormulaExpand expand,
+		FormulaTranslationMode mode,
+		Language language
+	) {
+		this.provideStoredLetValues = provideStoredLetValues;
 		this.evalExpand = evalExpand;
 		this.timeout = timeout;
 		this.expand = expand;
 		this.mode = mode;
 		this.language = language;
+	}
+	
+	public boolean isProvideStoredLetValues() {
+		return this.provideStoredLetValues;
+	}
+	
+	/**
+	 * Change whether stored let values are visible to the formula.
+	 * 
+	 * @param provideStoredLetValues whether stored let values should be visible to the formula
+	 * @return copy of {@code this} with let values made (in)visible
+	 */
+	public EvalOptions withProvideStoredLetValues(boolean provideStoredLetValues) {
+		return new EvalOptions(provideStoredLetValues, this.getEvalExpand(), this.getTimeout(), this.getExpand(), this.getMode(), this.getLanguage());
 	}
 	
 	public EvalExpandMode getEvalExpand() {
@@ -53,7 +76,7 @@ public final class EvalOptions {
 	 * @return copy of {@code this} with the evaluation expansion mode changed
 	 */
 	public EvalOptions withEvalExpand(final EvalExpandMode evalExpand) {
-		return new EvalOptions(evalExpand, this.getTimeout(), this.getExpand(), this.getMode(), this.getLanguage());
+		return new EvalOptions(this.isProvideStoredLetValues(), evalExpand, this.getTimeout(), this.getExpand(), this.getMode(), this.getLanguage());
 	}
 	
 	public Duration getTimeout() {
@@ -67,7 +90,7 @@ public final class EvalOptions {
 	 * @return copy of {@code this} with the timeout changed
 	 */
 	public EvalOptions withTimeout(final Duration timeout) {
-		return new EvalOptions(this.getEvalExpand(), timeout, this.getExpand(), this.getMode(), this.getLanguage());
+		return new EvalOptions(this.isProvideStoredLetValues(), this.getEvalExpand(), timeout, this.getExpand(), this.getMode(), this.getLanguage());
 	}
 	
 	public FormulaExpand getExpand() {
@@ -84,7 +107,7 @@ public final class EvalOptions {
 	 * @return copy of {@code this} with the pretty-print expansion mode changed
 	 */
 	public EvalOptions withExpand(final FormulaExpand expand) {
-		return new EvalOptions(this.getEvalExpand(), this.getTimeout(), expand, this.getMode(), this.getLanguage());
+		return new EvalOptions(this.isProvideStoredLetValues(), this.getEvalExpand(), this.getTimeout(), expand, this.getMode(), this.getLanguage());
 	}
 	
 	/**
@@ -136,7 +159,7 @@ public final class EvalOptions {
 	 * @return copy of {@code this} with the translation mode changed
 	 */
 	public EvalOptions withMode(final FormulaTranslationMode mode) {
-		return new EvalOptions(this.getEvalExpand(), this.getTimeout(), this.getExpand(), mode, this.getLanguage());
+		return new EvalOptions(this.isProvideStoredLetValues(), this.getEvalExpand(), this.getTimeout(), this.getExpand(), mode, this.getLanguage());
 	}
 	
 	public Language getLanguage() {
@@ -144,7 +167,7 @@ public final class EvalOptions {
 	}
 	
 	public EvalOptions withLanguage(final Language language) {
-		return new EvalOptions(this.getEvalExpand(), this.getTimeout(), this.getExpand(), this.getMode(), language);
+		return new EvalOptions(this.isProvideStoredLetValues(), this.getEvalExpand(), this.getTimeout(), this.getExpand(), this.getMode(), language);
 	}
 	
 	@Override
@@ -156,7 +179,8 @@ public final class EvalOptions {
 			return false;
 		}
 		final EvalOptions other = (EvalOptions)obj;
-		return this.getEvalExpand() == other.getEvalExpand()
+		return this.isProvideStoredLetValues() == other.isProvideStoredLetValues()
+			&& this.getEvalExpand() == other.getEvalExpand()
 			&& this.getTimeout() == other.getTimeout()
 			&& this.getExpand() == other.getExpand()
 			&& this.getMode() == other.getMode()
@@ -165,12 +189,13 @@ public final class EvalOptions {
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.getEvalExpand(), this.getTimeout(), this.getExpand(), this.getMode(), this.getLanguage());
+		return Objects.hash(this.isProvideStoredLetValues(), this.getEvalExpand(), this.getTimeout(), this.getExpand(), this.getMode(), this.getLanguage());
 	}
 	
 	@Override
 	public String toString() {
 		return MoreObjects.toStringHelper(this)
+			.add("provideStoredLetValues", this.isProvideStoredLetValues())
 			.add("evalExpand", this.getEvalExpand())
 			.add("timeout", this.getTimeout())
 			.add("expand", this.getExpand())
@@ -180,6 +205,10 @@ public final class EvalOptions {
 	}
 	
 	public void printProlog(final IPrologTermOutput pout) {
+		if (this.isProvideStoredLetValues()) {
+			pout.printAtom("provide_stored_let_values");
+		}
+		
 		if (this.getEvalExpand() != null) {
 			pout.openTerm("eval_expand");
 			this.getEvalExpand().printProlog(pout);

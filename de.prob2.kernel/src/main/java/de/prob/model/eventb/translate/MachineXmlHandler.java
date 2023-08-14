@@ -3,6 +3,8 @@ package de.prob.model.eventb.translate;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,8 +16,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import com.google.common.io.MoreFiles;
+
 import de.prob.animator.domainobjects.EventB;
-import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.model.eventb.Context;
 import de.prob.model.eventb.Event;
 import de.prob.model.eventb.EventBAction;
@@ -78,8 +81,9 @@ public class MachineXmlHandler extends DefaultHandler {
 		this.model = model;
 		this.typeEnv = typeEnv;
 
-		String name = fileName.substring(fileName.lastIndexOf(File.separatorChar) + 1, fileName.lastIndexOf('.'));
-		directoryPath = fileName.substring(0, fileName.lastIndexOf(File.separatorChar));
+		Path path = Paths.get(fileName);
+		String name = MoreFiles.getNameWithoutExtension(path);
+		directoryPath = path.getParent().toString();
 		machine = new EventBMachine(name);
 
 		axiomCache.put(name, new HashMap<>());
@@ -341,7 +345,7 @@ public class MachineXmlHandler extends DefaultHandler {
 
 	private void addSet(final Attributes attributes) {
 		String name = attributes.getValue("name");
-		sets.add(new de.prob.model.representation.Set(new EventB(name, FormulaExpand.EXPAND)));
+		sets.add(new de.prob.model.representation.Set(new EventB(name)));
 	}
 
 	private void addConstant(final Attributes attributes) {

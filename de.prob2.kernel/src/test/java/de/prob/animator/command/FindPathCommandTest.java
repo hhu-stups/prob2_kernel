@@ -15,23 +15,19 @@ import de.be4.classicalb.core.parser.exceptions.BCompoundException;
 import de.be4.classicalb.core.parser.node.AAbstractMachineParseUnit;
 import de.be4.classicalb.core.parser.node.Start;
 import de.be4.classicalb.core.parser.util.PrettyPrinter;
-import de.prob.ProBKernelStub;
 import de.prob.animator.domainobjects.ClassicalB;
-import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.exploration.ReplayOptions;
 import de.prob.check.tracereplay.check.refinement.ASTManipulator;
-import de.prob.check.tracereplay.check.refinement.HorizontalTraceRefiner;
 import de.prob.check.tracereplay.check.refinement.NodeCollector;
-import de.prob.check.tracereplay.check.traceConstruction.TraceConstructionError;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.cli.CliTestCommon;
+import de.prob.scripting.Api;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
 import de.prob.statespace.Transition;
 
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -39,13 +35,12 @@ import org.junit.jupiter.api.Test;
 public class FindPathCommandTest {
 
 	private static TraceManager traceManager;
-	private static ProBKernelStub proBKernelStub;
+	private static Api api;
 
 	@BeforeAll
 	static void beforeAll() {
-
 		traceManager = CliTestCommon.getInjector().getInstance(TraceManager.class);
-		proBKernelStub = CliTestCommon.getInjector().getInstance(ProBKernelStub.class);
+		api = CliTestCommon.getInjector().getInstance(Api.class);
 	}
 
 	/**
@@ -54,28 +49,18 @@ public class FindPathCommandTest {
 	 * Can construct simple traces without choice points
 	 * Does find right path in list (simple)
 	 */
-
-	@AfterAll
-	static void afterAll() {
-		proBKernelStub.killCurrentAnimator();
-	}
-
-
-
-
-
 	@Test
 	public void test_find_path_1_path_exists() throws IOException {
 
 
 		Path file = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "refinements",  "TrafficLight.mch");
 
-		StateSpace stateSpace = proBKernelStub.createStateSpace(file);
+		StateSpace stateSpace = api.b_load(file.toString());
 
 		List<PersistentTransition> transitionList = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "refinements",  "TrafficLight.prob2trace")).getTransitionList();
 
 		List<String> names = transitionList.stream().map(PersistentTransition::getOperationName).collect(Collectors.toList());
-		List<ClassicalB> predicates =transitionList.stream().map(entry -> new ClassicalB(ReplayOptions.allowAll().createMapping(entry).toString(), FormulaExpand.EXPAND)).collect(Collectors.toList());
+		List<ClassicalB> predicates =transitionList.stream().map(entry -> new ClassicalB(ReplayOptions.allowAll().createMapping(entry).toString())).collect(Collectors.toList());
 
 
 		FindPathCommand findPathCommand = new FindPathCommand(stateSpace,new Trace(stateSpace).getCurrentState(), names, predicates );
@@ -85,6 +70,8 @@ public class FindPathCommandTest {
 		List<String> result = findPathCommand.getNewTransitions().stream().map(Transition::getName).collect(Collectors.toList());
 
 		Assertions.assertEquals(names, result);
+
+		stateSpace.kill();
 	}
 
 
@@ -94,11 +81,11 @@ public class FindPathCommandTest {
 
 		Path file = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "refinements",  "TrafficLight.mch");
 
-		StateSpace stateSpace = proBKernelStub.createStateSpace(file);
+		StateSpace stateSpace = api.b_load(file.toString());
 
 
 		List<String> names = Arrays.asList(Transition.INITIALISE_MACHINE_NAME, "set_cars", "set_peds_go");
-		List<ClassicalB> predicates = Arrays.asList(new ClassicalB("1=1", FormulaExpand.EXPAND), new ClassicalB("cars_go=TRUE", FormulaExpand.EXPAND), new ClassicalB("1=1", FormulaExpand.EXPAND));
+		List<ClassicalB> predicates = Arrays.asList(new ClassicalB("1=1"), new ClassicalB("cars_go=TRUE"), new ClassicalB("1=1"));
 
 		List<String>expected = new ArrayList<>(names);
 
@@ -111,6 +98,8 @@ public class FindPathCommandTest {
 		List<String> result = findPathCommand.getNewTransitions().stream().map(Transition::getName).collect(Collectors.toList());
 
 		Assertions.assertEquals(expected, result);
+
+		stateSpace.kill();
 	}
 
 
@@ -123,14 +112,14 @@ public class FindPathCommandTest {
 		Path file = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "refinements",  "TrafficLightRef.ref");
 		BParser bParser = new BParser(file.toString());
 
-		Start start = bParser.parseFile(file.toFile(), false);
+		Start start = bParser.parseFile(file.toFile());
 
 		NodeCollector nodeCollector = new NodeCollector(start);
 
 		Path file2 = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "refinements",  "TrafficLight.mch");
 		BParser bParser2 = new BParser(file2.toString());
 
-		Start start2 = bParser2.parseFile(file2.toFile(), false);
+		Start start2 = bParser2.parseFile(file2.toFile());
 
 		ASTManipulator astManipulator = new ASTManipulator(start2, nodeCollector);
 
@@ -149,10 +138,10 @@ public class FindPathCommandTest {
 		writer.write(prettyPrinter.getPrettyPrint());
 		writer.close();
 
-		StateSpace stateSpace = proBKernelStub.createStateSpace(tempFile.toPath());
+		StateSpace stateSpace = api.b_load(tempFile.toString());
 
 		List<String> names = jsonFile.getTransitionList().stream().map(PersistentTransition::getOperationName).collect(Collectors.toList());
-		List<ClassicalB> predicates =jsonFile.getTransitionList().stream().map(entry -> new ClassicalB(ReplayOptions.allowAll().createMapping(entry).toString(), FormulaExpand.EXPAND)).collect(Collectors.toList());
+		List<ClassicalB> predicates =jsonFile.getTransitionList().stream().map(entry -> new ClassicalB(ReplayOptions.allowAll().createMapping(entry).toString())).collect(Collectors.toList());
 
 		FindPathCommand findPathCommand = new FindPathCommand(stateSpace,new Trace(stateSpace).getCurrentState(), names, predicates );
 
@@ -162,6 +151,7 @@ public class FindPathCommandTest {
 
 		Assertions.assertEquals(names, result);
 
+		stateSpace.kill();
 	}
 
 }

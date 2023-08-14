@@ -1,11 +1,5 @@
 package de.prob.model.eventb;
 
-import de.prob.ProBEventBKernelStub;
-import de.prob.cli.CliTestCommon;
-import de.prob.statespace.StateSpace;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -13,13 +7,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import de.prob.cli.CliTestCommon;
+import de.prob.scripting.Api;
+import de.prob.statespace.StateSpace;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 public class EventTest {
 
 	@Test
 	public void inheritanceRepresentation() throws IOException {
-		ProBEventBKernelStub proBEventBKernelStub =  CliTestCommon.getInjector().getInstance(ProBEventBKernelStub.class);
-
-		StateSpace stateSpace = proBEventBKernelStub.createStateSpace(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "abrialTrain",  "train_1.bum"));
+		StateSpace stateSpace = CliTestCommon.getInjector().getInstance(Api.class).eventb_load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "abrialTrain",  "train_1.bum").toString());
 
 		Event ini = new Event("INITIALISATION", Event.EventType.ORDINARY, Event.Inheritance.REFINES).withParentEvent(new Event("INITIALISATION", Event.EventType.ORDINARY, Event.Inheritance.NONE));
 
@@ -47,7 +46,7 @@ public class EventTest {
 
 		Assertions.assertEquals(expected, prepedResults);
 
-
+		stateSpace.kill();
 	}
 
 }

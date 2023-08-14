@@ -1,8 +1,6 @@
 package de.prob.animator.command;
 
-import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.EventB;
-import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;

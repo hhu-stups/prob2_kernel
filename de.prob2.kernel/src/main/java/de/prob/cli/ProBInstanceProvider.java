@@ -81,10 +81,10 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 		}
 
 		// Clean up Process objects that were never wrapped in a ProBInstance for some reason.
-		for (Iterator<Process> it = runningProcesses.iterator(); it.hasNext();) {
-			final Process process = it.next();
+		for (Process process : runningProcesses) {
 			process.destroy();
-			it.remove();
+			// CopyOnWriteArrayList doesn't support Iterator.remove, but regular remove works fine in this case.
+			runningProcesses.remove(process);
 			
 			final boolean exited;
 			try {

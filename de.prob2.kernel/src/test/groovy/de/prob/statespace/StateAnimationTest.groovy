@@ -3,10 +3,8 @@ package de.prob.statespace
 import java.nio.file.Paths
 
 import de.prob.animator.domainobjects.ClassicalB
-import de.prob.animator.domainobjects.FormulaExpand
 import de.prob.cli.CliTestCommon
 import de.prob.scripting.ClassicalBFactory
-
 import spock.lang.Specification
 
 class StateAnimationTest extends Specification {
@@ -102,8 +100,8 @@ class StateAnimationTest extends Specification {
 
 		then:
 		s2 == firstState
-		s3.eval("waiting", FormulaExpand.EXPAND).value != "{}"
-		s4.eval("waiting", FormulaExpand.EXPAND).value != "{}"
+		s3.eval("waiting").value != "{}"
+		s4.eval("waiting").value != "{}"
 		s5 == root
 	}
 
@@ -116,8 +114,8 @@ class StateAnimationTest extends Specification {
 
 		then:
 		s2 == firstState
-		s3.eval("waiting", FormulaExpand.EXPAND).value != "{}"
-		s4.eval("waiting", FormulaExpand.EXPAND).value != "{}"
+		s3.eval("waiting").value != "{}"
+		s4.eval("waiting").value != "{}"
 		s5 == root
 	}
 }

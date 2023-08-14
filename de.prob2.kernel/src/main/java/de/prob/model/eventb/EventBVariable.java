@@ -1,7 +1,6 @@
 package de.prob.model.eventb;
 
 import de.prob.animator.domainobjects.EventB;
-import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.model.representation.Variable;
 
 public class EventBVariable extends Variable {
@@ -15,7 +14,7 @@ public class EventBVariable extends Variable {
 	}
 
 	public EventBVariable(final String name, final String unit, String comment) {
-		super(new EventB(name, FormulaExpand.EXPAND));
+		super(new EventB(name));
 		this.name = name;
 		this.unit = unit;
 		this.comment = comment == null ? "" : comment;

@@ -1,14 +1,11 @@
 package de.prob.model.eventb;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import de.prob.model.representation.AbstractElement;
 import de.prob.model.representation.Named;
 import de.prob.prolog.output.IPrologTermOutput;
-import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.PrologTerm;
-import de.prob.util.Tuple2;
 
 public class ProofObligation extends AbstractElement implements Named {
 
@@ -24,23 +21,6 @@ public class ProofObligation extends AbstractElement implements Named {
 		this.confidence = confidence;
 		this.description = description;
 		this.sources = sources;
-	}
-
-	/**
-	 * @deprecated Use {@link #ProofObligation(String, String, int, String, List)} instead.
-	 */
-	@Deprecated
-	public ProofObligation(final String sourceName, final String name,
-			final boolean discharged, final String description,
-			final List<Tuple2<String, String>> elements) {
-		this(sourceName, name, discharged ? 1000 : 0, description, sourcesFromTuples(elements));
-	}
-
-	@Deprecated
-	private static List<PrologTerm> sourcesFromTuples(final List<Tuple2<String, String>> elements) {
-		return elements.stream()
-			.map(tuple -> new CompoundPrologTerm(tuple.getFirst(), new CompoundPrologTerm(tuple.getSecond())))
-			.collect(Collectors.toList());
 	}
 
 	@Override

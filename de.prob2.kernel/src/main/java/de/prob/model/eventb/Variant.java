@@ -3,7 +3,6 @@ package de.prob.model.eventb;
 import java.util.Set;
 
 import de.prob.animator.domainobjects.EventB;
-import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.model.representation.AbstractFormulaElement;
 
@@ -14,7 +13,7 @@ public class Variant extends AbstractFormulaElement {
 	private final String comment;
 
 	public Variant(final String code, final Set<IFormulaExtension> typeEnv) {
-		this(new EventB(code, typeEnv, FormulaExpand.EXPAND), "");
+		this(new EventB(code, typeEnv), "");
 	}
 
 	public Variant(EventB expression, String comment) {

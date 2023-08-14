@@ -11,7 +11,6 @@ import de.prob.animator.domainobjects.ComputationNotCompletedResult;
 import de.prob.animator.domainobjects.EvalResult;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
-import de.prob.exception.ProBError;
 import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
@@ -29,7 +28,7 @@ import de.prob.statespace.State;
  */
 public class CbcSolveCommand extends AbstractCommand {
 	public enum Solvers {
-		PROB, KODKOD, SMT_SUPPORTED_INTERPRETER, Z3, CVC4, CDCLT, Z3AXM, Z3CNS
+		PROB, KODKOD, SMT_SUPPORTED_INTERPRETER, Z3, CVC4, CDCLT, SAT, Z3AXM, Z3CNS
 	}
 
 	private static final String PROLOG_COMMAND_NAME = "cbc_timed_solve_with_opts";
@@ -111,18 +110,25 @@ public class CbcSolveCommand extends AbstractCommand {
 
 			for (PrologTerm b : solutionBindings) {
 				CompoundPrologTerm t = (CompoundPrologTerm) b;
-				solutions.put(t.getArgument(VAR_NAME).getFunctor(), t.getArgument(PRETTY_PRINT).getFunctor());
+				if (t.getArity() == 2) {
+					// New format: binding(VarName,PrettyPrint)
+					solutions.put(t.getArgument(0).atomToString(), t.getArgument(1).atomToString());
+				} else {
+					// Old format: binding(VarName,PrologRep,PrettyPrint)
+					// The PrologRep is ignored, because it's not usable by the Java side.
+					solutions.put(t.getArgument(VAR_NAME).getFunctor(), t.getArgument(PRETTY_PRINT).getFunctor());
+				}
 			}
 
 			result = new EvalResult("TRUE", solutions);
 		} else if (prologTerm.hasFunctor("no_solution_found", 1)) {
 			result = new ComputationNotCompletedResult(evalElement.getCode(),
 					"no solution found (but one might exist), reason: " + prologTerm.getArgument(1));
-		} else if (prologTerm.hasFunctor("error",0)) {
-			// FIXME Can this case actually happen?
-			// It seems that error/0 should only be returned if probcli has added an error to the error manager,
-			// in which case AnimatorImpl should have already thrown a ProBError.
-			throw new ProBError("Unexpected result when solving command. See Log for details.");
+		} else if (prologTerm.hasFunctor("error", 0)) {
+			// This result doesn't contain any information about the error(s).
+			// The Prolog side should only return it after adding errors to the error manager,
+			// so the actual error information will be thrown as a ProBError on the Java side.
+			result = new ComputationNotCompletedResult(evalElement.getCode(), "Solver returned error(s)");
 		} else {
 			throw new AssertionError("Unhandled functor in result: " + prologTerm.getFunctor() + "/" + prologTerm.getArity());
 		}

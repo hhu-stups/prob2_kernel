@@ -16,7 +16,7 @@ class ClassicalBModelTest extends Specification {
 		final modelFile = Paths.get("groovyTests", "machines", "references", "Foo.mch").toFile()
 		model = new ClassicalBModel(null)
 		final bparser = new BParser(modelFile.toString())
-		final ast = bparser.parseFile(modelFile,false)
+		final ast = bparser.parseFile(modelFile)
 		final rml = RecursiveMachineLoader.loadFromAst(bparser, ast, new ParsingBehaviour(), bparser.contentProvider)
 		model = model.create(ast, rml, modelFile, bparser)
 	}

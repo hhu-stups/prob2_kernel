@@ -1,5 +1,13 @@
 package de.prob.analysis.testcasegeneration;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import de.be4.classicalb.core.parser.node.APredicateParseUnit;
 import de.be4.classicalb.core.parser.node.PPredicate;
 import de.be4.classicalb.core.parser.node.Start;
@@ -11,7 +19,6 @@ import de.prob.analysis.testcasegeneration.testtrace.MCDCTestTrace;
 import de.prob.analysis.testcasegeneration.testtrace.TestTrace;
 import de.prob.animator.command.FindTestPathCommand;
 import de.prob.animator.domainobjects.ClassicalB;
-import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.animator.domainobjects.Join;
 import de.prob.model.representation.AbstractElement;
@@ -21,14 +28,6 @@ import de.prob.model.representation.Extraction;
 import de.prob.model.representation.Machine;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Performs constraint-based test case generation.
@@ -227,12 +226,7 @@ public class ConstraintBasedTestCaseGenerator {
 		AbstractModel model = stateSpace.getModel();;
 
 		List<IEvalElement> guards = Extraction.getGuardPredicates(machine, operation);
-		ClassicalB predicate = null;
-		if(guards.isEmpty()) {
-			predicate = new ClassicalB("1=1", FormulaExpand.EXPAND);
-		} else {
-			predicate = new ClassicalB(Join.conjunct(model, guards).getCode(), FormulaExpand.EXPAND);
-		}
+		ClassicalB predicate = (ClassicalB)Join.conjunct(model, guards);
 		Start ast = predicate.getAst();
 		return ((APredicateParseUnit) ast.getPParseUnit()).getPredicate();
 	}

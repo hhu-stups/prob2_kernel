@@ -1,6 +1,8 @@
 package de.prob.json;
 
 import java.time.Instant;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
 import java.util.Objects;
 
@@ -18,6 +20,12 @@ import org.slf4j.LoggerFactory;
  */
 final class ProB2UI1Dot0Metadata {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProB2UI1Dot0Metadata.class);
+	
+	private static final DateTimeFormatter OLD_METADATA_DATE_FORMATTER = new DateTimeFormatterBuilder()
+			.parseCaseInsensitive()
+			.parseLenient()
+			.appendPattern("d MMM yyyy hh:mm:ssa O")
+			.toFormatter();
 	
 	final String creationDate;
 	final String createdBy;
@@ -44,7 +52,7 @@ final class ProB2UI1Dot0Metadata {
 		Instant creationDateTime;
 		if (this.creationDate != null) {
 			try {
-				creationDateTime = JsonManagerRaw.OLD_METADATA_DATE_FORMATTER.parse(this.creationDate, Instant::from);
+				creationDateTime = OLD_METADATA_DATE_FORMATTER.parse(this.creationDate, Instant::from);
 			} catch (DateTimeParseException e) {
 				LOGGER.warn("Failed to parse creation date from ProB 2 UI 1.0 metadata, replacing with null", e);
 				creationDateTime = null;

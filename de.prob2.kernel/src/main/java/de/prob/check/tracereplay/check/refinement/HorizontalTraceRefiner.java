@@ -1,23 +1,29 @@
 package de.prob.check.tracereplay.check.refinement;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import com.google.common.io.MoreFiles;
 import com.google.inject.Injector;
+
 import de.be4.classicalb.core.parser.BParser;
 import de.be4.classicalb.core.parser.exceptions.BCompoundException;
 import de.be4.classicalb.core.parser.node.Start;
 import de.prob.check.tracereplay.PersistentTransition;
-import de.prob.check.tracereplay.check.TraceCheckerUtils;
 import de.prob.check.tracereplay.check.traceConstruction.AdvancedTraceConstructor;
 import de.prob.check.tracereplay.check.traceConstruction.TraceConstructionError;
 import de.prob.scripting.Api;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static java.util.Collections.*;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
@@ -30,11 +36,6 @@ public class HorizontalTraceRefiner extends AbstractTraceRefinement {
 		this.adaptTo = adaptTo;
 	}
 
-	private String removeFileExtension(Path path){
-		return path.getFileName().toString().substring(0, path.getFileName().toString().lastIndexOf("."));
-	}
-
-
 	/**
 	 * Refines a classical B Trace horizontally. Respects Includes/Extends/Promotes/Imports
 	 * @return A trace replayable on the target machine if possible, preserving the originals traces properties
@@ -45,20 +46,22 @@ public class HorizontalTraceRefiner extends AbstractTraceRefinement {
 	@Override
 	public TraceRefinementResult refineTraceExtendedFeedback() throws IOException, BCompoundException, TraceConstructionError {
 		BParser betaParser = new BParser(adaptTo.toString());
-		Start betaStart = betaParser.parseFile(adaptTo.toFile(), false);
+		Start betaStart = betaParser.parseFile(adaptTo.toFile());
 
-		OperationsFinder operationsFinder = new OperationsFinder(removeFileExtension(adaptFrom), betaStart);
+		OperationsFinder operationsFinder = new OperationsFinder(MoreFiles.getNameWithoutExtension(adaptFrom), betaStart);
 		operationsFinder.explore();
 
-		StateSpace stateSpace = TraceCheckerUtils.createStateSpace(adaptTo.toString(), injector);
-
-		StateSpace stateSpace2 = injector.getInstance(Api.class).b_load(adaptFrom.toString());
+		Api api = injector.getInstance(Api.class);
+		StateSpace stateSpace = api.b_load(adaptTo.toString());
+		StateSpace stateSpace2 = api.b_load(adaptFrom.toString());
 		Map<String, OperationsFinder.RenamingContainer> promotedOperations =
-				handlePromotedOperations(operationsFinder.getPromoted(), removeFileExtension(adaptFrom), new ArrayList<>(stateSpace2.getLoadedMachine().getOperations().keySet()), operationsFinder.getExtendedMachines(), operationsFinder.getIncludedImportedMachines());
+				handlePromotedOperations(operationsFinder.getPromoted(), MoreFiles.getNameWithoutExtension(adaptFrom), new ArrayList<>(stateSpace2.getLoadedMachine().getOperations().keySet()), operationsFinder.getExtendedMachines(), operationsFinder.getIncludedImportedMachines());
 
 		Map<String, Set<String>> internal = operationsFinder.usedOperationsReversed();
 
-		Set<String> usedOperations = TraceCheckerUtils.usedOperations(transitionList);
+		Set<String> usedOperations = transitionList.stream()
+			.map(PersistentTransition::getOperationName)
+			.collect(Collectors.toSet());
 
 		Map<String, List<String>> alternatives = usedOperations.stream().collect(toMap(entry -> entry, entry -> {
 			Set<String> result = new HashSet<>();

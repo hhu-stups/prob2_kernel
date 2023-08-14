@@ -1,9 +1,7 @@
 package de.prob.animator.domainobjects;
 
-import de.prob.animator.command.EvaluateFormulaCommand;
 import de.prob.model.representation.IFormulaUUID;
 import de.prob.prolog.output.IPrologTermOutput;
-import de.prob.statespace.State;
 
 /**
  * Objects that implement this interface correctly are automatically recognized
@@ -62,19 +60,7 @@ public interface IEvalElement {
 	 */
 	public abstract EvalElementType getKind();
 
-	/**
-	 * @deprecated No direct replacement is provided. Use {@link #getCode()} instead and store the formula language separately if needed.
-	 */
-	@Deprecated
-	public String serialized();
-
 	public IFormulaUUID getFormulaId();
-
-	/**
-	 * @deprecated Use {@link State#eval(IEvalElement)} or similar methods, or manually construct a {@link EvaluateFormulaCommand} if necessary.
-	 */
-	@Deprecated
-	public EvaluateFormulaCommand getCommand(State state);
 
 	public FormulaExpand expansion();
 }

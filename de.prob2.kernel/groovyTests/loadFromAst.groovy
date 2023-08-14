@@ -17,7 +17,7 @@ END"""
 final modelFactory = api.modelFactoryProvider.classicalBFactory
 assert modelFactory != null 
 final p = new BParser()
-final ast = p.parse(modelString, false)
+final ast = p.parseMachine(modelString)
 
 final em = modelFactory.create("blah",ast)
 final m = em.model
