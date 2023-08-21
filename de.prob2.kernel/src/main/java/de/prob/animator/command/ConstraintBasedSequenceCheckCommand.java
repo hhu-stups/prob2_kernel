@@ -6,6 +6,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.exception.ProBError;
 import de.prob.parser.ISimplifiedROMap;
@@ -17,6 +18,9 @@ import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
 import de.prob.statespace.Transition;
 
+/**
+ * Calls the ProB core to find a feasible path of a list of transitions that ends in a state that satisfies a given predicate.
+ */
 public class ConstraintBasedSequenceCheckCommand extends AbstractCommand implements IStateSpaceModifier {
 
 	
@@ -42,12 +46,12 @@ public class ConstraintBasedSequenceCheckCommand extends AbstractCommand impleme
 	
 	private List<Transition> transitions;
 	
+	public ConstraintBasedSequenceCheckCommand(StateSpace s, List<String> events) {
+		this(s, events, new ClassicalB("1=1"));
+	}
+	
 	public ConstraintBasedSequenceCheckCommand(final StateSpace s, final List<String> events, final IEvalElement predicate) {
-		this.s = s;
-		this.events = events;
-		this.predicate = predicate;
-		this.timeout = 200;
-		this.transitions = new ArrayList<>();
+		this(s, events, predicate, 200);
 	}
 	
 	public ConstraintBasedSequenceCheckCommand(final StateSpace s, final List<String> events, final IEvalElement predicate, final int timeout) {
@@ -104,7 +108,8 @@ public class ConstraintBasedSequenceCheckCommand extends AbstractCommand impleme
 	}
 
 	public Trace getTrace() {
-		if(transitions.isEmpty()) {
+		// FIXME Why is an empty trace not allowed here?
+		if (transitions == null || transitions.isEmpty()) {
 			return null;
 		}
 		return s.getTrace(s.getRoot().getId()).addTransitions(transitions);

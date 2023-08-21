@@ -17,7 +17,7 @@ import de.prob.analysis.mcdc.MCDCIdentifier;
 import de.prob.analysis.testcasegeneration.testtrace.CoverageTestTrace;
 import de.prob.analysis.testcasegeneration.testtrace.MCDCTestTrace;
 import de.prob.analysis.testcasegeneration.testtrace.TestTrace;
-import de.prob.animator.command.FindTestPathCommand;
+import de.prob.animator.command.ConstraintBasedSequenceCheckCommand;
 import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.animator.domainobjects.Join;
@@ -83,8 +83,8 @@ public class ConstraintBasedTestCaseGenerator {
 			List<TestTrace> tracesOfCurrentDepth = filterDepthAndFinal(testTraces, depth);
 			for (TestTrace trace : tracesOfCurrentDepth) {
 				for (Target t : new ArrayList<>(targets)) {
-					FindTestPathCommand cmd = findTestPath(trace, t);
-					if (cmd.isFeasible() && !visitedTargets.contains(t)) {
+					ConstraintBasedSequenceCheckCommand cmd = findTestPath(trace, t);
+					if (cmd.getResult() != ConstraintBasedSequenceCheckCommand.ResultType.NO_PATH_FOUND && !visitedTargets.contains(t)) {
 						targets.remove(t);
 						Trace previousTrace = cmd.getTrace();
 						cmd = findTestPathWithTarget(trace, t);
@@ -105,8 +105,8 @@ public class ConstraintBasedTestCaseGenerator {
 			}
 			for (TestTrace trace : tracesOfCurrentDepth) {
 				for (Target t : filterTempTargets(getAllOperationNames(), tempTargets)) {
-					FindTestPathCommand cmd = findTestPath(trace, t);
-					if (cmd.isFeasible() && !visitedTargets.contains(t)) {
+					ConstraintBasedSequenceCheckCommand cmd = findTestPath(trace, t);
+					if (cmd.getResult() != ConstraintBasedSequenceCheckCommand.ResultType.NO_PATH_FOUND && !visitedTargets.contains(t)) {
 						Trace previousTrace = cmd.getTrace();
 						cmd = findTestPathWithTarget(trace, t);
 						Trace currentTrace = cmd.getTrace();
@@ -248,7 +248,7 @@ public class ConstraintBasedTestCaseGenerator {
 	}
 
 	/**
-	 * Executes the {@link FindTestPathCommand}.
+	 * Executes the {@link ConstraintBasedSequenceCheckCommand}.
 	 * <p>
 	 * The command calls the ProB core to find a feasible path, composed of the transitions of a trace, that ends in a
 	 * state that satisfies the guard of the regarded target.
@@ -257,14 +257,16 @@ public class ConstraintBasedTestCaseGenerator {
 	 * @param target The regarded target
 	 * @return The command that contains the result of the ProB call
 	 */
-	private FindTestPathCommand findTestPath(TestTrace trace, Target target) {
-		FindTestPathCommand cmd = new FindTestPathCommand(trace.getTransitionNames(), stateSpace, target.getGuard());
+	private ConstraintBasedSequenceCheckCommand findTestPath(TestTrace trace, Target target) {
+		// FIXME Can we use the original predicate AST instead of pretty-printing and re-parsing it?
+		ClassicalB guardPredicate = new ClassicalB(target.getGuardString());
+		ConstraintBasedSequenceCheckCommand cmd = new ConstraintBasedSequenceCheckCommand(stateSpace, trace.getTransitionNames(), guardPredicate);
 		stateSpace.execute(cmd);
 		return cmd;
 	}
 
 	/**
-	 * Executes the {@link FindTestPathCommand}.
+	 * Executes the {@link ConstraintBasedSequenceCheckCommand}.
 	 * <p>
 	 * The command calls the ProB core to find a feasible path containing the target as final operation.
 	 * This function is used after checking the feasibility of the prior trace and the final operation.
@@ -273,10 +275,10 @@ public class ConstraintBasedTestCaseGenerator {
 	 * @param target The regarded target
 	 * @return The command that contains the result of the ProB call
 	 */
-	private FindTestPathCommand findTestPathWithTarget(TestTrace trace, Target target) {
+	private ConstraintBasedSequenceCheckCommand findTestPathWithTarget(TestTrace trace, Target target) {
 		List<String> transitions = new ArrayList<>(trace.getTransitionNames());
 		transitions.add(target.getOperation());
-		FindTestPathCommand cmd = new FindTestPathCommand(transitions, stateSpace);
+		ConstraintBasedSequenceCheckCommand cmd = new ConstraintBasedSequenceCheckCommand(stateSpace, transitions);
 		stateSpace.execute(cmd);
 		return cmd;
 	}

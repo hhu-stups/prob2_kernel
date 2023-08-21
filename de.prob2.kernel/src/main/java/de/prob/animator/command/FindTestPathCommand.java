@@ -20,7 +20,10 @@ import de.prob.statespace.Transition;
 /**
  * Calls the ProB core to find a feasible path of a list of transitions {@link #givenTransitions} that ends in a
  * state that satisfies a given predicate {@link #endPredicate}.
+ * 
+ * @deprecated Use {@link ConstraintBasedSequenceCheckCommand} instead, which does the same thing, but has a more complete API.
  */
+@Deprecated
 public class FindTestPathCommand extends AbstractCommand implements IStateSpaceModifier {
 
 	public enum ResultType {
