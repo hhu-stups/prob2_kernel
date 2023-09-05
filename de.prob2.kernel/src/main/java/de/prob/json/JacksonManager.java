@@ -127,6 +127,7 @@ public final class JacksonManager<T extends HasMetadata> {
 	 * @param objectMapper the object mapper to initialize
 	 */
 	private static void initObjectMapper(final ObjectMapper objectMapper) {
+		objectMapper.enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL);
 		objectMapper.enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 		objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 		objectMapper.disable(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS);
