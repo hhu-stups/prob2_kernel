@@ -23,6 +23,7 @@ public class GetDottyForSigMergeCmd extends AbstractCommand {
 		this.ignored = ignored;
 		try {
 			tempFile = File.createTempFile("dotSM", ".dot");
+			tempFile.deleteOnExit();
 		} catch (IOException e){
 			throw new IllegalStateException(e);
 		}

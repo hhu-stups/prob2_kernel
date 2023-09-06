@@ -58,7 +58,7 @@ public class VerticalTraceRefiner extends AbstractTraceRefinement{
 		prettyPrinter.caseAAbstractMachineParseUnit(aAbstractMachineParseUnit);
 
 		File tempFile = File.createTempFile("machine", "." + ClassicalBFactory.CLASSICAL_B_MACHINE_EXTENSION, adaptFrom.getParent().toFile());
-
+		tempFile.deleteOnExit();
 
 		FileWriter writer = new FileWriter(tempFile);
 		writer.write(prettyPrinter.getPrettyPrint());

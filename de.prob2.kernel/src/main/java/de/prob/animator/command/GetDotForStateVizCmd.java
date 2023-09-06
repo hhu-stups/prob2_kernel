@@ -30,6 +30,7 @@ public class GetDotForStateVizCmd extends AbstractCommand {
 		this.id = id;
 		try {
 			tempFile = File.createTempFile("dotSM", ".dot");
+			tempFile.deleteOnExit();
 		} catch (IOException e){
 			throw new IllegalStateException(e);
 		}

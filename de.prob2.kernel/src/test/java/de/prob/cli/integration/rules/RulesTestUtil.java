@@ -58,6 +58,7 @@ public final class RulesTestUtil {
 	public static File createRulesMachineFile(String machineBody) {
 		try {
 			File tempFile = File.createTempFile("TestMachine", ".rmch");
+			tempFile.deleteOnExit();
 			String filename = tempFile.getName();
 			StringBuilder sb = new StringBuilder();
 			sb.append("RULES_MACHINE ");

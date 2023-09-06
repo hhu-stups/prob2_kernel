@@ -22,6 +22,7 @@ public class GetDottyForTransitionDiagramCmd extends AbstractCommand {
 		expression = expr;
 		try {
 			tempFile = File.createTempFile("dotTD", ".dot");
+			tempFile.deleteOnExit();
 		} catch (IOException e) {
 			throw new IllegalStateException(e);
 		}

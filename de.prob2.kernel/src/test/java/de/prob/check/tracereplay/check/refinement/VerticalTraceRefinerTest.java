@@ -63,6 +63,7 @@ public class VerticalTraceRefinerTest {
 		TraceJsonFile jsonFile = traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "refinements", "TrafficLightRef.prob2trace"));
 
 		File tempFile = File.createTempFile("machine", ".mch");
+		tempFile.deleteOnExit();
 
 		FileWriter writer = new FileWriter(tempFile);
 		writer.write(prettyPrinter.getPrettyPrint());
