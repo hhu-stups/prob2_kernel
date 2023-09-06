@@ -1,5 +1,5 @@
 plugins {
-	id "de.undercouch.download" version "5.4.0"
+	id "de.undercouch.download" version "5.5.0"
 }
 
 apply plugin: 'java-library'
@@ -160,7 +160,7 @@ dependencies {
 	api group: "de.hhu.stups", name: "value-translator", version: "0.1.3"
 
 	// Groovy (Apache License 2.0)
-	api(platform(group: "org.apache.groovy", name: "groovy-bom", version: "4.0.13"))
+	api(platform(group: "org.apache.groovy", name: "groovy-bom", version: "4.0.14"))
 	api group: "org.apache.groovy", name: "groovy"
 	api group: "org.apache.groovy", name: "groovy-jsr223"
 	api group: "org.apache.groovy", name: "groovy-nio"
@@ -193,7 +193,7 @@ dependencies {
 
 	testRuntimeOnly group: "org.junit.platform", name: "junit-platform-launcher"
 	// Byte Buddy and Objenesis are needed by Spock to mock classes
-	testRuntimeOnly group: "net.bytebuddy", name: "byte-buddy", version: "1.14.5" // Apache License 2.0
+	testRuntimeOnly group: "net.bytebuddy", name: "byte-buddy", version: "1.14.7" // Apache License 2.0
 	testRuntimeOnly group: "org.objenesis", name: "objenesis", version: "3.3" // Apache License 2.0
 }
 
