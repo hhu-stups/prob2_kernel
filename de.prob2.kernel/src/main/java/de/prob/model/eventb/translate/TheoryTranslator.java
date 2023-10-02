@@ -155,8 +155,12 @@ public class TheoryTranslator {
 		pto.printAtom(operator.toString());
 
 		printOperatorArguments(operator.getArguments(), pto);
-		operator.getWD().printProlog(pto);
-
+		
+		// operator.getWD().printProlog(pto); // old version; this contains only the WD conditions inside the direct definition body
+        operator.getPredicate().printProlog(pto); // this seems to be the real user-defined WD condition
+        // TODO: do we want to export both and extend the Prolog format?
+        // The old getWD condition is implicit in the definition body and not that useful for ProB?
+		
 		processDefinition(operator.getDefinition(), pto);
 
 		pto.closeTerm();
