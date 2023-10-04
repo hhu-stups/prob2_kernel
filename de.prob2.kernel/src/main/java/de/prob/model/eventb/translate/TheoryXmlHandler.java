@@ -76,7 +76,7 @@ public class TheoryXmlHandler extends DefaultHandler {
 
 	@Override
 	public void endDocument() {
-		model = model.withTheories(theories);
+		model = model.withExtensions(typeEnv).withTheories(theories);
 	}
 
 	public EventBModel getModel() {

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<org.eventb.core.contextFile org.eventb.core.configuration="org.eventb.core.fwd;de.prob.symbolic.ctxBase" org.eventb.core.generated="false" org.eventb.texttools.text_lastmodified="1694516137800" org.eventb.texttools.text_representation="context TestTheoryWD&#10;constants x&#10;axioms&#10; @axm1 x∈ℕ&#10; @axm2 x = mu({1})&#10; theorem @thm1 x=1&#10; theorem @thm2 assert_non_empty({1,2,3})=1‥3&#10;end&#10;" version="3">
+    <org.eventb.core.constant name="_AcF2MFFVEe6_b6OkGjYNHg" org.eventb.core.generated="false" org.eventb.core.identifier="x"/>
+    <org.eventb.core.axiom name="_AcGdQFFVEe6_b6OkGjYNHg" org.eventb.core.generated="false" org.eventb.core.label="axm1" org.eventb.core.predicate="x∈ℕ"/>
+    <org.eventb.core.axiom name="_AcHrYFFVEe6_b6OkGjYNHg" org.eventb.core.generated="false" org.eventb.core.label="axm2" org.eventb.core.predicate="x = mu({1})"/>
+    <org.eventb.core.axiom name="_AcHrYVFVEe6_b6OkGjYNHg" org.eventb.core.generated="false" org.eventb.core.label="thm1" org.eventb.core.predicate="x=1" org.eventb.core.theorem="true"/>
+    <org.eventb.core.axiom name="_6CIbwFFaEe6OgPVmDV3zSA" org.eventb.core.generated="false" org.eventb.core.label="thm2" org.eventb.core.predicate="assert_non_empty({1,2,3})=1‥3" org.eventb.core.theorem="true"/>
+</org.eventb.core.contextFile>

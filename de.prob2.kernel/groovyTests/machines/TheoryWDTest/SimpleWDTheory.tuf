@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<org.eventb.theory.core.theoryRoot org.eventb.core.configuration="org.eventb.theory.core.thy">
+    <org.eventb.theory.core.typeParameter name="'" org.eventb.core.identifier="T"/>
+    <org.eventb.theory.core.newOperatorDefinition name="(" org.eventb.core.label="mu" org.eventb.theory.core.associative="false" org.eventb.theory.core.commutative="false" org.eventb.theory.core.formulaType="true" org.eventb.theory.core.notationType="PREFIX">
+        <org.eventb.theory.core.operatorArgument name="'" org.eventb.core.expression="ℙ(T)" org.eventb.core.identifier="set"/>
+        <org.eventb.theory.core.operatorWDcondition name="(" org.eventb.core.predicate="set ≠ ∅"/>
+        <org.eventb.theory.core.operatorWDcondition name="*" org.eventb.core.predicate="∃v·set={v}"/>
+        <org.eventb.theory.core.directOperatorDefinition name="+" org.eventb.theory.core.formula="({TRUE}×set)(TRUE)"/>
+    </org.eventb.theory.core.newOperatorDefinition>
+    <org.eventb.theory.core.newOperatorDefinition name=")" org.eventb.core.label="assert_non_empty" org.eventb.theory.core.associative="false" org.eventb.theory.core.commutative="false" org.eventb.theory.core.formulaType="true" org.eventb.theory.core.notationType="PREFIX">
+        <org.eventb.theory.core.operatorArgument name="'" org.eventb.core.expression="ℙ(T)" org.eventb.core.identifier="set"/>
+        <org.eventb.theory.core.operatorWDcondition name="(" org.eventb.core.predicate="set ≠ ∅"/>
+        <org.eventb.theory.core.directOperatorDefinition name=")" org.eventb.theory.core.formula="set"/>
+    </org.eventb.theory.core.newOperatorDefinition>
+</org.eventb.theory.core.theoryRoot>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<org.eventb.core.poFile org.eventb.core.poStamp="1">
+    <org.eventb.core.poPredicateSet name="ABSHYP" org.eventb.core.poStamp="0">
+        <org.eventb.core.poIdentifier name="x" org.eventb.core.type="ℤ"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poSequent name="axm2/WD" org.eventb.core.accurate="true" org.eventb.core.poDesc="Well-definedness of Axiom" org.eventb.core.poStamp="0">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/TheoryWDTest/TestTheoryWD.bpo|org.eventb.core.poFile#TestTheoryWD|org.eventb.core.poPredicateSet#HYP'"/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="{1}≠(∅ ⦂ ℙ(ℤ))∧(∃v⦂ℤ·{1}={v})" org.eventb.core.source="/TheoryWDTest/TestTheoryWD.buc|org.eventb.core.contextFile#TestTheoryWD|org.eventb.core.axiom#_AcHrYFFVEe6_b6OkGjYNHg"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/TheoryWDTest/TestTheoryWD.buc|org.eventb.core.contextFile#TestTheoryWD|org.eventb.core.axiom#_AcHrYFFVEe6_b6OkGjYNHg"/>
+        <org.eventb.core.poSelHint name="SEQHYS" org.eventb.core.poSelHintFst="/TheoryWDTest/TestTheoryWD.bpo|org.eventb.core.poFile#TestTheoryWD|org.eventb.core.poPredicateSet#ABSHYP" org.eventb.core.poSelHintSnd="/TheoryWDTest/TestTheoryWD.bpo|org.eventb.core.poFile#TestTheoryWD|org.eventb.core.poPredicateSet#HYP'"/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poSequent name="thm1/THM" org.eventb.core.accurate="true" org.eventb.core.poDesc="Theorem" org.eventb.core.poStamp="0">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/TheoryWDTest/TestTheoryWD.bpo|org.eventb.core.poFile#TestTheoryWD|org.eventb.core.poPredicateSet#HYP("/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="x=1" org.eventb.core.source="/TheoryWDTest/TestTheoryWD.buc|org.eventb.core.contextFile#TestTheoryWD|org.eventb.core.axiom#_AcHrYVFVEe6_b6OkGjYNHg"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/TheoryWDTest/TestTheoryWD.buc|org.eventb.core.contextFile#TestTheoryWD|org.eventb.core.axiom#_AcHrYVFVEe6_b6OkGjYNHg"/>
+        <org.eventb.core.poSelHint name="SEQHYS" org.eventb.core.poSelHintFst="/TheoryWDTest/TestTheoryWD.bpo|org.eventb.core.poFile#TestTheoryWD|org.eventb.core.poPredicateSet#ABSHYP" org.eventb.core.poSelHintSnd="/TheoryWDTest/TestTheoryWD.bpo|org.eventb.core.poFile#TestTheoryWD|org.eventb.core.poPredicateSet#HYP("/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poSequent name="thm2/WD" org.eventb.core.accurate="true" org.eventb.core.poDesc="Well-definedness of Theorem" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/TheoryWDTest/TestTheoryWD.bpo|org.eventb.core.poFile#TestTheoryWD|org.eventb.core.poPredicateSet#HYP)"/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="{1,2,3}≠(∅ ⦂ ℙ(ℤ))" org.eventb.core.source="/TheoryWDTest/TestTheoryWD.buc|org.eventb.core.contextFile#TestTheoryWD|org.eventb.core.axiom#_6CIbwFFaEe6OgPVmDV3zSA"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/TheoryWDTest/TestTheoryWD.buc|org.eventb.core.contextFile#TestTheoryWD|org.eventb.core.axiom#_6CIbwFFaEe6OgPVmDV3zSA"/>
+        <org.eventb.core.poSelHint name="SEQHYS" org.eventb.core.poSelHintFst="/TheoryWDTest/TestTheoryWD.bpo|org.eventb.core.poFile#TestTheoryWD|org.eventb.core.poPredicateSet#ABSHYP" org.eventb.core.poSelHintSnd="/TheoryWDTest/TestTheoryWD.bpo|org.eventb.core.poFile#TestTheoryWD|org.eventb.core.poPredicateSet#HYP)"/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poSequent name="thm2/THM" org.eventb.core.accurate="true" org.eventb.core.poDesc="Theorem" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/TheoryWDTest/TestTheoryWD.bpo|org.eventb.core.poFile#TestTheoryWD|org.eventb.core.poPredicateSet#HYP)"/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="assert_non_empty({1,2,3})=1 ‥ 3" org.eventb.core.source="/TheoryWDTest/TestTheoryWD.buc|org.eventb.core.contextFile#TestTheoryWD|org.eventb.core.axiom#_6CIbwFFaEe6OgPVmDV3zSA"/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/TheoryWDTest/TestTheoryWD.buc|org.eventb.core.contextFile#TestTheoryWD|org.eventb.core.axiom#_6CIbwFFaEe6OgPVmDV3zSA"/>
+        <org.eventb.core.poSelHint name="SEQHYS" org.eventb.core.poSelHintFst="/TheoryWDTest/TestTheoryWD.bpo|org.eventb.core.poFile#TestTheoryWD|org.eventb.core.poPredicateSet#ABSHYP" org.eventb.core.poSelHintSnd="/TheoryWDTest/TestTheoryWD.bpo|org.eventb.core.poFile#TestTheoryWD|org.eventb.core.poPredicateSet#HYP)"/>
+    </org.eventb.core.poSequent>
+    <org.eventb.core.poPredicateSet name="HYP'" org.eventb.core.parentSet="/TheoryWDTest/TestTheoryWD.bpo|org.eventb.core.poFile#TestTheoryWD|org.eventb.core.poPredicateSet#ABSHYP" org.eventb.core.poStamp="0">
+        <org.eventb.core.poPredicate name="PRD0" org.eventb.core.predicate="x∈ℕ" org.eventb.core.source="/TheoryWDTest/TestTheoryWD.buc|org.eventb.core.contextFile#TestTheoryWD|org.eventb.core.axiom#_AcGdQFFVEe6_b6OkGjYNHg"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poPredicateSet name="HYP(" org.eventb.core.parentSet="/TheoryWDTest/TestTheoryWD.bpo|org.eventb.core.poFile#TestTheoryWD|org.eventb.core.poPredicateSet#HYP'" org.eventb.core.poStamp="0">
+        <org.eventb.core.poPredicate name="PRD1" org.eventb.core.predicate="x=mu({1})" org.eventb.core.source="/TheoryWDTest/TestTheoryWD.buc|org.eventb.core.contextFile#TestTheoryWD|org.eventb.core.axiom#_AcHrYFFVEe6_b6OkGjYNHg"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poPredicateSet name="HYP)" org.eventb.core.parentSet="/TheoryWDTest/TestTheoryWD.bpo|org.eventb.core.poFile#TestTheoryWD|org.eventb.core.poPredicateSet#HYP(" org.eventb.core.poStamp="0">
+        <org.eventb.core.poPredicate name="PRD2" org.eventb.core.predicate="x=1" org.eventb.core.source="/TheoryWDTest/TestTheoryWD.buc|org.eventb.core.contextFile#TestTheoryWD|org.eventb.core.axiom#_AcHrYVFVEe6_b6OkGjYNHg"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poPredicateSet name="ALLHYP" org.eventb.core.parentSet="/TheoryWDTest/TestTheoryWD.bpo|org.eventb.core.poFile#TestTheoryWD|org.eventb.core.poPredicateSet#HYP)" org.eventb.core.poStamp="1">
+        <org.eventb.core.poPredicate name="PRD3" org.eventb.core.predicate="assert_non_empty({1,2,3})=1 ‥ 3" org.eventb.core.source="/TheoryWDTest/TestTheoryWD.buc|org.eventb.core.contextFile#TestTheoryWD|org.eventb.core.axiom#_6CIbwFFaEe6OgPVmDV3zSA"/>
+    </org.eventb.core.poPredicateSet>
+</org.eventb.core.poFile>

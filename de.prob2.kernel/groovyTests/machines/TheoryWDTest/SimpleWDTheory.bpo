@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<org.eventb.core.poFile org.eventb.core.poStamp="0">
+    <org.eventb.core.poPredicateSet name="ABSHYP" org.eventb.core.poStamp="0">
+        <org.eventb.core.poIdentifier name="T" org.eventb.core.type="ℙ(T)"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poSequent name="mu/Op-WD" org.eventb.core.accurate="true" org.eventb.core.poDesc="Operator Well-Definedness Preservation" org.eventb.core.poStamp="0">
+        <org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/TheoryWDTest/SimpleWDTheory.bpo|org.eventb.core.poFile#SimpleWDTheory|org.eventb.core.poPredicateSet#ABSHYP"/>
+        <org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="∀set⦂ℙ(T)·set≠(∅ ⦂ ℙ(T))∧(∃v⦂T·set={v})⇒TRUE∈dom({TRUE} × set)∧{TRUE} × set∈BOOL ⇸ T" org.eventb.core.source="/TheoryWDTest/SimpleWDTheory.tuf|org.eventb.theory.core.theoryRoot#SimpleWDTheory|org.eventb.theory.core.newOperatorDefinition#("/>
+        <org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/TheoryWDTest/SimpleWDTheory.tcf|org.eventb.theory.core.scTheoryRoot#SimpleWDTheory|org.eventb.theory.core.scNewOperatorDefinition#U"/>
+        <org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/TheoryWDTest/SimpleWDTheory.tuf|org.eventb.theory.core.theoryRoot#SimpleWDTheory|org.eventb.theory.core.newOperatorDefinition#("/>
+        <org.eventb.core.poSelHint name="SEQHYT" org.eventb.core.poSelHintFst="/TheoryWDTest/SimpleWDTheory.bpo|org.eventb.core.poFile#SimpleWDTheory|org.eventb.core.poPredicateSet#ABSHYP" org.eventb.core.poSelHintSnd="/TheoryWDTest/SimpleWDTheory.bpo|org.eventb.core.poFile#SimpleWDTheory|org.eventb.core.poSequent#mu\/Op-WD|org.eventb.core.poPredicateSet#SEQHYP"/>
+    </org.eventb.core.poSequent>
+</org.eventb.core.poFile>

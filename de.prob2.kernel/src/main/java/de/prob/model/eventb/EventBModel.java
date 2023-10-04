@@ -16,20 +16,27 @@ import de.prob.statespace.Language;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import org.eventb.core.ast.extension.IFormulaExtension;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 public class EventBModel extends AbstractModel {
+	private final Set<IFormulaExtension> extensions;
+
 	@Inject
 	public EventBModel(final StateSpaceProvider stateSpaceProvider) {
-		this(stateSpaceProvider, Collections.emptyMap(), new DependencyGraph(), null);
+		this(stateSpaceProvider, Collections.emptyMap(), new DependencyGraph(), null, Collections.emptySet());
 	}
 
-	private EventBModel(StateSpaceProvider stateSpaceProvider, Map<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children, DependencyGraph graph, File modelFile) {
+	private EventBModel(StateSpaceProvider stateSpaceProvider, Map<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children, DependencyGraph graph, File modelFile, Set<IFormulaExtension> extensions) {
 		super(stateSpaceProvider, children, graph, modelFile);
+		this.extensions = extensions;
 	}
 
 	public ModelElementList<EventBMachine> getMachines() {
@@ -49,7 +56,15 @@ public class EventBModel extends AbstractModel {
 	}
 
 	public EventBModel setModelFile(final File modelFile) {
-		return new EventBModel(getStateSpaceProvider(), getChildren(), getGraph(), modelFile);
+		return new EventBModel(getStateSpaceProvider(), getChildren(), getGraph(), modelFile, getExtensions());
+	}
+
+	public Set<IFormulaExtension> getExtensions() {
+		return this.extensions;
+	}
+
+	public EventBModel withExtensions(Set<IFormulaExtension> extensions) {
+		return new EventBModel(getStateSpaceProvider(), getChildren(), getGraph(), getModelFile(), Collections.unmodifiableSet(new HashSet<>(extensions)));
 	}
 
 	public ModelElementList<Theory> getTheories() {
@@ -62,7 +77,7 @@ public class EventBModel extends AbstractModel {
 
 	@Override
 	public IEvalElement parseFormula(final String formula, final FormulaExpand expand) {
-		return new EventB(formula, Collections.emptySet(), expand);
+		return new EventB(formula, getExtensions(), expand);
 	}
 
 	@Override
@@ -71,38 +86,38 @@ public class EventBModel extends AbstractModel {
 	}
 
 	public EventBModel set(Class<? extends AbstractElement> clazz, ModelElementList<? extends AbstractElement> elements) {
-		return new EventBModel(getStateSpaceProvider(), assoc(clazz, elements), getGraph(), getModelFile());
+		return new EventBModel(getStateSpaceProvider(), assoc(clazz, elements), getGraph(), getModelFile(), getExtensions());
 	}
 
 	public <T extends AbstractElement> EventBModel addTo(Class<T> clazz, T element) {
 		ModelElementList<T> list = getChildrenOfType(clazz);
-		return new EventBModel(getStateSpaceProvider(), assoc(clazz, list.addElement(element)), getGraph(), getModelFile());
+		return new EventBModel(getStateSpaceProvider(), assoc(clazz, list.addElement(element)), getGraph(), getModelFile(), getExtensions());
 	}
 
 	public <T extends AbstractElement> EventBModel removeFrom(Class<T> clazz, T element) {
 		ModelElementList<T> list = getChildrenOfType(clazz);
-		return new EventBModel(getStateSpaceProvider(), assoc(clazz, list.removeElement(element)), getGraph(), getModelFile());
+		return new EventBModel(getStateSpaceProvider(), assoc(clazz, list.removeElement(element)), getGraph(), getModelFile(), getExtensions());
 	}
 
 	public <T extends AbstractElement> EventBModel replaceIn(Class<T> clazz, T oldElement, T newElement) {
 		ModelElementList<T> list = getChildrenOfType(clazz);
-		return new EventBModel(getStateSpaceProvider(), assoc(clazz, list.replaceElement(oldElement, newElement)), getGraph(), getModelFile());
+		return new EventBModel(getStateSpaceProvider(), assoc(clazz, list.replaceElement(oldElement, newElement)), getGraph(), getModelFile(), getExtensions());
 	}
 
 	public EventBModel addMachine(final EventBMachine machine) {
-		return new EventBModel(getStateSpaceProvider(), assoc(Machine.class, getMachines().addElement(machine)), getGraph().addVertex(machine.getName()), getModelFile());
+		return new EventBModel(getStateSpaceProvider(), assoc(Machine.class, getMachines().addElement(machine)), getGraph().addVertex(machine.getName()), getModelFile(), getExtensions());
 	}
 
 	public EventBModel addContext(final Context context) {
-		return new EventBModel(getStateSpaceProvider(), assoc(Context.class, getContexts().addElement(context)), getGraph().addVertex(context.getName()), getModelFile());
+		return new EventBModel(getStateSpaceProvider(), assoc(Context.class, getContexts().addElement(context)), getGraph().addVertex(context.getName()), getModelFile(), getExtensions());
 	}
 
 	public EventBModel addRelationship(final String element1, final String element2, final DependencyGraph.ERefType relationship) {
-		return new EventBModel(getStateSpaceProvider(), getChildren(), getGraph().addEdge(element1, element2, relationship), getModelFile());
+		return new EventBModel(getStateSpaceProvider(), getChildren(), getGraph().addEdge(element1, element2, relationship), getModelFile(), getExtensions());
 	}
 
 	public EventBModel removeRelationship(final String element1, final String element2, final DependencyGraph.ERefType relationship) {
-		return new EventBModel(getStateSpaceProvider(), getChildren(), getGraph().removeEdge(element1, element2, relationship), getModelFile());
+		return new EventBModel(getStateSpaceProvider(), getChildren(), getGraph().removeEdge(element1, element2, relationship), getModelFile(), getExtensions());
 	}
 
 	public EventBModel calculateDependencies() {
@@ -122,7 +137,7 @@ public class EventBModel extends AbstractModel {
 				graph = graph.addEdge(c.getName(), c2.getName(), DependencyGraph.ERefType.EXTENDS);
 			}
 		}
-		return new EventBModel(getStateSpaceProvider(), getChildren(), graph, getModelFile());
+		return new EventBModel(getStateSpaceProvider(), getChildren(), graph, getModelFile(), getExtensions());
 	}
 
 	@Override
