@@ -175,7 +175,7 @@ dependencies {
 	api group: "com.google.inject", name: "guice", version: "6.0.0" // Apache License 2.0
 	implementation group: "de.hhu.stups", name: "alloy2b", version: "1.4" // Eclipse Public License 1.0
 	api group: "de.hhu.stups", name: "ltl-dsl", version: "0.2.1" // Eclipse Public License 1.0
-	api group: "de.hhu.stups", name: "rodin-eventb-ast", version: "3.2.0" // Eclipse Public License 1.0
+	api group: "de.hhu.stups", name: "rodin-eventb-ast", version: "3.2.1-SNAPSHOT" // Eclipse Public License 1.0
 	implementation group: "de.hhu.stups", name: "tla2bAST", version: "1.2.1" // Eclipse Public License 1.0
 
 	api(platform(group: "com.fasterxml.jackson", name: "jackson-bom", version: "2.15.2"))
