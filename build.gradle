@@ -118,8 +118,8 @@ allprojects {
 }
 
 // When making a release, please check that parserVersion matches what the specified version of probcli expects, to avoid unpredictable/inconsistent behavior!
-def parserVersion = "2.12.7"
-def probcliVersion = "1.12.2"
+def parserVersion = "2.12.8-SNAPSHOT"
+def probcliVersion = "1.12.3-nightly"
 def cliDownloadURL
 if (probcliVersion.endsWith("-nightly")) {
 	if (!isSnapshot) {
