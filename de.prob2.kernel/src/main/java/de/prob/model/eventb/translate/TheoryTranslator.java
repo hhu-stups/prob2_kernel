@@ -276,15 +276,8 @@ public class TheoryTranslator {
 	private void printMappings(final Collection<OperatorMapping> proBMappings,
 			final IPrologTermOutput pto) {
 		pto.openList();
-		// Currently, we support only one kind of operator mapping, just tagging
-		// an operator to indicate that an optimized ProB implementation should
-		// be used. We do not invest any effort in preparing future kinds of
-		// other operator mappings.
 		for (OperatorMapping mapping : proBMappings) {
-			pto.openTerm("tag");
-			pto.printAtom(mapping.getOperatorName());
-			pto.printAtom(mapping.getSpec());
-			pto.closeTerm();
+			mapping.printProlog(pto);
 		}
 		pto.closeList();
 	}
