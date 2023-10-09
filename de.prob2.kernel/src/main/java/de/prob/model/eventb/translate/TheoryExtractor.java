@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -125,7 +126,7 @@ public class TheoryExtractor extends DefaultHandler {
 					+ File.separator + name + ".ptm";
 			mappings = TheoryMappingParser.parseTheoryMapping(name,
 					mappingFileName);
-		} catch (FileNotFoundException e) {
+		} catch (FileNotFoundException | NoSuchFileException e) {
 			logger.warn("No .ptm file found for Theory {}. This means that ProB has no information on how to interpret this theory.", name, e);
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
