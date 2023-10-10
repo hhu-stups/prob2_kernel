@@ -5,21 +5,19 @@ import java.util.Map;
 import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.command.IRawCommand;
 import de.prob.cli.ProBInstance;
+import de.prob.core.sablecc.node.ACallBackResult;
 import de.prob.core.sablecc.node.AExceptionResult;
 import de.prob.core.sablecc.node.AInterruptedResult;
 import de.prob.core.sablecc.node.ANoResult;
-import de.prob.core.sablecc.node.AYesResult;
 import de.prob.core.sablecc.node.AProgressResult;
-import de.prob.core.sablecc.node.ACallBackResult;
+import de.prob.core.sablecc.node.AYesResult;
 import de.prob.core.sablecc.node.PResult;
-import de.prob.core.sablecc.node.Start;
 import de.prob.exception.ProBError;
 import de.prob.exception.PrologException;
 import de.prob.parser.BindingGenerator;
-import de.prob.parser.PrologTermGenerator;
 import de.prob.parser.ProBResultParser;
+import de.prob.parser.PrologTermGenerator;
 import de.prob.prolog.output.PrologTermStringOutput;
-import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;
 
 import org.slf4j.Logger;
@@ -52,23 +50,21 @@ class CommandProcessor {
 		}
 		String result = cli.send(query); // send the query and get Prolog's response
 
-		Start ast = parseResult(result);
-		PResult topnode = ast.getPResult();
+		PResult topnode = parseResult(result);
 		while (topnode instanceof AProgressResult || topnode instanceof ACallBackResult) {
 			if (topnode instanceof AProgressResult ) {
 				// enable the command to respond to the progress information (e.g., by updating progress bar)
-				command.processProgressResult(PrologTermGenerator.toPrologTerm(ast));
+				command.processProgressResult(PrologTermGenerator.toPrologTerm(topnode));
 				result = cli.receive(); // receive next term by Prolog
 			} else {
 				final PrologTermStringOutput pout = new PrologTermStringOutput();
-				command.processCallBack(PrologTermGenerator.toPrologTerm(ast), pout);
+				command.processCallBack(PrologTermGenerator.toPrologTerm(topnode), pout);
 				result = cli.send(pout.fullstop().toString());
 			}
-			ast = parseResult(result);
-			topnode = ast.getPResult();
+			topnode = parseResult(result);
 		}
 		// command is finished, we can extract the result:
-		IPrologResult extractResult = extractResult(ast,topnode);
+		IPrologResult extractResult = extractResult(topnode);
 		if (logger.isDebugEnabled() || logger.isTraceEnabled()) {
 			String resultString = extractResult.toString();
 			logger.debug("Result: {}", shorten(resultString));
@@ -77,25 +73,25 @@ class CommandProcessor {
 		return extractResult;
 	}
 
-	private IPrologResult extractResult(final Start ast, final PResult topnode) {
+	private IPrologResult extractResult(PResult topnode) {
 		if (topnode instanceof ANoResult) {
 			return new NoResult();
 		} else if (topnode instanceof AInterruptedResult) {
 			return new InterruptedResult();
 		} else if (topnode instanceof AYesResult) {
-			Map<String, PrologTerm> binding = BindingGenerator.createBinding(ast);
+			Map<String, PrologTerm> binding = BindingGenerator.createBinding(PrologTermGenerator.toPrologTerm(topnode));
 			return new YesResult(new SimplifiedROMap<String, PrologTerm>(binding));
 		} else if (topnode instanceof AExceptionResult) {
 			AExceptionResult r = (AExceptionResult) topnode;
 			String message = r.getString().getText();
 			throw new PrologException(message);
 		} else {
-			throw new ProBError("unknown prolog result " + ast);
+			throw new ProBError("Unhandled Prolog result: " + topnode.getClass());
 		}
 	}
 
-	private Start parseResult(final String input) {
-		return ProBResultParser.parse(input);
+	private PResult parseResult(final String input) {
+		return ProBResultParser.parse(input).getPResult();
 	}
 
 	public void configure(final ProBInstance cli) {
