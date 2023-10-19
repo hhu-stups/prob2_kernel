@@ -223,23 +223,16 @@ public class EventB extends AbstractEvalElement implements IBEvalElement {
 	@Override
 	public EvalElementType getKind() {
 		if (kind == null) {
-			IParseResult parseResult = ensurePredicateParsed();
-			if(!parseResult.hasProblem()) {
-				return kind;
-			} else {
-				parseResult = ensureExpressionParsed();
-				if(!parseResult.hasProblem()) {
-					return kind;
-				} else if (!allowAssignments) {
-					return EvalElementType.NONE;
-				} else {
-					parseResult = ensureAssignmentParsed();
-					if(!parseResult.hasProblem()) {
-						return kind;
-					} else {
-						return EvalElementType.NONE;
-					}
+			try {
+				ensureParsed();
+			} catch (EvaluationException exc) {
+				// ensureParsed should always set the kind, even if it throws an EvaluationException.
+				if (kind == null) {
+					throw new AssertionError("ensureParsed didn't initialize the formula kind", exc);
 				}
+			}
+			if (kind == null) {
+				throw new AssertionError("ensureParsed didn't initialize the formula kind");
 			}
 		}
 		return kind;
