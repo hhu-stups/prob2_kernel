@@ -16,7 +16,7 @@ import de.prob.prolog.term.PrologTerm;
  */
 public class GetStateBasedErrorsCommand extends AbstractCommand {
 
-	private static final String PROLOG_COMMAND_NAME = "get_state_errors";
+	private static final String PROLOG_COMMAND_NAME = "prob2_get_state_errors";
 	private final String stateId;
 	private Collection<StateError> stateErrors;
 
@@ -27,7 +27,7 @@ public class GetStateBasedErrorsCommand extends AbstractCommand {
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
 		stateErrors = BindingGenerator.getList(bindings, "Errors").stream()
-			.map(term -> new StateError(BindingGenerator.getCompoundTerm(term, "error", 3)))
+			.map(StateError::fromPrologTerm)
 			.collect(Collectors.toList());
 	}
 

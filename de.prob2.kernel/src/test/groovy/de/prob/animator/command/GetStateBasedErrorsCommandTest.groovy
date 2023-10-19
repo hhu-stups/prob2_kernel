@@ -24,7 +24,7 @@ class GetStateBasedErrorsCommandTest extends Specification {
 		final term = pto.sentences[0]
 		term != null
 		term instanceof CompoundPrologTerm
-		term.functor == "get_state_errors"
+		term.functor == "prob2_get_state_errors"
 		term.arity == 2
 		term.getArgument(1).number
 		term.getArgument(2).variable
@@ -34,11 +34,11 @@ class GetStateBasedErrorsCommandTest extends Specification {
 		given:
 		final ISimplifiedROMap<String, PrologTerm> map = Mock() {
 			get("Errors") >> new ListPrologTerm(
-				new CompoundPrologTerm("error",
-					new CompoundPrologTerm("foo"),
-					new CompoundPrologTerm("bar"),
-					new CompoundPrologTerm("baz"),
-				),
+				new CompoundPrologTerm("error", new ListPrologTerm(
+					new CompoundPrologTerm("event", new CompoundPrologTerm("foo")),
+					new CompoundPrologTerm("description", new CompoundPrologTerm("bar")),
+					new CompoundPrologTerm("long_description", new CompoundPrologTerm("baz")),
+				)),
 			)
 		}
 		final command = new GetStateBasedErrorsCommand("state")
