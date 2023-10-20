@@ -1,7 +1,10 @@
 package de.prob.animator.domainobjects;
 
+import java.util.Collection;
+
 import de.prob.model.representation.IFormulaUUID;
 import de.prob.prolog.output.IPrologTermOutput;
+import de.prob.statespace.StateSpace;
 
 /**
  * Objects that implement this interface correctly are automatically recognized
@@ -60,7 +63,22 @@ public interface IEvalElement {
 	 */
 	public abstract EvalElementType getKind();
 
+	/**
+	 * Do not call this method directly.
+	 * It is only used internally by the formula registration mechanism ({@link StateSpace#registerFormulas(Collection)}).
+	 * This method may be removed in the future if that implementation changes.
+	 * 
+	 * @return a unique identifier for this formula,
+	 *     different from all other formula IDs in the same ProB Java API instance
+	 */
 	public IFormulaUUID getFormulaId();
 
+	/**
+	 * This setting is obsolete.
+	 * The preferred way to change the expansion behavior is by passing a {@link FormulaExpand} or {@link EvalOptions} parameter to the evaluation method/command.
+	 * The expansion mode stored in the formula is only used as a fallback if no other setting is passed at evaluation time.
+	 * 
+	 * @return the default expansion mode to use when evaluating this formula
+	 */
 	public FormulaExpand expansion();
 }
