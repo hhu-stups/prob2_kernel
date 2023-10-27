@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 import de.be4.classicalb.core.parser.exceptions.BException;
 
-import de.prob.prolog.term.IntegerPrologTerm;
+import de.prob.prolog.term.AIntegerPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 
@@ -54,10 +54,10 @@ public final class ErrorItem {
 			}
 			
 			final String filename = location.getArgument(1).atomToString();
-			final int startLine = ((IntegerPrologTerm)location.getArgument(2)).getValue().intValueExact();
-			final int startColumn = ((IntegerPrologTerm)location.getArgument(3)).getValue().intValueExact();
-			final int endLine = ((IntegerPrologTerm)location.getArgument(4)).getValue().intValueExact();
-			final int endColumn = ((IntegerPrologTerm)location.getArgument(5)).getValue().intValueExact();
+			final int startLine = ((AIntegerPrologTerm)location.getArgument(2)).intValueExact();
+			final int startColumn = ((AIntegerPrologTerm)location.getArgument(3)).intValueExact();
+			final int endLine = ((AIntegerPrologTerm)location.getArgument(4)).intValueExact();
+			final int endColumn = ((AIntegerPrologTerm)location.getArgument(5)).intValueExact();
 			
 			return new Location(filename, startLine, startColumn, endLine, endColumn);
 		}

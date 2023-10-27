@@ -9,7 +9,7 @@ package de.prob.animator.command;
 import de.prob.check.StateSpaceStats;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
-import de.prob.prolog.term.IntegerPrologTerm;
+import de.prob.prolog.term.AIntegerPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 
 public final class ComputeStateSpaceStatsCommand extends AbstractCommand {
@@ -25,12 +25,12 @@ public final class ComputeStateSpaceStatsCommand extends AbstractCommand {
 	public void processResult(
 			final ISimplifiedROMap<String, PrologTerm> bindings) {
 
-		int nrNodes = ((IntegerPrologTerm) bindings
-				.get("NrNodes")).getValue().intValue();
-		int nrTrans = ((IntegerPrologTerm) bindings
-				.get("NrTrans")).getValue().intValue();
-		int nrProcessed = ((IntegerPrologTerm) bindings
-				.get("NrProcessed")).getValue().intValue();
+		int nrNodes = ((AIntegerPrologTerm) bindings
+				.get("NrNodes")).intValueExact();
+		int nrTrans = ((AIntegerPrologTerm) bindings
+				.get("NrTrans")).intValueExact();
+		int nrProcessed = ((AIntegerPrologTerm) bindings
+				.get("NrProcessed")).intValueExact();
 
 		coverageResult = new StateSpaceStats(nrNodes, nrTrans, nrProcessed);
 

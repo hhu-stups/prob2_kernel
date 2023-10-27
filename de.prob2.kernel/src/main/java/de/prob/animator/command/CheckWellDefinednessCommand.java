@@ -28,8 +28,8 @@ public final class CheckWellDefinednessCommand extends AbstractCommand {
 	
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
-		this.dischargedCount = BindingGenerator.getInteger(bindings.get(NR_DISCHARGED_VAR)).getValue();
-		this.totalCount = BindingGenerator.getInteger(bindings.get(NR_TOTAL_VAR)).getValue();
+		this.dischargedCount = BindingGenerator.getAInteger(bindings.get(NR_DISCHARGED_VAR)).getValue();
+		this.totalCount = BindingGenerator.getAInteger(bindings.get(NR_TOTAL_VAR)).getValue();
 	}
 	
 	public BigInteger getDischargedCount() {

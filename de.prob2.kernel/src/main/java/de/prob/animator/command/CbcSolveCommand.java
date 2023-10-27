@@ -14,8 +14,8 @@ import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
+import de.prob.prolog.term.AIntegerPrologTerm;
 import de.prob.prolog.term.CompoundPrologTerm;
-import de.prob.prolog.term.IntegerPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.State;
@@ -85,7 +85,7 @@ public class CbcSolveCommand extends AbstractCommand {
 			}
 		}
 
-		IntegerPrologTerm runtime =  (IntegerPrologTerm) bindings.get(TIME_VARIABLE);
+		AIntegerPrologTerm runtime =  (AIntegerPrologTerm) bindings.get(TIME_VARIABLE);
 		milliSeconds = runtime.getValue();
 
 		PrologTerm prologTerm = bindings.get(EVALUATE_TERM_VARIABLE);

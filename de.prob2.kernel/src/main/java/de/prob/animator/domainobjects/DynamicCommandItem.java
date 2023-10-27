@@ -49,7 +49,7 @@ public class DynamicCommandItem {
 		final String command = term.getArgument(1).atomToString();
 		final String name = term.getArgument(2).atomToString();
 		final String description = term.getArgument(3).atomToString();
-		final int arity = BindingGenerator.getInteger(term.getArgument(4)).getValue().intValue();
+		final int arity = BindingGenerator.getAInteger(term.getArgument(4)).intValueExact();
 		final List<String> relevantPreferences = PrologTerm.atomsToStrings(BindingGenerator.getList(term.getArgument(5)));
 		final List<PrologTerm> additionalInfo = BindingGenerator.getList(term.getArgument(6));
 		final String available = term.getArgument(7).atomToString();

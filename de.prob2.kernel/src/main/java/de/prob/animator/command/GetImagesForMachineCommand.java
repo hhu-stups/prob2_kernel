@@ -31,7 +31,7 @@ public class GetImagesForMachineCommand extends AbstractCommand {
 	public void processResult(ISimplifiedROMap<String, PrologTerm> bindings) {
 		ListPrologTerm entries = BindingGenerator.getList(bindings.get(VARIABLE_NAME));
 		for (PrologTerm t : entries) {
-			int id = BindingGenerator.getInteger(t.getArgument(1)).getValue().intValue();
+			int id = BindingGenerator.getAInteger(t.getArgument(1)).intValueExact();
 			String name = t.getArgument(2).getFunctor();
 			images.put(id, name);
 		}

@@ -28,7 +28,7 @@ public abstract class AbstractDotDiagramCmd extends AbstractCommand {
 				for (PrologTerm pt : ls) {
 					labels.add(pt.getFunctor());
 				}
-				int count = BindingGenerator.getInteger(cpt.getArgument(2)).getValue().intValue();
+				int count = BindingGenerator.getAInteger(cpt.getArgument(2)).intValueExact();
 				String color = cpt.getArgument(3).getFunctor();
 				DotNode n = new DotNode(id, labels, count, color);
 				nodes.put(id, n);

@@ -153,7 +153,7 @@ class AnimatorImpl implements IAnimator {
 	public long getTotalNumberOfErrors() {
 		GetTotalNumberOfErrorsCommand command = new GetTotalNumberOfErrorsCommand();
 		execute(command);
-		return command.getTotalNumberOfErrors().longValue();
+		return command.getTotalNumberOfErrors().longValueExact();
 	}
 
 	@Override

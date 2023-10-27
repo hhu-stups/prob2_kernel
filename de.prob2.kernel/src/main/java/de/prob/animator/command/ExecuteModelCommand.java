@@ -7,8 +7,8 @@ import java.util.List;
 import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
+import de.prob.prolog.term.AIntegerPrologTerm;
 import de.prob.prolog.term.CompoundPrologTerm;
-import de.prob.prolog.term.IntegerPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.ITraceDescription;
 import de.prob.statespace.State;
@@ -76,9 +76,8 @@ public class ExecuteModelCommand extends AbstractCommand implements IStateSpaceM
 		Transition operation = Transition.createTransitionFromCompoundPrologTerm(statespace, cpt);
 		resultTrace.add(operation);
 
-		IntegerPrologTerm intPrologTerm = BindingGenerator.getInteger(bindings.get(EXECUTED_STEPS_VARIABLE));
-		BigInteger bigInt = intPrologTerm.getValue();
-		stepsExecuted = bigInt.intValue();
+		AIntegerPrologTerm intPrologTerm = BindingGenerator.getAInteger(bindings.get(EXECUTED_STEPS_VARIABLE));
+		stepsExecuted = intPrologTerm.intValueExact();
 
 		switch (bindings.get(RESULT_VARIABLE).getFunctor()) {
 		case "maximum_nr_of_steps_reached":

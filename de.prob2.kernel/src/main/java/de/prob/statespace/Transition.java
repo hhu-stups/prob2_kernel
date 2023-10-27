@@ -26,7 +26,6 @@ import de.prob.animator.domainobjects.FormulaTranslationMode;
 import de.prob.formula.PredicateBuilder;
 import de.prob.parser.BindingGenerator;
 import de.prob.prolog.term.CompoundPrologTerm;
-import de.prob.prolog.term.IntegerPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 
 /**
@@ -511,9 +510,7 @@ public class Transition {
 	 * @return String representation of the Transition Id
 	 */
 	public static String getIdFromPrologTerm(final PrologTerm destTerm) {
-		if (destTerm instanceof IntegerPrologTerm) {
-			return BindingGenerator.getInteger(destTerm).getValue().toString();
-		}
+		// integer terms have their string representation as functor
 		return destTerm.getFunctor();
 	}
 }

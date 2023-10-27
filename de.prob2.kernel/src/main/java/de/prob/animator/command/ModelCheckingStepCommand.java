@@ -78,12 +78,12 @@ public class ModelCheckingStepCommand extends AbstractCommand implements IStateS
 			final ISimplifiedROMap<String, PrologTerm> bindings) {
 		CompoundPrologTerm statsTerm = BindingGenerator.getCompoundTerm(
 				bindings.get(STATS_VARIABLE), STATS_ARITY);
-		int numberNodes = BindingGenerator.getInteger(statsTerm.getArgument(1))
-				.getValue().intValue();
-		int numberTrans = BindingGenerator.getInteger(statsTerm.getArgument(2))
-				.getValue().intValue();
+		int numberNodes = BindingGenerator.getAInteger(statsTerm.getArgument(1))
+				.intValueExact();
+		int numberTrans = BindingGenerator.getAInteger(statsTerm.getArgument(2))
+				.intValueExact();
 		int numberProcessed = BindingGenerator
-				.getInteger(statsTerm.getArgument(3)).getValue().intValue();
+				.getAInteger(statsTerm.getArgument(3)).intValueExact();
 
 		stats = new StateSpaceStats(numberNodes, numberTrans, numberProcessed);
 		result = extractResult(bindings.get(RESULT_VARIABLE));
@@ -106,8 +106,8 @@ public class ModelCheckingStepCommand extends AbstractCommand implements IStateS
 
 		switch (type) {
 		case "not_yet_finished":
-			int maxNodesLeft = BindingGenerator.getInteger(cpt.getArgument(1))
-					.getValue().intValue();
+			int maxNodesLeft = BindingGenerator.getAInteger(cpt.getArgument(1))
+					.intValueExact();
 			return new NotYetFinished("Model checking not completed",
 					maxNodesLeft);
 		case "ok":

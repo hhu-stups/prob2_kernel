@@ -4,7 +4,7 @@ import java.math.BigInteger;
 
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
-import de.prob.prolog.term.IntegerPrologTerm;
+import de.prob.prolog.term.AIntegerPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 
 /**
@@ -21,7 +21,7 @@ public class GetTotalNumberOfErrorsCommand extends AbstractCommand {
 
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
-		IntegerPrologTerm prologTerm = (IntegerPrologTerm) bindings.get(ERRORS_VARIABLE);
+		AIntegerPrologTerm prologTerm = (AIntegerPrologTerm) bindings.get(ERRORS_VARIABLE);
 		value = prologTerm.getValue();
 	}
 

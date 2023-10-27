@@ -2,7 +2,7 @@ package de.prob.animator.command;
 
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
-import de.prob.prolog.term.IntegerPrologTerm;
+import de.prob.prolog.term.AIntegerPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 
 import java.math.BigInteger;
@@ -58,7 +58,7 @@ public class GetStatisticsCommand extends AbstractCommand {
 
 	@Override
 	public void processResult(ISimplifiedROMap<String, PrologTerm> bindings) {
-		IntegerPrologTerm valueTerm = (IntegerPrologTerm) bindings.get("V");
+		AIntegerPrologTerm valueTerm = (AIntegerPrologTerm) bindings.get("V");
 		result = valueTerm.getValue();
 	}
 

@@ -10,7 +10,7 @@ import de.prob.animator.domainobjects.AnimationMatrixEntry;
 import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
-import de.prob.prolog.term.IntegerPrologTerm;
+import de.prob.prolog.term.AIntegerPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.State;
@@ -49,10 +49,10 @@ public final class GetAnimationMatrixForStateCommand extends AbstractCommand {
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
 		final ListPrologTerm prologMatrix = BindingGenerator.getList(bindings.get(MATRIX_VAR));
-		final int minRow = BindingGenerator.getInteger(bindings.get(MIN_ROW_VAR)).getValue().intValueExact();
-		final int maxRow = BindingGenerator.getInteger(bindings.get(MAX_ROW_VAR)).getValue().intValueExact();
-		final int minColumn = BindingGenerator.getInteger(bindings.get(MIN_COL_VAR)).getValue().intValueExact();
-		final int maxColumn = BindingGenerator.getInteger(bindings.get(MAX_COL_VAR)).getValue().intValueExact();
+		final int minRow = BindingGenerator.getAInteger(bindings.get(MIN_ROW_VAR)).intValueExact();
+		final int maxRow = BindingGenerator.getAInteger(bindings.get(MAX_ROW_VAR)).intValueExact();
+		final int minColumn = BindingGenerator.getAInteger(bindings.get(MIN_COL_VAR)).intValueExact();
+		final int maxColumn = BindingGenerator.getAInteger(bindings.get(MAX_COL_VAR)).intValueExact();
 		
 		final int rows = maxRow - minRow + 1;
 		final int columns = maxColumn - minColumn + 1;
@@ -71,14 +71,14 @@ public final class GetAnimationMatrixForStateCommand extends AbstractCommand {
 		prologMatrix.stream()
 			.map(term -> BindingGenerator.getCompoundTerm(term, "entry", 3))
 			.forEach(term -> {
-				final int row = BindingGenerator.getInteger(term.getArgument(1)).getValue().intValueExact();
-				final int column = BindingGenerator.getInteger(term.getArgument(2)).getValue().intValueExact();
+				final int row = BindingGenerator.getAInteger(term.getArgument(1)).intValueExact();
+				final int column = BindingGenerator.getAInteger(term.getArgument(2)).intValueExact();
 				final PrologTerm valueTerm = term.getArgument(3);
 				final AnimationMatrixEntry value;
 				if ("image".equals(valueTerm.getFunctor())) {
 					// Animation image number
 					BindingGenerator.getCompoundTerm(valueTerm, 1);
-					final int imageNumber = ((IntegerPrologTerm)valueTerm.getArgument(1)).getValue().intValueExact();
+					final int imageNumber = ((AIntegerPrologTerm)valueTerm.getArgument(1)).intValueExact();
 					value = new AnimationMatrixEntry.Image(row, column, imageNumber);
 				} else if ("text".equals(valueTerm.getFunctor())) {
 					// Literal string label
