@@ -511,6 +511,6 @@ public class Transition {
 	 */
 	public static String getIdFromPrologTerm(final PrologTerm destTerm) {
 		// integer terms have their string representation as functor
-		return destTerm.getFunctor();
+		return destTerm.atomicToString();
 	}
 }
