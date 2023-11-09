@@ -117,6 +117,8 @@ public final class Installer {
 					// try to delete the lock file when this VM exits
 					LOCK_FILE_PATH.toFile().deleteOnExit();
 				} catch (Exception ignored) {
+					// silently ignore errors
+					// it is not a problem if the file persists
 				}
 			}
 		}

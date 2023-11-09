@@ -95,7 +95,6 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 			} catch (InterruptedException exc) {
 				LOGGER.warn("Thread interrupted while waiting for orphaned probcli process {} to exit after being destroyed", process, exc);
 				Thread.currentThread().interrupt();
-			} catch (Exception ignored) {
 			}
 		}
 	}
@@ -162,6 +161,7 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 		} catch (Exception e) {
 			throw new CliError("Error while opening socket connection to CLI", e);
 		}
+
 		ProBInstance cli = ProBInstance.create(process, stream,
 			cliInformation.getUserInterruptReference(), connection, this.home, this.osInfo, this);
 		this.runningInstances.add(cli);

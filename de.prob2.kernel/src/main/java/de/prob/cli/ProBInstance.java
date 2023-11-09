@@ -85,9 +85,7 @@ public final class ProBInstance implements Closeable {
 	}
 
 	public void shutdown() {
-		try {
-			this.close();
-		} catch (Exception ignored) {}
+		this.close();
 	}
 
 	public void sendInterrupt() {
@@ -159,7 +157,6 @@ public final class ProBInstance implements Closeable {
 			}
 		} catch (InterruptedException exc) {
 			LOGGER.warn("Thread interrupted while waiting for {} to exit - will destroy the process instead", this, exc);
-		} catch (Exception ignored) {
 		} finally {
 			this.probProcess.destroy();
 		}
@@ -177,7 +174,6 @@ public final class ProBInstance implements Closeable {
 			}
 		} catch (InterruptedException exc) {
 			LOGGER.warn("Thread interrupted while waiting for {} to exit after being destroyed - ignoring", this, exc);
-		} catch (Exception ignored) {
 		}
 
 		this.provider.instanceWasShutDown(this, this.probProcess);

@@ -86,7 +86,9 @@ public final class ProBConnection implements Closeable {
 	public void disconnect() {
 		try {
 			this.close();
-		} catch (Exception ignored) {}
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
 	}
 
 	@Override

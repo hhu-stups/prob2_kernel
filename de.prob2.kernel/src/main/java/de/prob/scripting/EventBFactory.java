@@ -75,11 +75,18 @@ public class EventBFactory implements ModelFactory<EventBModel> {
 			}
 		});
 		if (modelFiles.isEmpty()) {
+			Throwable suppressed = null;
 			try {
 				MoreFiles.deleteRecursively(tempdir);
-			} catch (Exception ignored) {
+			} catch (Exception e) {
+				suppressed = e;
 			}
-			throw new IllegalArgumentException("No static checked Event-B files were found in that zip archive!");
+
+			IllegalArgumentException e = new IllegalArgumentException("No static checked Event-B files were found in that zip archive!");
+			if (suppressed != null) {
+				e.addSuppressed(suppressed);
+			}
+			throw e;
 		}
 
 		EventBModel model = modelCreator.get();
@@ -100,6 +107,7 @@ public class EventBFactory implements ModelFactory<EventBModel> {
 			try {
 				MoreFiles.deleteRecursively(tempdir);
 			} catch (Exception ignored) {
+				// silently ignore any errors in this cleanup thread
 			}
 		}, "EventB TempDir Deleter"));
 		return tempdir;

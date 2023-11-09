@@ -27,7 +27,8 @@ final class ConsoleListener implements Runnable {
 			if ("Stream closed".equals(e.getMessage())) {
 				LOGGER.debug("CLI stdout stream closed - stopping ConsoleListener", e);
 			} else {
-				LOGGER.info("ConsoleListener died with error", e);
+				LOGGER.warn("ConsoleListener died with error", e);
+				throw new RuntimeException("ConsoleListener died with error", e);
 			}
 		}
 	}
