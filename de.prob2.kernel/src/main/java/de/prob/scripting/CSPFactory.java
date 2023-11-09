@@ -1,8 +1,8 @@
 package de.prob.scripting;
 
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
@@ -34,6 +34,9 @@ public class CSPFactory implements ModelFactory<CSPModel> {
 		} catch (NoSuchFileException e) {
 			// rethrow as FNFE, because the tests expect the old exception
 			throw new FileNotFoundException(e.getMessage());
+		} catch (UncheckedIOException e) {
+			// the stream will throw an UncheckedIOException when there is an IOException while reading
+			throw e.getCause();
 		}
 
 		cspModel = cspModel.create(text, p.toFile());

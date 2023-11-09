@@ -1,8 +1,8 @@
 package de.prob.animator.command;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -48,7 +48,7 @@ public class GetDotForStateVizCmd extends AbstractCommand {
 	public void processResult(ISimplifiedROMap<String, PrologTerm> bindings){
 		try (final Stream<String> lines = Files.lines(tempFile.toPath())) {
 			content = lines.collect(Collectors.joining("\n"));
-		} catch (IOException e) {
+		} catch (UncheckedIOException | IOException e) {
 			throw new IllegalStateException(e);
 		}
 	}
