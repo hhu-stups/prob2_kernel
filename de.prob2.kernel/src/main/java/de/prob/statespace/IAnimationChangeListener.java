@@ -27,7 +27,7 @@ public interface IAnimationChangeListener {
 	 * @param currentAnimationChanged
 	 *            whether or not the current animation has changed.
 	 */
-    void traceChange(Trace currentTrace, boolean currentAnimationChanged);
+	void traceChange(Trace currentTrace, boolean currentAnimationChanged);
 
 	void animatorStatus(boolean busy);
 }

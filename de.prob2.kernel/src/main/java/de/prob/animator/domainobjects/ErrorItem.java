@@ -21,7 +21,7 @@ public final class ErrorItem {
 		WARNING,
 		ERROR,
 		INTERNAL_ERROR,
-    }
+	}
 	
 	public static final class Location {
 		private final String filename;

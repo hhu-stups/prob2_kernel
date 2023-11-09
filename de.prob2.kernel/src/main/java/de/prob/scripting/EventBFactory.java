@@ -44,17 +44,17 @@ public class EventBFactory implements ModelFactory<EventBModel> {
 
 	private String getValidFileName(String fileName) {
 		String extension = MoreFiles.getFileExtension(Paths.get(fileName));
-        switch (extension) {
-            case CHECKED_RODIN_CONTEXT_EXTENSION:
-            case CHECKED_RODIN_MACHINE_EXTENSION:
-                return fileName;
-            case RODIN_CONTEXT_EXTENSION:
-                return fileName.substring(0, fileName.length() - RODIN_CONTEXT_EXTENSION.length()) + CHECKED_RODIN_CONTEXT_EXTENSION;
-            case RODIN_MACHINE_EXTENSION:
-                return fileName.substring(0, fileName.length() - RODIN_MACHINE_EXTENSION.length()) + CHECKED_RODIN_MACHINE_EXTENSION;
-            default:
-                throw new IllegalArgumentException(fileName + " is not a valid Event-B file");
-        }
+		switch (extension) {
+			case CHECKED_RODIN_CONTEXT_EXTENSION:
+			case CHECKED_RODIN_MACHINE_EXTENSION:
+				return fileName;
+			case RODIN_CONTEXT_EXTENSION:
+				return fileName.substring(0, fileName.length() - RODIN_CONTEXT_EXTENSION.length()) + CHECKED_RODIN_CONTEXT_EXTENSION;
+			case RODIN_MACHINE_EXTENSION:
+				return fileName.substring(0, fileName.length() - RODIN_MACHINE_EXTENSION.length()) + CHECKED_RODIN_MACHINE_EXTENSION;
+			default:
+				throw new IllegalArgumentException(fileName + " is not a valid Event-B file");
+		}
 	}
 
 	public EventBModel extractModelFromZip(final String zipfile) throws IOException {

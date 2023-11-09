@@ -103,7 +103,7 @@ public class ConstraintBasedAssertionCheckCommand extends AbstractCommand
 	@Override
 	public Trace getTrace(StateSpace s) {
 		if(counterExampleStateID != null && result == ResultType.COUNTER_EXAMPLE) {
-            return s.getTrace(counterExampleStateID);
+			return s.getTrace(counterExampleStateID);
 		}
 		return null;
 	}

@@ -180,7 +180,7 @@ public final class DotCall {
 				try (
 					final Reader reader = new InputStreamReader(dotProcess.getErrorStream());
 					final BufferedReader br = new BufferedReader(reader)
-                ) {
+				) {
 					br.lines().forEachOrdered(line -> {
 						errorOutput.add(line);
 						LOGGER.error("Error output from dot: {}", line);

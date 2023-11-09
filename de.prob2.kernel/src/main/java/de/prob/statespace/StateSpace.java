@@ -507,15 +507,15 @@ public class StateSpace implements IAnimator {
 					}
 
 					formulaSubscribers.get(formulaOfInterest).add(subscriber);
-                } else {
+				} else {
 					Set<Object> subscribers = Collections.newSetFromMap(new WeakHashMap<>());
 					subscribers.add(subscriber);
 					formulaSubscribers.put(formulaOfInterest, subscribers);
 					subscribedFormulaOptions.put(formulaOfInterest, options);
 					toSubscribe.add(formulaOfInterest);
-                }
-                success = true;
-            }
+				}
+				success = true;
+			}
 		}
 		this.registerFormulas(toSubscribe);
 		return success;

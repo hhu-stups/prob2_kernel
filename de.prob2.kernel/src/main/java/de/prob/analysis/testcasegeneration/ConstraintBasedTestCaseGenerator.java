@@ -225,7 +225,7 @@ public class ConstraintBasedTestCaseGenerator {
 		AbstractElement machine = stateSpace.getMainComponent();
 		AbstractModel model = stateSpace.getModel();
 
-        List<IEvalElement> guards = Extraction.getGuardPredicates(machine, operation);
+		List<IEvalElement> guards = Extraction.getGuardPredicates(machine, operation);
 		ClassicalB predicate = (ClassicalB)Join.conjunct(model, guards);
 		Start ast = predicate.getAst();
 		return ((APredicateParseUnit) ast.getPParseUnit()).getPredicate();

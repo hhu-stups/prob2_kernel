@@ -130,10 +130,10 @@ public class TranslationVisitor implements ISimpleVisitor {
 			// A linear search shouldn't be problematic (or is maybe the fastest
 			// solution) because there are only a few elements.
 			int tag = original.getTag();
-            for (int extraTypeConstruct : EXTRA_TYPE_CONSTRUCTS) {
-                if (extraTypeConstruct == tag)
-                    return true;
-            }
+			for (int extraTypeConstruct : EXTRA_TYPE_CONSTRUCTS) {
+				if (extraTypeConstruct == tag)
+					return true;
+			}
 			return false;
 		}
 	}

@@ -14,5 +14,5 @@ public interface HasMetadata {
 	 * @param metadata the new metadata
 	 * @return a copy of this object with the metadata replaced
 	 */
-    HasMetadata withMetadata(final JsonMetadata metadata);
+	HasMetadata withMetadata(final JsonMetadata metadata);
 }

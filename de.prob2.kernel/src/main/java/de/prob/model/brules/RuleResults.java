@@ -40,7 +40,7 @@ public class RuleResults {
 		final ArrayList<RuleOperation> ruleList = new ArrayList<>();
 		final List<IEvalElement> evalElements = new ArrayList<>();
 		for (RuleOperation operation : ruleOperations) {
-            ruleList.add(operation);
+			ruleList.add(operation);
 			ClassicalB ruleObject = new ClassicalB(operation.getName());
 			evalElements.add(ruleObject);
 			// get number of counter examples

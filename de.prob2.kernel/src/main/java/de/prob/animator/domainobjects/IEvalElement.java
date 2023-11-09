@@ -18,7 +18,7 @@ public interface IEvalElement {
 	/**
 	 * @return String representing the formula
 	 */
-    String getCode();
+	String getCode();
 
 	/**
 	 * Pretty-print this formula,
@@ -27,14 +27,14 @@ public interface IEvalElement {
 	 *
 	 * @return a pretty-printed version of the formula
 	 */
-    String getPrettyPrint();
+	String getPrettyPrint();
 
 	/**
 	 * Writes the formula to {@link IPrologTermOutput} pout
 	 * 
 	 * @param pout the {@link IPrologTermOutput} to write to
 	 */
-    void printProlog(IPrologTermOutput pout);
+	void printProlog(IPrologTermOutput pout);
 
 	/**
 	 * Write the formula as a Prolog term for use in evaluation commands.
@@ -61,7 +61,7 @@ public interface IEvalElement {
 	/**
 	 * @return The kind of the formula. For B formulas, this needs to be either formula or expression. For other formula types, new kinds need to be defined to recognize the formula.
 	 */
-    EvalElementType getKind();
+	EvalElementType getKind();
 
 	/**
 	 * Do not call this method directly.
@@ -71,7 +71,7 @@ public interface IEvalElement {
 	 * @return a unique identifier for this formula,
 	 *     different from all other formula IDs in the same ProB Java API instance
 	 */
-    IFormulaUUID getFormulaId();
+	IFormulaUUID getFormulaId();
 
 	/**
 	 * This setting is obsolete.
@@ -80,5 +80,5 @@ public interface IEvalElement {
 	 * 
 	 * @return the default expansion mode to use when evaluating this formula
 	 */
-    FormulaExpand expansion();
+	FormulaExpand expansion();
 }

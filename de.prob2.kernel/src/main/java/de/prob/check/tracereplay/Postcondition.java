@@ -18,7 +18,7 @@ public abstract class Postcondition {
 
 	public enum PostconditionKind {
 		PREDICATE, ENABLEDNESS, DISABLEDNESS
-    }
+	}
 
 	private final PostconditionKind kind;
 

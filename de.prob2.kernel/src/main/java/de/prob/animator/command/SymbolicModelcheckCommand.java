@@ -24,7 +24,7 @@ public class SymbolicModelcheckCommand extends AbstractCommand {
 	
 	public enum ResultType {
 		SUCCESSFUL, INTERRUPTED, COUNTER_EXAMPLE, TIMEOUT, LIMIT_REACHED
-    }
+	}
 	
 	private static final String COMMAND_NAME = "symbolic_model_check";
 	private static final String RESULT_VARIABLE = "R";

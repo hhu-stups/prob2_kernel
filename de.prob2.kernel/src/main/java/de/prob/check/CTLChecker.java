@@ -19,8 +19,7 @@ public class CTLChecker extends CheckerBase {
 		this(s, formula, null);
 	}
 
-	public CTLChecker(final StateSpace s, final CTL formula,
-                      final IModelCheckListener ui) {
+	public CTLChecker(final StateSpace s, final CTL formula, final IModelCheckListener ui) {
 		super(s, ui);
 
 		if (formula == null) {

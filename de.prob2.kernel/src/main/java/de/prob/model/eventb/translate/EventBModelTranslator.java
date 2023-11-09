@@ -27,7 +27,7 @@ public class EventBModelTranslator {
 		this.model = model;
 
 		for (EventBMachine machine : extractMachineHierarchy(mainComponent, model)) {
-            machineTranslators.add(new EventBMachineTranslator(machine));
+			machineTranslators.add(new EventBMachineTranslator(machine));
 			proofObligations.addAll(machine.getProofs());
 		}
 
@@ -156,7 +156,7 @@ public class EventBModelTranslator {
 
 	private void printPragmas(final IPrologTermOutput pto) {
 		for (EventBMachine machine : model.getMachines()) {
-            for (EventBVariable var : machine.getVariables()) {
+			for (EventBVariable var : machine.getVariables()) {
 				if (var.hasUnit()) {
 					pto.openTerm("pragma");
 					pto.printAtom("unit");
