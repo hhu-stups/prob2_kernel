@@ -1,22 +1,22 @@
 package de.prob.cli;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
 import com.google.inject.AbstractModule;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Provides;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-public class ModuleCli extends AbstractModule {
+public final class ModuleCli extends AbstractModule {
 
 	@Override
 	protected void configure() {
 		bind(ProBInstance.class).toProvider(ProBInstanceProvider.class);
 		bind(OsSpecificInfo.class).toProvider(OsInfoProvider.class)
-				.asEagerSingleton();
+			.asEagerSingleton();
 		bind(String.class).annotatedWith(OsName.class).toInstance(System.getProperty("os.name"));
 		bind(String.class).annotatedWith(OsArch.class).toInstance(System.getProperty("os.arch"));
 	}
@@ -41,5 +41,4 @@ public class ModuleCli extends AbstractModule {
 	@BindingAnnotation
 	@interface OsArch {
 	}
-
 }

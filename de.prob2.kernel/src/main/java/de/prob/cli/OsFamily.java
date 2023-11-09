@@ -1,13 +1,15 @@
 package de.prob.cli;
 
+import java.util.Locale;
+
 enum OsFamily {
+
 	WINDOWS,
 	MACOS,
-	LINUX,
-	;
-	
+	LINUX;
+
 	static OsFamily fromName(final String osName) {
-		final String os = osName.toLowerCase();
+		final String os = osName.toLowerCase(Locale.ROOT);
 		if (os.contains("win")) {
 			return WINDOWS;
 		} else if (os.contains("mac")) {

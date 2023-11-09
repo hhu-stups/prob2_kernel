@@ -1,10 +1,11 @@
 package de.prob.cli;
 
-import java.util.Objects;
-
 import com.google.common.collect.ComparisonChain;
 
-public class CliVersionNumber implements Comparable<CliVersionNumber> {
+import java.util.Locale;
+
+public final class CliVersionNumber implements Comparable<CliVersionNumber> {
+
 	public final String major;
 	public final String minor;
 	public final String service;
@@ -19,33 +20,44 @@ public class CliVersionNumber implements Comparable<CliVersionNumber> {
 		this.service = service;
 		this.qualifier = qualifier;
 		this.revision = revision;
-		this.shortVersionString = String.format("%s.%s.%s-%s", major, minor, service, qualifier);
+		this.shortVersionString = String.format(Locale.ROOT, "%s.%s.%s-%s", major, minor, service, qualifier);
 		this.version = this.shortVersionString + (revision.isEmpty() ? "" : " (" + revision + ")");
 	}
 
 	public String getShortVersionString() {
-		return shortVersionString;
+		return this.shortVersionString;
 	}
 
 	@Override
 	public String toString() {
-		return version;
+		return this.version;
 	}
 
 	@Override
 	public int compareTo(CliVersionNumber o) {
-		return ComparisonChain.start().compare(major, o.major).compare(minor, o.minor).compare(service, o.service)
-				.compare(qualifier, o.qualifier).compare(revision, o.revision).result();
+		return ComparisonChain.start()
+			.compare(this.major, o.major)
+			.compare(this.minor, o.minor)
+			.compare(this.service, o.service)
+			.compare(this.qualifier, o.qualifier)
+			.compare(this.revision, o.revision)
+			.result();
 	}
 
 	@Override
-	public boolean equals(Object that) {
-		return that != null && this.toString().equals(that.toString());
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		} else if (!(o instanceof CliVersionNumber)) {
+			return false;
+		} else {
+			CliVersionNumber that = (CliVersionNumber) o;
+			return this.version.equals(that.version);
+		}
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(version);
+		return this.version.hashCode();
 	}
-
 }

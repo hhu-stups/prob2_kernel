@@ -8,12 +8,12 @@ import com.google.inject.Singleton;
  * Creates {@link OsSpecificInfo} for each instance of the ProB 2.0 software.
  * This is determined from the System settings. The resulting
  * {@link OsSpecificInfo} can be injected into any desired class.
- * 
+ *
  * @author joy
- * 
  */
 @Singleton
-class OsInfoProvider implements Provider<OsSpecificInfo> {
+final class OsInfoProvider implements Provider<OsSpecificInfo> {
+
 	private static final String CLI_BINARIES_RESOURCE_PREFIX = "/de/prob/cli/binaries/";
 
 	private final OsSpecificInfo osInfo;
@@ -56,7 +56,7 @@ class OsInfoProvider implements Provider<OsSpecificInfo> {
 			cspmfName = "lib/cspmf";
 			fuzzName = "lib/fuzz";
 		}
-		
+
 		final String binariesZipResourceName = CLI_BINARIES_RESOURCE_PREFIX + "probcli_" + dirName + ".zip";
 		return new OsSpecificInfo(binariesZipResourceName, cliName, userInterruptCmd, cspmfName, fuzzName);
 	}

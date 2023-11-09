@@ -1,29 +1,21 @@
 package de.prob.scripting;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.common.io.MoreFiles;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-
 import de.prob.model.eventb.EventBModel;
 import de.prob.model.eventb.translate.EventBDatabaseTranslator;
 import de.prob.model.eventb.translate.EventBFileNotFoundException;
 
-import org.codehaus.groovy.runtime.ResourceGroovyMethods;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EventBFactory implements ModelFactory<EventBModel> {
+
 	private final Provider<EventBModel> modelCreator;
 	public static final String RODIN_MACHINE_EXTENSION = "bum";
 	public static final String RODIN_CONTEXT_EXTENSION = "buc";
@@ -37,13 +29,13 @@ public class EventBFactory implements ModelFactory<EventBModel> {
 
 	@Override
 	public ExtractedModel<EventBModel> extract(String modelPath) throws IOException {
-		if (EventBPackageFactory.EXTENSION.equals(MoreFiles.getFileExtension(Paths.get(modelPath)))) {
+		Path file = Paths.get(modelPath);
+		if (EventBPackageFactory.EXTENSION.equals(MoreFiles.getFileExtension(file))) {
 			throw new IllegalArgumentException("This is an EventB package file, it must be loaded using EventBPackageFactory instead of EventBFactory.\nPath: " + modelPath);
+		} else if (!Files.exists(file)) {
+			throw new EventBFileNotFoundException(file.toAbsolutePath().toString(), "", false, null);
 		}
-		File file = new File(modelPath);
-		if(!file.exists()) {
-			throw new EventBFileNotFoundException(file.getAbsolutePath(), "", false, null);
-		}
+
 		final EventBModel model = modelCreator.get();
 		final String validFileName = getValidFileName(modelPath);
 		final EventBDatabaseTranslator translator = new EventBDatabaseTranslator(model, validFileName);
@@ -64,46 +56,50 @@ public class EventBFactory implements ModelFactory<EventBModel> {
 	}
 
 	public EventBModel extractModelFromZip(final String zipfile) throws IOException {
-		final File tempdir = createTempDir();
-		try (final InputStream is = new FileInputStream(zipfile)) {
-			FileHandler.extractZip(is, tempdir.toPath());
+		final Path tempdir = createTempDir();
+		try (final InputStream is = Files.newInputStream(Paths.get(zipfile))) {
+			FileHandler.extractZip(is, tempdir);
 		}
 
-		final List<File> modelFiles = new ArrayList<>();
-		Files.walkFileTree(tempdir.toPath(), new SimpleFileVisitor<Path>() {
+		final List<Path> modelFiles = new ArrayList<>();
+		Files.walkFileTree(tempdir, new SimpleFileVisitor<Path>() {
 			@Override
-			public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) {
+			public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
 				String extension = MoreFiles.getFileExtension(file);
 				if (CHECKED_RODIN_CONTEXT_EXTENSION.equals(extension) || CHECKED_RODIN_MACHINE_EXTENSION.equals(extension)) {
-					modelFiles.add(file.toFile());
+					modelFiles.add(file.toRealPath());
 				}
 				return FileVisitResult.CONTINUE;
 			}
 		});
 		if (modelFiles.isEmpty()) {
-			ResourceGroovyMethods.deleteDir(tempdir);
+			try {
+				MoreFiles.deleteRecursively(tempdir);
+			} catch (Exception ignored) {
+			}
 			throw new IllegalArgumentException("No static checked Event-B files were found in that zip archive!");
 		}
+
 		EventBModel model = modelCreator.get();
-		for (File f : modelFiles) {
-			String name = MoreFiles.getNameWithoutExtension(f.toPath());
+		for (Path p : modelFiles) {
+			String name = MoreFiles.getNameWithoutExtension(p);
 			if (model.getComponent(name) == null) {
-				EventBDatabaseTranslator translator = new EventBDatabaseTranslator(model, f.getAbsolutePath());
+				EventBDatabaseTranslator translator = new EventBDatabaseTranslator(model, p.toString());
 				model = translator.getModel();
 			}
 		}
 		return model;
 	}
 
-	private File createTempDir() throws IOException {
-		final File tempdir = Files.createTempDirectory("eventb-model").toFile();
+	private Path createTempDir() throws IOException {
+		final Path tempdir = Files.createTempDirectory("eventb-model");
 		// the temporary directory will be deleted on shutdown of the JVM
-		Runtime.getRuntime().addShutdownHook(new Thread("EventB TempDir Deleter") {
-			@Override
-			public void run() {
-				ResourceGroovyMethods.deleteDir(tempdir);
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			try {
+				MoreFiles.deleteRecursively(tempdir);
+			} catch (Exception ignored) {
 			}
-		});
+		}, "EventB TempDir Deleter"));
 		return tempdir;
 	}
 }
