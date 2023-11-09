@@ -14,23 +14,36 @@ import java.util.zip.ZipInputStream;
  * @author joy
  */
 public final class FileHandler {
+
 	private FileHandler() {
 		throw new AssertionError("Utility class");
 	}
 
 	public static void extractZip(final InputStream zipFileStream, final Path targetDir) throws IOException {
 		Files.createDirectories(targetDir);
+		final Path realTargetDir = targetDir.toRealPath();
 
 		try (final ZipInputStream inStream = new ZipInputStream(zipFileStream)) {
-			ZipEntry entry;
-			while ((entry = inStream.getNextEntry()) != null) {
-				final Path dest = targetDir.resolve(entry.getName());
-				if (dest.getParent() != null) {
-					Files.createDirectories(dest.getParent());
+			for (ZipEntry entry; (entry = inStream.getNextEntry()) != null; ) {
+				final String name = entry.getName();
+				if (name.isEmpty() || "/".equals(name)) {
+					// extract directory is created above
+					continue;
 				}
+
+				final Path dest = realTargetDir.resolve(name).toAbsolutePath().normalize();
+				if (!dest.startsWith(realTargetDir)) {
+					throw new IOException("Entry is outside of target dir: " + name);
+				}
+
 				if (entry.isDirectory()) {
 					Files.createDirectories(dest);
 				} else {
+					Path parent = dest.getParent();
+					if (parent != null) {
+						Files.createDirectories(parent);
+					}
+
 					Files.copy(inStream, dest, StandardCopyOption.REPLACE_EXISTING);
 				}
 			}
