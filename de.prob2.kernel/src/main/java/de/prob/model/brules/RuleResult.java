@@ -42,12 +42,12 @@ public class RuleResult {
 
 	private void transformCounterExamples(AbstractEvalResult abstractEvalResult) {
 		EvalResult evalCurrent = (EvalResult) abstractEvalResult;
-		TranslatedEvalResult<BValue> translatedResult = null;
+		TranslatedEvalResult<BValue> translatedResult;
 		try {
 			translatedResult = evalCurrent.translate();
 		} catch (Exception e) {
 			/*- fall back solution if the result can not be parsed (e.g. {1,...,1000}) 
-			 * should not not happen because MAX_DISPLAY_SET is set to -1 
+			 * should not happen because MAX_DISPLAY_SET is set to -1
 			 * and hence, no truncated terms are delivered by ProBCore
 			 * */
 			final String message = evalCurrent.getValue().replaceAll("\"", "");
@@ -108,17 +108,17 @@ public class RuleResult {
 		sb.append("[OperationName: ").append(this.getRuleName());
 		sb.append(", Result: ").append(this.getRuleState());
 		if (this.getRuleId() != null) {
-			sb.append(", RuleID: " + this.getRuleId());
+			sb.append(", RuleID: ").append(this.getRuleId());
 		}
 		if (this.numberOfViolations > 0) {
-			sb.append(", NumberOfViolations: " + this.numberOfViolations);
-			sb.append(", Violations: " + this.counterExamples);
+			sb.append(", NumberOfViolations: ").append(this.numberOfViolations);
+			sb.append(", Violations: ").append(this.counterExamples);
 		}
 		if (!this.allFailedDependencies.isEmpty()) {
-			sb.append(", FailedDependencies: " + this.allFailedDependencies);
+			sb.append(", FailedDependencies: ").append(this.allFailedDependencies);
 		}
 		if (!this.allNotCheckedDependencies.isEmpty()) {
-			sb.append(", NotCheckedDependencies: " + this.allNotCheckedDependencies);
+			sb.append(", NotCheckedDependencies: ").append(this.allNotCheckedDependencies);
 		}
 		sb.append("]");
 		return sb.toString();
@@ -132,7 +132,7 @@ public class RuleResult {
 		return this.ruleStatus == RuleStatus.FAIL;
 	}
 
-	public class CounterExample {
+	public static class CounterExample {
 		private final int errorType;
 		private final String message;
 

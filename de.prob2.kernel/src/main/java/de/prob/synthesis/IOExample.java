@@ -6,8 +6,8 @@ public class IOExample implements BSynthesisResult {
 
 	// TODO: export to map for interface to neural networks
 
-	private Example input;
-	private Example output;
+	private final Example input;
+	private final Example output;
 
 	public IOExample(final Example input, final Example output) {
 		this.input = input;

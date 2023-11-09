@@ -6,7 +6,7 @@ package de.prob.json;
  * as the class of the root object in a JSON file.
  */
 public interface HasMetadata {
-	public JsonMetadata getMetadata();
+	JsonMetadata getMetadata();
 	
 	/**
 	 * Return a copy of this object with the metadata replaced.
@@ -14,5 +14,5 @@ public interface HasMetadata {
 	 * @param metadata the new metadata
 	 * @return a copy of this object with the metadata replaced
 	 */
-	public HasMetadata withMetadata(final JsonMetadata metadata);
+    HasMetadata withMetadata(final JsonMetadata metadata);
 }

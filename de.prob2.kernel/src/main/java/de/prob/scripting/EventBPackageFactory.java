@@ -76,7 +76,7 @@ public final class EventBPackageFactory implements ModelFactory<EventBModel> {
 		final Path path = Paths.get(fileName);
 		final String componentName;
 		if (EXTENSION.equals(MoreFiles.getFileExtension(path))) {
-			componentName = MoreFiles.getNameWithoutExtension(path).toString();
+			componentName = MoreFiles.getNameWithoutExtension(path);
 		} else {
 			componentName = path.getFileName().toString();
 		}

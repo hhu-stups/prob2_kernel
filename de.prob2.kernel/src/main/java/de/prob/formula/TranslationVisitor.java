@@ -130,10 +130,10 @@ public class TranslationVisitor implements ISimpleVisitor {
 			// A linear search shouldn't be problematic (or is maybe the fastest
 			// solution) because there are only a few elements.
 			int tag = original.getTag();
-			for (int i = 0; i < EXTRA_TYPE_CONSTRUCTS.length; i++) {
-				if (EXTRA_TYPE_CONSTRUCTS[i] == tag)
-					return true;
-			}
+            for (int extraTypeConstruct : EXTRA_TYPE_CONSTRUCTS) {
+                if (extraTypeConstruct == tag)
+                    return true;
+            }
 			return false;
 		}
 	}
@@ -161,7 +161,7 @@ public class TranslationVisitor implements ISimpleVisitor {
 		} else if (type instanceof IntegerType) {
 			result = new AIntegerSetExpression();
 		} else if (type instanceof PowerSetType) {
-			final Type a = ((PowerSetType) type).getBaseType();
+			final Type a = type.getBaseType();
 			result = new APowSubsetExpression(translateType(a));
 		} else if (type instanceof ProductType) {
 			final Type a = ((ProductType) type).getLeft();
@@ -176,7 +176,7 @@ public class TranslationVisitor implements ISimpleVisitor {
 				list.add(translateType(param));
 			}
 			result = new AExtendedExprExpression(new TIdentifierLiteral(ext.getSyntaxSymbol()), list,
-					Collections.<PPredicate>emptyList());
+					Collections.emptyList());
 		} else {
 			throw new AssertionError(
 					"Don't know how to handle the Event-B type of class " + type.getClass().getCanonicalName());

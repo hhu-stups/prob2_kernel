@@ -15,7 +15,7 @@ public final class GetInternalRepresentationCommand extends AbstractCommand {
 		
 		private final String prologName;
 		
-		private TypeInfos(final String prologName) {
+		TypeInfos(final String prologName) {
 			this.prologName = prologName;
 		}
 		

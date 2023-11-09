@@ -19,7 +19,7 @@ public class Theory extends AbstractElement implements Named {
 	private final String name;
 	private final String parentDirectory;
 	private final Collection<OperatorMapping> proBMappings;
-	private Set<IFormulaExtension> typeEnvironment;
+	private final Set<IFormulaExtension> typeEnvironment;
 
 	public Theory(final String name, final String parentDirectory,
 			final Collection<OperatorMapping> mappings) {
@@ -27,7 +27,7 @@ public class Theory extends AbstractElement implements Named {
 				name,
 				parentDirectory,
 				mappings,
-				Collections.<IFormulaExtension> emptySet(),
+				Collections.emptySet(),
 				Collections.emptyMap());
 	}
 

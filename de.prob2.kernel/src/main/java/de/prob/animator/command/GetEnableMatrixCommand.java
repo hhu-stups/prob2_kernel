@@ -70,7 +70,7 @@ public class GetEnableMatrixCommand extends AbstractCommand {
 	private static final String MATRIX_VAR = "Matrix";
 
 	private final EventPair[] pairs;
-	private Map<EventPair, EnableMatixEntry> matrix = new HashMap<>();
+	private final Map<EventPair, EnableMatixEntry> matrix = new HashMap<>();
 
 	public GetEnableMatrixCommand(EventPair... eventPairs) {
 		this.pairs = eventPairs;

@@ -15,7 +15,7 @@ import de.prob.statespace.StateSpace;
 
 public final class ExpandedFormula {
 
-	public static enum FormulaType {
+	public enum FormulaType {
 		EXPRESSION, PREDICATE, OTHER;
 		
 		public static ExpandedFormula.FormulaType fromProlog(final String prologTypeName) {

@@ -29,7 +29,7 @@ import de.prob.statespace.Language;
 public class RulesModel extends AbstractModel {
 
 	private RulesProject project;
-	private Map<AbstractOperation, IEvalElement> operationStateFormulaCache = new HashMap<>();
+	private final Map<AbstractOperation, IEvalElement> operationStateFormulaCache = new HashMap<>();
 
 	@Inject
 	public RulesModel(StateSpaceProvider stateSpaceProvider) {

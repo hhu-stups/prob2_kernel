@@ -25,7 +25,7 @@ public class GetImagesForMachineCommand extends AbstractCommand {
 		pto.closeTerm();
 	}
 
-	Map<Integer, String> images = new HashMap<>();
+	final Map<Integer, String> images = new HashMap<>();
 
 	@Override
 	public void processResult(ISimplifiedROMap<String, PrologTerm> bindings) {

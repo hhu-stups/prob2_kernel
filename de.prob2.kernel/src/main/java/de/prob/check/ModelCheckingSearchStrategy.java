@@ -15,7 +15,7 @@ public enum ModelCheckingSearchStrategy {
 	
 	private final String prologName;
 	
-	private ModelCheckingSearchStrategy(final String prologName) {
+	ModelCheckingSearchStrategy(final String prologName) {
 		this.prologName = prologName;
 	}
 	

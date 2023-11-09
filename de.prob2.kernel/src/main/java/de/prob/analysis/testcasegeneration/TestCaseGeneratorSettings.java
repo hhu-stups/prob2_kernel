@@ -2,7 +2,7 @@ package de.prob.analysis.testcasegeneration;
 
 public abstract class TestCaseGeneratorSettings {
 
-	protected int maxDepth;
+	protected final int maxDepth;
 
 	public TestCaseGeneratorSettings(int maxDepth) {
 		this.maxDepth = maxDepth;

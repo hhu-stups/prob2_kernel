@@ -103,15 +103,15 @@ public class TheoryExtractor extends DefaultHandler {
 	private List<EventB> given;
 	private EventB infer;
 
-	private Set<IFormulaExtension> typeEnv;
+	private final Set<IFormulaExtension> typeEnv;
 
-	private Map<String, Theory> theoryMap;
+	private final Map<String, Theory> theoryMap;
 
-	private String project;
+	private final String project;
 
-	private String name;
+	private final String name;
 
-	private String workspacePath;
+	private final String workspacePath;
 	private ModelElementList<Theory> theories = new ModelElementList<>();
 
 	public TheoryExtractor(final String workspacePath, String project,
@@ -148,7 +148,8 @@ public class TheoryExtractor extends DefaultHandler {
 					throws SAXException {
 		switch (qName) {
 			case "org.eventb.theory.core.scTypeParameter":
-				addTypeParameter(attributes);
+            case "org.eventb.theory.core.scAxiomaticTypeDefinition":
+                addTypeParameter(attributes);
 				break;
 			case "org.eventb.theory.core.useTheory":
 				addUsedTheory(attributes);
@@ -189,10 +190,7 @@ public class TheoryExtractor extends DefaultHandler {
 			case "org.eventb.theory.core.scAxiomaticDefinitionAxiom":
 				addDefinitionAxiom(attributes);
 				break;
-			case "org.eventb.theory.core.scAxiomaticTypeDefinition":
-				addTypeParameter(attributes);
-				break;
-			case "org.eventb.theory.core.scTheorem":
+            case "org.eventb.theory.core.scTheorem":
 				addTheorem(attributes);
 				break;
 			case "org.eventb.theory.core.scProofRulesBlock":
@@ -369,15 +367,12 @@ public class TheoryExtractor extends DefaultHandler {
 	}
 
 	private void beginAddingDataTypeConstructor(final Attributes attributes) {
-		String name = attributes.getValue("name");
-
-		currentConstructor = name;
+        currentConstructor = attributes.getValue("name");
 		currentDestructors = new ArrayList<>();
 	}
 
 	private void beginAddingDataType(final Attributes attributes) {
-		String name = attributes.getValue("name");
-		dataTypeName = name;
+        dataTypeName = attributes.getValue("name");
 		constructors = new ArrayList<>();
 		types = new ArrayList<>();
 

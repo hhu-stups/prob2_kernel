@@ -1,6 +1,5 @@
 package de.prob.check.tracereplay.check.traceConstruction;
 
-import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.statespace.Transition;
 
 import java.util.List;

@@ -97,7 +97,7 @@ public class MachineXmlHandler extends DefaultHandler {
 
 	@Override
 	public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
-		String name;
+		// String name;
 		switch (qName) {
 			case "org.eventb.core.scRefinesMachine":
 				addRefinedMachine(attributes);
@@ -138,7 +138,7 @@ public class MachineXmlHandler extends DefaultHandler {
 				addVariant(attributes);
 				break;
 			case "org.eventb.core.scEvent":
-				name = attributes.getValue("org.eventb.core.scName");
+				// name = attributes.getValue("org.eventb.core.scName");
 				beginEventExtraction(attributes);
 				break;
 			case "org.eventb.core.scAction":
@@ -326,8 +326,7 @@ public class MachineXmlHandler extends DefaultHandler {
 
 	private void addInvariant(final Attributes attributes) {
 		String source = attributes.getValue("org.eventb.core.source");
-		String internalName = source.substring(source.lastIndexOf('#') + 1,
-				source.length());
+		String internalName = source.substring(source.lastIndexOf('#') + 1);
 		internalName = internalName.replace("\\", "");
 		String filePath = source.substring(0, source.indexOf('|'));
 		String machineName = filePath.substring(filePath.lastIndexOf('/') + 1,
@@ -358,8 +357,7 @@ public class MachineXmlHandler extends DefaultHandler {
 
 	private void addExtendedContext(final Attributes attributes) {
 		String source = attributes.getValue("org.eventb.core.scTarget");
-		String contextName = source.substring(source.lastIndexOf('#') + 1,
-				source.length());
+		String contextName = source.substring(source.lastIndexOf('#') + 1);
 
 		model.addRelationship(internalContext.getName(), contextName,
 				ERefType.EXTENDS);
@@ -371,8 +369,7 @@ public class MachineXmlHandler extends DefaultHandler {
 
 	private void addAxiom(final Attributes attributes) {
 		String source = attributes.getValue("org.eventb.core.source");
-		String internalName = source.substring(source.lastIndexOf('#') + 1,
-				source.length());
+		String internalName = source.substring(source.lastIndexOf('#') + 1);
 		internalName = internalName.replace("\\", "");
 		String filePath = source.substring(0, source.indexOf('|'));
 		String contextName = filePath.substring(filePath.lastIndexOf('/') + 1,

@@ -75,6 +75,7 @@ class AnimatorImpl implements IAnimator {
 			logger.trace("Execution successful, processing result");
 			if (!errors.isEmpty()) {
 				assert worstErrorType.isPresent();
+				//noinspection NonStrictComparisonCanBeEquality
 				if (worstErrorType.get().compareTo(ErrorItem.Type.MESSAGE) <= 0) {
 					logger.info("ProB returned messages:");
 					for (final ErrorItem error : errors) {

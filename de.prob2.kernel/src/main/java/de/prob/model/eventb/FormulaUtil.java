@@ -169,14 +169,14 @@ public class FormulaUtil {
 			final String code = assignment.getCode();
 			final String[] split = code.split(":\\|");
 			final String lhs = split[0].trim() + ',' + newVar;
-			final String rhs = split[1] + " & " + var + "\' = " + newVar + '\'';
+			final String rhs = split[1] + " & " + var + "' = " + newVar + '\'';
 			return new EventB(lhs + ":|" + rhs, assignment.getTypes());
 		}
 		if (assignment.getAst() instanceof ABecomesElementOfSubstitution) {
 			final String code = assignment.getCode();
 			final String[] split = code.split("::");
 			assert split[0].trim().equals(var);
-			final String formula = var + ',' + newVar + " :| " + var + "\' : " + split[1].trim() + " & " + var + "\' = " + newVar + '\'';
+			final String formula = var + ',' + newVar + " :| " + var + "' : " + split[1].trim() + " & " + var + "' = " + newVar + '\'';
 			return new EventB(formula, assignment.getTypes());
 		}
 		throw new IllegalArgumentException(assignment + " must be of type assignment");

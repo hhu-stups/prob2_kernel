@@ -30,7 +30,7 @@ public enum RuleStatus implements OperationStatus {
 			return mapping.get(res);
 		} else {
 			throw new IllegalArgumentException(String
-					.format("The result value '%s' is not valid result of a rule operation.", evalResult.toString()));
+					.format("The result value '%s' is not valid result of a rule operation.", evalResult));
 		}
 	}
 

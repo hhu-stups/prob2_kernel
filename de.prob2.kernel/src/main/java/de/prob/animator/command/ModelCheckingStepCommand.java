@@ -33,7 +33,7 @@ public class ModelCheckingStepCommand extends AbstractCommand implements IStateS
 	/**
 	 * <p>
 	 * The prolog core returns a compound term containing the current stats
-	 * about the state space. This term has the arity {@link #STATS_ARITY}.
+	 * about the state space. This term has the arity {@code STATS_ARITY}.
 	 * </p>
 	 * 
 	 * <p>

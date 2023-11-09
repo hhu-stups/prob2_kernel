@@ -39,17 +39,16 @@ public class RuleResults {
 	public RuleResults(Set<RuleOperation> ruleOperations, State state, int maxNumberOfReportedCounterExamples) {
 		final ArrayList<RuleOperation> ruleList = new ArrayList<>();
 		final List<IEvalElement> evalElements = new ArrayList<>();
-		for (AbstractOperation operation : ruleOperations) {
-			RuleOperation rule = (RuleOperation) operation;
-			ruleList.add(rule);
-			ClassicalB ruleObject = new ClassicalB(rule.getName());
+		for (RuleOperation operation : ruleOperations) {
+            ruleList.add(operation);
+			ClassicalB ruleObject = new ClassicalB(operation.getName());
 			evalElements.add(ruleObject);
 			// get number of counter examples
-			String numberOfCtsFormula = String.format("card(%s)", rule.getCounterExampleVariableName());
+			String numberOfCtsFormula = String.format("card(%s)", operation.getCounterExampleVariableName());
 			ClassicalB numberOfCtsFormulaObject = new ClassicalB(numberOfCtsFormula);
 			evalElements.add(numberOfCtsFormulaObject);
 			// get the (restricted) set of counter examples
-			String ctFormula = String.format("SORT(%s)[1..%s]", rule.getCounterExampleVariableName(),
+			String ctFormula = String.format("SORT(%s)[1..%s]", operation.getCounterExampleVariableName(),
 					maxNumberOfReportedCounterExamples);
 			ClassicalB counterExampleObject = new ClassicalB(ctFormula);
 			evalElements.add(counterExampleObject);
@@ -144,7 +143,7 @@ public class RuleResults {
 		return sb.toString();
 	}
 
-	public class ResultSummary {
+	public static class ResultSummary {
 		public final int numberOfRules;
 		public final int numberOfRulesFailed;
 		public final int numberOfRulesSucceeded;

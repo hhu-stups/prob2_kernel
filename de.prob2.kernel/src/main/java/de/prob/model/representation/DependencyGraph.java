@@ -98,9 +98,9 @@ public class DependencyGraph {
 	}
 
 	public static class Edge {
-		Node from;
-		Node to;
-		ERefType relationship;
+		final Node from;
+		final Node to;
+		final ERefType relationship;
 
 		public Edge(final Node from, final Node to, final ERefType relationship) {
 			this.from = from;
@@ -140,8 +140,8 @@ public class DependencyGraph {
 		}
 	}
 
-	IPersistentMap<String, Node> graph;
-	private String start;
+	final IPersistentMap<String, Node> graph;
+	private final String start;
 
 	public DependencyGraph() {
 		this(PersistentHashMap.emptyMap(), "");
@@ -292,7 +292,7 @@ public class DependencyGraph {
 	 * @return the refinement chain if there is any
 	 */
 	public List<Node> refinementChain(){
-		if(start.equals("")){
+		if(start.isEmpty()){
 			return emptyList();
 		}
 		List<Node> acc = new ArrayList<>();

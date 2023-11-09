@@ -18,7 +18,7 @@ public class FindTraceBetweenNodesCommand extends AbstractCommand implements
 	private static final String PROLOG_COMMAND_NAME = "find_trace_from_node_to_node";
 	private static final String TRACE = "Trace";
 
-	List<Transition> newTransitions = new ArrayList<>();
+	final List<Transition> newTransitions = new ArrayList<>();
 	private final StateSpace stateSpace;
 	private final String sourceId;
 	private final String destId;

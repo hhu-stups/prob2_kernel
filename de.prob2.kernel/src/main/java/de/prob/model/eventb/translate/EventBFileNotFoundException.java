@@ -5,9 +5,9 @@ import java.io.FileNotFoundException;
 public class EventBFileNotFoundException extends FileNotFoundException {
 	private static final long serialVersionUID = 1L;
 
-	private String path;
+	private final String path;
 
-	private boolean refreshProject;
+	private final boolean refreshProject;
 
 	public EventBFileNotFoundException(String path, String additionalMsg, boolean refreshProject, Throwable cause) {
 		super(path + " (No such file)" + "\n" + additionalMsg);

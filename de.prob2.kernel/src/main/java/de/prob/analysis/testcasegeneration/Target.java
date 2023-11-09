@@ -19,9 +19,9 @@ import de.prob.analysis.mcdc.ConcreteMCDCTestCase;
  */
 public class Target {
 
-	private String operation;
-	private PPredicate guard;
-	private boolean feasible;
+	private final String operation;
+	private final PPredicate guard;
+	private final boolean feasible;
 
 	Target(String operation, ConcreteMCDCTestCase concreteMCDCTestCase) {
 		this.operation = operation;

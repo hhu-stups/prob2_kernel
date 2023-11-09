@@ -17,8 +17,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 public abstract class Postcondition {
 
 	public enum PostconditionKind {
-		PREDICATE, ENABLEDNESS, DISABLEDNESS;
-	}
+		PREDICATE, ENABLEDNESS, DISABLEDNESS
+    }
 
 	private final PostconditionKind kind;
 

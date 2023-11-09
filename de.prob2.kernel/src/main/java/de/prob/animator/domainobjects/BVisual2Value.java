@@ -105,7 +105,7 @@ public interface BVisual2Value {
 		}
 	}
 	
-	public static BVisual2Value fromPrologTerm(final PrologTerm term) {
+	static BVisual2Value fromPrologTerm(final PrologTerm term) {
 		final String functor = term.getFunctor();
 		switch (functor) {
 			case "p":

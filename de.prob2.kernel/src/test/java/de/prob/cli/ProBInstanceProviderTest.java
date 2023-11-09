@@ -19,7 +19,7 @@ public class ProBInstanceProviderTest {
 
 		BufferedReader reader = new BufferedReader(new StringReader(text));
 
-		ProBInstanceProvider.CliInformation info = factory.extractCliInformation(reader);
+		ProBInstanceProvider.CliInformation info = ProBInstanceProvider.extractCliInformation(reader);
 
 		Assertions.assertNotNull(info);
 		Assertions.assertEquals(61013, info.getPort());

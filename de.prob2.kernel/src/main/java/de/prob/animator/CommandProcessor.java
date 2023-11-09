@@ -80,7 +80,7 @@ class CommandProcessor {
 			return new InterruptedResult();
 		} else if (topnode instanceof AYesResult) {
 			Map<String, PrologTerm> binding = BindingGenerator.createBinding(PrologTermGenerator.toPrologTerm(topnode));
-			return new YesResult(new SimplifiedROMap<String, PrologTerm>(binding));
+			return new YesResult(new SimplifiedROMap<>(binding));
 		} else if (topnode instanceof AExceptionResult) {
 			AExceptionResult r = (AExceptionResult) topnode;
 			String message = r.getString().getText();

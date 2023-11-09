@@ -5,5 +5,5 @@ package de.prob.model.representation;
  */
 @SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
 public interface Named {
-	public abstract String getName();
+	String getName();
 }

@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
  *
  */
 public class ElementComment extends AbstractElement {
-	private String comment;
+	private final String comment;
 
 	public ElementComment(String comment) {
 		this.comment = comment;

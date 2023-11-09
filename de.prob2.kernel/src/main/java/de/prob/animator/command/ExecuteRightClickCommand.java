@@ -10,10 +10,10 @@ public class ExecuteRightClickCommand extends AbstractCommand {
 	private static final String TRANSITION = "TransitionId";
 	private static final String NEW_STATE = "NewStateId";
 	
-	private String stateId;
-	private int row;
-	private int column;
-	private String option;
+	private final String stateId;
+	private final int row;
+	private final int column;
+	private final String option;
 	private String transitionID;
 
 	public ExecuteRightClickCommand(String stateId, int row, int column, String option) {

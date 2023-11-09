@@ -87,8 +87,8 @@ public final class Installer {
 			LOGGER.trace("Acquired process-local lock for installing CLI binaries");
 			try (
 				final FileChannel lockFileChannel = FileChannel.open(LOCK_FILE_PATH, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
-				final FileLock ignored = lockFileChannel.lock();
-			) {
+				final FileLock ignored = lockFileChannel.lock()
+            ) {
 				LOGGER.trace("Acquired lock file for installing CLI binaries");
 				final String binariesZipResourceName = osInfo.getBinariesZipResourceName();
 				LOGGER.trace("Extracting binaries from {}", binariesZipResourceName);

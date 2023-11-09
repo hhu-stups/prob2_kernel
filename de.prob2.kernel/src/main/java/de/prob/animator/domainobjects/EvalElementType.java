@@ -16,7 +16,7 @@ public enum EvalElementType {
 	
 	private final String prologName;
 	
-	private EvalElementType(final String prologName) {
+	EvalElementType(final String prologName) {
 		this.prologName = prologName;
 	}
 	

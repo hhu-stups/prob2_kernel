@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import de.prob.model.representation.DependencyGraph.Node;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -23,10 +23,9 @@ public class DependencyGraphTest {
 		DependencyGraph dependencyGraph = new DependencyGraph();
 
 		String name = "NumberOne";
-		dependencyGraph.addVertex(name);
+		dependencyGraph = dependencyGraph.addVertex(name);
 
-		ArrayList<String> expected = new ArrayList<>(dependencyGraph.getVertices());
-		Assertions.assertEquals(expected, dependencyGraph.refinementChain());
+		Assertions.assertEquals(Collections.singletonList(new Node(name)), dependencyGraph.refinementChain());
 	}
 
 	@Test

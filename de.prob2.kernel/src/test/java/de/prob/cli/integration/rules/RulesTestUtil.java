@@ -68,8 +68,8 @@ public final class RulesTestUtil {
 			sb.append("\nEND");
 			try (
 				FileOutputStream fos = new FileOutputStream(tempFile);
-				OutputStreamWriter osw = new OutputStreamWriter(fos);
-			) {
+				OutputStreamWriter osw = new OutputStreamWriter(fos)
+            ) {
 				osw.write(sb.toString());
 			}
 			return tempFile;
@@ -96,8 +96,7 @@ public final class RulesTestUtil {
 
 				if (ruleResult.getRuleState() == RuleStatus.NOT_CHECKED) {
 					List<String> notCheckedCauses = ruleResult.getFailedDependencies();
-					assertTrue(!notCheckedCauses.isEmpty(),
-							String.format("There is no cause why rule '%s' is not checked.", ruleName));
+                    assertFalse(notCheckedCauses.isEmpty(), String.format("There is no cause why rule '%s' is not checked.", ruleName));
 				}
 			}
 

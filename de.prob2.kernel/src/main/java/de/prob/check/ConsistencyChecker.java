@@ -23,7 +23,7 @@ public class ConsistencyChecker extends CheckerBase {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConsistencyChecker.class);
 	private static final int TIMEOUT_MS = 500;
 
-	private ModelCheckingLimitConfiguration limitConfiguration;
+	private final ModelCheckingLimitConfiguration limitConfiguration;
 	private final ModelCheckingOptions options;
 
 	/**
@@ -39,7 +39,7 @@ public class ConsistencyChecker extends CheckerBase {
 	}
 
 	/**
-	 * calls {@link #ConsistencyChecker(StateSpace, ModelCheckingOptions)} with
+	 * calls {@link #ConsistencyChecker(StateSpace, ModelCheckingOptions, IModelCheckListener)} with
 	 * null for UI
 	 * 
 	 * @param s
@@ -103,8 +103,8 @@ public class ConsistencyChecker extends CheckerBase {
 			}
 		}
 
-		ModelCheckingStepCommand cmd = null;
-		StateSpaceStats stats = null;
+		ModelCheckingStepCommand cmd;
+		StateSpaceStats stats;
 		try {
 			this.getStateSpace().startTransaction();
 			ModelCheckingOptions modifiedOptions = this.options;

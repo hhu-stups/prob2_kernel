@@ -11,7 +11,7 @@ public enum FormulaTranslationMode {
 	
 	private final String prologName;
 	
-	private FormulaTranslationMode(final String prologName) {
+	FormulaTranslationMode(final String prologName) {
 		this.prologName = prologName;
 	}
 	

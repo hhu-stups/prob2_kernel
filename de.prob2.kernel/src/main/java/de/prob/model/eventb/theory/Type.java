@@ -63,7 +63,7 @@ public class Type extends AbstractElement {
 
 	private class TypeExtension implements IExpressionExtension {
 
-		String symbol;
+		final String symbol;
 
 		public TypeExtension() {
 			symbol = UnicodeTranslator.toUnicode(identifier.getCode());

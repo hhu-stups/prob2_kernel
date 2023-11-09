@@ -23,7 +23,7 @@ public class BLibrary {
 	private final Set<LibraryComponent> sequences = new HashSet<>();
 	private final Set<LibraryComponent> substitutions = new HashSet<>();
 
-	private ConsiderIfType considerIfStatements = ConsiderIfType.NONE;
+	private final ConsiderIfType considerIfStatements = ConsiderIfType.NONE;
 	/**
 	 * Automatically configure the library during synthesis if is true.
 	 */

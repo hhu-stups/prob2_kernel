@@ -17,17 +17,17 @@ import de.prob.statespace.Trace;
  */
 public class MCDCTestTrace extends TestTrace {
 
-	private List<ConcreteMCDCTestCase> mcdcTargets;
+	private final List<ConcreteMCDCTestCase> mcdcTargets;
 
 	public MCDCTestTrace(List<String> priorTransitions, Target target, List<ConcreteMCDCTestCase> mcdcTargets,
 						 boolean isComplete) {
-		super(priorTransitions, target, target == null ? null : target.getOperation(), isComplete, target == null ? true : target.getFeasible());
+		super(priorTransitions, target, target == null ? null : target.getOperation(), isComplete, target == null || target.getFeasible());
 		this.mcdcTargets = mcdcTargets;
 	}
 
 	public MCDCTestTrace(List<String> priorTransitions, Target target, List<ConcreteMCDCTestCase> mcdcTargets,
 						 boolean isComplete, Trace trace) {
-		super(priorTransitions, target, target == null ? null : target.getOperation(), isComplete, target == null ? true : target.getFeasible(), trace);
+		super(priorTransitions, target, target == null ? null : target.getOperation(), isComplete, target == null || target.getFeasible(), trace);
 		this.mcdcTargets = mcdcTargets;
 	}
 

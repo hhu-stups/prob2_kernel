@@ -7,7 +7,7 @@ public enum FormulaExpand {
 	
 	private final String prologName;
 	
-	private FormulaExpand(final String prologName) {
+	FormulaExpand(final String prologName) {
 		this.prologName = prologName;
 	}
 	

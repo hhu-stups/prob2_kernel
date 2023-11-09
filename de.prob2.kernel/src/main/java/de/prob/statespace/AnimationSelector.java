@@ -31,11 +31,11 @@ import org.slf4j.LoggerFactory;
 public class AnimationSelector {
 	private static final Logger logger = LoggerFactory.getLogger(AnimationSelector.class);
 
-	List<IAnimationChangeListener> traceListeners = new CopyOnWriteArrayList<>();
-	private List<IModelChangedListener> modelListeners = new CopyOnWriteArrayList<>();
+	final List<IAnimationChangeListener> traceListeners = new CopyOnWriteArrayList<>();
+	private final List<IModelChangedListener> modelListeners = new CopyOnWriteArrayList<>();
 
-	private Map<UUID, Trace> traces = new LinkedHashMap<>();
-	private Set<UUID> protectedTraces = new HashSet<>();
+	private final Map<UUID, Trace> traces = new LinkedHashMap<>();
+	private final Set<UUID> protectedTraces = new HashSet<>();
 
 	private Trace currentTrace = null;
 	private StateSpace currentStateSpace = null;

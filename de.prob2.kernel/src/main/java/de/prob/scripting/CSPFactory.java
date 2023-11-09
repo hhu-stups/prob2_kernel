@@ -1,11 +1,14 @@
 package de.prob.scripting;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -23,12 +26,17 @@ public class CSPFactory implements ModelFactory<CSPModel> {
 	@Override
 	public ExtractedModel<CSPModel> extract(final String modelPath) throws IOException {
 		CSPModel cspModel = modelCreator.get();
-		File f = new File(modelPath);
+		Path p = Paths.get(modelPath);
+
 		final String text;
-		try (final BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(f)))) {
-			text = reader.lines().collect(Collectors.joining("\n"));
+		try (final Stream<String> lines = Files.lines(p)) {
+			text = lines.collect(Collectors.joining("\n"));
+		} catch (NoSuchFileException e) {
+			// rethrow as FNFE, because the tests expect the old exception
+			throw new FileNotFoundException(e.getMessage());
 		}
-		cspModel = cspModel.create(text, f);
-		return new ExtractedModel<>(cspModel, cspModel.getComponent(f.getName()));
+
+		cspModel = cspModel.create(text, p.toFile());
+		return new ExtractedModel<>(cspModel, cspModel.getComponent(p.getFileName().toString()));
 	}
 }

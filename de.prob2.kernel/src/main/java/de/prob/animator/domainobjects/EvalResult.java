@@ -237,6 +237,6 @@ public class EvalResult extends AbstractEvalResult {
 		} else if ("enum_warning".equals(pt.getFunctor())) {
 			return new EnumerationWarning();
 		}
-		throw new IllegalArgumentException("Unknown result type " + pt.toString());
+		throw new IllegalArgumentException("Unknown result type " + pt);
 	}
 }

@@ -15,9 +15,9 @@ import de.prob.model.representation.DependencyGraph.ERefType;
 public final class DependencyWalker {
 
 	private final RecursiveMachineLoader rml;
-	private List<ClassicalBMachine> machines;
+	private final List<ClassicalBMachine> machines;
 	private DependencyGraph graph;
-	private Set<String> machineIds;
+	private final Set<String> machineIds;
 
 	public DependencyWalker(
 			final RecursiveMachineLoader rml,

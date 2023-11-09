@@ -18,7 +18,7 @@ public class GetMachineIdentifiersCommand extends AbstractCommand {
 		VARIABLES("variables"),
 		;
 
-		String prologAtom;
+		final String prologAtom;
 
 		Category(String atom) {
 			this.prologAtom = atom;

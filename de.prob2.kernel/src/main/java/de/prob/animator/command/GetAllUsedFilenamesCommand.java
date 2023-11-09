@@ -15,7 +15,7 @@ public class GetAllUsedFilenamesCommand extends AbstractCommand {
 
 	private static final String FILES = "Files";
 	
-	private List<MachineFileInformation> files = new ArrayList<>();
+	private final List<MachineFileInformation> files = new ArrayList<>();
 
 	@Override
 	public void writeCommand(IPrologTermOutput pto) {

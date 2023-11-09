@@ -32,9 +32,9 @@ import org.slf4j.LoggerFactory;
  **/
 public class ExecuteRun {
 
-	private ReusableAnimator animator;
-	private int maxNumberOfStatesToBeExecuted = Integer.MAX_VALUE;
-	private Integer timeout = null;
+	private final ReusableAnimator animator;
+	private final int maxNumberOfStatesToBeExecuted = Integer.MAX_VALUE;
+	private final Integer timeout = null;
 	private final boolean continueAfterErrors;
 	private final ExtractedModel<? extends AbstractModel> extractedModel;
 	private final Map<String, String> prefs;

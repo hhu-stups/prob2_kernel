@@ -53,7 +53,7 @@ public class RulesMachineRun {
 	private ReusableAnimator animator;
 
 	public RulesMachineRun(RulesMachineRunner rulesMachineRunner, File runnerFile) {
-		this(rulesMachineRunner, runnerFile, new HashMap<String, String>(), new HashMap<String, String>());
+		this(rulesMachineRunner, runnerFile, new HashMap<>(), new HashMap<>());
 	}
 
 	public RulesMachineRun(RulesMachineRunner rulesMachineRunner, File runnerFile, Map<String, String> prefs, Map<String, String> constantValuesToBeInjected) {
@@ -226,7 +226,7 @@ public class RulesMachineRun {
 		this.animator = animator;
 	}
 
-	public class Error {
+	public static class Error {
 		final ERROR_TYPES type;
 		final String message;
 		final Exception exception;

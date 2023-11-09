@@ -11,9 +11,9 @@ public class SymbolicModelcheckCommand extends AbstractCommand {
 		TINDUCTION("tinduction"),
 		IC3("ic3");
 		
-		private String prologName;
+		private final String prologName;
 		
-		private Algorithm(final String prologName) {
+		Algorithm(final String prologName) {
 			this.prologName = prologName;
 		}
 		
@@ -23,14 +23,14 @@ public class SymbolicModelcheckCommand extends AbstractCommand {
 	}
 	
 	public enum ResultType {
-		SUCCESSFUL, INTERRUPTED, COUNTER_EXAMPLE, TIMEOUT, LIMIT_REACHED;
-	}
+		SUCCESSFUL, INTERRUPTED, COUNTER_EXAMPLE, TIMEOUT, LIMIT_REACHED
+    }
 	
 	private static final String COMMAND_NAME = "symbolic_model_check";
 	private static final String RESULT_VARIABLE = "R";
 	
 	private ResultType result;
-	private Algorithm algorithm;
+	private final Algorithm algorithm;
 	
 	public SymbolicModelcheckCommand(Algorithm algorithm) {
 		this.algorithm = algorithm;

@@ -8,7 +8,7 @@ public class DotNode {
 
 	private final String id;
 	private final List<String> labels;
-	private int count;
+	private final int count;
 	private final String color;
 		
 	public DotNode(final String id, final List<String> labels,

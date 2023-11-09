@@ -11,7 +11,7 @@ import org.eventb.core.ast.extension.IFormulaExtension;
 public class DirectDefinition extends AbstractFormulaElement implements
 		IOperatorDefinition {
 
-	EventB formula;
+	final EventB formula;
 
 	public DirectDefinition(final String formula,
 			final Set<IFormulaExtension> typeEnv) {

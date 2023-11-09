@@ -1,10 +1,7 @@
 package de.prob.animator.domainobjects;
 
 import de.be4.classicalb.core.parser.ClassicalBParser;
-import de.be4.ltl.core.parser.CtlParser;
 import de.be4.ltl.core.parser.LtlParseException;
-import de.prob.exception.ProBError;
-import de.prob.ltl.parser.LtlParser;
 import de.prob.parserbase.ProBParserBase;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;

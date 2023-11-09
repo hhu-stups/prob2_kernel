@@ -2,15 +2,12 @@ package de.prob.check.tracereplay.check.refinement;
 
 import com.google.inject.Injector;
 
-import de.be4.classicalb.core.parser.exceptions.BCompoundException;
-import de.prob.animator.command.RefineTraceCommand;
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.check.tracereplay.check.traceConstruction.AdvancedTraceConstructor;
 import de.prob.check.tracereplay.check.traceConstruction.TraceConstructionError;
 import de.prob.model.eventb.EventBModel;
 import de.prob.scripting.Api;
 import de.prob.statespace.StateSpace;
-import de.prob.statespace.Trace;
 import de.prob.statespace.Transition;
 
 

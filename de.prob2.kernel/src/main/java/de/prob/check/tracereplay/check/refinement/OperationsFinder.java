@@ -57,7 +57,7 @@ public class OperationsFinder extends DepthFirstAdapter {
 
 		@Override
 		public String toString(){
-			if(prefix.equals("")){
+			if(prefix.isEmpty()){
 				return suffix;
 			}else {
 				return prefix + "." + suffix;

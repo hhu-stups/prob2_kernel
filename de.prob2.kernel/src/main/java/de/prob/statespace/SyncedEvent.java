@@ -55,7 +55,7 @@ public class SyncedEvent implements Named {
 	private final String name;
 	private final Map<UUID, Event> synced;
 
-	public class Event {
+	public static class Event {
 		public Event(String name, List<String> parameters) {
 			this.name = name;
 			this.parameters = parameters;

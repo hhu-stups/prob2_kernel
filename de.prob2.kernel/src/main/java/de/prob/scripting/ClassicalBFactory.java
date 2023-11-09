@@ -2,6 +2,8 @@ package de.prob.scripting;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import com.google.inject.Inject;
@@ -29,7 +31,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 
-	Logger logger = LoggerFactory.getLogger(ClassicalBFactory.class);
+	final Logger logger = LoggerFactory.getLogger(ClassicalBFactory.class);
 	private final Provider<ClassicalBModel> modelCreator;
 	public static final String CLASSICAL_B_MACHINE_EXTENSION = "mch";
 	public static final String CLASSICAL_B_REFINEMENT_EXTENSION = "ref";

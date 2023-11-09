@@ -48,7 +48,7 @@ public final class ComputeCoverageCommand extends AbstractCommand {
 			.closeTerm();
 	}
 
-	public class ComputeCoverageResult {
+	public static class ComputeCoverageResult {
 		private final BigInteger totalNumberOfNodes;
 		private final BigInteger totalNumberOfTransitions;
 		private final List<String> ops;

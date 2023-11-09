@@ -21,7 +21,7 @@ public class ExtractedModel<T extends AbstractModel> {
 	}
 
 	public StateSpace load() {
-		return load(Collections.<String, String> emptyMap());
+		return load(Collections.emptyMap());
 	}
 
 	public StateSpace load(final Map<String, String> preferences) {

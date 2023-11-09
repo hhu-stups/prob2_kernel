@@ -30,7 +30,7 @@ public final class GetEnabledOperationsCommand extends AbstractCommand
 
 	private final String id;
 
-	private List<Transition> enabledOperations = new ArrayList<>();
+	private final List<Transition> enabledOperations = new ArrayList<>();
 
 	private final StateSpace s;
 

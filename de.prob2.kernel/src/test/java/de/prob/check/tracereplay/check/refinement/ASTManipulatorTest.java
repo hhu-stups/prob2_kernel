@@ -326,7 +326,7 @@ public class ASTManipulatorTest {
 
 
 
-	public int getCombined(ASTChecker a, ASTChecker b, String name){
+	int getCombined(ASTChecker a, ASTChecker b, String name){
 		int scoreA = 0;
 		int scoreB = 0;
 		if(a.operationChildCounter.containsKey(name)){
@@ -337,7 +337,7 @@ public class ASTManipulatorTest {
 		}
 		return scoreA+scoreB;	}
 
-	public int getCombined(ASTChecker a, ASTChecker b, Types type){
+	int getCombined(ASTChecker a, ASTChecker b, Types type){
 
 		int scoreA = 0;
 		int scoreB = 0;
@@ -357,8 +357,8 @@ public class ASTManipulatorTest {
 		}
 
 
-		public Map<Types, Integer> childCounter = new HashMap<>();
-		public Map<String, Integer> operationChildCounter = new HashMap<>();
+		public final Map<Types, Integer> childCounter = new HashMap<>();
+		public final Map<String, Integer> operationChildCounter = new HashMap<>();
 
 		@Override
 		public void caseAInvariantMachineClause(AInvariantMachineClause node)

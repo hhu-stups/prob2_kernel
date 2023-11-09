@@ -113,8 +113,8 @@ class CbcSolveCommandTest {
 		Set<String> actualVars = new HashSet<>(cmd.getFreeVariables());
 
 		EvalResult value = (EvalResult) cmd.getValue();
-		Integer xVal = Integer.parseInt(value.getSolution("x"));
-		Integer yVal = Integer.parseInt(value.getSolution("y"));
+		int xVal = Integer.parseInt(value.getSolution("x"));
+		int yVal = Integer.parseInt(value.getSolution("y"));
 
 		assertAll(
 				() -> assertEquals(expectedVars, actualVars),

@@ -7,11 +7,11 @@ import java.util.Objects;
 
 public class VisBSVGObject {
 
-	private String id;
+	private final String id;
 
-	private String object;
+	private final String object;
 
-	private Map<String, String> attributes;
+	private final Map<String, String> attributes;
 
 	public VisBSVGObject(String id, String object, Map<String, String> attributes) {
 		this.id = id;

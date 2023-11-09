@@ -13,7 +13,6 @@ import de.prob.model.eventb.EventBModel;
 import de.prob.model.eventb.EventBVariable;
 import de.prob.model.eventb.ProofObligation;
 import de.prob.model.representation.AbstractElement;
-import de.prob.model.representation.Machine;
 import de.prob.prolog.output.IPrologTermOutput;
 
 public class EventBModelTranslator {
@@ -27,10 +26,9 @@ public class EventBModelTranslator {
 			final AbstractElement mainComponent) {
 		this.model = model;
 
-		for (Machine machine : extractMachineHierarchy(mainComponent, model)) {
-			EventBMachine ebM = (EventBMachine) machine;
-			machineTranslators.add(new EventBMachineTranslator(ebM));
-			proofObligations.addAll(ebM.getProofs());
+		for (EventBMachine machine : extractMachineHierarchy(mainComponent, model)) {
+            machineTranslators.add(new EventBMachineTranslator(machine));
+			proofObligations.addAll(machine.getProofs());
 		}
 
 		for (Context context : extractContextHierarchy(mainComponent, model)) {
@@ -157,9 +155,8 @@ public class EventBModelTranslator {
 	}
 
 	private void printPragmas(final IPrologTermOutput pto) {
-		for (Machine machine : model.getMachines()) {
-			EventBMachine ebM = (EventBMachine) machine;
-			for (EventBVariable var : ebM.getVariables()) {
+		for (EventBMachine machine : model.getMachines()) {
+            for (EventBVariable var : machine.getVariables()) {
 				if (var.hasUnit()) {
 					pto.openTerm("pragma");
 					pto.printAtom("unit");

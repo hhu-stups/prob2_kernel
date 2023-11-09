@@ -13,7 +13,7 @@ public enum ComputationStatus implements OperationStatus {
 
 	private final String bValue;
 
-	private static Map<String, ComputationStatus> mapping = new HashMap<>();
+	private static final Map<String, ComputationStatus> mapping = new HashMap<>();
 	static {
 		for (ComputationStatus compState : ComputationStatus.values()) {
 			mapping.put(compState.bValue, compState);
@@ -31,7 +31,7 @@ public enum ComputationStatus implements OperationStatus {
 			return mapping.get(key);
 		} else {
 			throw new IllegalArgumentException(String.format(
-					"The result value '%s' is not valid result of a computation operation.", evalResult.toString()));
+					"The result value '%s' is not valid result of a computation operation.", evalResult));
 		}
 
 	}

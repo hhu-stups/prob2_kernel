@@ -21,7 +21,7 @@ public class RewriteRule extends AbstractFormulaElement implements Named {
 	public RewriteRule(final String name, final String applicability,
 			final boolean complete, final String desc, final String formula,
 			final Set<IFormulaExtension> typeEnv) {
-		this(name, applicability, complete, desc, new EventB(formula, typeEnv), new ModelElementList<RewriteRuleRHS>());
+		this(name, applicability, complete, desc, new EventB(formula, typeEnv), new ModelElementList<>());
 	}
 
 	public RewriteRule(final String name, final String applicability,

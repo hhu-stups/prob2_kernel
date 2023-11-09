@@ -18,7 +18,7 @@ import de.prob.statespace.StateSpace;
 public abstract class AbstractModel extends AbstractElement {
 
 	protected final StateSpaceProvider stateSpaceProvider;
-	protected File modelFile;
+	protected final File modelFile;
 	protected final DependencyGraph graph;
 
 	public AbstractModel(

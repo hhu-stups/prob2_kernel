@@ -22,7 +22,7 @@ class BSynthesisCommand extends AbstractCommand {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	private SynthesisMode synthesisMode = SynthesisMode.FIRST_SOLUTION;
-	private SynthesisType synthesisType;
+	private final SynthesisType synthesisType;
 
 	private BLibrary componentLibrary;
 

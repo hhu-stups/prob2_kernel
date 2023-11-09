@@ -14,8 +14,8 @@ import de.prob.prolog.term.PrologTerm;
 public class UnsatRegularCoreCommand extends UnsatCoreBaseCommand {
 
 	private static final String PROLOG_COMMAND_NAME = "get_unsat_core_with_fixed_conjuncts";
-	private IBEvalElement pred;
-	private List<IBEvalElement> fixedPreds;
+	private final IBEvalElement pred;
+	private final List<IBEvalElement> fixedPreds;
 	private static final String RESULT_VARIABLE = "CoreOut";
 
 	public UnsatRegularCoreCommand(IBEvalElement pred,

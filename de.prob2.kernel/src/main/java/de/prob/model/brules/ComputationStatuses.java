@@ -18,7 +18,7 @@ import de.prob.statespace.State;
 
 public class ComputationStatuses {
 
-	private HashMap<String, ComputationStatus> statuses = new HashMap<>();
+	private final HashMap<String, ComputationStatus> statuses = new HashMap<>();
 
 	public ComputationStatuses(RulesProject project, State state) {
 		this(extractComputationOperations(project), state);

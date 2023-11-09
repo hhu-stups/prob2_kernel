@@ -19,7 +19,7 @@ public class GetRightClickOptionsForStateVisualizationCommand extends AbstractCo
 	private final int row;
 	private final int column;
 
-	private List<String> options = new ArrayList<>();
+	private final List<String> options = new ArrayList<>();
 
 	public GetRightClickOptionsForStateVisualizationCommand(String stateId, int row, int column) {
 		this.stateId = stateId;

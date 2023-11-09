@@ -22,8 +22,8 @@ public class MCDCASTVisitor extends DepthFirstAdapter {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(MCDCASTVisitor.class);
 
-	private List<ConcreteMCDCTestCase> tempTestCases = new ArrayList<>();
-	private int maxLevel;
+	private final List<ConcreteMCDCTestCase> tempTestCases = new ArrayList<>();
+	private final int maxLevel;
 	private int currentLevel;
 	private final AbstractModel model;
 

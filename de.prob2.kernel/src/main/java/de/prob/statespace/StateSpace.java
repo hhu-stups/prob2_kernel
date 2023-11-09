@@ -84,8 +84,8 @@ import org.slf4j.LoggerFactory;
  */
 public class StateSpace implements IAnimator {
 
-	Logger logger = LoggerFactory.getLogger(StateSpace.class);
-	private IAnimator animator;
+	final Logger logger = LoggerFactory.getLogger(StateSpace.class);
+	private final IAnimator animator;
 
 	private final Set<IEvalElement> registeredFormulas = new HashSet<>();
 	private final Map<IEvalElement, Set<Object>> formulaSubscribers = new HashMap<>();
@@ -507,16 +507,15 @@ public class StateSpace implements IAnimator {
 					}
 
 					formulaSubscribers.get(formulaOfInterest).add(subscriber);
-					success = true;
-				} else {
+                } else {
 					Set<Object> subscribers = Collections.newSetFromMap(new WeakHashMap<>());
 					subscribers.add(subscriber);
 					formulaSubscribers.put(formulaOfInterest, subscribers);
 					subscribedFormulaOptions.put(formulaOfInterest, options);
 					toSubscribe.add(formulaOfInterest);
-					success = true;
-				}
-			}
+                }
+                success = true;
+            }
 		}
 		this.registerFormulas(toSubscribe);
 		return success;
@@ -764,7 +763,7 @@ public class StateSpace implements IAnimator {
 
 		sb.append("Operations: \n");
 		for (final Transition opId : opIds) {
-			sb.append("  " + opId.getId() + ": " + opId.getRep());
+			sb.append("  ").append(opId.getId()).append(": ").append(opId.getRep());
 			sb.append("\n");
 		}
 
@@ -788,12 +787,12 @@ public class StateSpace implements IAnimator {
 
 		state.explore();
 
-		sb.append("STATE: " + state + "\n\n");
+		sb.append("STATE: ").append(state).append("\n\n");
 		sb.append("VALUES:\n");
 		Map<IEvalElement, AbstractEvalResult> currentState = state.getValues();
 		final Set<Map.Entry<IEvalElement, AbstractEvalResult>> entrySet = currentState.entrySet();
 		for (final Map.Entry<IEvalElement, AbstractEvalResult> entry : entrySet) {
-			sb.append("  " + entry.getKey().getCode() + " -> " + entry.getValue().toString() + "\n");
+			sb.append("  ").append(entry.getKey().getCode()).append(" -> ").append(entry.getValue().toString()).append("\n");
 		}
 
 		return sb.toString();

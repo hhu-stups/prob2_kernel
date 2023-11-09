@@ -33,7 +33,7 @@ public class AbstractMCDCTestCase {
 	}
 
 	public String toString() {
-		return String.valueOf(left).substring(0, 1) + String.valueOf(right).substring(0, 1) + " -> " + truthValue;
+		return String.valueOf(left).charAt(0) + (String.valueOf(right).charAt(0) + " -> " + truthValue);
 	}
 
 	static List<AbstractMCDCTestCase> getAbstractMCDCTestCases(String operator) {

@@ -6,5 +6,5 @@ import de.prob.model.representation.AbstractModel;
 
 public interface ModelFactory<T extends AbstractModel> {
 
-	public ExtractedModel<T> extract(final String fileName) throws IOException;
+	ExtractedModel<T> extract(final String fileName) throws IOException;
 }

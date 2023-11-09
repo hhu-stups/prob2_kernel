@@ -60,9 +60,9 @@ public class MCDCIdentifier {
 	}
 
 	private List<ConcreteMCDCTestCase> getMCDCTestCases(PPredicate node) {
-		AbstractModel model = stateSpace.getModel();;
+		AbstractModel model = stateSpace.getModel();
 
-		List<ConcreteMCDCTestCase> testCases = new MCDCASTVisitor(maxLevel, model).getMCDCTestCases(node);
+        List<ConcreteMCDCTestCase> testCases = new MCDCASTVisitor(maxLevel, model).getMCDCTestCases(node);
 		return filterFeasible(testCases);
 	}
 

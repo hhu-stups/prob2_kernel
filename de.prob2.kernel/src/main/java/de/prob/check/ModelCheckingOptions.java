@@ -46,7 +46,7 @@ public class ModelCheckingOptions {
 		private final String prologName;
 		private final String description;
 
-		private Options(final String prologName, final String description) {
+		Options(final String prologName, final String description) {
 			this.prologName = prologName;
 			this.description = description;
 		}
@@ -65,9 +65,9 @@ public class ModelCheckingOptions {
 
 	private final ModelCheckingSearchStrategy searchStrategy;
 	private final EnumSet<Options> options;
-	private IEvalElement customGoal;
-	private int stateLimit;
-	private Duration timeLimit;
+	private final IEvalElement customGoal;
+	private final int stateLimit;
+	private final Duration timeLimit;
 
 	public ModelCheckingOptions() {
 		this.searchStrategy = ModelCheckingSearchStrategy.MIXED_BF_DF;

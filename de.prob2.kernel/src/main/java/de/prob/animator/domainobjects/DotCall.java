@@ -179,9 +179,9 @@ public final class DotCall {
 			final Thread stderrLogger = new Thread(() -> {
 				try (
 					final Reader reader = new InputStreamReader(dotProcess.getErrorStream());
-					final BufferedReader br = new BufferedReader(reader);
-				) {
-					br.lines().forEach(line -> {
+					final BufferedReader br = new BufferedReader(reader)
+                ) {
+					br.lines().forEachOrdered(line -> {
 						errorOutput.add(line);
 						LOGGER.error("Error output from dot: {}", line);
 					});

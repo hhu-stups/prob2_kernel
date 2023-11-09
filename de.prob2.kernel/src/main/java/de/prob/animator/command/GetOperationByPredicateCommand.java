@@ -31,8 +31,8 @@ public final class GetOperationByPredicateCommand extends AbstractCommand
 		implements IStateSpaceModifier {
 
 	public static class GetOperationError {
-		private GetOperationErrorType type;
-		private String message;
+		private final GetOperationErrorType type;
+		private final String message;
 
 		GetOperationError(GetOperationErrorType type, String message) {
 			this.type = type;

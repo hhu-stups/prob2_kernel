@@ -24,7 +24,7 @@ import de.prob.statespace.Transition;
 public class RulesChecker {
 
 	private Trace trace;
-	private boolean init = false;
+	private final boolean init = false;
 	private final RulesModel rulesModel;
 	private final RulesProject rulesProject;
 

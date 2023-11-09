@@ -77,8 +77,8 @@ public class TraceConnector {
 	}
 
 	public static class Pair<T, E>{
-		public T first;
-		public E second;
+		public final T first;
+		public final E second;
 
 		public Pair(T first, E second){
 			this.first = first;

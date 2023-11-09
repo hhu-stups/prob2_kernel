@@ -16,7 +16,7 @@ public enum Language {
 	private final Language translatedTo;
 	private final String prologName;
 	
-	private Language(final FormalismType formalismType, final Language translatedTo, final String prologName) {
+	Language(final FormalismType formalismType, final Language translatedTo, final String prologName) {
 		this.formalismType = formalismType;
 		this.translatedTo = translatedTo;
 		this.prologName = prologName;

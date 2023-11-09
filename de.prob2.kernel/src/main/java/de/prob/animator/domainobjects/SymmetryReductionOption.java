@@ -16,7 +16,7 @@ public enum SymmetryReductionOption {
 	private final String description;
 	private final int pos;
 
-	private SymmetryReductionOption(final int pos, final String description) {
+	SymmetryReductionOption(final int pos, final String description) {
 		this.pos = pos;
 		this.description = description;
 	}

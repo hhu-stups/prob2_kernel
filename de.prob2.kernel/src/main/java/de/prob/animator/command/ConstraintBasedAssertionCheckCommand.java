@@ -36,7 +36,7 @@ public class ConstraintBasedAssertionCheckCommand extends AbstractCommand
 	private static final String COMMAND_NAME_DYNAMIC = "cbc_dynamic_assertion_violation_checking";
 	private static final String RESULT_VARIABLE = "R";
 
-	private CheckingType checkingType;
+	private final CheckingType checkingType;
 
 	private ResultType result;
 	private Transition counterExampleOperation;
@@ -103,10 +103,7 @@ public class ConstraintBasedAssertionCheckCommand extends AbstractCommand
 	@Override
 	public Trace getTrace(StateSpace s) {
 		if(counterExampleStateID != null && result == ResultType.COUNTER_EXAMPLE) {
-			Trace t = s.getTrace(counterExampleStateID);
-			if (t != null) {
-				return t;
-			}
+            return s.getTrace(counterExampleStateID);
 		}
 		return null;
 	}

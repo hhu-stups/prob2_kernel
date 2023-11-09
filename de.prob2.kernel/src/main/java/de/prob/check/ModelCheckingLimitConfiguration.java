@@ -57,7 +57,7 @@ public class ModelCheckingLimitConfiguration {
 
 	public void updateTimeLimit() {
 		if(timeLimitSet()) {
-			long timeoutInMs = timeLimit * 1000 - stopwatch.elapsed().toMillis();
+			long timeoutInMs = timeLimit * 1000L - stopwatch.elapsed().toMillis();
 			timeout = Math.min(initialTimeout, Math.max(0, (int) timeoutInMs));
 			finished = finished || timeoutInMs < 0;
 		}

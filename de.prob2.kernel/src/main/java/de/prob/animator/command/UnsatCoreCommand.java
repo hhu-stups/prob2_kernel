@@ -10,14 +10,14 @@ import de.prob.prolog.term.PrologTerm;
 
 public class UnsatCoreCommand extends AbstractCommand {
 
-	private UnsatCoreBaseCommand realCommand;
+	private final UnsatCoreBaseCommand realCommand;
 
 	public UnsatCoreCommand(IBEvalElement pred) {
-		this(pred, Collections.<IBEvalElement> emptyList());
+		this(pred, Collections.emptyList());
 	}
 
 	public UnsatCoreCommand(IBEvalElement pred, boolean minimumCore) {
-		this(pred, Collections.<IBEvalElement> emptyList(), minimumCore);
+		this(pred, Collections.emptyList(), minimumCore);
 	}
 
 	public UnsatCoreCommand(IBEvalElement pred, List<IBEvalElement> fixedPreds) {

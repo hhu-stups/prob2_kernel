@@ -21,16 +21,14 @@ public class ParseErrorTest {
 	}
 
 	@Test
-	public void testLoadBMachineWithParseError() throws IOException {
-		Assertions.assertThrows(ProBError.class, () -> {
-			api.b_load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "ParseError.mch").toString());
-		});
+	public void testLoadBMachineWithParseError() {
+		Assertions.assertThrows(ProBError.class,
+			() -> api.b_load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "ParseError.mch").toString()));
 	}
 
 	@Test
-	public void testLoadBMachineButFileDoesNotExists() throws IOException {
-		Assertions.assertThrows(IOException.class, () -> {
-			api.b_load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "FileDoesNotExists.mch").toString());
-		});
+	public void testLoadBMachineButFileDoesNotExists() {
+		Assertions.assertThrows(IOException.class,
+			() -> api.b_load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "FileDoesNotExists.mch").toString()));
 	}
 }

@@ -2,10 +2,10 @@ package de.prob.animator.command;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.nio.file.Files;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
@@ -38,8 +38,8 @@ public class GetDottyForTransitionDiagramCmd extends AbstractCommand {
 
 	@Override
 	public void processResult(ISimplifiedROMap<String, PrologTerm> bindings) {
-		try (final BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(tempFile)))) {
-			content = r.lines().collect(Collectors.joining("\n"));
+		try (final Stream<String> lines = Files.lines(tempFile.toPath())) {
+			content = lines.collect(Collectors.joining("\n"));
 		} catch (IOException e) {
 			throw new IllegalStateException(e);
 		}

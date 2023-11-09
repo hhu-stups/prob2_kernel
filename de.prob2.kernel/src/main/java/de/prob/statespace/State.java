@@ -39,8 +39,8 @@ import org.codehaus.groovy.runtime.DefaultGroovyMethods;
  * @author joy
  */
 public class State extends GroovyObjectSupport {
-	private String id;
-	private StateSpace stateSpace;
+	private final String id;
+	private final StateSpace stateSpace;
 	private volatile boolean explored;
 	private List<Transition> transitions;
 	private boolean constantsSetUp;
@@ -57,7 +57,7 @@ public class State extends GroovyObjectSupport {
 	 * The {@link IEvalElement#expansion()} is <i>not</i> directly used here.
 	 * Code that uses this cache is expected to integrate that setting into the {@link EvalOptions} as appropriate.
 	 */
-	private Map<EvalOptions, Map<IEvalElement, AbstractEvalResult>> evalCache;
+	private final Map<EvalOptions, Map<IEvalElement, AbstractEvalResult>> evalCache;
 
 	public State(String id, StateSpace space) {
 		this.id = id;

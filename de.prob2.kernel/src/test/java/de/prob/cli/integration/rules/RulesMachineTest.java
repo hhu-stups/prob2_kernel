@@ -141,7 +141,7 @@ public class RulesMachineTest {
 				"OPERATIONS RULE Rule1 BODY RULE_FAIL x WHEN x : 1..MAXINT COUNTEREXAMPLE STRING_FORMAT(\"~w\", x) END END");
 		Map<String, String> prefs = new HashMap<>();
 		prefs.put("MAXINT", "12");
-		RulesMachineRun rulesMachineRun = new RulesMachineRun(RulesTestUtil.getRulesMachineRunner(), file, prefs, Collections.<String, String>emptyMap());
+		RulesMachineRun rulesMachineRun = new RulesMachineRun(RulesTestUtil.getRulesMachineRunner(), file, prefs, Collections.emptyMap());
 		rulesMachineRun.start();
 		assertEquals(12, rulesMachineRun.getRuleResults().getRuleResult("Rule1").getCounterExamples().size());
 	}

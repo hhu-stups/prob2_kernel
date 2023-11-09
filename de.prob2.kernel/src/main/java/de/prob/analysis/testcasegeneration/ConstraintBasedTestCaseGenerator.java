@@ -43,7 +43,7 @@ public class ConstraintBasedTestCaseGenerator {
 	private final List<String> finalOperations;
 	private List<String> infeasibleOperations;
 	private List<Target> targets;
-	private List<Target> uncoveredTargets = new ArrayList<>();
+	private final List<Target> uncoveredTargets = new ArrayList<>();
 
 	public ConstraintBasedTestCaseGenerator(StateSpace stateSpace, TestCaseGeneratorSettings settings, List<String> finalOperations) {
 		this.stateSpace = stateSpace;
@@ -223,9 +223,9 @@ public class ConstraintBasedTestCaseGenerator {
 
 	private PPredicate getGuardAsPredicate(String operation) {
 		AbstractElement machine = stateSpace.getMainComponent();
-		AbstractModel model = stateSpace.getModel();;
+		AbstractModel model = stateSpace.getModel();
 
-		List<IEvalElement> guards = Extraction.getGuardPredicates(machine, operation);
+        List<IEvalElement> guards = Extraction.getGuardPredicates(machine, operation);
 		ClassicalB predicate = (ClassicalB)Join.conjunct(model, guards);
 		Start ast = predicate.getAst();
 		return ((APredicateParseUnit) ast.getPParseUnit()).getPredicate();

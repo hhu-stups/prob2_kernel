@@ -32,7 +32,7 @@ public class EvaluateFormulasCommand extends AbstractCommand {
 	private final List<? extends IEvalElement> evalElements;
 	private final List<AbstractEvalResult> values = new ArrayList<>();
 
-	private String stateId;
+	private final String stateId;
 	private final State state;
 	private final EvalOptions options;
 

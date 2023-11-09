@@ -117,8 +117,7 @@ public class ContextXmlHandler extends DefaultHandler {
 
 	private void addAxiom(final Attributes attributes) {
 		String source = attributes.getValue("org.eventb.core.source");
-		String internalName = source.substring(source.lastIndexOf('#') + 1,
-				source.length());
+		String internalName = source.substring(source.lastIndexOf('#') + 1);
 		String filePath = source.substring(0, source.indexOf('|'));
 		String contextName = filePath.substring(filePath.lastIndexOf('/') + 1,
 				filePath.lastIndexOf('.'));
@@ -154,8 +153,7 @@ public class ContextXmlHandler extends DefaultHandler {
 
 	private void addExtendedContext(final Attributes attributes) {
 		String source = attributes.getValue("org.eventb.core.scTarget");
-		String contextName = source.substring(source.lastIndexOf('#') + 1,
-				source.length());
+		String contextName = source.substring(source.lastIndexOf('#') + 1);
 
 		model.addRelationship(context.getName(), contextName, ERefType.EXTENDS);
 

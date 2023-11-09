@@ -10,13 +10,8 @@ import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.*;
-
-import static java.util.Collections.singletonList;
-import static java.util.stream.Collectors.toMap;
 
 /**
  * Use RefineTraceCommand instead; Can be removed after removing dependency in UI

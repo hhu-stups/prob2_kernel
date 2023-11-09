@@ -1,7 +1,6 @@
 package de.prob.formula;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import de.prob.animator.domainobjects.Join;
 
