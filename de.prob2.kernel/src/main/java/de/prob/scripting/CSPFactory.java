@@ -31,9 +31,6 @@ public class CSPFactory implements ModelFactory<CSPModel> {
 		final String text;
 		try (final Stream<String> lines = Files.lines(p)) {
 			text = lines.collect(Collectors.joining("\n"));
-		} catch (NoSuchFileException e) {
-			// rethrow as FNFE, because the tests expect the old exception
-			throw new FileNotFoundException(e.getMessage());
 		} catch (UncheckedIOException e) {
 			// the stream will throw an UncheckedIOException when there is an IOException while reading
 			throw e.getCause();

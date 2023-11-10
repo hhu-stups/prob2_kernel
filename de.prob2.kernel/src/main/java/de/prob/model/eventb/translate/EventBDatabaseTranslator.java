@@ -3,6 +3,7 @@ package de.prob.model.eventb.translate;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -61,7 +62,7 @@ public class EventBDatabaseTranslator {
 				mainComponent = xmlHandler.getMachine();
 				this.model = xmlHandler.getModel();
 			}
-		} catch (FileNotFoundException e) {
+		} catch (FileNotFoundException | NoSuchFileException e) {
 			throw new EventBFileNotFoundException(fullFileName, "Translated .bcm or .bcc file could not be found. Try to clean the Rodin project", true, e);
 		} catch (ParserConfigurationException | SAXException e) {
 			throw new ProBError("XML parsing error while loading Event-B file from Rodin project", e);
