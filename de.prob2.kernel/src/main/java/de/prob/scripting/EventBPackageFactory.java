@@ -74,7 +74,7 @@ public final class EventBPackageFactory implements ModelFactory<EventBModel> {
 			throw new IllegalArgumentException(file + " contained no valid Event-B Load command");
 		}
 
-        final String componentName;
+		final String componentName;
 		if (EXTENSION.equals(MoreFiles.getFileExtension(file))) {
 			componentName = MoreFiles.getNameWithoutExtension(file);
 		} else {
