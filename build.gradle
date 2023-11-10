@@ -212,7 +212,7 @@ tasks.withType(GroovyCompile) {
 // The Groovydoc encoding can't be set via the task, it depends on the file.encoding system property of the Gradle JVM.
 // FIXME This needs to be set in the gradle.properties, but the file is encrypted.
 
-final generatedResourcesDir = new File(project.buildDir, "generated-src/main/resources")
+final generatedResourcesDir = layout.buildDirectory.dir("generated-src/main/resources").get().asFile
 
 sourceSets {
 	main {
@@ -289,13 +289,13 @@ check.dependsOn(groovyIntegrationTests)
 project.jacoco.applyTo(groovyIntegrationTests)
 
 jacoco {
-	toolVersion = "0.8.10"
+	toolVersion = "0.8.11"
 }
 jacocoTestReport {
 	reports {
 		xml.required = false
 		csv.required = false
-		html.outputLocation = new File(buildDir, "jacocoHtml")
+		html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
 	}
 	executionData(test, groovyIntegrationTests)
 }
