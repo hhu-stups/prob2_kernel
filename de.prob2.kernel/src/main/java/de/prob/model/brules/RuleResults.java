@@ -48,8 +48,13 @@ public class RuleResults {
 			ClassicalB numberOfCtsFormulaObject = new ClassicalB(numberOfCtsFormula);
 			evalElements.add(numberOfCtsFormulaObject);
 			// get the (restricted) set of counter examples
-			String ctFormula = String.format("SORT(%s)[1..%s]", operation.getCounterExampleVariableName(),
+			String ctFormula;
+			if (maxNumberOfReportedCounterExamples == -1) {
+				ctFormula = String.format("ran(SORT(%s))", operation.getCounterExampleVariableName());
+			} else {
+				ctFormula = String.format("SORT(%s)[1..%s]", operation.getCounterExampleVariableName(),
 					maxNumberOfReportedCounterExamples);
+			}
 			ClassicalB counterExampleObject = new ClassicalB(ctFormula);
 			evalElements.add(counterExampleObject);
 		}
@@ -92,6 +97,8 @@ public class RuleResults {
 		int numberOfRulesSucceeded = 0;
 		int numberOfRulesNotChecked = 0;
 		int numberOfRulesDisabled = 0;
+		Map<String, RuleStatus> status = new HashMap<>();
+		Map<String, List<RuleResult.CounterExample>> counterexamples = new HashMap<>();
 		for (RuleResult ruleResult : ruleResultsMap.values()) {
 			RuleStatus resultEnum = ruleResult.getRuleState();
 			switch (resultEnum) {
@@ -110,9 +117,11 @@ public class RuleResults {
 			default:
 				throw new AssertionError();
 			}
+			status.put(ruleResult.getRuleName(), resultEnum);
+			counterexamples.put(ruleResult.getRuleName(), ruleResult.getCounterExamples());
 		}
 		this.summary = new ResultSummary(numberOfRules, numberOfRulesFailed, numberOfRulesSucceeded,
-				numberOfRulesNotChecked, numberOfRulesDisabled);
+			numberOfRulesNotChecked, numberOfRulesDisabled, status, counterexamples);
 	}
 
 	public List<RuleResult> getRuleResultList() {
@@ -149,14 +158,19 @@ public class RuleResults {
 		public final int numberOfRulesSucceeded;
 		public final int numberOfRulesNotChecked;
 		public final int numberOfRulesDisabled;
+		public final Map<String, RuleStatus> status;
+		public final Map<String, List<RuleResult.CounterExample>> counterexamples;
 
 		protected ResultSummary(int numberOfRules, int numberOfRulesFailed, int numberOfRulesSucceeded,
-				int numberOfRulesNotChecked, int numberOfRulesDisabled) {
+				int numberOfRulesNotChecked, int numberOfRulesDisabled, Map<String, RuleStatus> status,
+				Map<String, List<RuleResult.CounterExample>> counterexamples) {
 			this.numberOfRules = numberOfRules;
 			this.numberOfRulesFailed = numberOfRulesFailed;
 			this.numberOfRulesSucceeded = numberOfRulesSucceeded;
 			this.numberOfRulesNotChecked = numberOfRulesNotChecked;
 			this.numberOfRulesDisabled = numberOfRulesDisabled;
+			this.status = status;
+			this.counterexamples = counterexamples;
 		}
 	}
 }
