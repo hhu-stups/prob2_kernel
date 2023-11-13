@@ -96,7 +96,10 @@ public class ModelElementList<E> extends GroovyObjectSupport implements List<E> 
 	private PersistentHashMap<String, E> addMapping(final PersistentHashMap<String, E> keys, final E e) {
 		IPersistentMap<String, E> newkeys = keys;
 		if (e instanceof Named) {
-			newkeys = newkeys.assoc(((Named)e).getName(), e);
+			String name = ((Named)e).getName();
+			if (name != null) {
+				newkeys = newkeys.assoc(name, e);
+			}
 		}
 		return (PersistentHashMap<String, E>)newkeys;
 	}
@@ -104,7 +107,10 @@ public class ModelElementList<E> extends GroovyObjectSupport implements List<E> 
 	private PersistentHashMap<String, E> removeMapping(final PersistentHashMap<String, E> keys, final E e) {
 		IPersistentMap<String, E> newkeys = keys;
 		if (e instanceof Named) {
-			newkeys = newkeys.without(((Named)e).getName());
+			String name = ((Named) e).getName();
+			if (name != null) {
+				newkeys = newkeys.without(name);
+			}
 		}
 		return (PersistentHashMap<String, E>)newkeys;
 	}

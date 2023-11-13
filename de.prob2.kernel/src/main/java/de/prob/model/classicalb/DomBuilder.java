@@ -11,35 +11,7 @@ import java.util.stream.Collectors;
 
 import de.be4.classicalb.core.parser.analysis.DepthFirstAdapter;
 import de.be4.classicalb.core.parser.analysis.MachineClauseAdapter;
-import de.be4.classicalb.core.parser.node.AAssertionsMachineClause;
-import de.be4.classicalb.core.parser.node.AConjunctPredicate;
-import de.be4.classicalb.core.parser.node.AConstantsMachineClause;
-import de.be4.classicalb.core.parser.node.AConstraintsMachineClause;
-import de.be4.classicalb.core.parser.node.ADeferredSetSet;
-import de.be4.classicalb.core.parser.node.ADescriptionExpression;
-import de.be4.classicalb.core.parser.node.AEnumeratedSetSet;
-import de.be4.classicalb.core.parser.node.AExpressionParseUnit;
-import de.be4.classicalb.core.parser.node.AIdentifierExpression;
-import de.be4.classicalb.core.parser.node.AInvariantMachineClause;
-import de.be4.classicalb.core.parser.node.ALocalOperationsMachineClause;
-import de.be4.classicalb.core.parser.node.AMachineHeader;
-import de.be4.classicalb.core.parser.node.AOperation;
-import de.be4.classicalb.core.parser.node.AOperationsMachineClause;
-import de.be4.classicalb.core.parser.node.APreconditionSubstitution;
-import de.be4.classicalb.core.parser.node.APredicateParseUnit;
-import de.be4.classicalb.core.parser.node.APropertiesMachineClause;
-import de.be4.classicalb.core.parser.node.ASelectSubstitution;
-import de.be4.classicalb.core.parser.node.ASetsMachineClause;
-import de.be4.classicalb.core.parser.node.ASubstitutionParseUnit;
-import de.be4.classicalb.core.parser.node.AVariablesMachineClause;
-import de.be4.classicalb.core.parser.node.EOF;
-import de.be4.classicalb.core.parser.node.PExpression;
-import de.be4.classicalb.core.parser.node.POperation;
-import de.be4.classicalb.core.parser.node.PPredicate;
-import de.be4.classicalb.core.parser.node.PSet;
-import de.be4.classicalb.core.parser.node.PSubstitution;
-import de.be4.classicalb.core.parser.node.Start;
-import de.be4.classicalb.core.parser.node.TIdentifierLiteral;
+import de.be4.classicalb.core.parser.node.*;
 import de.be4.classicalb.core.parser.util.Utils;
 import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.exception.ProBError;
@@ -113,7 +85,7 @@ public class DomBuilder extends MachineClauseAdapter {
 			final AConstraintsMachineClause node) {
 		List<PPredicate> predicates = getPredicates(node.getPredicates());
 		for (PPredicate pPredicate : predicates) {
-			constraints.add(new Constraint(createPredicateAST(pPredicate)));
+			constraints.add(new Constraint(createPredicateAST(pPredicate), getPragmaLabelName(pPredicate)));
 		}
 	}
 
@@ -128,7 +100,7 @@ public class DomBuilder extends MachineClauseAdapter {
 	@Override
 	public void caseAPropertiesMachineClause(final APropertiesMachineClause node) {
 		for (PPredicate pPredicate : getPredicates(node.getPredicates())) {
-			properties.add(new Property(createPredicateAST(pPredicate)));
+			properties.add(new Property(createPredicateAST(pPredicate), getPragmaLabelName(pPredicate)));
 		}
 	}
 
@@ -147,8 +119,7 @@ public class DomBuilder extends MachineClauseAdapter {
 	public void caseAInvariantMachineClause(final AInvariantMachineClause node) {
 		List<PPredicate> predicates = getPredicates(node.getPredicates());
 		for (PPredicate pPredicate : predicates) {
-			invariants.add(new ClassicalBInvariant(
-					createPredicateAST(pPredicate)));
+			invariants.add(new ClassicalBInvariant(createPredicateAST(pPredicate), getPragmaLabelName(pPredicate)));
 		}
 	}
 
@@ -173,9 +144,9 @@ public class DomBuilder extends MachineClauseAdapter {
 
 	@Override
 	public void caseAAssertionsMachineClause(final AAssertionsMachineClause node) {
-		for (final PPredicate preds : node.getPredicates()) {
-			// we used to add each conjunct of preds individually, but this will flatten the list of assertions
-			assertions.add(new Assertion(createPredicateAST(preds)));
+		for (final PPredicate pPredicate : node.getPredicates()) {
+			// we used to add each conjunct of pPredicate individually, but this will flatten the list of assertions
+			assertions.add(new Assertion(createPredicateAST(pPredicate), getPragmaLabelName(pPredicate)));
 		}
 	}
 
@@ -212,7 +183,7 @@ public class DomBuilder extends MachineClauseAdapter {
 			PPredicate condition = ((ASelectSubstitution) body).getCondition();
 			List<PPredicate> predicates = getPredicates(condition);
 			for (PPredicate pPredicate : predicates) {
-				guards.add(new ClassicalBGuard(createPredicateAST(pPredicate)));
+				guards.add(new ClassicalBGuard(createPredicateAST(pPredicate), getPragmaLabelName(pPredicate)));
 			}
 		}
 		if (body instanceof APreconditionSubstitution) {
@@ -220,7 +191,7 @@ public class DomBuilder extends MachineClauseAdapter {
 					.getPredicate();
 			List<PPredicate> predicates = getPredicates(condition);
 			for (PPredicate pPredicate : predicates) {
-				guards.add(new ClassicalBGuard(createPredicateAST(pPredicate)));
+				guards.add(new ClassicalBGuard(createPredicateAST(pPredicate), getPragmaLabelName(pPredicate)));
 			}
 		}
 		List<ClassicalBAction> actions = new ArrayList<>();
@@ -283,6 +254,15 @@ public class DomBuilder extends MachineClauseAdapter {
 		node2.setPredicate(pPredicate.clone());
 		node2.getPredicate().apply(new RenameIdentifiers());
 		return start;
+	}
+
+	private String getPragmaLabelName(final PPredicate pPredicate) {
+		if (pPredicate instanceof ALabelPredicate) {
+			String text = ((ALabelPredicate) pPredicate).getName().getText();
+			return Utils.unquotePragmaIdentifier(text);
+		}
+
+		return null;
 	}
 
 	private Start createSubstitutionAST(final PSubstitution pSub) {
