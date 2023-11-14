@@ -7,12 +7,12 @@ import de.prob.model.eventb.EventBModel;
 import de.prob.statespace.StateSpace;
 
 public class CTLChecker extends CheckerBase {
-	private final CTL formula;
 
-	public CTLChecker(final StateSpace s, final String formula)
-			throws LtlParseException {
-		this(s, s.getModel() instanceof EventBModel ? CTL.parseEventB(formula)
-				: new CTL(formula));
+	private final CTL formula;
+	private final int stateLimit;
+
+	public CTLChecker(final StateSpace s, final String formula) throws LtlParseException {
+		this(s, s.getModel() instanceof EventBModel ? CTL.parseEventB(formula) : new CTL(formula));
 	}
 
 	public CTLChecker(final StateSpace s, final CTL formula) {
@@ -20,23 +20,31 @@ public class CTLChecker extends CheckerBase {
 	}
 
 	public CTLChecker(final StateSpace s, final CTL formula, final IModelCheckListener ui) {
+		// Set the state limit to -1 (infinite) per default.
+		this(s, formula, ui, -1);
+	}
+
+	public CTLChecker(final StateSpace s, final CTL formula, final IModelCheckListener ui, final int stateLimit) {
 		super(s, ui);
 
 		if (formula == null) {
-			throw new IllegalArgumentException(
-					"Cannot perform CTL checking without a correctly parsed CTL Formula");
+			throw new IllegalArgumentException("Cannot perform CTL checking without a correctly parsed CTL Formula");
 		}
-
 		this.formula = formula;
+
+		if (stateLimit < 0) {
+			this.stateLimit = -1;
+		} else if (stateLimit > 0) {
+			this.stateLimit = stateLimit;
+		} else {
+			throw new IllegalArgumentException("Cannot perform CTL checking with a stateLimit of 0");
+		}
 	}
 
 	@Override
 	protected void execute() {
-		// Set the state limit to -1 (infinite) for now.
-		// ProB's CTL checker cannot always resume checking after the state limit is reached,
-		// so this could result in the same few states getting checked over and over again.
 		// TODO Allow CtlCheckingCommand to return some sort of progress information during checking
-		final CtlCheckingCommand cmd = new CtlCheckingCommand(this.getStateSpace(), formula, -1);
+		final CtlCheckingCommand cmd = new CtlCheckingCommand(this.getStateSpace(), formula, stateLimit);
 		this.getStateSpace().withTransaction(() -> this.getStateSpace().execute(cmd));
 		this.isFinished(cmd.getResult(), null);
 	}
