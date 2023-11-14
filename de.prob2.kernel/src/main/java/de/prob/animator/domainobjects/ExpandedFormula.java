@@ -99,9 +99,11 @@ public final class ExpandedFormula {
 				case "value":
 					builder.value(BVisual2Value.fromPrologTerm(arg));
 					break;
+
 				case "type":
 					builder.type(ExpandedFormula.FormulaType.fromProlog(arg.atomToString()));
 					break;
+
 				case "children_ids":
 					builder.subformulas(BindingGenerator.getList(arg).stream()
 						.map(id -> BVisual2Formula.fromFormulaId(stateSpace, id.getFunctor()))
