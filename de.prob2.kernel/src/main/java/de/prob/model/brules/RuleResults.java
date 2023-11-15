@@ -98,7 +98,6 @@ public class RuleResults {
 		int numberOfRulesNotChecked = 0;
 		int numberOfRulesDisabled = 0;
 		Map<String, RuleStatus> status = new HashMap<>();
-		Map<String, List<RuleResult.CounterExample>> counterexamples = new HashMap<>();
 		for (RuleResult ruleResult : ruleResultsMap.values()) {
 			RuleStatus resultEnum = ruleResult.getRuleState();
 			switch (resultEnum) {
@@ -118,10 +117,9 @@ public class RuleResults {
 				throw new AssertionError();
 			}
 			status.put(ruleResult.getRuleName(), resultEnum);
-			counterexamples.put(ruleResult.getRuleName(), ruleResult.getCounterExamples());
 		}
 		this.summary = new ResultSummary(numberOfRules, numberOfRulesFailed, numberOfRulesSucceeded,
-			numberOfRulesNotChecked, numberOfRulesDisabled, status, counterexamples);
+			numberOfRulesNotChecked, numberOfRulesDisabled, status, ruleResultsMap);
 	}
 
 	public List<RuleResult> getRuleResultList() {
@@ -159,18 +157,18 @@ public class RuleResults {
 		public final int numberOfRulesNotChecked;
 		public final int numberOfRulesDisabled;
 		public final Map<String, RuleStatus> status;
-		public final Map<String, List<RuleResult.CounterExample>> counterexamples;
+		public final Map<String, RuleResult> ruleresults;
 
 		protected ResultSummary(int numberOfRules, int numberOfRulesFailed, int numberOfRulesSucceeded,
 				int numberOfRulesNotChecked, int numberOfRulesDisabled, Map<String, RuleStatus> status,
-				Map<String, List<RuleResult.CounterExample>> counterexamples) {
+				Map<String, RuleResult> ruleresults) {
 			this.numberOfRules = numberOfRules;
 			this.numberOfRulesFailed = numberOfRulesFailed;
 			this.numberOfRulesSucceeded = numberOfRulesSucceeded;
 			this.numberOfRulesNotChecked = numberOfRulesNotChecked;
 			this.numberOfRulesDisabled = numberOfRulesDisabled;
 			this.status = status;
-			this.counterexamples = counterexamples;
+			this.ruleresults = ruleresults;
 		}
 	}
 }
