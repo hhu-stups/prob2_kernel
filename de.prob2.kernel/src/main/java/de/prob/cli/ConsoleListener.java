@@ -18,6 +18,7 @@ final class ConsoleListener implements Runnable {
 		this.outputListener = outputListener;
 	}
 
+	@Override
 	public void run() {
 		try (final BufferedReader ignored = this.stream) {
 			for (String line; (line = stream.readLine()) != null; ) {
