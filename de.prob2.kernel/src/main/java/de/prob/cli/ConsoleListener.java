@@ -19,6 +19,7 @@ final class ConsoleListener implements Runnable {
 	}
 
 	@Override
+	@SuppressWarnings("try") // javac warns about unused resource (stream) in try-with-resources
 	public void run() {
 		try (final BufferedReader ignored = this.stream) {
 			for (String line; (line = stream.readLine()) != null; ) {
