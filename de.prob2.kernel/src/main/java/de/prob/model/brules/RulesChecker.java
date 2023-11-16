@@ -85,7 +85,7 @@ public class RulesChecker {
 		}
 	}
 
-	private OperationStatus executeOperation(AbstractOperation op) {
+	public OperationStatus executeOperation(AbstractOperation op) {
 		List<Transition> transitions = trace.getStateSpace()
 				.getTransitionsBasedOnParameterValues(trace.getCurrentState(), op.getName(), new ArrayList<>(), 1);
 		trace = trace.add(transitions.get(0));
@@ -94,7 +94,7 @@ public class RulesChecker {
 		return opState;
 	}
 
-	private Set<AbstractOperation> getExecutableOperations() {
+	public Set<AbstractOperation> getExecutableOperations() {
 		final Set<AbstractOperation> todo = new HashSet<>();
 		for (Entry<AbstractOperation, OperationStatus> eval : operationStatuses.entrySet()) {
 			AbstractOperation op = eval.getKey();
