@@ -12,6 +12,7 @@ public final class CompleteIdentifierCommand extends AbstractCommand {
 
 	private static final String PROLOG_COMMAND_NAME = "get_possible_completions";
 	private static final String IGNORE_CASE_ATOM = "lower_case";
+	private static final String KEYWORDS_ATOM = "keywords";
 
 	private static final String COMPLETIONS_VAR = "Completions";
 
@@ -66,7 +67,9 @@ public final class CompleteIdentifierCommand extends AbstractCommand {
 			pto.printAtom(IGNORE_CASE_ATOM);
 		}
 		if (this.hasKeywords()) {
+			pto.openTerm(KEYWORDS_ATOM);
 			pto.printAtom(this.keywords.getAtom());
+			pto.closeTerm();
 		}
 		pto.closeList();
 		pto.printVariable(COMPLETIONS_VAR);
