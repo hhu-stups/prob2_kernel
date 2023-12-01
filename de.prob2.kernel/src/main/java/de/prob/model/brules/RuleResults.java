@@ -1,13 +1,5 @@
 package de.prob.model.brules;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import de.be4.classicalb.core.parser.rules.AbstractOperation;
 import de.be4.classicalb.core.parser.rules.RuleOperation;
 import de.be4.classicalb.core.parser.rules.RulesProject;
@@ -15,6 +7,8 @@ import de.prob.animator.domainobjects.AbstractEvalResult;
 import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.statespace.State;
+
+import java.util.*;
 
 public class RuleResults {
 	private final LinkedHashMap<String, RuleResult> ruleResultsMap = new LinkedHashMap<>();
@@ -97,7 +91,6 @@ public class RuleResults {
 		int numberOfRulesSucceeded = 0;
 		int numberOfRulesNotChecked = 0;
 		int numberOfRulesDisabled = 0;
-		Map<String, RuleStatus> status = new HashMap<>();
 		for (RuleResult ruleResult : ruleResultsMap.values()) {
 			RuleStatus resultEnum = ruleResult.getRuleState();
 			switch (resultEnum) {
@@ -116,10 +109,9 @@ public class RuleResults {
 			default:
 				throw new AssertionError();
 			}
-			status.put(ruleResult.getRuleName(), resultEnum);
 		}
 		this.summary = new ResultSummary(numberOfRules, numberOfRulesFailed, numberOfRulesSucceeded,
-			numberOfRulesNotChecked, numberOfRulesDisabled, status, ruleResultsMap);
+			numberOfRulesNotChecked, numberOfRulesDisabled, ruleResultsMap);
 	}
 
 	public List<RuleResult> getRuleResultList() {
@@ -128,6 +120,31 @@ public class RuleResults {
 
 	public Map<String, RuleResult> getRuleResultMap() {
 		return new HashMap<>(this.ruleResultsMap);
+	}
+
+	public Map<String, List<RuleResult>> getRuleResultsForClassifications() {
+		Map<String, List<RuleResult>> classificationMap = new HashMap<>();
+		for (RuleResult ruleResult : this.ruleResultsMap.values()) {
+			if (ruleResult.hasClassification()) {
+				String classification = ruleResult.getClassification();
+				if (classificationMap.containsKey(classification)) {
+					classificationMap.get(classification).add(ruleResult);
+				} else {
+					classificationMap.put(classification, new ArrayList<>(Collections.singleton(ruleResult)));
+				}
+			}
+		}
+		return classificationMap;
+	}
+
+	public List<RuleResult> getRuleResultsWithoutClassification() {
+		List<RuleResult> ruleResults = new ArrayList<>();
+		for (RuleResult ruleResult : this.ruleResultsMap.values()) {
+			if (!ruleResult.hasClassification()) {
+				ruleResults.add(ruleResult);
+			}
+		}
+		return ruleResults;
 	}
 
 	public ResultSummary getSummary() {
@@ -149,26 +166,19 @@ public class RuleResults {
 		}
 		return sb.toString();
 	}
-
 	public static class ResultSummary {
 		public final int numberOfRules;
 		public final int numberOfRulesFailed;
 		public final int numberOfRulesSucceeded;
 		public final int numberOfRulesNotChecked;
 		public final int numberOfRulesDisabled;
-		public final Map<String, RuleStatus> status;
-		public final Map<String, RuleResult> ruleresults;
-
 		protected ResultSummary(int numberOfRules, int numberOfRulesFailed, int numberOfRulesSucceeded,
-				int numberOfRulesNotChecked, int numberOfRulesDisabled, Map<String, RuleStatus> status,
-				Map<String, RuleResult> ruleresults) {
+				int numberOfRulesNotChecked, int numberOfRulesDisabled, Map<String, RuleResult> ruleResults) {
 			this.numberOfRules = numberOfRules;
 			this.numberOfRulesFailed = numberOfRulesFailed;
 			this.numberOfRulesSucceeded = numberOfRulesSucceeded;
 			this.numberOfRulesNotChecked = numberOfRulesNotChecked;
 			this.numberOfRulesDisabled = numberOfRulesDisabled;
-			this.status = status;
-			this.ruleresults = ruleresults;
 		}
 	}
 }

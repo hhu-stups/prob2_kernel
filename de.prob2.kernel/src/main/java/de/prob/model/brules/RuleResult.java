@@ -102,6 +102,22 @@ public class RuleResult {
 		return ruleOperation.getRuleIdString();
 	}
 
+	public boolean hasClassification() {
+		return ruleOperation.getClassification() != null;
+	}
+
+	public String getClassification() {
+		return ruleOperation.getClassification();
+	}
+
+	public boolean hasTags() {
+		return ruleOperation.getTags().isEmpty();
+	}
+
+	public List<String> getTags() {
+		return ruleOperation.getTags();
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
