@@ -147,8 +147,10 @@ public class EventB extends AbstractEvalElement implements IBEvalElement {
 		}
 		
 		if(parseResult.hasProblem()) {
-			errors.add("Code: " + this.getCode());
-			errors.add("Unicode translation: " + this.toUnicode());
+			errors.add("Formula: \"" + this.getCode() + "\"");
+			if(! this.toUnicode().equals(this.getCode())) {
+			   errors.add("Unicode translation: " + this.toUnicode());
+			}
 			throw new EvaluationException("Could not parse formula:\n" + String.join("\n", errors));
 		}
 	}
