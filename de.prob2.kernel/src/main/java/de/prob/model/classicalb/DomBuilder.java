@@ -207,6 +207,9 @@ public class DomBuilder extends MachineClauseAdapter {
 			return (AIdentifierExpression) pExpression;
 		} else if(pExpression instanceof ADescriptionExpression) {
 			return (AIdentifierExpression) ((ADescriptionExpression) pExpression).getExpression();
+		} else if(pExpression instanceof ADefinitionExpression) {
+			throw new ProBError("ProB2 does not yet support DEFINITIONS for identifier lists: " + pExpression + " at position " + pExpression.getStartPos());
+			// TODO: analyse body of expression
 		} else {
 			throw new ProBError("Not a valid constant/variable identifier expression: " + pExpression.getClass());
 		}
