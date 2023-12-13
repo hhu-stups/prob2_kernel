@@ -57,7 +57,7 @@ public class ClassicalBModel extends AbstractModel {
 	}
 
 	public ClassicalBModel create(final Start mainAST, final RecursiveMachineLoader rml, final File modelFile, final BParser bparser) {
-		final DomBuilder d = new DomBuilder(rml.getMainMachineName(), null);
+		final DomBuilder d = new DomBuilder(modelFile, rml.getMainMachineName(), null);
 		final ClassicalBMachine classicalBMachine = d.build(mainAST);
 
 		final DependencyWalker walker = new DependencyWalker(rml, classicalBMachine);

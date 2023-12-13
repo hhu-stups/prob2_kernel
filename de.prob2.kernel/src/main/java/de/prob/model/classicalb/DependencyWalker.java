@@ -1,5 +1,6 @@
 package de.prob.model.classicalb;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -105,7 +106,8 @@ public final class DependencyWalker {
 	}
 
 	private ClassicalBMachine makeMachine(final String dest, final String prefix) {
-		final DomBuilder builder = new DomBuilder(dest, prefix);
+		File modelFile = rml.getParsedFiles().get(dest);
+		final DomBuilder builder = new DomBuilder(modelFile, dest, prefix);
 		final Start start = rml.getParsedMachines().get(dest);
 		start.apply(builder);
 		return builder.getMachine();

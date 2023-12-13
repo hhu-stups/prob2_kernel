@@ -1,5 +1,6 @@
 package de.prob.model.classicalb;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -11,9 +12,11 @@ import java.util.stream.Collectors;
 
 import de.be4.classicalb.core.parser.analysis.DepthFirstAdapter;
 import de.be4.classicalb.core.parser.analysis.MachineClauseAdapter;
+import de.be4.classicalb.core.parser.exceptions.BException;
 import de.be4.classicalb.core.parser.node.*;
 import de.be4.classicalb.core.parser.util.Utils;
 import de.prob.animator.domainobjects.ClassicalB;
+import de.prob.animator.domainobjects.ErrorItem;
 import de.prob.exception.ProBError;
 import de.prob.model.representation.Action;
 import de.prob.model.representation.BEvent;
@@ -36,10 +39,12 @@ public class DomBuilder extends MachineClauseAdapter {
 	private final List<Assertion> assertions = new ArrayList<>();
 	private final List<Operation> operations = new ArrayList<>();
 	private final Set<String> usedIds = new HashSet<>();
+	private final File modelFile;
 	private final String unprefixedName;
 	private final String prefix;
 
-	public DomBuilder(final String unprefixedName, final String prefix) {
+	DomBuilder(final File modelFile, final String unprefixedName, final String prefix) {
+		this.modelFile = modelFile;
 		this.unprefixedName = unprefixedName;
 		this.prefix = prefix;
 	}
@@ -202,22 +207,31 @@ public class DomBuilder extends MachineClauseAdapter {
 		operations.add(operation);
 	}
 
-	private static AIdentifierExpression extractIdentifierExpression(PExpression pExpression) {
+	private AIdentifierExpression extractIdentifierExpression(PExpression pExpression) {
 		if(pExpression instanceof AIdentifierExpression) {
 			return (AIdentifierExpression) pExpression;
 		} else if(pExpression instanceof ADescriptionExpression) {
 			return (AIdentifierExpression) ((ADescriptionExpression) pExpression).getExpression();
 		} else if(pExpression instanceof ADefinitionExpression) {
-			throw new ProBError("ProB2 does not yet support DEFINITIONS for identifier lists: " + pExpression + " at position " + pExpression.getStartPos());
+			// TODO Perhaps we should add better helper methods for converting positions like this?
+			BException.Location nodeLocation = BException.Location.fromNode(this.modelFile.toString(), pExpression);
+			List<ErrorItem.Location> locations;
+			if (nodeLocation == null) {
+				locations = Collections.emptyList();
+			} else {
+				locations = Collections.singletonList(ErrorItem.Location.fromParserLocation(nodeLocation));
+			}
+			ErrorItem error = new ErrorItem("ProB2 does not yet support DEFINITIONS for identifier lists: " + pExpression, ErrorItem.Type.ERROR, locations);
+			throw new ProBError(Collections.singletonList(error));
 			// TODO: analyse body of expression
 		} else {
 			throw new ProBError("Not a valid constant/variable identifier expression: " + pExpression.getClass());
 		}
 	}
 
-	private static List<String> extractIdentifiers(final List<PExpression> identifiers) {
+	private List<String> extractIdentifiers(final List<PExpression> identifiers) {
 		return identifiers.stream()
-			.map(DomBuilder::extractIdentifierExpression)
+			.map(this::extractIdentifierExpression)
 			.map(Utils::getAIdentifierAsString)
 			.collect(Collectors.toList());
 	}
