@@ -10,6 +10,7 @@ class DomWalkerTest extends Specification {
 	def setup() {
 		String testmachine = """
 		MACHINE SimplyStructure
+		FREETYPES Option = Some(INTEGER), None
 		VARIABLES aa, b, Cc
 		INVARIANT aa : NAT
 		INITIALISATION aa:=1
@@ -41,5 +42,10 @@ class DomWalkerTest extends Specification {
 	def "test if there are any invariants"() {
 		expect:
 		machine.invariants.collect {it.predicate.code} == ["aa:NAT"]
+	}
+
+	def "testing that freetypes are handled correctly"() {
+		expect:
+		machine.freetypes.collect {it.name} == ['Option']
 	}
 }

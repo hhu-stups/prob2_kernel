@@ -1,15 +1,5 @@
 package de.prob.model.classicalb;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import de.be4.classicalb.core.parser.analysis.DepthFirstAdapter;
 import de.be4.classicalb.core.parser.analysis.MachineClauseAdapter;
 import de.be4.classicalb.core.parser.exceptions.BException;
@@ -18,13 +8,12 @@ import de.be4.classicalb.core.parser.util.Utils;
 import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.ErrorItem;
 import de.prob.exception.ProBError;
-import de.prob.model.representation.Action;
-import de.prob.model.representation.BEvent;
-import de.prob.model.representation.Constant;
-import de.prob.model.representation.Guard;
-import de.prob.model.representation.Invariant;
-import de.prob.model.representation.ModelElementList;
-import de.prob.model.representation.Variable;
+import de.prob.model.representation.*;
+
+import java.io.File;
+import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class DomBuilder extends MachineClauseAdapter {
 
@@ -36,6 +25,7 @@ public class DomBuilder extends MachineClauseAdapter {
 	private final List<ClassicalBVariable> variables = new ArrayList<>();
 	private final List<ClassicalBInvariant> invariants = new ArrayList<>();
 	private final List<de.prob.model.representation.Set> sets = new ArrayList<>();
+	private final List<Freetype> freetypes = new ArrayList<>();
 	private final List<Assertion> assertions = new ArrayList<>();
 	private final List<Operation> operations = new ArrayList<>();
 	private final Set<String> usedIds = new HashSet<>();
@@ -69,6 +59,7 @@ public class DomBuilder extends MachineClauseAdapter {
 		machine = machine.set(Invariant.class, new ModelElementList<>(invariants));
 		machine = machine.set(Parameter.class, new ModelElementList<>(parameters));
 		machine = machine.set(de.prob.model.representation.Set.class, new ModelElementList<>(sets));
+		machine = machine.set(Freetype.class, new ModelElementList<>(freetypes));
 		machine = machine.set(Variable.class, new ModelElementList<>(variables));
 		machine = machine.set(BEvent.class, new ModelElementList<>(operations));
 		return machine;
@@ -87,7 +78,7 @@ public class DomBuilder extends MachineClauseAdapter {
 
 	@Override
 	public void caseAConstraintsMachineClause(
-			final AConstraintsMachineClause node) {
+		final AConstraintsMachineClause node) {
 		List<PPredicate> predicates = getPredicates(node.getPredicates());
 		for (PPredicate pPredicate : predicates) {
 			constraints.add(new Constraint(createPredicateAST(pPredicate), getPragmaLabelName(pPredicate)));
@@ -133,9 +124,9 @@ public class DomBuilder extends MachineClauseAdapter {
 		for (final PSet set : node.getSetDefinitions()) {
 			List<TIdentifierLiteral> identifier;
 			if (set instanceof ADeferredSetSet) {
-				identifier = ((ADeferredSetSet)set).getIdentifier();
+				identifier = ((ADeferredSetSet) set).getIdentifier();
 			} else if (set instanceof AEnumeratedSetSet) {
-				identifier = ((AEnumeratedSetSet)set).getIdentifier();
+				identifier = ((AEnumeratedSetSet) set).getIdentifier();
 			} else {
 				continue;
 			}
@@ -144,6 +135,33 @@ public class DomBuilder extends MachineClauseAdapter {
 				.map(TIdentifierLiteral::clone)
 				.collect(Collectors.toList());
 			sets.add(new de.prob.model.representation.Set(new ClassicalB(createExpressionAST(new AIdentifierExpression(identifier)))));
+		}
+	}
+
+	@Override
+	public void caseAFreetypesMachineClause(AFreetypesMachineClause node) {
+		for (PFreetype pFreetype : node.getFreetypes()) {
+			if (pFreetype instanceof AFreetype) {
+				AFreetype ft = (AFreetype) pFreetype;
+				// TODO: is this prefixing required?
+				String name = addPrefix(ft.getName().getText());
+				List<String> parameters = extractIdentifiers(ft.getParameters());
+				Freetype freetype = new Freetype(name, parameters);
+
+				List<FreetypeConstructor> constructors = new ArrayList<>();
+				for (PFreetypeConstructor c : ft.getConstructors()) {
+					if (c instanceof AConstructorFreetypeConstructor) {
+						AConstructorFreetypeConstructor cc = (AConstructorFreetypeConstructor) c;
+						constructors.add(new FreetypeConstructor(cc.getName().getText(), createExpressionAST(cc.getArgument())));
+					} else if (c instanceof AElementFreetypeConstructor) {
+						AElementFreetypeConstructor ec = (AElementFreetypeConstructor) c;
+						constructors.add(new FreetypeConstructor(ec.getName().getText()));
+					}
+				}
+				freetype = freetype.set(FreetypeConstructor.class, new ModelElementList<>(constructors));
+
+				this.freetypes.add(freetype);
+			}
 		}
 	}
 
@@ -168,16 +186,21 @@ public class DomBuilder extends MachineClauseAdapter {
 	private void doOperations(final List<? extends POperation> ops) {
 		for (final POperation op : ops) {
 			if (op instanceof AOperation) {
-				doOperation((AOperation)op);
+				doOperation((AOperation) op);
 			}
 		}
 	}
 
-	private void doOperation(final AOperation node) {
-		String name = Utils.getTIdentifierListAsString(node.getOpName());
+	private String addPrefix(String name) {
 		if (prefix != null && !prefix.equals(name)) {
-			name = prefix + "." + name;
+			return prefix + "." + name;
+		} else {
+			return name;
 		}
+	}
+
+	private void doOperation(final AOperation node) {
+		String name = addPrefix(Utils.getTIdentifierListAsString(node.getOpName()));
 		List<PExpression> paramIds = node.getParameters();
 		final List<String> params = extractIdentifiers(paramIds);
 		final List<String> output = extractIdentifiers(node.getReturnValues());
@@ -192,8 +215,7 @@ public class DomBuilder extends MachineClauseAdapter {
 			}
 		}
 		if (body instanceof APreconditionSubstitution) {
-			PPredicate condition = ((APreconditionSubstitution) body)
-					.getPredicate();
+			PPredicate condition = ((APreconditionSubstitution) body).getPredicate();
 			List<PPredicate> predicates = getPredicates(condition);
 			for (PPredicate pPredicate : predicates) {
 				guards.add(new ClassicalBGuard(createPredicateAST(pPredicate), getPragmaLabelName(pPredicate)));
@@ -208,11 +230,11 @@ public class DomBuilder extends MachineClauseAdapter {
 	}
 
 	private AIdentifierExpression extractIdentifierExpression(PExpression pExpression) {
-		if(pExpression instanceof AIdentifierExpression) {
+		if (pExpression instanceof AIdentifierExpression) {
 			return (AIdentifierExpression) pExpression;
-		} else if(pExpression instanceof ADescriptionExpression) {
+		} else if (pExpression instanceof ADescriptionExpression) {
 			return (AIdentifierExpression) ((ADescriptionExpression) pExpression).getExpression();
-		} else if(pExpression instanceof ADefinitionExpression) {
+		} else if (pExpression instanceof ADefinitionExpression) {
 			// TODO Perhaps we should add better helper methods for converting positions like this?
 			BException.Location nodeLocation = BException.Location.fromNode(this.modelFile.toString(), pExpression);
 			List<ErrorItem.Location> locations;
@@ -242,10 +264,10 @@ public class DomBuilder extends MachineClauseAdapter {
 		}
 
 		final LinkedList<PPredicate> conjunctPreds = new LinkedList<>();
-		AConjunctPredicate currentNode = (AConjunctPredicate)node;
+		AConjunctPredicate currentNode = (AConjunctPredicate) node;
 		while (currentNode.getLeft() instanceof AConjunctPredicate) {
 			conjunctPreds.addFirst(currentNode.getRight());
-			currentNode = (AConjunctPredicate)currentNode.getLeft();
+			currentNode = (AConjunctPredicate) currentNode.getLeft();
 		}
 		conjunctPreds.addFirst(currentNode.getRight());
 		conjunctPreds.addFirst(currentNode.getLeft());
@@ -293,6 +315,7 @@ public class DomBuilder extends MachineClauseAdapter {
 	}
 
 	private class RenameIdentifiers extends DepthFirstAdapter {
+
 		@Override
 		public void inAIdentifierExpression(final AIdentifierExpression node) {
 			if (prefix != null) {

@@ -40,6 +40,10 @@ public class ClassicalBMachine extends Machine implements ConstantsComponent {
 		return getChildrenOfType(Set.class);
 	}
 
+	public ModelElementList<Freetype> getFreetypes() {
+		return getChildrenOfType(Freetype.class);
+	}
+
 	public ModelElementList<Constraint> getConstraints() {
 		return getChildrenOfType(Constraint.class);
 	}
@@ -88,5 +92,9 @@ public class ClassicalBMachine extends Machine implements ConstantsComponent {
 	@Override
 	public Operation getEvent(final String eventName) {
 		return this.getOperation(eventName);
+	}
+
+	public Freetype getFreetype(String name) {
+		return this.getFreetypes().get(name);
 	}
 }
