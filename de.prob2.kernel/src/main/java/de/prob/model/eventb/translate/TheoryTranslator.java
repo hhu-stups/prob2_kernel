@@ -102,6 +102,7 @@ public class TheoryTranslator {
 			final IPrologTermOutput pto) {
 		pto.openTerm("datatype");
 		pto.printAtom(dataType.toString());
+		//System.out.println("Datatype: " + dataType.toString());
 		pto.openList();
 		for (String arg : dataType.getTypeArguments()) {
 			printType(arg, pto);
@@ -109,23 +110,26 @@ public class TheoryTranslator {
 		pto.closeList();
 		pto.openList();
 		for (final DataTypeConstructor constructor : dataType.getConstructorsByName().values()) {
-			printConstructor(constructor, pto);
+			printConstructor(constructor, dataType, pto);
 		}
 		pto.closeList();
 		pto.closeTerm();
 	}
 
 	private void printType(final String type, final IPrologTermOutput pto) {
+	    //System.out.println("printType : " + type);
 		new EventB(type, typeEnv).printProlog(pto);
 	}
 
-	private void printConstructor(final DataTypeConstructor constructor,
+	private void printConstructor(final DataTypeConstructor constructor, final DataType dataType,
 			final IPrologTermOutput pto) {
 		pto.openTerm("constructor");
 		pto.printAtom(constructor.getName());
+		System.out.println("Constructor " + constructor.getName());
+		System.out.println("Type env "+typeEnv);
 		pto.openList();
 		for (final DataTypeDestructor arg : constructor.getArguments()) {
-			printTypedIdentifier("destructor", arg.getName(), new EventB(arg.getType(), typeEnv), pto);
+			printTypedDestructorIdentifier("destructor", arg.getName(), new EventB(arg.getType(), typeEnv), dataType, pto);
 		}
 		pto.closeList();
 		pto.closeTerm();
@@ -134,9 +138,41 @@ public class TheoryTranslator {
 	private void printTypedIdentifier(final String functor,
 			final String idString, final EventB type,
 			final IPrologTermOutput pto) {
+		System.out.println("Typed id "+ functor + " id " + idString + " :: " + type);
 		pto.openTerm(functor);
 		pto.printAtom(idString);
-		type.printProlog(pto);
+		type.printProlog(pto); // TODO: use printPrologExpr() to avoid parsing as Predicate/Subst.
+		pto.closeTerm();
+	}
+
+    // print in the context of a dataType definition, detecting recursive references to the dataType name
+    // TODO: we need a set of current datatypes, as we can also refer other previously defined datatypes (not just the current one)
+	private void printTypedDestructorIdentifier(final String functor,
+			final String idString, final EventB type, final DataType dataType,
+			final IPrologTermOutput pto) {
+		//System.out.println("Typed id "+ functor + " id " + idString + " :: " + type);
+		pto.openTerm(functor);
+		pto.printAtom(idString);
+		if (dataType.toString().equals(type.toString())) {
+		   System.out.println("recursive reference to "+ dataType.toString());
+		   // we need to generate something like extended_expr(none,'MyList',[identifier(none,'T')],[]))
+		   pto.openTerm("extended_expr");
+		   pto.printAtom("none");
+		   pto.printAtom(dataType.toString());
+		   pto.openList();
+		   for (String typearg : dataType.getTypeArguments()) {
+			   pto.openTerm("identifier");
+			   pto.printAtom("none");
+			   pto.printAtom(typearg);
+			   pto.closeTerm();
+		   }
+		   pto.closeList();
+		   pto.openList();
+		   pto.closeList();
+		   pto.closeTerm();
+		} else {
+		   type.printProlog(pto); // TODO ??: use printPrologExpr() to avoid parsing as Predicate/Subst.
+		}
 		pto.closeTerm();
 	}
 
