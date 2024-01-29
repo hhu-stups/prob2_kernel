@@ -117,7 +117,7 @@ public class TheoryTranslator {
 	}
 
 	private void printType(final String type, final IPrologTermOutput pto) {
-	    //System.out.println("printType : " + type);
+		//System.out.println("printType : " + type);
 		new EventB(type, typeEnv).printProlog(pto);
 	}
 
@@ -145,8 +145,8 @@ public class TheoryTranslator {
 		pto.closeTerm();
 	}
 
-    // print in the context of a dataType definition, detecting recursive references to the dataType name
-    // TODO: we need a set of current datatypes, as we can also refer other previously defined datatypes (not just the current one)
+	// print in the context of a dataType definition, detecting recursive references to the dataType name
+	// TODO: we need a set of current datatypes, as we can also refer other previously defined datatypes (not just the current one)
 	private void printTypedDestructorIdentifier(final String functor,
 			final String idString, final EventB type, final DataType dataType,
 			final IPrologTermOutput pto) {
@@ -154,24 +154,24 @@ public class TheoryTranslator {
 		pto.openTerm(functor);
 		pto.printAtom(idString);
 		if (dataType.toString().equals(type.toString())) {
-		   System.out.println("recursive reference to "+ dataType.toString());
-		   // we need to generate something like extended_expr(none,'MyList',[identifier(none,'T')],[]))
-		   pto.openTerm("extended_expr");
-		   pto.printAtom("none");
-		   pto.printAtom(dataType.toString());
-		   pto.openList();
-		   for (String typearg : dataType.getTypeArguments()) {
-			   pto.openTerm("identifier");
-			   pto.printAtom("none");
-			   pto.printAtom(typearg);
-			   pto.closeTerm();
-		   }
-		   pto.closeList();
-		   pto.openList();
-		   pto.closeList();
-		   pto.closeTerm();
+			System.out.println("recursive reference to "+ dataType.toString());
+			// we need to generate something like extended_expr(none,'MyList',[identifier(none,'T')],[]))
+			pto.openTerm("extended_expr");
+			pto.printAtom("none");
+			pto.printAtom(dataType.toString());
+			pto.openList();
+			for (String typearg : dataType.getTypeArguments()) {
+				pto.openTerm("identifier");
+				pto.printAtom("none");
+				pto.printAtom(typearg);
+				pto.closeTerm();
+			}
+			pto.closeList();
+			pto.openList();
+			pto.closeList();
+			pto.closeTerm();
 		} else {
-		   type.printProlog(pto); // TODO ??: use printPrologExpr() to avoid parsing as Predicate/Subst.
+			type.printProlog(pto); // TODO ??: use printPrologExpr() to avoid parsing as Predicate/Subst.
 		}
 		pto.closeTerm();
 	}
