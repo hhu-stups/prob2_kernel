@@ -116,6 +116,8 @@ public class ModelElementList<E> extends GroovyObjectSupport implements List<E> 
 	}
 
 	// FIXME Does the same as get(String) and should probably be deprecated at some point
+	// Note: for getElement or get to work the type E should implement the Named interface!
+	//       otherwise getElement will always return null
 	/**
 	 * @param name of the element to be retrieved
 	 * @return the specified element, or null if no element with that name exists.
