@@ -102,7 +102,6 @@ public class TheoryTranslator {
 			final IPrologTermOutput pto) {
 		pto.openTerm("datatype");
 		pto.printAtom(dataType.toString());
-		//System.out.println("Datatype: " + dataType.toString());
 		pto.openList();
 		for (String arg : dataType.getTypeArguments()) {
 			printType(arg, pto);
@@ -124,8 +123,6 @@ public class TheoryTranslator {
 			final IPrologTermOutput pto) {
 		pto.openTerm("constructor");
 		pto.printAtom(constructor.getName());
-		//System.out.println("Constructor " + constructor.getName());
-		//System.out.println("Type env "+typeEnv);
 		pto.openList();
 		for (final DataTypeDestructor arg : constructor.getArguments()) {
 			printTypedDestructorIdentifier("destructor", arg.getName(), new EventB(arg.getType(), typeEnv), allDataTypes, pto);
@@ -148,7 +145,6 @@ public class TheoryTranslator {
 	private void printTypedDestructorIdentifier(final String functor,
 			final String idString, final EventB type, final ModelElementList<DataType> allDataTypes,
 			final IPrologTermOutput pto) {
-		System.out.println("Typed id "+ functor + " id " + idString + " :: " + type);
 		pto.openTerm(functor);
 		pto.printAtom(idString);
 		DataType dataType = null;
@@ -161,7 +157,6 @@ public class TheoryTranslator {
 			}
 		}
 		if (dataType != null) {
-			System.out.println("recursive reference to "+ type.toString());
 			// we need to generate something like extended_expr(none,'MyList',[identifier(none,'T')],[]))
 			pto.openTerm("extended_expr");
 			pto.printAtom("none");
