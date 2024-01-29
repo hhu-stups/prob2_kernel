@@ -1,27 +1,17 @@
 package de.prob.model.brules;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import de.be4.classicalb.core.parser.rules.AbstractOperation;
-import de.be4.classicalb.core.parser.rules.ComputationOperation;
-import de.be4.classicalb.core.parser.rules.FunctionOperation;
-import de.be4.classicalb.core.parser.rules.RuleOperation;
-import de.be4.classicalb.core.parser.rules.RulesProject;
+import de.be4.classicalb.core.parser.rules.*;
 import de.prob.animator.domainobjects.AbstractEvalResult;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.statespace.State;
 import de.prob.statespace.Trace;
 import de.prob.statespace.Transition;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 public class RulesChecker {
 
@@ -210,7 +200,7 @@ public class RulesChecker {
 		}
 	}
 
-	public void saveValidationReport(final Path path, final String language) throws IOException {
+	public void saveValidationReport(final Path path, final Locale language) throws IOException {
 		RuleValidationReport.reportVelocity(trace, path, language);
 	}
 }

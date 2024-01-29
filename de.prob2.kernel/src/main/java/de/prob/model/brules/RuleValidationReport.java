@@ -11,16 +11,13 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class RuleValidationReport {
 
-	public static void reportVelocity(final Trace trace, final Path path, final String language) throws IOException {
-		String templatePath = String.format("de/prob/model/brules/validation_report_%s.html.vm", language);
+	public static void reportVelocity(final Trace trace, final Path path, final Locale locale) throws IOException {
+		String templatePath = String.format("de/prob/model/brules/validation_report_%s.html.vm", locale.getLanguage());
 		initVelocityEngine();
 		VelocityContext context = getVelocityContext(trace);
 		try (final Writer writer = Files.newBufferedWriter(path)) {
