@@ -117,7 +117,6 @@ public class TheoryTranslator {
 	}
 
 	private void printType(final String type, final IPrologTermOutput pto) {
-		//System.out.println("printType : " + type);
 		new EventB(type, typeEnv).printProlog(pto);
 	}
 
@@ -125,8 +124,6 @@ public class TheoryTranslator {
 			final IPrologTermOutput pto) {
 		pto.openTerm("constructor");
 		pto.printAtom(constructor.getName());
-		System.out.println("Constructor " + constructor.getName());
-		System.out.println("Type env "+typeEnv);
 		pto.openList();
 		for (final DataTypeDestructor arg : constructor.getArguments()) {
 			printTypedDestructorIdentifier("destructor", arg.getName(), new EventB(arg.getType(), typeEnv), dataType, pto);
@@ -138,7 +135,6 @@ public class TheoryTranslator {
 	private void printTypedIdentifier(final String functor,
 			final String idString, final EventB type,
 			final IPrologTermOutput pto) {
-		System.out.println("Typed id "+ functor + " id " + idString + " :: " + type);
 		pto.openTerm(functor);
 		pto.printAtom(idString);
 		type.printProlog(pto); // TODO: use printPrologExpr() to avoid parsing as Predicate/Subst.
@@ -150,11 +146,9 @@ public class TheoryTranslator {
 	private void printTypedDestructorIdentifier(final String functor,
 			final String idString, final EventB type, final DataType dataType,
 			final IPrologTermOutput pto) {
-		//System.out.println("Typed id "+ functor + " id " + idString + " :: " + type);
 		pto.openTerm(functor);
 		pto.printAtom(idString);
 		if (dataType.toString().equals(type.toString())) {
-			System.out.println("recursive reference to "+ dataType.toString());
 			// we need to generate something like extended_expr(none,'MyList',[identifier(none,'T')],[]))
 			pto.openTerm("extended_expr");
 			pto.printAtom("none");
