@@ -1,5 +1,7 @@
 package de.prob.model.brules;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -39,13 +41,13 @@ public class RulesChecker {
 		if (trace.getModel() instanceof RulesModel) {
 			rulesModel = (RulesModel) trace.getModel();
 			rulesProject = rulesModel.getRulesProject();
-			determineDepedencies();
+			determineDependencies();
 		} else {
 			throw new IllegalArgumentException("Expected Rules Model.");
 		}
 	}
 
-	private void determineDepedencies() {
+	private void determineDependencies() {
 		for (AbstractOperation op : rulesProject.getOperationsMap().values()) {
 			if (!(op instanceof FunctionOperation)) {
 				Set<AbstractOperation> set = op.getTransitiveDependencies().stream()
@@ -208,4 +210,7 @@ public class RulesChecker {
 		}
 	}
 
+	public void saveValidationReport(final Path path, final String language) throws IOException {
+		RuleValidationReport.reportVelocity(trace, path, language);
+	}
 }

@@ -183,6 +183,7 @@ dependencies {
 	api group: 'com.fasterxml.jackson.core', name: 'jackson-databind'
 	// https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310
 	api group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310'
+	implementation group: 'org.apache.velocity', name: 'velocity-engine-core', version: '2.3'
 
 
 	// Test dependencies
