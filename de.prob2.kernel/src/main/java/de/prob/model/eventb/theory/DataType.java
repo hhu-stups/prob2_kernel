@@ -15,8 +15,9 @@ import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.datatype.IConstructorBuilder;
 import org.eventb.core.ast.datatype.IDatatypeBuilder;
 import org.eventb.core.ast.extension.IFormulaExtension;
+import de.prob.model.representation.Named;
 
-public class DataType extends AbstractElement {
+public class DataType extends AbstractElement  implements Named  {
 
 	final String identifierString;
 	private final Map<String, DataTypeConstructor> constructorsByName;
@@ -30,7 +31,11 @@ public class DataType extends AbstractElement {
 
 	@Override
 	public String toString() {
-		return identifierString;
+		return identifierString; // TODO: probably we should output more here?
+	}
+	@Override
+	public String getName() {
+		return identifierString; // this ensures that getElement or get work properly in ModelElementList
 	}
 
 	@Override

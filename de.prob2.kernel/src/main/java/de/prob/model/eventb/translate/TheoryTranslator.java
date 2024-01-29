@@ -140,23 +140,19 @@ public class TheoryTranslator {
 		pto.closeTerm();
 	}
 
-	// print in the context of a dataType definition, detecting recursive references to the dataType name
-	// TODO: we need a set of current datatypes, as we can also refer other previously defined datatypes (not just the current one)
+	// print in the context of a dataType definition, detecting recursive references to current datatypes
 	private void printTypedDestructorIdentifier(final String functor,
 			final String idString, final EventB type, final ModelElementList<DataType> allDataTypes,
 			final IPrologTermOutput pto) {
 		pto.openTerm(functor);
 		pto.printAtom(idString);
-		DataType dataType = null;
-		// I have no idea why this does not work: allDataTypes.getElement(type.toString());
-		// so we check by iteration whether the datatype is in the list of datatypes currently being added:
-		for (DataType dt : allDataTypes) {
-			if (dt.toString().equals(type.toString())) {
-				dataType = dt;
-				break;
-			}
-		}
+		DataType dataType = allDataTypes.getElement(type.toString());
+
 		if (dataType != null) {
+		    // We have a recursive reference to one of the introduced datatypes
+		    // the Rodin theory plugin no longer has the type parameters for those,
+		    //  and type.printProlog() would lead to a parse exception as the type parameters are missing
+		    // We thus write the type with its type parameters by hand,
 			// we need to generate something like extended_expr(none,'MyList',[identifier(none,'T')],[]))
 			pto.openTerm("extended_expr");
 			pto.printAtom("none");
@@ -173,7 +169,7 @@ public class TheoryTranslator {
 			pto.closeList();
 			pto.closeTerm();
 		} else {
-			type.printProlog(pto); // TODO ??: use printPrologExpr() to avoid parsing as Predicate/Subst.
+			type.printProlog(pto); // TODO: use printPrologExpr() to avoid parsing as Predicate/Subst.
 		}
 		pto.closeTerm();
 	}
