@@ -28,6 +28,7 @@ import de.prob.statespace.StateSpace;
 public class Api {
 	private final FactoryProvider modelFactoryProvider;
 	private final Provider<IAnimator> animatorProvider;
+	@Deprecated
 	private LinkedHashMap<Object, Object> globals = new LinkedHashMap<>();
 
 	/**
@@ -39,10 +40,20 @@ public class Api {
 		this.modelFactoryProvider = modelFactoryProvider;
 	}
 
+	/**
+	 * @deprecated Please store your global state in your own classes.
+	 *     In a Groovy scripting environment, you can also use the Groovy script's global namespace.
+	 */
+	@Deprecated
 	public LinkedHashMap<Object, Object> getGlobals() {
 		return globals;
 	}
 
+	/**
+	 * @deprecated Please store your global state in your own classes.
+	 *     In a Groovy scripting environment, you can also use the Groovy script's global namespace.
+	 */
+	@Deprecated
 	public void setGlobals(LinkedHashMap<Object, Object> globals) {
 		this.globals = globals;
 	}
