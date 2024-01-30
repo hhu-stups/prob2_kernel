@@ -20,12 +20,6 @@ String.metaClass.asType = {Class<?> type ->
 	}
 }
 
-def appendToTrace(t, c) {
-	c.resolveStrategy = Closure.DELEGATE_FIRST
-	c.delegate = new TraceDecorator(t)
-	c()
-}
-
 // Redirect print and println to our own buffered console
 inConsole = true
 Script.metaClass.print = {s ->
@@ -41,11 +35,21 @@ Script.metaClass.println = {s ->
 	}
 }
 
+// I have no idea why the same method exists under two names...
+// It seems that appendToTrace was never used anywhere.
+// execTrace was used in the past by the servlet UI,
+// but seems to be unused now as well...
+// Maybe we can remove this whole code at some point?
+
 def execTrace(t, c) {
 	final proxy = new TraceDecorator(t)
 	c.resolveStrategy = Closure.DELEGATE_FIRST
 	c.delegate = proxy
 	c()
+}
+
+def appendToTrace(t, c) {
+	execTrace(t, c)
 }
 
 final oldEvalResultAsType = EvalResult.metaClass.getMetaMethod("asType", [Class] as Class<?>[])
