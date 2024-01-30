@@ -134,9 +134,8 @@ if (probcliVersion.endsWith("-nightly")) {
 // Adjust all source directory paths of the root project to point into the de.prob2.kernel subdirectory.
 sourceSets {
 	main {
-		// in order to compile the mix of java and groovy in this project we compile all files using the groovy compiler
-		groovy.srcDirs = ['de.prob2.kernel/src/main/groovy', 'de.prob2.kernel/src/main/java'] // i.e. include the 'java' dir as groovy source
-		java.srcDirs = [] // i.e. there's no stand-alone java source
+		groovy.srcDirs = ['de.prob2.kernel/src/main/groovy']
+		java.srcDirs = ['de.prob2.kernel/src/main/java']
 		resources.srcDirs = ['de.prob2.kernel/src/main/resources']
 	}
 	
