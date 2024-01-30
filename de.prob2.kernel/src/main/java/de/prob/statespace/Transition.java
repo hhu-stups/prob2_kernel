@@ -451,8 +451,6 @@ public class Transition {
 	 *     and is potentially dependent on the system default charset
 	 *     (e. g. if the model contains non-ASCII identifiers).
 	 *     The hash value is also returned in a non-standard format (base 36).
-	 *     This method is currently kept to support Groovy trace files (see {@link TraceConverter}),
-	 *     but shouldn't be used in any new code.
 	 */
 	@Deprecated
 	public String sha() throws NoSuchAlgorithmException {
