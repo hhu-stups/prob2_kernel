@@ -1,4 +1,3 @@
-import de.prob.animator.domainobjects.CSP
 import de.prob.animator.domainobjects.ClassicalB
 import de.prob.animator.domainobjects.EvalResult
 import de.prob.animator.domainobjects.EventB
@@ -13,8 +12,6 @@ String.metaClass.asType = {Class<?> type ->
 		new ClassicalB(delegate)
 	} else if (type == EventB) {
 		new EventB(delegate)
-	} else if (type == CSP) {
-		new CSP(delegate)
 	} else {
 		oldStringAsType.invoke(delegate, [type] as Object[])
 	}
