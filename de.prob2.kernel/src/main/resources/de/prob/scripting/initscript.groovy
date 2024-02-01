@@ -1,21 +1,4 @@
-import de.prob.animator.domainobjects.ClassicalB
-import de.prob.animator.domainobjects.EvalResult
-import de.prob.animator.domainobjects.EventB
 import de.prob.statespace.TraceDecorator
-
-// This extends String's as operator to allow creating EvalElements from strings.
-// For example, "x" as ClassicalB creates a ClassicalB object by parsing the formula "x".
-// The same works for the EventB and CSP types.
-final oldStringAsType = String.metaClass.getMetaMethod("asType", [Class] as Class<?>[])
-String.metaClass.asType = {Class<?> type -> 
-	if (type == ClassicalB) {
-		new ClassicalB(delegate)
-	} else if (type == EventB) {
-		new EventB(delegate)
-	} else {
-		oldStringAsType.invoke(delegate, [type] as Object[])
-	}
-}
 
 // Redirect print and println to our own buffered console
 inConsole = true
@@ -47,19 +30,6 @@ def execTrace(t, c) {
 
 def appendToTrace(t, c) {
 	execTrace(t, c)
-}
-
-final oldEvalResultAsType = EvalResult.metaClass.getMetaMethod("asType", [Class] as Class<?>[])
-EvalResult.getMetaClass().asType = {Class<?> clazz ->
-	if (clazz == Integer) {
-		Integer.valueOf(delegate.value)
-	} else if (clazz == Double) {
-		Double.valueOf(delegate.value)
-	} else if (clazz == String) {
-		delegate.value
-	} else {
-		oldEvalResultAsType.invoke(delegate, [clazz] as Object[])
-	}
 }
 
 def eval(script) {

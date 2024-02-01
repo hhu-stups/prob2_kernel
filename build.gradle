@@ -247,6 +247,9 @@ processResources {
 	filesMatching("de/prob/build.properties") {
 		expand(version: project.version, git: readCurrentGitCommit())
 	}
+	filesMatching("META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule") {
+		expand(version: project.version)
+	}
 }
 
 if (!project.hasProperty("probHome")) {
