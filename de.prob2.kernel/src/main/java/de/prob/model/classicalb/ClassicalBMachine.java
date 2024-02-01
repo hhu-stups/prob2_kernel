@@ -95,6 +95,6 @@ public class ClassicalBMachine extends Machine implements ConstantsComponent {
 	}
 
 	public Freetype getFreetype(String name) {
-		return this.getFreetypes().get(name);
+		return this.getFreetypes().getElement(name);
 	}
 }

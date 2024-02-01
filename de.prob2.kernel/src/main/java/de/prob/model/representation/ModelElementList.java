@@ -110,7 +110,6 @@ public class ModelElementList<E> extends GroovyObjectSupport implements List<E> 
 		return (PersistentHashMap<String, E>)newkeys;
 	}
 
-	// FIXME Does the same as get(String) and should probably be deprecated at some point
 	// Note: for getElement or get to work the type E should implement the Named interface!
 	//       otherwise getElement will always return null
 	/**
@@ -168,7 +167,9 @@ public class ModelElementList<E> extends GroovyObjectSupport implements List<E> 
 
 	/**
 	 * @return the element associated with the specified name if a mapping for the name exists in the {@link ModelElementList}
+	 * @deprecated This method does the same thing as {@link #getElement(String)} - use that instead.
 	 */
+	@Deprecated
 	public E get(final String name) {
 		return keys.get(name);
 	}

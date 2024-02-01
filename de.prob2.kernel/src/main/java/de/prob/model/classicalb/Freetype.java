@@ -38,7 +38,7 @@ public class Freetype extends AbstractElement implements Named {
 	}
 
 	public FreetypeConstructor getConstructor(String name) {
-		return this.getConstructors().get(name);
+		return this.getConstructors().getElement(name);
 	}
 
 	@Override

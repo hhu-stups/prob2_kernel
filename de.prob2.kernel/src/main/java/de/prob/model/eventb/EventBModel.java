@@ -202,7 +202,7 @@ public class EventBModel extends AbstractModel {
 	 * @return the most concrete machine
 	 */
 	public EventBMachine getTopLevelMachine(){
-		return getMachines().get(getGraph().getStart());
+		return getMachines().getElement(getGraph().getStart());
 	}
 
 	/**
