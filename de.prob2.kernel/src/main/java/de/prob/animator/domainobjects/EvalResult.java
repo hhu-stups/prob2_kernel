@@ -15,8 +15,6 @@ import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 
-import groovy.lang.MissingPropertyException;
-
 public class EvalResult extends AbstractEvalResult {
 	public static final  EvalResult TRUE = new EvalResult("TRUE", Collections.emptyMap());
 	public static final  EvalResult FALSE = new EvalResult("FALSE", Collections.emptyMap());
@@ -89,19 +87,6 @@ public class EvalResult extends AbstractEvalResult {
 	 */
 	public String getSolution(String name) {
 		return solutions.get(name);
-	}
-
-	@Override
-	public Object getProperty(final String property) {
-		try {
-			return super.getProperty(property);
-		} catch (MissingPropertyException e) {
-			if (this.getSolutions().containsKey(property)) {
-				return this.getSolution(property);
-			} else {
-				throw e;
-			}
-		}
 	}
 
 	public <T extends BValue> TranslatedEvalResult<T> translate() throws TranslationException {

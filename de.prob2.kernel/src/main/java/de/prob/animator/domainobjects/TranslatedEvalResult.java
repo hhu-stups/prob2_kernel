@@ -5,8 +5,6 @@ import java.util.Set;
 
 import de.hhu.stups.prob.translator.BValue;
 
-import groovy.lang.MissingPropertyException;
-
 public class TranslatedEvalResult<T extends BValue> extends AbstractEvalResult {
 	private final T value;
 	private final Map<String, BValue> solutions;
@@ -29,19 +27,6 @@ public class TranslatedEvalResult<T extends BValue> extends AbstractEvalResult {
 	 */
 	public BValue getSolution(final String name) {
 		return solutions.get(name);
-	}
-
-	@Override
-	public Object getProperty(final String property) {
-		try {
-			return super.getProperty(property);
-		} catch (MissingPropertyException e) {
-			if (this.getSolutions().containsKey(property)) {
-				return this.getSolution(property);
-			} else {
-				throw e;
-			}
-		}
 	}
 
 	@Override
