@@ -46,11 +46,6 @@ public class ModelElementList<E> extends GroovyObjectSupport implements List<E> 
 		return keys.get(prop);
 	}
 
-	// Note: this intentionally hides the standard Groovy hasProperty method. Some of our code relies on this (e. g. ModelModifier).
-	public boolean hasProperty(final String prop) {
-		return keys.containsKey(prop);
-	}
-
 	public ModelElementList<E> addElement(final E e) {
 		final PersistentHashMap<String, E> newkeys = addMapping(keys, e);
 		final PersistentVector<E> newlist = list.assocN(list.size(), e);
