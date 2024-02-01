@@ -225,7 +225,7 @@ class TraceAnimationTest extends Specification {
 	def "can execute transition by invoking method"() {
 		when:
 		final t2 = t.$initialise_machine()
-		final t3 = t.invokeMethod("\$initialise_machine", [])
+		final t3 = t.invokeMethod("\$initialise_machine", [] as Object[])
 
 		then:
 		t2.currentTransition.name == "\$initialise_machine"

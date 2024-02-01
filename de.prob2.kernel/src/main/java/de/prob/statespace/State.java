@@ -25,10 +25,6 @@ import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.animator.domainobjects.StateError;
 import de.prob.model.representation.AbstractModel;
 
-import groovy.lang.GroovyObjectSupport;
-
-import org.codehaus.groovy.runtime.DefaultGroovyMethods;
-
 /**
  * A reference to the state object in the ProB core.
  *
@@ -38,7 +34,7 @@ import org.codehaus.groovy.runtime.DefaultGroovyMethods;
  *
  * @author joy
  */
-public class State extends GroovyObjectSupport {
+public class State {
 	private final String id;
 	private final StateSpace stateSpace;
 	private volatile boolean explored;
@@ -65,29 +61,6 @@ public class State extends GroovyObjectSupport {
 		this.explored = false;
 		this.transitions = new ArrayList<>();
 		this.evalCache = new HashMap<>();
-	}
-
-	/**
-	 * This method is included for groovy magic in a console environment.
-	 * Use the {@link State#perform} method instead.
-	 *
-	 * @param method String method name that was called
-	 * @param params List of parameter objects that it was called with
-	 * @return result of {@link State#perform}
-	 * @deprecated use {@link State#perform}
-	 */
-	@Deprecated
-	@Override
-	public State invokeMethod(String method, Object params) {
-		if (method.startsWith("$") && !Transition.SETUP_CONSTANTS_NAME.equals(method) && !Transition.INITIALISE_MACHINE_NAME.equals(method)) {
-			method = method.substring(1);
-		}
-
-		final List<String> paramsList = ((List<?>)DefaultGroovyMethods.asType(params, List.class)).stream().map(Object::toString).collect(Collectors.toList());
-		final String predicate = paramsList.isEmpty() ? "TRUE = TRUE" : String.join(" & ", paramsList);
-		final Transition op = stateSpace.transitionFromPredicate(this, method, predicate, 1).get(0);
-		transitions.add(op);
-		return op.getDestination();
 	}
 
 	/**

@@ -6,13 +6,11 @@ import java.util.stream.Collectors;
 
 import de.prob.model.representation.ModelElementList;
 
-import groovy.lang.GroovyObjectSupport;
-
 /**
  * Provides an API to synchronize the animation of different {@link Trace}s.
  * @author joy
  */
-public class SyncedTraces extends GroovyObjectSupport {
+public class SyncedTraces {
 	private final List<Trace> traces;
 	private final ModelElementList<SyncedEvent> syncedEvents;
 
@@ -23,19 +21,6 @@ public class SyncedTraces extends GroovyObjectSupport {
 
 	public final List<Trace> getTraces() {
 		return this.traces;
-	}
-
-	/**
-	 * This method has been marked as deprecated because it is only available in the class to
-	 * enable groovy magic. Calls the {@link SyncedTraces#execute(String)} method. In a Java environment,
-	 * call this directly.
-	 * @param name of method
-	 * @param args from method
-	 */
-	@Deprecated
-	@Override
-	public SyncedTraces invokeMethod(String name, Object args) {
-		return execute(name);
 	}
 
 	/**

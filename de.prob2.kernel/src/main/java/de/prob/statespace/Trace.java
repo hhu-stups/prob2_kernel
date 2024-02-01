@@ -23,14 +23,10 @@ import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.model.representation.AbstractModel;
 
-import groovy.lang.GroovyObjectSupport;
-
-import org.codehaus.groovy.runtime.DefaultGroovyMethods;
-
 /**
  * @author joy
  */
-public class Trace extends GroovyObjectSupport {
+public class Trace {
 	private boolean exploreStateByDefault = true;
 	private final TraceElement current;
 	private final TraceElement head;
@@ -322,31 +318,6 @@ public class Trace extends GroovyObjectSupport {
 		}
 
 		return new Trace(stateSpace, current, transitionList, this.uuid);
-	}
-
-	/**
-	 * This method is included because it translates to groovy magic in a console environment
-	 * (allows the execution of an event by calling it as a method in the Trace class).
-	 * For executing an event from within Java, use {@link Trace#execute} instead.
-	 *
-	 * @param method String method name called
-	 * @param params List of parameters
-	 * @return {@link Trace#execute(String, List)}
-	 * @deprecated use {@link Trace#execute}
-	 */
-	@Deprecated
-	@Override
-	public Trace invokeMethod(String method, Object params) {
-		if (method.startsWith("$") && !Transition.SETUP_CONSTANTS_NAME.equals(method) && !Transition.INITIALISE_MACHINE_NAME.equals(method)) {
-			method = method.substring(1);
-		}
-
-		final List<String> paramsList = ((List<?>)DefaultGroovyMethods.asType(params, List.class)).stream().map(Object::toString).collect(Collectors.toList());
-		final Transition transition = getCurrentState().findTransition(method, paramsList);
-		if (transition == null) {
-			throw new IllegalArgumentException("Could not execute event with name " + method + " and parameters " + params);
-		}
-		return add(transition);
 	}
 
 	/**

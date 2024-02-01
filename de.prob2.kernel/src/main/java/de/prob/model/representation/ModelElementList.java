@@ -10,9 +10,7 @@ import com.github.krukow.clj_lang.IPersistentMap;
 import com.github.krukow.clj_lang.PersistentHashMap;
 import com.github.krukow.clj_lang.PersistentVector;
 
-import groovy.lang.GroovyObjectSupport;
-
-public class ModelElementList<E> extends GroovyObjectSupport implements List<E> {
+public class ModelElementList<E> implements List<E> {
 	private final PersistentVector<E> list;
 	private final PersistentHashMap<String, E> keys;
 
@@ -39,11 +37,6 @@ public class ModelElementList<E> extends GroovyObjectSupport implements List<E> 
 	private ModelElementList(final List<E> list, final Map<String, E> keys) {
 		this.list = (PersistentVector<E>)list;
 		this.keys = (PersistentHashMap<String, E>)keys;
-	}
-
-	@Override
-	public E getProperty(final String prop) {
-		return keys.get(prop);
 	}
 
 	public ModelElementList<E> addElement(final E e) {
