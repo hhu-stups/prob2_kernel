@@ -110,7 +110,7 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 
 		final Process prologProcess;
 		try {
-			LOGGER.info("\nStarting ProB's Prolog Core. Path is {}", executable);
+			LOGGER.info("Starting ProB's Prolog Core. Path is {}", executable);
 			prologProcess = pb.start();
 			LOGGER.debug("probcli -sf started");
 		} catch (Exception e) {
