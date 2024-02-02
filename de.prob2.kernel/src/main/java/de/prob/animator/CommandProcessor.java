@@ -17,6 +17,7 @@ import de.prob.exception.PrologException;
 import de.prob.parser.BindingGenerator;
 import de.prob.parser.ProBResultParser;
 import de.prob.parser.PrologTermGenerator;
+import de.prob.parser.SimplifiedROMap;
 import de.prob.prolog.output.PrologTermStringOutput;
 import de.prob.prolog.term.PrologTerm;
 
