@@ -34,8 +34,8 @@ class CbcSolveCommandTest {
 
 	@BeforeEach
 	void beforeEach() throws IOException, URISyntaxException {
-		String example_mch = Paths.get(CbcSolveCommand.class.getClassLoader()
-				.getResource("de/prob/testmachines/b/VariablesOnly.mch")
+		String example_mch = Paths.get(CbcSolveCommand.class
+				.getResource("/de/prob/testmachines/b/VariablesOnly.mch")
 				.toURI()).toString();
 		stateSpace = api.b_load(example_mch);
 	}

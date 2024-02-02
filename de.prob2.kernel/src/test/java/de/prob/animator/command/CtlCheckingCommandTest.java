@@ -30,8 +30,8 @@ class CtlCheckingCommandTest {
 
 	@Test
 	void lift_1() throws URISyntaxException, IOException, LtlParseException {
-		Path path = Paths.get(CtlCheckingCommand.class.getClassLoader()
-				.getResource("de/prob/testmachines/b/Lift.mch")
+		Path path = Paths.get(CtlCheckingCommand.class
+				.getResource("/de/prob/testmachines/b/Lift.mch")
 				.toURI());
 		StateSpace stateSpace = api.b_load(path.toString());
 		CTL ctl = new CTL("EF {floors = 100}");
@@ -42,8 +42,8 @@ class CtlCheckingCommandTest {
 
 	@Test
 	void lift_2() throws URISyntaxException, IOException, LtlParseException {
-		Path path = Paths.get(CtlCheckingCommand.class.getClassLoader()
-				.getResource("de/prob/testmachines/b/Lift.mch")
+		Path path = Paths.get(CtlCheckingCommand.class
+				.getResource("/de/prob/testmachines/b/Lift.mch")
 				.toURI());
 		StateSpace stateSpace = api.b_load(path.toString());
 		CTL ctl = new CTL("EF {floors = 101}");
@@ -54,8 +54,8 @@ class CtlCheckingCommandTest {
 
 	@Test
 	void lift_3() throws URISyntaxException, IOException, LtlParseException {
-		Path path = Paths.get(CtlCheckingCommand.class.getClassLoader()
-				.getResource("de/prob/testmachines/b/Lift.mch")
+		Path path = Paths.get(CtlCheckingCommand.class
+				.getResource("/de/prob/testmachines/b/Lift.mch")
 				.toURI());
 		StateSpace stateSpace = api.b_load(path.toString());
 		CTL ctl = new CTL("AF {floors = 2}");
@@ -66,8 +66,8 @@ class CtlCheckingCommandTest {
 
 	@Test
 	void lift_4() throws URISyntaxException, IOException, LtlParseException {
-		Path path = Paths.get(CtlCheckingCommand.class.getClassLoader()
-				.getResource("de/prob/testmachines/b/Lift.mch")
+		Path path = Paths.get(CtlCheckingCommand.class
+				.getResource("/de/prob/testmachines/b/Lift.mch")
 				.toURI());
 		StateSpace stateSpace = api.b_load(path.toString());
 		CTL ctl = new CTL("AF EG{1 = 2}");
