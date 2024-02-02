@@ -39,8 +39,7 @@ public class FindPathCommand extends AbstractCommand implements
 	 * @param trace the trace to satisfy
 	 * @param predicates the constraints to put on each transition; maps 1:1 with trace
 	 */
-	public FindPathCommand(final StateSpace s, final State stateId,
-						   final List<String> trace, final List<ClassicalB> predicates) {
+	public FindPathCommand(final StateSpace s, final State stateId, final List<String> trace, final List<ClassicalB> predicates) {
 		this.stateSpace = s;
 		this.stateId = stateId;
 		this.name = trace;

@@ -149,10 +149,10 @@ public class TheoryTranslator {
 		DataType dataType = allDataTypes.getElement(type.toString());
 
 		if (dataType != null) {
-		    // We have a recursive reference to one of the introduced datatypes
-		    // the Rodin theory plugin no longer has the type parameters for those,
-		    //  and type.printProlog() would lead to a parse exception as the type parameters are missing
-		    // We thus write the type with its type parameters by hand,
+			// We have a recursive reference to one of the introduced datatypes
+			// the Rodin theory plugin no longer has the type parameters for those,
+			//  and type.printProlog() would lead to a parse exception as the type parameters are missing
+			// We thus write the type with its type parameters by hand,
 			// we need to generate something like extended_expr(none,'MyList',[identifier(none,'T')],[]))
 			pto.openTerm("extended_expr");
 			pto.printAtom("none");

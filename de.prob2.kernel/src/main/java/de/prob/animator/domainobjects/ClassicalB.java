@@ -95,8 +95,8 @@ public class ClassicalB extends AbstractEvalElement implements IBEvalElement {
 		try {
 			return bParser.parseFormula(formula);
 		} catch (BCompoundException e) {
-		    if (AllowSubst) {
-		       // also try parsing as substitution
+			if (AllowSubst) {
+				// also try parsing as substitution
 				try {
 					return bParser.parseSubstitution(formula);
 				} catch (BCompoundException f) {

@@ -53,8 +53,7 @@ public class RefineTraceCommand extends AbstractCommand implements
 	 * @param maxDepth maximum search depth
 	 * @param maxBreadth maximum search breadth
 	 */
-	public RefineTraceCommand(final StateSpace s, final State stateId,
-							  final List<String> trace, final List<? extends IEvalElement> predicates, final Map<String, List<String>> alternatives, final List<String> refinedAlternatives, final List<String> skips, final int maxBreadth, final int maxDepth) {
+	public RefineTraceCommand(final StateSpace s, final State stateId, final List<String> trace, final List<? extends IEvalElement> predicates, final Map<String, List<String>> alternatives, final List<String> refinedAlternatives, final List<String> skips, final int maxBreadth, final int maxDepth) {
 		this.stateSpace = s;
 		this.stateId = stateId;
 		this.name = trace;
@@ -89,9 +88,7 @@ public class RefineTraceCommand extends AbstractCommand implements
 	 * @param predicates the constraints to put on each transition; maps 1:1 with trace
 	 */
 	@Deprecated
-	public RefineTraceCommand(final StateSpace s, final State stateId,
-							  final List<String> trace, final List<? extends IEvalElement> predicates) {
-
+	public RefineTraceCommand(final StateSpace s, final State stateId, final List<String> trace, final List<? extends IEvalElement> predicates) {
 		this.stateSpace = s;
 		this.stateId = stateId;
 		this.name = trace;
@@ -116,8 +113,7 @@ public class RefineTraceCommand extends AbstractCommand implements
 	 * @param skips    All events/operations that are not introduced via a skip refinement
 	 */
 	@Deprecated
-	public RefineTraceCommand(final StateSpace s, final State stateId,
-							  final List<String> trace, final List<? extends IEvalElement> predicates, final Map<String, List<String>> alternatives, final List<String> refinedAlternatives, final List<String> skips) {
+	public RefineTraceCommand(final StateSpace s, final State stateId, final List<String> trace, final List<? extends IEvalElement> predicates, final Map<String, List<String>> alternatives, final List<String> refinedAlternatives, final List<String> skips) {
 		this.stateSpace = s;
 		this.stateId = stateId;
 		this.name = trace;
