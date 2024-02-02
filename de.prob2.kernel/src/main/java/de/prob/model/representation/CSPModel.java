@@ -106,12 +106,6 @@ public class CSPModel extends AbstractModel {
 		return null;
 	}
 
-	@Override
-	public Object getProperty(String name) {
-		AbstractElement component = getComponent(name);
-		return component != null ? component : super.getProperty(name);
-	}
-
 	public Object getAt(String name) {
 		return getComponent(name);
 	}

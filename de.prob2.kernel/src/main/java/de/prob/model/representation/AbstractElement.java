@@ -5,8 +5,6 @@ import java.util.Set;
 
 import com.github.krukow.clj_lang.PersistentHashMap;
 
-import groovy.lang.GroovyObjectSupport;
-
 /**
  * This class is the subclass of all model elements (Models, Machines, Contexts,
  * Variables, etc.)
@@ -14,8 +12,7 @@ import groovy.lang.GroovyObjectSupport;
  * @author joy
  *
  */
-public abstract class AbstractElement extends GroovyObjectSupport {
-
+public abstract class AbstractElement {
 	/**
 	 * Maps from a subclass of {@link AbstractElement} to a set containing all
 	 * elements for that subclass

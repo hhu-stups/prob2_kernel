@@ -184,16 +184,6 @@ public class EventBModel extends AbstractModel {
 		return getContexts().getElement(name);
 	}
 
-	@Override
-	public Object getProperty(String name) {
-		final AbstractElement component = getComponent(name);
-		if (component != null) {
-			return component;
-		} else {
-			return super.getProperty(name);
-		}
-	}
-
 	public AbstractElement getAt(String name) {
 		return getComponent(name);
 	}
