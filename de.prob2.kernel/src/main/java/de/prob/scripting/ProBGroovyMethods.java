@@ -90,7 +90,7 @@ public final class ProBGroovyMethods {
 		} else if (clazz == Trace.class) {
 			return (T)new Trace(self);
 		} else {
-			throw new ClassCastException("An element of class " + clazz + " was not found");
+			return DefaultGroovyMethods.asType(self, clazz);
 		}
 	}
 
@@ -101,7 +101,7 @@ public final class ProBGroovyMethods {
 		} else if (clazz == AbstractModel.class || clazz == self.getStateSpace().getModel().getClass()) {
 			return (T)self.getStateSpace().getModel();
 		} else {
-			throw new ClassCastException("Not able to convert Trace object to " + clazz);
+			return DefaultGroovyMethods.asType(self, clazz);
 		}
 	}
 }
