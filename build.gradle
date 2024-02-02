@@ -162,7 +162,6 @@ dependencies {
 	api(platform(group: "org.apache.groovy", name: "groovy-bom", version: "4.0.17"))
 	api group: "org.apache.groovy", name: "groovy"
 	api group: "org.apache.groovy", name: "groovy-jsr223"
-	api group: "org.apache.groovy", name: "groovy-nio"
 	api group: "org.apache.groovy", name: "groovy-xml"
 
 	// Logging
