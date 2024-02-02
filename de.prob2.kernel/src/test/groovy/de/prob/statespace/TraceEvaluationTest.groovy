@@ -120,7 +120,7 @@ class TraceEvaluationTest extends Specification {
 
 	def "Evaluating a formula over a trace also works for EventB"() {
 		given:
-		final path = Paths.get("groovyTests", "Lift", "lift0.bcm").toString()
+		final path = Paths.get("groovyTests", "machines", "Lift", "lift0.bcm").toString()
 		final factory = CliTestCommon.injector.getInstance(EventBFactory.class)
 		final s = factory.extract(path).load([:])
 		t = new Trace(s)
