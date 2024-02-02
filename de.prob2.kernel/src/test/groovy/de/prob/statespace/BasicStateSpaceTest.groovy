@@ -48,7 +48,7 @@ class BasicStateSpaceTest extends Specification {
 
 	def "it is not possible to cast a StateSpace to any other kind of class"() {
 		when:
-		s as String
+		s as Number
 
 		then:
 		thrown(ClassCastException)

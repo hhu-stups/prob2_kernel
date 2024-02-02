@@ -72,7 +72,7 @@ class TraceConstructionTest extends Specification {
 	def "casting trace with other kind of class doesn't work"() {
 		when:
 		final t = new Trace(s)
-		t as String
+		t as Number
 
 		then:
 		thrown(ClassCastException)
