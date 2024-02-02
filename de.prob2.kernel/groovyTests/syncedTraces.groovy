@@ -8,7 +8,7 @@ final s0 = api.b_load(Paths.get(dir, "machines", "scheduler.mch").toString())
 def t0 = new Trace(s0)
 t0 = t0.$initialise_machine()
 
-final s1 = api.eventb_load(Paths.get(dir, "Lift", "lift0.bcm").toString())
+final s1 = api.eventb_load(Paths.get(dir, "machines", "Lift", "lift0.bcm").toString())
 def t1 = new Trace(s1)
 t1 = t1.$setup_constants().$initialise_machine()
 

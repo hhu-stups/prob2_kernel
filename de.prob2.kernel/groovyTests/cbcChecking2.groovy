@@ -3,7 +3,7 @@ import java.nio.file.Paths
 import de.prob.check.CBCInvariantChecker
 import de.prob.check.CBCInvariantViolationFound
 
-final s2 = api.eventb_load(Paths.get(dir, "Time", "clock.bcm").toString())
+final s2 = api.eventb_load(Paths.get(dir, "machines", "Time", "clock.bcm").toString())
 
 final res5 = new CBCInvariantChecker(s2).call()
 assert res5 instanceof CBCInvariantViolationFound

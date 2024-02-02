@@ -3,7 +3,7 @@ import java.nio.file.Paths
 import de.prob.animator.domainobjects.FormulaExpand
 import de.prob.statespace.Trace
 
-final s = api.eventb_load(Paths.get(dir, "Lift", "lift0.bcm").toString())
+final s = api.eventb_load(Paths.get(dir, "machines", "Lift", "lift0.bcm").toString())
 def t = new Trace(s)
 t = t.$setup_constants()
 t = t.$initialise_machine()

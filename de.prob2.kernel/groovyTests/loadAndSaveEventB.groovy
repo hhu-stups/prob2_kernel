@@ -4,10 +4,10 @@ import java.nio.file.Paths
  * Tests loading of EventB to make sure that all components are there. 
  */
 
-final s1 = api.eventb_load(Paths.get(dir, "Lift", "lift0.bcm").toString())
+final s1 = api.eventb_load(Paths.get(dir, "machines", "Lift", "lift0.bcm").toString())
 assert s1 != null
 
-final savePath = Paths.get(dir, "Lift", "lift0.eventb")
+final savePath = Paths.get(dir, "machines", "Lift", "lift0.eventb")
 api.eventb_save(s1, savePath.toString())
 
 final fileContents = Files.readAllLines(savePath)

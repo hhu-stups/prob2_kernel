@@ -2,7 +2,7 @@ import java.nio.file.Paths
 
 import de.prob.statespace.Trace
 
-final s = api.eventb_load(Paths.get(dir, "counter", "machine.bum.bum").toString()) 
+final s = api.eventb_load(Paths.get(dir, "machines", "counter", "machine.bum.bum").toString()) 
 def c = s as Trace
 assert c.currentState == s.root
 assert c.currentState.toString() == "root"

@@ -1,10 +1,13 @@
+import java.nio.file.Paths
+
 import de.prob.model.eventb.EventBModel
 import de.prob.model.representation.DependencyGraph.ERefType
+
 /*
  * Tests loading of EventB to make sure that all components are there. 
  */
 
-final s = api.eventb_load(dir+File.separator+"Lift"+File.separator+"lift0.bcm")
+final s = api.eventb_load(Paths.get(dir, "machines", "Lift", "lift0.bcm").toString())
 assert s != null
 
 final l = s.totalNumberOfErrors
