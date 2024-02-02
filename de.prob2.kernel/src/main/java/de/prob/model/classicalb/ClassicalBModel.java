@@ -121,10 +121,6 @@ public class ClassicalBModel extends AbstractModel {
 		return getChildrenOfType(Machine.class).getElement(name);
 	}
 
-	public AbstractElement getAt(final String name) {
-		return getComponent(name);
-	}
-
 	public IDefinitions getDefinitions() {
 		return bparser.getDefinitions();
 	}

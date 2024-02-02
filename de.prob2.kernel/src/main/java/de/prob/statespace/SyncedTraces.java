@@ -31,10 +31,10 @@ public class SyncedTraces {
 	 * @throws IllegalArgumentException if no synced event with that name has been defined
 	 */
 	public SyncedTraces execute(String name) {
-		if (syncedEvents.getAt(name) == null) {
+		if (syncedEvents.getElement(name) == null) {
 			throw new IllegalArgumentException("No syncronized event is named " + name);
 		}
-		final SyncedEvent event = syncedEvents.getAt(name);
+		final SyncedEvent event = syncedEvents.getElement(name);
 		final List<Trace> newTraces = traces.stream().map(t -> {
 			SyncedEvent.Event e = event.getSynced().get(t.getUUID());
 			return e != null ? t.execute(e.getName(), e.getParameters()) : t;

@@ -439,19 +439,6 @@ public class Trace {
 		return stateSpace.getModel();
 	}
 
-	public Object asType(Class<?> clazz) {
-		if (clazz == StateSpace.class) {
-			return stateSpace;
-		}
-		if (clazz == AbstractModel.class) {
-			return stateSpace.getModel();
-		}
-		if (clazz == stateSpace.getModel().getClass()) {
-			return stateSpace.getModel();
-		}
-		throw new ClassCastException("Not able to convert Trace object to " + clazz);
-	}
-
 	public List<Transition> getTransitionList() {
 		return transitionList;
 	}

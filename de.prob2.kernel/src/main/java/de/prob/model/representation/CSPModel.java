@@ -105,8 +105,4 @@ public class CSPModel extends AbstractModel {
 
 		return null;
 	}
-
-	public Object getAt(String name) {
-		return getComponent(name);
-	}
 }

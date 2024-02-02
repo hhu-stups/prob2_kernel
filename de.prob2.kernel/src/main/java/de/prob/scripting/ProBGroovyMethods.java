@@ -3,6 +3,16 @@ package de.prob.scripting;
 import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.EvalResult;
 import de.prob.animator.domainobjects.EventB;
+import de.prob.model.classicalb.ClassicalBModel;
+import de.prob.model.eventb.EventBModel;
+import de.prob.model.representation.AbstractElement;
+import de.prob.model.representation.AbstractModel;
+import de.prob.model.representation.CSPModel;
+import de.prob.model.representation.ModelElementList;
+import de.prob.statespace.State;
+import de.prob.statespace.StateSpace;
+import de.prob.statespace.Trace;
+
 import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 import org.codehaus.groovy.runtime.StringGroovyMethods;
 
@@ -36,6 +46,62 @@ public final class ProBGroovyMethods {
 			return (T)self.getValue();
 		} else {
 			return DefaultGroovyMethods.asType(self, clazz);
+		}
+	}
+
+	public static <E> E getAt(ModelElementList<E> self, String name) {
+		return self.getElement(name);
+	}
+
+	public static AbstractElement getAt(AbstractModel self, String name) {
+		return self.getComponent(name);
+	}
+
+	/**
+	 * This method is implemented to provide access to the {@link State} objects
+	 * specified by an integer identifier. This maps to a groovy operator so
+	 * that in the console users can type variableOfTypeStateSpace[stateId] and
+	 * receive the corresponding State back. An IllegalArgumentException is
+	 * thrown if the specified id is unknown.
+	 *
+	 * @param id ID of the state thate is to be found.
+	 * @return {@link State} for the specified ID
+	 * @throws IllegalArgumentException if a state with the specified ID doesn't exist
+	 */
+	public static State getAt(StateSpace self, int id) {
+		return self.getState(id);
+	}
+
+	/**
+	 * This method allows the conversion of the {@link StateSpace} to a Model or a
+	 * Trace. This corresponds to the Groovy operator "as". The user convert a
+	 * StateSpace to an {@link AbstractModel}, {@link EventBModel},
+	 * {@link ClassicalBModel}, or {@link CSPModel}. If they specify the class
+	 * {@link Trace}, a new Trace object will be created and returned.
+	 *
+	 * @param clazz
+	 *            the class to convert to
+	 * @return the Model or Trace corresponding to the StateSpace instance
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> T asType(StateSpace self, Class<T> clazz) {
+		if (clazz == AbstractModel.class || clazz.equals(self.getModel().getClass())) {
+			return (T)self.getModel();
+		} else if (clazz == Trace.class) {
+			return (T)new Trace(self);
+		} else {
+			throw new ClassCastException("An element of class " + clazz + " was not found");
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T> T asType(Trace self, Class<T> clazz) {
+		if (clazz == StateSpace.class) {
+			return (T)self.getStateSpace();
+		} else if (clazz == AbstractModel.class || clazz == self.getStateSpace().getModel().getClass()) {
+			return (T)self.getStateSpace().getModel();
+		} else {
+			throw new ClassCastException("Not able to convert Trace object to " + clazz);
 		}
 	}
 }

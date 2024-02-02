@@ -253,14 +253,4 @@ public class ModelElementList<E> implements List<E> {
 	public String toString() {
 		return list.toString();
 	}
-
-	@SuppressWarnings("unused") // Groovy operator overload for this[index]
-	public E getAt(final int index) {
-		return get(index);
-	}
-
-	@SuppressWarnings("unused") // Groovy operator overload for this[property]
-	public E getAt(final String property) {
-		return keys.get(property);
-	}
 }

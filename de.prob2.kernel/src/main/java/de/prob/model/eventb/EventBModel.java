@@ -184,10 +184,6 @@ public class EventBModel extends AbstractModel {
 		return getContexts().getElement(name);
 	}
 
-	public AbstractElement getAt(String name) {
-		return getComponent(name);
-	}
-
 	/**
 	 * @return the most concrete machine
 	 */

@@ -188,23 +188,6 @@ public class StateSpace implements IAnimator {
 	}
 
 	/**
-	 * This method is implemented to provide access to the {@link State} objects
-	 * specified by an integer identifier. This maps to a groovy operator so
-	 * that in the console users can type variableOfTypeStateSpace[stateId] and
-	 * receive the corresponding State back. An IllegalArgumentException is
-	 * thrown if the specified id is unknown.
-	 *
-	 * @param stateId
-	 *            of the state thate is to be found.
-	 * @return {@link State} for the specified id
-	 * @throws IllegalArgumentException
-	 *             if a state with the specified id doesn't exist
-	 */
-	public State getAt(final int stateId) {
-		return getState(stateId);
-	}
-
-	/**
 	 * Whenever a {@link StateSpace} instance is created, it is assigned a
 	 * unique identifier to help external parties differentiate between two
 	 * instances. This getter method returns this id.
@@ -935,30 +918,6 @@ public class StateSpace implements IAnimator {
 
 	public AbstractElement getMainComponent() {
 		return mainComponent;
-	}
-
-	/**
-	 * This method allows the conversion of the StateSpace to a Model or a
-	 * Trace. This corresponds to the Groovy operator "as". The user convert a
-	 * StateSpace to an {@link AbstractModel}, {@link EventBModel},
-	 * {@link ClassicalBModel}, or {@link CSPModel}. If they specify the class
-	 * {@link Trace}, a new Trace object will be created and returned.
-	 *
-	 * @param clazz
-	 *            the class to convert to
-	 * @return the Model or Trace corresponding to the StateSpace instance
-	 */
-	public Object asType(final Class<?> clazz) {
-		if (clazz == AbstractModel.class) {
-			return model;
-		}
-		if (clazz.equals(model.getClass())) {
-			return model;
-		}
-		if (clazz == Trace.class) {
-			return new Trace(this);
-		}
-		throw new ClassCastException("An element of class " + clazz + " was not found");
 	}
 
 	/**
