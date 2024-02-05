@@ -16,7 +16,7 @@ allprojects {
 	project.group = 'de.hhu.stups'
 	// IMPORTANT: Before releasing ProB 2, remember to set probcli and all dependencies to release versions, not nightly/SNAPSHOT!
 	// IMPORTANT: Check the variables parserVersion and cliDownloadURL and the dependencies {...} block.
-	project.version = '4.12.3-SNAPSHOT'
+	project.version = "4.13.0-SNAPSHOT"
 	project.ext.isSnapshot = project.version.endsWith("-SNAPSHOT")
 	project.ext.SOURCE_ENCODING = "UTF-8"
 	
@@ -118,8 +118,8 @@ allprojects {
 }
 
 // When making a release, please check that parserVersion matches what the specified version of probcli expects, to avoid unpredictable/inconsistent behavior!
-def parserVersion = "2.12.8-SNAPSHOT"
-def probcliVersion = "1.12.3-nightly"
+def parserVersion = "2.13.0-SNAPSHOT"
+def probcliVersion = "1.13.0-nightly"
 def cliDownloadURL
 if (probcliVersion.endsWith("-nightly")) {
 	if (!isSnapshot) {
