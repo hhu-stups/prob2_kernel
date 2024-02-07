@@ -1,9 +1,5 @@
 package de.prob.json;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Objects;
-
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -11,11 +7,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.google.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Objects;
 
 /**
  * <p>
@@ -30,18 +31,20 @@ import org.slf4j.LoggerFactory;
  * </p>
  */
 public final class JacksonManager<T extends HasMetadata> {
+
 	public static class Context<T extends HasMetadata> {
+
 		protected final ObjectMapper objectMapper;
 		protected final Class<T> clazz;
 		protected final String fileType;
 		protected final int currentFormatVersion;
-		
+
 		/**
 		 * Initialize the context's required properties.
-		 * 
-		 * @param objectMapper the Jackson {@link ObjectMapper} to use to parse and serialize the JSON data
-		 * @param clazz the class to which the JSON root object should be mapped
-		 * @param fileType a string uniquely identifying the type of JSON data
+		 *
+		 * @param objectMapper         the Jackson {@link ObjectMapper} to use to parse and serialize the JSON data
+		 * @param clazz                the class to which the JSON root object should be mapped
+		 * @param fileType             a string uniquely identifying the type of JSON data
 		 * @param currentFormatVersion the version number for the current version of this format - should be incremented whenever the format changes in a way that previous versions of the code cannot read it anymore
 		 */
 		public Context(final ObjectMapper objectMapper, final Class<T> clazz, final String fileType, final int currentFormatVersion) {
@@ -51,28 +54,28 @@ public final class JacksonManager<T extends HasMetadata> {
 			this.fileType = Objects.requireNonNull(fileType, "fileType");
 			this.currentFormatVersion = currentFormatVersion;
 		}
-		
+
 		/**
 		 * Whether to accept JSON data with old or no metadata, as produced by ProB 2 UI 1.0 and earlier.
 		 * Returns {@code false} by default.
-		 * 
-		 * This method only exists to support loading data from old ProB 2 UI versions. 
+		 * <p>
+		 * This method only exists to support loading data from old ProB 2 UI versions.
 		 * For new data formats, this method should <i>not</i> be used.
 		 * For existing data formats that need to support old files with old/no metadata (e. g. trace files),
 		 * this method can be overridden to return {@code true}.
-		 * 
+		 *
 		 * @return whether to accept JSON data with old or no metadata
 		 */
 		public boolean shouldAcceptOldMetadata() {
 			return false;
 		}
-		
+
 		/**
 		 * <p>Convert data from an older format version to the current version.</p>
 		 * <p>This method must be overridden to support loading data that uses an older format version. The default implementation of this method always throws a {@link JsonConversionException}.</p>
 		 * <p>The converted object is returned from this method. The returned {@link JsonNode} may be a completely new object, or it may be {@code oldObject} after being modified in place.</p>
 		 *
-		 * @param oldObject the old data to convert
+		 * @param oldObject  the old data to convert
 		 * @param oldVersion the old data's format version (or 0 if the data has old metadata with no file type and format version)
 		 * @return the converted data
 		 * @throws JsonConversionException if the data could not be converted
@@ -85,8 +88,10 @@ public final class JacksonManager<T extends HasMetadata> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(JacksonManager.class);
 
 	private static final JsonMetadata MISSING_METADATA = new JsonMetadata(null, 0, null, null, null, null, null);
+
 	// Only used for parsing
 	private static final ObjectMapper METADATA_OBJECT_MAPPER = new ObjectMapper();
+
 	static {
 		initObjectMapper(METADATA_OBJECT_MAPPER);
 	}
@@ -118,12 +123,12 @@ public final class JacksonManager<T extends HasMetadata> {
 		}
 		this.context = Objects.requireNonNull(context, "context");
 	}
-	
+
 	/**
 	 * Initialize an {@link ObjectMapper} with default settings
 	 * to ensure that JSON files are formatted consistently
 	 * and the metadata part is read and written correctly.
-	 * 
+	 *
 	 * @param objectMapper the object mapper to initialize
 	 */
 	private static void initObjectMapper(final ObjectMapper objectMapper) {
@@ -133,13 +138,15 @@ public final class JacksonManager<T extends HasMetadata> {
 		objectMapper.disable(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS);
 		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 		objectMapper.setDefaultPrettyPrinter(new GsonStylePrettyPrinter());
+		objectMapper.registerModule(new ParameterNamesModule());
+		objectMapper.registerModule(new Jdk8Module());
 		objectMapper.registerModule(new JavaTimeModule());
 	}
-	
+
 	private static JsonMetadata extractNewMetadata(final JsonParser parser) throws IOException {
 		return METADATA_OBJECT_MAPPER.readValue(parser, ObjectWithJustMetadata.class).getMetadata();
 	}
-	
+
 	private static ProB2UI1Dot0Metadata extractOldMetadataIfPresent(final JsonParser parser) throws IOException {
 		final JsonToken firstMetadataToken = parser.nextToken();
 		if (firstMetadataToken == null) {
@@ -151,21 +158,21 @@ public final class JacksonManager<T extends HasMetadata> {
 			throw new InvalidJsonFormatException("Expected data after top-level object to be another object, but got " + firstMetadataToken);
 		}
 	}
-	
+
 	private JsonMetadata readAndCheckMetadata(final JsonParser parser) throws IOException {
 		// Try to read metadata in the new format.
 		final JsonMetadata newMetadata = extractNewMetadata(parser);
-		
+
 		if (newMetadata != null) {
 			// Found metadata in the new format.
 			LOGGER.trace("Found metadata in new format: {}", newMetadata);
 			LOGGER.debug("JSON data in file has type {} and version {}", newMetadata.getFileType(), newMetadata.getFormatVersion());
-			
+
 			// Check that the file has the expected type.
 			if (!newMetadata.getFileType().equals(this.getContext().fileType)) {
 				throw new InvalidJsonFormatException("Expected JSON data of type " + this.getContext().fileType + " but got " + newMetadata.getFileType());
 			}
-			
+
 			return newMetadata;
 		} else {
 			LOGGER.trace("JSON data did not contain metadata in new format");
@@ -176,7 +183,7 @@ public final class JacksonManager<T extends HasMetadata> {
 			if (!this.getContext().shouldAcceptOldMetadata()) {
 				throw new InvalidJsonFormatException("JSON data of type " + this.getContext().fileType + " requires new metadata format, but the loaded JSON file doesn't contain a \"metadata\" field");
 			}
-			
+
 			// Try to read old ProB 2 UI 1.0 metadata,
 			// which is stored directly behind the root object.
 			final ProB2UI1Dot0Metadata oldMetadata = extractOldMetadataIfPresent(parser);
@@ -192,7 +199,7 @@ public final class JacksonManager<T extends HasMetadata> {
 			}
 		}
 	}
-	
+
 	/**
 	 * Read an object from a JSON file.
 	 * The file type and version number are checked against the settings in the context.
@@ -206,7 +213,7 @@ public final class JacksonManager<T extends HasMetadata> {
 		try (final JsonParser parserForMetadata = METADATA_OBJECT_MAPPER.createParser(path.toFile())) {
 			metadata = this.readAndCheckMetadata(parserForMetadata);
 		}
-		
+
 		T parsed;
 		try (final JsonParser parserForRootObject = this.getContext().objectMapper.createParser(path.toFile())) {
 			if (metadata.getFormatVersion() > this.getContext().currentFormatVersion) {
@@ -229,7 +236,7 @@ public final class JacksonManager<T extends HasMetadata> {
 				parsed = this.getContext().objectMapper.readValue(parserForRootObject, this.getContext().clazz);
 			}
 		}
-		
+
 		// If the file didn't contain metadata in the new format,
 		// the parsed object's metadata will still be null.
 		// In that case we need to manually add the previously converted metadata to the object.
@@ -237,15 +244,15 @@ public final class JacksonManager<T extends HasMetadata> {
 			assert metadata.getFormatVersion() == 0;
 			parsed = this.getContext().clazz.cast(parsed.withMetadata(metadata));
 		}
-		
+
 		return parsed;
 	}
-	
+
 	/**
 	 * Write an object to a JSON file.
 	 * The file type and version number in the object's metadata must match the settings in the context.
 	 *
-	 * @param path the path of the JSON file to write
+	 * @param path   the path of the JSON file to write
 	 * @param object the object to write
 	 */
 	public void writeToFile(final Path path, final T object) throws IOException {

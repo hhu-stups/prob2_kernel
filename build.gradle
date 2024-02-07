@@ -178,8 +178,9 @@ dependencies {
 
 	api(platform(group: "com.fasterxml.jackson", name: "jackson-bom", version: "2.16.1"))
 	api group: 'com.fasterxml.jackson.core', name: 'jackson-databind'
-	api group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8'
+	api group: 'com.fasterxml.jackson.module', name: 'jackson-module-parameter-names'
 	api group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310'
+	api group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8'
 	implementation group: 'org.apache.velocity', name: 'velocity-engine-core', version: '2.3'
 
 
