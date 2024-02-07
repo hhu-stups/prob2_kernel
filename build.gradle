@@ -177,9 +177,8 @@ dependencies {
 	implementation group: "de.hhu.stups", name: "tla2bAST", version: "1.2.1" // Eclipse Public License 1.0
 
 	api(platform(group: "com.fasterxml.jackson", name: "jackson-bom", version: "2.16.1"))
-	// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
 	api group: 'com.fasterxml.jackson.core', name: 'jackson-databind'
-	// https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310
+	api group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8'
 	api group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310'
 	implementation group: 'org.apache.velocity', name: 'velocity-engine-core', version: '2.3'
 
