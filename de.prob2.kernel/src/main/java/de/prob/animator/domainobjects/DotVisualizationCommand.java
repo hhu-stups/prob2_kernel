@@ -21,7 +21,8 @@ import org.slf4j.LoggerFactory;
 
 public final class DotVisualizationCommand extends DynamicCommandItem {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DotVisualizationCommand.class);
-	
+
+	public static final String CUSTOM_GRAPH_NAME = "custom_graph";
 	public static final String EXPRESSION_AS_GRAPH_NAME = "expr_as_graph";
 	public static final String FORMULA_TREE_NAME = "formula_tree";
 	public static final String STATE_AS_GRAPH_NAME = "state_as_graph";
