@@ -1,6 +1,10 @@
-package de.prob.model.brules;
+package de.prob.model.brules.output;
 
 import de.prob.animator.command.GetVersionCommand;
+import de.prob.model.brules.RuleResult;
+import de.prob.model.brules.RuleResults;
+import de.prob.model.brules.RuleStatus;
+import de.prob.model.brules.RulesModel;
 import de.prob.statespace.Trace;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
@@ -16,8 +20,8 @@ import java.util.stream.Collectors;
 
 public class RuleValidationReport {
 
-	public static void reportVelocity(final Trace trace, final Path path, final Locale locale) throws IOException {
-		String templatePath = String.format("de/prob/model/brules/validation_report_%s.html.vm", locale.getLanguage());
+	public static void saveReport(final Trace trace, final Path path, final Locale locale) throws IOException {
+		String templatePath = String.format("de/prob/model/brules/output/validation_report_%s.html.vm", locale.getLanguage());
 		initVelocityEngine();
 		VelocityContext context = getVelocityContext(trace);
 		try (final Writer writer = Files.newBufferedWriter(path)) {

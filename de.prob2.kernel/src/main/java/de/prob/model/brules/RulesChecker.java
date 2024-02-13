@@ -3,6 +3,8 @@ package de.prob.model.brules;
 import de.be4.classicalb.core.parser.rules.*;
 import de.prob.animator.domainobjects.AbstractEvalResult;
 import de.prob.animator.domainobjects.IEvalElement;
+import de.prob.model.brules.output.RuleValidationReport;
+import de.prob.model.brules.output.RulesDependencyGraph;
 import de.prob.statespace.State;
 import de.prob.statespace.Trace;
 import de.prob.statespace.Transition;
@@ -200,7 +202,22 @@ public class RulesChecker {
 		}
 	}
 
+	/**
+		Saves complete dependency graph for all operations.
+	 */
+	public void saveDependencyGraph(final Path path, final String dotOutputFormat) throws IOException, InterruptedException {
+		saveDependencyGraph(path, rulesProject.getOperationsMap().values(), dotOutputFormat);
+	}
+
+	/**
+		Saves partial dependency graph for provided operations.
+	 */
+	public void saveDependencyGraph(final Path path, final Collection<AbstractOperation> operations, final String dotOutputFormat)
+		throws IOException, InterruptedException {
+		RulesDependencyGraph.saveGraph(trace, operations, path, dotOutputFormat);
+	}
+
 	public void saveValidationReport(final Path path, final Locale language) throws IOException {
-		RuleValidationReport.reportVelocity(trace, path, language);
+		RuleValidationReport.saveReport(trace, path, language);
 	}
 }
