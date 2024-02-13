@@ -14,16 +14,18 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class RuleValidationReport {
 
-	public static void saveReport(final Trace trace, final Path path, final Locale locale) throws IOException {
+	public static void saveReport(final Trace trace, final Path path, final Locale locale,
+	                              final Duration duration) throws IOException {
 		String templatePath = String.format("de/prob/model/brules/output/validation_report_%s.html.vm", locale.getLanguage());
 		initVelocityEngine();
-		VelocityContext context = getVelocityContext(trace);
+		VelocityContext context = getVelocityContext(trace, duration);
 		try (final Writer writer = Files.newBufferedWriter(path)) {
 			Velocity.mergeTemplate(templatePath, String.valueOf(StandardCharsets.UTF_8), context, writer);
 		}
@@ -36,7 +38,7 @@ public class RuleValidationReport {
 		Velocity.init(p);
 	}
 
-	private static VelocityContext getVelocityContext(final Trace trace) {
+	private static VelocityContext getVelocityContext(final Trace trace, final Duration duration) {
 		RuleResults ruleResults = new RuleResults(((RulesModel) trace.getModel()).getRulesProject(),
 			trace.getCurrentState(), -1);
 		RuleResults.ResultSummary resultSummary = ruleResults.getSummary();
@@ -68,6 +70,7 @@ public class RuleValidationReport {
 		context.put("status_DISABLED", RuleStatus.DISABLED);
 		context.put("probCliVersion", versionCommand.getVersion().toString());
 		context.put("localDateTime", LocalDateTime.now().withNano(0));
+		context.put("duration", duration.getSeconds() + "," + duration.getNano()/1000000 + " s");
 		return context;
 	}
 }

@@ -1,5 +1,6 @@
 package de.prob.model.brules;
 
+import com.google.common.base.Stopwatch;
 import de.be4.classicalb.core.parser.rules.*;
 import de.prob.animator.domainobjects.AbstractEvalResult;
 import de.prob.animator.domainobjects.IEvalElement;
@@ -22,12 +23,15 @@ public class RulesChecker {
 	private final RulesModel rulesModel;
 	private final RulesProject rulesProject;
 
+	private final Stopwatch stopwatch;
+
 	private final HashMap<AbstractOperation, Set<AbstractOperation>> predecessors = new HashMap<>();
 	private final HashMap<AbstractOperation, Set<AbstractOperation>> successors = new HashMap<>();
 
 	private Map<AbstractOperation, OperationStatus> operationStatuses;
 
 	public RulesChecker(Trace trace) {
+		this.stopwatch = Stopwatch.createUnstarted();
 		this.trace = trace;
 		this.trace.setExploreStateByDefault(false);
 		if (trace.getModel() instanceof RulesModel) {
@@ -56,6 +60,7 @@ public class RulesChecker {
 	}
 
 	public void init() {
+		stopwatch.reset();
 		if (!init) {
 			// initialize machine
 			while (!trace.getCurrentState().isInitialised()) {
@@ -80,11 +85,13 @@ public class RulesChecker {
 	}
 
 	public OperationStatus executeOperation(AbstractOperation op) {
+		stopwatch.start();
 		List<Transition> transitions = trace.getStateSpace()
 				.getTransitionsBasedOnParameterValues(trace.getCurrentState(), op.getName(), new ArrayList<>(), 1);
 		trace = trace.add(transitions.get(0));
 		OperationStatus opState = evalOperation(trace.getCurrentState(), op);
 		this.operationStatuses.put(op, opState);
+		stopwatch.stop();
 		return opState;
 	}
 
@@ -217,7 +224,7 @@ public class RulesChecker {
 		RulesDependencyGraph.saveGraph(trace, operations, path, dotOutputFormat);
 	}
 
-	public void saveValidationReport(final Path path, final Locale language) throws IOException {
-		RuleValidationReport.saveReport(trace, path, language);
+	public void saveValidationReport(final Path path, final Locale locale) throws IOException {
+		RuleValidationReport.saveReport(trace, path, locale, stopwatch.elapsed());
 	}
 }

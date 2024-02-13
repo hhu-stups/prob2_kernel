@@ -123,17 +123,17 @@
 		</style>
 	</head>
 	<body>
-	<h2>Regelvalidierungsbericht</h2>
-	<hr>
-	Überprüfte Maschine: <b>$machineName</b>
-	<div style="line-height:25px;">
-		<br>Insgesamte Anzahl an Regeln: <b>$numberOfRules</b>
-		<br>Anzahl überprüfter Regeln: <b>$rulesChecked</b>
-		<br>Anzahl erfolgreicher Regeln: <b>$rulesSucceeded</b>
-		<br>Anzahl fehlgeschlagener Regeln: <b>$rulesFailed</b>
-		<br>Anzahl deaktivierter Regeln: <b>$rulesDisabled</b>
-	</div>
-	<br>
+		<h2>Regelvalidierungsbericht</h2>
+		<hr>
+		Überprüfte Maschine: <b>$machineName</b>
+		<div style="line-height:25px;">
+			<br>Insgesamte Anzahl an Regeln: <b>$numberOfRules</b>
+			<br>Anzahl überprüfter Regeln: <b>$rulesChecked</b>
+			<br>Anzahl erfolgreicher Regeln: <b>$rulesSucceeded</b>
+			<br>Anzahl fehlgeschlagener Regeln: <b>$rulesFailed</b>
+			<br>Anzahl deaktivierter Regeln: <b>$rulesDisabled</b>
+		</div>
+		<br>
 		#if(!$classificationMap.keySet().isEmpty)
 		<div class="classification-list">
 			#foreach($classification in $classificationMap.keySet().stream().toList().stream().sorted().collect($Collectors.toList()))
@@ -152,13 +152,14 @@
 			#ruleContent($noClassification)
 		</div>
 		#end
-		ProB Version: $probCliVersion
-	<br>$localDateTime
-	<script>
-		function openDetails(contentId) {
-			const content = document.getElementById(contentId);
-			content.style.display = (content.style.display === 'block') ? 'none' : 'block';
-		}
-	</script>
+		Überprüfung abgeschlossen nach: $duration
+		<br>ProB Version: $probCliVersion
+	    <br>$localDateTime
+		<script>
+			function openDetails(contentId) {
+				const content = document.getElementById(contentId);
+				content.style.display = (content.style.display === 'block') ? 'none' : 'block';
+			}
+		</script>
 	</body>
 </html>

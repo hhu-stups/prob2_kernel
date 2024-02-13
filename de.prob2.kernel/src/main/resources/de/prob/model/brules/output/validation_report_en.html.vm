@@ -152,7 +152,8 @@
 				#ruleContent($noClassification)
 			</div>
 		#end
-		ProB Version: $probCliVersion
+		Check finished after: $duration
+		<br>ProB Version: $probCliVersion
 		<br>$localDateTime
 		<script>
 			function openDetails(contentId) {
