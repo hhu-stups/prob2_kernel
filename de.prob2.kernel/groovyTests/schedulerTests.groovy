@@ -96,7 +96,10 @@ assert !s.isValidOperation(root,"\$setup_constants", "TRUE = TRUE")
 
 t = s as Trace
 assert t.canExecuteEvent("\$initialise_machine", [])
+// for invoking method, names can be escaped with a $ if it is needed
+final t2 = t.$$initialise_machine("TRUE = TRUE")
 t = t.$initialise_machine("TRUE = TRUE")
+assert t.currentState == t2.currentState
 assert t.canExecuteEvent("new", ["pp = PID1"])
 t = t.new("pp = PID1")
 assert !t.canExecuteEvent("blah", [])
