@@ -62,6 +62,9 @@ if (!thrown4) {
 s.subscribe(m, f)
 t.currentState.explore()
 
+// States can be accessed by integer ID via the element access operator
+assert s.getState(0).is(s[0])
+
 def h = t.add 0
 
 final idAt0 = h.currentState
