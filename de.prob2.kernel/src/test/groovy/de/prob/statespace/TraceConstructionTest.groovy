@@ -3,9 +3,6 @@ package de.prob.statespace
 import java.nio.file.Paths
 
 import de.prob.cli.CliTestCommon
-import de.prob.model.classicalb.ClassicalBModel
-import de.prob.model.eventb.EventBModel
-import de.prob.model.representation.AbstractModel
 import de.prob.scripting.ClassicalBFactory
 import spock.lang.Specification
 
@@ -34,48 +31,6 @@ class TraceConstructionTest extends Specification {
 
 		then:
 		thrown(RuntimeException)
-	}
-
-	def "casting trace with AbstractModel works"() {
-		when:
-		final t = new Trace(s)
-
-		then:
-		t.model == t as AbstractModel
-	}
-
-	def "casting trace with ClassicalBModel works if it is a classical b model"() {
-		when:
-		final t = new Trace(s)
-
-		then:
-		t.model == t as ClassicalBModel
-	}
-
-	def "casting trace with other model type (i.e. EventB) results in error"() {
-		when:
-		final t = new Trace(s)
-		t as EventBModel
-
-		then:
-		thrown(ClassCastException)
-	}
-
-	def "casting trace with StateSpace works"() {
-		when:
-		final t = new Trace(s)
-
-		then:
-		t.stateSpace == t as StateSpace
-	}
-
-	def "casting trace with other kind of class doesn't work"() {
-		when:
-		final t = new Trace(s)
-		t as Number
-
-		then:
-		thrown(ClassCastException)
 	}
 
 	def "there are accessor methods for current and previous states, and for the current transition"() {

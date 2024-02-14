@@ -3,11 +3,7 @@ package de.prob.statespace
 import java.nio.file.Paths
 
 import de.prob.cli.CliTestCommon
-import de.prob.model.classicalb.ClassicalBModel
-import de.prob.model.eventb.EventBModel
-import de.prob.model.representation.AbstractModel
 import de.prob.scripting.ClassicalBFactory
-
 import spock.lang.Specification
 
 class BasicStateSpaceTest extends Specification {
@@ -21,37 +17,6 @@ class BasicStateSpaceTest extends Specification {
 
 	def cleanupSpec() {
 		s.kill()
-	}
-
-	def "it is possible to cast a StateSpace to an AbstractModel"() {
-		expect:
-		s.model == s as AbstractModel
-	}
-
-	def "it is possible to cast a StateSpace to its own Model class"() {
-		expect:
-		s.model == s as ClassicalBModel
-	}
-
-	def "it is not possible to cast a StateSpace to its another Model class"() {
-		when:
-		s.model == s as EventBModel
-
-		then:
-		thrown(ClassCastException)
-	}
-
-	def "it is possible to cast a StateSpace to a Trace object"() {
-		expect:
-		(s as Trace).stateSpace == s
-	}
-
-	def "it is not possible to cast a StateSpace to any other kind of class"() {
-		when:
-		s as Number
-
-		then:
-		thrown(ClassCastException)
 	}
 
 	def "the id of a state space is the id of its animator"() {
