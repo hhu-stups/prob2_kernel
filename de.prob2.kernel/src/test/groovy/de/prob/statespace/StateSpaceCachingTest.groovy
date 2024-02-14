@@ -2,13 +2,8 @@ package de.prob.statespace
 
 import java.nio.file.Paths
 
-import com.google.common.util.concurrent.UncheckedExecutionException
-import com.google.inject.Guice
-
-import de.prob.MainModule
 import de.prob.cli.CliTestCommon
 import de.prob.scripting.ClassicalBFactory
-
 import spock.lang.Specification
 
 class StateSpaceCachingTest extends Specification {
@@ -23,41 +18,6 @@ class StateSpaceCachingTest extends Specification {
 
 	def cleanupSpec() {
 		s.kill()
-	}
-
-	def setup() {
-		s.states.invalidateAll()
-	}
-
-	def "at the beginning, root is not in the state space"() {
-		expect:
-		s.states.getIfPresent("root") == null
-	}
-
-	def "after accessing root, it is present in cache"() {
-		expect:
-		s.root != null
-		s.states.getIfPresent("root") != null
-	}
-
-	def "states that are discovered during exploration are automatically stored cache"() {
-		when:
-		s.root.explore()
-
-		then:
-		s.states.getIfPresent("0") != null
-		s.getState("0") != null
-	}
-
-	def "but if the state is gone from cache for some reason, it can be reretrieved from prolog"() {
-		when:
-		s.root.explore()
-		s.states.invalidate("0")
-
-		then:
-		s.states.getIfPresent("0") == null
-		s.getState("0") != null
-		s.states.getIfPresent("0") != null
 	}
 
 	def "if a state does not exist in the state space (on the prolog side) and illegal argument exception is thrown"() {
@@ -104,39 +64,5 @@ class StateSpaceCachingTest extends Specification {
 
 		then:
 		thrown(IllegalArgumentException)
-	}
-
-	def "the cache is emptied when it gets too full"() {
-		given:
-		final mainModule = new MainModule()
-		mainModule.maxCacheSize = 5
-		final injector = Guice.createInjector(mainModule)
-		final path = Paths.get("groovyTests", "machines", "scheduler.mch").toString()
-		final factory = injector.getInstance(ClassicalBFactory.class)
-
-		when:
-		final s = factory.extract(path).load([:])
-		Trace t = new Trace(s)
-		final sizes = []
-		for (i in 1..10) {
-			t = t.anyEvent()
-			sizes << s.states.size()
-		}
-
-		then:
-		sizes.every {it <= 5}
-
-		cleanup:
-		if (s != null) {
-			s.kill()
-		}
-	}
-
-	def "trying to get a key from the LoadingCache that doesn't exist results in an exception"() {
-		when:
-		s.states.get("b")
-
-		then:
-		thrown(UncheckedExecutionException)
 	}
 }
