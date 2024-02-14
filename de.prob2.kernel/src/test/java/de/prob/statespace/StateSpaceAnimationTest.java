@@ -42,6 +42,33 @@ final class StateSpaceAnimationTest {
 	}
 
 	@Test
+	void getStateStringInvalid() {
+		Assertions.assertThrows(IllegalArgumentException.class, () -> s.getState("bum!"));
+	}
+
+	@Test
+	void getStateIntegerRoot() {
+		Assertions.assertEquals(root, s.getState(-1));
+	}
+
+	@Test
+	void getStateInteger() {
+		root.explore();
+		Assertions.assertEquals(s.getState("0"), s.getState(0));
+	}
+
+	@Test
+	void getStateIntegerInvalid() {
+		Assertions.assertThrows(IllegalArgumentException.class, () -> s.getState(-100));
+	}
+
+	@Test
+	void getStateIntegerNotYetExplored() {
+		// we have not reached this during the exploration we have done so far in the tests
+		Assertions.assertThrows(IllegalArgumentException.class, () -> s.getState(500));
+	}
+
+	@Test
 	void getStatesFromPredicate() {
 		firstState.perform("new", "pp=PID1").perform("new", "pp=PID2");
 		IEvalElement formula = new ClassicalB("card(waiting) > 0");
