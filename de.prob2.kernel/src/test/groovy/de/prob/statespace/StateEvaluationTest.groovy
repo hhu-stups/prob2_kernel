@@ -3,7 +3,6 @@ package de.prob.statespace
 import java.nio.file.Paths
 
 import de.prob.animator.domainobjects.ClassicalB
-import de.prob.animator.domainobjects.EvalResult
 import de.prob.cli.CliTestCommon
 import de.prob.scripting.ClassicalBFactory
 import spock.lang.Specification
@@ -53,18 +52,5 @@ class StateEvaluationTest extends Specification {
 		]).collect {it.value}
 		expect:
 		res == ["{PID1}", "{}"] || res == ["{PID1}", "\u2205"]
-	}
-
-	def "if a result is cached, prolog doesn't necessarily have to be contacted"() {
-		when:
-		final blah = new ClassicalB("blah")
-		final blahres = new EvalResult("blah", [:])
-		firstState.values[blah] = blahres
-
-		then:
-		//TODO currently no caching
-		//firstState.eval([blah]) == [blahres]
-		//firstState.values.remove(blah)
-		true
 	}
 }
