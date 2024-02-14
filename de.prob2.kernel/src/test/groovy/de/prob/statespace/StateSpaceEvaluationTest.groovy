@@ -30,10 +30,6 @@ class StateSpaceEvaluationTest extends Specification {
 		s.kill()
 	}
 
-	def setup() {
-		s.formulaSubscribers.clear()
-	}
-
 	private boolean isEmptySet(x) {
 		return (x=="{}" || x=="\u2205") // u2205 is Unicode emptyset
 	}
@@ -49,19 +45,18 @@ class StateSpaceEvaluationTest extends Specification {
 	def "it is possible for someone to subscribe to a formula"() {
 		when:
 		def formula = new ClassicalB("waiting /\\ ready")
-		boolean before = s.formulaSubscribers.containsKey(formula)
+		boolean before = s.isSubscribed(formula)
 		def subscriber = "I am a subscriber!"
 		def success = s.subscribe(subscriber, formula)
 		then:
 		!before
 		success
-		s.formulaSubscribers.containsKey(formula)
-		s.formulaSubscribers[formula].contains(subscriber)
+		s.isSubscribed(formula)
 	}
 	def "it is possible for multiple people to subscribe to the same formula"() {
 		when:
 		def formula = new ClassicalB("waiting \\/ ready")
-		boolean before = s.formulaSubscribers.containsKey(formula)
+		boolean before = s.isSubscribed(formula)
 		def subscriber1 = "I am a subscriber!"
 		def subscriber2 = "I am also a subscriber!"
 		def success = s.subscribe(subscriber1, formula)
@@ -70,9 +65,7 @@ class StateSpaceEvaluationTest extends Specification {
 		!before // it didn't have it before
 		success
 		success2
-		s.formulaSubscribers.containsKey(formula)
-		s.formulaSubscribers[formula].contains(subscriber1)
-		s.formulaSubscribers[formula].contains(subscriber2)
+		s.isSubscribed(formula)
 	}
 
 	def "csp formulas cannot be subscribed"() {
@@ -84,32 +77,30 @@ class StateSpaceEvaluationTest extends Specification {
 		def success = s.subscribe(subscriber1, csp)
 		then:
 		!success
-		!s.formulaSubscribers.containsKey(csp)
+		!s.isSubscribed(csp)
 	}
 
 	def "it is possible for someone to subscribe to multiple formulas"() {
 		when:
 		def formula = new ClassicalB("card(waiting)")
 		def formula2 = new ClassicalB("card(ready)")
-		boolean before = s.formulaSubscribers.containsKey(formula)
-		boolean before2 = s.formulaSubscribers.containsKey(formula2)
+		boolean before = s.isSubscribed(formula)
+		boolean before2 = s.isSubscribed(formula2)
 		def subscriber = "I am a subscriber!"
 		def success = s.subscribe(subscriber, [formula, formula2])
 		then:
 		!before
 		!before2
 		success
-		s.formulaSubscribers.containsKey(formula)
-		s.formulaSubscribers[formula].contains(subscriber)
-		s.formulaSubscribers.containsKey(formula2)
-		s.formulaSubscribers[formula2].contains(subscriber)
+		s.isSubscribed(formula)
+		s.isSubscribed(formula2)
 	}
 	def "it is possible for multiple people to subscribe to the same multiple formulas"() {
 		when:
 		def formula = new ClassicalB("card(ready)+card(waiting)")
 		def formula2 = new ClassicalB("card(active)")
-		boolean before = s.formulaSubscribers.containsKey(formula)
-		boolean before2 = s.formulaSubscribers.containsKey(formula2)
+		boolean before = s.isSubscribed(formula)
+		boolean before2 = s.isSubscribed(formula2)
 		def subscriber1 = "I am a subscriber!"
 		def subscriber2 = "I am also a subscriber!"
 		def success = s.subscribe(subscriber1, [formula, formula2])
@@ -119,12 +110,8 @@ class StateSpaceEvaluationTest extends Specification {
 		!before2
 		success
 		success2
-		s.formulaSubscribers.containsKey(formula)
-		s.formulaSubscribers[formula].contains(subscriber1)
-		s.formulaSubscribers[formula].contains(subscriber2)
-		s.formulaSubscribers.containsKey(formula2)
-		s.formulaSubscribers[formula2].contains(subscriber1)
-		s.formulaSubscribers[formula2].contains(subscriber2)
+		s.isSubscribed(formula)
+		s.isSubscribed(formula2)
 	}
 
 	def "multiple csp formulas cannot be subscribed"() {
@@ -138,8 +125,8 @@ class StateSpaceEvaluationTest extends Specification {
 		def success = s.subscribe(subscriber1, [csp, csp2])
 		then:
 		!success
-		!s.formulaSubscribers.containsKey(csp)
-		!s.formulaSubscribers.containsKey(csp2)
+		!s.isSubscribed(csp)
+		!s.isSubscribed(csp2)
 	}
 
 	def "formulas should not be evaluated in the root state"() {
@@ -166,33 +153,17 @@ class StateSpaceEvaluationTest extends Specification {
 		def subscriber = new DummyObject()
 		def formula = new ClassicalB('card(ready) + 1')
 		def success = s.subscribe(subscriber, formula)
-		def before = s.formulaSubscribers.containsKey(formula)
-		def before2 = s.formulaSubscribers[formula].contains(subscriber)
+		def before = s.isSubscribed(formula)
 		subscriber = null
 		System.gc()
 		then:
 		success
 		before
-		before2
-		s.formulaSubscribers.containsKey(formula)
-		!s.formulaSubscribers[formula].contains(subscriber)
+		!s.isSubscribed(formula)
 	}
 
 	def "a formula that has not yet been subscribed should be recognized as subscribed"() {
 		expect: !s.isSubscribed(new ClassicalB("card(waiting)+10"))
-	}
-
-	def "if there are no longer any subscribers who are interested in a formula, it is recognized as subscribed"() {
-		when:
-		def subscriber = new DummyObject()
-		def formula = new ClassicalB('card(ready) + 77')
-		def success = s.subscribe(subscriber, formula)
-		def before = s.isSubscribed(formula)
-		s.formulaSubscribers[formula].remove(subscriber) // this will happen at some point if the subscriber is cleaned up by the garbage collector
-		then:
-		success
-		before
-		!s.isSubscribed(formula)
 	}
 
 	def "it is possible to unsubscribe a formula after subscribing it"() {
@@ -231,21 +202,8 @@ class StateSpaceEvaluationTest extends Specification {
 		def subscriber = "hi!"
 		def formula = new ClassicalB("card(active) + 9")
 		def success = s.subscribe(subscriber, formula)
-		def before = s.getSubscribedFormulas() == [formula] as Set
-		s.formulaSubscribers.remove(formula)
-		then:
-		success
-		before
-		!s.getSubscribedFormulas().contains(formula)
-	}
-
-	def "getting subscribed formulas also removes formulas that aren't there any more 2"() {
-		when:
-		def subscriber = "hi!"
-		def formula = new ClassicalB("card(active) + 10")
-		def success = s.subscribe(subscriber, formula)
-		def before = s.getSubscribedFormulas() == [formula] as Set
-		s.formulaSubscribers[formula].remove(subscriber)
+		def before = s.getSubscribedFormulas().contains(formula)
+		s.unsubscribe(subscriber, formula)
 		then:
 		success
 		before
