@@ -44,7 +44,7 @@ class StateSpaceEvaluationTest extends Specification {
 			new ClassicalB("ready")
 		]).collect { it.getValue() }
 		expect:
-		 res == ["{}", "{}"] || res == ["\u2205", "\u2205"]
+		res == ["{}", "{}"] || res == ["\u2205", "\u2205"]
 	}
 	def "it is possible for someone to subscribe to a formula"() {
 		when:
