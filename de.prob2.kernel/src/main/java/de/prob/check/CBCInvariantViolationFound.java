@@ -41,17 +41,15 @@ public class CBCInvariantViolationFound implements IModelCheckingResult,
 	 * @param s
 	 *            {@link StateSpace} through which the specified counterexample
 	 *            should be replayed
-	 * @return {@link Trace} created after replaying the counterexample. This
-	 *         calls {@link StateSpace#getTrace(ITraceDescription)}.
+	 * @return {@link Trace} created after replaying the counterexample.
 	 */
 	public Trace getTrace(final int index, final StateSpace s) {
-		return s.getTrace(counterexamples.get(index));
+		return counterexamples.get(index).getTrace(s);
 	}
 
 	@Override
 	public Trace getTrace(final StateSpace s) {
-		return counterexamples.isEmpty() ? null : s.getTrace(counterexamples
-				.get(0));
+		return counterexamples.isEmpty() ? null : counterexamples.get(0).getTrace(s);
 	}
 
 	@Override

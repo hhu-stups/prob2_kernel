@@ -125,20 +125,6 @@ class StateSpaceAnimationTest extends Specification {
 		t.transitionList.collect() == transitions
 	}
 
-	def "it is possible to create ITraceDescription to generate traces"() {
-		when:
-		final t = s.getTrace(new ITraceDescription() {
-			@Override
-			Trace getTrace(StateSpace s) throws RuntimeException {
-				return new Trace(s).$initialise_machine().new("pp=PID1")
-			}
-		})
-
-		then:
-		t != null
-		t.transitionList.collect {it.name} == ["\$initialise_machine", "new"]
-	}
-
 	def "it is possible to generate a trace to a state in which a given predicate holds"() {
 		given:
 		final formula = new ClassicalB("waiting = {PID1,PID3}")

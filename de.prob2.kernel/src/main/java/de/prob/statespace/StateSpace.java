@@ -782,10 +782,7 @@ public class StateSpace implements IAnimator {
 	}
 
 	/**
-	 * This calculated the shortest path from root to the specified state. This
-	 * contacts the ProB kernel via the {@link GetShortestTraceCommand} and then
-	 * uses the generated of operations to generate a Trace via the
-	 * {@link StateSpace#getTrace(ITraceDescription)} method.
+	 * This calculated the shortest path from root to the specified state.
 	 *
 	 * @param stateId
 	 *            state id for which the trace through the state space should be
@@ -795,7 +792,7 @@ public class StateSpace implements IAnimator {
 	public Trace getTrace(final String stateId) {
 		GetShortestTraceCommand cmd = new GetShortestTraceCommand(this, stateId);
 		execute(cmd);
-		return getTrace(cmd);
+		return cmd.getTrace(this);
 	}
 
 	/**
@@ -811,7 +808,7 @@ public class StateSpace implements IAnimator {
 	public Trace getTrace(final String sourceId, final String destId) {
 		FindTraceBetweenNodesCommand cmd = new FindTraceBetweenNodesCommand(this, sourceId, destId);
 		execute(cmd);
-		return getTrace(cmd);
+		return cmd.getTrace(this);
 	}
 
 	/**
@@ -841,15 +838,15 @@ public class StateSpace implements IAnimator {
 	 * be created. {@link ITraceDescription#getTrace(StateSpace)} will then be
 	 * called in order to generate the correct Trace.
 	 * </p>
-	 * <p>
-	 * This overload is meant for use from Groovy.
-	 * Java code should call {@link ITraceDescription#getTrace(StateSpace)} directly instead.
-	 * </p>
 	 *
 	 * @param description
 	 *            of the trace to be created
 	 * @return Trace that is generated from the Trace Description
+	 * @deprecated This overload is meant for use from Groovy.
+	 *     Java code should call {@link ITraceDescription#getTrace(StateSpace)} directly instead.
 	 */
+	// TODO Move this to ProBGroovyMethods at some point (or just remove it entirely - I don't think anything really needs this overload...)
+	@Deprecated
 	public Trace getTrace(final ITraceDescription description) {
 		return description.getTrace(this);
 	}
@@ -866,7 +863,7 @@ public class StateSpace implements IAnimator {
 	public Trace getTraceToState(final IEvalElement predicate) {
 		FindStateCommand cmd = new FindStateCommand(this, predicate, true);
 		execute(cmd);
-		return getTrace(cmd);
+		return cmd.getTrace(this);
 	}
 
 	/**
