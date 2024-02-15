@@ -56,7 +56,7 @@ public class ComposedCommand extends AbstractCommand {
 		cmds.get(i).writeCommand(pto);
 	}
 
-	public String createPrefix(final int i) {
+	public static String createPrefix(final int i) {
 		if (i < LETTERS.length) {
 			return String.valueOf(LETTERS[i]);
 		} else {
