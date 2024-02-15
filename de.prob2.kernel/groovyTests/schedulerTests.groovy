@@ -107,4 +107,14 @@ assert t.canExecuteEvent("new", ["pp = PID1"])
 t = t.new("pp = PID1")
 assert !t.canExecuteEvent("blah", [])
 
+var thrown5 = false
+try {
+	t.blah()
+} catch (IllegalArgumentException ignored) {
+	thrown5 = true
+}
+if (!thrown5) {
+	throw new AssertionError("Executing a nonexistant event didn't throw an exception")
+}
+
 "Some attributes of the scheduler model were tested"
