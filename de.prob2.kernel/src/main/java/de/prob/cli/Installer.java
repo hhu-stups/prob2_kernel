@@ -96,7 +96,7 @@ public final class Installer {
 
 				try (final InputStream is = this.getClass().getResourceAsStream(binariesZipResourceName)) {
 					if (is == null) {
-						throw new IllegalArgumentException("Binaries zip not found in resources (make sure that you did not build ProB 2 with -PprobHome=... set): " + binariesZipResourceName);
+						throw new IllegalArgumentException("Binaries zip not found in resources (make sure that you did not build the ProB Java API with -PprobHome=... set): " + binariesZipResourceName);
 					}
 					FileHandler.extractZip(is, DEFAULT_HOME);
 				}

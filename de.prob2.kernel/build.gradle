@@ -156,4 +156,4 @@ jacocoTestReport {
 	executionData(test, groovyIntegrationTests)
 }
 
-publishing.publications.mavenJava.pom.description = "The ProB 2.0 Kernel library"
+publishing.publications.mavenJava.pom.description = "Core of the ProB Java API"

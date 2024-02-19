@@ -20,9 +20,9 @@ import de.prob.annotations.Home;
 import de.prob.cli.Installer;
 
 /**
- * Provides static information about ProB 2's version, the location of the ProB home directory, etc.
+ * Provides static information about the version of the ProB Java API, the location of the ProB home directory, etc.
  * This is <i>not</i> the actual main class!
- * ProB 2's command-line interface is now in a separate de.prob2.commandline subproject.
+ * The ProB Groovy shell command-line interface for the is now in a separate de.prob2.commandline subproject.
  * The old name of this class is kept to avoid breaking existing code.
  */
 public class Main {
@@ -49,7 +49,7 @@ public class Main {
 	}
 
 	/**
-	 * @deprecated ProB 2's global injector should not be used anymore. Create your own injector instead, using {@code Guice.createInjector(new MainModule())}.
+	 * @deprecated The global injector from the ProB Java API should not be used anymore. Create your own injector instead, using {@code Guice.createInjector(new MainModule())}.
 	 */
 	@Deprecated
 	public static synchronized Injector getInjector() {
@@ -65,7 +65,7 @@ public class Main {
 	 * @param i
 	 *            the new injector to use
 	 * 
-	 * @deprecated ProB 2 no longer uses the global injector.
+	 * @deprecated The ProB Java API no longer uses the global injector.
 	 */
 	@Deprecated
 	public static synchronized void setInjector(final Injector i) {
@@ -82,13 +82,13 @@ public class Main {
 	 * <p>
 	 * By default, the ProB home directory is located somewhere in the .prob directory in the user's home directory.
 	 * Before an instance of probcli is started for the first time,
-	 * ProB 2 installs probcli and other related files into the ProB home directory.
+	 * the ProB Java API installs probcli and other related files into the ProB home directory.
 	 * </p>
 	 * <p>
 	 * If the system property {@code prob.home} is set,
 	 * the ProB home directory is changed to the value of the property.
 	 * In this case, the directory must already contain a valid installation of probcli -
-	 * if {@code prob.home} is set, ProB 2 will <em>not</em> install probcli automatically.
+	 * if {@code prob.home} is set, the ProB Java API will <em>not</em> install probcli automatically.
 	 * </p>
 	 *
 	 * @return the directory in which the binary files and libraries for ProB are stored

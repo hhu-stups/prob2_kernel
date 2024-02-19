@@ -4,7 +4,7 @@ subprojects {
 	apply(plugin: "signing")
 	
 	project.group = 'de.hhu.stups'
-	// IMPORTANT: Before releasing ProB 2, remember to set probcli and all dependencies to release versions, not nightly/SNAPSHOT!
+	// IMPORTANT: Before releasing the ProB Java API, remember to set probcli and all dependencies to release versions, not nightly/SNAPSHOT!
 	// IMPORTANT: Check the variables parserVersion and cliDownloadURL and the dependencies {...} block.
 	project.version = "4.13.0-SNAPSHOT"
 	project.ext.isSnapshot = project.version.endsWith("-SNAPSHOT")

@@ -20,7 +20,7 @@ final class CommandLineModule extends AbstractModule {
 	}
 	
 	/**
-	 * @return an {@link Option} object containing the available command line options for ProB 2.0
+	 * @return an {@link Option} object containing the available command line options for the ProB Groovy shell
 	 */
 	@Provides
 	private static Options getCommandlineOptions() {

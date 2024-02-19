@@ -5,7 +5,7 @@ import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
 /**
- * Creates {@link OsSpecificInfo} for each instance of the ProB 2.0 software.
+ * Creates {@link OsSpecificInfo} for each instance of the ProB Java API.
  * This is determined from the System settings. The resulting
  * {@link OsSpecificInfo} can be injected into any desired class.
  *

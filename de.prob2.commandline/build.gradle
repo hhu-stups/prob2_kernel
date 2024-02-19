@@ -14,4 +14,4 @@ application {
 	mainClass = "de.prob2.commandline.CommandLineMain"
 }
 
-publishing.publications.mavenJava.pom.description = "The ProB 2.0 Kernel command-line interface"
+publishing.publications.mavenJava.pom.description = "The ProB Groovy shell command-line interface"

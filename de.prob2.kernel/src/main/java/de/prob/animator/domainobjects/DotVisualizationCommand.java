@@ -123,7 +123,7 @@ public final class DotVisualizationCommand extends DynamicCommandItem {
 	public byte[] visualizeAsDotToBytes(final List<IEvalElement> formulas) {
 		final Path tempDotFile;
 		try {
-			tempDotFile = Files.createTempFile("prob2", ".dot");
+			tempDotFile = Files.createTempFile("probjava", ".dot");
 		} catch (IOException e) {
 			throw new ProBError("Failed to create temporary dot file", e);
 		}

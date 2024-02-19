@@ -243,7 +243,7 @@ public class DomBuilder extends MachineClauseAdapter {
 			} else {
 				locations = Collections.singletonList(ErrorItem.Location.fromParserLocation(nodeLocation));
 			}
-			ErrorItem error = new ErrorItem("ProB2 does not yet support DEFINITIONS for identifier lists: " + pExpression, ErrorItem.Type.ERROR, locations);
+			ErrorItem error = new ErrorItem("The ProB Java API does not yet support DEFINITIONS for identifier lists: " + pExpression, ErrorItem.Type.ERROR, locations);
 			throw new ProBError(Collections.singletonList(error));
 			// TODO: analyse body of expression
 		} else {

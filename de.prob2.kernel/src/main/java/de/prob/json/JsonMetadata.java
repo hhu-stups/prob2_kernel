@@ -49,7 +49,7 @@ public final class JsonMetadata {
 	private final String creator;
 
 	/**
-	 * The version of the ProB 2 Java API used when the data was saved.
+	 * The version of the ProB Java API used when the data was saved.
 	 */
 	private final String proB2KernelVersion;
 

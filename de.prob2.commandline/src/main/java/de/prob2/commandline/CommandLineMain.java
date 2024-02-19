@@ -72,7 +72,7 @@ public final class CommandLineMain {
 	}
 
 	/**
-	 * Start the ProB 2.0 shell with argument -s. Run integration tests with -test /path/to/testDir
+	 * Start the ProB Groovy shell with argument -s. Run integration tests with -test /path/to/testDir
 	 *
 	 * @param args command-line arguments
 	 */

@@ -9,7 +9,7 @@ import de.prob.statespace.ModelModule;
 
 /**
  * This Guice {@link AbstractModule} contains all the configuration information
- * necessary to configure ProB 2.0.
+ * necessary to configure the ProB Java API.
  * 
  * @author joy
  * 
