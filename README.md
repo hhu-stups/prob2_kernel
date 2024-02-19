@@ -3,9 +3,6 @@
 The sourcecode of the current ProB2 Java API release is located at https://gitlab.cs.uni-duesseldorf.de/stups/prob/prob2_kernel
 and mirrored to https://github.com/hhu-stups/prob2_kernel
 
-**Note:** The Gradle build files have been moved recently from the "de.prob2.kernel" subdirectory into the repository root.
-You may need to update your scripts or IDE projects.
-
 The project is intended for internal usage, do not rely on any of the features or interfaces in this project.
 
 This repository only contains the Kernel of ProB 2.0.
@@ -32,10 +29,10 @@ to ensure that the expected Gradle version is used.
 Alternatively you can install a compatible Gradle version yourself,
 e. g. via your package manager.
 
-**Note:** the source code is found in the subdirectory "de.prob2.kernel".
+**Note:** most of the source code is found in the subdirectory "de.prob2.kernel".
 If your IDE does not recognize this location automatically,
 make sure that you have imported/linked the Gradle project correctly.
-The Gradle project files are located in the repository root,
+The top-level Gradle project is located in the repository root,
 *not* in the "de.prob2.kernel" directory!
 
 To run the test suite: `./gradlew check`
