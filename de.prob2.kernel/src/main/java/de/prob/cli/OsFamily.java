@@ -20,4 +20,8 @@ enum OsFamily {
 			throw new UnsupportedOperationException("Unsupported operating system: " + osName);
 		}
 	}
+
+	static OsFamily detect() {
+		return OsFamily.fromName(System.getProperty("os.name"));
+	}
 }
