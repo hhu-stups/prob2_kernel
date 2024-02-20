@@ -22,7 +22,7 @@ import de.prob.cli.Installer;
 /**
  * Provides static information about the version of the ProB Java API, the location of the ProB home directory, etc.
  * This is <i>not</i> the actual main class!
- * The ProB Groovy shell command-line interface for the is now in a separate de.prob2.commandline subproject.
+ * The ProB Groovy shell command-line interface is now in a separate de.prob2.commandline subproject.
  * The old name of this class is kept to avoid breaking existing code.
  */
 public class Main {
