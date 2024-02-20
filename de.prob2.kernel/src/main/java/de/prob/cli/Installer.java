@@ -60,6 +60,27 @@ public final class Installer {
 		}
 	}
 
+	private static void extractBundledProbcli(Path installDirectory, OsSpecificInfo osInfo) throws IOException {
+		final String binariesZipResourceName = osInfo.getBinariesZipResourceName();
+		LOGGER.trace("Extracting binaries from resource {} to directory {}", binariesZipResourceName, installDirectory);
+
+		try (final InputStream is = Installer.class.getResourceAsStream(binariesZipResourceName)) {
+			if (is == null) {
+				throw new IllegalArgumentException("Binaries zip not found in resources (make sure that you did not build the ProB Java API with -PprobHome=... set): " + binariesZipResourceName);
+			}
+			FileHandler.extractZip(is, installDirectory);
+		}
+
+		for (final String path : new String[] {
+			osInfo.getCliName(),
+			osInfo.getUserInterruptCmd(),
+			osInfo.getCspmfName(),
+			osInfo.getFuzzName(),
+		}) {
+			setExecutable(installDirectory.resolve(path));
+		}
+	}
+
 	/**
 	 * Install all CLI binaries, if necessary.
 	 */
@@ -91,25 +112,7 @@ public final class Installer {
 				final FileLock ignored = lockFileChannel.lock()
 			) {
 				LOGGER.trace("Acquired lock file for installing CLI binaries");
-				final String binariesZipResourceName = osInfo.getBinariesZipResourceName();
-				LOGGER.trace("Extracting binaries from {}", binariesZipResourceName);
-
-				try (final InputStream is = this.getClass().getResourceAsStream(binariesZipResourceName)) {
-					if (is == null) {
-						throw new IllegalArgumentException("Binaries zip not found in resources (make sure that you did not build the ProB Java API with -PprobHome=... set): " + binariesZipResourceName);
-					}
-					FileHandler.extractZip(is, DEFAULT_HOME);
-				}
-
-				for (final String path : new String[] {
-					this.osInfo.getCliName(),
-					this.osInfo.getUserInterruptCmd(),
-					this.osInfo.getCspmfName(),
-					this.osInfo.getFuzzName()
-				}) {
-					setExecutable(DEFAULT_HOME.resolve(path));
-				}
-
+				extractBundledProbcli(DEFAULT_HOME, this.osInfo);
 				LOGGER.info("CLI binaries successfully installed");
 			} catch (IOException e) {
 				LOGGER.error("Failed to install CLI binaries", e);
