@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.nio.file.Files;
@@ -115,7 +116,7 @@ public final class Installer {
 				extractBundledProbcli(DEFAULT_HOME, this.osInfo);
 				LOGGER.info("CLI binaries successfully installed");
 			} catch (IOException e) {
-				LOGGER.error("Failed to install CLI binaries", e);
+				throw new UncheckedIOException("Failed to install ProB CLI binaries", e);
 			} finally {
 				try {
 					// try to delete the lock file when this VM exits
