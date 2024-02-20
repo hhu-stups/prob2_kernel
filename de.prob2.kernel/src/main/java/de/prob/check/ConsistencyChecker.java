@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  * This {@link IModelCheckJob} performs consistency checking on a given
  * {@link StateSpace} based on the specified {@link ModelCheckingOptions}
  * specified by the user or by the default options. Communications with
- * the ProB kernel take place via the {@link ModelCheckingStepCommand}.
+ * the ProB Prolog core take place via the {@link ModelCheckingStepCommand}.
  * 
  * @author joy
  * 

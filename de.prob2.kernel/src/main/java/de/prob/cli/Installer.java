@@ -66,7 +66,7 @@ public final class Installer {
 	@SuppressWarnings("try") // javac warns about unused resource (lockFileChannel.lock()) in try-with-resources
 	public void ensureCLIsInstalled() {
 		if (System.getProperty("prob.home") != null) {
-			LOGGER.info("prob.home is set. Not installing CLI from kernel resources.");
+			LOGGER.info("prob.home is set. Not installing ProB CLI binaries from ProB Java API resources.");
 			return;
 		}
 

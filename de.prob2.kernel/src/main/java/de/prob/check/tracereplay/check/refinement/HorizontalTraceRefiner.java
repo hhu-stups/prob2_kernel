@@ -40,7 +40,7 @@ public class HorizontalTraceRefiner extends AbstractTraceRefinement {
 	 * Refines a classical B Trace horizontally. Respects Includes/Extends/Promotes/Imports
 	 * @return A trace replayable on the target machine if possible, preserving the originals traces properties
 	 * @throws IOException file reading went wrong
-	 * @throws BCompoundException construction of predicates for kernel went wrong
+	 * @throws BCompoundException construction of predicates went wrong
 	 * @throws TraceConstructionError no possible trace was found
 	 */
 	@Override

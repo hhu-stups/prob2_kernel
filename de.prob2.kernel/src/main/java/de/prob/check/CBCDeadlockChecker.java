@@ -8,7 +8,7 @@ import de.prob.statespace.StateSpace;
 /**
  * This {@link IModelCheckJob} performs constraint based deadlock checking on
  * the given {@link StateSpace} using an optional {@link IEvalElement}
- * constraint. Communication with the ProB kernel takes place via the
+ * constraint. Communication with the ProB Prolog core takes place via the
  * {@link ConstraintBasedDeadlockCheckCommand} command.
  * 
  * @author joy

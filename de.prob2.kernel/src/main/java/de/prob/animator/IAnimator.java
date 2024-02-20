@@ -7,7 +7,7 @@ import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.command.ComposedCommand;
 
 /**
- * This interface provides the methods needed to access the ProB prolog kernel.
+ * This interface provides the methods needed to access the ProB Prolog core (probcli).
  * The user can specific tasks to execute via the {@link AbstractCommand}
  * abstraction and either the {@link #execute(AbstractCommand)} or
  * {@link #execute(AbstractCommand...)} methods. If an execution should be
