@@ -6,7 +6,7 @@ import de.prob.statespace.Transition;
 
 import java.util.*;
 
-public class NodeCollector extends DepthFirstAdapter{
+public final class NodeCollector extends DepthFirstAdapter{
 
 	private PPredicate invariant;
 	private PPredicate properties;

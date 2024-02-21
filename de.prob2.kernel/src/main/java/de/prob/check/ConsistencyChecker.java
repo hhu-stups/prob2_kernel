@@ -77,7 +77,7 @@ public class ConsistencyChecker extends CheckerBase {
 	 */
 	public ConsistencyChecker(final StateSpace s, final ModelCheckingOptions options, final IModelCheckListener listener) {
 		super(s, listener);
-		this.limitConfiguration = new ModelCheckingLimitConfiguration(getStateSpace(), stopwatch, TIMEOUT_MS,
+		this.limitConfiguration = new ModelCheckingLimitConfiguration(s, stopwatch, TIMEOUT_MS,
 			options.getStateLimit(),
 			options.getTimeLimit() == null ? -1 : Math.toIntExact(options.getTimeLimit().getSeconds()));
 		this.options = options;

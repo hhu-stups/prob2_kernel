@@ -15,7 +15,7 @@ import de.prob.model.eventb.ProofObligation;
 import de.prob.model.representation.AbstractElement;
 import de.prob.prolog.output.IPrologTermOutput;
 
-public class EventBModelTranslator {
+public final class EventBModelTranslator {
 	private final List<EventBMachineTranslator> machineTranslators = new ArrayList<>();
 	private final List<ContextTranslator> contextTranslators = new ArrayList<>();
 	private final List<ProofObligation> proofObligations = new ArrayList<>();

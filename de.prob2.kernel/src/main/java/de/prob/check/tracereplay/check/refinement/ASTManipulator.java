@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
-public class ASTManipulator extends DepthFirstAdapter{
+public final class ASTManipulator extends DepthFirstAdapter {
 
 
 	private final Start start;

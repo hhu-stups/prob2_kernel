@@ -2,7 +2,7 @@ package de.prob.model.eventb.translate;
 
 import java.io.FileNotFoundException;
 
-public class EventBFileNotFoundException extends FileNotFoundException {
+public final class EventBFileNotFoundException extends FileNotFoundException {
 	private static final long serialVersionUID = 1L;
 
 	private final String path;
