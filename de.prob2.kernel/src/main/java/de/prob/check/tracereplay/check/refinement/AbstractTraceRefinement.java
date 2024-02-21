@@ -26,10 +26,6 @@ public abstract class AbstractTraceRefinement {
 		this.maxDepth = maxDepth;
 	}
 
-	/**
-	 * Better use with non-static parameters
-	 */
-	@Deprecated
 	public AbstractTraceRefinement(Injector injector, List<PersistentTransition> transitionList, Path adaptFrom) {
 		this.injector = injector;
 		this.transitionList = transitionList;

@@ -95,7 +95,6 @@ public class RefineTraceCommand extends AbstractCommand implements
 	 * @param trace      the trace to satisfy
 	 * @param predicates the constraints to put on each transition; maps 1:1 with trace
 	 */
-	@Deprecated
 	public RefineTraceCommand(final StateSpace s, final State stateId, final List<String> trace, final List<? extends IEvalElement> predicates) {
 		this(
 			s, stateId, trace, predicates,
@@ -116,7 +115,6 @@ public class RefineTraceCommand extends AbstractCommand implements
 	 *                     those are stored here, expects a 1:1 mapping else
 	 * @param skips    All events/operations that are not introduced via a skip refinement
 	 */
-	@Deprecated
 	public RefineTraceCommand(final StateSpace s, final State stateId, final List<String> trace, final List<? extends IEvalElement> predicates, final Map<String, List<String>> alternatives, final List<String> refinedAlternatives, final List<String> skips) {
 		this(s, stateId, trace, predicates, alternatives, refinedAlternatives, skips, 10, 5);
 	}
