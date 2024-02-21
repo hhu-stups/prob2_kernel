@@ -152,7 +152,7 @@ public class AdvancedTraceConstructor {
 	 * @param s the trace representing the current machine
 	 * @param persistentTransitionList the trace
 	 * @return the fixed or old trace
- 	 */
+	 */
 	public static List<PersistentTransition> prepareTrace(Trace s, List<PersistentTransition> persistentTransitionList){
 
 		boolean traceHasSC = persistentTransitionList.stream()
