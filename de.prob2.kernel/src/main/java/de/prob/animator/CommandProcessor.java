@@ -27,7 +27,11 @@ import org.slf4j.LoggerFactory;
 class CommandProcessor {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CommandProcessor.class);
 
-	private ProBInstance cli;
+	private final ProBInstance cli;
+
+	CommandProcessor(ProBInstance cli) {
+		this.cli = cli;
+	}
 
 	private static String shorten(final String s) {
 		final String shortened = s.length() <= 200 ? s : (s.substring(0, 200) + "...");
@@ -93,9 +97,4 @@ class CommandProcessor {
 	private PResult parseResult(final String input) {
 		return ProBResultParser.parse(input).getPResult();
 	}
-
-	public void configure(final ProBInstance cli) {
-		this.cli = cli;
-	}
-
 }

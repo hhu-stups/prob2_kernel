@@ -35,13 +35,11 @@ class AnimatorImpl implements IAnimator {
 	private final Collection<IWarningListener> warningListeners = new ArrayList<>();
 
 	@Inject
-	public AnimatorImpl(final ProBInstance cli, final CommandProcessor processor,
-			final GetErrorItemsCommand getErrorItems, final AnimationSelector animations) {
+	AnimatorImpl(ProBInstance cli, AnimationSelector animations) {
 		this.cli = cli;
-		this.processor = processor;
-		this.getErrorItems = getErrorItems;
+		this.processor = new CommandProcessor(cli);
+		this.getErrorItems = new GetErrorItemsCommand();
 		this.animations = animations;
-		processor.configure(cli);
 	}
 
 	@Override
