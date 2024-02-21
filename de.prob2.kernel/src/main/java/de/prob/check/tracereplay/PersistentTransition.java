@@ -368,22 +368,4 @@ public class PersistentTransition {
 				", description=" + description +
 				'}';
 	}
-
-	public static PersistentTransition createEmptyPTransition(){
-
-		return new PersistentTransition("Dummy",new HashMap<>(), new HashMap<>(), new HashMap<>(),new HashSet<>(),
-				new ArrayList<>(), new ArrayList<>(), "");
-
-	}
-
-	public static PersistentTransition createEmptyPTransition(String name){
-
-		return new PersistentTransition(name,new HashMap<>(), new HashMap<>(), new HashMap<>(),new HashSet<>(),
-				new ArrayList<>(), new ArrayList<>(), "");
-
-	}
-
-	public static PersistentTransition copy(PersistentTransition persistentTransition){
-		return new PersistentTransition(persistentTransition.name, persistentTransition.params, persistentTransition.results, persistentTransition.destState, persistentTransition.destStateNotChanged, persistentTransition.preds, persistentTransition.postconditions, persistentTransition.description);
-	}
 }
