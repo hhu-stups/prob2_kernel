@@ -331,28 +331,37 @@ public class PersistentTransition {
 		return result;
 	}
 
-
 	@Override
 	public boolean equals(Object obj) {
-		if(obj instanceof PersistentTransition)
-		{
-			if(((PersistentTransition) obj).name.equals(this.name)){
-				if(((PersistentTransition) obj).params.equals(this.params)){
-					if(((PersistentTransition) obj).destState.equals(this.destState)){
-						if(((PersistentTransition) obj).destStateNotChanged.equals(this.destStateNotChanged)){
-							if(((PersistentTransition) obj).results.equals(this.results)){
-								if(((PersistentTransition) obj).postconditions.equals(this.postconditions)) {
-									if(((PersistentTransition) obj).description.equals((this.description))) {
-										return ((PersistentTransition) obj).preds.equals(this.preds);
-									}
-								}
-							}
-						}
-					}
-				}
-			}
+		if (this == obj) {
+			return true;
 		}
-		return false;
+		if (obj == null || this.getClass() != obj.getClass()) {
+			return false;
+		}
+		PersistentTransition other = (PersistentTransition)obj;
+		return this.name.equals(other.name)
+			&& this.params.equals(other.params)
+			&& this.results.equals(other.results)
+			&& this.destState.equals(other.destState)
+			&& this.destStateNotChanged.equals(other.destStateNotChanged)
+			&& this.preds.equals(other.preds)
+			&& this.postconditions.equals(other.postconditions)
+			&& this.description.equals(other.description);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(
+			this.name,
+			this.params,
+			this.results,
+			this.destState,
+			this.destStateNotChanged,
+			this.preds,
+			this.postconditions,
+			this.description
+		);
 	}
 
 	@Override
