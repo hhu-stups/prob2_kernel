@@ -176,12 +176,36 @@ public class OperationInfo {
 
 	@Override
 	public boolean equals(Object obj) {
-		if(obj instanceof  OperationInfo)
-		{
-			OperationInfo helper = (OperationInfo) obj;
-			return helper.getTypeMap().equals(typeMap) && helper.getAllVariables().equals(this.getAllVariables()) && helper.getOperationName().equals(operationName)
-					&& helper.topLevel == topLevel && helper.type.equals(type) && helper.parameterNames.equals(parameterNames) && helper.outputParameterNames.equals(outputParameterNames);
+		if (this == obj) {
+			return true;
 		}
-		return false;
+		if (obj == null || this.getClass() != obj.getClass()) {
+			return false;
+		}
+		OperationInfo other = (OperationInfo)obj;
+		return this.isTopLevel() == other.isTopLevel()
+			&& this.getOperationName().equals(other.getOperationName())
+			&& this.getParameterNames().equals(other.getParameterNames())
+			&& this.getOutputParameterNames().equals(other.getOutputParameterNames())
+			&& this.getType() == other.getType()
+			&& this.getReadVariables().equals(other.getReadVariables())
+			&& this.getWrittenVariables().equals(other.getWrittenVariables())
+			&& this.getNonDetWrittenVariables().equals(other.getNonDetWrittenVariables())
+			&& this.getTypeMap().equals(other.getTypeMap());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(
+			this.getOperationName(),
+			this.getParameterNames(),
+			this.getOutputParameterNames(),
+			this.isTopLevel(),
+			this.getType(),
+			this.getReadVariables(),
+			this.getWrittenVariables(),
+			this.getNonDetWrittenVariables(),
+			this.getTypeMap()
+		);
 	}
 }
