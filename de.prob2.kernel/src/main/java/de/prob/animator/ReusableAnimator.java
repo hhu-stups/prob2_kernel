@@ -2,6 +2,7 @@ package de.prob.animator;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.google.inject.Inject;
@@ -43,8 +44,8 @@ public final class ReusableAnimator implements IAnimator {
 			super();
 			
 			this.isKilled = new AtomicBoolean(false);
-			this.warningListeners = new ArrayList<>();
-			this.consoleOutputListeners = new ArrayList<>();
+			this.warningListeners = new CopyOnWriteArrayList<>();
+			this.consoleOutputListeners = new CopyOnWriteArrayList<>();
 		}
 		
 		private void checkAlive() {

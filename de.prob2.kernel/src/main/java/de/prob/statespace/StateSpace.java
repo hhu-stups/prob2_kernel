@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 
 import com.google.common.cache.CacheBuilder;
@@ -104,7 +105,7 @@ public class StateSpace implements IAnimator {
 	private AbstractModel model;
 	private AbstractElement mainComponent;
 	private volatile boolean killed;
-	private final Collection<IStatesCalculatedListener> statesCalculatedListeners = new ArrayList<>();
+	private final Collection<IStatesCalculatedListener> statesCalculatedListeners = new CopyOnWriteArrayList<>();
 
 	@Inject
 	public StateSpace(final Provider<IAnimator> panimator, @MaxCacheSize final int maxSize) {

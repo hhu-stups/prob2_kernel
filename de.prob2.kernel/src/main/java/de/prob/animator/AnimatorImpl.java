@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.google.common.base.MoreObjects;
 import com.google.inject.Inject;
@@ -47,7 +48,7 @@ class AnimatorImpl implements IAnimator {
 	private final GetErrorItemsCommand getErrorItems;
 	private final AnimationSelector animations;
 	private boolean busy = false;
-	private final Collection<IWarningListener> warningListeners = new ArrayList<>();
+	private final Collection<IWarningListener> warningListeners = new CopyOnWriteArrayList<>();
 
 	@Inject
 	AnimatorImpl(ProBInstance cli, AnimationSelector animations) {
