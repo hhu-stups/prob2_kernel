@@ -3,6 +3,7 @@ package de.prob.animator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import com.google.common.base.MoreObjects;
@@ -12,10 +13,25 @@ import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.command.ComposedCommand;
 import de.prob.animator.command.GetErrorItemsCommand;
 import de.prob.animator.command.GetTotalNumberOfErrorsCommand;
+import de.prob.animator.command.IRawCommand;
 import de.prob.animator.command.ResetProBCommand;
 import de.prob.animator.domainobjects.ErrorItem;
 import de.prob.cli.ProBInstance;
+import de.prob.core.sablecc.node.ACallBackResult;
+import de.prob.core.sablecc.node.AExceptionResult;
+import de.prob.core.sablecc.node.AInterruptedResult;
+import de.prob.core.sablecc.node.ANoResult;
+import de.prob.core.sablecc.node.AProgressResult;
+import de.prob.core.sablecc.node.AYesResult;
+import de.prob.core.sablecc.node.PResult;
 import de.prob.exception.ProBError;
+import de.prob.exception.PrologException;
+import de.prob.parser.BindingGenerator;
+import de.prob.parser.ProBResultParser;
+import de.prob.parser.PrologTermGenerator;
+import de.prob.parser.SimplifiedROMap;
+import de.prob.prolog.output.PrologTermStringOutput;
+import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.AnimationSelector;
 
 import org.slf4j.Logger;
@@ -28,7 +44,6 @@ class AnimatorImpl implements IAnimator {
 	private final String id = "animator" + counter++;
 
 	private final ProBInstance cli;
-	private final CommandProcessor processor;
 	private final GetErrorItemsCommand getErrorItems;
 	private final AnimationSelector animations;
 	private boolean busy = false;
@@ -37,9 +52,68 @@ class AnimatorImpl implements IAnimator {
 	@Inject
 	AnimatorImpl(ProBInstance cli, AnimationSelector animations) {
 		this.cli = cli;
-		this.processor = new CommandProcessor(cli);
 		this.getErrorItems = new GetErrorItemsCommand();
 		this.animations = animations;
+	}
+
+	private static String shorten(final String s) {
+		final String shortened = s.length() <= 200 ? s : (s.substring(0, 200) + "...");
+		return shortened.endsWith("\n") ? shortened.substring(0, shortened.length()-1) : shortened;
+	}
+
+	private static IPrologResult extractResult(PResult topnode) {
+		if (topnode instanceof ANoResult) {
+			return new NoResult();
+		} else if (topnode instanceof AInterruptedResult) {
+			return new InterruptedResult();
+		} else if (topnode instanceof AYesResult) {
+			Map<String, PrologTerm> binding = BindingGenerator.createBinding(PrologTermGenerator.toPrologTerm(topnode));
+			return new YesResult(new SimplifiedROMap<>(binding));
+		} else if (topnode instanceof AExceptionResult) {
+			AExceptionResult r = (AExceptionResult) topnode;
+			String message = r.getString().getText();
+			throw new PrologException(message);
+		} else {
+			throw new ProBError("Unhandled Prolog result: " + topnode.getClass());
+		}
+	}
+
+	private IPrologResult sendCommand(final AbstractCommand command) {
+		String query;
+		if (command instanceof IRawCommand) {
+			query = ((IRawCommand) command).getCommand();
+			if (!query.endsWith(".")) {
+				query += ".";
+			}
+		} else {
+			PrologTermStringOutput pto = new PrologTermStringOutput();
+			command.writeCommand(pto);
+			pto.printAtom("true");
+			query = pto.fullstop().toString();
+		}
+		String result = cli.send(query); // send the query and get Prolog's response
+
+		PResult topnode = ProBResultParser.parse(result).getPResult();
+		while (topnode instanceof AProgressResult || topnode instanceof ACallBackResult) {
+			if (topnode instanceof AProgressResult ) {
+				// enable the command to respond to the progress information (e.g., by updating progress bar)
+				command.processProgressResult(PrologTermGenerator.toPrologTerm(topnode));
+				result = cli.receive(); // receive next term by Prolog
+			} else {
+				final PrologTermStringOutput pout = new PrologTermStringOutput();
+				command.processCallBack(PrologTermGenerator.toPrologTerm(topnode), pout);
+				result = cli.send(pout.fullstop().toString());
+			}
+			topnode = ProBResultParser.parse(result).getPResult();
+		}
+		// command is finished, we can extract the result:
+		IPrologResult extractResult = extractResult(topnode);
+		if (LOGGER.isDebugEnabled() || LOGGER.isTraceEnabled()) {
+			String resultString = extractResult.toString();
+			LOGGER.debug("Result: {}", shorten(resultString));
+			LOGGER.trace("Full result: {}", resultString);
+		}
+		return extractResult;
 	}
 
 	@Override
@@ -56,7 +130,7 @@ class AnimatorImpl implements IAnimator {
 		// Prevent multiple threads from communicating over the same connection at the same time.
 		synchronized (this) {
 			LOGGER.trace("Starting execution of {}", command);
-			result = processor.sendCommand(command);
+			result = sendCommand(command);
 			errors = getErrorItems();
 		}
 
@@ -96,7 +170,7 @@ class AnimatorImpl implements IAnimator {
 	}
 
 	private List<ErrorItem> getErrorItems() {
-		final IPrologResult errorResult = processor.sendCommand(getErrorItems);
+		final IPrologResult errorResult = sendCommand(getErrorItems);
 		if (errorResult instanceof YesResult) {
 			getErrorItems.processResult(((YesResult) errorResult).getBindings());
 			return getErrorItems.getErrors();
