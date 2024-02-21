@@ -25,10 +25,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class CommandProcessor {
+	private static final Logger LOGGER = LoggerFactory.getLogger(CommandProcessor.class);
 
 	private ProBInstance cli;
-
-	private final Logger logger = LoggerFactory.getLogger(CommandProcessor.class);
 
 	private static String shorten(final String s) {
 		final String shortened = s.length() <= 200 ? s : (s.substring(0, 200) + "...");
@@ -66,10 +65,10 @@ class CommandProcessor {
 		}
 		// command is finished, we can extract the result:
 		IPrologResult extractResult = extractResult(topnode);
-		if (logger.isDebugEnabled() || logger.isTraceEnabled()) {
+		if (LOGGER.isDebugEnabled() || LOGGER.isTraceEnabled()) {
 			String resultString = extractResult.toString();
-			logger.debug("Result: {}", shorten(resultString));
-			logger.trace("Full result: {}", resultString);
+			LOGGER.debug("Result: {}", shorten(resultString));
+			LOGGER.trace("Full result: {}", resultString);
 		}
 		return extractResult;
 	}

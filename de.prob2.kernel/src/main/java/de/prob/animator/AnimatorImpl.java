@@ -22,12 +22,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class AnimatorImpl implements IAnimator {
+	private static final Logger LOGGER = LoggerFactory.getLogger(AnimatorImpl.class);
 
 	private static int counter = 0;
 	private final String id = "animator" + counter++;
 
 	private final ProBInstance cli;
-	private final Logger logger = LoggerFactory.getLogger(AnimatorImpl.class);
 	private final CommandProcessor processor;
 	private final GetErrorItemsCommand getErrorItems;
 	private final AnimationSelector animations;
@@ -49,7 +49,7 @@ class AnimatorImpl implements IAnimator {
 		if (command instanceof ComposedCommand && command.getSubcommands().isEmpty()) {
 			// Optimization: an empty ComposedCommand has no effect,
 			// so return right away to avoid an unnecessary communication with the CLI.
-			logger.trace("Skipping execution of no-op ComposedCommand {}", command);
+			LOGGER.trace("Skipping execution of no-op ComposedCommand {}", command);
 			return;
 		}
 
@@ -57,7 +57,7 @@ class AnimatorImpl implements IAnimator {
 		final List<ErrorItem> errors;
 		// Prevent multiple threads from communicating over the same connection at the same time.
 		synchronized (this) {
-			logger.trace("Starting execution of {}", command);
+			LOGGER.trace("Starting execution of {}", command);
 			result = processor.sendCommand(command);
 			errors = getErrorItems();
 		}
@@ -72,29 +72,29 @@ class AnimatorImpl implements IAnimator {
 		final boolean anyErrorIsFatal = worstErrorType.isPresent() && worstErrorType.get().compareTo(ErrorItem.Type.ERROR) >= 0;
 
 		if (result instanceof YesResult && !anyErrorIsFatal) {
-			logger.trace("Execution successful, processing result");
+			LOGGER.trace("Execution successful, processing result");
 			if (!errors.isEmpty()) {
 				assert worstErrorType.isPresent();
 				//noinspection NonStrictComparisonCanBeEquality
 				if (worstErrorType.get().compareTo(ErrorItem.Type.MESSAGE) <= 0) {
-					logger.info("ProB returned messages:");
+					LOGGER.info("ProB returned messages:");
 					for (final ErrorItem error : errors) {
-						logger.info("{}", error);
+						LOGGER.info("{}", error);
 					}
 				} else {
-					logger.warn("ProB reported warnings:");
+					LOGGER.warn("ProB reported warnings:");
 					for (final ErrorItem error : errors) {
-						logger.warn("{}", error);
+						LOGGER.warn("{}", error);
 					}
 				}
 				this.warningListeners.forEach(listener -> listener.warningsOccurred(errors));
 			}
 			command.processResult(((YesResult) result).getBindings());
 		} else {
-			logger.trace("Execution unsuccessful, processing error");
+			LOGGER.trace("Execution unsuccessful, processing error");
 			command.processErrorResult(result, errors);
 		}
-		logger.trace("Done executing {}", command);
+		LOGGER.trace("Done executing {}", command);
 	}
 
 	private List<ErrorItem> getErrorItems() {
@@ -114,7 +114,7 @@ class AnimatorImpl implements IAnimator {
 
 	@Override
 	public void sendInterrupt() {
-		logger.info("Sending an interrupt to the CLI");
+		LOGGER.info("Sending an interrupt to the CLI");
 		cli.sendInterrupt();
 	}
 
