@@ -1,7 +1,16 @@
 package de.prob.animator.command;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import de.be4.classicalb.core.parser.analysis.prolog.ASTProlog;
-import de.prob.animator.domainobjects.*;
+import de.prob.animator.domainobjects.EvalElementType;
+import de.prob.animator.domainobjects.IBEvalElement;
+import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.check.tracereplay.check.refinement.TraceRefinementResult;
 import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
@@ -9,12 +18,11 @@ import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
-import de.prob.statespace.*;
-
-import java.util.*;
-
-import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toMap;
+import de.prob.statespace.ITraceDescription;
+import de.prob.statespace.State;
+import de.prob.statespace.StateSpace;
+import de.prob.statespace.Trace;
+import de.prob.statespace.Transition;
 
 public class RefineTraceCommand extends AbstractCommand implements
 		IStateSpaceModifier, ITraceDescription {
@@ -89,15 +97,11 @@ public class RefineTraceCommand extends AbstractCommand implements
 	 */
 	@Deprecated
 	public RefineTraceCommand(final StateSpace s, final State stateId, final List<String> trace, final List<? extends IEvalElement> predicates) {
-		this.stateSpace = s;
-		this.stateId = stateId;
-		this.name = trace;
-		this.eval = predicates;
-		this.alternatives = new HashSet<>(trace).stream().collect(toMap(entry -> entry, Collections::singletonList));
-		this.refineAlternatives = emptyList();
-		this.skips = emptyList();
-		maxBreadth = 10;
-		maxDepth = 5;
+		this(
+			s, stateId, trace, predicates,
+			new HashSet<>(trace).stream().collect(Collectors.toMap(entry -> entry, Collections::singletonList)),
+			Collections.emptyList(), Collections.emptyList()
+		);
 	}
 
 	/**
@@ -114,29 +118,7 @@ public class RefineTraceCommand extends AbstractCommand implements
 	 */
 	@Deprecated
 	public RefineTraceCommand(final StateSpace s, final State stateId, final List<String> trace, final List<? extends IEvalElement> predicates, final Map<String, List<String>> alternatives, final List<String> refinedAlternatives, final List<String> skips) {
-		this.stateSpace = s;
-		this.stateId = stateId;
-		this.name = trace;
-		this.alternatives = alternatives;
-		this.refineAlternatives = refinedAlternatives;
-		this.skips = skips;
-		this.eval = predicates;
-		maxBreadth = 10;
-		maxDepth = 5;
-
-
-		if (trace.size() != predicates.size()) {
-			throw new IllegalArgumentException(
-					"Must provide the same number of names and predicates.");
-		}
-		for (IEvalElement eval : predicates) {
-			if (!EvalElementType.PREDICATE.equals(eval.getKind())) {
-				throw new IllegalArgumentException(
-						"Formula must be a predicate, not " + eval.getKind() + ": " + eval);
-			}
-		}
-
-
+		this(s, stateId, trace, predicates, alternatives, refinedAlternatives, skips, 10, 5);
 	}
 
 
