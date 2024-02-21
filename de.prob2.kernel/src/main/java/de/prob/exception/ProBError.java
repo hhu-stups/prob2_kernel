@@ -8,9 +8,8 @@ import java.util.stream.Collectors;
 import de.be4.classicalb.core.parser.exceptions.BCompoundException;
 import de.prob.animator.domainobjects.ErrorItem;
 
+@SuppressWarnings("serial")
 public class ProBError extends RuntimeException {
-	private static final long serialVersionUID = 1L;
-
 	private final String originalMessage;
 	private final List<ErrorItem> errorItems;
 

@@ -3,9 +3,8 @@ package de.prob.animator.command;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("serial")
 public class ExecuteOperationException extends IllegalArgumentException {
-	private static final long serialVersionUID = 1L;
-
 	private final List<GetOperationByPredicateCommand.GetOperationError> errors;
 
 	public ExecuteOperationException(String msg, List<GetOperationByPredicateCommand.GetOperationError> errors) {

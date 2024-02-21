@@ -4,9 +4,8 @@ import de.prob.statespace.Transition;
 
 import java.util.List;
 
+@SuppressWarnings("serial")
 public class TraceConstructionError extends Exception{
-	private static final long serialVersionUID = 1L;
-
 	final List<String> errors;
 	final List<Transition> trace;
 	public TraceConstructionError(List<String> errors, List<Transition> trace){
