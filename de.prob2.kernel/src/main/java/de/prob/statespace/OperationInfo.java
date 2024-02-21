@@ -83,7 +83,6 @@ public class OperationInfo {
 	 * @param writtenVariables written variables
 	 * @param nonDetWrittenVariables non deterministic written variables
 	 */
-	@Deprecated
 	public OperationInfo(
 			 final String operationName,
 			 final List<String> parameterNames,
