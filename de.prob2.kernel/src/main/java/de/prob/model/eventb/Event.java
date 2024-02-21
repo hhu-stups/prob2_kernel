@@ -242,24 +242,6 @@ public class Event extends BEvent {
 		}
 	}
 
-	/**
-	 * @return only the "header", i.e., name, termination and extension information of the event
-	 */
-	public Event stripBody(){
-		return new Event(this.name, this.type, this.inheritance).withParentEvent(this.getParentEvent());
-	}
-
-
-	@Override
-	public boolean equals(Object o){
-		if(o instanceof Event){
-			return ((Event) o).getName().equals(name) && ((Event) o).type == type && ((Event) o).inheritance == inheritance;
-		} //TODO add body comparison
-		return false;
-	}
-
-
-
 	@Override
 	public String toString() {
 		return getName() + " " + getType() + " " + getInheritance() + " " + getParentEvent();

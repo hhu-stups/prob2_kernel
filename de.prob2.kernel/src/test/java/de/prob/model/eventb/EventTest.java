@@ -5,7 +5,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import de.prob.cli.CliTestCommon;
 import de.prob.scripting.Api;
@@ -40,11 +39,22 @@ public class EventTest {
 
 
 		List<Event> expected = new ArrayList<>(Arrays.asList(ini, res,free,f1,f2,b1,b2,pp,rf));
+		List<Event> actual = ((EventBMachine) stateSpace.getMainComponent()).getEvents();
 
-		//Otherwise the events have substitutions which will lead to failing comparisons
-		List<Event> prepedResults = ((EventBMachine) stateSpace.getMainComponent()).getEvents().stream().map(Event::stripBody).collect(Collectors.toList());
-
-		Assertions.assertEquals(expected, prepedResults);
+		Assertions.assertEquals(expected.size(), actual.size());
+		for (int i = 0; i < expected.size(); i++) {
+			Event expectedEvent = expected.get(i);
+			Event actualEvent = actual.get(i);
+			Assertions.assertEquals(expectedEvent.getName(), actualEvent.getName());
+			Assertions.assertEquals(expectedEvent.getType(), actualEvent.getType());
+			Assertions.assertEquals(expectedEvent.getInheritance(), actualEvent.getInheritance());
+			if (expectedEvent.getParentEvent() == null) {
+				Assertions.assertNull(actualEvent.getParentEvent());
+			} else {
+				Assertions.assertNotNull(actualEvent.getParentEvent());
+				Assertions.assertEquals(expectedEvent.getParentEvent().getName(), actualEvent.getParentEvent().getName());
+			}
+		}
 
 		stateSpace.kill();
 	}
