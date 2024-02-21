@@ -19,6 +19,10 @@ public class PredicateBuilder {
 		//
 	}
 
+	public List<String> getPredicates() {
+		return Collections.unmodifiableList(this.predicates);
+	}
+
 	public PredicateBuilder add(final String predicate) {
 		this.predicates.add(predicate);
 		return this;
@@ -46,15 +50,5 @@ public class PredicateBuilder {
 		} else {
 			return String.join(" & ", predicates);
 		}
-	}
-
-	public Set<String> predicatesAsSet(){
-		return new HashSet<>(predicates);
-	}
-
-
-	@Override
-	public boolean equals(Object obj) {
-		return obj instanceof PredicateBuilder && predicatesAsSet().containsAll(((PredicateBuilder) obj).predicatesAsSet()) && ((PredicateBuilder) obj).predicatesAsSet().containsAll(predicatesAsSet());
 	}
 }

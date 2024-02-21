@@ -1,13 +1,16 @@
 package de.prob.check.tracereplay.check.exploration;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import de.prob.check.tracereplay.PersistentTransition;
-import de.prob.check.tracereplay.check.exploration.ReplayOptions;
 import de.prob.formula.PredicateBuilder;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.Collections.*;
 
@@ -22,7 +25,7 @@ public class ReplayOptionsTest {
 
 		PredicateBuilder result = replayOptions.createMapping(persistentTransition);
 
-		Assertions.assertEquals(new PredicateBuilder(), result);
+		Assertions.assertTrue(result.getPredicates().isEmpty());
 	}
 
 	@Test
@@ -44,7 +47,7 @@ public class ReplayOptionsTest {
 
 		PredicateBuilder result = replayOptions.createMapping(persistentTransition);
 
-		Assertions.assertEquals(expected, result);
+		Assertions.assertEquals(new HashSet<>(expected.getPredicates()), new HashSet<>(result.getPredicates()));
 	}
 
 	@Test
@@ -59,12 +62,9 @@ public class ReplayOptionsTest {
 		PersistentTransition persistentTransition = new PersistentTransition("inc", input,
 				output, variables, emptySet(), emptyList(), emptyList(), "");
 
-		PredicateBuilder expected = new PredicateBuilder();
-
-
 		PredicateBuilder result = replayOptions.createMapping(persistentTransition);
 
-		Assertions.assertEquals(expected, result);
+		Assertions.assertTrue(result.getPredicates().isEmpty());
 	}
 
 
@@ -87,7 +87,7 @@ public class ReplayOptionsTest {
 
 		PredicateBuilder result = replayOptions.createMapping(persistentTransition);
 
-		Assertions.assertEquals(expected, result);
+		Assertions.assertEquals(new HashSet<>(expected.getPredicates()), new HashSet<>(result.getPredicates()));
 	}
 
 	@Test
@@ -108,7 +108,7 @@ public class ReplayOptionsTest {
 
 		PredicateBuilder result = replayOptions.createMapping(persistentTransition);
 
-		Assertions.assertEquals(expected, result);
+		Assertions.assertEquals(new HashSet<>(expected.getPredicates()), new HashSet<>(result.getPredicates()));
 	}
 
 
@@ -124,12 +124,9 @@ public class ReplayOptionsTest {
 		PersistentTransition persistentTransition = new PersistentTransition("inc", input,
 				output, variables, emptySet(), emptyList(), emptyList(), "");
 
-		PredicateBuilder expected = new PredicateBuilder();
-
-
 		PredicateBuilder result = replayOptions.createMapping(persistentTransition);
 
-		Assertions.assertEquals(expected, result);
+		Assertions.assertTrue(result.getPredicates().isEmpty());
 	}
 
 	@Test
@@ -144,11 +141,8 @@ public class ReplayOptionsTest {
 		PersistentTransition persistentTransition = new PersistentTransition("inc", input,
 				output, variables, emptySet(), emptyList(), emptyList(), "");
 
-		PredicateBuilder expected = new PredicateBuilder();
-
-
 		PredicateBuilder result = replayOptions.createMapping(persistentTransition);
 
-		Assertions.assertEquals(expected, result);
+		Assertions.assertTrue(result.getPredicates().isEmpty());
 	}
 }
