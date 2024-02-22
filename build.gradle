@@ -1,5 +1,6 @@
+final bomProject = project(":prob-java-bom")
+
 subprojects {
-	apply(plugin: "java")
 	apply(plugin: "maven-publish")
 	apply(plugin: "signing")
 	
@@ -24,38 +25,53 @@ subprojects {
 		resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 	}
 	
-	if (project.hasProperty("probHome")) {
-		tasks.withType(JavaForkOptions) {
-			systemProperties["prob.home"] = project.probHome
+	if (project == bomProject) {
+		// Necessary so that the publishing block below can find components.javaPlatform.
+		apply(plugin: "java-platform")
+	} else {
+		// The java-platform and java plugins cannot be applied at the same time,
+		// so this part must be skipped for the BOM subproject.
+		apply(plugin: "java")
+		
+		dependencies {
+			// The BOM subproject is pulled in by all other subprojects.
+			implementation(platform(bomProject))
 		}
-	}
-	
-	java {
-		sourceCompatibility = JavaVersion.VERSION_1_8
-		targetCompatibility = JavaVersion.VERSION_1_8
-		withSourcesJar()
-		withJavadocJar()
-	}
-	
-	tasks.withType(JavaCompile) {
-		options.encoding = SOURCE_ENCODING
-	}
-	
-	tasks.withType(Javadoc) {
-		options.encoding = SOURCE_ENCODING
-	}
+		
+		if (project.hasProperty("probHome")) {
+			tasks.withType(JavaForkOptions) {
+				systemProperties["prob.home"] = project.probHome
+			}
+		}
+		
+		java {
+			sourceCompatibility = JavaVersion.VERSION_1_8
+			targetCompatibility = JavaVersion.VERSION_1_8
+			withSourcesJar()
+			withJavadocJar()
+		}
+		
+		tasks.withType(JavaCompile) {
+			options.encoding = SOURCE_ENCODING
+		}
+		
+		tasks.withType(Javadoc) {
+			options.encoding = SOURCE_ENCODING
+		}
 
-	javadoc {
-		options {
-			// silence warnings on missing javadoc
-			addBooleanOption('Xdoclint:all,-missing', true)
+		javadoc {
+			options {
+				// silence warnings on missing javadoc
+				addBooleanOption('Xdoclint:all,-missing', true)
+			}
 		}
 	}
 	
 	publishing {
 		publications {
 			mavenJava(MavenPublication) {
-				from components.java
+				// Unfortunately, the java-platform and java plugins use different component names...
+				from(components.findByName("javaPlatform") ?: components.java)
 				
 				pom {
 					name = project.name
