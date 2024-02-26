@@ -1,7 +1,7 @@
 MACHINE scheduler
 
 SETS
-	PID 
+	PID = {PID1,PID2,PID3}
 
 /* LTL Formulas:
   G (e(del) -> {card(ready \\/ waiting)>0})  TRUE
@@ -23,7 +23,7 @@ INVARIANT  active : POW(PID) & ready : POW(PID) & waiting: POW(PID) & /* the typ
            (ready /\ waiting) = {} &
            active /\ (ready \/ waiting) = {} &
            card(active) <= 1 &
-           ((active = {})  => (waiting = {}))
+           ((active = {})  => (ready = {}))
               
 INITIALISATION  
 	active := {} || ready := {} || waiting := {}

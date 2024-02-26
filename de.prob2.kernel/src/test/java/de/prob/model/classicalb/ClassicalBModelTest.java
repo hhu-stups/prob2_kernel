@@ -19,7 +19,7 @@ final class ClassicalBModelTest {
 
 	@BeforeEach
 	void setUp() throws BCompoundException {
-		File modelFile = Paths.get("groovyTests", "machines", "references", "Foo.mch").toFile();
+		File modelFile = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "references", "Foo.mch").toFile();
 		model = new ClassicalBModel(null);
 		BParser bparser = new BParser(modelFile.toString());
 		Start ast = bparser.parseFile(modelFile);

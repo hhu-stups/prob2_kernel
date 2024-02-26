@@ -20,7 +20,7 @@ final class BasicStateTest {
 
 	@BeforeAll
 	static void beforeAll() throws IOException {
-		String path = Paths.get("groovyTests", "machines", "scheduler.mch").toString();
+		String path = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "scheduler.mch").toString();
 		ClassicalBFactory factory = CliTestCommon.getInjector().getInstance(ClassicalBFactory.class);
 		s = factory.extract(path).load();
 		root = s.getRoot();
@@ -59,7 +59,7 @@ final class BasicStateTest {
 
 	@Test
 	void equalsAndHashCode() throws IOException {
-		String path = Paths.get("groovyTests", "machines", "scheduler.mch").toString();
+		String path = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "scheduler.mch").toString();
 		ClassicalBFactory factory = CliTestCommon.getInjector().getInstance(ClassicalBFactory.class);
 		StateSpace s2 = factory.extract(path).load();
 		try {

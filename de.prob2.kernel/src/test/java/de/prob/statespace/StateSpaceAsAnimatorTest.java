@@ -22,7 +22,7 @@ final class StateSpaceAsAnimatorTest {
 
 	@BeforeAll
 	static void beforeAll() throws IOException {
-		String path = Paths.get("groovyTests", "machines", "scheduler.mch").toString();
+		String path = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "scheduler.mch").toString();
 		ClassicalBFactory factory = CliTestCommon.getInjector().getInstance(ClassicalBFactory.class);
 		s = factory.extract(path).load();
 		root = s.getRoot();
