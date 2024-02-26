@@ -11,7 +11,6 @@ import de.prob.scripting.Api;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.StateSpace;
 
-import org.apache.groovy.util.Maps;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -35,7 +34,9 @@ public class GetMachineOperationInfosWithTypesTest {
 
 		stateSpace.execute(getMachineOperationsFull);
 
-		Map<String, String> expected = Maps.of("cars" , "integer", "maxCars", "integer");
+		Map<String, String> expected = new HashMap<>();
+		expected.put("cars" , "integer");
+		expected.put("maxCars", "integer");
 
 		Assertions.assertEquals(1, getMachineOperationsFull.getOperationInfos().size());
 		Assertions.assertEquals(expected, getMachineOperationsFull.getOperationInfos().get(0).getTypeMap());
