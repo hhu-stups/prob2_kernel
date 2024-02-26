@@ -113,21 +113,20 @@ final class TraceEvaluationTest {
 
 	@Test
 	void evalAllEventB() throws IOException {
-		String path = Paths.get("groovyTests", "machines", "Lift", "lift0.bcm").toString();
+		String path = Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "trafficLight", "mac.bcm").toString();
 		EventBFactory factory = CliTestCommon.getInjector().getInstance(EventBFactory.class);
 		StateSpace s2 = factory.extract(path).load();
 		try {
-			Trace t2 = new Trace(s2).execute("$setup_constants").execute("$initialise_machine").execute("up");
-			Map<TraceElement, AbstractEvalResult> x = t2.evalAll(new EventB("level"));
+			Trace t2 = new Trace(s2).execute("$initialise_machine").execute("set_peds_go");
+			Map<TraceElement, AbstractEvalResult> x = t2.evalAll(new EventB("peds_go"));
 
-			Assertions.assertEquals(4, x.size());
+			Assertions.assertEquals(3, x.size());
 			Assertions.assertIterableEquals(t2.getElements(), x.keySet());
 
 			List<AbstractEvalResult> values = new ArrayList<>(x.values());
 			Assertions.assertInstanceOf(IdentifierNotInitialised.class, values.get(0));
-			Assertions.assertInstanceOf(IdentifierNotInitialised.class, values.get(1));
-			Assertions.assertEquals("L0", ((EvalResult)values.get(2)).getValue());
-			Assertions.assertEquals("L1", ((EvalResult)values.get(3)).getValue());
+			Assertions.assertEquals("FALSE", ((EvalResult)values.get(1)).getValue());
+			Assertions.assertEquals("TRUE", ((EvalResult)values.get(2)).getValue());
 		} finally {
 			s2.kill();
 		}
