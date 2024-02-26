@@ -14,4 +14,19 @@ application {
 	mainClass = "de.prob2.commandline.CommandLineMain"
 }
 
+// The groovyIntegrationTests task automatically runs all tests.
+// To run a single Groovy test script, use the run task instead, e. g.:
+// ./gradlew run --args="-script groovyTests/cbcChecking.groovy"
+
+tasks.register("groovyIntegrationTests", JavaExec) {
+	inputs.dir("groovyTests")
+	classpath = sourceSets.main.runtimeClasspath
+	mainClass = application.mainClass
+	args = ["-script", "groovyTests"]
+}
+
+tasks.named("check") {
+	dependsOn("groovyIntegrationTests")
+}
+
 publishing.publications.mavenJava.pom.description = "The ProB Groovy shell command-line interface"

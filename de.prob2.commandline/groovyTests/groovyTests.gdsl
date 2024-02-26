@@ -2,7 +2,7 @@
 // To load this file in IntelliJ, it must be located in a source root. Right-click on the groovyTests folder in the file tree, then select "Mark Directory as" > "Test Sources Root". (You can also do this under "Modules" in the Project Structure window.)
 // Once this is done, a yellow banner will appear above the file saying "DSL descriptor file has been changed [...]". To load the file, click the "Activate back" link in the banner.
 
-final testPathRegexp = ".*/prob2/de.prob2.kernel/groovyTests/.*"
+final testPathRegexp = ".*/de.prob2.commandline/groovyTests/.*"
 
 contributor(context(ctype: "groovy.lang.Script", scope: scriptScope(), filetypes: ["groovy"], pathRegexp: testPathRegexp)) {
 	property(name: "animations", type: "de.prob.statespace.AnimationSelector")

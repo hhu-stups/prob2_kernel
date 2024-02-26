@@ -127,23 +127,6 @@ test {
 	}
 }
 
-task groovyIntegrationTests(type: JavaExec) {
-	mainClass = "de.prob2.commandline.CommandLineMain"
-	inputs.dir("groovyTests")
-	classpath = project(":de.prob2.commandline").sourceSets.main.runtimeClasspath + project.sourceSets.test.runtimeClasspath
-	args = ['-script', 'groovyTests']
-}
-
-// Run a single groovy Testcase
-// Usage: ./gradlew groovyTest --args="-script groovyTests/cbcChecking.groovy"
-task groovyTest(type: JavaExec) {
-	mainClass = "de.prob2.commandline.CommandLineMain"
-	classpath = project(":de.prob2.commandline").sourceSets.main.runtimeClasspath
-}
-
-check.dependsOn(groovyIntegrationTests)
-project.jacoco.applyTo(groovyIntegrationTests)
-
 jacoco {
 	toolVersion = "0.8.11"
 }
@@ -153,7 +136,6 @@ jacocoTestReport {
 		csv.required = false
 		html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
 	}
-	executionData(test, groovyIntegrationTests)
 }
 
 publishing.publications.mavenJava.pom.description = "Core of the ProB Java API"
