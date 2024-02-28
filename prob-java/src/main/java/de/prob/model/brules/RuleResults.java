@@ -111,7 +111,7 @@ public class RuleResults {
 			}
 		}
 		this.summary = new ResultSummary(numberOfRules, numberOfRulesFailed, numberOfRulesSucceeded,
-			numberOfRulesNotChecked, numberOfRulesDisabled, ruleResultsMap);
+			numberOfRulesNotChecked, numberOfRulesDisabled);
 	}
 
 	public List<RuleResult> getRuleResultList() {
@@ -173,12 +173,21 @@ public class RuleResults {
 		public final int numberOfRulesNotChecked;
 		public final int numberOfRulesDisabled;
 		protected ResultSummary(int numberOfRules, int numberOfRulesFailed, int numberOfRulesSucceeded,
-				int numberOfRulesNotChecked, int numberOfRulesDisabled, Map<String, RuleResult> ruleResults) {
+				int numberOfRulesNotChecked, int numberOfRulesDisabled) {
 			this.numberOfRules = numberOfRules;
 			this.numberOfRulesFailed = numberOfRulesFailed;
 			this.numberOfRulesSucceeded = numberOfRulesSucceeded;
 			this.numberOfRulesNotChecked = numberOfRulesNotChecked;
 			this.numberOfRulesDisabled = numberOfRulesDisabled;
+		}
+
+		@Override
+		public String toString() {
+			return "[Rules: " + numberOfRules +
+				", failed rules: " + numberOfRulesFailed +
+				", succeeded rules: " + numberOfRulesSucceeded +
+				", not checked rules: " + numberOfRulesNotChecked +
+				", disabled rules: " + numberOfRulesDisabled + "]";
 		}
 	}
 }
