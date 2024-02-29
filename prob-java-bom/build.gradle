@@ -1,0 +1,24 @@
+plugins {
+	id("java-platform")
+}
+
+// This subproject declares a Gradle platform,
+// which is published as a Maven BOM (Bill of Materials).
+// Users of the ProB Java API should depend on this BOM artifact
+// to ensure that all parts of the ProB Java API have consistent versions,
+// even if multiple unrelated dependencies pull in different parts of the ProB Java API.
+
+dependencies {
+	constraints {
+		// Add all subprojects to the BOM,
+		// except for the BOM subproject itself.
+		rootProject.subprojects.each {
+			if (it != project) {
+				api(it)
+			}
+		}
+	}
+}
+
+publishing.publications.mavenJava.pom.name = "ProB Java API BOM"
+publishing.publications.mavenJava.pom.description = "ProB Java API BOM (Bill of Materials) for improved version management when depending on multiple parts of the ProB Java API"

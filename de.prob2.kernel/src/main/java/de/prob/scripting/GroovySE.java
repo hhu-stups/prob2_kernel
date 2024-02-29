@@ -45,7 +45,7 @@ public class GroovySE implements ScriptEngine {
 		final String initscript;
 		try (
 			final InputStream is = this.getClass().getResourceAsStream("/de/prob/scripting/initscript.groovy");
-			final Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8);
+			final Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)
 		) {
 			initscript = CharStreams.toString(reader);
 		} catch (IOException e) {

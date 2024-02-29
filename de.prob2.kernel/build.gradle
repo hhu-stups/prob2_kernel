@@ -1,0 +1,29 @@
+plugins {
+	id("groovy")
+	id("java-library")
+}
+
+dependencies {
+	api(project(":prob-java"))
+
+	// Groovy (Apache License 2.0)
+	api(platform(group: "org.apache.groovy", name: "groovy-bom", version: "4.0.18"))
+	api group: "org.apache.groovy", name: "groovy"
+	api group: "org.apache.groovy", name: "groovy-jsr223"
+	api group: "org.apache.groovy", name: "groovy-xml"
+}
+
+tasks.withType(GroovyCompile) {
+	options.encoding = SOURCE_ENCODING
+}
+
+// The Groovydoc encoding can't be set via the task, it depends on the file.encoding system property of the Gradle JVM.
+// FIXME This needs to be set in the gradle.properties, but the file is encrypted.
+
+processResources {
+	filesMatching("META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule") {
+		expand(version: project.version)
+	}
+}
+
+publishing.publications.mavenJava.pom.description = "The ProB Java API, including Groovy extensions"

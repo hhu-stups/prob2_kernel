@@ -1,3 +1,6 @@
-rootProject.name = "de.prob2.kernel"
+rootProject.name = "prob2_kernel"
 
 include("de.prob2.commandline")
+include("de.prob2.kernel")
+include("prob-java")
+include("prob-java-bom")

@@ -54,6 +54,10 @@ tests:jdk-17:
   extends: .docker-tests
   image: eclipse-temurin:17
 
+tests:jdk-21:
+  extends: .docker-tests
+  image: eclipse-temurin:21
+
 tests:macos:
   extends: .tests
   tags:

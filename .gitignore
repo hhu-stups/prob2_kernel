@@ -24,9 +24,7 @@ prob_log.txt
 *.log.*
 
 # Junk created by tests
-/de.prob2.kernel/groovyTests/Lift/lift0.eventb
-prob2preferences
-stateInspectorRepl
+/de.prob2.commandline/groovyTests/machines/Lift/lift0.eventb
 *.csp.pl
 *.dot
 *.fuzz

@@ -4,14 +4,29 @@ plugins {
 }
 
 dependencies {
-	implementation(project(":"))
+	implementation(project(":de.prob2.kernel"))
 	
-	implementation(group: "ch.qos.logback", name: "logback-classic", version: "1.3.11") // Eclipse Public License 1.0
-	implementation(group: "commons-cli", name: "commons-cli", version: "1.5.0") // Apache License 2.0
+	implementation(group: "ch.qos.logback", name: "logback-classic", version: "1.3.14") // Eclipse Public License 1.0
+	implementation(group: "commons-cli", name: "commons-cli", version: "1.6.0") // Apache License 2.0
 }
 
 application {
 	mainClass = "de.prob2.commandline.CommandLineMain"
 }
 
-publishing.publications.mavenJava.pom.description = "The ProB 2.0 Kernel command-line interface"
+// The groovyIntegrationTests task automatically runs all tests.
+// To run a single Groovy test script, use the run task instead, e. g.:
+// ./gradlew run --args="-script groovyTests/cbcChecking.groovy"
+
+tasks.register("groovyIntegrationTests", JavaExec) {
+	inputs.dir("groovyTests")
+	classpath = sourceSets.main.runtimeClasspath
+	mainClass = application.mainClass
+	args = ["-script", "groovyTests"]
+}
+
+tasks.named("check") {
+	dependsOn("groovyIntegrationTests")
+}
+
+publishing.publications.mavenJava.pom.description = "The ProB Groovy shell command-line interface"

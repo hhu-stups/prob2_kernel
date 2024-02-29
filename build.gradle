@@ -1,22 +1,13 @@
-plugins {
-	id "de.undercouch.download" version "5.4.0"
-}
+final bomProject = project(":prob-java-bom")
 
-apply plugin: 'java-library'
-apply plugin: 'groovy'
-apply plugin: 'eclipse'
-apply plugin: 'jacoco'
-
-
-allprojects {
-	apply(plugin: "java")
+subprojects {
 	apply(plugin: "maven-publish")
 	apply(plugin: "signing")
 	
 	project.group = 'de.hhu.stups'
-	// IMPORTANT: Before releasing ProB 2, remember to set probcli and all dependencies to release versions, not nightly/SNAPSHOT!
+	// IMPORTANT: Before releasing the ProB Java API, remember to set probcli and all dependencies to release versions, not nightly/SNAPSHOT!
 	// IMPORTANT: Check the variables parserVersion and cliDownloadURL and the dependencies {...} block.
-	project.version = '4.12.2'
+	project.version = "4.13.0"
 	project.ext.isSnapshot = project.version.endsWith("-SNAPSHOT")
 	project.ext.SOURCE_ENCODING = "UTF-8"
 	
@@ -34,38 +25,53 @@ allprojects {
 		resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 	}
 	
-	if (project.hasProperty("probHome")) {
-		tasks.withType(JavaForkOptions) {
-			systemProperties["prob.home"] = project.probHome
+	if (project == bomProject) {
+		// Necessary so that the publishing block below can find components.javaPlatform.
+		apply(plugin: "java-platform")
+	} else {
+		// The java-platform and java plugins cannot be applied at the same time,
+		// so this part must be skipped for the BOM subproject.
+		apply(plugin: "java")
+		
+		dependencies {
+			// The BOM subproject is pulled in by all other subprojects.
+			implementation(platform(bomProject))
 		}
-	}
-	
-	java {
-		sourceCompatibility = JavaVersion.VERSION_1_8
-		targetCompatibility = JavaVersion.VERSION_1_8
-		withSourcesJar()
-		withJavadocJar()
-	}
-	
-	tasks.withType(JavaCompile) {
-		options.encoding = SOURCE_ENCODING
-	}
-	
-	tasks.withType(Javadoc) {
-		options.encoding = SOURCE_ENCODING
-	}
+		
+		if (project.hasProperty("probHome")) {
+			tasks.withType(JavaForkOptions) {
+				systemProperties["prob.home"] = project.probHome
+			}
+		}
+		
+		java {
+			sourceCompatibility = JavaVersion.VERSION_1_8
+			targetCompatibility = JavaVersion.VERSION_1_8
+			withSourcesJar()
+			withJavadocJar()
+		}
+		
+		tasks.withType(JavaCompile) {
+			options.encoding = SOURCE_ENCODING
+		}
+		
+		tasks.withType(Javadoc) {
+			options.encoding = SOURCE_ENCODING
+		}
 
-	javadoc {
-		options {
-			// silence warnings on missing javadoc
-			addBooleanOption('Xdoclint:all,-missing', true)
+		javadoc {
+			options {
+				// silence warnings on missing javadoc
+				addBooleanOption('Xdoclint:all,-missing', true)
+			}
 		}
 	}
 	
 	publishing {
 		publications {
 			mavenJava(MavenPublication) {
-				from components.java
+				// Unfortunately, the java-platform and java plugins use different component names...
+				from(components.findByName("javaPlatform") ?: components.java)
 				
 				pom {
 					name = project.name
@@ -116,192 +122,3 @@ allprojects {
 	
 	ext."signing.secretKeyRingFile" = rootProject.file("secring.gpg").absolutePath
 }
-
-// When making a release, please check that parserVersion matches what the specified version of probcli expects, to avoid unpredictable/inconsistent behavior!
-def parserVersion = "2.12.7"
-def probcliVersion = "1.12.2"
-def cliDownloadURL
-if (probcliVersion.endsWith("-nightly")) {
-	if (!isSnapshot) {
-		throw new GradleException("A release version of the ProB Java API cannot use a nightly version of probcli! Please change the variable probcliVersion (currently ${probcliVersion}) to a release version!")
-	}
-	cliDownloadURL = "https://stups.hhu-hosting.de/downloads/prob/cli/nightly"
-} else {
-	cliDownloadURL = "https://stups.hhu-hosting.de/downloads/prob/cli/releases/${probcliVersion}"
-}
-
-
-// Adjust all source directory paths of the root project to point into the de.prob2.kernel subdirectory.
-sourceSets {
-	main {
-		// in order to compile the mix of java and groovy in this project we compile all files using the groovy compiler
-		groovy.srcDirs = ['de.prob2.kernel/src/main/groovy', 'de.prob2.kernel/src/main/java'] // i.e. include the 'java' dir as groovy source
-		java.srcDirs = [] // i.e. there's no stand-alone java source
-		resources.srcDirs = ['de.prob2.kernel/src/main/resources']
-	}
-	
-	test {
-		groovy.srcDirs = ['de.prob2.kernel/src/test/groovy']
-		java.srcDirs = ['de.prob2.kernel/src/test/java']
-		resources.srcDirs = ['de.prob2.kernel/src/test/resources']
-	}
-}
-
-
-dependencies {
-	// ProB parser dependencies (Eclipse Public License 1.0)
-	api group: "de.hhu.stups", name: "answerparser", version: parserVersion
-	api group: "de.hhu.stups", name: "bparser", version: parserVersion
-	api group: "de.hhu.stups", name: "ltlparser", version: parserVersion
-	api group: "de.hhu.stups", name: "parserbase", version: parserVersion
-	api group: "de.hhu.stups", name: "prologlib", version: parserVersion
-	api group: "de.hhu.stups", name: "unicode", version: parserVersion
-	api group: "de.hhu.stups", name: "theorymapping", version: parserVersion
-	api group: "de.hhu.stups", name: "value-translator", version: "0.1.3"
-
-	// Groovy (Apache License 2.0)
-	api(platform(group: "org.apache.groovy", name: "groovy-bom", version: "4.0.13"))
-	api group: "org.apache.groovy", name: "groovy"
-	api group: "org.apache.groovy", name: "groovy-jsr223"
-	api group: "org.apache.groovy", name: "groovy-nio"
-	api group: "org.apache.groovy", name: "groovy-xml"
-
-	// Logging
-	api group: "org.slf4j", name: "slf4j-api", version: "2.0.7" // MIT License
-
-	// Misc dependencies
-	implementation group: "com.github.krukow", name: "clj-ds", version: "0.0.4" // Eclipse Public License 1.0
-	implementation group: "com.google.guava", name: "guava", version: "32.1.2-jre" // Apache License 2.0
-	api group: "com.google.inject", name: "guice", version: "6.0.0" // Apache License 2.0
-	implementation group: "de.hhu.stups", name: "alloy2b", version: "1.4" // Eclipse Public License 1.0
-	api group: "de.hhu.stups", name: "ltl-dsl", version: "0.2.1" // Eclipse Public License 1.0
-	api group: "de.hhu.stups", name: "rodin-eventb-ast", version: "3.2.0" // Eclipse Public License 1.0
-	implementation group: "de.hhu.stups", name: "tla2bAST", version: "1.2.1" // Eclipse Public License 1.0
-
-	api(platform(group: "com.fasterxml.jackson", name: "jackson-bom", version: "2.15.2"))
-	// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
-	api group: 'com.fasterxml.jackson.core', name: 'jackson-databind'
-	// https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310
-	api group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310'
-
-
-	// Test dependencies
-	testImplementation group: "ch.qos.logback", name: "logback-classic", version: "1.3.11" // Eclipse Public License 1.0
-	testImplementation(platform('org.junit:junit-bom:5.10.0'))
-	testImplementation('org.junit.jupiter:junit-jupiter')
-	testImplementation group: "org.spockframework", name: "spock-core", version: "2.3-groovy-4.0" // Apache License 2.0
-	// Byte Buddy and Objenesis are needed by Spock to mock classes
-	testRuntimeOnly group: "net.bytebuddy", name: "byte-buddy", version: "1.14.5" // Apache License 2.0
-	testRuntimeOnly group: "org.objenesis", name: "objenesis", version: "3.3" // Apache License 2.0
-}
-
-if (project.hasProperty("probHome")) {
-	allprojects {
-		tasks.withType(JavaForkOptions) {
-			systemProperties["prob.home"] = project.probHome
-		}
-	}
-}
-
-tasks.withType(GroovyCompile) {
-	options.encoding = SOURCE_ENCODING
-}
-
-// The Groovydoc encoding can't be set via the task, it depends on the file.encoding system property of the Gradle JVM.
-// FIXME This needs to be set in the gradle.properties, but the file is encrypted.
-
-final generatedResourcesDir = new File(project.buildDir, "generated-src/main/resources")
-
-sourceSets {
-	main {
-		resources {
-			srcDir(generatedResourcesDir)
-		}
-	}
-}
-
-final platforms = [
-	"macos",
-	"linux64",
-	"windows64",
-]
-
-task downloadBinaries(type: Download) {
-	src(platforms.collect {platform -> "${cliDownloadURL}/probcli_${platform}.zip"})
-	dest(new File(generatedResourcesDir, "de/prob/cli/binaries"))
-	onlyIfModified(true)
-}
-
-def readCurrentGitCommit() {
-	def proc = ["git", "rev-parse", "HEAD"].execute(null, project.projectDir)
-	def exitCode = proc.waitFor()
-	if (exitCode != 0) {
-		throw new IllegalStateException("git rev-parse command exited with status code ${exitCode}:\n" + proc.err.readLines().join("\n"))
-	}
-	return proc.in.readLines()[0]
-}
-
-processResources {
-	filesMatching("de/prob/build.properties") {
-		expand(version: project.version, git: readCurrentGitCommit())
-	}
-}
-
-if (!project.hasProperty("probHome")) {
-	// Automatically download probcli/cspmf, unless a custom PROB_HOME is set
-	processResources.dependsOn(downloadBinaries)
-}
-
-sourcesJar {
-	// The downloaded binaries shouldn't go into the sources jar.
-	exclude("de/prob/cli/binaries")
-}
-
-test {
-	useJUnitPlatform()
-	systemProperty("logback.configurationFile", "de/prob/logging/production.xml")
-	testLogging {
-		exceptionFormat = 'full'
-	}
-}
-
-tasks.withType(Test).configureEach {
-	workingDir = "de.prob2.kernel"
-}
-
-task groovyIntegrationTests(type: JavaExec) {
-	mainClass = "de.prob2.commandline.CommandLineMain"
-	inputs.dir("de.prob2.kernel/groovyTests")
-	classpath = project(":de.prob2.commandline").sourceSets.main.runtimeClasspath + project.sourceSets.test.runtimeClasspath
-	args = ['-script', 'de.prob2.kernel/groovyTests']
-}
-
-// Run a single groovy Testcase
-// Usage: ./gradlew groovyTest --args="-script groovyTests/cbcChecking.groovy"
-task groovyTest(type: JavaExec) {
-	mainClass = "de.prob2.commandline.CommandLineMain"
-	classpath = project(":de.prob2.commandline").sourceSets.main.runtimeClasspath
-}
-
-check.dependsOn(groovyIntegrationTests)
-project.jacoco.applyTo(groovyIntegrationTests)
-
-jacoco {
-	toolVersion = "0.8.10"
-}
-jacocoTestReport {
-	reports {
-		xml.required = false
-		csv.required = false
-		html.outputLocation = new File(buildDir, "jacocoHtml")
-	}
-	executionData(test, groovyIntegrationTests)
-}
-
-eclipse {
-	project {
-		name = 'de.prob2.kernel'
-	}
-}
-
-publishing.publications.mavenJava.pom.description = "The ProB 2.0 Kernel library"

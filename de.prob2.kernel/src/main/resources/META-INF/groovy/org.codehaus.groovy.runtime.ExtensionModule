@@ -1,0 +1,5 @@
+extensionClasses=de.prob.scripting.ProBGroovyMethods
+moduleName=ProB Java API Groovy extensions
+# The value for moduleVersion is generated during the build.
+# See the configuration of the processResources task in build.gradle.
+moduleVersion=${version}
