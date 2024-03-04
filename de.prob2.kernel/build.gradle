@@ -10,7 +10,6 @@ dependencies {
 	api(platform(group: "org.apache.groovy", name: "groovy-bom", version: "4.0.18"))
 	api group: "org.apache.groovy", name: "groovy"
 	api group: "org.apache.groovy", name: "groovy-jsr223"
-	api group: "org.apache.groovy", name: "groovy-xml"
 }
 
 tasks.withType(GroovyCompile) {
