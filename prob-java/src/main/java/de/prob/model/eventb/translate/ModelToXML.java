@@ -193,7 +193,7 @@ public final class ModelToXML {
 	}
 
 	private void extractContext(Context context, Path dir) throws Exception {
-		writeXml(dir.resolve(context.getName() + "." + EventBFactory.RODIN_CONTEXT_EXTENSION), document -> {
+		writeXml(dir.resolve(context.getName() + "." + EventBFactory.RODIN_CONTEXT_EXTENSION), document ->
 			child(document, "org.eventb.core.contextFile",
 				attrs("org.eventb.core.configuration", "org.eventb.core.fwd", "version", 3, "org.eventb.core.comment", context.getComment()),
 				contextFile -> {
@@ -201,7 +201,6 @@ public final class ModelToXML {
 					context.getSets().forEach(it -> child(contextFile, "org.eventb.core.carrierSet", attrs("name", genName(), "org.eventb.core.identifier", it.getName(), "org.eventb.core.comment", it.getComment())));
 					context.getConstants().forEach(it -> child(contextFile, "org.eventb.core.constant", attrs("name", genName(), "org.eventb.core.identifier", it.getName(), "org.eventb.core.comment", it.getComment())));
 					context.getAxioms().forEach(it -> child(contextFile, "org.eventb.core.axiom", attrs("name", genName(), "org.eventb.core.label", it.getName(), "org.eventb.core.predicate", ((EventB) it.getPredicate()).toUnicode(), "org.eventb.core.theorem", it.isTheorem(), "org.eventb.core.comment", it.getComment())));
-				});
-		});
+				}));
 	}
 }

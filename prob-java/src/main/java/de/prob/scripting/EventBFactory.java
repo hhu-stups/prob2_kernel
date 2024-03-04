@@ -1,6 +1,7 @@
 package de.prob.scripting;
 
 import com.google.common.io.MoreFiles;
+import com.google.common.io.RecursiveDeleteOption;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import de.prob.model.eventb.EventBModel;
@@ -77,7 +78,7 @@ public class EventBFactory implements ModelFactory<EventBModel> {
 		if (modelFiles.isEmpty()) {
 			Throwable suppressed = null;
 			try {
-				MoreFiles.deleteRecursively(tempdir);
+				MoreFiles.deleteRecursively(tempdir, RecursiveDeleteOption.ALLOW_INSECURE);
 			} catch (Exception e) {
 				suppressed = e;
 			}
@@ -105,7 +106,7 @@ public class EventBFactory implements ModelFactory<EventBModel> {
 		// the temporary directory will be deleted on shutdown of the JVM
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			try {
-				MoreFiles.deleteRecursively(tempdir);
+				MoreFiles.deleteRecursively(tempdir, RecursiveDeleteOption.ALLOW_INSECURE);
 			} catch (Exception ignored) {
 				// silently ignore any errors in this cleanup thread
 			}
