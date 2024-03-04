@@ -44,8 +44,6 @@ public final class ModelToXML {
 		transformer.setOutputProperty(OutputKeys.METHOD, "xml");
 		transformer.setOutputProperty(OutputKeys.ENCODING, StandardCharsets.UTF_8.name());
 		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
-		// TODO: standalone has no effect?
-		// transformer.setOutputProperty(OutputKeys.STANDALONE, "no");
 		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 
 		Files.createDirectories(path.getParent());
@@ -79,7 +77,7 @@ public final class ModelToXML {
 	}
 
 	private static Map<String, String> attrs(Object... kvs) {
-		Map<String, String> attrs = new HashMap<>();
+		Map<String, String> attrs = new LinkedHashMap<>(); // preserve insertion order
 		for (int i = 0; i < kvs.length; i += 2) {
 			Object key = Objects.requireNonNull(kvs[i], "key");
 			Object value = kvs[i + 1];
@@ -114,16 +112,17 @@ public final class ModelToXML {
 	}
 
 	private void createProjectFile(String modelName, Path dir) throws Exception {
-		writeXml(dir.resolve(".project"), document -> child(document, "projectDescription", projectDescription -> {
-			child(projectDescription, "name", modelName);
-			child(projectDescription, "comment");
-			child(projectDescription, "projects");
-			child(projectDescription, "buildSpec", buildSpec -> child(buildSpec, "buildCommand", buildCommand -> {
-				child(buildCommand, "name", "org.rodinp.core.rodinbuilder");
-				child(buildCommand, "arguments");
+		writeXml(dir.resolve(".project"), document ->
+			child(document, "projectDescription", projectDescription -> {
+				child(projectDescription, "name", modelName);
+				child(projectDescription, "comment");
+				child(projectDescription, "projects");
+				child(projectDescription, "buildSpec", buildSpec -> child(buildSpec, "buildCommand", buildCommand -> {
+					child(buildCommand, "name", "org.rodinp.core.rodinbuilder");
+					child(buildCommand, "arguments");
+				}));
+				child(projectDescription, "natures", natures -> child(natures, "nature", "org.rodinp.core.rodinnature"));
 			}));
-			child(projectDescription, "natures", natures -> child(natures, "nature", "org.rodinp.core.rodinnature"));
-		}));
 	}
 
 	private void extractTheories(ModelElementList<Theory> theories, Path dir) throws Exception {
@@ -151,7 +150,7 @@ public final class ModelToXML {
 	}
 
 	private void extractMachine(EventBMachine machine, Path dir) throws Exception {
-		writeXml(dir.resolve(machine.getName() + "." + EventBFactory.RODIN_MACHINE_EXTENSION), document -> {
+		writeXml(dir.resolve(machine.getName() + "." + EventBFactory.RODIN_MACHINE_EXTENSION), document ->
 			child(document, "org.eventb.core.machineFile",
 				attrs("org.eventb.core.configuration", "org.eventb.core.fwd", "version", 5, "org.eventb.core.comment", machine.getComment()),
 				machineFile -> {
@@ -166,8 +165,7 @@ public final class ModelToXML {
 							"org.eventb.core.theorem", it.isTheorem(),
 							"org.eventb.core.comment", it.getComment())));
 					machine.getEvents().forEach(it -> extractEvent(it, machineFile));
-				});
-		});
+				}));
 	}
 
 	private void extractEvent(Event event, Element machineFile) {
