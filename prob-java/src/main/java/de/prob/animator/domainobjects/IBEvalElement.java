@@ -15,6 +15,11 @@ public interface IBEvalElement extends IEvalElement {
 		return prettyPrinter.getPrettyPrint();
 	}
 
+	// TODO: this method could cause heap pollution when the wrong instance of BValue is used
+	// alternatives:
+	//  - just return BValue and let the user cast explicitly to catch errors
+	//  - add a class parameter so we can do a safe cast at runtime
+	@Deprecated
 	default <T extends BValue> T translate() {
 		if (!EvalElementType.EXPRESSION.equals(getKind())) {
 			throw new IllegalArgumentException("Value translation is only supported for expressions, not " + this.getKind());

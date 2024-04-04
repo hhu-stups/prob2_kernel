@@ -1,22 +1,19 @@
 package de.prob.model.representation;
 
-import de.prob.prolog.output.IPrologTermOutput;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class FormulaUUID implements IFormulaUUID {
-	static int count = 0;
+public final class FormulaUUID implements IFormulaUUID {
+
+	private static final AtomicInteger COUNT = new AtomicInteger();
+
 	private final String uuid;
 
 	public FormulaUUID() {
-		this.uuid = "formula_" + ++count;
-	}
-
-	@Override
-	public void printUUID(final IPrologTermOutput pto) {
-		pto.printAtom(uuid);
+		this.uuid = "formula_" + COUNT.incrementAndGet();
 	}
 
 	@Override
 	public String getUUID() {
-		return uuid;
+		return this.uuid;
 	}
 }

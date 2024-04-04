@@ -1,23 +1,30 @@
 package de.prob.animator.domainobjects;
 
-import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * @author joy
- * 
- *         Provides uniform methods for {@link IEvalElement}s. Ensures that the
- *         {@link #equals(Object)} and {@link #hashCode()} methods are correctly
- *         implemented (using the value of {@link #code}) so that
- *         {@link HashMap}s work correctly with {@link IEvalElement}s extending
- *         this class.
+ * <p>
+ * Provides uniform methods for {@link IEvalElement}s. Ensures that the
+ * {@link #equals(Object)} and {@link #hashCode()} methods are correctly
+ * implemented (using the value of {@link #code}) so that
+ * {@link java.util.HashMap}s work correctly with {@link IEvalElement}s extending
+ * this class.
+ * </p>
  */
 public abstract class AbstractEvalElement implements IEvalElement {
+
 	private final String code;
+	/**
+	 * This is obsolete.
+	 *
+	 * @see IEvalElement#expansion()
+	 */
 	private final FormulaExpand expansion;
 
 	protected AbstractEvalElement(final String code, final FormulaExpand expansion) {
-		this.code = code;
-		this.expansion = expansion;
+		this.code = code; // code might be null - for example in ClassicalB it is computed lazily
+		this.expansion = Objects.requireNonNull(expansion, "expansion");
 	}
 
 	protected AbstractEvalElement(final String code) {
@@ -26,16 +33,32 @@ public abstract class AbstractEvalElement implements IEvalElement {
 
 	@Override
 	public String getCode() {
-		return code;
+		return this.code;
+	}
+
+	@Override
+	public FormulaExpand expansion() {
+		return this.expansion;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		} else if (o == null || this.getClass() != o.getClass()) {
+			return false;
+		} else {
+			return this.getCode().equals(((AbstractEvalElement) o).getCode());
+		}
+	}
+
+	@Override
+	public int hashCode() {
+		return this.getCode().hashCode();
 	}
 
 	@Override
 	public String toString() {
 		return this.getCode();
-	}
-	
-	@Override
-	public FormulaExpand expansion() {
-		return expansion;
 	}
 }

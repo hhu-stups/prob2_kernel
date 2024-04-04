@@ -42,18 +42,7 @@ public interface IEvalElement {
 	 * @param pout the {@link IPrologTermOutput} to write to
 	 */
 	default void printEvalTerm(IPrologTermOutput pout) {
-		switch (this.getKind()) {
-			case PREDICATE:
-				pout.openTerm("bpred");
-				break;
-			
-			case EXPRESSION:
-				pout.openTerm("bexpr");
-				break;
-			
-			default:
-				throw new EvaluationException("Formula type not supported for evaluation: " + this.getKind());
-		}
+		pout.openTerm(this.getKind().getPrologName());
 		this.printProlog(pout);
 		pout.closeTerm();
 	}

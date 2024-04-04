@@ -1,6 +1,7 @@
 package de.prob.animator.domainobjects;
 
-import de.be4.classicalb.core.parser.node.Node;
+import java.util.Objects;
+
 import de.be4.classicalb.core.parser.node.Start;
 import de.hhu.stups.prob.translator.BValue;
 import de.prob.model.representation.IFormulaUUID;
@@ -10,22 +11,20 @@ import de.tla2bAst.Translator;
 
 import util.ToolIO;
 
-public class TLA extends AbstractEvalElement implements IBEvalElement {
+public final class TLA extends AbstractEvalElement implements IBEvalElement {
 
-	private final Start ast;
-	private final ClassicalB classicalB;
+	private Start cachedAST;
+	private ClassicalB cachedFormula;
 
 	public TLA(String code) {
 		this(code, FormulaExpand.EXPAND);
 	}
 
 	public TLA(String code, FormulaExpand expand) {
-		super(code, expand);
-		ast = fromTLA(code);
-		classicalB = new ClassicalB(ast, expand);
+		super(Objects.requireNonNull(code, "code"), expand);
 	}
 
-	private Start fromTLA(String code) {
+	private static Start fromTLA(String code) {
 		ToolIO.setMode(ToolIO.TOOL);
 		Start start;
 		try {
@@ -38,32 +37,37 @@ public class TLA extends AbstractEvalElement implements IBEvalElement {
 
 	@Override
 	public void printProlog(IPrologTermOutput pout) {
-		classicalB.printProlog(pout);
+		this.getFormula().printProlog(pout);
 	}
 
 	@Override
 	public EvalElementType getKind() {
-		return classicalB.getKind();
+		return this.getFormula().getKind();
 	}
 
 	@Override
 	public IFormulaUUID getFormulaId() {
-		return classicalB.getFormulaId();
+		return this.getFormula().getFormulaId();
 	}
 
 	@Override
-	public FormulaExpand expansion() {
-		return classicalB.expansion();
-	}
-
-	@Override
+	@Deprecated
 	public <T extends BValue> T translate() {
-		return classicalB.translate();
+		return this.getFormula().translate();
 	}
 
 	@Override
-	public Node getAst() {
-		return ast;
+	public Start getAst() {
+		if (this.cachedAST == null) {
+			this.cachedAST = fromTLA(this.getCode());
+		}
+		return this.cachedAST;
 	}
 
+	private ClassicalB getFormula() {
+		if (this.cachedFormula == null) {
+			this.cachedFormula = new ClassicalB(this.getAst(), this.expansion());
+		}
+		return this.cachedFormula;
+	}
 }

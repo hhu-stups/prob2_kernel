@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import de.prob.model.representation.CSPModel;
@@ -19,8 +20,9 @@ import de.prob.prolog.output.IPrologTermOutput;
  *
  * @author joy
  */
-public class CSP extends AbstractEvalElement {
-	private final FormulaUUID uuid;
+public final class CSP extends AbstractEvalElement {
+
+	private final FormulaUUID uuid = new FormulaUUID();
 	private final String fileName;
 	private final Path cspmfPath;
 
@@ -29,12 +31,11 @@ public class CSP extends AbstractEvalElement {
 	 * a {@link CSPModel} is one of the necessary parameters.
 	 *
 	 * @param formula string formula
-	 * @param model csp model
+	 * @param model   csp model
 	 */
 	public CSP(String formula, CSPModel model) {
-		super(formula, FormulaExpand.EXPAND);
-		
-		this.uuid = new FormulaUUID();
+		super(Objects.requireNonNull(formula, "formula"), FormulaExpand.EXPAND);
+		Objects.requireNonNull(model, "model");
 		this.fileName = model.getModelFile().getAbsolutePath();
 		this.cspmfPath = model.getCspmfPath();
 	}
@@ -47,13 +48,6 @@ public class CSP extends AbstractEvalElement {
 	@Override
 	public void printProlog(IPrologTermOutput pout) {
 		callCSPMF(pout, "translate", "--expressionToPrologTerm=" + this.getCode(), fileName);
-	}
-
-	@Override
-	public void printEvalTerm(final IPrologTermOutput pout) {
-		pout.openTerm("csp");
-		this.printProlog(pout);
-		pout.closeTerm();
 	}
 
 	public void printPrologAssertion(IPrologTermOutput pout) {
@@ -101,6 +95,6 @@ public class CSP extends AbstractEvalElement {
 
 	@Override
 	public IFormulaUUID getFormulaId() {
-		return uuid;
+		return this.uuid;
 	}
 }
