@@ -48,13 +48,14 @@ public abstract class AbstractEvalElement implements IEvalElement {
 		} else if (o == null || this.getClass() != o.getClass()) {
 			return false;
 		} else {
-			return this.getCode().equals(((AbstractEvalElement) o).getCode());
+			AbstractEvalElement that = (AbstractEvalElement) o;
+			return this.getCode().equals(that.getCode()) && this.expansion().equals(that.expansion());
 		}
 	}
 
 	@Override
 	public int hashCode() {
-		return this.getCode().hashCode();
+		return Objects.hash(this.getCode(), this.expansion());
 	}
 
 	@Override
