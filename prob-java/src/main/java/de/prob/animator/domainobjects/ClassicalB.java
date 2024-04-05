@@ -44,7 +44,8 @@ public final class ClassicalB extends AbstractEvalElement implements IBEvalEleme
 
 		this.cachedAST = ast;
 		this.cachedCode = code;
-		// eagerly parse code to get errors immediately
+
+		// eagerly parse "code" to get errors immediately
 		this.getAst();
 	}
 
