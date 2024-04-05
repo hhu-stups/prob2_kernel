@@ -51,7 +51,6 @@ public final class TLA extends AbstractEvalElement implements IBEvalElement {
 	}
 
 	@Override
-	@Deprecated
 	public <T extends BValue> T translate() {
 		return this.getFormula().translate();
 	}
