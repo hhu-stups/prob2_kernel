@@ -87,8 +87,8 @@ public final class ClassicalB extends AbstractEvalElement implements IBEvalEleme
 	 * (you can then pass the parsed AST into {@link #ClassicalB(Start, String)} if you really need to for some reason).
 	 */
 	@Deprecated
-	public ClassicalB(final String formula, final FormulaExpand expansion, final Boolean AllowSubst) {
-		this(parse(Objects.requireNonNull(formula, "formula"), AllowSubst), expansion, formula);
+	public ClassicalB(final String formula, final FormulaExpand expansion, final boolean allowSubstitution) {
+		this(parse(Objects.requireNonNull(formula, "formula"), allowSubstitution), expansion, formula);
 	}
 
 	/**
@@ -99,12 +99,12 @@ public final class ClassicalB extends AbstractEvalElement implements IBEvalEleme
 		this(code, FormulaExpand.EXPAND);
 	}
 
-	private static Start parse(final String formula, Boolean AllowSubst) {
+	private static Start parse(String formula, boolean allowSubstitution) {
 		final BParser bParser = new BParser();
 		try {
 			return bParser.parseFormula(formula);
 		} catch (BCompoundException e) {
-			if (AllowSubst != null && AllowSubst) {
+			if (allowSubstitution) {
 				// also try parsing as substitution
 				try {
 					return bParser.parseSubstitution(formula);
