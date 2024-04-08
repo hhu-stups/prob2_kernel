@@ -42,7 +42,7 @@ public interface IEvalElement {
 	 * @param pout the {@link IPrologTermOutput} to write to
 	 */
 	default void printEvalTerm(IPrologTermOutput pout) {
-		pout.openTerm(this.getKind().getPrologName());
+		pout.openTerm(this.getKind().getEvalTermName());
 		this.printProlog(pout);
 		pout.closeTerm();
 	}

@@ -16,13 +16,13 @@ public enum EvalElementType {
 	CSP("csp"),
 	;
 
-	private final String prologName;
+	private final String evalTermName;
 
-	EvalElementType(final String prologName) {
-		this.prologName = Objects.requireNonNull(prologName, "prologName");
+	EvalElementType(String evalTermName) {
+		this.evalTermName = Objects.requireNonNull(evalTermName, "evalTermName");
 	}
 
-	public String getPrologName() {
-		return this.prologName;
+	public String getEvalTermName() {
+		return this.evalTermName;
 	}
 }
