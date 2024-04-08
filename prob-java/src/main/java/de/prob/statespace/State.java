@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,10 +15,17 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import de.prob.animator.command.CheckConstantsSetUpStatusCommand;
+import de.prob.animator.command.CheckInitialisationStatusCommand;
+import de.prob.animator.command.CheckInvariantStatusCommand;
+import de.prob.animator.command.CheckMaxOperationReachedStatusCommand;
+import de.prob.animator.command.CheckTimeoutStatusCommand;
 import de.prob.animator.command.EvaluateFormulasCommand;
 import de.prob.animator.command.ExecuteOperationException;
-import de.prob.animator.command.ExploreStateCommand;
 import de.prob.animator.command.GetBStateCommand;
+import de.prob.animator.command.GetEnabledOperationsCommand;
+import de.prob.animator.command.GetOperationsWithTimeout;
+import de.prob.animator.command.GetStateBasedErrorsCommand;
 import de.prob.animator.domainobjects.AbstractEvalResult;
 import de.prob.animator.domainobjects.EvalOptions;
 import de.prob.animator.domainobjects.FormulaExpand;
@@ -430,17 +438,33 @@ public class State {
 	}
 
 	public synchronized State explore() {
-		final ExploreStateCommand cmd = new ExploreStateCommand(stateSpace, id, Collections.emptyList());
-		stateSpace.execute(cmd);
-		transitions = cmd.getNewTransitions();
-		constantsSetUp = cmd.isConstantsSetUp();
-		initialised = cmd.isInitialised();
-		invariantOk = cmd.isInvariantOk();
-		timeoutOccurred = cmd.isTimeoutOccured();
-		maxTransitionsCalculated = cmd.isMaxOperationsReached();
-		stateErrors = cmd.getStateErrors();
-		transitionsWithTimeout = cmd.getOperationsWithTimeout();
-		// TODO Combine the subscribed formula evaluation commands into ExploreStateCommand again
+		GetEnabledOperationsCommand getEnabledOpsCmd = new GetEnabledOperationsCommand(stateSpace, id);
+		CheckConstantsSetUpStatusCommand checkConstantsSetUpCmd = new CheckConstantsSetUpStatusCommand(id);
+		CheckInitialisationStatusCommand checkInitialisedCmd = new CheckInitialisationStatusCommand(id);
+		CheckInvariantStatusCommand checkInvariantCmd = new CheckInvariantStatusCommand(id);
+		CheckTimeoutStatusCommand checkTimeoutCmd = new CheckTimeoutStatusCommand(id);
+		GetOperationsWithTimeout getOpsWithTimeoutCmd = new GetOperationsWithTimeout(id);
+		CheckMaxOperationReachedStatusCommand checkMaxOpsReachedCmd = new CheckMaxOperationReachedStatusCommand(id);
+		GetStateBasedErrorsCommand getStateErrorsCmd = new GetStateBasedErrorsCommand(id);
+		stateSpace.execute(
+			getEnabledOpsCmd,
+			checkConstantsSetUpCmd,
+			checkInitialisedCmd,
+			checkInvariantCmd,
+			checkTimeoutCmd,
+			getOpsWithTimeoutCmd,
+			checkMaxOpsReachedCmd,
+			getStateErrorsCmd
+		);
+		transitions = getEnabledOpsCmd.getEnabledOperations();
+		constantsSetUp = checkConstantsSetUpCmd.isConstantsSetUp();
+		initialised = checkInitialisedCmd.isInitialized();
+		invariantOk = !checkInvariantCmd.isInvariantViolated();
+		timeoutOccurred = checkTimeoutCmd.isTimeout();
+		transitionsWithTimeout = new HashSet<>(getOpsWithTimeoutCmd.getTimeouts());
+		maxTransitionsCalculated = checkMaxOpsReachedCmd.maxOperationReached();
+		stateErrors = getStateErrorsCmd.getResult();
+		// TODO Combine the subscribed formula evaluation commands into the execute call above so that there is only one Prolog call per exploration
 		this.getValues();
 		explored = true;
 		return this;

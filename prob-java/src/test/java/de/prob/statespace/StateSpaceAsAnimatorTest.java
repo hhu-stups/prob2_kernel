@@ -2,11 +2,9 @@ package de.prob.statespace;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.Collections;
 
 import de.prob.animator.command.CheckInitialisationStatusCommand;
 import de.prob.animator.command.CheckInvariantStatusCommand;
-import de.prob.animator.command.ExploreStateCommand;
 import de.prob.cli.CliTestCommon;
 import de.prob.scripting.ClassicalBFactory;
 
@@ -37,7 +35,10 @@ final class StateSpaceAsAnimatorTest {
 	@Test
 	void sendInterruptDoesNotAffectLaterCommands() {
 		s.sendInterrupt();
-		s.execute(new ExploreStateCommand(s, "root", Collections.emptyList()));
+		s.execute(
+			new CheckInitialisationStatusCommand("root"),
+			new CheckInvariantStatusCommand("root")
+		);
 	}
 
 	@Test
