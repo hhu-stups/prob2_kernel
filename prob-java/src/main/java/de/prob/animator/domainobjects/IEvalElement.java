@@ -42,7 +42,11 @@ public interface IEvalElement {
 	 * @param pout the {@link IPrologTermOutput} to write to
 	 */
 	default void printEvalTerm(IPrologTermOutput pout) {
-		pout.openTerm(this.getKind().getEvalTermName());
+		String evalTermName = this.getKind().getEvalTermName();
+		if (evalTermName == null) {
+			throw new IllegalStateException("A formula of kind " + this.getKind() + " cannot be written as a Prolog term");
+		}
+		pout.openTerm(evalTermName);
 		this.printProlog(pout);
 		pout.closeTerm();
 	}

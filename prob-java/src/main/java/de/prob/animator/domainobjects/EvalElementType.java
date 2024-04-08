@@ -12,14 +12,14 @@ public enum EvalElementType {
 	PREDICATE("bpred"),
 	EXPRESSION("bexpr"),
 	ASSIGNMENT("bsubst"),
-	NONE("none"),
+	NONE(null),
 	CSP("csp"),
 	;
 
 	private final String evalTermName;
 
 	EvalElementType(String evalTermName) {
-		this.evalTermName = Objects.requireNonNull(evalTermName, "evalTermName");
+		this.evalTermName = evalTermName;
 	}
 
 	public String getEvalTermName() {
