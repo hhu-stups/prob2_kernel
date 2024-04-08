@@ -213,6 +213,8 @@ public final class EventB extends AbstractEvalElement implements IBEvalElement {
 				if (this.kind == null) {
 					throw new AssertionError("ensureParsed didn't initialize the formula kind", exc);
 				}
+				// TODO: this swallows the EvaluationException, is that intended?
+				// see EventBEvalElementTest
 			}
 			if (this.kind == null) {
 				throw new AssertionError("ensureParsed didn't initialize the formula kind");
