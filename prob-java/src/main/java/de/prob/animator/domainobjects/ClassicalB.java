@@ -33,20 +33,28 @@ import de.prob.prolog.output.IPrologTermOutput;
 public final class ClassicalB extends AbstractEvalElement implements IBEvalElement {
 
 	private final FormulaUUID uuid = new FormulaUUID();
-	private Start cachedAST;
+	private final Start ast;
 	private String cachedCode;
 
 	public ClassicalB(final Start ast, final FormulaExpand expansion, final String code) {
 		super(null, expansion);
-		if (ast == null && code == null) {
-			throw new IllegalArgumentException("both ast and code are null");
-		}
 
-		this.cachedAST = ast;
 		this.cachedCode = code;
 
-		// eagerly parse "code" to get errors immediately
-		this.getAst();
+		if (ast == null) {
+			// If ast is null, parse it from code, which must not be null.
+			if (code == null) {
+				throw new IllegalArgumentException("both ast and code are null");
+			}
+			// The code is parsed eagerly so that any parse errors are thrown from the constructor,
+			// not from later code that tries to write the formula to Prolog or otherwise uses the AST.
+			this.ast = parse(code, false);
+		} else {
+			// If ast is non-null, then code may or may not be null.
+			// If code is null, it will be initialized lazily by pretty-printing the AST.
+			// If code is non-null, it's assumed to be the original source code or an existing pretty-print of the AST.
+			this.ast = ast;
+		}
 	}
 
 	public ClassicalB(final Start ast, final String code) {
@@ -147,12 +155,8 @@ public final class ClassicalB extends AbstractEvalElement implements IBEvalEleme
 	@Override
 	public String getCode() {
 		if (this.cachedCode == null) {
-			if (this.cachedAST == null) {
-				throw new IllegalStateException();
-			}
-
 			final PrettyPrinter prettyPrinter = new PrettyPrinter();
-			this.cachedAST.apply(prettyPrinter);
+			this.ast.apply(prettyPrinter);
 			this.cachedCode = prettyPrinter.getPrettyPrint();
 		}
 
@@ -178,15 +182,7 @@ public final class ClassicalB extends AbstractEvalElement implements IBEvalEleme
 	 */
 	@Override
 	public Start getAst() {
-		if (this.cachedAST == null) {
-			if (this.cachedCode == null) {
-				throw new IllegalStateException();
-			}
-
-			this.cachedAST = parse(this.cachedCode, false);
-		}
-
-		return this.cachedAST;
+		return this.ast;
 	}
 
 	@Override
