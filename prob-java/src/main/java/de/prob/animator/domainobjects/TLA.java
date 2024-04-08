@@ -39,22 +39,22 @@ public final class TLA extends AbstractEvalElement implements IBEvalElement {
 
 	@Override
 	public void printProlog(IPrologTermOutput pout) {
-		this.getFormula().printProlog(pout);
+		this.asClassicalB().printProlog(pout);
 	}
 
 	@Override
 	public EvalElementType getKind() {
-		return this.getFormula().getKind();
+		return this.asClassicalB().getKind();
 	}
 
 	@Override
 	public IFormulaUUID getFormulaId() {
-		return this.getFormula().getFormulaId();
+		return this.asClassicalB().getFormulaId();
 	}
 
 	@Override
 	public <T extends BValue> T translate() {
-		return this.getFormula().translate();
+		return this.asClassicalB().translate();
 	}
 
 	@Override
@@ -62,7 +62,7 @@ public final class TLA extends AbstractEvalElement implements IBEvalElement {
 		return this.ast;
 	}
 
-	private ClassicalB getFormula() {
+	private ClassicalB asClassicalB() {
 		return this.formula;
 	}
 }
