@@ -60,7 +60,6 @@ public class ClassicalBEvalElementTest {
 	@Test
 	@SuppressWarnings("deprecation")
 	public void testAssignmentDeprecatedParserError() {
-		// even correct assignments throw an exception because they are not allowed in the standard constructor
 		Assertions.assertThrows(EvaluationException.class, () -> {
 			ClassicalB element = new ClassicalB("x:=42 :=", FormulaExpand.EXPAND, true);
 			assertEquals(EvalElementType.PREDICATE, element.getKind());
