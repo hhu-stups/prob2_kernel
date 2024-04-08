@@ -12,9 +12,8 @@ import de.tla2bAst.Translator;
 import util.ToolIO;
 
 public final class TLA extends AbstractEvalElement implements IBEvalElement {
-
-	private Start cachedAST;
-	private ClassicalB cachedFormula;
+	private final Start ast;
+	private final ClassicalB formula;
 
 	public TLA(String code) {
 		this(code, FormulaExpand.EXPAND);
@@ -22,6 +21,9 @@ public final class TLA extends AbstractEvalElement implements IBEvalElement {
 
 	public TLA(String code, FormulaExpand expand) {
 		super(Objects.requireNonNull(code, "code"), expand);
+
+		this.ast = fromTLA(code);
+		this.formula = new ClassicalB(ast, expand);
 	}
 
 	private static Start fromTLA(String code) {
@@ -57,16 +59,10 @@ public final class TLA extends AbstractEvalElement implements IBEvalElement {
 
 	@Override
 	public Start getAst() {
-		if (this.cachedAST == null) {
-			this.cachedAST = fromTLA(this.getCode());
-		}
-		return this.cachedAST;
+		return this.ast;
 	}
 
 	private ClassicalB getFormula() {
-		if (this.cachedFormula == null) {
-			this.cachedFormula = new ClassicalB(this.getAst(), this.expansion());
-		}
-		return this.cachedFormula;
+		return this.formula;
 	}
 }
