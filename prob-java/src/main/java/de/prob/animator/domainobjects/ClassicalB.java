@@ -18,6 +18,7 @@ import de.be4.classicalb.core.parser.node.AIdentifierExpression;
 import de.be4.classicalb.core.parser.node.APredicateParseUnit;
 import de.be4.classicalb.core.parser.node.ASubstitutionParseUnit;
 import de.be4.classicalb.core.parser.node.EOF;
+import de.be4.classicalb.core.parser.node.PParseUnit;
 import de.be4.classicalb.core.parser.node.Start;
 import de.be4.classicalb.core.parser.node.TIdentifierLiteral;
 import de.be4.classicalb.core.parser.util.PrettyPrinter;
@@ -165,15 +166,15 @@ public final class ClassicalB extends AbstractEvalElement implements IBEvalEleme
 
 	@Override
 	public EvalElementType getKind() {
-		Start ast = this.getAst();
-		if (ast.getPParseUnit() instanceof AExpressionParseUnit) {
+		PParseUnit parseUnit = this.getAst().getPParseUnit();
+		if (parseUnit instanceof AExpressionParseUnit) {
 			return EvalElementType.EXPRESSION;
-		} else if (ast.getPParseUnit() instanceof APredicateParseUnit) {
+		} else if (parseUnit instanceof APredicateParseUnit) {
 			return EvalElementType.PREDICATE;
-		} else if (ast.getPParseUnit() instanceof ASubstitutionParseUnit) {
+		} else if (parseUnit instanceof ASubstitutionParseUnit) {
 			return EvalElementType.ASSIGNMENT;
 		} else {
-			throw new IllegalStateException("unknown kind for ClassicalB: " + ast.getPParseUnit().getClass().getSimpleName() + " " + ast.getPParseUnit());
+			throw new IllegalStateException("unknown kind for ClassicalB: " + parseUnit.getClass().getSimpleName() + " " + parseUnit);
 		}
 	}
 
