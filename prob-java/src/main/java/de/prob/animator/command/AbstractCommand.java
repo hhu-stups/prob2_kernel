@@ -59,9 +59,8 @@ public abstract class AbstractCommand {
 	 * <p>
 	 * This will be called if the Prolog query was successful and no error
 	 * messages were logged during the execution of the query. If the query was
-	 * not successful, or if there were errors
-	 * {@link AbstractCommand#processErrorResult(IPrologResult, List)} will
-	 * be called.
+	 * not successful, or if there were errors, an exception is thrown
+	 * and this method is not called.
 	 * </p>
 	 * 
 	 * <p>
@@ -102,9 +101,9 @@ public abstract class AbstractCommand {
 	 * but errors were also found</li>
 	 * </ol>
 	 * 
-	 * Default behavior for error handling is implemented in
-	 * {@link AbstractCommand}, but if a developer wants to implement special
-	 * behavior, he/she needs to overwrite this method.
+	 * Default behavior for error handling is implemented in {@link AbstractCommand}.
+	 * Subclasses can override this method to implement custom error processing,
+	 * but this is strongly discouraged and will probably be disallowed in the future.
 	 * 
 	 * @param result the result returned from Prolog
 	 * @param errors the error messages and locations that were reported
