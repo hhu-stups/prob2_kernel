@@ -35,7 +35,6 @@ import de.prob.animator.command.FormulaTypecheckCommand;
 import de.prob.animator.command.GetCurrentPreferencesCommand;
 import de.prob.animator.command.GetDefaultPreferencesCommand;
 import de.prob.animator.command.GetOperationByPredicateCommand;
-import de.prob.animator.command.GetOpsFromIds;
 import de.prob.animator.command.GetPreferenceCommand;
 import de.prob.animator.command.GetShortestTraceCommand;
 import de.prob.animator.command.GetStatesFromPredicate;
@@ -929,8 +928,13 @@ public class StateSpace implements IAnimator {
 	 * @return map of all transitions and the corresponding evaluated infos
 	 */
 	public Map<Transition, EvaluatedTransitionInfo> evaluateTransitions(final Collection<Transition> transitions, final EvalOptions options) {
-		GetOpsFromIds cmd = new GetOpsFromIds(transitions, options);
-		execute(cmd);
+		List<GetOpFromId> opInfoCmds = new ArrayList<>();
+		for (Transition transition : transitions) {
+			if (!transition.isEvaluated(options)) {
+				opInfoCmds.add(new GetOpFromId(transition, options));
+			}
+		}
+		execute(opInfoCmds);
 		final Map<Transition, EvaluatedTransitionInfo> result = new LinkedHashMap<>(transitions.size());
 		for (final Transition transition : transitions) {
 			result.put(transition, transition.evaluate(options));

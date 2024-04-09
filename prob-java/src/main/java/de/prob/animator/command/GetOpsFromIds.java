@@ -10,8 +10,14 @@ import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.GetOpFromId;
+import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
 
+/**
+ * @deprecated Use {@link StateSpace#evaluateTransitions(Collection, EvalOptions)} instead, which provides a high-level API for what this command did.
+ *     If you really need to use commands, use individual {@link GetOpFromId} commands and execute them together.
+ */
+@Deprecated
 public class GetOpsFromIds extends AbstractCommand {
 	private final ComposedCommand allCommands;
 
