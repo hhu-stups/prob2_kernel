@@ -79,11 +79,11 @@ public abstract class AbstractCommand {
 			ISimplifiedROMap<String, PrologTerm> bindings);
 
 	/**
-	 * Returns the list of sub-commands contained in a given
-	 * {@link AbstractCommand}. This allow the animator to debug the code. If
-	 * developers want individual commands to be executed separately in debug
-	 * mode when an {@link AbstractCommand} is executed, then this method MUST
-	 * be overridden. By default, {@link Collections#emptyList()} is returned.
+	 * Returns the list of sub-commands contained in a given {@link AbstractCommand}.
+	 * This allow the animator to debug the code.
+	 * This method is meant for internal use by {@link ComposedCommand}.
+	 * Other commands should not override this method.
+	 * It may be removed from the {@link AbstractCommand} base class in the future.
 	 * 
 	 * @return {@code List} of {@link AbstractCommand} subcommands
 	 */
