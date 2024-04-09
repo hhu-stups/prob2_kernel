@@ -67,13 +67,7 @@ public final class CtlCheckingCommand extends AbstractCommand implements
 				LOGGER.warn("CTL checker returned errors together with a non-error result {}/{}", res.getFunctor(), res.getArity());
 			}
 			final List<ErrorItem> errors = errorTerm.stream()
-				.map(error -> {
-					if (error.isAtom()) {
-						return ErrorItem.fromErrorMessage(error.atomToString());
-					} else {
-						return ErrorItem.fromProlog(error);
-					}
-				})
+				.map(ErrorItem::fromProlog)
 				.collect(Collectors.toList());
 			this.result = new CTLError(ctlFormula, errors);
 		} else if (res.hasFunctor("typeerror", 0)) {

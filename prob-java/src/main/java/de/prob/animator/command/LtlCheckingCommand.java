@@ -70,13 +70,7 @@ public final class LtlCheckingCommand extends AbstractCommand implements
 				LOGGER.warn("LTL checker returned errors together with a non-error result {}/{}", term.getFunctor(), term.getArity());
 			}
 			final List<ErrorItem> errors = errorTerm.stream()
-				.map(error -> {
-					if (error.isAtom()) {
-						return ErrorItem.fromErrorMessage(error.atomToString());
-					} else {
-						return ErrorItem.fromProlog(error);
-					}
-				})
+				.map(ErrorItem::fromProlog)
 				.collect(Collectors.toList());
 			result = new LTLError(ltlFormula, errors);
 		} else if (term.hasFunctor("typeerror", 0)) {
