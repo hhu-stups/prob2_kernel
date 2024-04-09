@@ -30,8 +30,13 @@ import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public final class LtlCheckingCommand extends AbstractCommand implements
 		IStateSpaceModifier {
+	private static final Logger LOGGER = LoggerFactory.getLogger(LtlCheckingCommand.class);
+
 	private static final String PROLOG_COMMAND_NAME = "prob2_do_ltl_modelcheck";
 	private static final String VARIABLE_NAME_RESULT = "R";
 	private static final String VARIABLE_NAME_ERRORS = "Errors";
@@ -58,14 +63,12 @@ public final class LtlCheckingCommand extends AbstractCommand implements
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
 		PrologTerm term = bindings.get(VARIABLE_NAME_RESULT);
+		ListPrologTerm errorTerm = BindingGenerator.getList(bindings, VARIABLE_NAME_ERRORS);
 
-		if (term.hasFunctor("ok", 0)) {
-			result = new LTLOk(ltlFormula);
-		} else if (term.hasFunctor("nostart", 0)) {
-			result = new LTLError(ltlFormula,
-					"Could not find initialisation. Try to animating the model.");
-		} else if (term.hasFunctor("typeerror", 0)) {
-			ListPrologTerm errorTerm = (ListPrologTerm) bindings.get(VARIABLE_NAME_ERRORS);
+		if (!errorTerm.isEmpty()) {
+			if (!term.hasFunctor("typeerror", 0)) {
+				LOGGER.warn("LTL checker returned errors together with a non-error result {}/{}", term.getFunctor(), term.getArity());
+			}
 			final List<ErrorItem> errors = errorTerm.stream()
 				.map(error -> {
 					if (error.isAtom()) {
@@ -76,6 +79,15 @@ public final class LtlCheckingCommand extends AbstractCommand implements
 				})
 				.collect(Collectors.toList());
 			result = new LTLError(ltlFormula, errors);
+		} else if (term.hasFunctor("typeerror", 0)) {
+			assert errorTerm.isEmpty(); // non-empty case already handled in previous branch
+			LOGGER.warn("LTL checker returned typeerror/0 result with an empty list of errors");
+			result = new LTLError(ltlFormula, Collections.emptyList());
+		} else if (term.hasFunctor("ok", 0)) {
+			result = new LTLOk(ltlFormula);
+		} else if (term.hasFunctor("nostart", 0)) {
+			result = new LTLError(ltlFormula,
+					"Could not find initialisation. Try to animating the model.");
 		} else if (term.hasFunctor("incomplete", 0)) {
 			result = new LTLNotYetFinished(ltlFormula);
 		} else if (term.hasFunctor("counterexample", 3)) {
