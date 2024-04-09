@@ -1,7 +1,5 @@
 package de.prob.animator.domainobjects;
 
-import java.util.Objects;
-
 /**
  * Different eval types supported by Prolog and the ProB Kernel.
  *
@@ -22,7 +20,7 @@ public enum EvalElementType {
 		this.evalTermName = evalTermName;
 	}
 
-	public String getEvalTermName() {
+	String getEvalTermName() {
 		return this.evalTermName;
 	}
 }
