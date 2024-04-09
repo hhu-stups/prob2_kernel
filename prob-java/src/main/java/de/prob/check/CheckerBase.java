@@ -1,15 +1,21 @@
 package de.prob.check;
 
 import com.google.common.base.Stopwatch;
+
+import de.prob.animator.CommandInterruptedException;
 import de.prob.statespace.StateSpace;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * <p>Internal base class of all checker classes. This class implements almost all parts of the {@link IModelCheckJob} interface and takes care of generating a job ID, measuring execution time, and correctly calling the {@link IModelCheckListener}. Subclasses only need to implement the {@link #execute()} method to perform the actual checking and return the final {@link IModelCheckingResult} object.</p>
  */
 abstract class CheckerBase implements IModelCheckJob {
+	private static final Logger LOGGER = LoggerFactory.getLogger(CheckerBase.class);
 	private static final String JOB_ID_PREFIX = "mc";
 	private static final NotYetFinished UNSET_RESULT = new NotYetFinished("No result was calculated", -1);
 	private static final AtomicLong jobIdCounter = new AtomicLong();
@@ -91,7 +97,15 @@ abstract class CheckerBase implements IModelCheckJob {
 	public IModelCheckingResult call() {
 		this.stopwatch.start();
 		this.updateStats(new NotYetFinished("Check started", 0), null);
-		this.execute();
+		try {
+			this.execute();
+		} catch (CommandInterruptedException exc) {
+			// Provide sensible default handling for interrupts.
+			// Implementations can also handle CommandInterruptedException themselves in .execute
+			// to return stats or a different result.
+			LOGGER.info("{} received a Prolog interrupt", this.getClass().getSimpleName(), exc);
+			this.isFinished(new CheckInterrupted(), null);
+		}
 		this.stopwatch.stop();
 		if (this.getResult() == UNSET_RESULT) {
 			throw new IllegalStateException(CheckerBase.class.getSimpleName() + ".execute implementations must call isFinished before returning");

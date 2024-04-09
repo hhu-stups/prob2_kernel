@@ -111,15 +111,6 @@ public class ConstraintBasedDeadlockCheckCommand extends AbstractCommand
 	}
 
 	@Override
-	public void processErrorResult(final IPrologResult result, final List<ErrorItem> errors) {
-		if (result instanceof InterruptedResult) {
-			this.result = new CheckInterrupted();
-		} else {
-			super.processErrorResult(result, errors);
-		}
-	}
-
-	@Override
 	public List<Transition> getNewTransitions() {
 		return newOps;
 	}

@@ -9,10 +9,6 @@ package de.prob.animator.command;
 import java.util.Collections;
 import java.util.List;
 
-import de.prob.animator.IPrologResult;
-import de.prob.animator.InterruptedResult;
-import de.prob.animator.domainobjects.ErrorItem;
-import de.prob.check.CheckInterrupted;
 import de.prob.check.IModelCheckingResult;
 import de.prob.check.ModelCheckErrorUncovered;
 import de.prob.check.ModelCheckGoalFound;
@@ -87,15 +83,6 @@ public class ModelCheckingStepCommand extends AbstractCommand implements IStateS
 
 		stats = new StateSpaceStats(numberNodes, numberTrans, numberProcessed);
 		result = extractResult(bindings.get(RESULT_VARIABLE));
-	}
-
-	@Override
-	public void processErrorResult(final IPrologResult result, final List<ErrorItem> errors) {
-		if (result instanceof InterruptedResult) {
-			this.result = new CheckInterrupted();
-		} else {
-			super.processErrorResult(result, errors);
-		}
 	}
 
 	private IModelCheckingResult extractResult(final PrologTerm prologTerm) {

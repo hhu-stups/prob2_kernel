@@ -2,6 +2,7 @@ package de.prob.check;
 
 import java.time.Duration;
 
+import de.prob.animator.CommandInterruptedException;
 import de.prob.animator.command.ModelCheckingStepCommand;
 import de.prob.animator.command.SetBGoalCommand;
 import de.prob.animator.domainobjects.IEvalElement;
@@ -113,7 +114,20 @@ public class ConsistencyChecker extends CheckerBase {
 				limitConfiguration.updateTimeLimit();
 				limitConfiguration.updateNodeLimit();
 				cmd = limitConfiguration.nodesLimitSet() ? new ModelCheckingStepCommand(limitConfiguration.getMaximumNodesLeft(), limitConfiguration.getTimeout(), modifiedOptions) : new ModelCheckingStepCommand(limitConfiguration.getTimeout(), modifiedOptions);
-				this.getStateSpace().execute(cmd);
+
+				try {
+					this.getStateSpace().execute(cmd);
+				} catch (CommandInterruptedException exc) {
+					// Custom handling of Prolog interrupts to return stats if possible.
+					// (Though most likely the stats will be outdated, because interrupted commands don't return anything...)
+					// This case only happens rarely.
+					// It seems that the Prolog-side model checker code usually handles Prolog interrupts in some way
+					// and returns a regular "not yet finished" result in that case.
+					LOGGER.info("Consistency checker received a Prolog interrupt", exc);
+					this.isFinished(new CheckInterrupted(), cmd.getStats());
+					return;
+				}
+
 				stats = cmd.getStats();
 				limitConfiguration.updateStateSpaceCoverage(stats);
 				if (Thread.interrupted()) {

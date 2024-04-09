@@ -10,8 +10,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import de.prob.animator.IPrologResult;
-import de.prob.animator.InterruptedResult;
 import de.prob.animator.domainobjects.CTL;
 import de.prob.animator.domainobjects.ErrorItem;
 import de.prob.check.CTLCouldNotDecide;
@@ -19,7 +17,6 @@ import de.prob.check.CTLCounterExample;
 import de.prob.check.CTLError;
 import de.prob.check.CTLNotYetFinished;
 import de.prob.check.CTLOk;
-import de.prob.check.CheckInterrupted;
 import de.prob.check.IModelCheckingResult;
 import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
@@ -87,15 +84,6 @@ public final class CtlCheckingCommand extends AbstractCommand implements
 			this.result = new CTLCouldNotDecide(ctlFormula);
 		} else {
 			throw new AssertionError("Unknown result from CTL checking: " + res);
-		}
-	}
-
-	@Override
-	public void processErrorResult(final IPrologResult result, final List<ErrorItem> errors) {
-		if (result instanceof InterruptedResult) {
-			this.result = new CheckInterrupted();
-		} else {
-			super.processErrorResult(result, errors);
 		}
 	}
 
