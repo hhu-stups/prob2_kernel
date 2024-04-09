@@ -17,6 +17,15 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * This class is more or less an implementation detail -
+ * please avoid using it externally if possible.
+ * Some external code does use it though,
+ * in particular the {@link #shutdownAll()} method to explicitly shut down any leftover ProB instances
+ * (even though this is usually not necessary),
+ * so please avoid changing the class name and public methods,
+ * unless there's a good reason for it.
+ */
 @Singleton
 public final class ProBInstanceProvider implements Provider<ProBInstance> {
 
@@ -69,6 +78,11 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 		this.runningProcesses.remove(process);
 	}
 
+	/**
+	 * Shut down all running {@link ProBInstance}s that were created by this provider.
+	 * This method is called automatically when the JVM shuts down,
+	 * so you usually don't need to call it directly.
+	 */
 	public void shutdownAll() {
 		for (ProBInstance instance : this.runningInstances) {
 			// This also removes the instance and its process from the respective lists.
