@@ -9,7 +9,7 @@ public enum EvalElementType {
 
 	PREDICATE("bpred"),
 	EXPRESSION("bexpr"),
-	ASSIGNMENT("bsubst"),
+	ASSIGNMENT(null),
 	NONE(null),
 	CSP("csp"),
 	;
