@@ -19,12 +19,18 @@ public final class EvaluateBVisual2FormulasCommand extends AbstractCommand {
 	
 	private final Collection<BVisual2Formula> formulas;
 	private final State state;
+	private final boolean unlimited;
 	
 	private List<BVisual2Value> results;
 	
 	public EvaluateBVisual2FormulasCommand(final Collection<BVisual2Formula> formulas, final State state) {
+		this(formulas, state, false);
+	}
+
+	public EvaluateBVisual2FormulasCommand(final Collection<BVisual2Formula> formulas, final State state, final boolean unlimited) {
 		this.formulas = formulas;
 		this.state = state;
+		this.unlimited = unlimited;
 	}
 	
 	@Override
@@ -36,6 +42,11 @@ public final class EvaluateBVisual2FormulasCommand extends AbstractCommand {
 			.forEachOrdered(pto::printAtomOrNumber);
 		pto.closeList();
 		pto.printAtomOrNumber(this.state.getId());
+		pto.openList();
+		if (this.unlimited) {
+			pto.printAtom("unlimited");
+		}
+		pto.closeList();
 		pto.printVariable(VALUES_VARIABLE);
 		pto.closeTerm();
 	}
