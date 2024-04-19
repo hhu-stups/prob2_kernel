@@ -39,7 +39,7 @@ class BVisual2FormulaTest {
 
 	@Test
 	void testLongStringEvaluate() {
-		String expected = "\"" + IntStream.range(0, 100).mapToObj(i -> "1234567890").collect(Collectors.joining()) + "\"";
+		String expected = IntStream.range(0, 100).mapToObj(i -> "1234567890").collect(Collectors.joining("", "\"", "\""));
 
 		State init = stateSpace.getRoot().perform(Transition.INITIALISE_MACHINE_NAME);
 		BVisual2Formula s = BVisual2Formula.fromFormula(stateSpace, new ClassicalB("s"));
@@ -49,7 +49,7 @@ class BVisual2FormulaTest {
 
 	@Test
 	void testUnlimitedLongStringEvaluate() {
-		String expected = "\"" + IntStream.range(0, 100).mapToObj(i -> "1234567890").collect(Collectors.joining()) + "\"";
+		String expected = IntStream.range(0, 100).mapToObj(i -> "1234567890").collect(Collectors.joining("", "\"", "\""));
 
 		State init = stateSpace.getRoot().perform(Transition.INITIALISE_MACHINE_NAME);
 		BVisual2Formula s = BVisual2Formula.fromFormula(stateSpace, new ClassicalB("s"));
