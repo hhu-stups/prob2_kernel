@@ -43,8 +43,8 @@ class BVisual2FormulaTest {
 
 		State init = stateSpace.getRoot().perform(Transition.INITIALISE_MACHINE_NAME);
 		BVisual2Formula s = BVisual2Formula.fromFormula(stateSpace, new ClassicalB("s"));
-		String result = s.evaluateUnlimited(init).toString();
-		Assertions.assertEquals(expected, result);
+		String result = s.evaluate(init).toString();
+		Assertions.assertTrue(result.length() < expected.length()); // truncation!
 	}
 
 	@Test
@@ -53,7 +53,7 @@ class BVisual2FormulaTest {
 
 		State init = stateSpace.getRoot().perform(Transition.INITIALISE_MACHINE_NAME);
 		BVisual2Formula s = BVisual2Formula.fromFormula(stateSpace, new ClassicalB("s"));
-		String result = s.evaluate(init).toString();
-		Assertions.assertTrue(result.length() < expected.length()); // truncation!
+		String result = s.evaluateUnlimited(init).toString();
+		Assertions.assertEquals(expected, result);
 	}
 }
