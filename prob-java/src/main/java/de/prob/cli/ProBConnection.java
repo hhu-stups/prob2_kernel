@@ -58,6 +58,9 @@ public final class ProBConnection implements Closeable {
 			throw new IOException("ProB has been shut down. It does not accept messages.");
 		} else if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("{}", shorten(term));
+			if (LOGGER.isTraceEnabled()) {
+				LOGGER.trace("Full term: {}", term.trim());
+			}
 		}
 
 		this.outputWriter.write(term);
