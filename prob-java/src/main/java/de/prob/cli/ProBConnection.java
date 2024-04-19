@@ -57,7 +57,7 @@ public final class ProBConnection implements Closeable {
 			LOGGER.error("Cannot send terms while probcli is shutting down: {}", term);
 			throw new IOException("ProB has been shut down. It does not accept messages.");
 		} else if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug(shorten(term));
+			LOGGER.debug("{}", shorten(term));
 		}
 
 		this.outputWriter.write(term);
