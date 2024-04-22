@@ -3,11 +3,11 @@ package de.prob.animator.command;
 import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
+import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public final class CompleteIdentifierCommand extends AbstractCommand {
 
@@ -26,7 +26,7 @@ public final class CompleteIdentifierCommand extends AbstractCommand {
 	private boolean asciiToUnicode;
 	private boolean latexOnly;
 	private final List<KeywordContext> keywords;
-	private List<String> completions;
+	private List<Completion> completions;
 
 	public CompleteIdentifierCommand(final String identifier) {
 		super();
@@ -91,7 +91,7 @@ public final class CompleteIdentifierCommand extends AbstractCommand {
 		this.keywords.remove(keyword);
 	}
 
-	public List<String> getCompletions() {
+	public List<Completion> getCompletions() {
 		return Collections.unmodifiableList(this.completions);
 	}
 
@@ -127,7 +127,16 @@ public final class CompleteIdentifierCommand extends AbstractCommand {
 
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
-		this.completions = PrologTerm.atomsToStrings(BindingGenerator.getList(bindings, COMPLETIONS_VAR));
+		ListPrologTerm completionsWithType = BindingGenerator.getList(bindings, COMPLETIONS_VAR);
+		if (!completionsWithType.stream().allMatch(c -> c.getArity() == 2)) {
+			throw new IllegalStateException("expected list [Completion,Type]");
+		}
+		this.completions = completionsWithType.stream()
+			.map(completion -> new Completion(
+				completion.getArgument(1).atomToString(),
+				completion.getArgument(2).atomToString()
+			))
+			.collect(Collectors.toList());
 	}
 
 	public enum KeywordContext {
@@ -144,6 +153,23 @@ public final class CompleteIdentifierCommand extends AbstractCommand {
 
 		public String getAtom() {
 			return this.atom;
+		}
+	}
+
+	public static class Completion {
+		private final String completion, type;
+
+		public Completion(final String completion, final String type) {
+			this.completion = completion;
+			this.type = type;
+		}
+
+		public String getCompletion() {
+			return this.completion;
+		}
+
+		public String getType() {
+			return this.type;
 		}
 	}
 }
