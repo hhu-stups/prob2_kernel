@@ -15,7 +15,12 @@ public final class CompleteIdentifierCommand extends AbstractCommand {
 	private static final String LATEX_TO_UNICODE = "latex_to_unicode";
 	private static final String ASCII_TO_UNICODE = "ascii_to_unicode";
 	private static final String IGNORE_CASE_ATOM = "lower_case";
+	private static final String DOT_ONLY_ATOM = "dot_only";
 	private static final String LATEX_ONLY_ATOM = "latex_only";
+	// ignore keyword "special_categories_only": it provides prefixes for the 'only'-categories;
+	// the category is set directly in this class
+	private static final String SVG_ONLY_ATOM = "svg_only";
+	private static final String SVG_COLORS_ONLY_ATOM = "svg_colors_only";
 	private static final String KEYWORDS_ATOM = "keywords";
 
 	private static final String COMPLETIONS_VAR = "Completions";
@@ -24,7 +29,10 @@ public final class CompleteIdentifierCommand extends AbstractCommand {
 	private boolean ignoreCase;
 	private boolean latexToUnicode;
 	private boolean asciiToUnicode;
+	private boolean dotOnly;
 	private boolean latexOnly;
+	private boolean svgOnly;
+	private boolean svgColorsOnly;
 	private final List<KeywordContext> keywords;
 	private List<Completion> completions;
 
@@ -65,6 +73,14 @@ public final class CompleteIdentifierCommand extends AbstractCommand {
 		this.asciiToUnicode = asciiToUnicode;
 	}
 
+	public boolean isDotOnly() {
+		return dotOnly;
+	}
+
+	public void setDotOnly(final boolean dotOnly) {
+		this.dotOnly = dotOnly;
+	}
+
 	public boolean isLatexOnly() {
 		return latexOnly;
 	}
@@ -76,13 +92,29 @@ public final class CompleteIdentifierCommand extends AbstractCommand {
 		this.latexOnly = latexOnly;
 	}
 
+	public boolean isSvgOnly() {
+		return svgOnly;
+	}
+
+	public void setSvgOnly(final boolean svgOnly) {
+		this.svgOnly = svgOnly;
+	}
+
+	public boolean isSvgColorsOnly() {
+		return svgColorsOnly;
+	}
+
+	public void setSvgColorsOnly(final boolean svgColorsOnly) {
+		this.svgColorsOnly = svgColorsOnly;
+	}
+
 	public List<KeywordContext> getKeywordContexts() {
 		return Collections.unmodifiableList(this.keywords);
 	}
 
 	public void addKeywordContext(final KeywordContext keyword) {
-		if (this.latexOnly) {
-			throw new IllegalStateException("latex only and keyword contexts are exclusive");
+		if (this.dotOnly || this.latexOnly || this.svgOnly || this.svgColorsOnly) {
+			throw new IllegalStateException("only keywords and keyword contexts are exclusive");
 		}
 		this.keywords.add(keyword);
 	}
@@ -109,9 +141,21 @@ public final class CompleteIdentifierCommand extends AbstractCommand {
 		if (this.isIgnoreCase()) {
 			pto.printAtom(IGNORE_CASE_ATOM);
 		}
-		if (this.isLatexOnly()) {
+		if (this.isDotOnly()) {
+			pto.openTerm(KEYWORDS_ATOM);
+			pto.printAtom(DOT_ONLY_ATOM);
+			pto.closeTerm();
+		} else if (this.isLatexOnly()) {
 			pto.openTerm(KEYWORDS_ATOM);
 			pto.printAtom(LATEX_ONLY_ATOM);
+			pto.closeTerm();
+		} else if (this.isSvgOnly()) {
+			pto.openTerm(KEYWORDS_ATOM);
+			pto.printAtom(SVG_ONLY_ATOM);
+			pto.closeTerm();
+		} else if (this.isSvgColorsOnly()) {
+			pto.openTerm(KEYWORDS_ATOM);
+			pto.printAtom(SVG_COLORS_ONLY_ATOM);
 			pto.closeTerm();
 		} else {
 			for (KeywordContext keyword : this.keywords) {
@@ -143,7 +187,8 @@ public final class CompleteIdentifierCommand extends AbstractCommand {
 
 		LATEX("latex"),
 		EXPR("expr"),
-		ALL("all");
+		ALL("all"),
+		SVG("svg");
 
 		private final String atom;
 
