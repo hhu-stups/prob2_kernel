@@ -14,12 +14,13 @@ import de.prob.animator.command.GetDotForVisualizationCommand;
 import de.prob.exception.ProBError;
 import de.prob.parser.BindingGenerator;
 import de.prob.prolog.term.PrologTerm;
-import de.prob.statespace.State;
+import de.prob.statespace.Trace;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class DotVisualizationCommand extends DynamicCommandItem {
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(DotVisualizationCommand.class);
 
 	public static final String CUSTOM_GRAPH_NAME = "custom_graph";
@@ -31,52 +32,50 @@ public final class DotVisualizationCommand extends DynamicCommandItem {
 	public static final String STATE_SPACE_PROJECTION_NAME = "transition_diagram";
 	
 	private DotVisualizationCommand(
-		final State state,
-		final String command,
-		final String name,
-		final String description,
-		final int arity,
-		final List<String> relevantPreferences,
-		final List<PrologTerm> additionalInfo,
-		final String available
+			final Trace trace,
+			final String command,
+			final String name,
+			final String description,
+			final int arity,
+			final List<String> relevantPreferences,
+			final List<PrologTerm> additionalInfo,
+			final String available
 	) {
 		super(
-			state,
-			command,
-			name,
-			description,
-			arity,
-			relevantPreferences,
-			additionalInfo,
-			available
+				trace,
+				command,
+				name,
+				description,
+				arity,
+				relevantPreferences,
+				additionalInfo,
+				available
 		);
 	}
-	
-	public static DotVisualizationCommand fromPrologTerm(final State state, final PrologTerm term) {
-		final DynamicCommandItem item = DynamicCommandItem.fromPrologTerm(state, term);
-		
+
+	public static DotVisualizationCommand fromPrologTerm(final Trace trace, final PrologTerm term) {
+		final DynamicCommandItem item = DynamicCommandItem.fromPrologTerm(trace, term);
 		return new DotVisualizationCommand(
-			item.getState(),
-			item.getCommand(),
-			item.getName(),
-			item.getDescription(),
-			item.getArity(),
-			item.getRelevantPreferences(),
-			item.getAdditionalInfo(),
-			item.getAvailable()
+				item.getTrace(),
+				item.getCommand(),
+				item.getName(),
+				item.getDescription(),
+				item.getArity(),
+				item.getRelevantPreferences(),
+				item.getAdditionalInfo(),
+				item.getAvailable()
 		);
 	}
-	
 	
 	/**
 	 * Get a list of information about all supported dot visualization commands.
-	 * 
-	 * @param state the state in which the commands should be executed when called
+	 *
+	 * @param trace the trace with which the commands should be executed when called
 	 * @return information about all supported dot visualization commands
 	 */
-	public static List<DotVisualizationCommand> getAll(final State state) {
-		final GetAllDotCommands cmd = new GetAllDotCommands(state);
-		state.getStateSpace().execute(cmd);
+	public static List<DotVisualizationCommand> getAll(final Trace trace) {
+		final GetAllDotCommands cmd = new GetAllDotCommands(trace);
+		trace.getStateSpace().execute(cmd);
 		return cmd.getCommands();
 	}
 	
@@ -85,11 +84,11 @@ public final class DotVisualizationCommand extends DynamicCommandItem {
 	 * Some common dot visualization command names are defined as constants in {@link DotVisualizationCommand}.
 	 * 
 	 * @param commandName the name of the command to look up
-	 * @param state the state in which the command should be executed when called
+	 * @param trace the trace with which the command should be executed when called
 	 * @return information about the named dot visualization command
 	 */
-	public static DotVisualizationCommand getByName(final String commandName, final State state) {
-		return getAll(state).stream()
+	public static DotVisualizationCommand getByName(final String commandName, final Trace trace) {
+		return getAll(trace).stream()
 			.filter(command -> commandName.equals(command.getCommand()))
 			.findAny()
 			.orElseThrow(() -> new IllegalArgumentException("Could not find dot visualization command named " + commandName));
@@ -110,8 +109,8 @@ public final class DotVisualizationCommand extends DynamicCommandItem {
 	 * @param formulas arguments for the command, if it takes any
 	 */
 	public void visualizeAsDotToFile(final Path dotFilePath, final List<IEvalElement> formulas) {
-		final GetDotForVisualizationCommand cmd = new GetDotForVisualizationCommand(this.getState(), this, dotFilePath.toFile(), formulas);
-		this.getState().getStateSpace().execute(cmd);
+		final GetDotForVisualizationCommand cmd = new GetDotForVisualizationCommand(this.getTrace(), this, dotFilePath.toFile(), formulas);
+		this.getTrace().getStateSpace().execute(cmd);
 	}
 	
 	/**
@@ -170,9 +169,9 @@ public final class DotVisualizationCommand extends DynamicCommandItem {
 	 * @return the generated graph in the requested format
 	 */
 	public byte[] visualizeToBytes(final String outputFormat, final List<IEvalElement> formulas) {
-		final DotCall dotCall = new DotCall(this.getState().getStateSpace().getCurrentPreference("DOT"))
+		final DotCall dotCall = new DotCall(this.getTrace().getStateSpace().getCurrentPreference("DOT"))
 			.layoutEngine(this.getPreferredDotLayoutEngine().orElseGet(() ->
-				this.getState().getStateSpace().getCurrentPreference("DOT_ENGINE")
+					                                                           this.getTrace().getStateSpace().getCurrentPreference("DOT_ENGINE")
 			))
 			.outputFormat(outputFormat)
 			.input(this.visualizeAsDotToBytes(formulas));
