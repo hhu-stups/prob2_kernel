@@ -1,33 +1,19 @@
 package de.prob.animator.command;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import de.prob.animator.domainobjects.TableVisualizationCommand;
-import de.prob.parser.BindingGenerator;
-import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.term.PrologTerm;
-import de.prob.statespace.State;
+import de.prob.statespace.Trace;
 
-public class GetAllTableCommands extends AbstractGetDynamicCommands {
+public class GetAllTableCommands extends AbstractGetDynamicCommands<TableVisualizationCommand> {
 
-	static final String PROLOG_COMMAND_NAME = "get_table_commands_in_state";
+	private static final String PROLOG_COMMAND_NAME = "get_table_commands_with_trace";
 
-	private List<TableVisualizationCommand> commands;
-
-	public GetAllTableCommands(State id) {
-		super(id, PROLOG_COMMAND_NAME);
+	public GetAllTableCommands(Trace trace) {
+		super(PROLOG_COMMAND_NAME, trace);
 	}
 
 	@Override
-	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
-		this.commands = BindingGenerator.getList(bindings, LIST).stream()
-			.map(term -> TableVisualizationCommand.fromPrologTerm(this.id, term))
-			.collect(Collectors.toList());
-	}
-
-	@Override
-	public List<TableVisualizationCommand> getCommands() {
-		return this.commands;
+	protected TableVisualizationCommand createCommand(PrologTerm term) {
+		return TableVisualizationCommand.fromPrologTerm(this.trace, term);
 	}
 }

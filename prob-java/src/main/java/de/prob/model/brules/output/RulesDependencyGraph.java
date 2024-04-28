@@ -117,7 +117,7 @@ public class RulesDependencyGraph {
 	public static void saveGraph(final Trace trace, final Collection<AbstractOperation> operations,
 	                             final Path path, final String dotOutputFormat) throws IOException, InterruptedException {
 
-		byte[] dotContent = DotVisualizationCommand.getByName(DotVisualizationCommand.EXPRESSION_AS_GRAPH_NAME, trace.getCurrentState())
+		byte[] dotContent = DotVisualizationCommand.getByName(DotVisualizationCommand.EXPRESSION_AS_GRAPH_NAME, trace)
 			.visualizeAsDotToBytes(Collections.singletonList(getGraphExpression(trace, operations)));
 		StateSpace stateSpace = trace.getStateSpace();
 

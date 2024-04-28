@@ -8,37 +8,43 @@ import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;
-import de.prob.statespace.State;
+import de.prob.statespace.Trace;
+import de.prob.statespace.Transition;
 
-public abstract class AbstractGetDynamicCommands extends AbstractCommand {
+public abstract class AbstractGetDynamicCommands<T extends DynamicCommandItem> extends AbstractCommand {
 
-	static final String LIST = "List";
-	private List<DynamicCommandItem> commands;
-	final State id;
+	private static final String LIST = "List";
+
 	private final String commandName;
+	protected final Trace trace;
+	private List<T> commands;
 
-	public AbstractGetDynamicCommands(State id, String commandName) {
-		this.id = id;
+	protected AbstractGetDynamicCommands(String commandName, Trace trace) {
 		this.commandName = commandName;
+		this.trace = trace;
 	}
 
 	@Override
 	public void writeCommand(IPrologTermOutput pto) {
-		pto.openTerm(commandName);
-		pto.printAtomOrNumber(id.getId());
+		pto.openTerm(this.commandName);
+		// TODO: do we want to ignore the forward history?
+		for (Transition t : this.trace.getTransitionList()) {
+			pto.printAtomOrNumber(t.getId());
+		}
 		pto.printVariable(LIST);
 		pto.closeTerm();
 	}
 
+	protected abstract T createCommand(PrologTerm term);
+
 	@Override
 	public void processResult(ISimplifiedROMap<String, PrologTerm> bindings) {
 		commands = BindingGenerator.getList(bindings, LIST).stream()
-			.map(term -> DynamicCommandItem.fromPrologTerm(this.id, term))
+				           .map(this::createCommand)
 			.collect(Collectors.toList());
 	}
 
-	public List<? extends DynamicCommandItem> getCommands() {
+	public List<T> getCommands() {
 		return commands;
 	}
-
 }
