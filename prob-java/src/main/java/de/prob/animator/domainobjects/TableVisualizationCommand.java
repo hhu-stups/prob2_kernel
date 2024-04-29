@@ -5,6 +5,7 @@ import java.util.List;
 import de.prob.animator.command.GetAllTableCommands;
 import de.prob.animator.command.GetTableForVisualizationCommand;
 import de.prob.prolog.term.PrologTerm;
+import de.prob.statespace.State;
 import de.prob.statespace.Trace;
 
 public final class TableVisualizationCommand extends DynamicCommandItem {
@@ -34,6 +35,11 @@ public final class TableVisualizationCommand extends DynamicCommandItem {
 		);
 	}
 
+	@Deprecated
+	public static TableVisualizationCommand fromPrologTerm(final State state, final PrologTerm term) {
+		return fromPrologTerm(new Trace(state), term);
+	}
+
 	public static TableVisualizationCommand fromPrologTerm(final Trace trace, final PrologTerm term) {
 		final DynamicCommandItem item = DynamicCommandItem.fromPrologTerm(trace, term);
 		return new TableVisualizationCommand(
@@ -47,6 +53,11 @@ public final class TableVisualizationCommand extends DynamicCommandItem {
 				item.getAvailable()
 		);
 	}
+
+	@Deprecated
+	public static List<TableVisualizationCommand> getAll(final State state) {
+		return getAll(new Trace(state));
+	}
 	
 	/**
 	 * Get a list of information about all supported table visualization commands.
@@ -58,6 +69,11 @@ public final class TableVisualizationCommand extends DynamicCommandItem {
 		final GetAllTableCommands cmd = new GetAllTableCommands(trace);
 		trace.getStateSpace().execute(cmd);
 		return cmd.getCommands();
+	}
+
+	@Deprecated
+	public static TableVisualizationCommand getByName(final String commandName, final State state) {
+		return getByName(commandName, new Trace(state));
 	}
 	
 	/**

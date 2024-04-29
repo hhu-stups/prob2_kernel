@@ -2,11 +2,17 @@ package de.prob.animator.command;
 
 import de.prob.animator.domainobjects.TableVisualizationCommand;
 import de.prob.prolog.term.PrologTerm;
+import de.prob.statespace.State;
 import de.prob.statespace.Trace;
 
 public class GetAllTableCommands extends AbstractGetDynamicCommands<TableVisualizationCommand> {
 
 	private static final String PROLOG_COMMAND_NAME = "get_table_commands_with_trace";
+
+	@Deprecated
+	public GetAllTableCommands(State state) {
+		this(new Trace(state));
+	}
 
 	public GetAllTableCommands(Trace trace) {
 		super(PROLOG_COMMAND_NAME, trace);

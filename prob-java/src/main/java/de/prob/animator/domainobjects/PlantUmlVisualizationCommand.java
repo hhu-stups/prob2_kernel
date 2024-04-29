@@ -10,6 +10,7 @@ import de.prob.animator.command.GetAllPlantUmlCommands;
 import de.prob.animator.command.GetPlantUmlForVisualizationCommand;
 import de.prob.exception.ProBError;
 import de.prob.prolog.term.PrologTerm;
+import de.prob.statespace.State;
 import de.prob.statespace.Trace;
 
 import org.slf4j.Logger;
@@ -43,6 +44,11 @@ public final class PlantUmlVisualizationCommand extends DynamicCommandItem {
 		);
 	}
 
+	@Deprecated
+	public static PlantUmlVisualizationCommand fromPrologTerm(final State state, final PrologTerm term) {
+		return fromPrologTerm(new Trace(state), term);
+	}
+
 	public static PlantUmlVisualizationCommand fromPrologTerm(final Trace trace, final PrologTerm term) {
 		final DynamicCommandItem item = DynamicCommandItem.fromPrologTerm(trace, term);
 		return new PlantUmlVisualizationCommand(
@@ -56,6 +62,11 @@ public final class PlantUmlVisualizationCommand extends DynamicCommandItem {
 				item.getAvailable()
 		);
 	}
+
+	@Deprecated
+	public static List<PlantUmlVisualizationCommand> getAll(final State state) {
+		return getAll(new Trace(state));
+	}
 	
 	/**
 	 * Get a list of information about all supported plantuml visualization commands.
@@ -67,6 +78,11 @@ public final class PlantUmlVisualizationCommand extends DynamicCommandItem {
 		final GetAllPlantUmlCommands cmd = new GetAllPlantUmlCommands(trace);
 		trace.getStateSpace().execute(cmd);
 		return cmd.getCommands();
+	}
+
+	@Deprecated
+	public static PlantUmlVisualizationCommand getByName(final String commandName, final State state) {
+		return getByName(commandName, new Trace(state));
 	}
 	
 	/**

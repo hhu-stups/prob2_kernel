@@ -14,6 +14,7 @@ import de.prob.animator.command.GetDotForVisualizationCommand;
 import de.prob.exception.ProBError;
 import de.prob.parser.BindingGenerator;
 import de.prob.prolog.term.PrologTerm;
+import de.prob.statespace.State;
 import de.prob.statespace.Trace;
 
 import org.slf4j.Logger;
@@ -53,6 +54,11 @@ public final class DotVisualizationCommand extends DynamicCommandItem {
 		);
 	}
 
+	@Deprecated
+	public static DotVisualizationCommand fromPrologTerm(final State state, final PrologTerm term) {
+		return fromPrologTerm(new Trace(state), term);
+	}
+
 	public static DotVisualizationCommand fromPrologTerm(final Trace trace, final PrologTerm term) {
 		final DynamicCommandItem item = DynamicCommandItem.fromPrologTerm(trace, term);
 		return new DotVisualizationCommand(
@@ -66,7 +72,12 @@ public final class DotVisualizationCommand extends DynamicCommandItem {
 				item.getAvailable()
 		);
 	}
-	
+
+	@Deprecated
+	public static List<DotVisualizationCommand> getAll(final State state) {
+		return getAll(new Trace(state));
+	}
+
 	/**
 	 * Get a list of information about all supported dot visualization commands.
 	 *
@@ -77,6 +88,11 @@ public final class DotVisualizationCommand extends DynamicCommandItem {
 		final GetAllDotCommands cmd = new GetAllDotCommands(trace);
 		trace.getStateSpace().execute(cmd);
 		return cmd.getCommands();
+	}
+
+	@Deprecated
+	public static DotVisualizationCommand getByName(final String commandName, final State state) {
+		return getByName(commandName, new Trace(state));
 	}
 	
 	/**

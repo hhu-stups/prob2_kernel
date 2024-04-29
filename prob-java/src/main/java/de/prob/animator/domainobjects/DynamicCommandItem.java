@@ -18,7 +18,7 @@ public class DynamicCommandItem {
 	private final List<String> relevantPreferences;
 	private final List<PrologTerm> additionalInfo;
 	private final String available;
-	
+
 	DynamicCommandItem(
 			Trace trace,
 			String command,
@@ -39,6 +39,11 @@ public class DynamicCommandItem {
 		this.available = available;
 	}
 
+	@Deprecated
+	public static DynamicCommandItem fromPrologTerm(final State state, final PrologTerm term) {
+		return fromPrologTerm(new Trace(state), term);
+	}
+
 	public static DynamicCommandItem fromPrologTerm(final Trace trace, final PrologTerm term) {
 		BindingGenerator.getCompoundTerm(term, "command", 7);
 		final String command = term.getArgument(1).atomToString();
@@ -48,7 +53,6 @@ public class DynamicCommandItem {
 		final List<String> relevantPreferences = PrologTerm.atomsToStrings(BindingGenerator.getList(term.getArgument(5)));
 		final List<PrologTerm> additionalInfo = BindingGenerator.getList(term.getArgument(6));
 		final String available = term.getArgument(7).atomToString();
-		
 		return new DynamicCommandItem(
 				trace,
 				command,
@@ -60,43 +64,48 @@ public class DynamicCommandItem {
 				available
 		);
 	}
-	
+
+	@Deprecated
+	public State getState() {
+		return this.getTrace().getCurrentState();
+	}
+
 	public Trace getTrace() {
 		return this.trace;
 	}
-	
+
 	public String getCommand() {
 		return command;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
-	
+
 	public String getDescription() {
 		return description;
 	}
-	
+
 	public int getArity() {
 		return arity;
 	}
-	
+
 	public List<String> getRelevantPreferences() {
 		return relevantPreferences;
 	}
-	
+
 	public List<PrologTerm> getAdditionalInfo() {
 		return additionalInfo;
 	}
-	
+
 	public String getAvailable() {
 		return available;
 	}
-	
+
 	public boolean isAvailable() {
 		return "available".equals(available);
 	}
-	
+
 	@Override
 	public boolean equals(final Object obj) {
 		if (this == obj) {
@@ -108,12 +117,12 @@ public class DynamicCommandItem {
 		final DynamicCommandItem other = (DynamicCommandItem)obj;
 		return Objects.equals(this.getCommand(), other.getCommand()) && this.getArity() == other.getArity();
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(this.getCommand(), this.getArity());
 	}
-	
+
 	@Override
 	public String toString() {
 		return name;
