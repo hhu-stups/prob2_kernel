@@ -1,14 +1,13 @@
 package de.prob.animator.command;
 
+import java.nio.file.Path;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.Trace;
-import de.prob.statespace.Transition;
-
-import java.nio.file.Path;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class ExportVisBForHistoryCommand extends AbstractCommand {
 
@@ -25,10 +24,11 @@ public class ExportVisBForHistoryCommand extends AbstractCommand {
 
 	public ExportVisBForHistoryCommand(Trace trace, Path path) {
 		this(
-			trace.getTransitionList().stream()
-				.map(Transition::getId)
-				.collect(Collectors.toList()),
-			path.toString()
+				trace.getCurrentElements().stream()
+						.filter(e -> e.getTransition() != null)
+						.map(e -> e.getTransition().getId())
+						.collect(Collectors.toList()),
+				path.toString()
 		);
 	}
 
@@ -36,7 +36,7 @@ public class ExportVisBForHistoryCommand extends AbstractCommand {
 	public void writeCommand(IPrologTermOutput pto) {
 		pto.openTerm(PROLOG_COMMAND_NAME);
 		pto.openList();
-		for(String transID : transIDS) {
+		for (String transID : this.transIDS) {
 			pto.printAtomOrNumber(transID);
 		}
 		pto.closeList();
@@ -48,5 +48,4 @@ public class ExportVisBForHistoryCommand extends AbstractCommand {
 	public void processResult(ISimplifiedROMap<String, PrologTerm> bindings) {
 		// There are no output variables.
 	}
-
 }

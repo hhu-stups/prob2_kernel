@@ -78,20 +78,36 @@ public class Trace {
 		return uuid;
 	}
 
+	private static List<TraceElement> getElementsStartingFrom(TraceElement element) {
+		final LinkedList<TraceElement> elements = new LinkedList<>();
+		for (; element != null; element = element.getPrevious()) {
+			elements.addFirst(element);
+		}
+		return elements;
+	}
+
 	/**
 	 * Get a list of all {@link TraceElement}s that make up this trace.
 	 * Currently, this list is newly constructed on every call to this method and is <i>not</i> cached.
 	 * To iterate over the trace more efficiently,
-	 * traverse the {@link TraceElement}s manually starting at {@link #getHead()} or {@link #getCurrent()}.
+	 * traverse the {@link TraceElement}s manually starting at {@link #getCurrent()}.
 	 * 
 	 * @return list of all elements of this trace
 	 */
 	public List<TraceElement> getElements() {
-		final LinkedList<TraceElement> elements = new LinkedList<>();
-		for (TraceElement element = this.getHead(); element != null; element = element.getPrevious()) {
-			elements.addFirst(element);
-		}
-		return elements;
+		return getElementsStartingFrom(this.getHead());
+	}
+
+	/**
+	 * Get a list of all {@link TraceElement}s up to the current element (ignoring forward history).
+	 * Currently, this list is newly constructed on every call to this method and is <i>not</i> cached.
+	 * To iterate over the trace more efficiently,
+	 * traverse the {@link TraceElement}s manually starting at {@link #getCurrent()}.
+	 *
+	 * @return list of all elements of this trace up to the current element
+	 */
+	public List<TraceElement> getCurrentElements() {
+		return getElementsStartingFrom(this.getCurrent());
 	}
 
 	public AbstractEvalResult evalCurrent(String formula, EvalOptions options) {

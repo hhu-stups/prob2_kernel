@@ -10,7 +10,7 @@ import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.Trace;
-import de.prob.statespace.Transition;
+import de.prob.statespace.TraceElement;
 
 public abstract class AbstractDynamicVisualizationCommand<T extends DynamicCommandItem> extends AbstractCommand {
 
@@ -32,9 +32,10 @@ public abstract class AbstractDynamicVisualizationCommand<T extends DynamicComma
 	public void writeCommand(IPrologTermOutput pto) {
 		pto.openTerm(this.commandName);
 		pto.openList();
-		// TODO: do we want to ignore the forward history?
-		for (Transition t : this.trace.getTransitionList()) {
-			pto.printAtomOrNumber(t.getId());
+		for (TraceElement e : this.trace.getCurrentElements()) {
+			if (e.getTransition() != null) {
+				pto.printAtomOrNumber(e.getTransition().getId());
+			}
 		}
 		pto.closeList();
 		pto.printAtom(this.item.getCommand());

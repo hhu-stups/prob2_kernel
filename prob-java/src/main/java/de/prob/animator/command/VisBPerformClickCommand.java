@@ -3,10 +3,9 @@ package de.prob.animator.command;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
-import de.prob.prolog.term.CompoundPrologTerm;
-import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
@@ -49,20 +48,12 @@ public class VisBPerformClickCommand extends AbstractCommand implements IStateSp
 
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
-		final PrologTerm resultTerm = bindings.get(TRANSITIONS);
-		ListPrologTerm list = (ListPrologTerm) resultTerm;
 		this.transIDS = new ArrayList<>();
 		this.transitions = new ArrayList<>();
-		for(PrologTerm term : list) {
-			if (term instanceof CompoundPrologTerm) {
-				final Transition trans = Transition.createTransitionFromCompoundPrologTerm(this.stateSpace, (CompoundPrologTerm)term);
-				this.transitions.add(trans);
-				this.transIDS.add(trans.getId());
-			} else {
-				// Old probcli version - not enough information to construct a Transition object...
-				// TODO Remove this soon (once the new probcli is built)
-				this.transIDS.add(Transition.getIdFromPrologTerm(term));
-			}
+		for (PrologTerm term : BindingGenerator.getList(bindings, TRANSITIONS)) {
+			final Transition trans = Transition.createTransitionFromCompoundPrologTerm(this.stateSpace, BindingGenerator.getCompoundTerm(term, 4));
+			this.transitions.add(trans);
+			this.transIDS.add(trans.getId());
 		}
 	}
 
