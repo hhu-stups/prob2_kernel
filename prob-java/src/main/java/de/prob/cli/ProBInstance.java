@@ -1,11 +1,5 @@
 package de.prob.cli;
 
-import com.google.common.base.MoreObjects;
-import de.prob.animator.IConsoleOutputListener;
-import de.prob.exception.CliError;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.IOException;
@@ -14,6 +8,16 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+
+import com.google.common.base.MoreObjects;
+
+import de.prob.animator.IConsoleOutputListener;
+import de.prob.exception.CliError;
+import de.prob.prolog.output.IPrologTermOutput;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class ProBInstance implements Closeable {
 
@@ -111,6 +115,14 @@ public final class ProBInstance implements Closeable {
 	public String send(final String term) {
 		try {
 			return connection.send(term);
+		} catch (IOException e) {
+			throw new CliError("Error during communication with Prolog core.", e);
+		}
+	}
+
+	public String send(final Consumer<IPrologTermOutput> termOutput) {
+		try {
+			return connection.send(termOutput);
 		} catch (IOException e) {
 			throw new CliError("Error during communication with Prolog core.", e);
 		}

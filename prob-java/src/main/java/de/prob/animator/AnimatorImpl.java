@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Stopwatch;
@@ -31,6 +32,7 @@ import de.prob.parser.BindingGenerator;
 import de.prob.parser.ProBResultParser;
 import de.prob.parser.PrologTermGenerator;
 import de.prob.parser.SimplifiedROMap;
+import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.output.PrologTermStringOutput;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.AnimationSelector;
@@ -40,6 +42,7 @@ import org.slf4j.LoggerFactory;
 
 class AnimatorImpl implements IAnimator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AnimatorImpl.class);
+	private static final boolean DIRECT_SOCKET_WRITE = Boolean.getBoolean("prob.directwrite");
 
 	private static int counter = 0;
 	private final String id = "animator" + counter++;
@@ -81,20 +84,30 @@ class AnimatorImpl implements IAnimator {
 
 	private IPrologResult sendCommand(final AbstractCommand command) {
 		Stopwatch sw = Stopwatch.createStarted();
-		String query;
+		String result;
 		if (command instanceof IRawCommand) {
-			query = ((IRawCommand) command).getCommand();
+			String query = ((IRawCommand) command).getCommand();
 			if (!query.endsWith(".")) {
 				query += ".";
 			}
+			LOGGER.trace("Built raw command term after {}", sw);
+			result = cli.send(query);
 		} else {
-			PrologTermStringOutput pto = new PrologTermStringOutput();
-			command.writeCommand(pto);
-			pto.printAtom("true");
-			query = pto.fullstop().toString();
+			final Consumer<IPrologTermOutput> termGenerator = pto -> {
+				command.writeCommand(pto);
+				pto.printAtom("true");
+				pto.fullstop();
+			};
+			if (DIRECT_SOCKET_WRITE) {
+				result = cli.send(termGenerator);
+			} else {
+				PrologTermStringOutput pto = new PrologTermStringOutput();
+				termGenerator.accept(pto);
+				String query = pto.toString();
+				LOGGER.trace("Built command term after {}", sw);
+				result = cli.send(query);
+			}
 		}
-		LOGGER.trace("Built command term after {}", sw);
-		String result = cli.send(query); // send the query and get Prolog's response
 		LOGGER.trace("Received answer after {}", sw);
 
 		PResult topnode = ProBResultParser.parse(result).getPResult();
