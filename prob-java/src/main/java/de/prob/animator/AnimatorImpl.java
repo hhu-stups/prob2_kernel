@@ -1,6 +1,5 @@
 package de.prob.animator;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +7,7 @@ import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Stopwatch;
 import com.google.inject.Inject;
 
 import de.prob.animator.command.AbstractCommand;
@@ -80,6 +80,7 @@ class AnimatorImpl implements IAnimator {
 	}
 
 	private IPrologResult sendCommand(final AbstractCommand command) {
+		Stopwatch sw = Stopwatch.createStarted();
 		String query;
 		if (command instanceof IRawCommand) {
 			query = ((IRawCommand) command).getCommand();
@@ -92,7 +93,9 @@ class AnimatorImpl implements IAnimator {
 			pto.printAtom("true");
 			query = pto.fullstop().toString();
 		}
+		LOGGER.trace("Built command term after {}", sw);
 		String result = cli.send(query); // send the query and get Prolog's response
+		LOGGER.trace("Received result after {}", sw);
 
 		PResult topnode = ProBResultParser.parse(result).getPResult();
 		while (topnode instanceof AProgressResult || topnode instanceof ACallBackResult) {
@@ -109,9 +112,10 @@ class AnimatorImpl implements IAnimator {
 		}
 		// command is finished, we can extract the result:
 		IPrologResult extractResult = extractResult(topnode);
+		sw.stop();
 		if (LOGGER.isDebugEnabled() || LOGGER.isTraceEnabled()) {
 			String resultString = extractResult.toString();
-			LOGGER.debug("Result: {}", shorten(resultString));
+			LOGGER.debug("Result (after {}): {}", sw, shorten(resultString));
 			LOGGER.trace("Full result: {}", resultString);
 		}
 		return extractResult;
