@@ -95,11 +95,12 @@ class AnimatorImpl implements IAnimator {
 		}
 		LOGGER.trace("Built command term after {}", sw);
 		String result = cli.send(query); // send the query and get Prolog's response
-		LOGGER.trace("Received result after {}", sw);
+		LOGGER.trace("Received answer after {}", sw);
 
 		PResult topnode = ProBResultParser.parse(result).getPResult();
 		while (topnode instanceof AProgressResult || topnode instanceof ACallBackResult) {
-			if (topnode instanceof AProgressResult ) {
+			LOGGER.trace("Processing sub-result of type {}", topnode.getClass().getSimpleName());
+			if (topnode instanceof AProgressResult) {
 				// enable the command to respond to the progress information (e.g., by updating progress bar)
 				command.processProgressResult(PrologTermGenerator.toPrologTerm(topnode));
 				result = cli.receive(); // receive next term by Prolog
@@ -109,14 +110,16 @@ class AnimatorImpl implements IAnimator {
 				result = cli.send(pout.fullstop().toString());
 			}
 			topnode = ProBResultParser.parse(result).getPResult();
+			LOGGER.trace("Processed sub-result after {}", sw);
 		}
+
 		// command is finished, we can extract the result:
 		IPrologResult extractResult = extractResult(topnode);
 		sw.stop();
 		if (LOGGER.isDebugEnabled() || LOGGER.isTraceEnabled()) {
 			String resultString = extractResult.toString();
 			LOGGER.debug("Result (after {}): {}", sw, shorten(resultString));
-			LOGGER.trace("Full result: {}", resultString);
+			LOGGER.trace("Full result (after {}): {}", sw, resultString);
 		}
 		return extractResult;
 	}
@@ -136,6 +139,7 @@ class AnimatorImpl implements IAnimator {
 		synchronized (this) {
 			LOGGER.trace("Starting execution of {}", command);
 			result = sendCommand(command);
+			LOGGER.trace("Getting errors of previous command {}", command);
 			errors = getErrorItems();
 		}
 

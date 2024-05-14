@@ -31,7 +31,7 @@ public final class ProBConnection implements Closeable {
 		this.inputScanner = new Scanner(socket.getInputStream(), StandardCharsets.UTF_8.name())
 			.useDelimiter("\u0001") // Prolog sends character 1 to terminate its outputs
 			.useLocale(Locale.ROOT);
-		this.outputWriter = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8));
+		this.outputWriter = new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8);
 		LOGGER.debug("Connected");
 	}
 
@@ -57,15 +57,19 @@ public final class ProBConnection implements Closeable {
 			LOGGER.error("Cannot send terms while probcli is shutting down: {}", term);
 			throw new IOException("ProB has been shut down. It does not accept messages.");
 		} else if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("{}", shorten(term));
+			String trimmed = term.trim(); // shorten will always trim, so we can save us some work if TRACE is enabled
+			LOGGER.debug("{}", shorten(trimmed));
 			if (LOGGER.isTraceEnabled()) {
-				LOGGER.trace("Full term: {}", term.trim());
+				LOGGER.trace("Full term: {}", trimmed);
 			}
 		}
 
 		this.outputWriter.write(term);
 		this.outputWriter.write('\n');
 		this.outputWriter.flush();
+		if (LOGGER.isTraceEnabled()) {
+			LOGGER.trace("Sent: {}", shorten(term));
+		}
 		return this.getAnswer();
 	}
 
@@ -82,7 +86,7 @@ public final class ProBConnection implements Closeable {
 			throw new IOException("ProB binary returned nothing - it might have crashed", e);
 		}
 
-		LOGGER.trace(input);
+		LOGGER.trace("Answer: {}", input);
 		return input;
 	}
 
