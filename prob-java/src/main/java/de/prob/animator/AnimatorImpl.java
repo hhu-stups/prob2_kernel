@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 
 class AnimatorImpl implements IAnimator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AnimatorImpl.class);
-	private static final boolean DIRECT_SOCKET_WRITE = Boolean.getBoolean("prob.directwrite");
+	private static final boolean DIRECT_SOCKET_WRITE = "true".equals(System.getProperty("prob.directwrite"));
 
 	private static int counter = 0;
 	private final String id = "animator" + counter++;
