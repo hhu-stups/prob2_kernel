@@ -61,8 +61,17 @@ class AnimatorImpl implements IAnimator {
 	}
 
 	private static String shorten(final String s) {
-		final String shortened = s.length() <= 200 ? s : (s.substring(0, 200) + "...");
-		return shortened.endsWith("\n") ? shortened.substring(0, shortened.length()-1) : shortened;
+		final int maxLength = 200;
+		if (s.length() <= maxLength) {
+			if (s.endsWith("\n")) {
+				return s.substring(0, s.length() - 1);
+			} else {
+				return s;
+			}
+		} else {
+			String trimmed = s.substring(0, maxLength - 3);
+			return trimmed + "...";
+		}
 	}
 
 	private static IPrologResult extractResult(PResult topnode) {

@@ -54,12 +54,17 @@ public final class ProBConnection implements Closeable {
 	}
 
 	private static String shorten(final String s) {
-		String trimmed = s.trim();
-		if (trimmed.length() <= 200) {
-			return trimmed;
+		final int maxLength = 200;
+		if (s.length() <= maxLength) {
+			if (s.endsWith("\n")) {
+				return s.substring(0, s.length() - 1);
+			} else {
+				return s;
+			}
+		} else {
+			String trimmed = s.substring(0, maxLength - 3);
+			return trimmed + "...";
 		}
-
-		return s.substring(0, 197) + "...";
 	}
 
 	public String send(final String term) throws IOException {
@@ -69,18 +74,16 @@ public final class ProBConnection implements Closeable {
 		}
 
 		if (LOGGER.isDebugEnabled()) {
-			String trimmed = term.trim(); // shorten will always trim, so we can save us some work if TRACE is enabled
-			LOGGER.debug("{}", shorten(trimmed));
+			LOGGER.debug("Sending: {}", shorten(term));
 			if (LOGGER.isTraceEnabled()) {
+				String trimmed = term.endsWith("\n") ? term.substring(0, term.length() - 1) : term;
 				LOGGER.trace("Full term: {}", trimmed);
 			}
 		}
 		this.outputWriter.write(term);
 		this.outputWriter.write('\n');
 		this.outputWriter.flush();
-		if (LOGGER.isTraceEnabled()) {
-			LOGGER.trace("Sent: {}", shorten(term));
-		}
+		LOGGER.trace("Sent");
 
 		return this.getAnswer();
 	}
@@ -95,7 +98,7 @@ public final class ProBConnection implements Closeable {
 		IPrologTermOutput pto = new PrologTermOutput(this.outputWriter, false);
 		termOutput.accept(pto);
 		// the command should end with a fullstop and that automatically adds a newline and flushes
-		LOGGER.debug("Sent");
+		LOGGER.trace("Sent");
 
 		return this.getAnswer();
 	}
