@@ -8,6 +8,10 @@ import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;
 
+/**
+ * @deprecated Please define a subclass of {@link AbstractCommand} for the command you want to call.
+ */
+@Deprecated
 public class SimpleTextCommand extends AbstractCommand implements IRawCommand {
 	private final String command;
 	private final String resultVar;
