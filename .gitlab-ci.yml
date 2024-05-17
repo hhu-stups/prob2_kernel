@@ -66,7 +66,7 @@ tests:macos:
 tests:windows64:
   extends: .tests
   before_script: []
-  script: .\gradlew.bat %GRADLE_OPTIONS% clean check jacocoTestReport
+  script: cmd /c ".\gradlew.bat %GRADLE_OPTIONS% clean check jacocoTestReport"
   tags:
     - windows
 
