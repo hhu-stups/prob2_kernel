@@ -1,5 +1,9 @@
 package de.prob.json;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Objects;
+
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -11,12 +15,9 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.google.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Objects;
 
 /**
  * <p>
@@ -237,12 +238,15 @@ public final class JacksonManager<T extends HasMetadata> {
 			}
 		}
 
-		// If the file didn't contain metadata in the new format,
-		// the parsed object's metadata will still be null.
-		// In that case we need to manually add the previously converted metadata to the object.
-		if (parsed.getMetadata() == null) {
-			assert metadata.getFormatVersion() == 0;
-			parsed = this.getContext().clazz.cast(parsed.withMetadata(metadata));
+		// we have rewritten the ObjectNode to the new format version, so we can...
+		if (parsed.getMetadata() == null || metadata.getFormatVersion() != this.getContext().currentFormatVersion) {
+			// ...update metadata version...
+			JsonMetadata newMetadata = new JsonMetadataBuilder(metadata)
+					.withFormatVersion(this.getContext().currentFormatVersion)
+					.build();
+
+			// ...and override it in the parsed object
+			parsed = this.getContext().clazz.cast(parsed.withMetadata(newMetadata));
 		}
 
 		return parsed;
