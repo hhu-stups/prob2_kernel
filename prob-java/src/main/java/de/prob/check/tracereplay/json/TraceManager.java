@@ -3,6 +3,8 @@ package de.prob.check.tracereplay.json;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import com.fasterxml.jackson.core.JsonFactoryBuilder;
+import com.fasterxml.jackson.core.StreamReadConstraints;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -16,12 +18,24 @@ import de.prob.json.JsonConversionException;
  * Loads and saves traces
  */
 public class TraceManager  {
+	private static final int MAX_STRING_LENGTH = 0x4000000;
+
 	private final JacksonManager<TraceJsonFile> jacksonManager;
 
 	@Inject
 	public TraceManager(ObjectMapper objectMapper, final JacksonManager<TraceJsonFile> jacksonManager) {
+		ObjectMapper modifiedObjectMapper = objectMapper;
+		// Increase the maximum string length to allow loading trace files with very large formulas.
+		if (modifiedObjectMapper.getFactory().streamReadConstraints().getMaxStringLength() < MAX_STRING_LENGTH) {
+			modifiedObjectMapper = modifiedObjectMapper.copyWith(new JsonFactoryBuilder()
+				.streamReadConstraints(StreamReadConstraints.builder()
+					.maxStringLength(MAX_STRING_LENGTH) // around 67 million chars, 64 MiB in ASCII, 128 MiB in UTF-16
+					.build())
+				.build());
+		}
+
 		this.jacksonManager = jacksonManager;
-		this.jacksonManager.initContext(new JacksonManager.Context<TraceJsonFile>(objectMapper, TraceJsonFile.class, TraceJsonFile.FILE_TYPE, TraceJsonFile.CURRENT_FORMAT_VERSION) {
+		this.jacksonManager.initContext(new JacksonManager.Context<TraceJsonFile>(modifiedObjectMapper, TraceJsonFile.class, TraceJsonFile.FILE_TYPE, TraceJsonFile.CURRENT_FORMAT_VERSION) {
 			@Override
 			public boolean shouldAcceptOldMetadata() {
 				return true;
