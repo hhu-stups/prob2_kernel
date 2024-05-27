@@ -1,10 +1,10 @@
 package de.prob.check.tracereplay;
 
+import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
-import java.util.Objects;
 
 @JsonPropertyOrder({ "predicate" })
 public class PostconditionPredicate extends Postcondition {

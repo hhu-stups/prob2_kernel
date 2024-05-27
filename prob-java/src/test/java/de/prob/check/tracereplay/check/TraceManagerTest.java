@@ -51,7 +51,6 @@ public class TraceManagerTest {
 		stateSpace.kill();
 	}
 
-
 	@Test
 	public void serialize_correct_data_structure_test_2(@TempDir Path tempDir) throws IOException {
 
@@ -70,19 +69,15 @@ public class TraceManagerTest {
 		stateSpace.kill();
 	}
 
-
-
 	@Test
 	public void deserialize_correct_file_test() throws IOException {
 		traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "testTraceMachine10Steps.prob2trace"));
 	}
 
-
 	@Test
 	public void deserialize_10_steps_test() throws IOException {
 		traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "traces", "testTraceMachine10Steps.prob2trace"));
 	}
-
 
 	@Test
 	public void deserialize_file_wrong_field_test() {
@@ -101,10 +96,4 @@ public class TraceManagerTest {
 		assertThrows(JsonConversionException.class, () ->
 		traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines","traces", "test4.prob2trace")));
 	}
-
-
-
-
-
-
 }

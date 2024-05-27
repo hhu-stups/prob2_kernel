@@ -1,13 +1,32 @@
 package de.prob.check.tracereplay;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import de.prob.animator.domainobjects.*;
-import de.prob.statespace.*;
 
-import java.util.*;
+import de.prob.animator.domainobjects.AbstractEvalResult;
+import de.prob.animator.domainobjects.EvalExpandMode;
+import de.prob.animator.domainobjects.EvalOptions;
+import de.prob.animator.domainobjects.EvalResult;
+import de.prob.animator.domainobjects.FormulaExpand;
+import de.prob.animator.domainobjects.FormulaTranslationMode;
+import de.prob.animator.domainobjects.IEvalElement;
+import de.prob.statespace.EvaluatedTransitionInfo;
+import de.prob.statespace.Language;
+import de.prob.statespace.LoadedMachine;
+import de.prob.statespace.OperationInfo;
+import de.prob.statespace.State;
+import de.prob.statespace.Transition;
 
 import static java.util.Collections.emptyList;
 
@@ -21,6 +40,7 @@ public class PersistentTransition {
 		// TODO Support formalisms that are not B or translated to B
 		.withLanguage(Language.CLASSICAL_B);
 
+	// name is required
 	private final String name;
 
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -116,6 +136,7 @@ public class PersistentTransition {
 	 * @param preds               predicates
 	 * @param postconditions      postconditions
 	 */
+	@JsonCreator
 	public PersistentTransition(
 		@JsonProperty("name") String name,
 		@JsonProperty("params") Map<String, String> params,

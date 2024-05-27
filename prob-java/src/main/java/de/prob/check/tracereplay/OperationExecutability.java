@@ -1,8 +1,8 @@
 package de.prob.check.tracereplay;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class OperationExecutability extends Postcondition {
 

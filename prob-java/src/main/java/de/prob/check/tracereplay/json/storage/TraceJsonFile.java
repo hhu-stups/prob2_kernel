@@ -1,9 +1,17 @@
 package de.prob.check.tracereplay.json.storage;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 import de.prob.check.tracereplay.PersistentTrace;
 import de.prob.check.tracereplay.PersistentTransition;
 import de.prob.json.HasMetadata;
@@ -12,9 +20,6 @@ import de.prob.json.JsonMetadataBuilder;
 import de.prob.statespace.LoadedMachine;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.Trace;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
 
@@ -106,6 +111,7 @@ public class TraceJsonFile implements HasMetadata {
 	 * @param setNames              name of sets operation infos of the corresponding machine
 	 * @param metadata              metadata
 	 */
+	@JsonCreator
 	public TraceJsonFile(
 		@JsonProperty("description") String description,
 		@JsonProperty("transitionList") List<PersistentTransition> transitionList,

@@ -1,13 +1,20 @@
 package de.prob.statespace;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
-
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class OperationInfo {
 
@@ -31,6 +38,7 @@ public class OperationInfo {
 		}
 	}
 
+	// name is required
 	private final String operationName;
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	private final List<String> parameterNames;
@@ -83,6 +91,7 @@ public class OperationInfo {
 	 * @param nonDetWrittenVariables non deterministic written variables
 	 * @param typeMap                map mapping the used identifiers to their types
 	 */
+	@JsonCreator
 	public OperationInfo(
 		@JsonProperty("operationName") final String operationName,
 		@JsonProperty("parameterNames") final List<String> parameterNames,
