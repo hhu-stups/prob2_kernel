@@ -1,14 +1,16 @@
 package de.prob.statespace;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.MoreObjects;
+
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.MoreObjects;
-
 public class OperationInfo {
+
 	public enum Type {
 		CLASSICAL_B, EVENTB, CSP;
 
@@ -30,78 +32,77 @@ public class OperationInfo {
 	}
 
 	private final String operationName;
+	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	private final List<String> parameterNames;
+	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	private final List<String> outputParameterNames;
 	private final boolean topLevel;
 	private final OperationInfo.Type type;
+	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	private final List<String> readVariables;
+	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	private final List<String> writtenVariables;
+	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	private final List<String> nonDetWrittenVariables;
+	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	private final Map<String, String> typeMap;
 
 	/**
-	 * Annotation is used by jackson to construct objects
-	 * @param operationName teh name of the operation
-	 * @param parameterNames name of the parameters
-	 * @param outputParameterNames name of the output parameters
-	 * @param topLevel operation is toplevel
-	 * @param type type of the operation
-	 * @param readVariables read variables
-	 * @param writtenVariables written variables
+	 * @param operationName          teh name of the operation
+	 * @param parameterNames         name of the parameters
+	 * @param outputParameterNames   name of the output parameters
+	 * @param topLevel               operation is toplevel
+	 * @param type                   type of the operation
+	 * @param readVariables          read variables
+	 * @param writtenVariables       written variables
 	 * @param nonDetWrittenVariables non deterministic written variables
-	 * @param typeMap map mapping the used identifiers to their types
 	 */
 	public OperationInfo(
-			@JsonProperty("operationName") final String operationName,
-			@JsonProperty("parameterNames") final List<String> parameterNames,
-			@JsonProperty("outputParameterNames") final List<String> outputParameterNames,
-			@JsonProperty("topLevel") final boolean topLevel,
-			@JsonProperty("type") final OperationInfo.Type type,
-			@JsonProperty("readVariables") final List<String> readVariables,
-			@JsonProperty("writtenVariables") final List<String> writtenVariables,
-			@JsonProperty("nonDetWrittenVariables") final List<String> nonDetWrittenVariables,
-			@JsonProperty("typeMap") final Map<String, String> typeMap
+		final String operationName,
+		final List<String> parameterNames,
+		final List<String> outputParameterNames,
+		final boolean topLevel,
+		final OperationInfo.Type type,
+		final List<String> readVariables,
+		final List<String> writtenVariables,
+		final List<String> nonDetWrittenVariables
 	) {
-		this.operationName = operationName;
-		this.parameterNames = parameterNames;
-		this.outputParameterNames = outputParameterNames;
-		this.topLevel = topLevel;
-		this.type = type;
-		this.readVariables = readVariables;
-		this.writtenVariables = writtenVariables;
-		this.nonDetWrittenVariables = nonDetWrittenVariables;
-		this.typeMap = typeMap;
+		this(operationName, parameterNames, outputParameterNames, topLevel, type, readVariables, writtenVariables, nonDetWrittenVariables, null);
 	}
 
 	/**
-	 * @param operationName teh name of the operation
-	 * @param parameterNames name of the parameters
-	 * @param outputParameterNames name of the output parameters
-	 * @param topLevel operation is toplevel
-	 * @param type type of the operation
-	 * @param readVariables read variables
-	 * @param writtenVariables written variables
+	 * Annotation is used by jackson to construct objects
+	 *
+	 * @param operationName          teh name of the operation
+	 * @param parameterNames         name of the parameters
+	 * @param outputParameterNames   name of the output parameters
+	 * @param topLevel               operation is toplevel
+	 * @param type                   type of the operation
+	 * @param readVariables          read variables
+	 * @param writtenVariables       written variables
 	 * @param nonDetWrittenVariables non deterministic written variables
+	 * @param typeMap                map mapping the used identifiers to their types
 	 */
 	public OperationInfo(
-			 final String operationName,
-			 final List<String> parameterNames,
-			 final List<String> outputParameterNames,
-			final boolean topLevel,
-			 final OperationInfo.Type type,
-			 final List<String> readVariables,
-			 final List<String> writtenVariables,
-			 final List<String> nonDetWrittenVariables
+		@JsonProperty("operationName") final String operationName,
+		@JsonProperty("parameterNames") final List<String> parameterNames,
+		@JsonProperty("outputParameterNames") final List<String> outputParameterNames,
+		@JsonProperty("topLevel") final boolean topLevel,
+		@JsonProperty("type") final OperationInfo.Type type,
+		@JsonProperty("readVariables") final List<String> readVariables,
+		@JsonProperty("writtenVariables") final List<String> writtenVariables,
+		@JsonProperty("nonDetWrittenVariables") final List<String> nonDetWrittenVariables,
+		@JsonProperty("typeMap") final Map<String, String> typeMap
 	) {
-		this.operationName = operationName;
-		this.parameterNames = parameterNames;
-		this.outputParameterNames = outputParameterNames;
+		this.operationName = operationName != null ? operationName : "";
+		this.parameterNames = parameterNames != null ? parameterNames : new ArrayList<>();
+		this.outputParameterNames = outputParameterNames != null ? outputParameterNames : new ArrayList<>();
 		this.topLevel = topLevel;
 		this.type = type;
-		this.readVariables = readVariables;
-		this.writtenVariables = writtenVariables;
-		this.nonDetWrittenVariables = nonDetWrittenVariables;
-		this.typeMap = Collections.emptyMap();
+		this.readVariables = readVariables != null ? readVariables : new ArrayList<>();
+		this.writtenVariables = writtenVariables != null ? writtenVariables : new ArrayList<>();
+		this.nonDetWrittenVariables = nonDetWrittenVariables != null ? nonDetWrittenVariables : new ArrayList<>();
+		this.typeMap = typeMap != null ? typeMap : new HashMap<>();
 	}
 
 	public String getOperationName() {
@@ -137,26 +138,23 @@ public class OperationInfo {
 	}
 
 	@JsonIgnore
-	public List<String> getAllVariables(){
+	public List<String> getAllVariables() {
 		return Stream.of(readVariables, writtenVariables, nonDetWrittenVariables).flatMap(Collection::stream).collect(Collectors.toList());
 	}
-
 
 	public Map<String, String> getTypeMap() {
 		return typeMap;
 	}
 
 	@JsonIgnore
-	public Set<String> getAllIdentifier(){
+	public Set<String> getAllIdentifier() {
 		return Stream.of(readVariables, writtenVariables, nonDetWrittenVariables, getParameterNames(), getOutputParameterNames())
-				.flatMap(Collection::stream).collect(Collectors.toSet());
-
+			.flatMap(Collection::stream).collect(Collectors.toSet());
 	}
 
-	public OperationInfo createOperationInfoWithNewTypeMap(Map<String, String> info){
+	public OperationInfo createOperationInfoWithNewTypeMap(Map<String, String> info) {
 		return new OperationInfo(operationName, parameterNames, outputParameterNames, topLevel, type, readVariables, writtenVariables, nonDetWrittenVariables, info);
 	}
-
 
 	@Override
 	public String toString() {
@@ -169,7 +167,7 @@ public class OperationInfo {
 			.add("readVariables", this.readVariables)
 			.add("writtenVariables", this.writtenVariables)
 			.add("nonDetWrittenVariables", this.nonDetWrittenVariables)
-				.add("types", this.typeMap)
+			.add("types", this.typeMap)
 			.toString();
 	}
 
@@ -181,7 +179,7 @@ public class OperationInfo {
 		if (obj == null || this.getClass() != obj.getClass()) {
 			return false;
 		}
-		OperationInfo other = (OperationInfo)obj;
+		OperationInfo other = (OperationInfo) obj;
 		return this.isTopLevel() == other.isTopLevel()
 			&& this.getOperationName().equals(other.getOperationName())
 			&& this.getParameterNames().equals(other.getParameterNames())

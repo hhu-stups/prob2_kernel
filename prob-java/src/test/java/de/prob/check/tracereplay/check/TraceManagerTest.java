@@ -39,7 +39,7 @@ public class TraceManagerTest {
 		Path tempDirPath = tempDir.resolve("testFile.txt");
 		final StateSpace stateSpace = api.b_load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "ExampleMachine.mch").toString());
 
-		JsonMetadata metadata = new JsonMetadataBuilder("Trace", 5)
+		JsonMetadata metadata = new JsonMetadataBuilder("Trace", TraceJsonFile.CURRENT_FORMAT_VERSION)
 			.withSavedNow()
 			.withUserCreator()
 			.withProBCliVersion("version")
@@ -58,7 +58,7 @@ public class TraceManagerTest {
 		Path tempDirPath = tempDir.resolve("testFile.txt");
 		StateSpace stateSpace = api.b_load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "b", "ExampleMachine.mch").toString());
 
-		JsonMetadata metadata = new JsonMetadataBuilder("Trace", 5)
+		JsonMetadata metadata = new JsonMetadataBuilder("Trace", TraceJsonFile.CURRENT_FORMAT_VERSION)
 				.withSavedNow()
 				.withUserCreator()
 				.withProBCliVersion("version")

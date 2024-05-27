@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+import java.util.Objects;
+
 @JsonPropertyOrder({
 	"kind"
 })
@@ -23,7 +25,7 @@ public abstract class Postcondition {
 	private final PostconditionKind kind;
 
 	public Postcondition(PostconditionKind kind) {
-		this.kind = kind;
+		this.kind = Objects.requireNonNull(kind, "kind");
 	}
 
 	@JsonProperty("kind")
