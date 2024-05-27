@@ -6,8 +6,9 @@ stages:
 
 cache:
   paths:
-    - .gradle/wrapper
     - .gradle/caches
+    - .gradle/notifications
+    - .gradle/wrapper
 
 variables:
   GRADLE_OPTIONS: --no-daemon --info --stacktrace --warning-mode=all
