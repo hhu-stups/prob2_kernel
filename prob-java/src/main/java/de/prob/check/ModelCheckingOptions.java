@@ -38,7 +38,17 @@ public class ModelCheckingOptions {
 		IGNORE_OTHER_ERRORS("ignore_state_errors", "ignore other errors"),
 		INSPECT_EXISTING_NODES("inspect_existing_nodes", "recheck existing states"),
 		STOP_AT_FULL_COVERAGE("stop_at_full_coverage", "stop at full coverage"),
+		/**
+		 * @deprecated This option is no longer used.
+		 *     Partial order reduction is now configured only via ProB preferences.
+		 */
+		@Deprecated
 		PARTIAL_ORDER_REDUCTION("partial_order_reduction", "partial order reduction"),
+		/**
+		 * @deprecated This option is no longer used.
+		 *     Partial guard evaluation is now configured only via ProB preferences.
+		 */
+		@Deprecated
 		PARTIAL_GUARD_EVALUATION("partial_guard_evaluation", "partial guard evaluation"),
 		FIND_GOAL("find_goal", "search for goal"),
 		;
@@ -170,10 +180,20 @@ public class ModelCheckingOptions {
 		return changeOption(value, Options.STOP_AT_FULL_COVERAGE);
 	}
 
+	/**
+	 * @deprecated This option is no longer used.
+	 *     Partial order reduction is now configured only via ProB preferences.
+	 */
+	@Deprecated
 	public ModelCheckingOptions partialOrderReduction(final boolean value) {
 		return changeOption(value, Options.PARTIAL_ORDER_REDUCTION);
 	}
 
+	/**
+	 * @deprecated This option is no longer used.
+	 *     Partial guard evaluation is now configured only via ProB preferences.
+	 */
+	@Deprecated
 	public ModelCheckingOptions partialGuardEvaluation(final boolean value) {
 		return changeOption(value, Options.PARTIAL_GUARD_EVALUATION);
 	}
