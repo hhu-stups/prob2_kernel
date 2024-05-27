@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -31,6 +32,7 @@ import de.prob.statespace.Transition;
 import static java.util.Collections.emptyList;
 
 @JsonPropertyOrder({ "name", "params", "results", "destState", "destStateNotChanged", "preds", "postconditions", "description" })
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class PersistentTransition {
 
 	private static final EvalOptions TRACE_SAVE_EVAL_OPTIONS = EvalOptions.DEFAULT
@@ -40,22 +42,17 @@ public class PersistentTransition {
 		// TODO Support formalisms that are not B or translated to B
 		.withLanguage(Language.CLASSICAL_B);
 
-	// name is required
+	// all fields are @JsonInclude(JsonInclude.Include.NON_EMPTY)
+
+	@JsonInclude // name is required
 	private final String name;
 
-	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	private final Map<String, String> params = new HashMap<>();
-	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	private final Map<String, String> results = new HashMap<>();
-	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	private final Map<String, String> destState = new HashMap<>();
-	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	private final Set<String> destStateNotChanged = new HashSet<>();
-	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	private final List<String> preds = new ArrayList<>();
-	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	private final List<Postcondition> postconditions = new ArrayList<>();
-	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	private String description = "";
 
 	// FIXME Why is the default value of storeDestinationState false for constructor with 1 argument?
@@ -262,47 +259,48 @@ public class PersistentTransition {
 		}
 	}
 
-	@JsonProperty("name")
+	@JsonGetter("name")
 	public String getOperationName() {
-		return name;
+		return this.name;
 	}
 
-	@JsonProperty("destStateNotChanged")
+	@JsonGetter("destStateNotChanged")
 	public Set<String> getDestStateNotChanged() {
 		return new HashSet<>(this.destStateNotChanged);
 	}
 
-	@JsonProperty("preds")
+	@JsonGetter("preds")
 	public List<String> getAdditionalPredicates() {
 		return new ArrayList<>(this.preds);
 	}
 
-	@JsonProperty("params")
+	@JsonGetter("params")
 	public Map<String, String> getParameters() {
 		return new HashMap<>(this.params);
 	}
 
-	@JsonProperty("results")
+	@JsonGetter("results")
 	public Map<String, String> getOutputParameters() {
-		return new HashMap<>(results);
+		return new HashMap<>(this.results);
 	}
 
-	@JsonProperty("destState")
+	@JsonGetter("destState")
 	public Map<String, String> getDestinationStateVariables() {
 		return new HashMap<>(this.destState);
 	}
 
-	@JsonProperty("postconditions")
+	@JsonGetter("postconditions")
 	public List<Postcondition> getPostconditions() {
 		// Do not invoke ArrayList constructor as it will copy the list
 		return this.postconditions;
 	}
 
-	@JsonProperty("description")
+	@JsonGetter("description")
 	public String getDescription() {
 		return description;
 	}
 
+	@JsonIgnore
 	public void setDescription(String description) {
 		this.description = description != null ? description : "";
 	}

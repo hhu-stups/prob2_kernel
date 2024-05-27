@@ -16,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class OperationInfo {
 
 	public enum Type {
@@ -38,21 +39,18 @@ public class OperationInfo {
 		}
 	}
 
-	// name is required
+	// all fields are @JsonInclude(JsonInclude.Include.NON_EMPTY)
+
+	@JsonInclude // name is required
 	private final String operationName;
-	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	private final List<String> parameterNames;
-	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	private final List<String> outputParameterNames;
+	@JsonInclude // default value for boolean value is false
 	private final boolean topLevel;
 	private final OperationInfo.Type type;
-	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	private final List<String> readVariables;
-	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	private final List<String> writtenVariables;
-	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	private final List<String> nonDetWrittenVariables;
-	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	private final Map<String, String> typeMap;
 
 	/**

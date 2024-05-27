@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -32,24 +33,20 @@ public class TraceJsonFile implements HasMetadata {
 	public static final String FILE_TYPE = "Trace";
 	public static final int CURRENT_FORMAT_VERSION = 6;
 
-	@JsonInclude(JsonInclude.Include.NON_EMPTY)
+	// all fields are @JsonInclude(JsonInclude.Include.NON_EMPTY)
+
 	private final String description;
-	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	private final List<PersistentTransition> transitionList;
-	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	private final List<String> variableNames;
-	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	private final List<String> constantNames;
-	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	private final List<String> setNames;
 	/**
 	 * Generated from {@link TraceJsonFile#reducedMachineOperationInfos} and {@link TraceJsonFile#globalIdentifierTypes} at JSON load time.
 	 */
 	private final Map<String, OperationInfo> machineOperationInfos;
-	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	private final Map<String, OperationInfo> reducedMachineOperationInfos;
-	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	private final Map<String, String> globalIdentifierTypes;
+	@JsonInclude
 	private final JsonMetadata metadata;
 
 	/**
@@ -212,7 +209,7 @@ public class TraceJsonFile implements HasMetadata {
 		return setNames;
 	}
 
-	@JsonProperty("machineOperationInfos")
+	@JsonGetter("machineOperationInfos")
 	public Map<String, OperationInfo> getReducedMachineOperationInfos() {return reducedMachineOperationInfos;}
 
 	public Map<String, String> getGlobalIdentifierTypes() {return globalIdentifierTypes;}
