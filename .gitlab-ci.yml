@@ -14,7 +14,7 @@ variables:
 
 .tests:
   stage: test
-  script: ./gradlew ${GRADLE_OPTIONS} clean check jacocoTestReport
+  script: ./gradlew ${GRADLE_OPTIONS} check jacocoTestReport
   before_script:
     - export GRADLE_USER_HOME=`pwd`/.gradle
   artifacts:
@@ -66,7 +66,7 @@ tests:macos:
 tests:windows64:
   extends: .tests
   before_script: []
-  script: cmd /c ".\gradlew.bat %GRADLE_OPTIONS% clean check jacocoTestReport"
+  script: cmd /c ".\gradlew.bat %GRADLE_OPTIONS% check jacocoTestReport"
   tags:
     - windows
 
