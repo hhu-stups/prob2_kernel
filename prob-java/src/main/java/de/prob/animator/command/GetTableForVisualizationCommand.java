@@ -21,7 +21,7 @@ public class GetTableForVisualizationCommand extends AbstractDynamicVisualizatio
 
 	@Deprecated
 	public GetTableForVisualizationCommand(State state, DynamicCommandItem item, List<IEvalElement> formulas) {
-		this(new Trace(state), (TableVisualizationCommand) item, formulas);
+		this(state.getStateSpace().getTrace(state.getId()), (TableVisualizationCommand) item, formulas);
 	}
 
 	public GetTableForVisualizationCommand(Trace trace, TableVisualizationCommand item, List<IEvalElement> formulas) {

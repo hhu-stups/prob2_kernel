@@ -15,7 +15,7 @@ public class GetPlantUmlForVisualizationCommand extends AbstractDynamicVisualiza
 
 	@Deprecated
 	public GetPlantUmlForVisualizationCommand(State state, DynamicCommandItem item, File file, List<IEvalElement> formulas) {
-		this(new Trace(state), (PlantUmlVisualizationCommand) item, file, formulas);
+		this(state.getStateSpace().getTrace(state.getId()), (PlantUmlVisualizationCommand) item, file, formulas);
 	}
 
 	public GetPlantUmlForVisualizationCommand(Trace trace, PlantUmlVisualizationCommand item, File file, List<IEvalElement> formulas) {

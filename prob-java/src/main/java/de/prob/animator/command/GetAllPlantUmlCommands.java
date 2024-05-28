@@ -11,7 +11,7 @@ public class GetAllPlantUmlCommands extends AbstractGetDynamicCommands<PlantUmlV
 
 	@Deprecated
 	public GetAllPlantUmlCommands(State state) {
-		this(new Trace(state));
+		this(state.getStateSpace().getTrace(state.getId()));
 	}
 
 	public GetAllPlantUmlCommands(Trace trace) {

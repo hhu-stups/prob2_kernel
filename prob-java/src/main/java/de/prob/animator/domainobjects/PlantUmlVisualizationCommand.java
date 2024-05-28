@@ -46,7 +46,7 @@ public final class PlantUmlVisualizationCommand extends DynamicCommandItem {
 
 	@Deprecated
 	public static PlantUmlVisualizationCommand fromPrologTerm(final State state, final PrologTerm term) {
-		return fromPrologTerm(new Trace(state), term);
+		return fromPrologTerm(state.getStateSpace().getTrace(state.getId()), term);
 	}
 
 	public static PlantUmlVisualizationCommand fromPrologTerm(final Trace trace, final PrologTerm term) {
@@ -65,7 +65,7 @@ public final class PlantUmlVisualizationCommand extends DynamicCommandItem {
 
 	@Deprecated
 	public static List<PlantUmlVisualizationCommand> getAll(final State state) {
-		return getAll(new Trace(state));
+		return getAll(state.getStateSpace().getTrace(state.getId()));
 	}
 	
 	/**
@@ -82,7 +82,7 @@ public final class PlantUmlVisualizationCommand extends DynamicCommandItem {
 
 	@Deprecated
 	public static PlantUmlVisualizationCommand getByName(final String commandName, final State state) {
-		return getByName(commandName, new Trace(state));
+		return getByName(commandName, state.getStateSpace().getTrace(state.getId()));
 	}
 	
 	/**

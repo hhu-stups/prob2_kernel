@@ -11,7 +11,7 @@ public class GetAllDotCommands extends AbstractGetDynamicCommands<DotVisualizati
 
 	@Deprecated
 	public GetAllDotCommands(State state) {
-		this(new Trace(state));
+		this(state.getStateSpace().getTrace(state.getId()));
 	}
 
 	public GetAllDotCommands(Trace trace) {

@@ -56,7 +56,7 @@ public final class DotVisualizationCommand extends DynamicCommandItem {
 
 	@Deprecated
 	public static DotVisualizationCommand fromPrologTerm(final State state, final PrologTerm term) {
-		return fromPrologTerm(new Trace(state), term);
+		return fromPrologTerm(state.getStateSpace().getTrace(state.getId()), term);
 	}
 
 	public static DotVisualizationCommand fromPrologTerm(final Trace trace, final PrologTerm term) {
@@ -75,7 +75,7 @@ public final class DotVisualizationCommand extends DynamicCommandItem {
 
 	@Deprecated
 	public static List<DotVisualizationCommand> getAll(final State state) {
-		return getAll(new Trace(state));
+		return getAll(state.getStateSpace().getTrace(state.getId()));
 	}
 
 	/**
@@ -92,7 +92,7 @@ public final class DotVisualizationCommand extends DynamicCommandItem {
 
 	@Deprecated
 	public static DotVisualizationCommand getByName(final String commandName, final State state) {
-		return getByName(commandName, new Trace(state));
+		return getByName(commandName, state.getStateSpace().getTrace(state.getId()));
 	}
 	
 	/**

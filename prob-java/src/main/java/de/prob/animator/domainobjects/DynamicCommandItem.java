@@ -41,7 +41,7 @@ public class DynamicCommandItem {
 
 	@Deprecated
 	public static DynamicCommandItem fromPrologTerm(final State state, final PrologTerm term) {
-		return fromPrologTerm(new Trace(state), term);
+		return fromPrologTerm(state.getStateSpace().getTrace(state.getId()), term);
 	}
 
 	public static DynamicCommandItem fromPrologTerm(final Trace trace, final PrologTerm term) {

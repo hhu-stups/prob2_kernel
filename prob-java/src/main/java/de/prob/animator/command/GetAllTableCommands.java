@@ -11,7 +11,7 @@ public class GetAllTableCommands extends AbstractGetDynamicCommands<TableVisuali
 
 	@Deprecated
 	public GetAllTableCommands(State state) {
-		this(new Trace(state));
+		this(state.getStateSpace().getTrace(state.getId()));
 	}
 
 	public GetAllTableCommands(Trace trace) {

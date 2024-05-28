@@ -15,7 +15,7 @@ public class GetDotForVisualizationCommand extends AbstractDynamicVisualizationC
 
 	@Deprecated
 	public GetDotForVisualizationCommand(State state, DynamicCommandItem item, File file, List<IEvalElement> formulas) {
-		this(new Trace(state), (DotVisualizationCommand) item, file, formulas);
+		this(state.getStateSpace().getTrace(state.getId()), (DotVisualizationCommand) item, file, formulas);
 	}
 
 	public GetDotForVisualizationCommand(Trace trace, DotVisualizationCommand item, File file, List<IEvalElement> formulas) {
