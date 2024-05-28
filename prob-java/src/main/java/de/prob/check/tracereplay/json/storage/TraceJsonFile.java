@@ -28,6 +28,7 @@ import static java.util.stream.Collectors.toMap;
  * Represents the trace file
  */
 @JsonPropertyOrder({ "description", "transitionList", "variableNames", "constantNames", "setNames", "machineOperationInfos", "globalIdentifierTypes", "metadata" })
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class TraceJsonFile implements HasMetadata {
 
 	public static final String FILE_TYPE = "Trace";
