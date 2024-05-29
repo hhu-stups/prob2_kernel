@@ -35,10 +35,6 @@ public final class EventBPackageFactory implements ModelFactory<EventBModel> {
 		public String getName() {
 			return name;
 		}
-
-		public void setName(final String name) {
-			this.name = name;
-		}
 	}
 	
 	public static final String EXTENSION = "eventb";
