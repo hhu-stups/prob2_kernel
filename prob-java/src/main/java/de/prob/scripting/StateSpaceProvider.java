@@ -26,7 +26,7 @@ public class StateSpaceProvider {
 		final AbstractElement mainComponent,
 		final AbstractCommand loadCmd
 	) {
-		s.initModel(model, mainComponent);
+		s.initModel(model);
 		s.execute(loadCmd);
 		s.execute(new StartAnimationCommand());
 	}

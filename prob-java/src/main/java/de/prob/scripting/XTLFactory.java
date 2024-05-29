@@ -23,6 +23,6 @@ public class XTLFactory implements ModelFactory<XTLModel> {
 	public ExtractedModel<XTLModel> extract(final String modelPath) throws IOException {
 		final File f = new File(modelPath);
 		final XTLModel xtlModel = modelCreator.get().create(f);
-		return new ExtractedModel<>(stateSpaceProvider, xtlModel, null);
+		return new ExtractedModel<>(stateSpaceProvider, xtlModel);
 	}
 }

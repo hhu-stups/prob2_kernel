@@ -112,13 +112,18 @@ public class ClassicalBModel extends AbstractModel {
 	}
 
 	@Override
-	public AbstractCommand getLoadCommand(final AbstractElement mainComponent) {
+	public AbstractCommand getLoadCommand() {
 		return new LoadBProjectCommand(rml, getModelFile());
 	}
 
 	@Override
 	public AbstractElement getComponent(final String name) {
 		return getChildrenOfType(Machine.class).getElement(name);
+	}
+
+	@Override
+	public AbstractElement getMainComponent() {
+		return this.getMainMachine();
 	}
 
 	public IDefinitions getDefinitions() {

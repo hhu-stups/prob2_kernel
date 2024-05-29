@@ -12,16 +12,14 @@ import de.prob.statespace.StateSpace;
 public class ExtractedModel<T extends AbstractModel> {
 	private final Provider<StateSpace> stateSpaceProvider;
 	private final T model;
-	private final AbstractElement mainComponent;
 
-	public ExtractedModel(Provider<StateSpace> stateSpaceProvider, T model, AbstractElement mainComponent) {
+	public ExtractedModel(Provider<StateSpace> stateSpaceProvider, T model) {
 		this.stateSpaceProvider = stateSpaceProvider;
 		this.model = model;
-		this.mainComponent = mainComponent;
 	}
 
 	public void loadIntoStateSpace(final StateSpace stateSpace) {
-		model.loadIntoStateSpace(stateSpace, mainComponent);
+		model.loadIntoStateSpace(stateSpace);
 	}
 
 	public StateSpace load() {
@@ -32,7 +30,7 @@ public class ExtractedModel<T extends AbstractModel> {
 		StateSpace stateSpace = stateSpaceProvider.get();
 		try {
 			stateSpace.changePreferences(preferences);
-			model.loadIntoStateSpace(stateSpace, mainComponent);
+			model.loadIntoStateSpace(stateSpace);
 			return stateSpace;
 		} catch (RuntimeException e) {
 			stateSpace.kill();
@@ -44,7 +42,12 @@ public class ExtractedModel<T extends AbstractModel> {
 		return model;
 	}
 
+	/**
+	 * This method is no longer needed - you can call {@link AbstractModel#getMainComponent()} directly instead.
+	 * 
+	 * @return the model's main component
+	 */
 	public AbstractElement getMainComponent() {
-		return mainComponent;
+		return this.getModel().getMainComponent();
 	}
 }

@@ -18,6 +18,7 @@ import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.EvaluationException;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
+import de.prob.model.classicalb.ClassicalBMachine;
 import de.prob.model.representation.AbstractElement;
 import de.prob.model.representation.AbstractModel;
 import de.prob.model.representation.DependencyGraph;
@@ -44,6 +45,12 @@ public class RulesModel extends AbstractModel {
 	@Override
 	public AbstractElement getComponent(String name) {
 		throw new AssertionError();
+	}
+
+	@Override
+	public AbstractElement getMainComponent() {
+		// FIXME The ClassicalBMachine returned here is very incomplete - does this implementation make any sense? Should we fix it, or can we just return null instead?
+		return new ClassicalBMachine(project.getBModels().get(0).getMachineName());
 	}
 
 	public RulesModel create(File file, RulesProject project) {
@@ -80,7 +87,7 @@ public class RulesModel extends AbstractModel {
 	}
 
 	@Override
-	public AbstractCommand getLoadCommand(final AbstractElement mainComponent) {
+	public AbstractCommand getLoadCommand() {
 		return new LoadRulesProjectCommand(project, modelFile);
 	}
 

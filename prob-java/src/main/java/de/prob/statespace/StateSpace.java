@@ -53,11 +53,8 @@ import de.prob.animator.domainobjects.ProBPreference;
 import de.prob.animator.domainobjects.TypeCheckResult;
 import de.prob.annotations.MaxCacheSize;
 import de.prob.formula.PredicateBuilder;
-import de.prob.model.classicalb.ClassicalBModel;
-import de.prob.model.eventb.EventBModel;
 import de.prob.model.representation.AbstractElement;
 import de.prob.model.representation.AbstractModel;
-import de.prob.model.representation.CSPModel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,7 +99,6 @@ public class StateSpace implements IAnimator {
 	private final LoadingCache<String, State> states;
 
 	private AbstractModel model;
-	private AbstractElement mainComponent;
 	private volatile boolean killed;
 	private final Collection<IStatesCalculatedListener> statesCalculatedListeners = new CopyOnWriteArrayList<>();
 
@@ -867,40 +863,18 @@ public class StateSpace implements IAnimator {
 	}
 
 	/**
-	 * Set the model that is being animated. This should only be set at the
-	 * beginning of an animation. The currently supported model types are
-	 * {@link ClassicalBModel}, {@link EventBModel}, or {@link CSPModel}. A
-	 * StateSpace object always corresponds with exactly one model.
-	 *
-	 * @param model
-	 *            the new model
-	 * @param mainComponent
-	 *            the new main component
-	 * @deprecated Use {@link #initModel(AbstractModel, AbstractElement)} instead
-	 */
-	@Deprecated
-	public void setModel(final AbstractModel model, final AbstractElement mainComponent) {
-		this.model = model;
-		this.mainComponent = mainComponent;
-	}
-
-	/**
 	 * Set the model that is being animated. This should be set at the
 	 * beginning of an animation and can only be set once per StateSpace.
 	 * A StateSpace object always corresponds to exactly one model.
 	 *
 	 * @param model the new model
-	 * @param mainComponent the new main component
 	 * @throws IllegalStateException if the model or main component has already been set
 	 */
-	public void initModel(final AbstractModel model, final AbstractElement mainComponent) {
+	public void initModel(AbstractModel model) {
 		if (this.getModel() != null) {
 			throw new IllegalStateException("model has already been set");
 		}
-		if (this.getMainComponent() != null) {
-			throw new IllegalStateException("mainComponent has already been set");
-		}
-		this.setModel(model, mainComponent);
+		this.model = model;
 	}
 
 	/**
@@ -914,7 +888,7 @@ public class StateSpace implements IAnimator {
 	}
 
 	public AbstractElement getMainComponent() {
-		return mainComponent;
+		return this.getModel().getMainComponent();
 	}
 
 	/**

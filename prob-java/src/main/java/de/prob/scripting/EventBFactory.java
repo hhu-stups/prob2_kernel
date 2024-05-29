@@ -48,7 +48,7 @@ public class EventBFactory implements ModelFactory<EventBModel> {
 		final EventBModel model = modelCreator.get();
 		final String validFileName = getValidFileName(modelPath);
 		final EventBDatabaseTranslator translator = new EventBDatabaseTranslator(model, validFileName);
-		return new ExtractedModel<>(stateSpaceProvider, translator.getModel(), translator.getMainComponent());
+		return new ExtractedModel<>(stateSpaceProvider, translator.getModel());
 	}
 
 	private String getValidFileName(String fileName) {

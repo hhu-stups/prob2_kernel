@@ -78,7 +78,7 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 			}
 		}
 		classicalBModel = classicalBModel.create(ast, rml, f, bparser);
-		return new ExtractedModel<>(stateSpaceProvider, classicalBModel, classicalBModel.getMainMachine());
+		return new ExtractedModel<>(stateSpaceProvider, classicalBModel);
 	}
 
 	public ExtractedModel<ClassicalBModel> create(final String model) {
@@ -98,7 +98,7 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 			throw new ProBError(e);
 		}
 		classicalBModel = classicalBModel.create(ast, rml, new File(name + "." + CLASSICAL_B_MACHINE_EXTENSION), bparser);
-		return new ExtractedModel<>(stateSpaceProvider, classicalBModel, classicalBModel.getMainMachine());
+		return new ExtractedModel<>(stateSpaceProvider, classicalBModel);
 	}
 
 	public ExtractedModel<ClassicalBModel> create(final Start model) {
@@ -116,6 +116,6 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 			throw new ProBError(e);
 		}
 		classicalBModel = classicalBModel.create(model, rml, new File(name + "." + CLASSICAL_B_MACHINE_EXTENSION), bparser);
-		return new ExtractedModel<>(stateSpaceProvider, classicalBModel, classicalBModel.getMainMachine());
+		return new ExtractedModel<>(stateSpaceProvider, classicalBModel);
 	}
 }

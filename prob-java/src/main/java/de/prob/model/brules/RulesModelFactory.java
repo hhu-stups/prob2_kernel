@@ -10,7 +10,6 @@ import de.be4.classicalb.core.parser.ParsingBehaviour;
 import de.be4.classicalb.core.parser.exceptions.BCompoundException;
 import de.be4.classicalb.core.parser.rules.RulesProject;
 import de.prob.exception.ProBError;
-import de.prob.model.classicalb.ClassicalBMachine;
 import de.prob.scripting.ExtractedModel;
 import de.prob.scripting.ModelFactory;
 import de.prob.statespace.StateSpace;
@@ -29,8 +28,7 @@ public class RulesModelFactory implements ModelFactory<RulesModel> {
 		RulesModel rulesModel = modelCreator.get();
 
 		rulesModel = rulesModel.create(runnerFile, rulesProject);
-		return new ExtractedModel<>(stateSpaceProvider, rulesModel,
-				new ClassicalBMachine(rulesProject.getBModels().get(0).getMachineName()));
+		return new ExtractedModel<>(stateSpaceProvider, rulesModel);
 	}
 	
 	@Override

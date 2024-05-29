@@ -23,6 +23,6 @@ public class ZFactory implements ModelFactory<ZModel> {
 	public ExtractedModel<ZModel> extract(final String modelPath) throws IOException {
 		final File f = new File(modelPath);
 		final ZModel zModel = modelCreator.get().create(f);
-		return new ExtractedModel<>(stateSpaceProvider, zModel, null);
+		return new ExtractedModel<>(stateSpaceProvider, zModel);
 	}
 }

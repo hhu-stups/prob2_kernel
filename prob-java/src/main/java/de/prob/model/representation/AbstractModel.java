@@ -37,6 +37,8 @@ public abstract class AbstractModel extends AbstractElement {
 
 	public abstract AbstractElement getComponent(final String name);
 
+	public abstract AbstractElement getMainComponent();
+
 	public DependencyGraph getGraph() {
 		return graph;
 	}
@@ -140,12 +142,32 @@ public abstract class AbstractModel extends AbstractElement {
 		return stateSpaceProvider;
 	}
 
-	public abstract AbstractCommand getLoadCommand(final AbstractElement mainComponent);
+	public abstract AbstractCommand getLoadCommand();
 
-	public void loadIntoStateSpace(final StateSpace stateSpace, final AbstractElement mainComponent) {
-		stateSpace.initModel(this, mainComponent);
-		stateSpace.execute(this.getLoadCommand(mainComponent));
+	/**
+	 * @deprecated Use {@link #getLoadCommand()} instead.
+	 * @param mainComponent this model's main component, as returned by {@link ExtractedModel#getMainComponent()}
+	 * @return the command for loading this model into the animator
+	 */
+	@Deprecated
+	public AbstractCommand getLoadCommand(AbstractElement mainComponent) {
+		return this.getLoadCommand();
+	}
+
+	public void loadIntoStateSpace(final StateSpace stateSpace) {
+		stateSpace.initModel(this);
+		stateSpace.execute(this.getLoadCommand());
 		stateSpace.execute(new StartAnimationCommand());
+	}
+
+	/**
+	 * @deprecated Use {@link #loadIntoStateSpace(StateSpace)} instead.
+	 * @param stateSpace the {@link StateSpace} into which to load the model
+	 * @param mainComponent this model's main component, as returned by {@link ExtractedModel#getMainComponent()}
+	 */
+	@Deprecated
+	public void loadIntoStateSpace(final StateSpace stateSpace, final AbstractElement mainComponent) {
+		this.loadIntoStateSpace(stateSpace);
 	}
 
 	/**

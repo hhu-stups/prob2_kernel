@@ -24,7 +24,7 @@ public class ZFuzzModel extends ZModel {
 	}
 	
 	@Override
-	public AbstractCommand getLoadCommand(final AbstractElement mainComponent) {
+	public AbstractCommand getLoadCommand() {
 		return new LoadZFuzzCommand(this.getModelFile().getAbsolutePath());
 	}
 }

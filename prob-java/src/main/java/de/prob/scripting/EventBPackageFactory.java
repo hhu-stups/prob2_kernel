@@ -1,14 +1,5 @@
 package de.prob.scripting;
 
-import com.google.common.io.MoreFiles;
-import com.google.inject.Inject;
-import com.google.inject.Provider;
-import de.prob.model.eventb.EventBModel;
-import de.prob.model.eventb.EventBPackageModel;
-import de.prob.model.representation.AbstractElement;
-import de.prob.model.representation.Named;
-import de.prob.statespace.StateSpace;
-
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
@@ -18,25 +9,15 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.common.io.MoreFiles;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+
+import de.prob.model.eventb.EventBModel;
+import de.prob.model.eventb.EventBPackageModel;
+import de.prob.statespace.StateSpace;
+
 public final class EventBPackageFactory implements ModelFactory<EventBModel> {
-	private static final class DummyElement extends AbstractElement implements Named {
-		private String name;
-
-		private DummyElement(final String name) {
-			this.name = name;
-		}
-
-		@Override
-		public String toString() {
-			return name;
-		}
-
-		@Override
-		public String getName() {
-			return name;
-		}
-	}
-	
 	public static final String EXTENSION = "eventb";
 	
 	private final Provider<StateSpace> stateSpaceProvider;
@@ -82,7 +63,7 @@ public final class EventBPackageFactory implements ModelFactory<EventBModel> {
 
 		// TODO: Extract machines, contexts, axioms, ...
 		// Currently, the list of children is empty for EventBPackageModel
-		EventBModel eventBModel = modelCreator.get().setLoadCommandPrologCode(loadcmd);
-		return new ExtractedModel<>(stateSpaceProvider, eventBModel, new DummyElement(componentName));
+		EventBModel eventBModel = modelCreator.get().create(componentName, loadcmd);
+		return new ExtractedModel<>(stateSpaceProvider, eventBModel);
 	}
 }

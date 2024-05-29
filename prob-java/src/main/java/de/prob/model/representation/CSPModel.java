@@ -93,7 +93,7 @@ public class CSPModel extends AbstractModel {
 	}
 
 	@Override
-	public AbstractCommand getLoadCommand(final AbstractElement mainComponent) {
+	public AbstractCommand getLoadCommand() {
 		return new LoadCSPCommand(getModelFile().getAbsolutePath());
 	}
 
@@ -104,5 +104,10 @@ public class CSPModel extends AbstractModel {
 		}
 
 		return null;
+	}
+
+	@Override
+	public AbstractElement getMainComponent() {
+		return this.mainComponent;
 	}
 }

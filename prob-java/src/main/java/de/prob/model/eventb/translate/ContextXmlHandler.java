@@ -217,7 +217,7 @@ public class ContextXmlHandler extends DefaultHandler {
 				+ File.separatorChar + context.getName());
 		context = context.withProofs(extractor.getProofs());
 
-		model = model.addContext(context);
+		model = model.addContext(context).setMainComponent(context);
 	}
 
 	public Context getContext() {

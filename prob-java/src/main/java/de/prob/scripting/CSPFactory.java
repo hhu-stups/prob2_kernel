@@ -38,6 +38,6 @@ public class CSPFactory implements ModelFactory<CSPModel> {
 		}
 
 		cspModel = cspModel.create(text, p.toFile());
-		return new ExtractedModel<>(stateSpaceProvider, cspModel, cspModel.getComponent(p.getFileName().toString()));
+		return new ExtractedModel<>(stateSpaceProvider, cspModel);
 	}
 }

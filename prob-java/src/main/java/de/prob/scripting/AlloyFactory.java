@@ -42,7 +42,7 @@ public class AlloyFactory implements ModelFactory<AlloyModel> {
 		try {
 			final ParserResult parserResult = new Alloy2BParser().parseFromFile(f.getAbsolutePath());
 			alloyModel = modelCreator.get().create(f, parserResult.getPrologTerm());
-			return new ExtractedModel<>(stateSpaceProvider, alloyModel, null);
+			return new ExtractedModel<>(stateSpaceProvider, alloyModel);
 		} catch (final Alloy2BParserErr e) {
 			throw new ProBError(null, convertAlloyExceptionToErrorItems(e), e);
 		}

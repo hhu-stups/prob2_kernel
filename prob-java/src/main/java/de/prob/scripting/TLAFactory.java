@@ -66,6 +66,6 @@ public class TLAFactory implements ModelFactory<ClassicalBModel> {
 		}
 		logger.trace("Done parsing '{}'", f.getAbsolutePath());
 		classicalBModel = classicalBModel.create(ast, rml, f, bparser);
-		return new ExtractedModel<>(stateSpaceProvider, classicalBModel, classicalBModel.getMainMachine());
+		return new ExtractedModel<>(stateSpaceProvider, classicalBModel);
 	}
 }

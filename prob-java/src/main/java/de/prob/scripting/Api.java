@@ -193,7 +193,7 @@ public class Api {
 	 * @param pto where to output the saved Prolog term
 	 */
 	public void eventb_save(final StateSpace s, final IPrologTermOutput pto) {
-		final EventBModelTranslator translator = new EventBModelTranslator((EventBModel) s.getModel(), s.getMainComponent());
+		final EventBModelTranslator translator = new EventBModelTranslator((EventBModel)s.getModel());
 		translator.printPrologFact(pto);
 	}
 
