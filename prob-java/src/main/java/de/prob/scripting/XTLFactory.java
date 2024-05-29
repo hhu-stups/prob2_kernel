@@ -7,12 +7,15 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import de.prob.model.representation.XTLModel;
+import de.prob.statespace.StateSpace;
 
 public class XTLFactory implements ModelFactory<XTLModel> {
+	private final Provider<StateSpace> stateSpaceProvider;
 	private final Provider<XTLModel> modelCreator;
 	
 	@Inject
-	public XTLFactory(final Provider<XTLModel> modelCreator) {
+	XTLFactory(Provider<StateSpace> stateSpaceProvider, Provider<XTLModel> modelCreator) {
+		this.stateSpaceProvider = stateSpaceProvider;
 		this.modelCreator = modelCreator;
 	}
 
@@ -20,6 +23,6 @@ public class XTLFactory implements ModelFactory<XTLModel> {
 	public ExtractedModel<XTLModel> extract(final String modelPath) throws IOException {
 		final File f = new File(modelPath);
 		final XTLModel xtlModel = modelCreator.get().create(f);
-		return new ExtractedModel<>(xtlModel, null);
+		return new ExtractedModel<>(stateSpaceProvider, xtlModel, null);
 	}
 }

@@ -7,6 +7,7 @@ import de.prob.model.eventb.EventBModel;
 import de.prob.model.eventb.EventBPackageModel;
 import de.prob.model.representation.AbstractElement;
 import de.prob.model.representation.Named;
+import de.prob.statespace.StateSpace;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -42,10 +43,12 @@ public final class EventBPackageFactory implements ModelFactory<EventBModel> {
 	
 	public static final String EXTENSION = "eventb";
 	
+	private final Provider<StateSpace> stateSpaceProvider;
 	private final Provider<EventBPackageModel> modelCreator;
 
 	@Inject
-	public EventBPackageFactory(final Provider<EventBPackageModel> modelCreator) {
+	EventBPackageFactory(Provider<StateSpace> stateSpaceProvider, Provider<EventBPackageModel> modelCreator) {
+		this.stateSpaceProvider = stateSpaceProvider;
 		this.modelCreator = modelCreator;
 	}
 
@@ -84,6 +87,6 @@ public final class EventBPackageFactory implements ModelFactory<EventBModel> {
 		// TODO: Extract machines, contexts, axioms, ...
 		// Currently, the list of children is empty for EventBPackageModel
 		EventBModel eventBModel = modelCreator.get().setLoadCommandPrologCode(loadcmd);
-		return new ExtractedModel<>(eventBModel, new DummyElement(componentName));
+		return new ExtractedModel<>(stateSpaceProvider, eventBModel, new DummyElement(componentName));
 	}
 }

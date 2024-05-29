@@ -15,6 +15,7 @@ import de.be4.classicalb.core.parser.exceptions.PreParseException;
 import de.be4.classicalb.core.parser.node.Start;
 import de.prob.exception.ProBError;
 import de.prob.model.classicalb.ClassicalBModel;
+import de.prob.statespace.StateSpace;
 import de.tla2b.exceptions.TLA2BException;
 import de.tla2bAst.Translator;
 
@@ -24,10 +25,13 @@ import org.slf4j.LoggerFactory;
 public class TLAFactory implements ModelFactory<ClassicalBModel> {
 
 	private static final Logger logger = LoggerFactory.getLogger(TLAFactory.class);
+
+	private final Provider<StateSpace> stateSpaceProvider;
 	private final Provider<ClassicalBModel> modelCreator;
 
 	@Inject
-	public TLAFactory(final Provider<ClassicalBModel> modelCreator) {
+	TLAFactory(Provider<StateSpace> stateSpaceProvider, Provider<ClassicalBModel> modelCreator) {
+		this.stateSpaceProvider = stateSpaceProvider;
 		this.modelCreator = modelCreator;
 	}
 
@@ -62,6 +66,6 @@ public class TLAFactory implements ModelFactory<ClassicalBModel> {
 		}
 		logger.trace("Done parsing '{}'", f.getAbsolutePath());
 		classicalBModel = classicalBModel.create(ast, rml, f, bparser);
-		return new ExtractedModel<>(classicalBModel, classicalBModel.getMainMachine());
+		return new ExtractedModel<>(stateSpaceProvider, classicalBModel, classicalBModel.getMainMachine());
 	}
 }

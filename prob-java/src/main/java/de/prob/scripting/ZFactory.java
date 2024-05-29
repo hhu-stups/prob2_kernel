@@ -7,12 +7,15 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import de.prob.model.representation.ZModel;
+import de.prob.statespace.StateSpace;
 
 public class ZFactory implements ModelFactory<ZModel> {
+	private final Provider<StateSpace> stateSpaceProvider;
 	private final Provider<ZModel> modelCreator;
 	
 	@Inject
-	public ZFactory(final Provider<ZModel> modelCreator) {
+	ZFactory(Provider<StateSpace> stateSpaceProvider, Provider<ZModel> modelCreator) {
+		this.stateSpaceProvider = stateSpaceProvider;
 		this.modelCreator = modelCreator;
 	}
 
@@ -20,6 +23,6 @@ public class ZFactory implements ModelFactory<ZModel> {
 	public ExtractedModel<ZModel> extract(final String modelPath) throws IOException {
 		final File f = new File(modelPath);
 		final ZModel zModel = modelCreator.get().create(f);
-		return new ExtractedModel<>(zModel, null);
+		return new ExtractedModel<>(stateSpaceProvider, zModel, null);
 	}
 }

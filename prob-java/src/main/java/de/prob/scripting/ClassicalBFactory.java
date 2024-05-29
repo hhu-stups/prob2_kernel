@@ -2,8 +2,6 @@ package de.prob.scripting;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 import com.google.inject.Inject;
@@ -19,6 +17,7 @@ import de.be4.classicalb.core.parser.node.Start;
 import de.prob.annotations.Home;
 import de.prob.exception.ProBError;
 import de.prob.model.classicalb.ClassicalBModel;
+import de.prob.statespace.StateSpace;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +31,8 @@ import org.slf4j.LoggerFactory;
 public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 
 	final Logger logger = LoggerFactory.getLogger(ClassicalBFactory.class);
+
+	private final Provider<StateSpace> stateSpaceProvider;
 	private final Provider<ClassicalBModel> modelCreator;
 	public static final String CLASSICAL_B_MACHINE_EXTENSION = "mch";
 	public static final String CLASSICAL_B_REFINEMENT_EXTENSION = "ref";
@@ -39,7 +40,8 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 
 
 	@Inject
-	public ClassicalBFactory(final Provider<ClassicalBModel> modelCreator, final @Home String probdir) {
+	ClassicalBFactory(Provider<StateSpace> stateSpaceProvider, Provider<ClassicalBModel> modelCreator, @Home String probdir) {
+		this.stateSpaceProvider = stateSpaceProvider;
 		this.modelCreator = modelCreator;
 
 		// Provide location of ProB stdlib directory to the parser,
@@ -77,7 +79,7 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 			}
 		}
 		classicalBModel = classicalBModel.create(ast, rml, f, bparser);
-		return new ExtractedModel<>(classicalBModel, classicalBModel.getMainMachine());
+		return new ExtractedModel<>(stateSpaceProvider, classicalBModel, classicalBModel.getMainMachine());
 	}
 
 	public ExtractedModel<ClassicalBModel> create(final String model) {
@@ -97,7 +99,7 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 			throw new ProBError(e);
 		}
 		classicalBModel = classicalBModel.create(ast, rml, new File(name + "." + CLASSICAL_B_MACHINE_EXTENSION), bparser);
-		return new ExtractedModel<>(classicalBModel, classicalBModel.getMainMachine());
+		return new ExtractedModel<>(stateSpaceProvider, classicalBModel, classicalBModel.getMainMachine());
 	}
 
 	public ExtractedModel<ClassicalBModel> create(final Start model) {
@@ -115,6 +117,6 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 			throw new ProBError(e);
 		}
 		classicalBModel = classicalBModel.create(model, rml, new File(name + "." + CLASSICAL_B_MACHINE_EXTENSION), bparser);
-		return new ExtractedModel<>(classicalBModel, classicalBModel.getMainMachine());
+		return new ExtractedModel<>(stateSpaceProvider, classicalBModel, classicalBModel.getMainMachine());
 	}
 }

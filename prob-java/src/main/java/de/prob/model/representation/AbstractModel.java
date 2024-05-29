@@ -10,13 +10,16 @@ import de.prob.animator.domainobjects.EvaluationException;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.model.representation.DependencyGraph.ERefType;
+import de.prob.scripting.ExtractedModel;
 import de.prob.scripting.StateSpaceProvider;
 import de.prob.statespace.FormalismType;
 import de.prob.statespace.Language;
 import de.prob.statespace.StateSpace;
 
 public abstract class AbstractModel extends AbstractElement {
-
+	// The stateSpaceProvider field will be removed in the future,
+	// but isn't deprecated yet,
+	// because the subclasses still need it to support the old API.
 	protected final StateSpaceProvider stateSpaceProvider;
 	protected final File modelFile;
 	protected final DependencyGraph graph;
@@ -131,6 +134,7 @@ public abstract class AbstractModel extends AbstractElement {
 		return modelFile;
 	}
 
+	@Deprecated
 	public StateSpaceProvider getStateSpaceProvider() {
 		return stateSpaceProvider;
 	}
@@ -141,10 +145,25 @@ public abstract class AbstractModel extends AbstractElement {
 		StateSpaceProvider.loadFromCommandIntoStateSpace(stateSpace, this, mainComponent, this.getLoadCommand(mainComponent));
 	}
 
+	/**
+	 * @deprecated Use {@link ExtractedModel#load(Map)} instead.
+	 *     In the future, {@link AbstractModel}s will not include a {@link StateSpaceProvider}.
+	 * @param mainComponent this model's main component, as returned by {@link ExtractedModel#getMainComponent()}
+	 * @return the {@link StateSpace} for the loaded model
+	 */
+	@Deprecated
 	public StateSpace load(AbstractElement mainComponent) {
 		return load(mainComponent, new HashMap<>());
 	}
 
+	/**
+	 * @deprecated Use {@link ExtractedModel#load(Map)} instead.
+	 *     In the future, {@link AbstractModel}s will not include a {@link StateSpaceProvider}.
+	 * @param mainComponent this model's main component, as returned by {@link ExtractedModel#getMainComponent()}
+	 * @param preferences custom ProB preferences to use
+	 * @return the {@link StateSpace} for the loaded model
+	 */
+	@Deprecated
 	public StateSpace load(final AbstractElement mainComponent, final Map<String, String> preferences) {
 		final StateSpace stateSpace = getStateSpaceProvider().getStateSpace();
 		try {
