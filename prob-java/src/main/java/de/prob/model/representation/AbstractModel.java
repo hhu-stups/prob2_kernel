@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.prob.animator.command.AbstractCommand;
+import de.prob.animator.command.StartAnimationCommand;
 import de.prob.animator.domainobjects.EvaluationException;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
@@ -142,7 +143,9 @@ public abstract class AbstractModel extends AbstractElement {
 	public abstract AbstractCommand getLoadCommand(final AbstractElement mainComponent);
 
 	public void loadIntoStateSpace(final StateSpace stateSpace, final AbstractElement mainComponent) {
-		StateSpaceProvider.loadFromCommandIntoStateSpace(stateSpace, this, mainComponent, this.getLoadCommand(mainComponent));
+		stateSpace.initModel(this, mainComponent);
+		stateSpace.execute(this.getLoadCommand(mainComponent));
+		stateSpace.execute(new StartAnimationCommand());
 	}
 
 	/**
