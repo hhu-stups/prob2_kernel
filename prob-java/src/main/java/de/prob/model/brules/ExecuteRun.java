@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
  * 
  **/
 public class ExecuteRun {
+	private static final Logger LOGGER = LoggerFactory.getLogger(ExecuteRun.class);
 
 	private final ReusableAnimator animator;
 	private final int maxNumberOfStatesToBeExecuted = Integer.MAX_VALUE;
@@ -50,10 +51,9 @@ public class ExecuteRun {
 	}
 
 	public void start() {
-		final Logger logger = LoggerFactory.getLogger(getClass());
 		final Stopwatch loadStopwatch = Stopwatch.createStarted();
 		loadStopwatch.stop();
-		logger.info("Time to load model: {} ms", loadStopwatch.elapsed(TimeUnit.MILLISECONDS));
+		LOGGER.info("Time to load model: {} ms", loadStopwatch.elapsed(TimeUnit.MILLISECONDS));
 
 		final Stopwatch executeStopwatch = Stopwatch.createStarted();
 		final StateSpace oldStateSpace = this.animator.getCurrentStateSpace();
@@ -66,7 +66,7 @@ public class ExecuteRun {
 		this.extractedModel.loadIntoStateSpace(stateSpace);
 		executeModel(stateSpace);
 		executeStopwatch.stop();
-		logger.info("Time to run execute command: {} ms", executeStopwatch.elapsed(TimeUnit.MILLISECONDS));
+		LOGGER.info("Time to run execute command: {} ms", executeStopwatch.elapsed(TimeUnit.MILLISECONDS));
 	}
 
 	private void executeModel(final StateSpace stateSpace) {

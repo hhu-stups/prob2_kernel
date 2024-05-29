@@ -83,8 +83,8 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class StateSpace implements IAnimator {
+	private static final Logger LOGGER = LoggerFactory.getLogger(StateSpace.class);
 
-	final Logger logger = LoggerFactory.getLogger(StateSpace.class);
 	private final IAnimator animator;
 
 	private final Set<IEvalElement> registeredFormulas = new HashSet<>();
@@ -469,7 +469,7 @@ public class StateSpace implements IAnimator {
 		List<IEvalElement> toSubscribe = new ArrayList<>();
 		for (IEvalElement formulaOfInterest : formulas) {
 			if (formulaOfInterest instanceof CSP) {
-				logger.info(
+				LOGGER.info(
 						"CSP formula {} not subscribed because CSP evaluation is not state based. Use eval method instead",
 						formulaOfInterest.getCode());
 			} else {

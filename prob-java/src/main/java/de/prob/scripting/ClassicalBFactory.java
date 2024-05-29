@@ -29,8 +29,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
-
-	final Logger logger = LoggerFactory.getLogger(ClassicalBFactory.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ClassicalBFactory.class);
 
 	private final Provider<StateSpace> stateSpaceProvider;
 	private final Provider<ClassicalBModel> modelCreator;
@@ -64,7 +63,7 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 		File f = new File(modelPath);
 		BParser bparser = new BParser(modelPath);
 
-		logger.trace("Parsing main file '{}'", f.getAbsolutePath());
+		LOGGER.trace("Parsing main file '{}'", f.getAbsolutePath());
 		Start ast;
 		final RecursiveMachineLoader rml;
 		try {

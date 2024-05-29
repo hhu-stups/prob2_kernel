@@ -51,8 +51,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class TheoryExtractor extends DefaultHandler {
-
-	private final Logger logger = LoggerFactory.getLogger(TheoryExtractor.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(TheoryExtractor.class);
 
 	private Theory theory;
 	private ModelElementList<Theory> imported = new ModelElementList<>();
@@ -127,7 +126,7 @@ public class TheoryExtractor extends DefaultHandler {
 			mappings = TheoryMappingParser.parseTheoryMapping(name,
 					mappingFileName);
 		} catch (FileNotFoundException | NoSuchFileException e) {
-			logger.warn("No .ptm file found for Theory {}. This means that ProB has no information on how to interpret this theory.", name, e);
+			LOGGER.warn("No .ptm file found for Theory {}. This means that ProB has no information on how to interpret this theory.", name, e);
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		} catch (TheoryMappingException e) {

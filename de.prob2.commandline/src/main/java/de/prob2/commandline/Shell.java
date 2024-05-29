@@ -18,9 +18,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 final class Shell {
+	private static final Logger LOGGER = LoggerFactory.getLogger(Shell.class);
 
 	private final ScriptEngineProvider sep;
-	private final Logger logger = LoggerFactory.getLogger(Shell.class);
 	private final ProBInstanceProvider proBs;
 
 	@Inject
@@ -50,7 +50,7 @@ final class Shell {
 
 	private void runSingleScript(final String dir, final File scriptFile, final boolean silent) throws IOException, ScriptException {
 		final Stopwatch stopwatch = Stopwatch.createStarted();
-		logger.debug("Running script: {}", scriptFile.getAbsolutePath());
+		LOGGER.debug("Running script: {}", scriptFile.getAbsolutePath());
 		ScriptEngine executor = sep.get();
 		executor.put("dir", dir);
 		executor.put("inConsole", false);
@@ -63,11 +63,11 @@ final class Shell {
 			res = executor.eval(fr);
 		} catch (IOException e) {
 			System.err.printf("Could not read script %s: %s%n", scriptFile, e);
-			logger.error("Could not read script", e);
+			LOGGER.error("Could not read script", e);
 			throw e;
 		} catch (ScriptException e) {
 			System.err.printf("Exception thrown by script %s: %s%n", scriptFile, e);
-			logger.error("Exception thrown by script", e);
+			LOGGER.error("Exception thrown by script", e);
 			throw e;
 		} finally {
 			proBs.shutdownAll();

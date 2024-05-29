@@ -30,6 +30,8 @@ public class RulesMachineRun {
 		PARSE_ERROR, PROB_ERROR, UNEXPECTED_ERROR
 	}
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(RulesMachineRun.class);
+
 	private final RulesMachineRunner rulesMachineRunner;
 
 	private RulesProject rulesProject;
@@ -43,8 +45,6 @@ public class RulesMachineRun {
 
 	private RuleResults ruleResults;
 	private int maxNumberOfReportedCounterExamples = 50;
-
-	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	private BigInteger totalNumberOfProBCliErrors;
 
@@ -83,25 +83,25 @@ public class RulesMachineRun {
 	}
 
 	public void start() {
-		logger.info("Starting rules machine run: {}", this.runnerFile.getAbsolutePath());
+		LOGGER.info("Starting rules machine run: {}", this.runnerFile.getAbsolutePath());
 		final Stopwatch parsingStopwatch = Stopwatch.createStarted();
 		boolean hasParseErrors = parseAndTranslateRulesProject();
 		parsingStopwatch.stop();
-		logger.info("Time to parse rules project: {} ms", parsingStopwatch.elapsed(TimeUnit.MILLISECONDS));
+		LOGGER.info("Time to parse rules project: {} ms", parsingStopwatch.elapsed(TimeUnit.MILLISECONDS));
 		if (hasParseErrors) {
-			logger.error("RULES_MACHINE has errors!");
+			LOGGER.error("RULES_MACHINE has errors!");
 			return;
 		}
 		this.executeRun = rulesMachineRunner.createRulesMachineExecuteRun(this.rulesProject, runnerFile,
 				this.proBCorePreferences, continueAfterErrors, this.getAnimator());
 		try {
-			logger.info("Start execute ...");
+			LOGGER.info("Start execute ...");
 			final Stopwatch executeStopwatch = Stopwatch.createStarted();
 			this.executeRun.start();
 			executeStopwatch.stop();
-			logger.info("Execute run finished. Time: {} ms", executeStopwatch.elapsed(TimeUnit.MILLISECONDS));
+			LOGGER.info("Execute run finished. Time: {} ms", executeStopwatch.elapsed(TimeUnit.MILLISECONDS));
 		} catch (ProBError e) {
-			logger.error("ProBError: {}", e.getMessage());
+			LOGGER.error("ProBError: {}", e.getMessage());
 			this.errors.add(new Error(ERROR_TYPES.PROB_ERROR, e.getMessage(), e));
 			if (executeRun.getExecuteModelCommand() != null) {
 				try {
@@ -123,7 +123,7 @@ public class RulesMachineRun {
 				return;
 			}
 		} catch (Exception e) {
-			logger.error("Unexpected error occured: {}", e.getMessage(), e);
+			LOGGER.error("Unexpected error occured: {}", e.getMessage(), e);
 			// storing all error messages
 			this.errors.add(new Error(ERROR_TYPES.PROB_ERROR, e.getMessage(), e));
 			return;
@@ -138,7 +138,7 @@ public class RulesMachineRun {
 		this.ruleResults = new RuleResults(this.rulesProject, executeRun.getExecuteModelCommand().getFinalState(),
 				maxNumberOfReportedCounterExamples);
 		extractResultsStopwatch.stop();
-		logger.info("Time to extract results from final state: {}", extractResultsStopwatch.elapsed(TimeUnit.MILLISECONDS));
+		LOGGER.info("Time to extract results from final state: {}", extractResultsStopwatch.elapsed(TimeUnit.MILLISECONDS));
 
 	}
 
@@ -161,7 +161,7 @@ public class RulesMachineRun {
 		if (rulesProject.hasErrors()) {
 			BException bException = rulesProject.getBExceptionList().get(0);
 			String message = bException.getMessage();
-			logger.error("Parse error:  {}", message);
+			LOGGER.error("Parse error:  {}", message);
 
 			this.errors.add(new Error(ERROR_TYPES.PARSE_ERROR, message, bException));
 		}
