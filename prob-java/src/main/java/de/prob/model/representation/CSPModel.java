@@ -42,7 +42,7 @@ public class CSPModel extends AbstractModel {
 	}
 
 	public CSPModel create(final String content, final File modelFile) {
-		return new CSPModel(getStateSpaceProvider(), this.getCspmfPath(), content, modelFile, new CSPElement(modelFile.getName()));
+		return new CSPModel(stateSpaceProvider, this.getCspmfPath(), content, modelFile, new CSPElement(modelFile.getName()));
 	}
 
 	/**

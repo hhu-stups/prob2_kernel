@@ -30,7 +30,7 @@ public class AlloyModel extends AbstractModel {
 	}
 
 	public AlloyModel create(final File modelFile, final String term) {
-		return new AlloyModel(getStateSpaceProvider(), modelFile, term);
+		return new AlloyModel(stateSpaceProvider, modelFile, term);
 	}
 	
 	@Override

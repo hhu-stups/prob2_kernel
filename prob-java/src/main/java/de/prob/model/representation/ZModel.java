@@ -26,7 +26,7 @@ public class ZModel extends AbstractModel {
 	}
 
 	public ZModel create(final File modelFile) {
-		return new ZModel(getStateSpaceProvider(), modelFile);
+		return new ZModel(stateSpaceProvider, modelFile);
 	}
 	
 	@Override

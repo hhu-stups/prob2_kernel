@@ -20,7 +20,7 @@ public class ZFuzzModel extends ZModel {
 
 	@Override
 	public ZFuzzModel create(final File modelFile) {
-		return new ZFuzzModel(getStateSpaceProvider(), modelFile);
+		return new ZFuzzModel(stateSpaceProvider, modelFile);
 	}
 	
 	@Override

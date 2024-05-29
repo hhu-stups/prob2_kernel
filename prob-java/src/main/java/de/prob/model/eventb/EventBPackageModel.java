@@ -26,7 +26,7 @@ public final class EventBPackageModel extends EventBModel {
 	}
 	
 	public EventBPackageModel setLoadCommandPrologCode(final String loadCommandPrologCode) {
-		return new EventBPackageModel(this.getStateSpaceProvider(), loadCommandPrologCode);
+		return new EventBPackageModel(this.stateSpaceProvider, loadCommandPrologCode);
 	}
 	
 	@Override

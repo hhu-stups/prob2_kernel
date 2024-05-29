@@ -26,7 +26,7 @@ public class XTLModel extends AbstractModel {
 	}
 
 	public XTLModel create(final File modelFile) {
-		return new XTLModel(getStateSpaceProvider(), modelFile);
+		return new XTLModel(stateSpaceProvider, modelFile);
 	}
 	
 	@Override
