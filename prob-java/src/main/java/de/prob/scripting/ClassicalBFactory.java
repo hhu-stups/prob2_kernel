@@ -29,14 +29,14 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
-	private static final Logger LOGGER = LoggerFactory.getLogger(ClassicalBFactory.class);
-
-	private final Provider<StateSpace> stateSpaceProvider;
-	private final Provider<ClassicalBModel> modelCreator;
 	public static final String CLASSICAL_B_MACHINE_EXTENSION = "mch";
 	public static final String CLASSICAL_B_REFINEMENT_EXTENSION = "ref";
 	public static final String CLASSICAL_B_IMPLEMENTATION_EXTENSION = "imp";
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(ClassicalBFactory.class);
+
+	private final Provider<StateSpace> stateSpaceProvider;
+	private final Provider<ClassicalBModel> modelCreator;
 
 	@Inject
 	ClassicalBFactory(Provider<StateSpace> stateSpaceProvider, Provider<ClassicalBModel> modelCreator, @Home String probdir) {

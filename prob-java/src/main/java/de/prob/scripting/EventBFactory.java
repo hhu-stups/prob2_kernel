@@ -22,12 +22,13 @@ import de.prob.model.eventb.translate.EventBFileNotFoundException;
 import de.prob.statespace.StateSpace;
 
 public class EventBFactory implements ModelFactory<EventBModel> {
-	private final Provider<StateSpace> stateSpaceProvider;
-	private final Provider<EventBModel> modelCreator;
 	public static final String RODIN_MACHINE_EXTENSION = "bum";
 	public static final String RODIN_CONTEXT_EXTENSION = "buc";
 	public static final String CHECKED_RODIN_MACHINE_EXTENSION = "bcm";
 	public static final String CHECKED_RODIN_CONTEXT_EXTENSION = "bcc";
+
+	private final Provider<StateSpace> stateSpaceProvider;
+	private final Provider<EventBModel> modelCreator;
 
 	@Inject
 	EventBFactory(Provider<StateSpace> stateSpaceProvider, Provider<EventBModel> modelCreator) {

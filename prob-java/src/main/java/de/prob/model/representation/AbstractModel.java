@@ -21,8 +21,8 @@ public abstract class AbstractModel extends AbstractElement {
 	// but isn't deprecated yet,
 	// because the subclasses still need it to support the old API.
 	protected final StateSpaceProvider stateSpaceProvider;
-	protected final File modelFile;
 	protected final DependencyGraph graph;
+	protected final File modelFile;
 
 	public AbstractModel(
 			StateSpaceProvider stateSpaceProvider,
