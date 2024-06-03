@@ -15,6 +15,8 @@ assert fileContents == ["package(load_event_b_project([event_b_model(none,lift0,
 
 final s2 = api.eventb_load(savePath.toString())
 assert s2.model.modelFile == savePath.toFile()
+assert s2.model.allFiles.size() == 1
+assert s2.model.allFiles[0] == savePath
 
 "Load the Event-B Lift example and store it to a .eventb file."
 

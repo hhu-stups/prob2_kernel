@@ -48,6 +48,7 @@ public final class EventBPackageModel extends EventBModel {
 			mainComponentName == null ? new DependencyGraph() : new DependencyGraph().addVertex(mainComponentName),
 			modelFile,
 			mainComponentName == null ? null : new DummyMainComponent(mainComponentName),
+			modelFile == null ? Collections.emptyList() : Collections.singletonList(modelFile.toPath()),
 			Collections.emptySet()
 		);
 		

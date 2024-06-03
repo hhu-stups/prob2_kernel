@@ -34,7 +34,7 @@ public class EventBDatabaseTranslator {
 			parserFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 			SAXParser saxParser = parserFactory.newSAXParser();
 
-			this.model = m.setModelFile(modelFile);
+			this.model = m.setModelFile(modelFile).addFile(modelFile.toPath());
 
 			String directory = fullFileName.substring(0, fullFileName.lastIndexOf(File.separatorChar));
 			String workspacePath = directory.substring(0, directory.lastIndexOf(File.separatorChar));
@@ -44,6 +44,7 @@ public class EventBDatabaseTranslator {
 			if (!theoryFile.exists()) {
 				typeEnv = new HashSet<>();
 			} else {
+				this.model = this.model.addFile(theoryFile.toPath());
 				TheoryXmlHandler theoryHandler = new TheoryXmlHandler(this.model, workspacePath);
 				saxParser.parse(theoryFile, theoryHandler);
 				typeEnv = theoryHandler.getTypeEnv();

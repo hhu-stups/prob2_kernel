@@ -6,7 +6,12 @@ import de.prob.model.representation.DependencyGraph.ERefType
 import de.prob.model.representation.Variable
 import de.prob.statespace.Trace
 
-final s = api.b_load(Paths.get(dir, "machines", "includes", "M1.mch").toString())
+final path = Paths.get(dir, "machines", "includes", "M1.mch")
+final s = api.b_load(path.toString())
+assert s.model.allFiles.size() == 3
+assert s.model.allFiles[0] == path
+assert s.model.allFiles[1] == path.resolveSibling("M2.mch")
+assert s.model.allFiles[2] == path.resolveSibling("M3.mch")
 def t = new Trace(s)
 t = t.$initialise_machine()
 t = t."MA.set"()

@@ -1,6 +1,16 @@
 package de.prob.model.eventb;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import com.github.krukow.clj_lang.PersistentVector;
 import com.google.inject.Inject;
+
 import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.command.LoadEventBProjectCommand;
 import de.prob.animator.domainobjects.EvaluationException;
@@ -9,17 +19,15 @@ import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.model.eventb.theory.Theory;
 import de.prob.model.eventb.translate.EventBModelTranslator;
-import de.prob.model.representation.*;
+import de.prob.model.representation.AbstractElement;
+import de.prob.model.representation.AbstractModel;
+import de.prob.model.representation.BEvent;
+import de.prob.model.representation.DependencyGraph;
+import de.prob.model.representation.Machine;
+import de.prob.model.representation.ModelElementList;
 import de.prob.scripting.StateSpaceProvider;
 import de.prob.statespace.FormalismType;
 import de.prob.statespace.Language;
-
-import java.io.File;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.eventb.core.ast.extension.IFormulaExtension;
 
@@ -28,11 +36,12 @@ import static java.util.stream.Collectors.toMap;
 
 public class EventBModel extends AbstractModel {
 	private final AbstractElement mainComponent;
+	private final PersistentVector<Path> allFiles;
 	private final Set<IFormulaExtension> extensions;
 
 	@Inject
 	public EventBModel(final StateSpaceProvider stateSpaceProvider) {
-		this(stateSpaceProvider, Collections.emptyMap(), new DependencyGraph(), null, null, Collections.emptySet());
+		this(stateSpaceProvider, Collections.emptyMap(), new DependencyGraph(), null, null, Collections.emptyList(), Collections.emptySet());
 	}
 
 	EventBModel(
@@ -41,10 +50,12 @@ public class EventBModel extends AbstractModel {
 		DependencyGraph graph,
 		File modelFile,
 		AbstractElement mainComponent,
+		List<Path> allFiles,
 		Set<IFormulaExtension> extensions
 	) {
 		super(stateSpaceProvider, children, graph, modelFile);
 		this.mainComponent = mainComponent;
+		this.allFiles = allFiles instanceof PersistentVector<?> ? (PersistentVector<Path>)allFiles : PersistentVector.create(allFiles);
 		this.extensions = extensions;
 	}
 
@@ -65,11 +76,24 @@ public class EventBModel extends AbstractModel {
 	}
 
 	public EventBModel setModelFile(final File modelFile) {
-		return new EventBModel(stateSpaceProvider, getChildren(), getGraph(), modelFile, getMainComponent(), getExtensions());
+		return new EventBModel(stateSpaceProvider, getChildren(), getGraph(), modelFile, getMainComponent(), getAllFiles(), getExtensions());
 	}
 
 	public EventBModel withMainComponent(AbstractElement mainComponent) {
-		return new EventBModel(stateSpaceProvider, getChildren(), getGraph(), getModelFile(), mainComponent, getExtensions());
+		return new EventBModel(stateSpaceProvider, getChildren(), getGraph(), getModelFile(), mainComponent, getAllFiles(), getExtensions());
+	}
+
+	@Override
+	public List<Path> getAllFiles() {
+		return this.allFiles;
+	}
+
+	private EventBModel withAllFiles(List<Path> allFiles) {
+		return new EventBModel(stateSpaceProvider, getChildren(), getGraph(), getModelFile(), getMainComponent(), allFiles, getExtensions());
+	}
+
+	public EventBModel addFile(Path file) {
+		return this.withAllFiles(allFiles.assocN(allFiles.size(), file));
 	}
 
 	public Set<IFormulaExtension> getExtensions() {
@@ -77,7 +101,7 @@ public class EventBModel extends AbstractModel {
 	}
 
 	public EventBModel withExtensions(Set<IFormulaExtension> extensions) {
-		return new EventBModel(stateSpaceProvider, getChildren(), getGraph(), getModelFile(), getMainComponent(), Collections.unmodifiableSet(new HashSet<>(extensions)));
+		return new EventBModel(stateSpaceProvider, getChildren(), getGraph(), getModelFile(), getMainComponent(), getAllFiles(), Collections.unmodifiableSet(new HashSet<>(extensions)));
 	}
 
 	public ModelElementList<Theory> getTheories() {
@@ -99,7 +123,7 @@ public class EventBModel extends AbstractModel {
 	}
 
 	public EventBModel set(Class<? extends AbstractElement> clazz, ModelElementList<? extends AbstractElement> elements) {
-		return new EventBModel(stateSpaceProvider, assoc(clazz, elements), getGraph(), getModelFile(), getMainComponent(), getExtensions());
+		return new EventBModel(stateSpaceProvider, assoc(clazz, elements), getGraph(), getModelFile(), getMainComponent(), getAllFiles(), getExtensions());
 	}
 
 	public <T extends AbstractElement> EventBModel addTo(Class<T> clazz, T element) {
@@ -118,7 +142,7 @@ public class EventBModel extends AbstractModel {
 	}
 
 	private EventBModel withGraph(DependencyGraph graph) {
-		return new EventBModel(stateSpaceProvider, getChildren(), graph, getModelFile(), getMainComponent(), getExtensions());
+		return new EventBModel(stateSpaceProvider, getChildren(), graph, getModelFile(), getMainComponent(), getAllFiles(), getExtensions());
 	}
 
 	public EventBModel addMachine(final EventBMachine machine) {

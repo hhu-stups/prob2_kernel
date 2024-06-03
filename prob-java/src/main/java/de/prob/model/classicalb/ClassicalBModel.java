@@ -76,6 +76,11 @@ public class ClassicalBModel extends AbstractModel {
 			.collect(Collectors.toList());
 	}
 
+	@Override
+	public List<Path> getAllFiles() {
+		return this.getLoadedMachineFiles();
+	}
+
 	public Map<String, Path> getMachineFilesByName() {
 		final Map<String, Path> machineFilePaths = new TreeMap<>();
 		this.rml.getParsedFiles().forEach((name, file) -> machineFilePaths.put(name, file.toPath()));

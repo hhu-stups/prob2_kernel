@@ -1,6 +1,8 @@
 package de.prob.model.representation;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +60,21 @@ public abstract class AbstractModel extends AbstractElement {
 	@Override
 	public String toString() {
 		return graph.toString();
+	}
+
+	/**
+	 * Get a list of all files from which this model was loaded.
+	 * This always includes the main model file ({@link #getModelFile()}),
+	 * and possibly other files referenced from the main file (directly or indirectly).
+	 * 
+	 * @return list of all files that make up this model
+	 */
+	public List<Path> getAllFiles() {
+		if (this.getModelFile() == null) {
+			return Collections.emptyList();
+		} else {
+			return Collections.singletonList(this.getModelFile().toPath());
+		}
 	}
 
 	/**
