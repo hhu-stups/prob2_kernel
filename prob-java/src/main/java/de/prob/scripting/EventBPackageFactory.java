@@ -5,9 +5,9 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -28,29 +28,27 @@ public final class EventBPackageFactory implements ModelFactory<EventBModel> {
 		this.modelCreator = modelCreator;
 	}
 
-	private List<String> readFile(final Path machine) throws IOException {
-		try {
-			return Files.readAllLines(machine);
-		} catch (UncheckedIOException e) {
-			// the stream will throw an UncheckedIOException when there is an IOException while reading
-			throw e.getCause();
-		}
-	}
-	
 	@Override
 	public ExtractedModel<EventBModel> extract(final String fileName) throws IOException {
 		final Pattern pattern = Pattern.compile("^package\\((.*?)\\)\\.");
 		final Path file = Paths.get(fileName);
-		final List<String> lines = readFile(file);
-		String loadcmd = null;
-		for (final String string : lines) {
-			final Matcher m1 = pattern.matcher(string);
-			if (m1.find()) {
-				loadcmd = m1.group(1);
-			}
-		}
-		if (loadcmd == null) {
-			throw new IllegalArgumentException(file + " contained no valid Event-B Load command");
+
+		String loadcmd;
+		try (Stream<String> lines = Files.lines(file)) {
+			loadcmd = lines
+				.flatMap(line -> {
+					Matcher matcher = pattern.matcher(line);
+					if (matcher.find()) {
+						return Stream.of(matcher.group(1));
+					} else {
+						return Stream.empty();
+					}
+				})
+				.findFirst()
+				.orElseThrow(() -> new IllegalArgumentException(file + " contained no valid Event-B Load command"));
+		} catch (UncheckedIOException e) {
+			// the stream will throw an UncheckedIOException when there is an IOException while reading
+			throw e.getCause();
 		}
 
 		// TODO: Extract machines, contexts, axioms, ...
