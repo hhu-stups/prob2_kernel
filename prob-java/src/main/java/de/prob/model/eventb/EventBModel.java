@@ -68,7 +68,7 @@ public class EventBModel extends AbstractModel {
 		return new EventBModel(stateSpaceProvider, getChildren(), getGraph(), modelFile, getMainComponent(), getExtensions());
 	}
 
-	public EventBModel setMainComponent(AbstractElement mainComponent) {
+	public EventBModel withMainComponent(AbstractElement mainComponent) {
 		return new EventBModel(stateSpaceProvider, getChildren(), getGraph(), getModelFile(), mainComponent, getExtensions());
 	}
 

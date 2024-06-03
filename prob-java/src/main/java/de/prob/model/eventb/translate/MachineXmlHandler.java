@@ -448,7 +448,7 @@ public class MachineXmlHandler extends DefaultHandler {
 		ProofExtractor proofExtractor = new ProofExtractor(machine,
 				directoryPath + File.separatorChar + machine.getName());
 		machine = machine.withProofs(proofExtractor.getProofs());
-		model = model.addMachine(machine).setMainComponent(machine);
+		model = model.addMachine(machine).withMainComponent(machine);
 
 	}
 
