@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.google.common.io.MoreFiles;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -54,16 +53,9 @@ public final class EventBPackageFactory implements ModelFactory<EventBModel> {
 			throw new IllegalArgumentException(file + " contained no valid Event-B Load command");
 		}
 
-		final String componentName;
-		if (EXTENSION.equals(MoreFiles.getFileExtension(file))) {
-			componentName = MoreFiles.getNameWithoutExtension(file);
-		} else {
-			componentName = file.getFileName().toString();
-		}
-
 		// TODO: Extract machines, contexts, axioms, ...
 		// Currently, the list of children is empty for EventBPackageModel
-		EventBModel eventBModel = modelCreator.get().create(componentName, loadcmd);
+		EventBModel eventBModel = modelCreator.get().create(file, loadcmd);
 		return new ExtractedModel<>(stateSpaceProvider, eventBModel);
 	}
 }

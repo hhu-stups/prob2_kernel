@@ -1,7 +1,10 @@
 package de.prob.model.eventb;
 
+import java.io.File;
+import java.nio.file.Path;
 import java.util.Collections;
 
+import com.google.common.io.MoreFiles;
 import com.google.inject.Inject;
 
 import de.prob.animator.command.AbstractCommand;
@@ -9,6 +12,7 @@ import de.prob.animator.command.LoadEventBFileCommand;
 import de.prob.model.representation.AbstractElement;
 import de.prob.model.representation.DependencyGraph;
 import de.prob.model.representation.Named;
+import de.prob.scripting.EventBPackageFactory;
 import de.prob.scripting.StateSpaceProvider;
 
 public final class EventBPackageModel extends EventBModel {
@@ -34,15 +38,15 @@ public final class EventBPackageModel extends EventBModel {
 	
 	@Inject
 	public EventBPackageModel(final StateSpaceProvider stateSpaceProvider) {
-		this(stateSpaceProvider, null, null);
+		this(stateSpaceProvider, null, null, null);
 	}
 	
-	private EventBPackageModel(StateSpaceProvider stateSpaceProvider, String mainComponentName, String loadCommandPrologCode) {
+	private EventBPackageModel(StateSpaceProvider stateSpaceProvider, File modelFile, String mainComponentName, String loadCommandPrologCode) {
 		super(
 			stateSpaceProvider,
 			Collections.emptyMap(),
 			mainComponentName == null ? new DependencyGraph() : new DependencyGraph().addVertex(mainComponentName),
-			null,
+			modelFile,
 			mainComponentName == null ? null : new DummyMainComponent(mainComponentName),
 			Collections.emptySet()
 		);
@@ -54,8 +58,14 @@ public final class EventBPackageModel extends EventBModel {
 		return this.loadCommandPrologCode;
 	}
 	
-	public EventBPackageModel create(String mainComponentName, String loadCommandPrologCode) {
-		return new EventBPackageModel(this.stateSpaceProvider, mainComponentName, loadCommandPrologCode);
+	public EventBPackageModel create(Path modelFile, String loadCommandPrologCode) {
+		String mainComponentName;
+		if (EventBPackageFactory.EXTENSION.equals(MoreFiles.getFileExtension(modelFile))) {
+			mainComponentName = MoreFiles.getNameWithoutExtension(modelFile);
+		} else {
+			mainComponentName = modelFile.getFileName().toString();
+		}
+		return new EventBPackageModel(this.stateSpaceProvider, modelFile.toFile(), mainComponentName, loadCommandPrologCode);
 	}
 	
 	@Override
