@@ -201,6 +201,12 @@ public class ContextXmlHandler extends DefaultHandler {
 		}
 
 		model = model.addContext(internalContext);
+		if (extractor.getProofObligationsFile() != null) {
+			model = model.addFile(extractor.getProofObligationsFile());
+		}
+		if (extractor.getProofStatusFile() != null) {
+			model = model.addFile(extractor.getProofStatusFile());
+		}
 		inInternalContext = false;
 	}
 
@@ -218,6 +224,12 @@ public class ContextXmlHandler extends DefaultHandler {
 		context = context.withProofs(extractor.getProofs());
 
 		model = model.addContext(context).withMainComponent(context);
+		if (extractor.getProofObligationsFile() != null) {
+			model = model.addFile(extractor.getProofObligationsFile());
+		}
+		if (extractor.getProofStatusFile() != null) {
+			model = model.addFile(extractor.getProofStatusFile());
+		}
 	}
 
 	public Context getContext() {

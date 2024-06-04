@@ -4,8 +4,12 @@ import de.prob.statespace.Trace
 
 final path = Paths.get(dir, "machines", "Scheduler", "Scheduler0.bum")
 final s = api.eventb_load(path.toString()) 
-assert s.model.allFiles.size() == 1
+assert s.model.allFiles.size() == 5
 assert s.model.allFiles[0] == path.resolveSibling("Scheduler0.bcm")
+assert s.model.allFiles[1] == path.resolveSibling("Processes.bpo")
+assert s.model.allFiles[2] == path.resolveSibling("Processes.bps")
+assert s.model.allFiles[3] == path.resolveSibling("Scheduler0.bpo")
+assert s.model.allFiles[4] == path.resolveSibling("Scheduler0.bps")
 
 def c = s as Trace
 assert c.currentState == s.root
