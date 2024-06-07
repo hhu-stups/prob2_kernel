@@ -84,8 +84,7 @@ class AnimatorImpl implements IAnimator {
 			return new YesResult(new SimplifiedROMap<>(binding));
 		} else if (topnode instanceof AExceptionResult) {
 			AExceptionResult r = (AExceptionResult) topnode;
-			String message = r.getParams().getText();
-			throw new PrologException(message);
+			throw new PrologException(PrologTermGenerator.toPrologTerm(r.getTerm()));
 		} else {
 			throw new ProBError("Unhandled Prolog result: " + topnode.getClass());
 		}
