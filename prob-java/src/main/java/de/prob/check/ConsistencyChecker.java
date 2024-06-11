@@ -1,5 +1,7 @@
 package de.prob.check;
 
+import java.time.Duration;
+
 import de.prob.animator.CommandInterruptedException;
 import de.prob.animator.command.ComputeStateSpaceStatsCommand;
 import de.prob.animator.command.ModelCheckingStepCommand;
@@ -7,6 +9,7 @@ import de.prob.animator.command.SetBGoalCommand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.exception.ProBError;
 import de.prob.statespace.StateSpace;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +27,6 @@ public class ConsistencyChecker extends CheckerBase {
 	private static final int TIMEOUT_MS = 500;
 
 	private final ModelCheckingOptions options;
-	private final int timeLimit;
 
 	private int timeout;
 	private int maximumNodesLeft;
@@ -90,7 +92,6 @@ public class ConsistencyChecker extends CheckerBase {
 		this.maximumNodesLeft = options.getStateLimit();
 		this.deltaNodeProcessed = 0;
 		this.oldNodesProcessed = 0;
-		this.timeLimit = options.getTimeLimit() == null ? -1 : Math.toIntExact(options.getTimeLimit().getSeconds());
 		this.finished = false;
 	}
 
@@ -119,9 +120,9 @@ public class ConsistencyChecker extends CheckerBase {
 
 	private void updateTimeLimit() {
 		if (timeLimitSet()) {
-			long timeoutInMs = timeLimit * 1000L - stopwatch.elapsed().toMillis();
-			timeout = Math.min(TIMEOUT_MS, Math.max(0, (int) timeoutInMs));
-			finished = finished || timeoutInMs < 0;
+			Duration newTimeout = this.options.getTimeLimit().minus(stopwatch.elapsed());
+			timeout = Math.toIntExact(Math.min(TIMEOUT_MS, Math.max(0L, newTimeout.toMillis())));
+			finished = finished || newTimeout.isNegative();
 		}
 	}
 
