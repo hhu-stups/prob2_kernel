@@ -7,9 +7,8 @@ import de.prob.prolog.term.PrologTerm;
 /**
  * Represents an unhandled Prolog exception (from throw/1 in Prolog).
  */
+@SuppressWarnings("serial")
 public final class PrologException extends ProBError {
-	private static final long serialVersionUID = 1L;
-	
 	private final PrologTerm exceptionTerm;
 	
 	public PrologException(PrologTerm exceptionTerm) {
