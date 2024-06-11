@@ -1,6 +1,7 @@
 package de.prob.check;
 
 import de.prob.animator.CommandInterruptedException;
+import de.prob.animator.command.ComputeStateSpaceStatsCommand;
 import de.prob.animator.command.ModelCheckingStepCommand;
 import de.prob.animator.command.SetBGoalCommand;
 import de.prob.animator.domainobjects.IEvalElement;
@@ -22,8 +23,15 @@ public class ConsistencyChecker extends CheckerBase {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConsistencyChecker.class);
 	private static final int TIMEOUT_MS = 500;
 
-	private final ModelCheckingLimitConfiguration limitConfiguration;
 	private final ModelCheckingOptions options;
+	private final int timeLimit;
+
+	private int timeout;
+	private int maximumNodesLeft;
+	private boolean finished;
+
+	private int deltaNodeProcessed;
+	private int oldNodesProcessed;
 
 	/**
 	 * calls {@link #ConsistencyChecker(StateSpace, ModelCheckingOptions)} with
@@ -76,10 +84,52 @@ public class ConsistencyChecker extends CheckerBase {
 	 */
 	public ConsistencyChecker(final StateSpace s, final ModelCheckingOptions options, final IModelCheckListener listener) {
 		super(s, listener);
-		this.limitConfiguration = new ModelCheckingLimitConfiguration(s, stopwatch, TIMEOUT_MS,
-			options.getStateLimit(),
-			options.getTimeLimit() == null ? -1 : Math.toIntExact(options.getTimeLimit().getSeconds()));
+
 		this.options = options;
+		this.timeout = TIMEOUT_MS;
+		this.maximumNodesLeft = options.getStateLimit();
+		this.deltaNodeProcessed = 0;
+		this.oldNodesProcessed = 0;
+		this.timeLimit = options.getTimeLimit() == null ? -1 : Math.toIntExact(options.getTimeLimit().getSeconds());
+		this.finished = false;
+	}
+
+	private boolean nodesLimitSet() {
+		return this.options.getStateLimit() > 0;
+	}
+
+	private boolean timeLimitSet() {
+		return this.options.getTimeLimit() != null;
+	}
+
+	private void computeStateSpaceCoverage() {
+		if (nodesLimitSet()) {
+			final ComputeStateSpaceStatsCommand stateSpaceStatsCmd = new ComputeStateSpaceStatsCommand();
+			this.getStateSpace().execute(stateSpaceStatsCmd);
+			oldNodesProcessed = stateSpaceStatsCmd.getResult().getNrProcessedNodes();
+		}
+	}
+
+	private void updateStateSpaceCoverage(StateSpaceStats stats) {
+		if (nodesLimitSet()) {
+			deltaNodeProcessed = stats.getNrProcessedNodes() - oldNodesProcessed;
+			oldNodesProcessed = stats.getNrProcessedNodes();
+		}
+	}
+
+	private void updateTimeLimit() {
+		if (timeLimitSet()) {
+			long timeoutInMs = timeLimit * 1000L - stopwatch.elapsed().toMillis();
+			timeout = Math.min(TIMEOUT_MS, Math.max(0, (int) timeoutInMs));
+			finished = finished || timeoutInMs < 0;
+		}
+	}
+
+	private void updateNodeLimit() {
+		if (nodesLimitSet()) {
+			maximumNodesLeft = maximumNodesLeft - deltaNodeProcessed;
+			finished = finished || maximumNodesLeft <= 0;
+		}
 	}
 
 	@Override
@@ -99,11 +149,11 @@ public class ConsistencyChecker extends CheckerBase {
 		try {
 			this.getStateSpace().startTransaction();
 			ModelCheckingOptions modifiedOptions = this.options;
-			limitConfiguration.computeStateSpaceCoverage();
+			computeStateSpaceCoverage();
 			do {
-				limitConfiguration.updateTimeLimit();
-				limitConfiguration.updateNodeLimit();
-				cmd = limitConfiguration.nodesLimitSet() ? new ModelCheckingStepCommand(limitConfiguration.getMaximumNodesLeft(), limitConfiguration.getTimeout(), modifiedOptions) : new ModelCheckingStepCommand(limitConfiguration.getTimeout(), modifiedOptions);
+				updateTimeLimit();
+				updateNodeLimit();
+				cmd = nodesLimitSet() ? new ModelCheckingStepCommand(this.maximumNodesLeft, this.timeout, modifiedOptions) : new ModelCheckingStepCommand(this.timeout, modifiedOptions);
 
 				try {
 					this.getStateSpace().execute(cmd);
@@ -119,7 +169,7 @@ public class ConsistencyChecker extends CheckerBase {
 				}
 
 				stats = cmd.getStats();
-				limitConfiguration.updateStateSpaceCoverage(stats);
+				updateStateSpaceCoverage(stats);
 				if (Thread.interrupted()) {
 					LOGGER.info("Consistency checker received a Java thread interrupt");
 					this.isFinished(new CheckInterrupted(), stats);
@@ -127,7 +177,7 @@ public class ConsistencyChecker extends CheckerBase {
 				}
 				this.updateStats(cmd.getResult(), stats);
 				modifiedOptions = modifiedOptions.recheckExisting(false);
-			} while (cmd.getResult() instanceof NotYetFinished && !limitConfiguration.isFinished());
+			} while (cmd.getResult() instanceof NotYetFinished && !this.finished);
 		} finally {
 			this.getStateSpace().endTransaction();
 		}
