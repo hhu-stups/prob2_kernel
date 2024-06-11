@@ -1,7 +1,5 @@
 package de.prob.check;
 
-import java.time.Duration;
-
 import de.prob.animator.CommandInterruptedException;
 import de.prob.animator.command.ModelCheckingStepCommand;
 import de.prob.animator.command.SetBGoalCommand;
@@ -82,14 +80,6 @@ public class ConsistencyChecker extends CheckerBase {
 			options.getStateLimit(),
 			options.getTimeLimit() == null ? -1 : Math.toIntExact(options.getTimeLimit().getSeconds()));
 		this.options = options;
-	}
-
-	/**
-	 * @deprecated Use {@link ModelCheckingOptions#stateLimit(int)} and {@link ModelCheckingOptions#timeLimit(Duration)} to configure model checking limits.
-	 */
-	@Deprecated
-	public ModelCheckingLimitConfiguration getLimitConfiguration() {
-		return limitConfiguration;
 	}
 
 	@Override

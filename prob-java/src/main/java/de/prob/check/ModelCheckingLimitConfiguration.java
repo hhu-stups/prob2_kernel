@@ -4,13 +4,12 @@ import com.google.common.base.Stopwatch;
 import de.prob.animator.command.ComputeStateSpaceStatsCommand;
 import de.prob.statespace.StateSpace;
 
-public class ModelCheckingLimitConfiguration {
-
+class ModelCheckingLimitConfiguration {
 	private final StateSpace stateSpace;
 	private final Stopwatch stopwatch;
 	private final int initialTimeout;
-	private int nodesLimit;
-	private int timeLimit;
+	private final int nodesLimit;
+	private final int timeLimit;
 	private int timeout;
 	private int maximumNodesLeft;
 	private boolean finished;
@@ -29,15 +28,6 @@ public class ModelCheckingLimitConfiguration {
 		this.nodesLimit = nodesLimit;
 		this.timeLimit = timeLimit;
 		this.finished = false;
-	}
-
-	public void setNodesLimit(int nodesLimit) {
-		this.maximumNodesLeft = nodesLimit;
-		this.nodesLimit = nodesLimit;
-	}
-
-	public void setTimeLimit(int timeLimit) {
-		this.timeLimit = timeLimit;
 	}
 
 	public void computeStateSpaceCoverage() {
