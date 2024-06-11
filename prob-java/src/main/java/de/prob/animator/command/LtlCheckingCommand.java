@@ -22,13 +22,9 @@ import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.AIntegerPrologTerm;
 import de.prob.prolog.term.CompoundPrologTerm;
-import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class LtlCheckingCommand extends AbstractCommand implements
 		IStateSpaceModifier {
@@ -36,11 +32,8 @@ public final class LtlCheckingCommand extends AbstractCommand implements
 		INFINITE, FINITE, REDUCED
 	}
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(LtlCheckingCommand.class);
-
 	private static final String PROLOG_COMMAND_NAME = "prob2_do_ltl_modelcheck";
 	private static final String VARIABLE_NAME_RESULT = "R";
-	private static final String VARIABLE_NAME_ERRORS = "Errors";
 
 	private final StateSpace s;
 	private final LTL ltlFormula;
@@ -61,20 +54,12 @@ public final class LtlCheckingCommand extends AbstractCommand implements
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
 		PrologTerm term = bindings.get(VARIABLE_NAME_RESULT);
-		ListPrologTerm errorTerm = BindingGenerator.getList(bindings, VARIABLE_NAME_ERRORS);
 
-		if (!errorTerm.isEmpty()) {
-			if (!term.hasFunctor("typeerror", 0)) {
-				LOGGER.warn("LTL checker returned errors together with a non-error result {}/{}", term.getFunctor(), term.getArity());
-			}
-			final List<ErrorItem> errors = errorTerm.stream()
+		if (term.hasFunctor("type_error", 1)) {
+			final List<ErrorItem> errors = BindingGenerator.getList(term.getArgument(1)).stream()
 				.map(ErrorItem::fromProlog)
 				.collect(Collectors.toList());
 			result = new LTLError(ltlFormula, errors);
-		} else if (term.hasFunctor("typeerror", 0)) {
-			assert errorTerm.isEmpty(); // non-empty case already handled in previous branch
-			LOGGER.warn("LTL checker returned typeerror/0 result with an empty list of errors");
-			result = new LTLError(ltlFormula, Collections.emptyList());
 		} else if (term.hasFunctor("ok", 0)) {
 			result = new LTLOk(ltlFormula);
 		} else if (term.hasFunctor("nostart", 0)) {
@@ -121,9 +106,14 @@ public final class LtlCheckingCommand extends AbstractCommand implements
 	public void writeCommand(final IPrologTermOutput pto) {
 		pto.openTerm(PROLOG_COMMAND_NAME);
 		this.ltlFormula.printProlog(pto);
+
+		pto.openList();
+		pto.openTerm("max_new_states");
 		pto.printNumber(max);
+		pto.closeTerm();
+		pto.closeList();
+
 		pto.printVariable(VARIABLE_NAME_RESULT);
-		pto.printVariable(VARIABLE_NAME_ERRORS);
 		pto.closeTerm();
 	}
 
