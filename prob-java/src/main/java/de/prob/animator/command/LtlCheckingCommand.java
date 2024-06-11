@@ -23,6 +23,7 @@ import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.AIntegerPrologTerm;
 import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.PrologTerm;
+import de.prob.statespace.State;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
 
@@ -38,13 +39,19 @@ public final class LtlCheckingCommand extends AbstractCommand implements
 	private final StateSpace s;
 	private final LTL ltlFormula;
 	private final int max;
+	private final State startState;
 
 	private IModelCheckingResult result;
 
-	public LtlCheckingCommand(final StateSpace s, final LTL ltlFormula, final int max) {
+	public LtlCheckingCommand(StateSpace s, LTL ltlFormula, int max, State startState) {
 		this.s = s;
 		this.ltlFormula = ltlFormula;
 		this.max = max;
+		this.startState = startState;
+	}
+
+	public LtlCheckingCommand(StateSpace s, LTL ltlFormula, int max) {
+		this(s, ltlFormula, max, null);
 	}
 
 	public IModelCheckingResult getResult() {
@@ -110,6 +117,15 @@ public final class LtlCheckingCommand extends AbstractCommand implements
 		pto.openList();
 		pto.openTerm("max_new_states");
 		pto.printNumber(max);
+		pto.closeTerm();
+		pto.openTerm("mode");
+		if (startState == null) {
+			pto.printAtom("init");
+		} else {
+			pto.openTerm("specific_node");
+			pto.printAtomOrNumber(startState.getId());
+			pto.closeTerm();
+		}
 		pto.closeTerm();
 		pto.closeList();
 

@@ -22,6 +22,7 @@ import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;
+import de.prob.statespace.State;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
 
@@ -34,13 +35,19 @@ public final class CtlCheckingCommand extends AbstractCommand implements
 	private final StateSpace s;
 	private final CTL ctlFormula;
 	private final int max;
+	private final State startState;
 
 	private IModelCheckingResult result;
 
-	public CtlCheckingCommand(final StateSpace s, final CTL ctlFormula, final int max) {
+	public CtlCheckingCommand(StateSpace s, CTL ctlFormula, int max, State startState) {
 		this.s = s;
 		this.ctlFormula = ctlFormula;
 		this.max = max;
+		this.startState = startState;
+	}
+	
+	public CtlCheckingCommand(StateSpace s, CTL ctlFormula, int max) {
+		this(s, ctlFormula, max, null);
 	}
 
 	public IModelCheckingResult getResult() {
@@ -81,6 +88,15 @@ public final class CtlCheckingCommand extends AbstractCommand implements
 		pto.openList();
 		pto.openTerm("max_new_states");
 		pto.printNumber(max);
+		pto.closeTerm();
+		pto.openTerm("mode");
+		if (startState == null) {
+			pto.printAtom("init");
+		} else {
+			pto.openTerm("specific_node");
+			pto.printAtomOrNumber(startState.getId());
+			pto.closeTerm();
+		}
 		pto.closeTerm();
 		pto.closeList();
 
