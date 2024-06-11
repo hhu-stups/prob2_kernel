@@ -32,20 +32,21 @@ import org.slf4j.LoggerFactory;
 
 public final class LtlCheckingCommand extends AbstractCommand implements
 		IStateSpaceModifier {
+	public enum PathType {
+		INFINITE, FINITE, REDUCED
+	}
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(LtlCheckingCommand.class);
 
 	private static final String PROLOG_COMMAND_NAME = "prob2_do_ltl_modelcheck";
 	private static final String VARIABLE_NAME_RESULT = "R";
 	private static final String VARIABLE_NAME_ERRORS = "Errors";
 
-	public enum PathType {
-		INFINITE, FINITE, REDUCED
-	}
-
-	private final int max;
-	private IModelCheckingResult result;
-	private final LTL ltlFormula;
 	private final StateSpace s;
+	private final LTL ltlFormula;
+	private final int max;
+
+	private IModelCheckingResult result;
 
 	public LtlCheckingCommand(final StateSpace s, final LTL ltlFormula, final int max) {
 		this.s = s;

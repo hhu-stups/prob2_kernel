@@ -38,10 +38,11 @@ public final class CtlCheckingCommand extends AbstractCommand implements
 	private static final String VARIABLE_NAME_COUNTER_EXAMPLE = "CE";
 	private static final String VARIABLE_NAME_ERRORS = "Errors";
 
-	private final int max;
-	private IModelCheckingResult result;
-	private final CTL ctlFormula;
 	private final StateSpace s;
+	private final CTL ctlFormula;
+	private final int max;
+
+	private IModelCheckingResult result;
 
 	public CtlCheckingCommand(final StateSpace s, final CTL ctlFormula, final int max) {
 		this.s = s;
