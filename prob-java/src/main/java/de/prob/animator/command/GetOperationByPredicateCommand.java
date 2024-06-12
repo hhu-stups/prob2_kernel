@@ -119,8 +119,7 @@ public final class GetOperationByPredicateCommand extends AbstractCommand
 
 		for (PrologTerm prologTerm : BindingGenerator.getList(bindings.get(ERRORS_VARIABLE))) {
 			if(prologTerm.getArity() > 0) {
-				ListPrologTerm errorList = (ListPrologTerm) prologTerm.getArgument(1);
-				for(PrologTerm errorTerm : errorList) {
+				for(PrologTerm errorTerm : BindingGenerator.getList(prologTerm.getArgument(1))) {
 					this.errors.add(new GetOperationError(GetOperationErrorType.PARSE_ERROR, errorTerm.getArgument(1).getFunctor()));
 				}
 			} else {

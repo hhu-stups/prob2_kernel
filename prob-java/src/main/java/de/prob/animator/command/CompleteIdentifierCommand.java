@@ -172,7 +172,7 @@ public final class CompleteIdentifierCommand extends AbstractCommand {
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
 		ListPrologTerm completionsWithType = BindingGenerator.getList(bindings, COMPLETIONS_VAR);
-		if (!completionsWithType.stream().allMatch(c -> c.getArity() == 2)) {
+		if (!completionsWithType.stream().allMatch(c -> c.isList() && ((ListPrologTerm) c).size() == 2)) {
 			throw new IllegalStateException("expected list [Completion,Type]");
 		}
 		this.completions = completionsWithType.stream()

@@ -38,7 +38,7 @@ public final class ReplayedTrace implements ITraceDescription {
 			
 			final List<String> errorMessages = new ArrayList<>();
 			for (final PrologTerm errorTerm : BindingGenerator.getList(term.getArgument(2))) {
-				if ("rerror".equals(errorTerm.getFunctor()) && errorTerm.getArity() == 1) {
+				if (errorTerm.hasFunctor("rerror", 1)) {
 					errorMessages.add(errorTerm.getArgument(1).atomToString());
 				} else {
 					errorMessages.add(errorTerm.toString());
