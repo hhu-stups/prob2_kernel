@@ -9,6 +9,7 @@ import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.parser.ResultParserException;
 import de.prob.prolog.output.IPrologTermOutput;
+import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 
@@ -176,16 +177,7 @@ public final class CompleteIdentifierCommand extends AbstractCommand {
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
 		ListPrologTerm completionsWithType = BindingGenerator.getList(bindings, COMPLETIONS_VAR);
 		this.completions = completionsWithType.stream()
-			.map(term -> {
-				ListPrologTerm completion = BindingGenerator.getList(term);
-				if (completion.size() != 2) {
-					throw new ResultParserException("expected list [Completion,Type]");
-				}
-				return new Completion(
-					completion.get(0).atomToString(),
-					completion.get(1).atomToString()
-				);
-			})
+			.map(Completion::fromPrologTerm)
 			.collect(Collectors.toList());
 	}
 
@@ -213,6 +205,11 @@ public final class CompleteIdentifierCommand extends AbstractCommand {
 		public Completion(final String completion, final String type) {
 			this.completion = completion;
 			this.type = type;
+		}
+
+		public static Completion fromPrologTerm(PrologTerm term) {
+			CompoundPrologTerm compound = BindingGenerator.getCompoundTerm(term, "completion", 2);
+			return new Completion(compound.getArgument(1).atomToString(), compound.getArgument(2).atomToString());
 		}
 
 		public String getCompletion() {
