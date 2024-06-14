@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class GetMachineOperationInfosWithTypes extends AbstractCommand {
@@ -28,7 +28,7 @@ public class GetMachineOperationInfosWithTypes extends AbstractCommand {
 	private static List<String> convertPossiblyUnknownAtomicStringList(final PrologTerm list) {
 		if (list instanceof ListPrologTerm) {
 			return PrologTerm.atomsToStrings((ListPrologTerm) list);
-		} else if ("unknown".equals(list.atomicToString())) {
+		} else if (list.hasFunctor("unknown")) {
 			return Collections.emptyList();
 		} else {
 			throw new AssertionError("Not a list or 'unknown': " + list);
@@ -50,10 +50,19 @@ public class GetMachineOperationInfosWithTypes extends AbstractCommand {
 	}
 
 	private static Map<String, String> convertPrologTermIntoMap(PrologTerm argument) {
-		Set<String> split = BindingGenerator.getList(argument).stream().map(entry -> entry.getArgument(1)+ "-"+entry.getArgument(2)).collect(Collectors.toSet());
-		return split.stream().collect(Collectors.toMap(entry -> entry.substring(0, entry.indexOf("-")), entry -> entry.substring(entry.indexOf("-")+1 )));
+		return BindingGenerator.getList(argument).stream()
+				.map(entry -> BindingGenerator.getCompoundTerm(entry, "-", 2))
+				.collect(Collectors.toMap(
+						entry -> entry.getArgument(1).toString(),
+						entry -> entry.getArgument(2).toString(),
+						(oldVal, newVal) -> {
+							if (!Objects.equals(oldVal, newVal)) {
+								throw new AssertionError(oldVal + " != " + newVal);
+							}
+							return newVal;
+						}
+				));
 	}
-
 
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {

@@ -75,14 +75,12 @@ public final class GetAnimationMatrixForStateCommand extends AbstractCommand {
 				final int column = BindingGenerator.getAInteger(term.getArgument(2)).intValueExact();
 				final PrologTerm valueTerm = term.getArgument(3);
 				final AnimationMatrixEntry value;
-				if ("image".equals(valueTerm.getFunctor())) {
+				if (valueTerm.hasFunctor("image", 1)) {
 					// Animation image number
-					BindingGenerator.getCompoundTerm(valueTerm, 1);
 					final int imageNumber = ((AIntegerPrologTerm)valueTerm.getArgument(1)).intValueExact();
 					value = new AnimationMatrixEntry.Image(row, column, imageNumber);
-				} else if ("text".equals(valueTerm.getFunctor())) {
+				} else if (valueTerm.hasFunctor("text", 1)) {
 					// Literal string label
-					BindingGenerator.getCompoundTerm(valueTerm, 1);
 					final String text = valueTerm.getArgument(1).atomicToString();
 					value = new AnimationMatrixEntry.Text(row, column, text);
 				} else {

@@ -3,9 +3,9 @@ package de.prob.animator.command;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
-import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 
 public class GetEnableMatrixCommand extends AbstractCommand {
@@ -54,6 +54,7 @@ public class GetEnableMatrixCommand extends AbstractCommand {
 		public final String keepDisabled;
 
 		public EnableMatixEntry(PrologTerm term) {
+			BindingGenerator.getCompoundTerm(term, "enable_edges", 4);
 			enable = term.getArgument(1).getFunctor();
 			keepEnabled = term.getArgument(2).getFunctor();
 			disable = term.getArgument(3).getFunctor();
@@ -95,9 +96,9 @@ public class GetEnableMatrixCommand extends AbstractCommand {
 	// enable_edges(Enable,KeepEnabled,Disable,KeepDisabled)
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
-		ListPrologTerm elements = (ListPrologTerm) bindings.get(MATRIX_VAR);
 		matrix.clear();
-		for (PrologTerm term : elements) {
+		for (PrologTerm term : BindingGenerator.getList(bindings, MATRIX_VAR)) {
+			BindingGenerator.getCompoundTerm(term, "enable_rel", 3);
 			EventPair key = new EventPair(term.getArgument(1).getFunctor(), term.getArgument(2).getFunctor());
 			matrix.put(key, new EnableMatixEntry(term.getArgument(3)));
 		}

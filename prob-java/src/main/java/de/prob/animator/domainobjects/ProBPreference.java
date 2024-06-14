@@ -29,7 +29,7 @@ public final class ProBPreference {
 		description = term.getArgument(DESC_POSITION).atomToString();
 		category = term.getArgument(CAT_POSITION).atomToString();
 		final PrologTerm defaultTerm = term.getArgument(DEFAULT_POSITION);
-		defaultValue = defaultTerm.isAtom() ? defaultTerm.atomToString() : defaultTerm.toString();
+		defaultValue = defaultTerm.isAtomic() ? defaultTerm.atomicToString() : defaultTerm.toString();
 	}
 
 	@Override
