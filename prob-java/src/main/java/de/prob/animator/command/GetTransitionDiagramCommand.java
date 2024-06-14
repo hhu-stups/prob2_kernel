@@ -27,8 +27,8 @@ public class GetTransitionDiagramCommand extends AbstractDotDiagramCmd {
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
 		// Result term is a list with two arguments [States,Transitions].
 		ListPrologTerm list = BindingGenerator.getList(bindings.get(STATE_SPACE));
-		extractStates(BindingGenerator.getList(list.getArgument(1)));
-		extractTransitions(BindingGenerator.getList(list.getArgument(2)));
+		extractStates(BindingGenerator.getList(list.get(0)));
+		extractTransitions(BindingGenerator.getList(list.get(1)));
 	}
 
 	public IEvalElement getExpression() {

@@ -1,13 +1,16 @@
 package de.prob.animator.command;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
+import de.prob.parser.ResultParserException;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 public final class CompleteIdentifierCommand extends AbstractCommand {
 
@@ -172,14 +175,17 @@ public final class CompleteIdentifierCommand extends AbstractCommand {
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
 		ListPrologTerm completionsWithType = BindingGenerator.getList(bindings, COMPLETIONS_VAR);
-		if (!completionsWithType.stream().allMatch(c -> c.isList() && ((ListPrologTerm) c).size() == 2)) {
-			throw new IllegalStateException("expected list [Completion,Type]");
-		}
 		this.completions = completionsWithType.stream()
-			.map(completion -> new Completion(
-				completion.getArgument(1).atomToString(),
-				completion.getArgument(2).atomToString()
-			))
+			.map(term -> {
+				ListPrologTerm completion = BindingGenerator.getList(term);
+				if (completion.size() != 2) {
+					throw new ResultParserException("expected list [Completion,Type]");
+				}
+				return new Completion(
+					completion.get(0).atomToString(),
+					completion.get(1).atomToString()
+				);
+			})
 			.collect(Collectors.toList());
 	}
 
