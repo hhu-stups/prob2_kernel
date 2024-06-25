@@ -29,11 +29,11 @@ public class RuleResult {
 			AbstractEvalResult counterExampleResult) {
 		this.ruleOperation = rule;
 		this.ruleStatus = RuleStatus.valueOf(result);
-		if (numberOfCounterExamples instanceof EnumerationWarning) {
-			this.numberOfViolations = -1;
-		} else if (numberOfCounterExamples instanceof EvalResult) {
+		if (numberOfCounterExamples instanceof EvalResult) {
 			this.numberOfViolations = Integer.parseInt(((EvalResult) numberOfCounterExamples).getValue());
 			transformCounterExamples(counterExampleResult);
+		} else if (numberOfCounterExamples instanceof EnumerationWarning) {
+			this.numberOfViolations = -1;
 		} else {
 			throw new IllegalStateException("expected instance of EvalResult for enumerable counter examples" +
 				" or EnumerationWarning for an infinite number of counter examples");

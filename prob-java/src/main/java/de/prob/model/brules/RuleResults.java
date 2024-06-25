@@ -38,15 +38,17 @@ public class RuleResults {
 			ClassicalB ruleObject = new ClassicalB(operation.getName());
 			evalElements.add(ruleObject);
 			// get number of counter examples
+			// don't use FORCE here - enumeration warnings are handled by RuleResult
 			String numberOfCtsFormula = String.format("card(%s)", operation.getCounterExampleVariableName());
 			ClassicalB numberOfCtsFormulaObject = new ClassicalB(numberOfCtsFormula);
 			evalElements.add(numberOfCtsFormulaObject);
 			// get the (restricted) set of counter examples
+			// FORCE should not be a problem here - we only use the result if card(%s) above was finite
 			String ctFormula;
 			if (maxNumberOfReportedCounterExamples == -1) {
-				ctFormula = String.format("ran(SORT(%s))", operation.getCounterExampleVariableName());
+				ctFormula = String.format("FORCE(ran(SORT(%s)))", operation.getCounterExampleVariableName());
 			} else {
-				ctFormula = String.format("SORT(%s)[1..%s]", operation.getCounterExampleVariableName(),
+				ctFormula = String.format("FORCE(SORT(%s)[1..%s])", operation.getCounterExampleVariableName(),
 					maxNumberOfReportedCounterExamples);
 			}
 			ClassicalB counterExampleObject = new ClassicalB(ctFormula);
