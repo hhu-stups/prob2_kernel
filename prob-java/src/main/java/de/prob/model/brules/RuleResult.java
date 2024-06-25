@@ -11,6 +11,7 @@ import de.hhu.stups.prob.translator.BString;
 import de.hhu.stups.prob.translator.BTuple;
 import de.hhu.stups.prob.translator.BValue;
 import de.prob.animator.domainobjects.AbstractEvalResult;
+import de.prob.animator.domainobjects.EnumerationWarning;
 import de.prob.animator.domainobjects.EvalResult;
 import de.prob.animator.domainobjects.TranslatedEvalResult;
 
@@ -28,8 +29,15 @@ public class RuleResult {
 			AbstractEvalResult counterExampleResult) {
 		this.ruleOperation = rule;
 		this.ruleStatus = RuleStatus.valueOf(result);
-		this.numberOfViolations = Integer.parseInt(((EvalResult) numberOfCounterExamples).getValue());
-		transformCounterExamples(counterExampleResult);
+		if (numberOfCounterExamples instanceof EnumerationWarning) {
+			this.numberOfViolations = -1;
+		} else if (numberOfCounterExamples instanceof EvalResult) {
+			this.numberOfViolations = Integer.parseInt(((EvalResult) numberOfCounterExamples).getValue());
+			transformCounterExamples(counterExampleResult);
+		} else {
+			throw new IllegalStateException("expected instance of EvalResult for enumerable counter examples" +
+				" or EnumerationWarning for an infinite number of counter examples");
+		}
 	}
 
 	public RuleOperation getRuleOperation() {
