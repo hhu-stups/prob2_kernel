@@ -1,6 +1,7 @@
 package de.prob.model.brules;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiFunction;
@@ -65,10 +66,12 @@ public class RuleResult {
 
 	private void transformCounterExamples(AbstractEvalResult abstractEvalResult) {
 		transformMessages(abstractEvalResult, counterExamples, CounterExample::new);
+		counterExamples.sort(Comparator.comparingInt(RuleResult.CounterExample::getErrorType));
 	}
 
 	private void transformSuccessMessages(AbstractEvalResult abstractEvalResult) {
 		transformMessages(abstractEvalResult, successMessages, SuccessMessage::new);
+		successMessages.sort(Comparator.comparingInt(RuleResult.SuccessMessage::getRuleBodyCount));
 	}
 
 	private static <T> void transformMessages(AbstractEvalResult abstractEvalResult, List<T> messages, BiFunction<Integer, String, T> messageConstructor) {
