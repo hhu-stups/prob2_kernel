@@ -105,6 +105,13 @@ public class RulesMachineTest {
 	}
 
 	@Test
+	public void testNumberOfReportedSuccessMessages() {
+		RulesMachineRun rulesMachineRun = startRulesMachineRunWithOperations(
+			"RULE Rule1 BODY RULE_FORALL x WHERE x : 1..1000 EXPECT x : 1..200 COUNTEREXAMPLE STRING_FORMAT(\"~w\", x) END END");
+		assertEquals(50, rulesMachineRun.getRuleResults().getRuleResult("Rule1").getSuccessMessages().size());
+	}
+
+	@Test
 	public void testChangeNumberOfReportedCounterExamples() {
 		File file = createRulesMachineFile(
 				"OPERATIONS RULE Rule1 BODY RULE_FAIL x WHEN x : 1..1000 COUNTEREXAMPLE STRING_FORMAT(\"~w\", x) END END");
@@ -115,13 +122,35 @@ public class RulesMachineTest {
 	}
 
 	@Test
+	public void testChangeNumberOfReportedSuccessMessages() {
+		File file = createRulesMachineFile(
+			"OPERATIONS RULE Rule1 BODY RULE_FORALL x WHERE x : 1..1000 EXPECT x : 1..200 COUNTEREXAMPLE STRING_FORMAT(\"~w\", x) END END");
+		RulesMachineRun rulesMachineRun = new RulesMachineRun(RulesTestUtil.getRulesMachineRunner(), file);
+		rulesMachineRun.setMaxNumberOfReportedSuccessMessages(20);
+		rulesMachineRun.start();
+		assertEquals(20, rulesMachineRun.getRuleResults().getRuleResult("Rule1").getSuccessMessages().size());
+	}
+
+	@Test
 	public void testExtractingAllCounterExample() {
 		File file = createRulesMachineFile(
 				"OPERATIONS RULE Rule1 BODY RULE_FAIL x WHEN x : 1..1000 COUNTEREXAMPLE STRING_FORMAT(\"This is a long counter example message including a unique number to test that the extracted B value will not be truncated: ~w\", x) END END");
 		RulesMachineRun rulesMachineRun = new RulesMachineRun(RulesTestUtil.getRulesMachineRunner(), file);
-		rulesMachineRun.setMaxNumberOfReportedCounterExamples(1000);
+		rulesMachineRun.setMaxNumberOfReportedCounterExamples(-1);
 		rulesMachineRun.start();
 		assertEquals(1000, rulesMachineRun.getRuleResults().getRuleResult("Rule1").getCounterExamples().size());
+	}
+
+	@Test
+	public void testExtractingAllCounterExamplesAndSuccessMessages() {
+		File file = createRulesMachineFile(
+			"OPERATIONS RULE Rule1 BODY RULE_FORALL x WHERE x : 1..1000 EXPECT x : 1..200 COUNTEREXAMPLE STRING_FORMAT(\"This is a long counter example message including a unique number to test that the extracted B value will not be truncated: ~w\", x) END END");
+		RulesMachineRun rulesMachineRun = new RulesMachineRun(RulesTestUtil.getRulesMachineRunner(), file);
+		rulesMachineRun.setMaxNumberOfReportedCounterExamples(-1);
+		rulesMachineRun.setMaxNumberOfReportedSuccessMessages(-1);
+		rulesMachineRun.start();
+		assertEquals(800, rulesMachineRun.getRuleResults().getRuleResult("Rule1").getCounterExamples().size());
+		assertEquals(200, rulesMachineRun.getRuleResults().getRuleResult("Rule1").getSuccessMessages().size());
 	}
 
 	@Test
