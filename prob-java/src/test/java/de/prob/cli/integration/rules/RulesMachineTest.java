@@ -107,7 +107,7 @@ public class RulesMachineTest {
 	@Test
 	public void testNumberOfReportedSuccessMessages() {
 		RulesMachineRun rulesMachineRun = startRulesMachineRunWithOperations(
-			"RULE Rule1 BODY RULE_FORALL x WHERE x : 1..1000 EXPECT x : 1..200 COUNTEREXAMPLE STRING_FORMAT(\"~w\", x) END END");
+			"RULE Rule1 BODY RULE_FORALL x WHERE x : 1..1000 EXPECT x : 1..200 ON_SUCCESS ```${x}``` COUNTEREXAMPLE STRING_FORMAT(\"~w\", x) END END");
 		assertEquals(50, rulesMachineRun.getRuleResults().getRuleResult("Rule1").getSuccessMessages().size());
 	}
 
@@ -124,7 +124,7 @@ public class RulesMachineTest {
 	@Test
 	public void testChangeNumberOfReportedSuccessMessages() {
 		File file = createRulesMachineFile(
-			"OPERATIONS RULE Rule1 BODY RULE_FORALL x WHERE x : 1..1000 EXPECT x : 1..200 COUNTEREXAMPLE STRING_FORMAT(\"~w\", x) END END");
+			"OPERATIONS RULE Rule1 BODY RULE_FORALL x WHERE x : 1..1000 EXPECT x : 1..200 ON_SUCCESS ```${x}``` COUNTEREXAMPLE STRING_FORMAT(\"~w\", x) END END");
 		RulesMachineRun rulesMachineRun = new RulesMachineRun(RulesTestUtil.getRulesMachineRunner(), file);
 		rulesMachineRun.setMaxNumberOfReportedSuccessMessages(20);
 		rulesMachineRun.start();
@@ -144,7 +144,7 @@ public class RulesMachineTest {
 	@Test
 	public void testExtractingAllCounterExamplesAndSuccessMessages() {
 		File file = createRulesMachineFile(
-			"OPERATIONS RULE Rule1 BODY RULE_FORALL x WHERE x : 1..1000 EXPECT x : 1..200 COUNTEREXAMPLE STRING_FORMAT(\"This is a long counter example message including a unique number to test that the extracted B value will not be truncated: ~w\", x) END END");
+			"OPERATIONS RULE Rule1 BODY RULE_FORALL x WHERE x : 1..1000 EXPECT x : 1..200 ON_SUCCESS ```${x}``` COUNTEREXAMPLE STRING_FORMAT(\"This is a long counter example message including a unique number to test that the extracted B value will not be truncated: ~w\", x) END END");
 		RulesMachineRun rulesMachineRun = new RulesMachineRun(RulesTestUtil.getRulesMachineRunner(), file);
 		rulesMachineRun.setMaxNumberOfReportedCounterExamples(-1);
 		rulesMachineRun.setMaxNumberOfReportedSuccessMessages(-1);
