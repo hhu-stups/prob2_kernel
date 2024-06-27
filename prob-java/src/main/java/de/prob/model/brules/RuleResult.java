@@ -66,12 +66,14 @@ public class RuleResult {
 
 	private void transformCounterExamples(AbstractEvalResult abstractEvalResult) {
 		transformMessages(abstractEvalResult, counterExamples, CounterExample::new);
-		counterExamples.sort(Comparator.comparingInt(RuleResult.CounterExample::getErrorType));
+		counterExamples.sort(Comparator.comparingInt(RuleResult.CounterExample::getErrorType)
+			.thenComparing(RuleResult.CounterExample::getMessage));
 	}
 
 	private void transformSuccessMessages(AbstractEvalResult abstractEvalResult) {
 		transformMessages(abstractEvalResult, successMessages, SuccessMessage::new);
-		successMessages.sort(Comparator.comparingInt(RuleResult.SuccessMessage::getRuleBodyCount));
+		successMessages.sort(Comparator.comparingInt(RuleResult.SuccessMessage::getRuleBodyCount)
+			.thenComparing(RuleResult.SuccessMessage::getMessage));
 	}
 
 	private static <T> void transformMessages(AbstractEvalResult abstractEvalResult, List<T> messages, BiFunction<Integer, String, T> messageConstructor) {

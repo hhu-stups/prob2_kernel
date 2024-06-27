@@ -128,7 +128,7 @@ public class RulesMachineRun {
 				return;
 			}
 		} catch (Exception e) {
-			LOGGER.error("Unexpected error occured: {}", e.getMessage(), e);
+			LOGGER.error("Unexpected error occurred: {}", e.getMessage(), e);
 			// storing all error messages
 			this.errors.add(new Error(ERROR_TYPES.PROB_ERROR, e.getMessage(), e));
 			return;
