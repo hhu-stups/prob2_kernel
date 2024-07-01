@@ -10,6 +10,12 @@ public enum EvalElementType {
 	PREDICATE("bpred"),
 	EXPRESSION("bexpr"),
 	ASSIGNMENT(null),
+	/**
+	 * @deprecated This type is no longer used.
+	 *     It was previously returned for {@link EventB} formulas that could not be parsed.
+	 *     This now throws an {@link EvaluationException} instead.
+	 */
+	@Deprecated
 	NONE(null),
 	CSP("csp"),
 	;

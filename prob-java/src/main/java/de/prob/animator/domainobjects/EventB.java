@@ -138,7 +138,6 @@ public final class EventB extends AbstractEvalElement implements IBEvalElement {
 				if (parseResult.hasProblem()) {
 					errors.add("Parsing substitution failed because: " + parseResult);
 					addProblems(parseResult, errors);
-					kind = EvalElementType.NONE;
 				}
 			}
 		}
@@ -206,19 +205,7 @@ public final class EventB extends AbstractEvalElement implements IBEvalElement {
 	@Override
 	public EvalElementType getKind() {
 		if (this.kind == null) {
-			try {
-				this.ensureParsed();
-			} catch (EvaluationException exc) {
-				// ensureParsed should always set the kind, even if it throws an EvaluationException.
-				if (this.kind == null) {
-					throw new AssertionError("ensureParsed didn't initialize the formula kind", exc);
-				}
-				// TODO: this swallows the EvaluationException, is that intended?
-				// see EventBEvalElementTest
-			}
-			if (this.kind == null) {
-				throw new AssertionError("ensureParsed didn't initialize the formula kind");
-			}
+			this.ensureParsed();
 		}
 		return this.kind;
 	}
