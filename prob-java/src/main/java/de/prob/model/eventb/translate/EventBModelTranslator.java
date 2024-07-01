@@ -24,6 +24,10 @@ public final class EventBModelTranslator {
 	public EventBModelTranslator(EventBModel model) {
 		this.model = model;
 
+		if (model.getMainComponent() == null) {
+			throw new IllegalArgumentException("Cannot translate model without a main component");
+		}
+
 		for (EventBMachine machine : extractMachineHierarchy(model)) {
 			machineTranslators.add(new EventBMachineTranslator(machine));
 			proofObligations.addAll(machine.getProofs());
@@ -40,14 +44,15 @@ public final class EventBModelTranslator {
 	private List<EventBMachine> extractMachineHierarchy(EventBModel model) {
 		if (model.getMainComponent() instanceof Context) {
 			return Collections.emptyList();
-		}
-		List<EventBMachine> machines = new ArrayList<>();
-		if (model.getMainComponent() instanceof EventBMachine) {
+		} else if (model.getMainComponent() instanceof EventBMachine) {
+			List<EventBMachine> machines = new ArrayList<>();
 			EventBMachine machine = (EventBMachine)model.getMainComponent();
 			machines.add(machine);
 			machines.addAll(extractMachines(machine, model));
+			return machines;
+		} else {
+			throw new IllegalArgumentException("Unhandled main component type: " + model.getMainComponent().getClass());
 		}
-		return machines;
 	}
 
 	private List<EventBMachine> extractMachines(final EventBMachine machine, EventBModel model) {
@@ -65,11 +70,11 @@ public final class EventBModelTranslator {
 	private List<Context> extractContextHierarchy(EventBModel model) {
 		if (model.getMainComponent() instanceof Context) {
 			return extractContextHierarchy((Context)model.getMainComponent(), model);
-		}
-		if (model.getMainComponent() instanceof EventBMachine) {
+		} else if (model.getMainComponent() instanceof EventBMachine) {
 			return extractContextHierarchy((EventBMachine)model.getMainComponent(), model);
+		} else {
+			throw new IllegalArgumentException("Unhandled main component type: " + model.getMainComponent().getClass());
 		}
-		return Collections.emptyList();
 	}
 
 	private List<Context> extractContextHierarchy(final EventBMachine machine, EventBModel model) {
