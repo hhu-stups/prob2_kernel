@@ -12,6 +12,7 @@ import de.prob.animator.command.StartAnimationCommand;
 import de.prob.animator.domainobjects.EvaluationException;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
+import de.prob.model.eventb.EventBModel;
 import de.prob.model.representation.DependencyGraph.ERefType;
 import de.prob.scripting.ExtractedModel;
 import de.prob.scripting.StateSpaceProvider;
@@ -179,6 +180,9 @@ public abstract class AbstractModel extends AbstractElement {
 
 	/**
 	 * @deprecated Use {@link #loadIntoStateSpace(StateSpace)} instead.
+	 *     To control which component to load from a Rodin project,
+	 *     pass the correct file name when loading the model,
+	 *     or use {@link EventBModel#withMainComponent(AbstractElement)} to change the main component after loading.
 	 * @param stateSpace the {@link StateSpace} into which to load the model
 	 * @param mainComponent this model's main component, as returned by {@link ExtractedModel#getMainComponent()}
 	 */

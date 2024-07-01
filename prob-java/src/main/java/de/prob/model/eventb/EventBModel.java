@@ -28,6 +28,7 @@ import de.prob.model.representation.ModelElementList;
 import de.prob.scripting.StateSpaceProvider;
 import de.prob.statespace.FormalismType;
 import de.prob.statespace.Language;
+import de.prob.statespace.StateSpace;
 
 import org.eventb.core.ast.extension.IFormulaExtension;
 
@@ -207,6 +208,18 @@ public class EventBModel extends AbstractModel {
 	@Override
 	public AbstractCommand getLoadCommand() {
 		return new LoadEventBProjectCommand(new EventBModelTranslator(this));
+	}
+
+	// For backward compatibility with old code that manually passes a different main component
+	// to load a different context/machine from an already loaded project.
+	@Deprecated
+	@Override
+	public void loadIntoStateSpace(StateSpace stateSpace, AbstractElement mainComponent) {
+		EventBModel model = this;
+		if (model.getMainComponent() != mainComponent) {
+			model = model.withMainComponent(mainComponent);
+		}
+		model.loadIntoStateSpace(stateSpace);
 	}
 
 	@Override
