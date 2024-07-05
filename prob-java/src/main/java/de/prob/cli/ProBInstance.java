@@ -46,7 +46,12 @@ public final class ProBInstance implements Closeable {
 		this.outputLoggerThread = new Thread(new ConsoleListener(stream, this::logConsoleLine), "ProB Output Logger for " + this.probProcess);
 		this.connection = connection;
 		final String command = home + osInfo.getUserInterruptCmd();
-		this.interruptCommand = Arrays.asList(command, Long.toString(userInterruptReference));
+		if (userInterruptReference == -1) {
+			// ProB has user interrupt support disabled.
+			this.interruptCommand = null;
+		} else {
+			this.interruptCommand = Arrays.asList(command, Long.toString(userInterruptReference));
+		}
 		this.provider = provider;
 		// Because the console output logger is its own thread,
 		// we have to worry about thread safety when listeners are added/removed.
@@ -93,6 +98,11 @@ public final class ProBInstance implements Closeable {
 	}
 
 	public void sendInterrupt() {
+		if (this.interruptCommand == null) {
+			LOGGER.info("This ProB build has user interrupt support disabled - not calling send_user_interrupt");
+			return;
+		}
+
 		try {
 			LOGGER.info("sending interrupt signal");
 			// calls send_user_interrupt or send_user_interrupt.exe on Windows

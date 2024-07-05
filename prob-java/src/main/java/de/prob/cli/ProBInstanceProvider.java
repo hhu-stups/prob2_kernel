@@ -206,7 +206,7 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 					final String userInterruptReferenceString = userInterruptReferenceMatcher.group(1);
 					if ("off".equals(userInterruptReferenceString)) {
 						userInterruptReference = -1L;
-						LOGGER.info("This ProB build has user interrupt support disabled. Interrupting ProB may not work as expected.");
+						LOGGER.info("This ProB build has user interrupt support disabled. The sendInterrupt method will not work.");
 					} else {
 						userInterruptReference = Long.parseLong(userInterruptReferenceString);
 						LOGGER.info("Received user interrupt reference from CLI: {}", userInterruptReference);
