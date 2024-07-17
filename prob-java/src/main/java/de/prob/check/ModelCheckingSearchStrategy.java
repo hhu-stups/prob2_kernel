@@ -11,6 +11,10 @@ public enum ModelCheckingSearchStrategy {
 	OUT_DEGREE_HASH("out_degree_hash"),
 	TERM_SIZE("term_size"),
 	DISABLED_TRANSITIONS("disabled_actions"),
+
+	// TODO: handle external model checkers separately, TLC is here at the moment because of ProB2-UI ModelCheckingStage
+	// These are external model checkers ("strategies"), the prologName does not really exist
+	TLC("TLC4B")
 	;
 	
 	private final String prologName;

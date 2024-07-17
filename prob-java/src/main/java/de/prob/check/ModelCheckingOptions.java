@@ -307,7 +307,7 @@ public class ModelCheckingOptions {
 			.add("options", this.options)
 			.add("customGoal", this.getCustomGoal())
 			.add("stateLimit", this.getStateLimit())
-			.add("timeLimig", this.getTimeLimit())
+			.add("timeLimit", this.getTimeLimit())
 			.toString();
 	}
 
