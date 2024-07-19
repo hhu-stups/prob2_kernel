@@ -141,8 +141,6 @@ public class TLCModelCheckingOptions {
 	public Map<TLCOption, String> getOptions() {
 		return options;
 	}
-
-	}
 	
 	@Override
 	public boolean equals(Object obj) {
