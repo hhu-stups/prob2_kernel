@@ -7,7 +7,7 @@ plugins {
 
 // When making a release, please check that parserVersion matches what the specified version of probcli expects, to avoid unpredictable/inconsistent behavior!
 def parserVersion = "2.13.3"
-def probcliVersion = "1.13.1-beta2"
+def probcliVersion = "1.13.1-nightly"
 def cliDownloadURL
 if (probcliVersion.endsWith("-nightly")) {
 	if (!isSnapshot) {
