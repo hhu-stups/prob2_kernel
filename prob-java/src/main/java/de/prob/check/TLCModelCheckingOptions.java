@@ -3,7 +3,6 @@ package de.prob.check;
 import com.google.common.base.MoreObjects;
 import de.prob.animator.command.GetConstantsPredicateCommand;
 import de.prob.statespace.StateSpace;
-import de.tlc4b.TLC4BCliOptions;
 import de.tlc4b.TLC4BCliOptions.TLCOption;
 
 import java.util.*;
@@ -17,15 +16,14 @@ public class TLCModelCheckingOptions {
 
 	// avoid passing the TLCOption enum outside the API, Class is for type info, e.g. for choice of field type in ProB2-UI
 	private final StateSpace stateSpace;
-	private final Map<String, Class<?>> allOptions = TLC4BCliOptions.getOptions();
-	private final Map<String, String> options = new HashMap<>();
+	private final Map<TLCOption, String> options = new HashMap<>();
 
 	public TLCModelCheckingOptions(final StateSpace stateSpace) {
 		this(stateSpace, new HashMap<>());
 	}
 
-	private TLCModelCheckingOptions(final StateSpace stateSpace, final Map<String, String> options) {
-		options.forEach(this::addOption);
+	public TLCModelCheckingOptions(final StateSpace stateSpace, final Map<TLCOption, String> options) {
+		this.options.putAll(options);
 		this.stateSpace = stateSpace;
 		this.setupConstantsUsingProB(stateSpace.getCurrentPreference(TLC_USE_PROB_CONSTANTS).equalsIgnoreCase("true"))
 			.setNumberOfWorkers(stateSpace.getCurrentPreference(TLC_WORKERS))
@@ -122,41 +120,28 @@ public class TLCModelCheckingOptions {
 		return getConstantsPredicateCommand.getPredicate();
 	}
 
-	private void addOption(final String option, final String value) {
-		if (allOptions.containsKey(option)) {
-			if (allOptions.get(option) != null && value == null) {
-				throw new IllegalArgumentException("Expected argument for option " + option + ".");
-			}
-			options.put(option, value);
-		} else {
-			throw new IllegalArgumentException("TLC option '" + option + "' does not exist.");
-		}
-	}
-
 	private TLCModelCheckingOptions changeOption(final boolean value, final TLCOption o) {
 		if (value) {
-			this.options.put(o.arg(), null);
+			this.options.put(o, null);
 		} else {
-			this.options.remove(o.arg());
+			this.options.remove(o);
 		}
 		return this;
 	}
 
 	private TLCModelCheckingOptions changeOption(final String parameter, final TLCOption o) {
 		if (parameter != null) {
-			this.options.put(o.arg(), parameter);
+			this.options.put(o, parameter);
 		} else {
-			this.options.remove(o.arg());
+			this.options.remove(o);
 		}
 		return this;
 	}
 
-	public Map<String, String> getOptions() {
+	public Map<TLCOption, String> getOptions() {
 		return options;
 	}
 
-	public Map<String, Class<?>> getAllOptions() {
-		return allOptions;
 	}
 	
 	@Override

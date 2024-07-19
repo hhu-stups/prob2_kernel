@@ -1,10 +1,9 @@
 package de.prob.check;
 
-import com.google.inject.Injector;
 import de.be4.classicalb.core.parser.exceptions.BCompoundException;
-import de.prob.scripting.Api;
 import de.prob.statespace.StateSpace;
 import de.tlc4b.TLC4B;
+import de.tlc4b.TLC4BCliOptions.TLCOption;
 import de.tlc4b.TLCRunner;
 import de.tlc4b.tlc.TLCResults;
 
@@ -41,9 +40,9 @@ public class TLCModelChecker extends CheckerBase {
 	private String[] getCurrentOptions() {
 		List<String> args = new ArrayList<>();
 		args.add(machinePath);
-		Map<String, String> currentOptions = options.getOptions();
-		for (String option : currentOptions.keySet()) {
-			args.add("-" + option);
+		Map<TLCOption, String> currentOptions = options.getOptions();
+		for (TLCOption option : currentOptions.keySet()) {
+			args.add("-" + option.arg());
 			args.add(currentOptions.get(option));
 		}
 		return args.toArray(new String[0]);
