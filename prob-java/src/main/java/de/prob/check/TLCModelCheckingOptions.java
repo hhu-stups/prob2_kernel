@@ -8,12 +8,12 @@ import de.tlc4b.TLC4BCliOptions.TLCOption;
 
 import java.util.*;
 
-import static de.tlc4b.TLC4BCliOptions.TLCOption.WORKERS;
-
 public class TLCModelCheckingOptions {
 
 	private static final String TLC_USE_PROB_CONSTANTS = "TLC_USE_PROB_CONSTANTS";
 	private static final String TLC_WORKERS = "TLC_WORKERS";
+	private static final String MININT = "MININT";
+	private static final String MAXINT = "MAXINT";
 
 	// avoid passing the TLCOption enum outside the API, Class is for type info, e.g. for choice of field type in ProB2-UI
 	private final StateSpace stateSpace;
@@ -28,7 +28,9 @@ public class TLCModelCheckingOptions {
 		options.forEach(this::addOption);
 		this.stateSpace = stateSpace;
 		this.setupConstantsUsingProB(stateSpace.getCurrentPreference(TLC_USE_PROB_CONSTANTS).equalsIgnoreCase("true"))
-			.setNumberOfWorkers(stateSpace.getCurrentPreference(TLC_WORKERS));
+			.setNumberOfWorkers(stateSpace.getCurrentPreference(TLC_WORKERS))
+			.minInt(Integer.parseInt(stateSpace.getCurrentPreference(MININT)))
+			.maxInt(Integer.parseInt(stateSpace.getCurrentPreference(MAXINT)));
 	}
 
 	// BEGIN OPTIONS:
@@ -42,7 +44,7 @@ public class TLCModelCheckingOptions {
 
 	public TLCModelCheckingOptions checkGoal(final boolean value) {
 		// TODO: check if custom goal is possible
-		return changeOption(value, TLCOption.NOGOAL);
+		return changeOption(!value, TLCOption.NOGOAL);
 	}
 
 	public TLCModelCheckingOptions checkInvariantViolations(final boolean value) {
@@ -90,8 +92,12 @@ public class TLCModelCheckingOptions {
 	}
 
 	public TLCModelCheckingOptions setNumberOfWorkers(final String number) {
-		return changeOption(number, WORKERS);
+		return changeOption(number, TLCOption.WORKERS);
 	}
+
+	/*public TLCModelCheckingOptions useDepthFirstSearch(final String initialDepth) {
+		return changeOption(initialDepth, DFID);
+	}*/
 
 	public TLCModelCheckingOptions setupConstantsUsingProB(final boolean value) {
 		return changeOption(value ? getProBConstants() : null, TLCOption.CONSTANTSSETUP);
