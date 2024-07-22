@@ -21,8 +21,13 @@ public class TLCModelChecker extends CheckerBase {
 	private TLCResults results = null;
 
 	public TLCModelChecker(final String machinePath, final StateSpace stateSpace, final IModelCheckListener listener) {
+		this(machinePath, stateSpace, listener, new TLCModelCheckingOptions(stateSpace));
+	}
+
+	public TLCModelChecker(final String machinePath, final StateSpace stateSpace, final IModelCheckListener listener,
+	                       final TLCModelCheckingOptions options) {
 		super(stateSpace, listener);
-		this.options = new TLCModelCheckingOptions(stateSpace);
+		this.options = options;
 		this.machinePath = machinePath;
 	}
 
@@ -42,7 +47,7 @@ public class TLCModelChecker extends CheckerBase {
 		args.add(machinePath);
 		Map<TLCOption, String> currentOptions = options.getOptions();
 		for (TLCOption option : currentOptions.keySet()) {
-			args.add("-" + option.arg());
+			args.add(option.cliArg());
 			args.add(currentOptions.get(option));
 		}
 		return args.toArray(new String[0]);
@@ -53,7 +58,7 @@ public class TLCModelChecker extends CheckerBase {
 	}
 
 	public static void generateTLAWithoutTLC(final String machinePath) throws IOException, BCompoundException {
-		TLC4B.run(new String[]{machinePath, NOTLC.arg()});
+		TLC4B.run(new String[]{machinePath, NOTLC.cliArg()});
 	}
 
 	public TLCResults getResults() {

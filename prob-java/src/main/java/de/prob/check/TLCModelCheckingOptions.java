@@ -14,21 +14,24 @@ public class TLCModelCheckingOptions {
 	private static final String MININT = "MININT";
 	private static final String MAXINT = "MAXINT";
 
-	// avoid passing the TLCOption enum outside the API, Class is for type info, e.g. for choice of field type in ProB2-UI
 	private final StateSpace stateSpace;
 	private final Map<TLCOption, String> options = new HashMap<>();
 
+	/**
+	 * default options provided by ProB preferences
+	 */
 	public TLCModelCheckingOptions(final StateSpace stateSpace) {
 		this(stateSpace, new HashMap<>());
-	}
-
-	public TLCModelCheckingOptions(final StateSpace stateSpace, final Map<TLCOption, String> options) {
-		this.options.putAll(options);
-		this.stateSpace = stateSpace;
 		this.setupConstantsUsingProB(stateSpace.getCurrentPreference(TLC_USE_PROB_CONSTANTS).equalsIgnoreCase("true"))
 			.setNumberOfWorkers(stateSpace.getCurrentPreference(TLC_WORKERS))
 			.minInt(Integer.parseInt(stateSpace.getCurrentPreference(MININT)))
 			.maxInt(Integer.parseInt(stateSpace.getCurrentPreference(MAXINT)));
+	}
+
+	public TLCModelCheckingOptions(final StateSpace stateSpace, final Map<TLCOption, String> options) {
+		this.stateSpace = stateSpace;
+		// use only custom options
+		this.options.putAll(options);
 	}
 
 	// BEGIN OPTIONS:
