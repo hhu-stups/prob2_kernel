@@ -79,13 +79,6 @@ public final class GetOperationByPredicateCommand extends AbstractCommand
 		}
 	}
 
-	/**
-	 * This method is called when the command is prepared for sending. The
-	 * method is called by the Animator class, most likely it is not interesting
-	 * for other classes.
-	 *
-	 * @see de.prob.animator.command.AbstractCommand#writeCommand(de.prob.prolog.output.IPrologTermOutput)
-	 */
 	@Override
 	public void writeCommand(final IPrologTermOutput pto) {
 		pto.openTerm(PROLOG_COMMAND_NAME)
@@ -96,15 +89,6 @@ public final class GetOperationByPredicateCommand extends AbstractCommand
 		pto.printVariable(ERRORS_VARIABLE).closeTerm();
 	}
 
-	/**
-	 * This method is called to extract relevant information from ProB's answer.
-	 * The method is called by the Animator class, most likely it is not
-	 * interesting for other classes.
-	 *
-	 *
-	 *
-	 * @see de.prob.animator.command.AbstractCommand#writeCommand(de.prob.prolog.output.IPrologTermOutput)
-	 */
 	@Override
 	public void processResult(
 			final ISimplifiedROMap<String, PrologTerm> bindings) {
