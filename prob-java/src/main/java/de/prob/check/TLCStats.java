@@ -111,8 +111,10 @@ public class TLCStats extends TLCMessageListener {
 				break;
 			case TemporalPropertyViolation:
 				// TODO improve handling; like LTLCounterExample?
-				result = new ModelCheckErrorUncovered("LTL formula " + results.getViolatedDefinition()
-					+ " is not satisfied.", getDestStateId(results));
+				String message = results.getViolatedDefinition().equals("ltl") ?
+					"Custom LTL formula is not satisfied."
+					: "LTL formula " + results.getViolatedDefinition() + " is not satisfied.";
+				result = new ModelCheckErrorUncovered(message, getDestStateId(results));
 				break;
 			case WellDefinednessError:
 				result = new CheckError("Welldefinedness error.");
