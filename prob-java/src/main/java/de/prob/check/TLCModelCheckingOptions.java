@@ -96,9 +96,9 @@ public class TLCModelCheckingOptions {
 		return changeOption(number, TLCOption.WORKERS);
 	}
 
-	/*public TLCModelCheckingOptions useDepthFirstSearch(final String initialDepth) {
-		return changeOption(initialDepth, DFID);
-	}*/
+	public TLCModelCheckingOptions useDepthFirstSearch(final String initialDepth) {
+		return changeOption(initialDepth, TLCOption.DFID);
+	}
 
 	public TLCModelCheckingOptions setupConstantsUsingProB(final boolean value) {
 		return changeOption(value ? getProBConstants() : null, TLCOption.CONSTANTSSETUP);
@@ -114,6 +114,10 @@ public class TLCModelCheckingOptions {
 
 	public TLCModelCheckingOptions silentMode(final boolean value) {
 		return changeOption(value, TLCOption.SILENT);
+	}
+
+	public TLCModelCheckingOptions outputDir(final String outputDir) {
+		return changeOption(outputDir, TLCOption.OUTPUT);
 	}
 	// END OPTIONS
 
@@ -142,6 +146,10 @@ public class TLCModelCheckingOptions {
 	}
 
 	public Map<TLCOption, String> getOptions() {
+		if (options.containsKey(TLCOption.DFID) && options.containsKey(TLCOption.WORKERS)
+			&& Integer.parseInt(options.get(TLCOption.WORKERS)) > 1) {
+			throw new IllegalArgumentException("Depth-First Iterative Deepening mode does not support multiple workers.");
+		}
 		return options;
 	}
 	

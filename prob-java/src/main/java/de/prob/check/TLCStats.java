@@ -47,14 +47,21 @@ public class TLCStats extends TLCMessageListener {
 		int processedNodes = lastStats.getNrProcessedNodes();
 		switch (message.getMessageCode()) {
 			case EC.TLC_STATS:
+			case EC.TLC_STATS_DFID:
 				totalTransitions = Integer.parseInt(message.getParameters()[0]);
 				totalNodes = Integer.parseInt(message.getParameters()[1]);
 				processedNodes = totalNodes;
 				break;
 			case EC.TLC_PROGRESS_STATS:
-				totalTransitions = Integer.parseInt(message.getParameters()[1]);
-				totalNodes = Integer.parseInt(message.getParameters()[2]);
-				processedNodes = Integer.parseInt(message.getParameters()[3]);
+				// only here: numbers of format 103,423
+				totalTransitions = Integer.parseInt(message.getParameters()[1].replace(",",""));
+				totalNodes = Integer.parseInt(message.getParameters()[2].replace(",",""));
+				processedNodes = Integer.parseInt(message.getParameters()[3].replace(",",""));
+				break;
+			case EC.TLC_PROGRESS_STATS_DFID:
+				totalTransitions = Integer.parseInt(message.getParameters()[0]);
+				totalNodes = -1;
+				processedNodes = Integer.parseInt(message.getParameters()[1]);
 				break;
 			case EC.TLC_SUCCESS:
 				finished = true;
@@ -70,8 +77,14 @@ public class TLCStats extends TLCMessageListener {
 		this.lastStats = new StateSpaceStats(results.getNumberOfDistinctStates(), results.getNumberOfTransitions(),
 			results.getNumberOfDistinctStates());
 
+		TLCResults.TLCResult tlcResult = results.getTLCResult();
+		if (tlcResult == null) {
+			tlcModelChecker.isFinished(new CheckError("TLC model checking has no result."), lastStats);
+			return;
+		}
+
 		IModelCheckingResult result;
-		switch (results.getTLCResult()) {
+		switch (tlcResult) {
 			case Deadlock:
 				result = new ModelCheckErrorUncovered("Deadlock found.", getDestStateId(results));
 				break;
@@ -107,6 +120,7 @@ public class TLCStats extends TLCMessageListener {
 			case TLCError:
 			case InitialStateError:
 			default:
+				// TODO: improve message; needs more info from TLC4B
 				result = new CheckError("Unknown error during TLC Model Checking.");
 				break;
 		}

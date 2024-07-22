@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.*;
 
 import static de.tlc4b.TLC4BCliOptions.TLCOption.NOTLC;
+import static de.tlc4b.TLC4BCliOptions.TLCOption.OUTPUT;
 
 // TODO: add tests
 public class TLCModelChecker extends CheckerBase {
@@ -57,8 +58,8 @@ public class TLCModelChecker extends CheckerBase {
 		return TLC4B.checkTLC4BIsApplicable(path, timeOut);
 	}
 
-	public static void generateTLAWithoutTLC(final String machinePath) throws IOException, BCompoundException {
-		TLC4B.run(new String[]{machinePath, NOTLC.cliArg()});
+	public static void generateTLAWithoutTLC(final String machinePath, final String outputPath) throws IOException, BCompoundException {
+		TLC4B.run(new String[]{machinePath, NOTLC.cliArg(), OUTPUT.cliArg(), outputPath});
 	}
 
 	public TLCResults getResults() {
