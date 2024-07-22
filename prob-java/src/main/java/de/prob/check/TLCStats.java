@@ -29,7 +29,7 @@ public class TLCStats extends TLCMessageListener {
 			// once finished, ignore further updates
 			return;
 
-		if (message.getMessageClass() == NONE) { // is status message
+		if (message != null && message.getMessageClass() == NONE) { // is status message
 			StateSpaceStats stats = handleStatusMessage(message);
 			IModelCheckingResult result;
 			if (!finished) {
@@ -132,7 +132,7 @@ public class TLCStats extends TLCMessageListener {
 
 	private String getDestStateId(final TLCResults results) {
 		StateSpace stateSpace = tlcModelChecker.getStateSpace();
-		String root = String.valueOf(stateSpace.getRoot().numericalId());
+		String root = stateSpace.getRoot().getId();
 		String tracePath = results.getTraceFilePath();
 
 		String destId;
