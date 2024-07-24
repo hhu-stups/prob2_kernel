@@ -60,7 +60,11 @@ public class TLCModelCheckingOptions {
 		return changeOption(value, TLCOption.WDCHECK);
 	}
 
-	public TLCModelCheckingOptions symmetry(final boolean value) {
+	public TLCModelCheckingOptions proofGuidedModelChecking(final boolean value) {
+		return changeOption(value, TLCOption.PARINVEVAL);
+	}
+
+	public TLCModelCheckingOptions useSymmetry(final boolean value) {
 		return changeOption(value, TLCOption.SYMMETRY);
 	}
 

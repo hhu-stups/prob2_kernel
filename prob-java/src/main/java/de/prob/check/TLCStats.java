@@ -120,6 +120,9 @@ public class TLCStats extends TLCMessageListener {
 				result = new CheckError("Welldefinedness error.");
 				break;
 			case TLCError:
+				String msg = results.getTLCErrorMessage();
+				result = new CheckError(msg != null ? "TLC " + msg : "Unknown error during TLC Model Checking.");
+				break;
 			case InitialStateError:
 			default:
 				// TODO: improve message; needs more info from TLC4B
