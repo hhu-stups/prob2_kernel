@@ -123,6 +123,9 @@ public class TLCStats extends TLCMessageListener {
 				String msg = results.getTLCErrorMessage();
 				result = new CheckError(msg != null ? "TLC " + msg : "Unknown error during TLC Model Checking.");
 				break;
+			case Interrupted:
+				result = new CheckInterrupted();
+				break;
 			case InitialStateError:
 			default:
 				// TODO: improve message; needs more info from TLC4B
