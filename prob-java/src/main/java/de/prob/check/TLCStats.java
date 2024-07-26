@@ -128,7 +128,6 @@ public class TLCStats extends TLCMessageListener {
 				break;
 			case InitialStateError:
 			default:
-				// TODO: improve message; needs more info from TLC4B
 				result = new CheckError("Unknown error during TLC Model Checking.");
 				break;
 		}

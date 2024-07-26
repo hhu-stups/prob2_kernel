@@ -20,7 +20,7 @@ public class GetConstantsPredicateCommand extends AbstractCommand {
 
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
-		constantsPredicate = bindings.get(PREDICATE).atomToString().replace("\n","");
+		constantsPredicate = bindings.get(PREDICATE).atomToString().replace("\n      ","");
 	}
 
 	public String getPredicate() {
