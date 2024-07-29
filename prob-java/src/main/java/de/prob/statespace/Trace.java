@@ -400,7 +400,7 @@ public class Trace {
 		if (!ops.isEmpty()) {
 			int opIndex = new Random().nextInt(ops.size());
 			Transition op = ops.get(opIndex);
-			return add(op.getId());
+			return add(op);
 		}
 		return this;
 	}
