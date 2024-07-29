@@ -48,7 +48,10 @@ public class TLCModelChecker extends CheckerBase {
 		args.add(machinePath);
 		options.getOptions().forEach((key, value) -> {
 			args.add(key.cliArg());
-			args.add(value);
+			// If the value is null, it's a boolean flag with no argument.
+			if (value != null) {
+				args.add(value);
+			}
 		});
 		return args.toArray(new String[0]);
 	}
