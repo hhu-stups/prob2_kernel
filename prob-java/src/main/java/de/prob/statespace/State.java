@@ -68,7 +68,7 @@ public class State {
 		this.id = id;
 		this.stateSpace = space;
 		this.explored = false;
-		this.transitions = new ArrayList<>();
+		this.transitions = Collections.emptyList();
 		this.evalCache = new HashMap<>();
 	}
 
@@ -144,7 +144,7 @@ public class State {
 		try {
 			return stateSpace.transitionFromPredicate(this, name, predicate, nrOfSolutions);
 		} catch (ExecuteOperationException e) {
-			return new ArrayList<>();
+			return Collections.emptyList();
 		}
 	}
 
@@ -448,7 +448,7 @@ public class State {
 	 * @param transitions the updated list of outgoing transitions from this state
 	 */
 	synchronized void setOutTransitions(List<Transition> transitions) {
-		this.transitions = transitions;
+		this.transitions = Collections.unmodifiableList(transitions);
 	}
 
 	public synchronized State explore() {
@@ -470,7 +470,7 @@ public class State {
 			checkMaxOpsReachedCmd,
 			getStateErrorsCmd
 		);
-		transitions = getEnabledOpsCmd.getEnabledOperations();
+		transitions = Collections.unmodifiableList(getEnabledOpsCmd.getEnabledOperations());
 		constantsSetUp = checkConstantsSetUpCmd.isConstantsSetUp();
 		initialised = checkInitialisedCmd.isInitialized();
 		invariantOk = !checkInvariantCmd.isInvariantViolated();
