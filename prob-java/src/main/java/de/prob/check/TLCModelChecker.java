@@ -1,14 +1,14 @@
 package de.prob.check;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import de.be4.classicalb.core.parser.exceptions.BCompoundException;
 import de.prob.statespace.StateSpace;
 import de.tlc4b.TLC4B;
-import de.tlc4b.TLC4BCliOptions.TLCOption;
 import de.tlc4b.TLCRunner;
 import de.tlc4b.tlc.TLCResults;
-
-import java.io.IOException;
-import java.util.*;
 
 import static de.tlc4b.TLC4BCliOptions.TLCOption.NOTLC;
 import static de.tlc4b.TLC4BCliOptions.TLCOption.OUTPUT;
@@ -46,11 +46,10 @@ public class TLCModelChecker extends CheckerBase {
 	private String[] getCurrentOptions() {
 		List<String> args = new ArrayList<>();
 		args.add(machinePath);
-		Map<TLCOption, String> currentOptions = options.getOptions();
-		for (TLCOption option : currentOptions.keySet()) {
-			args.add(option.cliArg());
-			args.add(currentOptions.get(option));
-		}
+		options.getOptions().forEach((key, value) -> {
+			args.add(key.cliArg());
+			args.add(value);
+		});
 		return args.toArray(new String[0]);
 	}
 
