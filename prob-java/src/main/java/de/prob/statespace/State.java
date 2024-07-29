@@ -116,10 +116,12 @@ public class State {
 	 * @return the calculated transition, or null if no transition was found.
 	 */
 	public Transition findTransition(final String name, List<String> predicates) {
-		if (predicates.isEmpty() && !transitions.isEmpty()) {
-			final Optional<Transition> op = transitions.stream().filter(t -> t.getName().equals(name)).findAny();
-			if (op.isPresent()) {
-				return op.get();
+		if (predicates.isEmpty()) {
+			synchronized (this) {
+				final Optional<Transition> op = transitions.stream().filter(t -> t.getName().equals(name)).findAny();
+				if (op.isPresent()) {
+					return op.get();
+				}
 			}
 		}
 		final List<Transition> transitions = findTransitions(name, predicates, 1);
@@ -141,9 +143,11 @@ public class State {
 		List<Transition> newOps;
 		try {
 			newOps = stateSpace.transitionFromPredicate(this, name, predicate, nrOfSolutions);
-			transitions.addAll(newOps);
 		} catch (ExecuteOperationException e) {
 			return new ArrayList<>();
+		}
+		synchronized (this) {
+			transitions.addAll(newOps);
 		}
 		return newOps;
 	}
