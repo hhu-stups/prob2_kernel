@@ -34,6 +34,7 @@ import de.prob.animator.command.FindTraceBetweenNodesCommand;
 import de.prob.animator.command.FormulaTypecheckCommand;
 import de.prob.animator.command.GetCurrentPreferencesCommand;
 import de.prob.animator.command.GetDefaultPreferencesCommand;
+import de.prob.animator.command.GetEnabledOperationsCommand;
 import de.prob.animator.command.GetOperationByPredicateCommand;
 import de.prob.animator.command.GetPreferenceCommand;
 import de.prob.animator.command.GetShortestTraceCommand;
@@ -247,7 +248,10 @@ public class StateSpace implements IAnimator {
 			final int nrOfSolutions) {
 		final GetOperationByPredicateCommand command = new GetOperationByPredicateCommand(this, state.getId(), opName,
 				predicate, nrOfSolutions);
-		execute(command);
+		GetEnabledOperationsCommand getTransitionsCommand = new GetEnabledOperationsCommand(this, state.getId());
+		execute(command, getTransitionsCommand);
+		// Update the state's transitions list to include any newly found transitions.
+		state.setOutTransitions(getTransitionsCommand.getEnabledOperations());
 		if (command.hasErrors()) {
 			if(command.getErrors().stream().allMatch(err -> err.getType() == GetOperationByPredicateCommand.GetOperationErrorType.CANNOT_EXECUTE)) {
 				throw new ExecuteOperationException("Executing operation " + opName + " with additional predicate produced errors: " + String.join(", ", command.getErrorMessages()), command.getErrors());

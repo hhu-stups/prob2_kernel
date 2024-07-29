@@ -140,16 +140,11 @@ public class State {
 	 */
 	public List<Transition> findTransitions(String name, List<String> predicates, int nrOfSolutions) {
 		final String predicate = predicates.isEmpty() ? "TRUE = TRUE" : '(' + String.join(") & (", predicates) + ')';
-		List<Transition> newOps;
 		try {
-			newOps = stateSpace.transitionFromPredicate(this, name, predicate, nrOfSolutions);
+			return stateSpace.transitionFromPredicate(this, name, predicate, nrOfSolutions);
 		} catch (ExecuteOperationException e) {
 			return new ArrayList<>();
 		}
-		synchronized (this) {
-			transitions.addAll(newOps);
-		}
-		return newOps;
 	}
 
 	// TODO This duplicates Trace.anyOperation (almost, but not exactly)
@@ -439,6 +434,15 @@ public class State {
 			stateSpace.evaluateTransitions(transitions, expansion);
 		}
 		return transitions;
+	}
+
+	/**
+	 * For internal use only by {@link StateSpace}.
+	 * 
+	 * @param transitions the updated list of outgoing transitions from this state
+	 */
+	synchronized void setOutTransitions(List<Transition> transitions) {
+		this.transitions = transitions;
 	}
 
 	public synchronized State explore() {
