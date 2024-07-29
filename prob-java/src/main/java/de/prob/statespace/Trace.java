@@ -1,6 +1,5 @@
 package de.prob.statespace;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -10,10 +9,10 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.github.krukow.clj_lang.PersistentVector;
@@ -387,22 +386,13 @@ public class Trace {
 		}
 	}
 
-	// TODO This duplicates State.anyOperation (almost, but not exactly)
-	public Trace anyOperation(final Object filter) {
-		List<Transition> ops = current.getCurrentState().getOutTransitions();
-		if (filter instanceof String) {
-			final Pattern filterPattern = Pattern.compile((String)filter);
-			ops = ops.stream().filter(t -> filterPattern.matcher(t.getName()).matches()).collect(Collectors.toList());
+	public Trace anyOperation(Object filter) {
+		Optional<Transition> transition = this.getCurrentState().chooseRandomOutTransition(filter);
+		if (transition.isPresent()) {
+			return this.add(transition.get());
+		} else {
+			return this;
 		}
-		if (filter instanceof ArrayList) {
-			ops = ops.stream().filter(t -> ((List<?>)filter).contains(t.getName())).collect(Collectors.toList());
-		}
-		if (!ops.isEmpty()) {
-			int opIndex = new Random().nextInt(ops.size());
-			Transition op = ops.get(opIndex);
-			return add(op);
-		}
-		return this;
 	}
 
 	public Trace anyEvent(Object filter) {

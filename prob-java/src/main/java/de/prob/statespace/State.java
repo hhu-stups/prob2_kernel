@@ -148,8 +148,7 @@ public class State {
 		}
 	}
 
-	// TODO This duplicates Trace.anyOperation (almost, but not exactly)
-	public State anyOperation(final Object filter) {
+	Optional<Transition> chooseRandomOutTransition(Object filter) {
 		List<Transition> ops = getOutTransitions();
 		if (filter instanceof String) {
 			final Pattern filterPattern = Pattern.compile((String)filter);
@@ -158,12 +157,21 @@ public class State {
 		if (filter instanceof ArrayList) {
 			ops = ops.stream().filter(t -> ((List<?>)filter).contains(t.getName())).collect(Collectors.toList());
 		}
-		if (!ops.isEmpty()) {
+		if (ops.isEmpty()) {
+			return Optional.empty();
+		} else {
 			int opIndex = new Random().nextInt(ops.size());
-			Transition op = ops.get(opIndex);
-			return op.getDestination();
+			return Optional.of(ops.get(opIndex));
 		}
-		return this;
+	}
+
+	public State anyOperation(Object filter) {
+		Optional<Transition> transition = this.chooseRandomOutTransition(filter);
+		if (transition.isPresent()) {
+			return transition.get().getDestination();
+		} else {
+			return this;
+		}
 	}
 
 	public State anyEvent(Object filter) {
