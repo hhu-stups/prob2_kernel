@@ -10,6 +10,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -306,6 +307,7 @@ public class Trace {
 			return this;
 		}
 
+		Random random = new Random();
 		State currentState = this.current.getCurrentState();
 		TraceElement current = this.current;
 		PersistentVector<Transition> transitionList = this.transitionList;
@@ -316,8 +318,7 @@ public class Trace {
 				if (ops.isEmpty()) {
 					break;
 				}
-				Collections.shuffle(ops);
-				final Transition op = ops.get(0);
+				Transition op = ops.get(random.nextInt(ops.size()));
 				current = new TraceElement(op, current);
 				if (i == 0) {
 					transitionList = branchTransitionListIfNecessary(op);
@@ -396,9 +397,9 @@ public class Trace {
 		if (filter instanceof ArrayList) {
 			ops = ops.stream().filter(t -> ((List<?>)filter).contains(t.getName())).collect(Collectors.toList());
 		}
-		Collections.shuffle(ops);
 		if (!ops.isEmpty()) {
-			Transition op = ops.get(0);
+			int opIndex = new Random().nextInt(ops.size());
+			Transition op = ops.get(opIndex);
 			return add(op.getId());
 		}
 		return this;

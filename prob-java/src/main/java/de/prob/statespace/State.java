@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -158,8 +159,8 @@ public class State {
 			ops = ops.stream().filter(t -> ((List<?>)filter).contains(t.getName())).collect(Collectors.toList());
 		}
 		if (!ops.isEmpty()) {
-			Collections.shuffle(ops);
-			final Transition op = ops.get(0);
+			int opIndex = new Random().nextInt(ops.size());
+			Transition op = ops.get(opIndex);
 			final State newState = op.getDestination();
 			newState.exploreIfNeeded();
 			return newState;
