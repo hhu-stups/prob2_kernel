@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.be4.classicalb.core.parser.exceptions.BCompoundException;
+import de.prob.animator.command.GetConstantsPredicateCommand;
 import de.prob.statespace.StateSpace;
 import de.tlc4b.TLC4B;
+import de.tlc4b.TLC4BCliOptions;
 import de.tlc4b.TLCRunner;
 import de.tlc4b.tlc.TLCResults;
 
@@ -16,13 +18,13 @@ import static de.tlc4b.TLC4BCliOptions.TLCOption.OUTPUT;
 // TODO: add tests
 public class TLCModelChecker extends CheckerBase {
 
-	private final TLCModelCheckingOptions options;
+	private TLCModelCheckingOptions options;
 	private final String machinePath;
 
 	private TLCResults results = null;
 
 	public TLCModelChecker(final String machinePath, final StateSpace stateSpace, final IModelCheckListener listener) {
-		this(machinePath, stateSpace, listener, new TLCModelCheckingOptions(stateSpace));
+		this(machinePath, stateSpace, listener, null);
 	}
 
 	public TLCModelChecker(final String machinePath, final StateSpace stateSpace, final IModelCheckListener listener,
@@ -43,13 +45,28 @@ public class TLCModelChecker extends CheckerBase {
 		}
 	}
 
+	private String getProBConstants() {
+		GetConstantsPredicateCommand getConstantsPredicateCommand = new GetConstantsPredicateCommand();
+		this.getStateSpace().execute(getConstantsPredicateCommand);
+		return getConstantsPredicateCommand.getPredicate();
+	}
+
 	private String[] getCurrentOptions() {
 		List<String> args = new ArrayList<>();
 		args.add(machinePath);
+		if (options == null) {
+			options = TLCModelCheckingOptions.fromPreferences(this.getStateSpace());
+		}
 		options.getOptions().forEach((key, value) -> {
 			args.add(key.cliArg());
 			// If the value is null, it's a boolean flag with no argument.
-			if (value != null) {
+			if (value == null) {
+				// Except for one special case: CONSTANTSSETUP has an argument,
+				// but it's calculated lazily here so that TLCModelCheckingOptions doesn't depend on the StateSpace.
+				if (key == TLC4BCliOptions.TLCOption.CONSTANTSSETUP) {
+					args.add(this.getProBConstants());
+				}
+			} else {
 				args.add(value);
 			}
 		});

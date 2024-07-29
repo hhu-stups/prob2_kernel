@@ -1,11 +1,14 @@
 package de.prob.check;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 import com.google.common.base.MoreObjects;
-import de.prob.animator.command.GetConstantsPredicateCommand;
+
 import de.prob.statespace.StateSpace;
 import de.tlc4b.TLC4BCliOptions.TLCOption;
-
-import java.util.*;
 
 public class TLCModelCheckingOptions {
 
@@ -14,24 +17,51 @@ public class TLCModelCheckingOptions {
 	private static final String MININT = "MININT";
 	private static final String MAXINT = "MAXINT";
 
-	private final StateSpace stateSpace;
-	private final Map<TLCOption, String> options = new HashMap<>();
+	private final Map<TLCOption, String> options;
 
 	/**
 	 * default options provided by ProB preferences
+	 * @param stateSpace ProB instance whose preference values to use as defaults
+	 * @deprecated Use {@link #fromPreferences(Map)} instead.
 	 */
 	public TLCModelCheckingOptions(final StateSpace stateSpace) {
-		this(stateSpace, new HashMap<>());
+		this();
+		// FIXME This only works because TLCModelCheckingOptions is actually mutable, even though the API looks immutable.
+		// This constructor should be removed as soon as possible so that TLCModelCheckingOptions can be made immutable.
 		this.setupConstantsUsingProB(stateSpace.getCurrentPreference(TLC_USE_PROB_CONSTANTS).equalsIgnoreCase("true"))
 			.setNumberOfWorkers(stateSpace.getCurrentPreference(TLC_WORKERS))
 			.minInt(Integer.parseInt(stateSpace.getCurrentPreference(MININT)))
 			.maxInt(Integer.parseInt(stateSpace.getCurrentPreference(MAXINT)));
 	}
 
+	public TLCModelCheckingOptions(Map<TLCOption, String> options) {
+		this.options = new HashMap<>(options);
+	}
+	
+	/**
+	 * @param stateSpace ignored
+	 * @param options initial set of options
+	 * @deprecated Use {@link #TLCModelCheckingOptions(Map)} instead.
+	 */
+	@Deprecated
 	public TLCModelCheckingOptions(final StateSpace stateSpace, final Map<TLCOption, String> options) {
-		this.stateSpace = stateSpace;
-		// use only custom options
-		this.options.putAll(options);
+		this(options);
+	}
+
+	public TLCModelCheckingOptions() {
+		this(Collections.emptyMap());
+	}
+
+	public static TLCModelCheckingOptions fromPreferences(Map<String, String> preferences) {
+		return new TLCModelCheckingOptions()
+			.setupConstantsUsingProB("true".equalsIgnoreCase(preferences.get(TLC_USE_PROB_CONSTANTS)))
+			.setNumberOfWorkers(preferences.get(TLC_WORKERS))
+			.minInt(Integer.parseInt(preferences.get(MININT)))
+			.maxInt(Integer.parseInt(preferences.get(MAXINT)));
+	}
+
+	public static TLCModelCheckingOptions fromPreferences(StateSpace stateSpace) {
+		return fromPreferences(stateSpace.getCurrentPreferences());
 	}
 
 	// BEGIN OPTIONS:
@@ -105,7 +135,7 @@ public class TLCModelCheckingOptions {
 	}
 
 	public TLCModelCheckingOptions setupConstantsUsingProB(final boolean value) {
-		return changeOption(value ? getProBConstants() : null, TLCOption.CONSTANTSSETUP);
+		return changeOption(value, TLCOption.CONSTANTSSETUP);
 	}
 
 	public TLCModelCheckingOptions checkLTLFormula(final String formula) {
@@ -124,12 +154,6 @@ public class TLCModelCheckingOptions {
 		return changeOption(outputDir, TLCOption.OUTPUT);
 	}
 	// END OPTIONS
-
-	private String getProBConstants() {
-		GetConstantsPredicateCommand getConstantsPredicateCommand = new GetConstantsPredicateCommand();
-		stateSpace.execute(getConstantsPredicateCommand);
-		return getConstantsPredicateCommand.getPredicate();
-	}
 
 	private TLCModelCheckingOptions changeOption(final boolean value, final TLCOption o) {
 		if (value) {
