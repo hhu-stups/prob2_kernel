@@ -161,9 +161,7 @@ public class State {
 		if (!ops.isEmpty()) {
 			int opIndex = new Random().nextInt(ops.size());
 			Transition op = ops.get(opIndex);
-			final State newState = op.getDestination();
-			newState.exploreIfNeeded();
-			return newState;
+			return op.getDestination();
 		}
 		return this;
 	}
