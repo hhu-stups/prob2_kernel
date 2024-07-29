@@ -346,6 +346,11 @@ public class State {
 		return explored;
 	}
 
+	/**
+	 * @return list of outgoing transitions from this state that have been found so far
+	 * @deprecated This method doesn't ensure that the state has been explored. Use {@link #getOutTransitions()} instead.
+	 */
+	@Deprecated
 	public List<Transition> getTransitions() {
 		return transitions;
 	}

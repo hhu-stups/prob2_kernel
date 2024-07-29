@@ -741,8 +741,12 @@ public class StateSpace implements IAnimator {
 	 *         output.
 	 */
 	public String printOps(final State state) {
+		if (!state.isExplored()) {
+			return "State not explored yet - outgoing transitions not known.";
+		}
+
 		final StringBuilder sb = new StringBuilder();
-		final Collection<Transition> opIds = state.getTransitions();
+		final Collection<Transition> opIds = state.getOutTransitions();
 
 		sb.append("Operations: \n");
 		for (final Transition opId : opIds) {
@@ -750,9 +754,6 @@ public class StateSpace implements IAnimator {
 			sb.append("\n");
 		}
 
-		if (!state.isExplored()) {
-			sb.append("\n Possibly not all transitions shown. ProB does not explore states by default");
-		}
 		return sb.toString();
 	}
 
