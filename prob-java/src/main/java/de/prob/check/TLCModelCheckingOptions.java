@@ -8,7 +8,7 @@ import java.util.Objects;
 import com.google.common.base.MoreObjects;
 
 import de.prob.statespace.StateSpace;
-import de.tlc4b.TLC4BCliOptions.TLCOption;
+import de.tlc4b.TLC4BOption;
 
 public class TLCModelCheckingOptions {
 
@@ -17,7 +17,7 @@ public class TLCModelCheckingOptions {
 	private static final String MININT = "MININT";
 	private static final String MAXINT = "MAXINT";
 
-	private final Map<TLCOption, String> options;
+	private final Map<TLC4BOption, String> options;
 
 	/**
 	 * default options provided by ProB preferences
@@ -34,7 +34,7 @@ public class TLCModelCheckingOptions {
 			.maxInt(Integer.parseInt(stateSpace.getCurrentPreference(MAXINT)));
 	}
 
-	public TLCModelCheckingOptions(Map<TLCOption, String> options) {
+	public TLCModelCheckingOptions(Map<TLC4BOption, String> options) {
 		this.options = new HashMap<>(options);
 	}
 	
@@ -44,7 +44,7 @@ public class TLCModelCheckingOptions {
 	 * @deprecated Use {@link #TLCModelCheckingOptions(Map)} instead.
 	 */
 	@Deprecated
-	public TLCModelCheckingOptions(final StateSpace stateSpace, final Map<TLCOption, String> options) {
+	public TLCModelCheckingOptions(final StateSpace stateSpace, final Map<TLC4BOption, String> options) {
 		this(options);
 	}
 
@@ -67,95 +67,95 @@ public class TLCModelCheckingOptions {
 	// BEGIN OPTIONS:
 	// -workers and -constantssetup are also controlled via preferences
 	// use the preference values by default, options can be overwritten here
-	// TODO: add remaining TLCOptions if required.
+	// TODO: add remaining TLC4BOptions if required.
 
 	public TLCModelCheckingOptions checkDeadlocks(final boolean value) {
-		return changeOption(!value, TLCOption.NODEAD);
+		return changeOption(!value, TLC4BOption.NODEAD);
 	}
 
 	public TLCModelCheckingOptions checkGoal(final boolean value) {
 		// TODO: check if custom goal is possible
-		return changeOption(!value, TLCOption.NOGOAL);
+		return changeOption(!value, TLC4BOption.NOGOAL);
 	}
 
 	public TLCModelCheckingOptions checkInvariantViolations(final boolean value) {
-		return changeOption(!value, TLCOption.NOINV);
+		return changeOption(!value, TLC4BOption.NOINV);
 	}
 
 	public TLCModelCheckingOptions checkAssertions(final boolean value) {
-		return changeOption(!value, TLCOption.NOASS);
+		return changeOption(!value, TLC4BOption.NOASS);
 	}
 
 	public TLCModelCheckingOptions checkWelldefinedness(final boolean value) {
-		return changeOption(value, TLCOption.WDCHECK);
+		return changeOption(value, TLC4BOption.WDCHECK);
 	}
 
 	public TLCModelCheckingOptions proofGuidedModelChecking(final boolean value) {
-		return changeOption(value, TLCOption.PARINVEVAL);
+		return changeOption(value, TLC4BOption.PARINVEVAL);
 	}
 
 	public TLCModelCheckingOptions useSymmetry(final boolean value) {
-		return changeOption(value, TLCOption.SYMMETRY);
+		return changeOption(value, TLC4BOption.SYMMETRY);
 	}
 
 	public TLCModelCheckingOptions saveGeneratedFiles(final boolean value) {
-		return changeOption(!value, TLCOption.TMP);
+		return changeOption(!value, TLC4BOption.TMP);
 	}
 
 	public TLCModelCheckingOptions checkLTLAssertions(final boolean value) {
-		return changeOption(!value, TLCOption.NOLTL);
+		return changeOption(!value, TLC4BOption.NOLTL);
 	}
 
 	public TLCModelCheckingOptions lazyConstants(final boolean value) {
-		return changeOption(value, TLCOption.LAZYCONSTANTS);
+		return changeOption(value, TLC4BOption.LAZYCONSTANTS);
 	}
 
 	public TLCModelCheckingOptions noTrace(final boolean value) {
-		return changeOption(value, TLCOption.NOTRACE);
+		return changeOption(value, TLC4BOption.NOTRACE);
 	}
 
 	public TLCModelCheckingOptions maxInt(final int value) {
-		return changeOption(String.valueOf(value), TLCOption.MAXINT);
+		return changeOption(String.valueOf(value), TLC4BOption.MAXINT);
 	}
 
 	public TLCModelCheckingOptions defaultSetsize(final int value) {
-		return changeOption(String.valueOf(value), TLCOption.DEFAULT_SETSIZE);
+		return changeOption(String.valueOf(value), TLC4BOption.DEFAULT_SETSIZE);
 	}
 
 	public TLCModelCheckingOptions minInt(final int value) {
-		return changeOption(String.valueOf(value), TLCOption.MININT);
+		return changeOption(String.valueOf(value), TLC4BOption.MININT);
 	}
 
 	public TLCModelCheckingOptions setNumberOfWorkers(final String number) {
-		return changeOption(number, TLCOption.WORKERS);
+		return changeOption(number, TLC4BOption.WORKERS);
 	}
 
 	public TLCModelCheckingOptions useDepthFirstSearch(final String initialDepth) {
-		return changeOption(initialDepth, TLCOption.DFID);
+		return changeOption(initialDepth, TLC4BOption.DFID);
 	}
 
 	public TLCModelCheckingOptions setupConstantsUsingProB(final boolean value) {
-		return changeOption(value, TLCOption.CONSTANTSSETUP);
+		return changeOption(value, TLC4BOption.CONSTANTSSETUP);
 	}
 
 	public TLCModelCheckingOptions checkLTLFormula(final String formula) {
-		return changeOption(formula, TLCOption.LTLFORMULA);
+		return changeOption(formula, TLC4BOption.LTLFORMULA);
 	}
 
 	public TLCModelCheckingOptions verboseMode(final boolean value) {
-		return changeOption(value, TLCOption.VERBOSE);
+		return changeOption(value, TLC4BOption.VERBOSE);
 	}
 
 	public TLCModelCheckingOptions silentMode(final boolean value) {
-		return changeOption(value, TLCOption.SILENT);
+		return changeOption(value, TLC4BOption.SILENT);
 	}
 
 	public TLCModelCheckingOptions outputDir(final String outputDir) {
-		return changeOption(outputDir, TLCOption.OUTPUT);
+		return changeOption(outputDir, TLC4BOption.OUTPUT);
 	}
 	// END OPTIONS
 
-	private TLCModelCheckingOptions changeOption(final boolean value, final TLCOption o) {
+	private TLCModelCheckingOptions changeOption(final boolean value, final TLC4BOption o) {
 		if (value) {
 			this.options.put(o, null);
 		} else {
@@ -164,7 +164,7 @@ public class TLCModelCheckingOptions {
 		return this;
 	}
 
-	private TLCModelCheckingOptions changeOption(final String parameter, final TLCOption o) {
+	private TLCModelCheckingOptions changeOption(final String parameter, final TLC4BOption o) {
 		if (parameter != null) {
 			this.options.put(o, parameter);
 		} else {
@@ -173,9 +173,9 @@ public class TLCModelCheckingOptions {
 		return this;
 	}
 
-	public Map<TLCOption, String> getOptions() {
-		if (options.containsKey(TLCOption.DFID) && options.containsKey(TLCOption.WORKERS)
-			&& Integer.parseInt(options.get(TLCOption.WORKERS)) > 1) {
+	public Map<TLC4BOption, String> getOptions() {
+		if (options.containsKey(TLC4BOption.DFID) && options.containsKey(TLC4BOption.WORKERS)
+			&& Integer.parseInt(options.get(TLC4BOption.WORKERS)) > 1) {
 			throw new IllegalArgumentException("Depth-First Iterative Deepening mode does not support multiple workers.");
 		}
 		return options;

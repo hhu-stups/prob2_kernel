@@ -8,12 +8,9 @@ import de.be4.classicalb.core.parser.exceptions.BCompoundException;
 import de.prob.animator.command.GetConstantsPredicateCommand;
 import de.prob.statespace.StateSpace;
 import de.tlc4b.TLC4B;
-import de.tlc4b.TLC4BCliOptions;
+import de.tlc4b.TLC4BOption;
 import de.tlc4b.TLCRunner;
 import de.tlc4b.tlc.TLCResults;
-
-import static de.tlc4b.TLC4BCliOptions.TLCOption.NOTLC;
-import static de.tlc4b.TLC4BCliOptions.TLCOption.OUTPUT;
 
 // TODO: add tests
 public class TLCModelChecker extends CheckerBase {
@@ -63,7 +60,7 @@ public class TLCModelChecker extends CheckerBase {
 			if (value == null) {
 				// Except for one special case: CONSTANTSSETUP has an argument,
 				// but it's calculated lazily here so that TLCModelCheckingOptions doesn't depend on the StateSpace.
-				if (key == TLC4BCliOptions.TLCOption.CONSTANTSSETUP) {
+				if (key == TLC4BOption.CONSTANTSSETUP) {
 					args.add(this.getProBConstants());
 				}
 			} else {
@@ -78,7 +75,7 @@ public class TLCModelChecker extends CheckerBase {
 	}
 
 	public static void generateTLAWithoutTLC(final String machinePath, final String outputPath) throws IOException, BCompoundException {
-		TLC4B.run(new String[]{machinePath, NOTLC.cliArg(), OUTPUT.cliArg(), outputPath});
+		TLC4B.run(new String[]{machinePath, TLC4BOption.NOTLC.cliArg(), TLC4BOption.OUTPUT.cliArg(), outputPath});
 	}
 
 	public TLCResults getResults() {
