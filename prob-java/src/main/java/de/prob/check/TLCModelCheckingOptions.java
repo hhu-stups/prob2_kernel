@@ -19,33 +19,8 @@ public class TLCModelCheckingOptions {
 
 	private final Map<TLC4BOption, String> options;
 
-	/**
-	 * default options provided by ProB preferences
-	 * @param stateSpace ProB instance whose preference values to use as defaults
-	 * @deprecated Use {@link #fromPreferences(Map)} instead.
-	 */
-	public TLCModelCheckingOptions(final StateSpace stateSpace) {
-		this();
-		// FIXME This only works because TLCModelCheckingOptions is actually mutable, even though the API looks immutable.
-		// This constructor should be removed as soon as possible so that TLCModelCheckingOptions can be made immutable.
-		this.setupConstantsUsingProB(stateSpace.getCurrentPreference(TLC_USE_PROB_CONSTANTS).equalsIgnoreCase("true"))
-			.setNumberOfWorkers(stateSpace.getCurrentPreference(TLC_WORKERS))
-			.minInt(Integer.parseInt(stateSpace.getCurrentPreference(MININT)))
-			.maxInt(Integer.parseInt(stateSpace.getCurrentPreference(MAXINT)));
-	}
-
 	public TLCModelCheckingOptions(Map<TLC4BOption, String> options) {
 		this.options = new HashMap<>(options);
-	}
-	
-	/**
-	 * @param stateSpace ignored
-	 * @param options initial set of options
-	 * @deprecated Use {@link #TLCModelCheckingOptions(Map)} instead.
-	 */
-	@Deprecated
-	public TLCModelCheckingOptions(final StateSpace stateSpace, final Map<TLC4BOption, String> options) {
-		this(options);
 	}
 
 	public TLCModelCheckingOptions() {
