@@ -75,6 +75,16 @@ public class TLCModelChecker extends CheckerBase {
 		return args.toArray(new String[0]);
 	}
 
+	/**
+	 * Quickly check whether TLC4B is applicable to the provided machine.
+	 *
+	 * @param path path to B machine file
+	 * @param timeOut time out in seconds
+	 * @return Exception if TLC4B is not applicable, else null (also if unknown)
+	 * @deprecated This method creates an executor that is never shut down.
+	 *     Use {@link TLC4B#checkTLC4BIsApplicable(String)} instead and implement the timeout logic yourself as appropriate for your application.
+	 */
+	@Deprecated
 	public static Exception checkTLCApplicable(final String path, final int timeOut) {
 		return TLC4B.checkTLC4BIsApplicable(path, timeOut);
 	}
