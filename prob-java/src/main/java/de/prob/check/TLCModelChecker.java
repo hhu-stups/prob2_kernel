@@ -31,6 +31,7 @@ public class TLCModelChecker extends CheckerBase {
 		this.machinePath = machinePath;
 	}
 
+	@Override
 	public void execute() {
 		TLCStats stats = new TLCStats(this);
 		TLCRunner.addTLCMessageListener(stats);

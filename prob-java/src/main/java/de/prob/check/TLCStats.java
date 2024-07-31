@@ -24,6 +24,7 @@ public class TLCStats extends TLCMessageListener {
 		this.tlcModelChecker.updateStats(new NotYetFinished("TLC model checking started.", 0), lastStats);
 	}
 
+	@Override
 	public void onMessage(Message message) {
 		if (finished)
 			// once finished, ignore further updates

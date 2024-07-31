@@ -23,10 +23,12 @@ public class CoverageTestTrace extends TestTrace {
 		return new CoverageTestTrace(transitions, t, isComplete);
 	}
 
+	@Override
 	public CoverageTestTrace createNewTrace(List<String> transitions, Target t, boolean isComplete, Trace trace) {
 		return new CoverageTestTrace(transitions, t, isComplete, trace);
 	}
 
+	@Override
 	public String toString() {
 		StringJoiner stringJoiner = new StringJoiner(", ", "{", "}");
 		transitionNames.forEach(stringJoiner::add);

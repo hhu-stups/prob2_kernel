@@ -24,6 +24,7 @@ public class EventBAction extends Action implements Named {
 		this.comment = comment == null ? "" : comment;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}

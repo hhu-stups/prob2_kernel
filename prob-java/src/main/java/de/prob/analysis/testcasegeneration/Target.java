@@ -74,6 +74,7 @@ public class Target {
 		return Objects.hash(operation, feasible, getGuardString());
 	}
 
+	@Override
 	public String toString() {
 		return operation + " (" + getGuardString() + "->" + feasible + ")";
 	}

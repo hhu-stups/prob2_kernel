@@ -25,6 +25,7 @@ public class ConcreteMCDCTestCase {
 		return truthValue;
 	}
 
+	@Override
 	public String toString() {
 		PrettyPrinter prettyPrinter = new PrettyPrinter();
 		predicate.apply(prettyPrinter);

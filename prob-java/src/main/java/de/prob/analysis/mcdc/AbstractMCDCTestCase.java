@@ -32,6 +32,7 @@ public class AbstractMCDCTestCase {
 		return right;
 	}
 
+	@Override
 	public String toString() {
 		return String.valueOf(left).charAt(0) + (String.valueOf(right).charAt(0) + " -> " + truthValue);
 	}
