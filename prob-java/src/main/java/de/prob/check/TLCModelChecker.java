@@ -1,11 +1,13 @@
 package de.prob.check;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import de.be4.classicalb.core.parser.exceptions.BCompoundException;
 import de.prob.animator.command.GetConstantsPredicateCommand;
+import de.prob.exception.ProBError;
 import de.prob.statespace.StateSpace;
 import de.tlc4b.TLC4B;
 import de.tlc4b.TLC4BOption;
@@ -38,8 +40,10 @@ public class TLCModelChecker extends CheckerBase {
 		try {
 			this.results = TLC4B.run(getCurrentOptions());
 			stats.handleResults(results);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+		} catch (IOException exc) {
+			throw new UncheckedIOException(exc);
+		} catch (BCompoundException exc) {
+			throw new ProBError(exc);
 		}
 	}
 
