@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 
@@ -288,9 +289,13 @@ public final class JacksonManager<T extends HasMetadata> {
 		// save it under a temporary file name first,
 		// and only once the json has been fully saved rename it to the real file name
 		// (overwriting any existing file with that name).
+		Path parentDir = path.getParent();
+		if (parentDir == null) {
+			parentDir = Paths.get(".");
+		}
 		Path tempFile = null;
 		try {
-			tempFile = Files.createTempFile(path.getFileName().toString(), ".probsavetmp");
+			tempFile = Files.createTempFile(parentDir, path.getFileName().toString(), ".probsavetmp");
 			LOGGER.debug("Using temp file {} to save {}", tempFile, path);
 			try (BufferedWriter w = Files.newBufferedWriter(tempFile, StandardCharsets.UTF_8)) {
 				this.getContext().objectMapper.writeValue(w, object);
