@@ -293,21 +293,18 @@ public final class JacksonManager<T extends HasMetadata> {
 		if (parentDir == null) {
 			parentDir = Paths.get(".");
 		}
-		Path tempFile = null;
+		Path tempFile = Files.createTempFile(parentDir, path.getFileName().toString(), ".probsavetmp");
+		LOGGER.debug("Using temp file {} to save {}", tempFile, path);
 		try {
-			tempFile = Files.createTempFile(parentDir, path.getFileName().toString(), ".probsavetmp");
-			LOGGER.debug("Using temp file {} to save {}", tempFile, path);
 			try (BufferedWriter w = Files.newBufferedWriter(tempFile, StandardCharsets.UTF_8)) {
 				this.getContext().objectMapper.writeValue(w, object);
 			}
 			Files.move(tempFile, path, StandardCopyOption.REPLACE_EXISTING);
 		} catch (Exception e) {
-			if (tempFile != null) {
-				try {
-					Files.deleteIfExists(tempFile);
-				} catch (Exception e2) {
-					e.addSuppressed(e2);
-				}
+			try {
+				Files.deleteIfExists(tempFile);
+			} catch (Exception e2) {
+				e.addSuppressed(e2);
 			}
 			throw e;
 		}
