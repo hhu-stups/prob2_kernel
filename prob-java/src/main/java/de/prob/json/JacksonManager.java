@@ -294,8 +294,8 @@ public final class JacksonManager<T extends HasMetadata> {
 			LOGGER.debug("Using temp file {} to save {}", tempFile, path);
 			try (BufferedWriter w = Files.newBufferedWriter(tempFile, StandardCharsets.UTF_8)) {
 				this.getContext().objectMapper.writeValue(w, object);
-				Files.move(tempFile, path, StandardCopyOption.REPLACE_EXISTING);
 			}
+			Files.move(tempFile, path, StandardCopyOption.REPLACE_EXISTING);
 		} catch (Exception e) {
 			LOGGER.error("Failed to save file {}", path, e);
 			throw e;
