@@ -1,7 +1,11 @@
 package de.prob.json;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -260,6 +264,7 @@ public final class JacksonManager<T extends HasMetadata> {
 	 * @param object the object to write
 	 */
 	public void writeToFile(final Path path, final T object) throws IOException {
+		LOGGER.debug("Writing json file of type {} to {}", this.getContext().fileType, path);
 		final JsonMetadata metadata = object.getMetadata();
 		if (metadata == null) {
 			throw new IllegalArgumentException("Object must have metadata set");
@@ -278,6 +283,30 @@ public final class JacksonManager<T extends HasMetadata> {
 				this.getContext().currentFormatVersion
 			));
 		}
-		this.getContext().objectMapper.writeValue(path.toFile(), object);
+
+		// To avoid corrupting the previously saved files if saving fails/is interrupted for some reason,
+		// save it under a temporary file name first,
+		// and only once the json has been fully saved rename it to the real file name
+		// (overwriting any existing file with that name).
+		Path tempFile = null;
+		try {
+			tempFile = Files.createTempFile(path.getFileName().toString(), ".probsavetmp");
+			LOGGER.debug("Using temp file {} to save {}", tempFile, path);
+			try (BufferedWriter w = Files.newBufferedWriter(tempFile, StandardCharsets.UTF_8)) {
+				this.getContext().objectMapper.writeValue(w, object);
+				Files.move(tempFile, path, StandardCopyOption.REPLACE_EXISTING);
+			}
+		} catch (Exception e) {
+			LOGGER.error("Failed to save file {}", path, e);
+			throw e;
+		} finally {
+			if (tempFile != null) {
+				try {
+					Files.deleteIfExists(tempFile);
+				} catch (Exception e) {
+					LOGGER.warn("Failed to delete temporary file {}", tempFile, e);
+				}
+			}
+		}
 	}
 }
