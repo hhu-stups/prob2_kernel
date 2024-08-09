@@ -298,15 +298,15 @@ public final class JacksonManager<T extends HasMetadata> {
 			Files.move(tempFile, path, StandardCopyOption.REPLACE_EXISTING);
 		} catch (Exception e) {
 			LOGGER.error("Failed to save file {}", path, e);
-			throw e;
-		} finally {
 			if (tempFile != null) {
 				try {
 					Files.deleteIfExists(tempFile);
-				} catch (Exception e) {
-					LOGGER.warn("Failed to delete temporary file {}", tempFile, e);
+				} catch (Exception e2) {
+					LOGGER.warn("Failed to delete temporary file {}", tempFile, e2);
+					e.addSuppressed(e2);
 				}
 			}
+			throw e;
 		}
 	}
 }
