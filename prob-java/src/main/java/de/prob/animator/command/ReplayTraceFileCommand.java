@@ -1,11 +1,15 @@
 package de.prob.animator.command;
 
+import java.util.Collections;
+import java.util.List;
+
 import de.prob.check.tracereplay.ReplayedTrace;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;
+import de.prob.statespace.Transition;
 
-public final class ReplayTraceFileCommand extends AbstractCommand {
+public final class ReplayTraceFileCommand extends AbstractCommand implements IStateSpaceModifier {
 	private static final String PROLOG_COMMAND_NAME = "prob2_replay_json_trace_file";
 	
 	private static final String REPLAY_STATUS_VAR = "ReplayStatus";
@@ -37,5 +41,11 @@ public final class ReplayTraceFileCommand extends AbstractCommand {
 	
 	public ReplayedTrace getTrace() {
 		return trace;
+	}
+	
+	@Override
+	public List<Transition> getNewTransitions() {
+		// TODO
+		return Collections.emptyList();
 	}
 }
