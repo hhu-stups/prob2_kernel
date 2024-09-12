@@ -20,16 +20,18 @@ public final class VisBExportOptions {
 	
 	private final boolean showHeader;
 	private final boolean showSets;
+	private final boolean showSource;
 	private final boolean showConstants;
 	private final boolean showVariables;
 	private final boolean showVersionInfo;
 	private final String idPrefix;
 	
-	public static final VisBExportOptions DEFAULT = new VisBExportOptions(true, false, false, false, true, null);
+	public static final VisBExportOptions DEFAULT = new VisBExportOptions(true, false, false, false, false, true, null);
 	
-	private VisBExportOptions(boolean showHeader, boolean showSets, boolean showConstants, boolean showVariables, boolean showVersionInfo, String idPrefix) {
+	private VisBExportOptions(boolean showHeader, boolean showSets, boolean showSource, boolean showConstants, boolean showVariables, boolean showVersionInfo, String idPrefix) {
 		this.showHeader = showHeader;
 		this.showSets = showSets;
+		this.showSource = showSource;
 		this.showConstants = showConstants;
 		this.showVariables = showVariables;
 		this.showVersionInfo = showVersionInfo;
@@ -41,7 +43,7 @@ public final class VisBExportOptions {
 	}
 	
 	public VisBExportOptions withShowHeader(boolean showHeader) {
-		return new VisBExportOptions(showHeader, this.showSets, this.showConstants, this.showVariables, this.showVersionInfo, this.idPrefix);
+		return new VisBExportOptions(showHeader, this.showSets, this.showSource, this.showConstants, this.showVariables, this.showVersionInfo, this.idPrefix);
 	}
 	
 	public boolean isShowSets() {
@@ -49,7 +51,15 @@ public final class VisBExportOptions {
 	}
 	
 	public VisBExportOptions withShowSets(boolean showSets) {
-		return new VisBExportOptions(this.showHeader, showSets, this.showConstants, this.showVariables, this.showVersionInfo, this.idPrefix);
+		return new VisBExportOptions(this.showHeader, showSets, this.showSource, this.showConstants, this.showVariables, this.showVersionInfo, this.idPrefix);
+	}
+
+	public boolean isShowSource() {
+		return showSource;
+	}
+
+	public VisBExportOptions withShowSource(boolean showSource) {
+		return new VisBExportOptions(this.showHeader, this.showSets, showSource, this.showConstants, this.showVariables, this.showVersionInfo, this.idPrefix);
 	}
 	
 	public boolean isShowConstants() {
@@ -57,7 +67,7 @@ public final class VisBExportOptions {
 	}
 	
 	public VisBExportOptions withShowConstants(boolean showConstants) {
-		return new VisBExportOptions(this.showHeader, this.showSets, showConstants, this.showVariables, this.showVersionInfo, this.idPrefix);
+		return new VisBExportOptions(this.showHeader, this.showSets, this.showSource, showConstants, this.showVariables, this.showVersionInfo, this.idPrefix);
 	}
 	
 	public boolean isShowVariables() {
@@ -65,7 +75,7 @@ public final class VisBExportOptions {
 	}
 	
 	public VisBExportOptions withShowVariables(boolean showVariables) {
-		return new VisBExportOptions(this.showHeader, this.showSets, this.showConstants, showVariables, this.showVersionInfo, this.idPrefix);
+		return new VisBExportOptions(this.showHeader, this.showSets, this.showSource, this.showConstants, showVariables, this.showVersionInfo, this.idPrefix);
 	}
 	
 	public boolean isShowVersionInfo() {
@@ -73,7 +83,7 @@ public final class VisBExportOptions {
 	}
 	
 	public VisBExportOptions withShowVersionInfo(boolean showVersionInfo) {
-		return new VisBExportOptions(this.showHeader, this.showSets, this.showConstants, this.showVariables, showVersionInfo, this.idPrefix);
+		return new VisBExportOptions(this.showHeader, this.showSets, this.showSource, this.showConstants, this.showVariables, showVersionInfo, this.idPrefix);
 	}
 	
 	public String getIdPrefix() {
@@ -81,7 +91,7 @@ public final class VisBExportOptions {
 	}
 	
 	public VisBExportOptions withIdPrefix(String idPrefix) {
-		return new VisBExportOptions(this.showHeader, this.showSets, this.showConstants, this.showVariables, this.showVersionInfo, idPrefix);
+		return new VisBExportOptions(this.showHeader, this.showSets, this.showSource, this.showConstants, this.showVariables, this.showVersionInfo, idPrefix);
 	}
 	
 	public VisBExportOptions withAutoIdPrefix() {
@@ -99,6 +109,7 @@ public final class VisBExportOptions {
 		VisBExportOptions other = (VisBExportOptions)obj;
 		return this.isShowHeader() == other.isShowHeader()
 			&& this.isShowSets() == other.isShowSets()
+			&& this.isShowSource() == other.isShowSource()
 			&& this.isShowConstants() == other.isShowConstants()
 			&& this.isShowVariables() == other.isShowVariables()
 			&& this.isShowVersionInfo() == other.isShowVersionInfo()
@@ -110,6 +121,7 @@ public final class VisBExportOptions {
 		return Objects.hash(
 			this.isShowHeader(),
 			this.isShowSets(),
+			this.isShowSource(),
 			this.isShowConstants(),
 			this.isShowVariables(),
 			this.isShowVersionInfo(),
@@ -122,6 +134,7 @@ public final class VisBExportOptions {
 		return MoreObjects.toStringHelper(this)
 			.add("showHeader", this.isShowHeader())
 			.add("showSets", this.isShowSets())
+			.add("showSource", this.isShowSource())
 			.add("showConstants", this.isShowConstants())
 			.add("showVariables", this.isShowVariables())
 			.add("showVersionInfo", this.isShowVersionInfo())
@@ -150,6 +163,10 @@ public final class VisBExportOptions {
 			pout.openTerm("show_variables");
 			pout.printAtom("all");
 			pout.closeTerm();
+		}
+
+		if (this.isShowSource()) {
+			pout.printAtom("show_source");
 		}
 		
 		if (!this.isShowVersionInfo()) {
