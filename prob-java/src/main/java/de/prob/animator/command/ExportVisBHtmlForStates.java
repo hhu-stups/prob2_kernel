@@ -24,7 +24,7 @@ public final class ExportVisBHtmlForStates extends AbstractCommand {
 	}
 	
 	public ExportVisBHtmlForStates(List<State> states, Path path) {
-		this(states, VisBExportOptions.DEFAULT, path);
+		this(states, VisBExportOptions.DEFAULT_STATES, path);
 	}
 	
 	public ExportVisBHtmlForStates(State state, VisBExportOptions options, Path path) {
