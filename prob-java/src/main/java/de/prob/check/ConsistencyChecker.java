@@ -118,21 +118,6 @@ public class ConsistencyChecker extends CheckerBase {
 		}
 	}
 
-	private void updateTimeLimit() {
-		if (timeLimitSet()) {
-			Duration newTimeout = this.options.getTimeLimit().minus(stopwatch.elapsed());
-			timeout = Math.toIntExact(Math.min(TIMEOUT_MS, Math.max(0L, newTimeout.toMillis())));
-			finished = finished || newTimeout.isNegative();
-		}
-	}
-
-	private void updateNodeLimit() {
-		if (nodesLimitSet()) {
-			maximumNodesLeft = maximumNodesLeft - deltaNodeProcessed;
-			finished = finished || maximumNodesLeft <= 0;
-		}
-	}
-
 	@Override
 	protected void execute() {
 		if (options.getCustomGoal() != null) {
@@ -152,9 +137,19 @@ public class ConsistencyChecker extends CheckerBase {
 			ModelCheckingOptions modifiedOptions = this.options;
 			computeStateSpaceCoverage();
 			do {
-				updateTimeLimit();
-				updateNodeLimit();
-				cmd = nodesLimitSet() ? new ModelCheckingStepCommand(this.maximumNodesLeft, this.timeout, modifiedOptions) : new ModelCheckingStepCommand(this.timeout, modifiedOptions);
+				if (timeLimitSet()) {
+					Duration newTimeout = this.options.getTimeLimit().minus(stopwatch.elapsed());
+					timeout = Math.toIntExact(Math.min(TIMEOUT_MS, Math.max(0L, newTimeout.toMillis())));
+					finished = finished || newTimeout.isNegative();
+				}
+
+				if (nodesLimitSet()) {
+					maximumNodesLeft = maximumNodesLeft - deltaNodeProcessed;
+					finished = finished || maximumNodesLeft <= 0;
+					cmd = new ModelCheckingStepCommand(this.maximumNodesLeft, this.timeout, modifiedOptions);
+				} else {
+					cmd = new ModelCheckingStepCommand(this.timeout, modifiedOptions);
+				}
 
 				try {
 					this.getStateSpace().execute(cmd);
