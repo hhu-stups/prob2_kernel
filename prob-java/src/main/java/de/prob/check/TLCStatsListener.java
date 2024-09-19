@@ -11,15 +11,15 @@ import tlc2.output.Message;
 
 import static tlc2.output.MP.*;
 
-class TLCStats extends TLCMessageListener {
-	private static final Logger LOGGER = LoggerFactory.getLogger(TLCStats.class);
+class TLCStatsListener extends TLCMessageListener {
+	private static final Logger LOGGER = LoggerFactory.getLogger(TLCStatsListener.class);
 
 	private final TLCModelChecker tlcModelChecker;
 
 	private StateSpaceStats lastStats = new StateSpaceStats(1,0,0);
 	private boolean finished = false;
 
-	TLCStats(TLCModelChecker tlcModelChecker) {
+	TLCStatsListener(TLCModelChecker tlcModelChecker) {
 		this.tlcModelChecker = tlcModelChecker;
 		this.tlcModelChecker.updateStats(new NotYetFinished("TLC model checking started.", 0), lastStats);
 	}
