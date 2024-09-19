@@ -30,7 +30,6 @@ public class ConsistencyChecker extends CheckerBase {
 
 	private int timeout;
 	private int maximumNodesLeft;
-	private boolean finished;
 
 	private int deltaNodeProcessed;
 	private int oldNodesProcessed;
@@ -92,7 +91,6 @@ public class ConsistencyChecker extends CheckerBase {
 		this.maximumNodesLeft = options.getStateLimit();
 		this.deltaNodeProcessed = 0;
 		this.oldNodesProcessed = 0;
-		this.finished = false;
 	}
 
 	private boolean nodesLimitSet() {
@@ -131,7 +129,7 @@ public class ConsistencyChecker extends CheckerBase {
 		}
 
 		ModelCheckingStepCommand cmd;
-		StateSpaceStats stats;
+		StateSpaceStats stats = null;
 		try {
 			this.getStateSpace().startTransaction();
 			ModelCheckingOptions modifiedOptions = this.options;
@@ -140,12 +138,18 @@ public class ConsistencyChecker extends CheckerBase {
 				if (timeLimitSet()) {
 					Duration newTimeout = this.options.getTimeLimit().minus(stopwatch.elapsed());
 					timeout = Math.toIntExact(Math.min(TIMEOUT_MS, Math.max(0L, newTimeout.toMillis())));
-					finished = finished || newTimeout.isNegative();
+					if (newTimeout.isNegative()) {
+						this.isFinished(new ModelCheckLimitReached("Time limit reached"), stats);
+						return;
+					}
 				}
 
 				if (nodesLimitSet()) {
 					maximumNodesLeft = maximumNodesLeft - deltaNodeProcessed;
-					finished = finished || maximumNodesLeft <= 0;
+					if (maximumNodesLeft <= 0) {
+						this.isFinished(new ModelCheckLimitReached("State limit reached"), stats);
+						return;
+					}
 					cmd = new ModelCheckingStepCommand(this.maximumNodesLeft, this.timeout, modifiedOptions);
 				} else {
 					cmd = new ModelCheckingStepCommand(this.timeout, modifiedOptions);
@@ -173,7 +177,7 @@ public class ConsistencyChecker extends CheckerBase {
 				}
 				this.updateStats(cmd.getResult(), stats);
 				modifiedOptions = modifiedOptions.recheckExisting(false);
-			} while (cmd.getResult() instanceof NotYetFinished && !this.finished);
+			} while (cmd.getResult() instanceof NotYetFinished);
 		} finally {
 			this.getStateSpace().endTransaction();
 		}
