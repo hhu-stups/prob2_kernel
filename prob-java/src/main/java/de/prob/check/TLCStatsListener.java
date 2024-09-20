@@ -9,6 +9,10 @@ import org.slf4j.LoggerFactory;
 import tlc2.output.EC;
 import tlc2.output.Message;
 
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.Locale;
+
 import static tlc2.output.MP.*;
 
 class TLCStatsListener extends TLCMessageListener {
@@ -54,10 +58,16 @@ class TLCStatsListener extends TLCMessageListener {
 				processedNodes = totalNodes;
 				break;
 			case EC.TLC_PROGRESS_STATS:
-				// only here: numbers of format 103,423
-				totalTransitions = Integer.parseInt(message.getParameters()[1].replace(",",""));
-				totalNodes = Integer.parseInt(message.getParameters()[2].replace(",",""));
-				processedNodes = Integer.parseInt(message.getParameters()[3].replace(",",""));
+				// only here: number format depends on locale!
+				NumberFormat format = NumberFormat.getInstance(Locale.getDefault());
+				try {
+					totalTransitions = format.parse(message.getParameters()[1]).intValue();
+					totalNodes = format.parse(message.getParameters()[2]).intValue();
+					processedNodes = format.parse(message.getParameters()[3]).intValue();
+				} catch (ParseException e) {
+					// missing progress update is not very critical
+					LOGGER.info("Failed to parse TLC progress message", e);
+				}
 				break;
 			case EC.TLC_PROGRESS_STATS_DFID:
 				totalTransitions = Integer.parseInt(message.getParameters()[0]);
