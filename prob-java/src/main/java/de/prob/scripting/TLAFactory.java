@@ -65,7 +65,7 @@ public class TLAFactory implements ModelFactory<TLAModel> {
 			throw new ProBError(e);
 		}
 		logger.trace("Done parsing '{}'", f.getAbsolutePath());
-		tlaModel = tlaModel.create(ast, rml, f, bparser);
+		tlaModel = tlaModel.create(ast, rml, f, bparser, translator);
 		return new ExtractedModel<>(stateSpaceProvider, tlaModel);
 	}
 }

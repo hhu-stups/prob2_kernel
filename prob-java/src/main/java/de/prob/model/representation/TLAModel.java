@@ -12,6 +12,7 @@ import de.prob.model.classicalb.ClassicalBModel;
 import de.prob.scripting.StateSpaceProvider;
 import de.prob.statespace.FormalismType;
 import de.prob.statespace.Language;
+import de.tla2bAst.Translator;
 
 import java.io.File;
 import java.util.List;
@@ -19,19 +20,23 @@ import java.util.List;
 public class TLAModel extends AbstractModel {
 
 	private final ClassicalBModel internalModel;
+	private final Translator translator;
 
 	@Inject
 	public TLAModel(final StateSpaceProvider ssProvider, final ClassicalBModel internalModel) {
-		this(ssProvider, null, internalModel);
+		this(ssProvider, null, internalModel, null);
 	}
 
-	public TLAModel(final StateSpaceProvider ssProvider, final File modelFile, final ClassicalBModel internalModel) {
+	public TLAModel(final StateSpaceProvider ssProvider, final File modelFile, final ClassicalBModel internalModel,
+	                final Translator translator) {
 		super(ssProvider, internalModel.getChildren(), internalModel.getGraph(), modelFile);
 		this.internalModel = internalModel;
+		this.translator = translator;
 	}
 
-	public TLAModel create(final Start mainAST, final RecursiveMachineLoader rml, final File modelFile, final BParser bparser) {
-		return new TLAModel(stateSpaceProvider, modelFile, internalModel.create(mainAST, rml, modelFile, bparser));
+	public TLAModel create(final Start mainAST, final RecursiveMachineLoader rml, final File modelFile, final BParser bparser,
+	                       final Translator translator) {
+		return new TLAModel(stateSpaceProvider, modelFile, internalModel.create(mainAST, rml, modelFile, bparser), translator);
 	}
 
 	@Override
@@ -46,7 +51,7 @@ public class TLAModel extends AbstractModel {
 
 	@Override
 	public IEvalElement parseFormula(final String formula, final FormulaExpand expand) {
-		return new TLA(formula, expand);
+		return new TLA(formula, expand, translator);
 	}
 
 	@Override
