@@ -36,9 +36,9 @@ public final class TLA extends AbstractEvalElement implements IBEvalElement {
 		try {
 			if (translator != null) {
 				// evaluate expression in module context if available
-				return translator.translateExpression(code);
+				return translator.translateExpressionIncludingModel(code);
 			} else {
-				return Translator.translateTlaExpression(code);
+				return Translator.translateExpressionWithoutModel(code);
 			}
 		} catch (ExpressionTranslationException | TLA2BException e) {
 			throw new EvaluationException(e);

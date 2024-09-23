@@ -52,6 +52,7 @@ public class TLAModel extends AbstractModel {
 	@Override
 	public IEvalElement parseFormula(final String formula, final FormulaExpand expand) {
 		return new TLA(formula, expand, translator);
+		// TODO: tests (TLA + classical B expressions)?
 	}
 
 	@Override
