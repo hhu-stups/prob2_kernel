@@ -55,6 +55,10 @@ public class TLAModel extends AbstractModel {
 		// TODO: tests (TLA + classical B expressions)?
 	}
 
+	public IEvalElement parseFormulaAsClassicalB(final String formula, final FormulaExpand expand) {
+		return internalModel.parseFormula(formula, expand);
+	}
+
 	@Override
 	public IEvalElement formulaFromIdentifier(List<String> identifier, FormulaExpand expansion) {
 		return internalModel.formulaFromIdentifier(identifier, expansion);
