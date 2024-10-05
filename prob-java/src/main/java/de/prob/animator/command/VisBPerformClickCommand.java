@@ -3,6 +3,7 @@ package de.prob.animator.command;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.prob.animator.domainobjects.VisBClickMetaInfos;
 import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
@@ -21,14 +22,14 @@ public class VisBPerformClickCommand extends AbstractCommand implements IStateSp
 
 	private final String svgID;
 
-	private final List<String> metaInfoList;
+	private final VisBClickMetaInfos metaInfos;
 
 	private final String stateID;
 
-	public VisBPerformClickCommand(StateSpace stateSpace, String svgID, List<String> metaInfoList, String stateID) {
+	public VisBPerformClickCommand(StateSpace stateSpace, String svgID, VisBClickMetaInfos metaInfos, String stateID) {
 		this.stateSpace = stateSpace;
 		this.svgID = svgID;
-		this.metaInfoList = metaInfoList;
+		this.metaInfos = metaInfos;
 		this.stateID = stateID;
 	}
 
@@ -37,9 +38,7 @@ public class VisBPerformClickCommand extends AbstractCommand implements IStateSp
 		pto.openTerm(PROLOG_COMMAND_NAME);
 		pto.printAtom(svgID);
 		pto.openList();
-		for (String metaInfo : metaInfoList) {
-			pto.printString(metaInfo);
-		}
+		metaInfos.printProlog(pto);
 		pto.closeList();
 		pto.printAtomOrNumber(stateID);
 		pto.printVariable(TRANSITIONS);
