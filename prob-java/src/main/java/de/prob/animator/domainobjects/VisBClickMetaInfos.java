@@ -13,6 +13,8 @@ import java.util.Objects;
  * <p>{@link VisBClickMetaInfos} objects are immutable.</p>
  */
 public final class VisBClickMetaInfos {
+	private final boolean altKey;
+	private final boolean ctrlKey;
 	private final boolean metaKey;
 	private final int pageX;
 	private final int pageY;
@@ -20,13 +22,23 @@ public final class VisBClickMetaInfos {
 
 	private final Map<String,String> javaScriptVariables;
 
-	public VisBClickMetaInfos(boolean metaKey, int pageX, int pageY, boolean shiftKey,
+	public VisBClickMetaInfos(boolean altKey, boolean ctrlKey, boolean metaKey, int pageX, int pageY, boolean shiftKey,
 	                           Map<String,String> javaScriptVariables) {
+		this.altKey = altKey;
+		this.ctrlKey = ctrlKey;
 		this.metaKey = metaKey;
 		this.pageX = pageX;
 		this.pageY = pageY;
 		this.shiftKey = shiftKey;
 		this.javaScriptVariables = new HashMap<>(javaScriptVariables);
+	}
+
+	public boolean isAltKey() {
+		return altKey;
+	}
+
+	public boolean isCtrlKey() {
+		return ctrlKey;
 	}
 
 	public boolean isMetaKey() {
@@ -58,7 +70,9 @@ public final class VisBClickMetaInfos {
 			return false;
 		}
 		VisBClickMetaInfos other = (VisBClickMetaInfos)obj;
-		return this.isMetaKey() == other.isMetaKey()
+		return this.isAltKey() == other.isAltKey()
+			&& this.isCtrlKey() == other.isCtrlKey()
+			&& this.isMetaKey() == other.isMetaKey()
 			&& this.getPageX() == other.getPageX()
 			&& this.getPageY() == other.getPageY()
 			&& this.isShiftKey() == other.isShiftKey()
@@ -68,6 +82,8 @@ public final class VisBClickMetaInfos {
 	@Override
 	public int hashCode() {
 		return Objects.hash(
+			this.isAltKey(),
+			this.isCtrlKey(),
 			this.isMetaKey(),
 			this.getPageX(),
 			this.getPageY(),
@@ -79,6 +95,8 @@ public final class VisBClickMetaInfos {
 	@Override
 	public String toString() {
 		return MoreObjects.toStringHelper(this)
+			.add("altKey", this.isAltKey())
+			.add("ctrlKey", this.isCtrlKey())
 			.add("metaKey", this.isMetaKey())
 			.add("pageX", this.getPageX())
 			.add("pageY", this.getPageY())
@@ -88,6 +106,14 @@ public final class VisBClickMetaInfos {
 	}
 
 	public void printProlog(IPrologTermOutput pout) {
+		if (this.isAltKey()) {
+			pout.printAtom("alt_key");
+		}
+
+		if (this.isCtrlKey()) {
+			pout.printAtom("ctrl_key");
+		}
+
 		if (this.isMetaKey()) {
 			pout.printAtom("meta_key");
 		}

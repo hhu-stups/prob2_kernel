@@ -26,8 +26,8 @@ public class VisBPerformClickCommand extends AbstractCommand implements IStateSp
 
 	@Deprecated
 	public VisBPerformClickCommand(StateSpace stateSpace, String svgID, List<String> metaInfos, String stateID) {
-		this(stateSpace, svgID,
-				new VisBClickMetaInfos(false, 0, 0, false, new HashMap<>()), stateID);
+		this(stateSpace, svgID, new VisBClickMetaInfos(false, false, false, 0, 0,
+				false, new HashMap<>()), stateID);
 	}
 
 	public VisBPerformClickCommand(StateSpace stateSpace, String svgID, VisBClickMetaInfos metaInfos, String stateID) {
