@@ -3,18 +3,14 @@ package de.prob.animator.domainobjects;
 import com.google.common.base.MoreObjects;
 import de.prob.prolog.output.IPrologTermOutput;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 /**
  * <p>A set of meta information for a {@link de.prob.animator.command.VisBPerformClickCommand}.</p>
- * <p>
- * {@link VisBClickMetaInfos} objects are immutable.
- * There is no public constructor - to create a new set,
- * start with the {@link #DEFAULT} options
- * and change the desired elements using the {@code with...} methods.
- * </p>
+ * <p>{@link VisBClickMetaInfos} objects are immutable.</p>
  */
 public final class VisBClickMetaInfos {
 	private final boolean metaKey;
@@ -22,60 +18,37 @@ public final class VisBClickMetaInfos {
 	private final int pageY;
 	private final boolean shiftKey;
 
-	private final Map<String,String> javaScriptVariables = new HashMap<>();
+	private final Map<String,String> javaScriptVariables;
 
-	public static final VisBClickMetaInfos DEFAULT = new VisBClickMetaInfos(false, 0, 0,
-			false, new HashMap<>());
-
-	private VisBClickMetaInfos(boolean metaKey, int pageX, int pageY, boolean shiftKey,
+	public VisBClickMetaInfos(boolean metaKey, int pageX, int pageY, boolean shiftKey,
 	                           Map<String,String> javaScriptVariables) {
 		this.metaKey = metaKey;
 		this.pageX = pageX;
 		this.pageY = pageY;
 		this.shiftKey = shiftKey;
-		this.javaScriptVariables.putAll(javaScriptVariables);
+		this.javaScriptVariables = new HashMap<>(javaScriptVariables);
 	}
 
 	public boolean isMetaKey() {
 		return metaKey;
 	}
 
-	public VisBClickMetaInfos withMetaKey(boolean metaKey) {
-		return new VisBClickMetaInfos(metaKey, this.pageX, this.pageY, this.shiftKey, this.javaScriptVariables);
-	}
-
 	public int getPageX() {
 		return pageX;
 	}
 
-	public VisBClickMetaInfos withPageX(int pageX) {
-		return new VisBClickMetaInfos(this.metaKey, pageX, this.pageY, this.shiftKey, this.javaScriptVariables);
-	}
-	
-	public double getPageY() {
+	public int getPageY() {
 		return pageY;
 	}
 
-	public VisBClickMetaInfos withPageY(int pageY) {
-		return new VisBClickMetaInfos(this.metaKey, this.pageX, pageY, this.shiftKey, this.javaScriptVariables);
-	}
-	
 	public boolean isShiftKey() {
 		return shiftKey;
 	}
 
-	public VisBClickMetaInfos withShiftKey(boolean shiftKey) {
-		return new VisBClickMetaInfos(this.metaKey, this.pageX, this.pageY, shiftKey, this.javaScriptVariables);
-	}
-
 	public Map<String, String> getJavaScriptVariables() {
-		return javaScriptVariables;
+		return Collections.unmodifiableMap(javaScriptVariables);
 	}
 
-	public VisBClickMetaInfos withJavaScriptVariables(Map<String, String> javaScriptVariables) {
-		return new VisBClickMetaInfos(this.metaKey, this.pageX, this.pageY, this.shiftKey, javaScriptVariables);
-	}
-	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -91,7 +64,7 @@ public final class VisBClickMetaInfos {
 			&& this.isShiftKey() == other.isShiftKey()
 			&& this.getJavaScriptVariables() == other.getJavaScriptVariables();
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(
@@ -102,7 +75,7 @@ public final class VisBClickMetaInfos {
 			this.getJavaScriptVariables()
 		);
 	}
-	
+
 	@Override
 	public String toString() {
 		return MoreObjects.toStringHelper(this)
@@ -113,7 +86,7 @@ public final class VisBClickMetaInfos {
 			.add("javaScriptVariables", this.getJavaScriptVariables())
 			.toString();
 	}
-	
+
 	public void printProlog(IPrologTermOutput pout) {
 		if (this.isMetaKey()) {
 			pout.printAtom("meta_key");

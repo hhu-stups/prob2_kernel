@@ -1,6 +1,7 @@
 package de.prob.animator.command;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import de.prob.animator.domainobjects.VisBClickMetaInfos;
@@ -19,12 +20,15 @@ public class VisBPerformClickCommand extends AbstractCommand implements IStateSp
 	private List<Transition> transitions;
 
 	private final StateSpace stateSpace;
-
 	private final String svgID;
-
 	private final VisBClickMetaInfos metaInfos;
-
 	private final String stateID;
+
+	@Deprecated
+	public VisBPerformClickCommand(StateSpace stateSpace, String svgID, List<String> metaInfos, String stateID) {
+		this(stateSpace, svgID,
+				new VisBClickMetaInfos(false, 0, 0, false, new HashMap<>()), stateID);
+	}
 
 	public VisBPerformClickCommand(StateSpace stateSpace, String svgID, VisBClickMetaInfos metaInfos, String stateID) {
 		this.stateSpace = stateSpace;
