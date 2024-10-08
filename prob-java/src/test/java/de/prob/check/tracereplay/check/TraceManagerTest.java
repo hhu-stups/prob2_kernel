@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import de.prob.check.tracereplay.json.TraceManager;
 import de.prob.check.tracereplay.json.storage.TraceJsonFile;
 import de.prob.cli.CliTestCommon;
-import de.prob.json.JsonConversionException;
 import de.prob.json.JsonMetadata;
 import de.prob.json.JsonMetadataBuilder;
 import de.prob.scripting.Api;
@@ -93,7 +92,7 @@ public class TraceManagerTest {
 
 	@Test
 	public void deserialize_wrong_fields_test() {
-		assertThrows(JsonConversionException.class, () ->
+		assertThrows(UnrecognizedPropertyException.class, () ->
 		traceManager.load(Paths.get("src", "test", "resources", "de", "prob", "testmachines","traces", "test4.prob2trace")));
 	}
 }
