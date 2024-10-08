@@ -44,11 +44,15 @@ public class TraceManager {
 
 			@Override
 			public ObjectNode convertOldData(final ObjectNode oldObject, final int oldVersion) {
-				if (oldVersion <= 0) {
+				if (oldVersion <= 5) {
+					// the format conversion code below (for versions 1-5) requires transitionList to exist
+					// same goes for the deserialization
 					if (!oldObject.has("transitionList")) {
 						oldObject.set("transitionList", oldObject.arrayNode());
 					}
+				}
 
+				if (oldVersion <= 0) {
 					if (!oldObject.has("description")) {
 						oldObject.put("description", "");
 					}
