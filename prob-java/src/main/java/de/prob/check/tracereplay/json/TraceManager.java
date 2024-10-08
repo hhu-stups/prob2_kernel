@@ -44,11 +44,11 @@ public class TraceManager {
 
 			@Override
 			public ObjectNode convertOldData(final ObjectNode oldObject, final int oldVersion) {
-				if (!oldObject.has("transitionList")) {
-					oldObject.set("transitionList", oldObject.arrayNode());
-				}
-
 				if (oldVersion <= 0) {
+					if (!oldObject.has("transitionList")) {
+						oldObject.set("transitionList", oldObject.arrayNode());
+					}
+
 					if (!oldObject.has("description")) {
 						oldObject.put("description", "");
 					}
