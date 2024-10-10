@@ -2,6 +2,7 @@ package de.prob.check.tracereplay.check.refinement;
 
 import de.be4.classicalb.core.parser.analysis.DepthFirstAdapter;
 import de.be4.classicalb.core.parser.node.*;
+import de.be4.classicalb.core.parser.util.Utils;
 import de.prob.exception.ProBError;
 
 import java.util.*;
@@ -120,9 +121,9 @@ public class OperationsFinder extends DepthFirstAdapter {
 	}
 
 	@Override
-	public void caseAOpSubstitution(AOpSubstitution node)
+	public void caseAOperationCallSubstitution(AOperationCallSubstitution node)
 	{
-		String function = node.getName().toString().trim();
+		String function = Utils.getTIdentifierListAsString(node.getOperation());
 		if(used.containsKey(function)){
 			used.get(function).add(currentOperation.getOpName().getFirst().getText());
 		}
