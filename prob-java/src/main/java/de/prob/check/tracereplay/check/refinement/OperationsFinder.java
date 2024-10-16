@@ -28,7 +28,7 @@ public class OperationsFinder extends DepthFirstAdapter {
 			this.suffix = suffix;
 		}
 
-		public RenamingContainer(List<TIdentifierLiteral> list) throws ProBError {
+		public RenamingContainer(List<TIdentifierLiteral> list) {
 			if (list.size() == 2) {
 				this.prefix = list.get(0).getText();
 				this.suffix = list.get(1).getText();
