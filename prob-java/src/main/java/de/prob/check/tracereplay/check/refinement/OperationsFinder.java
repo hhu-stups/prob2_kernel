@@ -10,15 +10,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class OperationsFinder extends DepthFirstAdapter {
-	private Set<RenamingContainer> promoted = new HashSet<>();
-	private final Map<String, HashSet<String>> used = new HashMap<>();
-	private AOperation currentOperation;
-	private final String sourceMachine;
-	private final Start node;
-	private boolean extendsSourceMachine = false;
-	private final List<RenamingContainer> extendedMachines = new ArrayList<>();
-	private final List<RenamingContainer> includedImportedMachines = new ArrayList<>();
-
 	public static class RenamingContainer {
 		final String prefix;
 		final String suffix;
@@ -66,6 +57,15 @@ public class OperationsFinder extends DepthFirstAdapter {
 			return (prefix + suffix).hashCode();
 		}
 	}
+
+	private Set<RenamingContainer> promoted = new HashSet<>();
+	private final Map<String, HashSet<String>> used = new HashMap<>();
+	private AOperation currentOperation;
+	private final String sourceMachine;
+	private final Start node;
+	private boolean extendsSourceMachine = false;
+	private final List<RenamingContainer> extendedMachines = new ArrayList<>();
+	private final List<RenamingContainer> includedImportedMachines = new ArrayList<>();
 
 	public OperationsFinder(String sourceMachine, Start node) {
 		this.sourceMachine = sourceMachine;
