@@ -60,7 +60,7 @@ public class TLAFactory implements ModelFactory<TLAModel> {
 		}
 		final RecursiveMachineLoader rml;
 		try {
-			rml = RecursiveMachineLoader.loadFromAst(bparser, ast, new ParsingBehaviour(), bparser.getContentProvider());
+			rml = translator.parseAllMachines(ast, f, bparser);
 		} catch (BCompoundException e) {
 			throw new ProBError(e);
 		}
