@@ -15,7 +15,9 @@ import de.prob.statespace.Language;
 import de.tla2bAst.Translator;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TLAModel extends AbstractModel {
 
@@ -37,6 +39,13 @@ public class TLAModel extends AbstractModel {
 	public TLAModel create(final Start mainAST, final RecursiveMachineLoader rml, final File modelFile, final BParser bparser,
 	                       final Translator translator) {
 		return new TLAModel(stateSpaceProvider, modelFile, internalModel.create(mainAST, rml, modelFile, bparser), translator);
+	}
+
+	@Override
+	public List<Path> getAllFiles() {
+		return this.translator.getModuleFiles().stream()
+			.map(File::toPath)
+			.collect(Collectors.toList());
 	}
 
 	@Override
