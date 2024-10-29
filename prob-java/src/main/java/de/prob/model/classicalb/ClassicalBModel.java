@@ -14,7 +14,6 @@ import de.be4.classicalb.core.parser.BParser;
 import de.be4.classicalb.core.parser.IDefinitions;
 import de.be4.classicalb.core.parser.analysis.prolog.RecursiveMachineLoader;
 import de.be4.classicalb.core.parser.exceptions.BCompoundException;
-import de.be4.classicalb.core.parser.exceptions.BParseException;
 import de.be4.classicalb.core.parser.node.Start;
 import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.command.LoadBProjectCommand;
@@ -92,12 +91,7 @@ public class ClassicalBModel extends AbstractModel {
 		try {
 			return new ClassicalB(bparser.parseFormula(formula), expand, formula);
 		} catch (BCompoundException e) {
-			final Throwable cause = e.getCause();
-			if (cause != null && cause.getCause() instanceof BParseException) {
-				throw new EvaluationException(((BParseException)e.getCause().getCause()).getRealMsg(), e);
-			} else {
-				throw new EvaluationException(e.getFirstException().getLocalizedMessage(), e);
-			}
+			throw new EvaluationException(e.getMessage(), e);
 		}
 	}
 
