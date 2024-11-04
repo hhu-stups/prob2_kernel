@@ -123,7 +123,7 @@ public class ExecuteModelCommand extends AbstractCommand implements IStateSpaceM
 		return t.addTransitions(resultTrace);
 	}
 
-	public int getNumberofStatesExecuted() {
+	public int getNumberOfStatesExecuted() {
 		return this.stepsExecuted;
 	}
 

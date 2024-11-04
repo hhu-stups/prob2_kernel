@@ -2,6 +2,7 @@ package de.prob.model.brules;
 
 import com.google.common.base.Stopwatch;
 import de.be4.classicalb.core.parser.rules.*;
+import de.prob.animator.command.ExecuteModelCommand;
 import de.prob.animator.domainobjects.AbstractEvalResult;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.model.brules.output.RuleValidationReport;
@@ -17,6 +18,10 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 public class RulesChecker {
+
+	public interface RulesCheckListener {
+		void progress(int nrExecutedOperations);
+	}
 
 	private Trace trace;
 	private final boolean init = false;
@@ -70,6 +75,29 @@ public class RulesChecker {
 			// extract current state of all operations
 			this.operationStatuses = evalOperations(trace.getCurrentState(), rulesProject.getOperationsMap().values());
 		}
+	}
+
+	/**
+	 * use direct 'execute' instead of 'animate' for faster execution of all rules.
+	 */
+	public void executeAllOperationsDirect(RulesCheckListener listener, int stepSize) {
+		// TODO: consider using RulesMachineRun
+		init();
+		int nrExecutedOperations = 0;
+		stopwatch.start();
+		while (true) {
+			ExecuteModelCommand executeModelCommand = new ExecuteModelCommand(trace.getStateSpace(),
+					trace.getCurrentState(), stepSize, true, Integer.MAX_VALUE-1);
+			trace.getStateSpace().execute(executeModelCommand);
+			int nrSteps = executeModelCommand.getNumberOfStatesExecuted();
+			if (nrSteps < 1) {
+				break;
+			}
+			trace = trace.addTransitions(executeModelCommand.getNewTransitions());
+			listener.progress(nrExecutedOperations+=nrSteps);
+		}
+		evalOperations(trace.getCurrentState(), rulesProject.getOperationsMap().values());
+		stopwatch.stop();
 	}
 
 	public void executeAllOperations() {

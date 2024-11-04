@@ -61,7 +61,7 @@ public class RulesMachineErrorsTest {
 		// @formatter:on
 		assertTrue(rulesMachineRun.hasError());
 		int numberofStatesExecuted = rulesMachineRun.getExecuteRun().getExecuteModelCommand()
-				.getNumberofStatesExecuted();
+				.getNumberOfStatesExecuted();
 		assertEquals(1, numberofStatesExecuted);
 		assertEquals(ERROR_TYPES.PROB_ERROR, rulesMachineRun.getFirstError().getType());
 		assertTrue(rulesMachineRun.getTotalNumberOfProBCliErrors().intValue() > 0);
