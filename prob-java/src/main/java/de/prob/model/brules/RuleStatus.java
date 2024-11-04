@@ -7,8 +7,11 @@ import de.be4.classicalb.core.parser.rules.RulesTransformation;
 import de.prob.animator.domainobjects.AbstractEvalResult;
 
 public enum RuleStatus implements OperationStatus {
-	FAIL(RulesTransformation.RULE_FAIL), SUCCESS(RulesTransformation.RULE_SUCCESS), NOT_CHECKED(
-			RulesTransformation.RULE_NOT_CHECKED), DISABLED(RulesTransformation.RULE_DISABLED);
+
+	FAIL(RulesTransformation.RULE_FAIL),
+	SUCCESS(RulesTransformation.RULE_SUCCESS),
+	NOT_CHECKED(RulesTransformation.RULE_NOT_CHECKED),
+	DISABLED(RulesTransformation.RULE_DISABLED);
 
 	private final String bValue;
 

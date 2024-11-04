@@ -8,8 +8,9 @@ import de.prob.animator.domainobjects.AbstractEvalResult;
 
 public enum ComputationStatus implements OperationStatus {
 
-	EXECUTED(RulesTransformation.COMPUTATION_EXECUTED), DISABLED(
-			RulesTransformation.COMPUTATION_DISABLED), NOT_EXECUTED(RulesTransformation.COMPUTATION_NOT_EXECUTED);
+	EXECUTED(RulesTransformation.COMPUTATION_EXECUTED),
+	DISABLED(RulesTransformation.COMPUTATION_DISABLED),
+	NOT_EXECUTED(RulesTransformation.COMPUTATION_NOT_EXECUTED);
 
 	private final String bValue;
 
