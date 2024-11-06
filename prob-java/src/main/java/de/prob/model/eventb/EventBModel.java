@@ -13,6 +13,7 @@ import com.google.inject.Inject;
 
 import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.command.LoadEventBProjectCommand;
+import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.EvaluationException;
 import de.prob.animator.domainobjects.EventB;
 import de.prob.animator.domainobjects.FormulaExpand;
@@ -116,6 +117,10 @@ public class EventBModel extends AbstractModel {
 	@Override
 	public IEvalElement parseFormula(final String formula, final FormulaExpand expand) {
 		return new EventB(formula, getExtensions(), expand);
+	}
+
+	public IEvalElement parseFormulaAsClassicalB(final String formula, final FormulaExpand expand) {
+		return new ClassicalB(formula, expand);
 	}
 
 	@Override
