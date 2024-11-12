@@ -34,8 +34,7 @@ dependencies {
 	api group: "de.hhu.stups", name: "ltl-dsl", version: "0.2.1" // Eclipse Public License 1.0
 	api group: "de.hhu.stups", name: "rodin-eventb-ast", version: "3.8.0" // Eclipse Public License 1.0
 	implementation group: "de.hhu.stups", name: "tla2bAST", version: "1.4.0" // Eclipse Public License 1.0
-	// TODO: switch to release version as soon as possible
-	api group: "de.hhu.stups", name: "tlc4b", version: "1.2.0-SNAPSHOT" // MIT License
+	api group: "de.hhu.stups", name: "tlc4b", version: "1.2.0" // MIT License
 
 	// Logging
 	api group: "org.slf4j", name: "slf4j-api", version: "2.0.13" // MIT License
