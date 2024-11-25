@@ -24,6 +24,7 @@ import de.prob.animator.command.CheckTimeoutStatusCommand;
 import de.prob.animator.command.EvaluateFormulasCommand;
 import de.prob.animator.command.ExecuteOperationException;
 import de.prob.animator.command.GetBStateCommand;
+import de.prob.animator.command.GetCandidateOperationsCommand;
 import de.prob.animator.command.GetEnabledOperationsCommand;
 import de.prob.animator.command.GetOperationsWithTimeout;
 import de.prob.animator.command.GetStateBasedErrorsCommand;
@@ -48,6 +49,7 @@ public class State {
 	private final StateSpace stateSpace;
 	private volatile boolean explored;
 	private List<Transition> transitions;
+	private List<GetCandidateOperationsCommand.Candidate> candidates;
 	private boolean constantsSetUp;
 	private boolean initialised;
 	private boolean invariantOk;
@@ -362,6 +364,16 @@ public class State {
 		return transitions;
 	}
 
+	/**
+	 * An operations might be potentially enabled if it has MAX_OPERATIONS == 0.
+	 *
+	 * @return list of potentially enabled operations
+	 */
+	public List<GetCandidateOperationsCommand.Candidate> getCandidateOperations() {
+		this.exploreIfNeeded();
+		return candidates;
+	}
+
 	public boolean isConstantsSetUp() {
 		this.exploreIfNeeded();
 		return constantsSetUp;
@@ -459,6 +471,7 @@ public class State {
 
 	public synchronized State explore() {
 		GetEnabledOperationsCommand getEnabledOpsCmd = new GetEnabledOperationsCommand(stateSpace, id);
+		GetCandidateOperationsCommand getCandidateOperationsCommand = new GetCandidateOperationsCommand(id);
 		CheckConstantsSetUpStatusCommand checkConstantsSetUpCmd = new CheckConstantsSetUpStatusCommand(id);
 		CheckInitialisationStatusCommand checkInitialisedCmd = new CheckInitialisationStatusCommand(id);
 		CheckInvariantStatusCommand checkInvariantCmd = new CheckInvariantStatusCommand(id);
@@ -468,6 +481,7 @@ public class State {
 		GetStateBasedErrorsCommand getStateErrorsCmd = new GetStateBasedErrorsCommand(id);
 		stateSpace.execute(
 			getEnabledOpsCmd,
+			getCandidateOperationsCommand,
 			checkConstantsSetUpCmd,
 			checkInitialisedCmd,
 			checkInvariantCmd,
@@ -477,6 +491,7 @@ public class State {
 			getStateErrorsCmd
 		);
 		transitions = Collections.unmodifiableList(getEnabledOpsCmd.getEnabledOperations());
+		candidates = Collections.unmodifiableList(getCandidateOperationsCommand.getCandidates());
 		constantsSetUp = checkConstantsSetUpCmd.isConstantsSetUp();
 		initialised = checkInitialisedCmd.isInitialized();
 		invariantOk = !checkInvariantCmd.isInvariantViolated();
