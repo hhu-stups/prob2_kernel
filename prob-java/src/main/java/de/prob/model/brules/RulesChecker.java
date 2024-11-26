@@ -9,7 +9,6 @@ import de.prob.model.brules.output.RuleValidationReport;
 import de.prob.model.brules.output.RulesDependencyGraph;
 import de.prob.statespace.State;
 import de.prob.statespace.Trace;
-import de.prob.statespace.Transition;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -20,7 +19,7 @@ import java.util.stream.Collectors;
 public class RulesChecker {
 
 	public interface RulesCheckListener {
-		void progress(int nrExecutedOperations);
+		void progress(int nrExecutedOperations, String opName);
 	}
 
 	private Trace trace;
@@ -94,7 +93,8 @@ public class RulesChecker {
 				break;
 			}
 			trace = trace.addTransitions(executeModelCommand.getNewTransitions());
-			listener.progress(nrExecutedOperations+=nrSteps);
+			String transitionName = executeModelCommand.getSingleTransitionName();
+			listener.progress(nrExecutedOperations+=nrSteps, transitionName == null ? "" : transitionName);
 		}
 		evalOperations(trace.getCurrentState(), rulesProject.getOperationsMap().values());
 		stopwatch.stop();
