@@ -109,6 +109,14 @@ public class ExecuteModelCommand extends AbstractCommand implements IStateSpaceM
 		return resultTrace;
 	}
 
+	public String getSingleTransitionName() {
+		if (resultTrace.size() == 1) {
+			return resultTrace.get(0).getName();
+		} else {
+			return null;
+		}
+	}
+
 	public State getFinalState() {
 		if (resultTrace.isEmpty()) {
 			return this.startstate;
@@ -136,7 +144,7 @@ public class ExecuteModelCommand extends AbstractCommand implements IStateSpaceM
 	}
 
 	/**
-	 * @return the result of of the executeModelCommand. The result is
+	 * @return the result of the executeModelCommand. The result is
 	 *         either {@link ExecuteModelResult#MAXIMUM_NR_OF_STEPS_REACHED} or
 	 *         {@link ExecuteModelResult#DEADLOCK}.
 	 */
