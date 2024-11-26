@@ -9,6 +9,7 @@ import de.prob.model.brules.output.RuleValidationReport;
 import de.prob.model.brules.output.RulesDependencyGraph;
 import de.prob.statespace.State;
 import de.prob.statespace.Trace;
+import de.prob.statespace.Transition;
 
 import java.io.IOException;
 import java.nio.file.Path;
