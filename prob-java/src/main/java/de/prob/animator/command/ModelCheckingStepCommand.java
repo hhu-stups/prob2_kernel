@@ -99,13 +99,13 @@ public class ModelCheckingStepCommand extends AbstractCommand implements IStateS
 					maxNodesLeft);
 		case "ok":
 			return new ModelCheckOk(
-					"Model Checking complete. No error nodes found.");
+					"Model Checking complete. No more error nodes found.");
 		case "full_coverage":
 			return new ModelCheckOk(
 					"Model Checking complete. All operations were covered.");
 		case "ok_not_all_nodes_considered":
 			return new ModelCheckOk(
-					"Model Checking complete. No error nodes found. Not all nodes were considered.");
+					"Model Checking complete. No more error nodes found. Not all nodes were considered.");
 		case "deadlock":
 			return new ModelCheckErrorUncovered("Deadlock found.", cpt
 					.getArgument(1).getFunctor());
