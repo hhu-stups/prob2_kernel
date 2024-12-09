@@ -5,6 +5,7 @@ import java.time.Duration;
 import de.prob.animator.CommandInterruptedException;
 import de.prob.animator.command.ComputeStateSpaceStatsCommand;
 import de.prob.animator.command.ModelCheckingStepCommand;
+import de.prob.animator.command.ResetBGoalCommand;
 import de.prob.animator.command.SetBGoalCommand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.exception.ProBError;
@@ -118,14 +119,17 @@ public class ConsistencyChecker extends CheckerBase {
 
 	@Override
 	protected void execute() {
-		if (options.getCustomGoal() != null) {
-			try {
-				SetBGoalCommand cmd = new SetBGoalCommand(options.getCustomGoal());
-				this.getStateSpace().execute(cmd);
-			} catch (ProBError e) {
-				this.isFinished(new CheckError("Type error in specified goal."), null);
-				return;
+		try {
+			if (options.getCustomGoal() != null) {
+				this.getStateSpace().execute(new SetBGoalCommand(options.getCustomGoal()));
+			} else {
+				// we have to reset the global goal variable on the prolog side
+				// it might contain a custom goal from an earlier model check
+				this.getStateSpace().execute(new ResetBGoalCommand());
 			}
+		} catch (ProBError e) {
+			this.isFinished(new CheckError("Type error in specified goal."), null);
+			return;
 		}
 
 		ModelCheckingStepCommand cmd;
