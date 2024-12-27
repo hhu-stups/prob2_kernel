@@ -292,7 +292,7 @@ public class StateSpace implements IAnimator {
 		if (!parameterNames.isEmpty()) {
 			if (parameterNames.size() != parameterValues.size()) {
 				throw new IllegalArgumentException("Cannot execute operation " + opName
-						+ " because the number of parameters does not match the number of provied values: "
+						+ " because the number of parameters does not match the number of provided values: "
 						+ parameterNames.size() + " vs " + parameterValues.size());
 			}
 			for (int i = 0; i < parameterNames.size(); i++) {
