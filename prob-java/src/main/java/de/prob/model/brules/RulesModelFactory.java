@@ -25,10 +25,7 @@ public class RulesModelFactory implements ModelFactory<RulesModel> {
 	}
 
 	public ExtractedModel<RulesModel> extract(File runnerFile, RulesProject rulesProject) {
-		RulesModel rulesModel = modelCreator.get();
-
-		rulesModel = rulesModel.create(runnerFile, rulesProject);
-		return new ExtractedModel<>(stateSpaceProvider, rulesModel);
+		return new ExtractedModel<>(stateSpaceProvider, modelCreator.get().create(runnerFile, rulesProject));
 	}
 	
 	@Override

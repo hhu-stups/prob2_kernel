@@ -116,9 +116,7 @@ public class RulesChecker {
 
 	public OperationStatus executeOperation(AbstractOperation op) {
 		stopwatch.start();
-		List<Transition> transitions = trace.getStateSpace()
-				.getTransitionsBasedOnParameterValues(trace.getCurrentState(), op.getName(), new ArrayList<>(), 1);
-		trace = trace.add(transitions.get(0));
+		trace = trace.execute(op.getName());
 		OperationStatus opState = evalOperation(trace.getCurrentState(), op);
 		this.operationStatuses.put(op, opState);
 		stopwatch.stop();
@@ -184,10 +182,7 @@ public class RulesChecker {
 	}
 
 	public OperationStatus evalOperation(State state, AbstractOperation operation) {
-		Set<AbstractOperation> set = new HashSet<>();
-		set.add(operation);
-		Map<AbstractOperation, OperationStatus> evalOperations = evalOperations(state, set);
-		return evalOperations.get(operation);
+		return evalOperations(state, Collections.singleton(operation)).get(operation);
 	}
 
 	public Map<AbstractOperation, OperationStatus> evalOperations(State state,
