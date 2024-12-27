@@ -1,6 +1,7 @@
 package de.prob.model.brules;
 
 import com.google.common.base.Stopwatch;
+import com.google.common.io.MoreFiles;
 import de.be4.classicalb.core.parser.rules.*;
 import de.prob.animator.command.ExecuteModelCommand;
 import de.prob.animator.domainobjects.AbstractEvalResult;
@@ -253,7 +254,17 @@ public class RulesChecker {
 		RulesDependencyGraph.saveGraph(trace, operations, path, dotOutputFormat);
 	}
 
+	/**
+	 * Save validation report with all rule results
+	 *
+	 * @param path if the file extension is .xml, report is saved as machine-readable XML, otherwise as interactive HTML
+	 */
 	public void saveValidationReport(final Path path, final Locale locale) throws IOException {
-		RuleValidationReport.saveReport(trace, path, locale, stopwatch.elapsed());
+		String exportType = MoreFiles.getFileExtension(path);
+		if (exportType.equals("xml")) {
+			RuleValidationReport.exportAsXML(trace, path, stopwatch.elapsed());
+		} else {
+			RuleValidationReport.exportAsHTML(trace, path, locale, stopwatch.elapsed());
+		}
 	}
 }
