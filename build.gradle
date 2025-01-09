@@ -15,8 +15,8 @@ subprojects {
 		mavenCentral()
 		if (isSnapshot) {
 			maven {
-				name "sonatype snapshots"
-				url "https://oss.sonatype.org/content/repositories/snapshots"
+				name = "sonatype snapshots"
+				url = "https://oss.sonatype.org/content/repositories/snapshots"
 			}
 		}
 	}
@@ -105,7 +105,7 @@ subprojects {
 			maven {
 				final releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
 				final snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots"
-				url isSnapshot ? snapshotsRepoUrl : releasesRepoUrl
+				url = isSnapshot ? snapshotsRepoUrl : releasesRepoUrl
 				if (project.hasProperty('ossrhUsername') && project.hasProperty('ossrhPassword')) {
 					credentials {
 						username project.ossrhUsername
