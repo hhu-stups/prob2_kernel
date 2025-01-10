@@ -108,8 +108,8 @@ subprojects {
 				url = isSnapshot ? snapshotsRepoUrl : releasesRepoUrl
 				if (project.hasProperty('ossrhUsername') && project.hasProperty('ossrhPassword')) {
 					credentials {
-						username project.ossrhUsername
-						password project.ossrhPassword
+						username = project.ossrhUsername
+						password = project.ossrhPassword
 					}
 				}
 			}
