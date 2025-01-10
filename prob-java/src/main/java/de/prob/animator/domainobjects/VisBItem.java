@@ -1,5 +1,6 @@
 package de.prob.animator.domainobjects;
 
+import java.util.Locale;
 import java.util.Objects;
 
 import de.prob.parser.BindingGenerator;
@@ -8,9 +9,9 @@ import de.prob.prolog.term.PrologTerm;
 /**
  * The VisBItem is designed for the JSON / VisB file
  */
-public class VisBItem {
+public final class VisBItem {
 
-	public static class VisBItemKey {
+	public static final class VisBItemKey {
 
 		private final String id;
 		private final String attribute;
@@ -26,6 +27,11 @@ public class VisBItem {
 
 		public String getAttribute() {
 			return attribute;
+		}
+
+		@Override
+		public String toString() {
+			return String.format(Locale.ROOT, "VisBItemKey{%s, %s}", id, attribute);
 		}
 
 		@Override
@@ -103,7 +109,7 @@ public class VisBItem {
 
 	@Override
 	public String toString() {
-		return String.format("VisBItem{%s, %s, %s, %s, %s}", id, attribute, expression, description, source);
+		return String.format(Locale.ROOT, "VisBItem{%s, %s, %s, %s, %s}", id, attribute, expression, description, source);
 	}
 
 	@Override
