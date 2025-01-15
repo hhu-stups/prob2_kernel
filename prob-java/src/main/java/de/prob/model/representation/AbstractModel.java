@@ -9,8 +9,10 @@ import java.util.Map;
 
 import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.command.StartAnimationCommand;
+import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.EvaluationException;
 import de.prob.animator.domainobjects.FormulaExpand;
+import de.prob.animator.domainobjects.IBEvalElement;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.model.eventb.EventBModel;
 import de.prob.model.representation.DependencyGraph.ERefType;
@@ -87,6 +89,19 @@ public abstract class AbstractModel extends AbstractElement {
 	 * @throws RuntimeException if parsing is not successful
 	 */
 	public abstract IEvalElement parseFormula(String formula, FormulaExpand expand);
+
+	/**
+	 * Will parse a classical B formula without respecting the model's language.
+	 *
+	 * @param formula to be parsed, must be parsable as classical B
+	 * @param expand  the expansion behavior to use
+	 * @return a valid formula
+	 * @throws RuntimeException if parsing is not successful
+	 * @apiNote This API is still in beta, do not depend on it!
+	 */
+	public ClassicalB parseFormulaAsClassicalB(String formula, FormulaExpand expand) {
+		return new ClassicalB(formula, expand);
+	}
 	
 	/**
 	 * Will parse a formula including information specific to the model at hand.

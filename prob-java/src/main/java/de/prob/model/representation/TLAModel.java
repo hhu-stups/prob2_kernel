@@ -1,10 +1,17 @@
 package de.prob.model.representation;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.google.inject.Inject;
+
 import de.be4.classicalb.core.parser.BParser;
 import de.be4.classicalb.core.parser.analysis.prolog.RecursiveMachineLoader;
 import de.be4.classicalb.core.parser.node.Start;
 import de.prob.animator.command.AbstractCommand;
+import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.animator.domainobjects.TLA;
@@ -13,11 +20,6 @@ import de.prob.scripting.StateSpaceProvider;
 import de.prob.statespace.FormalismType;
 import de.prob.statespace.Language;
 import de.tla2bAst.Translator;
-
-import java.io.File;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class TLAModel extends AbstractModel {
 
@@ -64,8 +66,9 @@ public class TLAModel extends AbstractModel {
 		// TODO: tests (TLA + classical B expressions)?
 	}
 
-	public IEvalElement parseFormulaAsClassicalB(final String formula, final FormulaExpand expand) {
-		return internalModel.parseFormula(formula, expand);
+	@Override
+	public ClassicalB parseFormulaAsClassicalB(final String formula, final FormulaExpand expand) {
+		return internalModel.parseFormulaAsClassicalB(formula, expand);
 	}
 
 	@Override

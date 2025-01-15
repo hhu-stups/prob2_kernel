@@ -119,10 +119,6 @@ public class EventBModel extends AbstractModel {
 		return new EventB(formula, getExtensions(), expand);
 	}
 
-	public IEvalElement parseFormulaAsClassicalB(final String formula, final FormulaExpand expand) {
-		return new ClassicalB(formula, expand);
-	}
-
 	@Override
 	public IEvalElement formulaFromIdentifier(final List<String> identifier, final FormulaExpand expansion) {
 		return EventB.fromIdentifier(identifier, expansion);
