@@ -33,7 +33,7 @@ dependencies {
 	implementation group: "de.hhu.stups", name: "alloy2b", version: "1.4" // Eclipse Public License 1.0
 	api group: "de.hhu.stups", name: "ltl-dsl", version: "0.2.2" // Eclipse Public License 1.0
 	api group: "de.hhu.stups", name: "rodin-eventb-ast", version: "3.8.0" // Eclipse Public License 1.0
-	implementation group: "de.hhu.stups", name: "tla2bAST", version: "1.4.0" // Eclipse Public License 1.0
+	implementation group: "de.hhu.stups", name: "tla2bAST", version: "1.4.1-SNAPSHOT" // Eclipse Public License 1.0
 	api group: "de.hhu.stups", name: "tlc4b", version: "1.2.0" // MIT License
 
 	// Logging

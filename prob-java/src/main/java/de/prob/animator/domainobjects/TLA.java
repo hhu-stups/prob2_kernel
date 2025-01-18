@@ -40,7 +40,7 @@ public final class TLA extends AbstractEvalElement implements IBEvalElement {
 			} else {
 				return Translator.translateExpressionWithoutModel(code);
 			}
-		} catch (ExpressionTranslationException | TLA2BException e) {
+		} catch (ExpressionTranslationException e) {
 			throw new EvaluationException(e);
 		}
 	}
