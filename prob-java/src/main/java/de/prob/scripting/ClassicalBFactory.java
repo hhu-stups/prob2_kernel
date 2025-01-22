@@ -10,6 +10,7 @@ import com.google.inject.Provider;
 import de.be4.classicalb.core.parser.BParser;
 import de.be4.classicalb.core.parser.CachingDefinitionFileProvider;
 import de.be4.classicalb.core.parser.ParsingBehaviour;
+import de.be4.classicalb.core.parser.analysis.checking.DefinitionCollector;
 import de.be4.classicalb.core.parser.analysis.prolog.RecursiveMachineLoader;
 import de.be4.classicalb.core.parser.exceptions.BCompoundException;
 import de.be4.classicalb.core.parser.exceptions.BException;
@@ -108,6 +109,10 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 	public ExtractedModel<ClassicalBModel> create(final String name, final Start model) {
 		ClassicalBModel classicalBModel = modelCreator.get();
 		BParser bparser = new BParser(name + "." + CLASSICAL_B_MACHINE_EXTENSION);
+		DefinitionCollector defCollector = new DefinitionCollector(bparser.getDefinitions());
+		defCollector.collectDefinitions(model);
+		bparser.setDefinitions(defCollector.getDefinitions());
+		// otherwise definitions are unknown, maybe this part can be moved to the RML?
 
 		final RecursiveMachineLoader rml;
 		try {
