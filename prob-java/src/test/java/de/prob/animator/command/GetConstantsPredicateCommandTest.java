@@ -31,8 +31,7 @@ public class GetConstantsPredicateCommandTest {
 		stateSpace.changePreferences(Collections.singletonMap("MAX_INITIALISATIONS","20"));
 		GetConstantsPredicateCommand getConstantsPredicate = new GetConstantsPredicateCommand();
 		stateSpace.execute(getConstantsPredicate);
-		Assertions.assertEquals(getConstantsPredicate.getPredicate(),
-				"( a=TRUE & b=1 & c={} & d={} )"
+		Assertions.assertEquals("( a=TRUE & b=1 & c={} & d={} )"
 				+ " or ( a=TRUE & b=1 & c={} & d={(TRUE|->1)} )"
 				+ " or ( a=TRUE & b=1 & c={(TRUE|->1)} & d={(TRUE|->1)} )"
 				+ " or ( a=TRUE & b=2 & c={} & d={} )"
@@ -40,7 +39,8 @@ public class GetConstantsPredicateCommandTest {
 				+ " or ( a=TRUE & b=2 & c={(TRUE|->2)} & d={(TRUE|->2)} )"
 				+ " or ( a=TRUE & b=3 & c={} & d={} )"
 				+ " or ( a=TRUE & b=3 & c={} & d={(TRUE|->3)} )"
-				+ " or ( a=TRUE & b=3 & c={(TRUE|->3)} & d={(TRUE|->3)} )");
+				+ " or ( a=TRUE & b=3 & c={(TRUE|->3)} & d={(TRUE|->3)} )",
+				getConstantsPredicate.getPredicate());
 		stateSpace.kill();
 	}
 
@@ -53,7 +53,7 @@ public class GetConstantsPredicateCommandTest {
 		final StateSpace stateSpace = api.b_load(ast);
 		GetConstantsPredicateCommand getConstantsPredicate = new GetConstantsPredicateCommand();
 		stateSpace.execute(getConstantsPredicate);
-		Assertions.assertEquals(getConstantsPredicate.getPredicate(), "( a={(25|->5.0),(36|->6.0)} & b={5.0,6.0} )");
+		Assertions.assertEquals("( a={(25|->5.0),(36|->6.0)} & b={5.0,6.0} )", getConstantsPredicate.getPredicate());
 		stateSpace.kill();
 	}
 
@@ -66,7 +66,9 @@ public class GetConstantsPredicateCommandTest {
 		final StateSpace stateSpace = api.b_load(ast);
 		GetConstantsPredicateCommand getConstantsPredicate = new GetConstantsPredicateCommand();
 		stateSpace.execute(getConstantsPredicate);
-		Assertions.assertEquals(getConstantsPredicate.getPredicate(), "( a=1 & b=1 )");
+		Assertions.assertEquals("( a=1 & b=1 )", getConstantsPredicate.getPredicate());
+		stateSpace.kill();
+	}
 
 	@Test
 	public void incompleteSetupConstants() throws IOException, BCompoundException {
