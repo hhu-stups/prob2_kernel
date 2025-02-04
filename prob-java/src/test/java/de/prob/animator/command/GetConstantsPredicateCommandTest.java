@@ -41,6 +41,7 @@ public class GetConstantsPredicateCommandTest {
 				+ " or ( a=TRUE & b=3 & c={} & d={(TRUE|->3)} )"
 				+ " or ( a=TRUE & b=3 & c={(TRUE|->3)} & d={(TRUE|->3)} )",
 				getConstantsPredicate.getPredicate());
+		Assertions.assertTrue(getConstantsPredicate.getPredicateComplete());
 		stateSpace.kill();
 	}
 
@@ -54,6 +55,7 @@ public class GetConstantsPredicateCommandTest {
 		GetConstantsPredicateCommand getConstantsPredicate = new GetConstantsPredicateCommand();
 		stateSpace.execute(getConstantsPredicate);
 		Assertions.assertEquals("( a={(25|->5.0),(36|->6.0)} & b={5.0,6.0} )", getConstantsPredicate.getPredicate());
+		Assertions.assertTrue(getConstantsPredicate.getPredicateComplete());
 		stateSpace.kill();
 	}
 
@@ -67,6 +69,7 @@ public class GetConstantsPredicateCommandTest {
 		GetConstantsPredicateCommand getConstantsPredicate = new GetConstantsPredicateCommand();
 		stateSpace.execute(getConstantsPredicate);
 		Assertions.assertEquals("( a=1 & b=1 )", getConstantsPredicate.getPredicate());
+		Assertions.assertTrue(getConstantsPredicate.getPredicateComplete());
 		stateSpace.kill();
 	}
 
