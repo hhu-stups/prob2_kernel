@@ -67,6 +67,19 @@ public class GetConstantsPredicateCommandTest {
 		GetConstantsPredicateCommand getConstantsPredicate = new GetConstantsPredicateCommand();
 		stateSpace.execute(getConstantsPredicate);
 		Assertions.assertEquals(getConstantsPredicate.getPredicate(), "( a=1 & b=1 )");
+
+	@Test
+	public void incompleteSetupConstants() throws IOException, BCompoundException {
+		Start ast = new BParser("IncompleteConstants").parseMachine("MACHINE IncompleteConstants\n" +
+				"CONSTANTS a\n" +
+				"PROPERTIES a : 1..2\n" +
+				"END");
+		final StateSpace stateSpace = api.b_load(ast);
+		stateSpace.changePreferences(Collections.singletonMap("MAX_INITIALISATIONS","0"));
+		GetConstantsPredicateCommand getConstantsPredicate = new GetConstantsPredicateCommand();
+		stateSpace.execute(getConstantsPredicate);
+		Assertions.assertEquals("1=1", getConstantsPredicate.getPredicate());
+		Assertions.assertFalse(getConstantsPredicate.getPredicateComplete());
 		stateSpace.kill();
 	}
 }

@@ -109,7 +109,8 @@ class TLCStatsListener extends TLCMessageListener {
 				result = new CheckError("Parse error.");
 				break;
 			case NoError:
-				result = new ModelCheckOk("Model Checking complete. No error nodes found.");
+				result = new ModelCheckOk("Model Checking complete. No error nodes found." +
+						(tlcModelChecker.isSetupConstantsComplete() ? "" : " Not all nodes were considered."));
 				break;
 			case AssertionError:
 				result = new ModelCheckErrorUncovered("Assertion violation found.", getDestStateId(results));

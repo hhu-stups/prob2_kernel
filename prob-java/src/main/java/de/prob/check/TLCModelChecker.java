@@ -21,6 +21,7 @@ public class TLCModelChecker extends CheckerBase {
 	private final String machinePath;
 
 	private TLCResults results = null;
+	private boolean setupConstantsComplete = true;
 
 	public TLCModelChecker(final String machinePath, final StateSpace stateSpace, final IModelCheckListener listener) {
 		this(machinePath, stateSpace, listener, null);
@@ -50,6 +51,7 @@ public class TLCModelChecker extends CheckerBase {
 	private String getProBConstants() {
 		GetConstantsPredicateCommand getConstantsPredicateCommand = new GetConstantsPredicateCommand();
 		this.getStateSpace().execute(getConstantsPredicateCommand);
+		this.setupConstantsComplete = getConstantsPredicateCommand.getPredicateComplete();
 		return getConstantsPredicateCommand.getPredicate();
 	}
 
@@ -81,5 +83,9 @@ public class TLCModelChecker extends CheckerBase {
 
 	public TLCResults getResults() {
 		return this.results;
+	}
+
+	public boolean isSetupConstantsComplete() {
+		return this.setupConstantsComplete;
 	}
 }
