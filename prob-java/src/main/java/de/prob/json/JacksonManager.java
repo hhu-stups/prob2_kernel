@@ -102,6 +102,18 @@ public final class JacksonManager<T extends HasMetadata> {
 		public ObjectNode convertOldData(final ObjectNode oldObject, final int oldVersion) {
 			throw new JsonConversionException("JSON data uses old format version " + oldVersion + ", which cannot be converted to the current version " + this.currentFormatVersion);
 		}
+
+		/**
+		 * Pre-save callback. Allows to update metadata right before saving.
+		 *
+		 * @param metadata the metadata
+		 * @return possibly mutated metadata
+		 */
+		public JsonMetadata updateMetadataOnSave(JsonMetadata metadata) {
+			return new JsonMetadataBuilder(metadata)
+					.withFormatVersion(this.currentFormatVersion)
+					.build();
+		}
 	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(JacksonManager.class);
@@ -279,7 +291,7 @@ public final class JacksonManager<T extends HasMetadata> {
 	 * @param path   the path of the JSON file to write
 	 * @param object the object to write
 	 */
-	public void writeToFile(final Path path, final T object) throws IOException {
+	public void writeToFile(final Path path, T object) throws IOException {
 		LOGGER.debug("Writing json file of type {} to {}", this.getContext().fileType, path);
 		final JsonMetadata metadata = object.getMetadata();
 		if (metadata == null) {
@@ -298,6 +310,11 @@ public final class JacksonManager<T extends HasMetadata> {
 				metadata.getFormatVersion(),
 				this.getContext().currentFormatVersion
 			));
+		}
+
+		JsonMetadata updatedMetadata = this.getContext().updateMetadataOnSave(metadata);
+		if (updatedMetadata != null && !updatedMetadata.equals(metadata)) {
+			object = this.getContext().clazz.cast(object.withMetadata(updatedMetadata));
 		}
 
 		// To avoid corrupting the previously saved files if saving fails/is interrupted for some reason,
