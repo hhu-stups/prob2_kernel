@@ -77,6 +77,19 @@ public final class JacksonManager<T extends HasMetadata> {
 		}
 
 		/**
+		 * Check whether the given metadata has a file type that this context can handle.
+		 * <p>
+		 * This method exists to support loading identical formats that just differ in the file type
+		 * (simulation items in ProB2-UI do this).
+		 *
+		 * @param metadata metadata
+		 * @return true iff the given metadata can be handled by this context
+		 */
+		public boolean isFileTypeAccepted(JsonMetadata metadata) {
+			return this.fileType.equals(metadata.getFileType());
+		}
+
+		/**
 		 * <p>Convert data from an older format version to the current version.</p>
 		 * <p>This method must be overridden to support loading data that uses an older format version. The default implementation of this method always throws a {@link JsonConversionException}.</p>
 		 * <p>The converted object is returned from this method. The returned {@link JsonNode} may be a completely new object, or it may be {@code oldObject} after being modified in place.</p>
@@ -92,8 +105,6 @@ public final class JacksonManager<T extends HasMetadata> {
 	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(JacksonManager.class);
-
-	private static final JsonMetadata MISSING_METADATA = new JsonMetadata(null, 0, null, null, null, null, null);
 
 	// Only used for parsing
 	private static final ObjectMapper METADATA_OBJECT_MAPPER = new ObjectMapper();
@@ -175,7 +186,7 @@ public final class JacksonManager<T extends HasMetadata> {
 			LOGGER.debug("JSON data in file has type {} and version {}", newMetadata.getFileType(), newMetadata.getFormatVersion());
 
 			// Check that the file has the expected type.
-			if (!newMetadata.getFileType().equals(this.getContext().fileType)) {
+			if (!this.getContext().isFileTypeAccepted(newMetadata)) {
 				throw new InvalidJsonFormatException("Expected JSON data of type " + this.getContext().fileType + " but got " + newMetadata.getFileType());
 			}
 
@@ -195,13 +206,13 @@ public final class JacksonManager<T extends HasMetadata> {
 			final ProB2UI1Dot0Metadata oldMetadata = extractOldMetadataIfPresent(parser);
 			if (oldMetadata != null) {
 				// Found old metadata - convert it to the new format.
-				return oldMetadata.toNewMetadata();
+				return oldMetadata.toNewMetadata(this.getContext().fileType);
 			} else {
 				// Didn't find old metadata either.
 				// This only happens for JSON data from pre-1.0 snapshot versions of ProB 2 UI
 				// where metadata wasn't introduced yet.
 				// Substitute a blank metadata object instead.
-				return MISSING_METADATA;
+				return new JsonMetadata(this.getContext().fileType, 0, null, null, null, null, null);
 			}
 		}
 	}
@@ -244,11 +255,15 @@ public final class JacksonManager<T extends HasMetadata> {
 		}
 
 		// we have rewritten the ObjectNode to the new format version, so we can...
-		if (parsed.getMetadata() == null || metadata.getFormatVersion() != this.getContext().currentFormatVersion) {
+		if (parsed.getMetadata() == null || metadata.getFileType() == null || metadata.getFormatVersion() != this.getContext().currentFormatVersion) {
 			// ...update metadata version...
-			JsonMetadata newMetadata = new JsonMetadataBuilder(metadata)
-					.withFormatVersion(this.getContext().currentFormatVersion)
-					.build();
+			JsonMetadataBuilder b = new JsonMetadataBuilder(metadata)
+					.withFormatVersion(this.getContext().currentFormatVersion);
+			// ...and file type if required...
+			if (metadata.getFileType() == null) {
+				b.withFileType(this.getContext().fileType);
+			}
+			JsonMetadata newMetadata = b.build();
 
 			// ...and override it in the parsed object
 			parsed = this.getContext().clazz.cast(parsed.withMetadata(newMetadata));
@@ -270,7 +285,7 @@ public final class JacksonManager<T extends HasMetadata> {
 		if (metadata == null) {
 			throw new IllegalArgumentException("Object must have metadata set");
 		}
-		if (!this.getContext().fileType.equals(metadata.getFileType())) {
+		if (!this.getContext().isFileTypeAccepted(metadata)) {
 			throw new IllegalArgumentException(String.format(
 				"File type in object metadata (%s) doesn't match file type set in context (%s)",
 				metadata.getFileType(),
