@@ -109,9 +109,7 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 	public ExtractedModel<ClassicalBModel> create(final String name, final Start model) {
 		ClassicalBModel classicalBModel = modelCreator.get();
 		BParser bparser = new BParser(name + "." + CLASSICAL_B_MACHINE_EXTENSION);
-		DefinitionCollector defCollector = new DefinitionCollector(bparser.getDefinitions());
-		defCollector.collectDefinitions(model);
-		bparser.setDefinitions(defCollector.getDefinitions());
+		new DefinitionCollector(bparser.getDefinitions()).collectDefinitions(model);
 		// otherwise definitions are unknown, maybe this part can be moved to the RML?
 
 		final RecursiveMachineLoader rml;
