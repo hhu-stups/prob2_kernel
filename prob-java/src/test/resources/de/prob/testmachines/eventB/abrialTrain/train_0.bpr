@@ -151,13 +151,13 @@
         </org.eventb.core.prPred>
         <org.eventb.core.prPred name="p18" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒r∈dom(nxt)∧nxt∈ROUTES ⇸ ℙ(BLOCKS × BLOCKS)"/>
         <org.eventb.core.prExpr name="e0" org.eventb.core.expression="ROUTES"/>
-        <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.conj:0"/>
-        <org.eventb.core.prReas name="r4" org.eventb.core.prRID="org.eventb.core.seqprover.totalDom:2"/>
-        <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
         <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL5:0"/>
-        <org.eventb.core.prReas name="r5" org.eventb.core.prRID="org.eventb.core.seqprover.trueGoal"/>
         <org.eventb.core.prReas name="r6" org.eventb.core.prRID="org.eventb.core.seqprover.isFunGoal"/>
         <org.eventb.core.prReas name="r3" org.eventb.core.prRID="org.eventb.core.seqprover.allI"/>
+        <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.conj:0"/>
+        <org.eventb.core.prReas name="r5" org.eventb.core.prRID="org.eventb.core.seqprover.trueGoal"/>
+        <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
+        <org.eventb.core.prReas name="r4" org.eventb.core.prRID="org.eventb.core.seqprover.totalDom:2"/>
     </org.eventb.core.prProof>
     <org.eventb.core.prProof name="inv7/WD" org.eventb.core.confidence="1000" org.eventb.core.prFresh="r" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p1" org.eventb.core.prSets="BLOCKS,ROUTES">
         <org.eventb.core.lang name="L"/>
@@ -333,13 +333,13 @@
         </org.eventb.core.prPred>
         <org.eventb.core.prPred name="p21" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒r∈dom(nxt)∧nxt∈ROUTES ⇸ ℙ(BLOCKS × BLOCKS)"/>
         <org.eventb.core.prExpr name="e0" org.eventb.core.expression="ROUTES"/>
-        <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.conj:0"/>
-        <org.eventb.core.prReas name="r4" org.eventb.core.prRID="org.eventb.core.seqprover.totalDom:2"/>
-        <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
         <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL5:0"/>
-        <org.eventb.core.prReas name="r5" org.eventb.core.prRID="org.eventb.core.seqprover.trueGoal"/>
         <org.eventb.core.prReas name="r6" org.eventb.core.prRID="org.eventb.core.seqprover.isFunGoal"/>
         <org.eventb.core.prReas name="r3" org.eventb.core.prRID="org.eventb.core.seqprover.allI"/>
+        <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.conj:0"/>
+        <org.eventb.core.prReas name="r5" org.eventb.core.prRID="org.eventb.core.seqprover.trueGoal"/>
+        <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
+        <org.eventb.core.prReas name="r4" org.eventb.core.prRID="org.eventb.core.seqprover.totalDom:2"/>
     </org.eventb.core.prProof>
     <org.eventb.core.prProof name="inv8/WD" org.eventb.core.confidence="1000" org.eventb.core.prFresh="r" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p1" org.eventb.core.prSets="BLOCKS,ROUTES">
         <org.eventb.core.lang name="L"/>
@@ -526,13 +526,13 @@
         </org.eventb.core.prPred>
         <org.eventb.core.prPred name="p23" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒r∈dom(nxt)∧nxt∈ROUTES ⇸ ℙ(BLOCKS × BLOCKS)"/>
         <org.eventb.core.prExpr name="e0" org.eventb.core.expression="ROUTES"/>
-        <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.conj:0"/>
-        <org.eventb.core.prReas name="r4" org.eventb.core.prRID="org.eventb.core.seqprover.totalDom:2"/>
-        <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
         <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL5:0"/>
-        <org.eventb.core.prReas name="r5" org.eventb.core.prRID="org.eventb.core.seqprover.trueGoal"/>
         <org.eventb.core.prReas name="r6" org.eventb.core.prRID="org.eventb.core.seqprover.isFunGoal"/>
         <org.eventb.core.prReas name="r3" org.eventb.core.prRID="org.eventb.core.seqprover.allI"/>
+        <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.conj:0"/>
+        <org.eventb.core.prReas name="r5" org.eventb.core.prRID="org.eventb.core.seqprover.trueGoal"/>
+        <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
+        <org.eventb.core.prReas name="r4" org.eventb.core.prRID="org.eventb.core.seqprover.totalDom:2"/>
     </org.eventb.core.prProof>
     <org.eventb.core.prProof name="INITIALISATION/inv3/INV" org.eventb.core.confidence="1000" org.eventb.core.prFresh="" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="" org.eventb.core.prSets="BLOCKS,ROUTES">
         <org.eventb.core.lang name="L"/>
@@ -958,9 +958,9 @@
             <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
             <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
         </org.eventb.core.prPred>
+        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL5:0"/>
         <org.eventb.core.prReas name="r2" org.eventb.core.prRID="com.clearsy.atelierb.provers.core.externalPP:1"/>
         <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
-        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL5:0"/>
     </org.eventb.core.prProof>
     <org.eventb.core.prProof name="route_reservation/inv5/INV" org.eventb.core.confidence="1000" org.eventb.core.prFresh="" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16,p17,p18,p19,p20" org.eventb.core.prSets="BLOCKS,ROUTES">
         <org.eventb.core.lang name="L"/>
@@ -1068,10 +1068,10 @@
         <org.eventb.core.prPred name="p41" org.eventb.core.predicate="∀r⦂ROUTES·nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}"/>
         <org.eventb.core.prPred name="p36" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒¬fst(r)=lst(r)"/>
         <org.eventb.core.prPred name="p21" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒¬fst(r)=lst(r)"/>
-        <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.genMPL4"/>
-        <org.eventb.core.prReas name="r3" org.eventb.core.prRID="com.clearsy.atelierb.provers.core.externalML:1"/>
-        <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
         <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL5:0"/>
+        <org.eventb.core.prReas name="r3" org.eventb.core.prRID="com.clearsy.atelierb.provers.core.externalML:1"/>
+        <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.genMPL4"/>
+        <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
     </org.eventb.core.prProof>
     <org.eventb.core.prProof name="route_reservation/inv4/INV" org.eventb.core.confidence="1000" org.eventb.core.prFresh="" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16,p17,p18,p19,p20" org.eventb.core.prSets="BLOCKS,ROUTES">
         <org.eventb.core.lang name="L"/>
@@ -1168,9 +1168,9 @@
         <org.eventb.core.prPred name="p38" org.eventb.core.predicate="∀r⦂ROUTES·nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}"/>
         <org.eventb.core.prPred name="p33" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒¬fst(r)=lst(r)"/>
         <org.eventb.core.prPred name="p21" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒¬fst(r)=lst(r)"/>
+        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL5:0"/>
         <org.eventb.core.prReas name="r2" org.eventb.core.prRID="com.clearsy.atelierb.provers.core.externalML:1"/>
         <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
-        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL5:0"/>
     </org.eventb.core.prProof>
     <org.eventb.core.prProof name="route_reservation/inv6/INV" org.eventb.core.confidence="1000" org.eventb.core.prFresh="r0" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p1,p2,p3" org.eventb.core.prSets="BLOCKS,ROUTES">
         <org.eventb.core.lang name="L"/>
@@ -1311,35 +1311,32 @@
             <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
             <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
         </org.eventb.core.prPred>
-        <org.eventb.core.prReas name="r3" org.eventb.core.prRID="com.clearsy.atelierb.provers.core.externalPP:1"/>
-        <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
         <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL5:0"/>
         <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.allI"/>
+        <org.eventb.core.prReas name="r3" org.eventb.core.prRID="com.clearsy.atelierb.provers.core.externalPP:1"/>
+        <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
     </org.eventb.core.prProof>
     <org.eventb.core.prProof name="route_reservation/inv7/INV" org.eventb.core.confidence="1000" org.eventb.core.prFresh="r0" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16,p17" org.eventb.core.prSets="BLOCKS,ROUTES" org.eventb.core.psManual="true">
+        <org.eventb.core.lang name="L"/>
         <org.eventb.core.prRule name="r0" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="simplification rewrites" org.eventb.core.prHyps="">
             <org.eventb.core.prAnte name="'">
-                <org.eventb.core.prHypAction name="FORWARD_INF0" org.eventb.core.prHyps="p18" org.eventb.core.prInfHyps="p19"/>
-                <org.eventb.core.prHypAction name="HIDE1" org.eventb.core.prHyps="p18"/>
-                <org.eventb.core.prHypAction name="FORWARD_INF2" org.eventb.core.prHyps="p1" org.eventb.core.prInfHyps="p20"/>
-                <org.eventb.core.prHypAction name="HIDE3" org.eventb.core.prHyps="p1"/>
-                <org.eventb.core.prHypAction name="FORWARD_INF4" org.eventb.core.prHyps="p10" org.eventb.core.prInfHyps="p21"/>
-                <org.eventb.core.prHypAction name="HIDE5" org.eventb.core.prHyps="p10"/>
-                <org.eventb.core.prHypAction name="FORWARD_INF6" org.eventb.core.prHyps="p2" org.eventb.core.prInfHyps="p22"/>
-                <org.eventb.core.prHypAction name="HIDE7" org.eventb.core.prHyps="p2"/>
+                <org.eventb.core.prHypAction name="REWRITE0" org.eventb.core.prHidden="p18" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p19"/>
+                <org.eventb.core.prHypAction name="REWRITE1" org.eventb.core.prHidden="p4" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p20"/>
+                <org.eventb.core.prHypAction name="REWRITE2" org.eventb.core.prHidden="p9" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p21"/>
+                <org.eventb.core.prHypAction name="REWRITE3" org.eventb.core.prHidden="p10" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p22"/>
                 <org.eventb.core.prRule name="r1" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="type rewrites" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="">
                     <org.eventb.core.prAnte name="'" org.eventb.core.prGoal="p34">
                         <org.eventb.core.prHypAction name="HIDE0" org.eventb.core.prHyps="p23"/>
-                        <org.eventb.core.prHypAction name="FORWARD_INF1" org.eventb.core.prHyps="p6" org.eventb.core.prInfHyps="p24"/>
-                        <org.eventb.core.prHypAction name="HIDE2" org.eventb.core.prHyps="p6"/>
-                        <org.eventb.core.prHypAction name="FORWARD_INF3" org.eventb.core.prHyps="p13" org.eventb.core.prInfHyps="p25"/>
-                        <org.eventb.core.prHypAction name="HIDE4" org.eventb.core.prHyps="p13"/>
+                        <org.eventb.core.prHypAction name="FORWARD_INF1" org.eventb.core.prHyps="p14" org.eventb.core.prInfHyps="p24"/>
+                        <org.eventb.core.prHypAction name="HIDE2" org.eventb.core.prHyps="p14"/>
+                        <org.eventb.core.prHypAction name="FORWARD_INF3" org.eventb.core.prHyps="p17" org.eventb.core.prInfHyps="p25"/>
+                        <org.eventb.core.prHypAction name="HIDE4" org.eventb.core.prHyps="p17"/>
                         <org.eventb.core.prHypAction name="HIDE5" org.eventb.core.prHyps="p26"/>
                         <org.eventb.core.prHypAction name="HIDE6" org.eventb.core.prHyps="p27"/>
-                        <org.eventb.core.prHypAction name="FORWARD_INF7" org.eventb.core.prHyps="p16" org.eventb.core.prInfHyps="p28"/>
-                        <org.eventb.core.prHypAction name="HIDE8" org.eventb.core.prHyps="p16"/>
-                        <org.eventb.core.prHypAction name="FORWARD_INF9" org.eventb.core.prHyps="p17" org.eventb.core.prInfHyps="p29"/>
-                        <org.eventb.core.prHypAction name="HIDE10" org.eventb.core.prHyps="p17"/>
+                        <org.eventb.core.prHypAction name="FORWARD_INF7" org.eventb.core.prHyps="p2" org.eventb.core.prInfHyps="p28"/>
+                        <org.eventb.core.prHypAction name="HIDE8" org.eventb.core.prHyps="p2"/>
+                        <org.eventb.core.prHypAction name="FORWARD_INF9" org.eventb.core.prHyps="p7" org.eventb.core.prInfHyps="p29"/>
+                        <org.eventb.core.prHypAction name="HIDE10" org.eventb.core.prHyps="p7"/>
                         <org.eventb.core.prHypAction name="FORWARD_INF11" org.eventb.core.prHyps="p3" org.eventb.core.prInfHyps="p30"/>
                         <org.eventb.core.prHypAction name="HIDE12" org.eventb.core.prHyps="p3"/>
                         <org.eventb.core.prHypAction name="FORWARD_INF13" org.eventb.core.prHyps="p19" org.eventb.core.prInfHyps="p31"/>
@@ -1350,29 +1347,21 @@
                         <org.eventb.core.prHypAction name="HIDE18" org.eventb.core.prHyps="p21"/>
                         <org.eventb.core.prRule name="r0" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="simplification rewrites" org.eventb.core.prGoal="p34" org.eventb.core.prHyps="">
                             <org.eventb.core.prAnte name="'" org.eventb.core.prGoal="p43">
-                                <org.eventb.core.prHypAction name="FORWARD_INF0" org.eventb.core.prHyps="p24" org.eventb.core.prInfHyps="p35"/>
-                                <org.eventb.core.prHypAction name="HIDE1" org.eventb.core.prHyps="p24"/>
-                                <org.eventb.core.prHypAction name="FORWARD_INF2" org.eventb.core.prHyps="p25" org.eventb.core.prInfHyps="p36"/>
-                                <org.eventb.core.prHypAction name="HIDE3" org.eventb.core.prHyps="p25"/>
-                                <org.eventb.core.prHypAction name="FORWARD_INF4" org.eventb.core.prHyps="p28" org.eventb.core.prInfHyps="p37"/>
-                                <org.eventb.core.prHypAction name="HIDE5" org.eventb.core.prHyps="p28"/>
-                                <org.eventb.core.prHypAction name="FORWARD_INF6" org.eventb.core.prHyps="p29" org.eventb.core.prInfHyps="p38"/>
-                                <org.eventb.core.prHypAction name="HIDE7" org.eventb.core.prHyps="p29"/>
-                                <org.eventb.core.prHypAction name="FORWARD_INF8" org.eventb.core.prHyps="p30" org.eventb.core.prInfHyps="p39"/>
-                                <org.eventb.core.prHypAction name="HIDE9" org.eventb.core.prHyps="p30"/>
-                                <org.eventb.core.prHypAction name="FORWARD_INF10" org.eventb.core.prHyps="p31" org.eventb.core.prInfHyps="p40"/>
-                                <org.eventb.core.prHypAction name="HIDE11" org.eventb.core.prHyps="p31"/>
-                                <org.eventb.core.prHypAction name="FORWARD_INF12" org.eventb.core.prHyps="p32" org.eventb.core.prInfHyps="p41"/>
-                                <org.eventb.core.prHypAction name="HIDE13" org.eventb.core.prHyps="p32"/>
-                                <org.eventb.core.prHypAction name="FORWARD_INF14" org.eventb.core.prHyps="p33" org.eventb.core.prInfHyps="p42"/>
-                                <org.eventb.core.prHypAction name="HIDE15" org.eventb.core.prHyps="p33"/>
+                                <org.eventb.core.prHypAction name="REWRITE0" org.eventb.core.prHidden="p24" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p35"/>
+                                <org.eventb.core.prHypAction name="REWRITE1" org.eventb.core.prHidden="p25" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p36"/>
+                                <org.eventb.core.prHypAction name="REWRITE2" org.eventb.core.prHidden="p28" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p37"/>
+                                <org.eventb.core.prHypAction name="REWRITE3" org.eventb.core.prHidden="p29" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p38"/>
+                                <org.eventb.core.prHypAction name="REWRITE4" org.eventb.core.prHidden="p30" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p39"/>
+                                <org.eventb.core.prHypAction name="REWRITE5" org.eventb.core.prHidden="p31" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p40"/>
+                                <org.eventb.core.prHypAction name="REWRITE6" org.eventb.core.prHidden="p32" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p41"/>
+                                <org.eventb.core.prHypAction name="REWRITE7" org.eventb.core.prHidden="p33" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p42"/>
                                 <org.eventb.core.prRule name="r2" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="∀ goal (frees r0)" org.eventb.core.prGoal="p43" org.eventb.core.prHyps="">
                                     <org.eventb.core.prAnte name="'" org.eventb.core.prGoal="p44">
                                         <org.eventb.core.prIdent name="r0" org.eventb.core.type="ROUTES"/>
                                         <org.eventb.core.prRule name="r3" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="sl/ds" org.eventb.core.prHyps="">
                                             <org.eventb.core.prAnte name="'">
-                                                <org.eventb.core.prHypAction name="SELECT0" org.eventb.core.prHyps="p4,p11,p15,p12,p5,p7,p8,p14,p35,p36,p37,p39,p41,p42"/>
-                                                <org.eventb.core.prRule name="r4" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="PP" org.eventb.core.prGoal="p44" org.eventb.core.prHyps="p9,p22,p38,p4,p11,p15,p12,p5,p7,p8,p14,p35,p36,p37,p39,p41,p42">
+                                                <org.eventb.core.prHypAction name="SELECT0" org.eventb.core.prHyps="p1,p42,p5,p37,p6,p8,p35,p41,p11,p12,p13,p36,p16,p39"/>
+                                                <org.eventb.core.prRule name="r4" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="PP" org.eventb.core.prGoal="p44" org.eventb.core.prHyps="p1,p38,p42,p22,p5,p37,p6,p8,p35,p41,p11,p12,p13,p36,p15,p16,p39">
                                                     <org.eventb.core.prString name=".arg" org.eventb.core.prSValue="R30000"/>
                                                 </org.eventb.core.prRule>
                                             </org.eventb.core.prAnte>
@@ -1394,83 +1383,80 @@
         <org.eventb.core.prIdent name="resrt" org.eventb.core.type="ℙ(ROUTES)"/>
         <org.eventb.core.prIdent name="rsrtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
         <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
-        <org.eventb.core.prPred name="p41" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·¬r=s⇒¬fst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}"/>
-        <org.eventb.core.prPred name="p2" org.eventb.core.predicate="r∉resrt"/>
-        <org.eventb.core.prPred name="p34" org.eventb.core.predicate="∀r0⦂ROUTES·⊤⇒(nxt(r0))[(rsrtbl∪(rtbl ▷ {r}))∼[{r0}]]⊆(rsrtbl∪(rtbl ▷ {r}))∼[{r0}]"/>
-        <org.eventb.core.prPred name="p4" org.eventb.core.predicate="dom(rtbl)=BLOCKS"/>
-        <org.eventb.core.prPred name="p5" org.eventb.core.predicate="lst∼⊆rtbl"/>
-        <org.eventb.core.prPred name="p6" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(∀S⦂ℙ(BLOCKS)·S⊆ran(nxt(r))∧S⊆(nxt(r))[S]⇒S=(∅ ⦂ ℙ(BLOCKS)))"/>
-        <org.eventb.core.prPred name="p39" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
-        <org.eventb.core.prPred name="p7" org.eventb.core.predicate="rsrtbl∈resbl → resrt"/>
-        <org.eventb.core.prPred name="p31" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒¬fst(r)=lst(r)"/>
-        <org.eventb.core.prPred name="p26" org.eventb.core.predicate="resrt⊆ROUTES"/>
-        <org.eventb.core.prPred name="p30" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
-        <org.eventb.core.prPred name="p9" org.eventb.core.predicate="rtbl∼[{r}]∩resbl=(∅ ⦂ ℙ(BLOCKS))"/>
-        <org.eventb.core.prPred name="p25" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}"/>
-        <org.eventb.core.prPred name="p21" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧¬r=s⇒¬lst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}"/>
-        <org.eventb.core.prPred name="p10" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧r≠s⇒lst(r)∉rtbl∼[{s}] ∖ {fst(s),lst(s)}"/>
-        <org.eventb.core.prPred name="p11" org.eventb.core.predicate="ran(rtbl)=ROUTES"/>
-        <org.eventb.core.prPred name="p19" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒¬fst(r)=lst(r)"/>
-        <org.eventb.core.prPred name="p12" org.eventb.core.predicate="fst∼⊆rtbl"/>
-        <org.eventb.core.prPred name="p33" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·⊤∧⊤∧¬r=s⇒¬lst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}"/>
-        <org.eventb.core.prPred name="p13" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}"/>
-        <org.eventb.core.prPred name="p32" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·⊤∧⊤∧¬r=s⇒¬fst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}"/>
-        <org.eventb.core.prPred name="p14" org.eventb.core.predicate="OCC⊆resbl"/>
-        <org.eventb.core.prPred name="p28" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=(∅ ⦂ ℙ(BLOCKS))"/>
-        <org.eventb.core.prPred name="p22" org.eventb.core.predicate="¬r∈resrt"/>
-        <org.eventb.core.prPred name="p15" org.eventb.core.predicate="nxt∈ROUTES → (BLOCKS ⤔ BLOCKS)"/>
-        <org.eventb.core.prPred name="p16" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=(∅ ⦂ ℙ(BLOCKS))"/>
-        <org.eventb.core.prPred name="p1" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧r≠s⇒fst(r)∉rtbl∼[{s}] ∖ {fst(s),lst(s)}"/>
-        <org.eventb.core.prPred name="p18" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒fst(r)≠lst(r)"/>
-        <org.eventb.core.prPred name="p43" org.eventb.core.predicate="∀r0⦂ROUTES·(nxt(r0))[(rsrtbl∪(rtbl ▷ {r}))∼[{r0}]]⊆(rsrtbl∪(rtbl ▷ {r}))∼[{r0}]"/>
-        <org.eventb.core.prPred name="p38" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rsrtbl∼[{r}]]⊆rsrtbl∼[{r}]"/>
+        <org.eventb.core.prPred name="p1" org.eventb.core.predicate="nxt∈ROUTES → (BLOCKS ⤔ BLOCKS)"/>
         <org.eventb.core.prPred name="p3" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
-        <org.eventb.core.prPred name="p42" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·¬r=s⇒¬lst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}"/>
+        <org.eventb.core.prPred name="p4" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧r≠s⇒fst(r)∉rtbl∼[{s}] ∖ {fst(s),lst(s)}"/>
+        <org.eventb.core.prPred name="p38" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rsrtbl∼[{r}]]⊆rsrtbl∼[{r}]"/>
         <org.eventb.core.prPred name="p37" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=(∅ ⦂ ℙ(BLOCKS))"/>
+        <org.eventb.core.prPred name="p18" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒fst(r)≠lst(r)"/>
+        <org.eventb.core.prPred name="p8" org.eventb.core.predicate="rsrtbl∈resbl → resrt"/>
+        <org.eventb.core.prPred name="p34" org.eventb.core.predicate="∀r0⦂ROUTES·⊤⇒(nxt(r0))[(rsrtbl∪(rtbl ▷ {r}))∼[{r0}]]⊆(rsrtbl∪(rtbl ▷ {r}))∼[{r0}]"/>
         <org.eventb.core.prPred name="p35" org.eventb.core.predicate="∀r⦂ROUTES,S⦂ℙ(BLOCKS)·S⊆ran(nxt(r))∧S⊆(nxt(r))[S]⇒S=(∅ ⦂ ℙ(BLOCKS))"/>
+        <org.eventb.core.prPred name="p21" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧¬r=s⇒¬lst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}"/>
+        <org.eventb.core.prPred name="p11" org.eventb.core.predicate="fst∼⊆rtbl"/>
         <org.eventb.core.prPred name="p40" org.eventb.core.predicate="∀r⦂ROUTES·¬fst(r)=lst(r)"/>
-        <org.eventb.core.prPred name="p29" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rsrtbl∼[{r}]]⊆rsrtbl∼[{r}]"/>
-        <org.eventb.core.prPred name="p8" org.eventb.core.predicate="rsrtbl⊆rtbl"/>
-        <org.eventb.core.prPred name="p24" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(∀S⦂ℙ(BLOCKS)·S⊆ran(nxt(r))∧S⊆(nxt(r))[S]⇒S=(∅ ⦂ ℙ(BLOCKS)))"/>
+        <org.eventb.core.prPred name="p15" org.eventb.core.predicate="rtbl∼[{r}]∩resbl=(∅ ⦂ ℙ(BLOCKS))"/>
+        <org.eventb.core.prPred name="p16" org.eventb.core.predicate="lst∼⊆rtbl"/>
+        <org.eventb.core.prPred name="p26" org.eventb.core.predicate="resrt⊆ROUTES"/>
+        <org.eventb.core.prPred name="p39" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
+        <org.eventb.core.prPred name="p17" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}"/>
+        <org.eventb.core.prPred name="p25" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}"/>
+        <org.eventb.core.prPred name="p27" org.eventb.core.predicate="resbl⊆BLOCKS"/>
+        <org.eventb.core.prPred name="p2" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=(∅ ⦂ ℙ(BLOCKS))"/>
+        <org.eventb.core.prPred name="p43" org.eventb.core.predicate="∀r0⦂ROUTES·(nxt(r0))[(rsrtbl∪(rtbl ▷ {r}))∼[{r0}]]⊆(rsrtbl∪(rtbl ▷ {r}))∼[{r0}]"/>
+        <org.eventb.core.prPred name="p33" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·⊤∧⊤∧¬r=s⇒¬lst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}"/>
+        <org.eventb.core.prPred name="p20" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧¬r=s⇒¬fst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}"/>
+        <org.eventb.core.prPred name="p42" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·¬r=s⇒¬lst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}"/>
+        <org.eventb.core.prPred name="p22" org.eventb.core.predicate="¬r∈resrt"/>
+        <org.eventb.core.prPred name="p5" org.eventb.core.predicate="rsrtbl⊆rtbl"/>
+        <org.eventb.core.prPred name="p6" org.eventb.core.predicate="dom(rtbl)=BLOCKS"/>
+        <org.eventb.core.prPred name="p0" org.eventb.core.predicate="∀r0⦂ROUTES·r0∈ROUTES⇒(nxt(r0))[(rsrtbl∪(rtbl ▷ {r}))∼[{r0}]]⊆(rsrtbl∪(rtbl ▷ {r}))∼[{r0}]"/>
+        <org.eventb.core.prPred name="p7" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rsrtbl∼[{r}]]⊆rsrtbl∼[{r}]"/>
         <org.eventb.core.prPred name="p23" org.eventb.core.predicate="rtbl∈BLOCKS ↔ ROUTES"/>
+        <org.eventb.core.prPred name="p29" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rsrtbl∼[{r}]]⊆rsrtbl∼[{r}]"/>
+        <org.eventb.core.prPred name="p28" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=(∅ ⦂ ℙ(BLOCKS))"/>
+        <org.eventb.core.prPred name="p41" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·¬r=s⇒¬fst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}"/>
+        <org.eventb.core.prPred name="p9" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧r≠s⇒lst(r)∉rtbl∼[{s}] ∖ {fst(s),lst(s)}"/>
+        <org.eventb.core.prPred name="p10" org.eventb.core.predicate="r∉resrt"/>
+        <org.eventb.core.prPred name="p30" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
+        <org.eventb.core.prPred name="p32" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·⊤∧⊤∧¬r=s⇒¬fst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}"/>
+        <org.eventb.core.prPred name="p12" org.eventb.core.predicate="ran(rtbl)=ROUTES"/>
+        <org.eventb.core.prPred name="p13" org.eventb.core.predicate="OCC⊆resbl"/>
+        <org.eventb.core.prPred name="p24" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(∀S⦂ℙ(BLOCKS)·S⊆ran(nxt(r))∧S⊆(nxt(r))[S]⇒S=(∅ ⦂ ℙ(BLOCKS)))"/>
+        <org.eventb.core.prPred name="p14" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(∀S⦂ℙ(BLOCKS)·S⊆ran(nxt(r))∧S⊆(nxt(r))[S]⇒S=(∅ ⦂ ℙ(BLOCKS)))"/>
+        <org.eventb.core.prPred name="p36" org.eventb.core.predicate="∀r⦂ROUTES·nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}"/>
+        <org.eventb.core.prPred name="p31" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒¬fst(r)=lst(r)"/>
+        <org.eventb.core.prPred name="p19" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒¬fst(r)=lst(r)"/>
         <org.eventb.core.prPred name="p44" org.eventb.core.predicate="(nxt(r0))[(rsrtbl∪(rtbl ▷ {r}))∼[{r0}]]⊆(rsrtbl∪(rtbl ▷ {r}))∼[{r0}]">
             <org.eventb.core.prIdent name="r0" org.eventb.core.type="ROUTES"/>
         </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p36" org.eventb.core.predicate="∀r⦂ROUTES·nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}"/>
-        <org.eventb.core.prPred name="p27" org.eventb.core.predicate="resbl⊆BLOCKS"/>
-        <org.eventb.core.prPred name="p0" org.eventb.core.predicate="∀r0⦂ROUTES·r0∈ROUTES⇒(nxt(r0))[(rsrtbl∪(rtbl ▷ {r}))∼[{r0}]]⊆(rsrtbl∪(rtbl ▷ {r}))∼[{r0}]"/>
-        <org.eventb.core.prPred name="p20" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧¬r=s⇒¬fst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}"/>
-        <org.eventb.core.prPred name="p17" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rsrtbl∼[{r}]]⊆rsrtbl∼[{r}]"/>
         <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.allI"/>
         <org.eventb.core.prReas name="r4" org.eventb.core.prRID="com.clearsy.atelierb.provers.core.externalPP:1"/>
-        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL3:1"/>
-        <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
+        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL3:2"/>
         <org.eventb.core.prReas name="r3" org.eventb.core.prRID="org.eventb.core.seqprover.mngHyp"/>
+        <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
     </org.eventb.core.prProof>
     <org.eventb.core.prProof name="route_reservation/inv8/INV" org.eventb.core.confidence="1000" org.eventb.core.prFresh="r0" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16,p17" org.eventb.core.prSets="BLOCKS,ROUTES" org.eventb.core.psManual="true">
+        <org.eventb.core.lang name="L"/>
         <org.eventb.core.prRule name="r0" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="simplification rewrites" org.eventb.core.prHyps="">
             <org.eventb.core.prAnte name="'">
-                <org.eventb.core.prHypAction name="FORWARD_INF0" org.eventb.core.prHyps="p18" org.eventb.core.prInfHyps="p19"/>
-                <org.eventb.core.prHypAction name="HIDE1" org.eventb.core.prHyps="p18"/>
-                <org.eventb.core.prHypAction name="FORWARD_INF2" org.eventb.core.prHyps="p1" org.eventb.core.prInfHyps="p20"/>
-                <org.eventb.core.prHypAction name="HIDE3" org.eventb.core.prHyps="p1"/>
-                <org.eventb.core.prHypAction name="FORWARD_INF4" org.eventb.core.prHyps="p10" org.eventb.core.prInfHyps="p21"/>
-                <org.eventb.core.prHypAction name="HIDE5" org.eventb.core.prHyps="p10"/>
-                <org.eventb.core.prHypAction name="FORWARD_INF6" org.eventb.core.prHyps="p2" org.eventb.core.prInfHyps="p22"/>
-                <org.eventb.core.prHypAction name="HIDE7" org.eventb.core.prHyps="p2"/>
+                <org.eventb.core.prHypAction name="REWRITE0" org.eventb.core.prHidden="p18" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p19"/>
+                <org.eventb.core.prHypAction name="REWRITE1" org.eventb.core.prHidden="p4" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p20"/>
+                <org.eventb.core.prHypAction name="REWRITE2" org.eventb.core.prHidden="p9" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p21"/>
+                <org.eventb.core.prHypAction name="REWRITE3" org.eventb.core.prHidden="p10" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p22"/>
                 <org.eventb.core.prRule name="r1" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="type rewrites" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="">
                     <org.eventb.core.prAnte name="'" org.eventb.core.prGoal="p34">
                         <org.eventb.core.prHypAction name="HIDE0" org.eventb.core.prHyps="p23"/>
-                        <org.eventb.core.prHypAction name="FORWARD_INF1" org.eventb.core.prHyps="p6" org.eventb.core.prInfHyps="p24"/>
-                        <org.eventb.core.prHypAction name="HIDE2" org.eventb.core.prHyps="p6"/>
-                        <org.eventb.core.prHypAction name="FORWARD_INF3" org.eventb.core.prHyps="p13" org.eventb.core.prInfHyps="p25"/>
-                        <org.eventb.core.prHypAction name="HIDE4" org.eventb.core.prHyps="p13"/>
+                        <org.eventb.core.prHypAction name="FORWARD_INF1" org.eventb.core.prHyps="p14" org.eventb.core.prInfHyps="p24"/>
+                        <org.eventb.core.prHypAction name="HIDE2" org.eventb.core.prHyps="p14"/>
+                        <org.eventb.core.prHypAction name="FORWARD_INF3" org.eventb.core.prHyps="p17" org.eventb.core.prInfHyps="p25"/>
+                        <org.eventb.core.prHypAction name="HIDE4" org.eventb.core.prHyps="p17"/>
                         <org.eventb.core.prHypAction name="HIDE5" org.eventb.core.prHyps="p26"/>
                         <org.eventb.core.prHypAction name="HIDE6" org.eventb.core.prHyps="p27"/>
-                        <org.eventb.core.prHypAction name="FORWARD_INF7" org.eventb.core.prHyps="p16" org.eventb.core.prInfHyps="p28"/>
-                        <org.eventb.core.prHypAction name="HIDE8" org.eventb.core.prHyps="p16"/>
-                        <org.eventb.core.prHypAction name="FORWARD_INF9" org.eventb.core.prHyps="p17" org.eventb.core.prInfHyps="p29"/>
-                        <org.eventb.core.prHypAction name="HIDE10" org.eventb.core.prHyps="p17"/>
+                        <org.eventb.core.prHypAction name="FORWARD_INF7" org.eventb.core.prHyps="p2" org.eventb.core.prInfHyps="p28"/>
+                        <org.eventb.core.prHypAction name="HIDE8" org.eventb.core.prHyps="p2"/>
+                        <org.eventb.core.prHypAction name="FORWARD_INF9" org.eventb.core.prHyps="p7" org.eventb.core.prInfHyps="p29"/>
+                        <org.eventb.core.prHypAction name="HIDE10" org.eventb.core.prHyps="p7"/>
                         <org.eventb.core.prHypAction name="FORWARD_INF11" org.eventb.core.prHyps="p3" org.eventb.core.prInfHyps="p30"/>
                         <org.eventb.core.prHypAction name="HIDE12" org.eventb.core.prHyps="p3"/>
                         <org.eventb.core.prHypAction name="FORWARD_INF13" org.eventb.core.prHyps="p19" org.eventb.core.prInfHyps="p31"/>
@@ -1481,29 +1467,21 @@
                         <org.eventb.core.prHypAction name="HIDE18" org.eventb.core.prHyps="p21"/>
                         <org.eventb.core.prRule name="r0" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="simplification rewrites" org.eventb.core.prGoal="p34" org.eventb.core.prHyps="">
                             <org.eventb.core.prAnte name="'" org.eventb.core.prGoal="p43">
-                                <org.eventb.core.prHypAction name="FORWARD_INF0" org.eventb.core.prHyps="p24" org.eventb.core.prInfHyps="p35"/>
-                                <org.eventb.core.prHypAction name="HIDE1" org.eventb.core.prHyps="p24"/>
-                                <org.eventb.core.prHypAction name="FORWARD_INF2" org.eventb.core.prHyps="p25" org.eventb.core.prInfHyps="p36"/>
-                                <org.eventb.core.prHypAction name="HIDE3" org.eventb.core.prHyps="p25"/>
-                                <org.eventb.core.prHypAction name="FORWARD_INF4" org.eventb.core.prHyps="p28" org.eventb.core.prInfHyps="p37"/>
-                                <org.eventb.core.prHypAction name="HIDE5" org.eventb.core.prHyps="p28"/>
-                                <org.eventb.core.prHypAction name="FORWARD_INF6" org.eventb.core.prHyps="p29" org.eventb.core.prInfHyps="p38"/>
-                                <org.eventb.core.prHypAction name="HIDE7" org.eventb.core.prHyps="p29"/>
-                                <org.eventb.core.prHypAction name="FORWARD_INF8" org.eventb.core.prHyps="p30" org.eventb.core.prInfHyps="p39"/>
-                                <org.eventb.core.prHypAction name="HIDE9" org.eventb.core.prHyps="p30"/>
-                                <org.eventb.core.prHypAction name="FORWARD_INF10" org.eventb.core.prHyps="p31" org.eventb.core.prInfHyps="p40"/>
-                                <org.eventb.core.prHypAction name="HIDE11" org.eventb.core.prHyps="p31"/>
-                                <org.eventb.core.prHypAction name="FORWARD_INF12" org.eventb.core.prHyps="p32" org.eventb.core.prInfHyps="p41"/>
-                                <org.eventb.core.prHypAction name="HIDE13" org.eventb.core.prHyps="p32"/>
-                                <org.eventb.core.prHypAction name="FORWARD_INF14" org.eventb.core.prHyps="p33" org.eventb.core.prInfHyps="p42"/>
-                                <org.eventb.core.prHypAction name="HIDE15" org.eventb.core.prHyps="p33"/>
+                                <org.eventb.core.prHypAction name="REWRITE0" org.eventb.core.prHidden="p24" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p35"/>
+                                <org.eventb.core.prHypAction name="REWRITE1" org.eventb.core.prHidden="p25" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p36"/>
+                                <org.eventb.core.prHypAction name="REWRITE2" org.eventb.core.prHidden="p28" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p37"/>
+                                <org.eventb.core.prHypAction name="REWRITE3" org.eventb.core.prHidden="p29" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p38"/>
+                                <org.eventb.core.prHypAction name="REWRITE4" org.eventb.core.prHidden="p30" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p39"/>
+                                <org.eventb.core.prHypAction name="REWRITE5" org.eventb.core.prHidden="p31" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p40"/>
+                                <org.eventb.core.prHypAction name="REWRITE6" org.eventb.core.prHidden="p32" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p41"/>
+                                <org.eventb.core.prHypAction name="REWRITE7" org.eventb.core.prHidden="p33" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p42"/>
                                 <org.eventb.core.prRule name="r2" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="∀ goal (frees r0)" org.eventb.core.prGoal="p43" org.eventb.core.prHyps="">
                                     <org.eventb.core.prAnte name="'" org.eventb.core.prGoal="p44">
                                         <org.eventb.core.prIdent name="r0" org.eventb.core.type="ROUTES"/>
                                         <org.eventb.core.prRule name="r3" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="sl/ds" org.eventb.core.prHyps="">
                                             <org.eventb.core.prAnte name="'">
-                                                <org.eventb.core.prHypAction name="SELECT0" org.eventb.core.prHyps="p4,p11,p15,p12,p5,p7,p8,p14,p35,p36,p37,p38,p41,p42"/>
-                                                <org.eventb.core.prRule name="r4" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="PP" org.eventb.core.prGoal="p44" org.eventb.core.prHyps="p9,p22,p39,p4,p11,p15,p12,p5,p7,p8,p14,p35,p36,p37,p38,p41,p42">
+                                                <org.eventb.core.prHypAction name="SELECT0" org.eventb.core.prHyps="p1,p38,p42,p5,p37,p6,p8,p35,p41,p11,p12,p13,p36,p16"/>
+                                                <org.eventb.core.prRule name="r4" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="PP" org.eventb.core.prGoal="p44" org.eventb.core.prHyps="p1,p38,p42,p22,p5,p37,p6,p8,p35,p41,p11,p12,p13,p36,p15,p16,p39">
                                                     <org.eventb.core.prString name=".arg" org.eventb.core.prSValue="R30000"/>
                                                 </org.eventb.core.prRule>
                                             </org.eventb.core.prAnte>
@@ -1525,58 +1503,58 @@
         <org.eventb.core.prIdent name="resrt" org.eventb.core.type="ℙ(ROUTES)"/>
         <org.eventb.core.prIdent name="rsrtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
         <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
-        <org.eventb.core.prPred name="p41" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·¬r=s⇒¬fst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}"/>
-        <org.eventb.core.prPred name="p2" org.eventb.core.predicate="r∉resrt"/>
-        <org.eventb.core.prPred name="p4" org.eventb.core.predicate="dom(rtbl)=BLOCKS"/>
-        <org.eventb.core.prPred name="p5" org.eventb.core.predicate="lst∼⊆rtbl"/>
-        <org.eventb.core.prPred name="p6" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(∀S⦂ℙ(BLOCKS)·S⊆ran(nxt(r))∧S⊆(nxt(r))[S]⇒S=(∅ ⦂ ℙ(BLOCKS)))"/>
-        <org.eventb.core.prPred name="p34" org.eventb.core.predicate="∀r0⦂ROUTES·⊤⇒(nxt(r0))[(rsrtbl∪(rtbl ▷ {r}))∼[{r0}] ∖ OCC]⊆(rsrtbl∪(rtbl ▷ {r}))∼[{r0}] ∖ OCC"/>
-        <org.eventb.core.prPred name="p39" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
-        <org.eventb.core.prPred name="p7" org.eventb.core.predicate="rsrtbl∈resbl → resrt"/>
-        <org.eventb.core.prPred name="p31" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒¬fst(r)=lst(r)"/>
-        <org.eventb.core.prPred name="p26" org.eventb.core.predicate="resrt⊆ROUTES"/>
-        <org.eventb.core.prPred name="p30" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
-        <org.eventb.core.prPred name="p9" org.eventb.core.predicate="rtbl∼[{r}]∩resbl=(∅ ⦂ ℙ(BLOCKS))"/>
-        <org.eventb.core.prPred name="p25" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}"/>
-        <org.eventb.core.prPred name="p21" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧¬r=s⇒¬lst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}"/>
-        <org.eventb.core.prPred name="p10" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧r≠s⇒lst(r)∉rtbl∼[{s}] ∖ {fst(s),lst(s)}"/>
-        <org.eventb.core.prPred name="p11" org.eventb.core.predicate="ran(rtbl)=ROUTES"/>
-        <org.eventb.core.prPred name="p19" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒¬fst(r)=lst(r)"/>
-        <org.eventb.core.prPred name="p12" org.eventb.core.predicate="fst∼⊆rtbl"/>
-        <org.eventb.core.prPred name="p33" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·⊤∧⊤∧¬r=s⇒¬lst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}"/>
-        <org.eventb.core.prPred name="p13" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}"/>
-        <org.eventb.core.prPred name="p32" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·⊤∧⊤∧¬r=s⇒¬fst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}"/>
-        <org.eventb.core.prPred name="p14" org.eventb.core.predicate="OCC⊆resbl"/>
-        <org.eventb.core.prPred name="p28" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=(∅ ⦂ ℙ(BLOCKS))"/>
-        <org.eventb.core.prPred name="p22" org.eventb.core.predicate="¬r∈resrt"/>
-        <org.eventb.core.prPred name="p15" org.eventb.core.predicate="nxt∈ROUTES → (BLOCKS ⤔ BLOCKS)"/>
-        <org.eventb.core.prPred name="p16" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=(∅ ⦂ ℙ(BLOCKS))"/>
-        <org.eventb.core.prPred name="p1" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧r≠s⇒fst(r)∉rtbl∼[{s}] ∖ {fst(s),lst(s)}"/>
-        <org.eventb.core.prPred name="p0" org.eventb.core.predicate="∀r0⦂ROUTES·r0∈ROUTES⇒(nxt(r0))[(rsrtbl∪(rtbl ▷ {r}))∼[{r0}] ∖ OCC]⊆(rsrtbl∪(rtbl ▷ {r}))∼[{r0}] ∖ OCC"/>
-        <org.eventb.core.prPred name="p18" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒fst(r)≠lst(r)"/>
-        <org.eventb.core.prPred name="p38" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rsrtbl∼[{r}]]⊆rsrtbl∼[{r}]"/>
+        <org.eventb.core.prPred name="p1" org.eventb.core.predicate="nxt∈ROUTES → (BLOCKS ⤔ BLOCKS)"/>
         <org.eventb.core.prPred name="p3" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
-        <org.eventb.core.prPred name="p42" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·¬r=s⇒¬lst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}"/>
+        <org.eventb.core.prPred name="p4" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧r≠s⇒fst(r)∉rtbl∼[{s}] ∖ {fst(s),lst(s)}"/>
+        <org.eventb.core.prPred name="p38" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rsrtbl∼[{r}]]⊆rsrtbl∼[{r}]"/>
         <org.eventb.core.prPred name="p37" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=(∅ ⦂ ℙ(BLOCKS))"/>
+        <org.eventb.core.prPred name="p18" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒fst(r)≠lst(r)"/>
+        <org.eventb.core.prPred name="p8" org.eventb.core.predicate="rsrtbl∈resbl → resrt"/>
         <org.eventb.core.prPred name="p35" org.eventb.core.predicate="∀r⦂ROUTES,S⦂ℙ(BLOCKS)·S⊆ran(nxt(r))∧S⊆(nxt(r))[S]⇒S=(∅ ⦂ ℙ(BLOCKS))"/>
+        <org.eventb.core.prPred name="p21" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧¬r=s⇒¬lst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}"/>
+        <org.eventb.core.prPred name="p11" org.eventb.core.predicate="fst∼⊆rtbl"/>
         <org.eventb.core.prPred name="p40" org.eventb.core.predicate="∀r⦂ROUTES·¬fst(r)=lst(r)"/>
+        <org.eventb.core.prPred name="p15" org.eventb.core.predicate="rtbl∼[{r}]∩resbl=(∅ ⦂ ℙ(BLOCKS))"/>
+        <org.eventb.core.prPred name="p16" org.eventb.core.predicate="lst∼⊆rtbl"/>
+        <org.eventb.core.prPred name="p26" org.eventb.core.predicate="resrt⊆ROUTES"/>
+        <org.eventb.core.prPred name="p39" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
+        <org.eventb.core.prPred name="p17" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}"/>
+        <org.eventb.core.prPred name="p25" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}"/>
+        <org.eventb.core.prPred name="p27" org.eventb.core.predicate="resbl⊆BLOCKS"/>
+        <org.eventb.core.prPred name="p0" org.eventb.core.predicate="∀r0⦂ROUTES·r0∈ROUTES⇒(nxt(r0))[(rsrtbl∪(rtbl ▷ {r}))∼[{r0}] ∖ OCC]⊆(rsrtbl∪(rtbl ▷ {r}))∼[{r0}] ∖ OCC"/>
+        <org.eventb.core.prPred name="p2" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=(∅ ⦂ ℙ(BLOCKS))"/>
+        <org.eventb.core.prPred name="p33" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·⊤∧⊤∧¬r=s⇒¬lst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}"/>
+        <org.eventb.core.prPred name="p20" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧¬r=s⇒¬fst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}"/>
+        <org.eventb.core.prPred name="p42" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·¬r=s⇒¬lst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}"/>
+        <org.eventb.core.prPred name="p22" org.eventb.core.predicate="¬r∈resrt"/>
+        <org.eventb.core.prPred name="p5" org.eventb.core.predicate="rsrtbl⊆rtbl"/>
+        <org.eventb.core.prPred name="p6" org.eventb.core.predicate="dom(rtbl)=BLOCKS"/>
+        <org.eventb.core.prPred name="p7" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rsrtbl∼[{r}]]⊆rsrtbl∼[{r}]"/>
+        <org.eventb.core.prPred name="p23" org.eventb.core.predicate="rtbl∈BLOCKS ↔ ROUTES"/>
         <org.eventb.core.prPred name="p29" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rsrtbl∼[{r}]]⊆rsrtbl∼[{r}]"/>
-        <org.eventb.core.prPred name="p8" org.eventb.core.predicate="rsrtbl⊆rtbl"/>
+        <org.eventb.core.prPred name="p28" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=(∅ ⦂ ℙ(BLOCKS))"/>
+        <org.eventb.core.prPred name="p41" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·¬r=s⇒¬fst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}"/>
+        <org.eventb.core.prPred name="p9" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧r≠s⇒lst(r)∉rtbl∼[{s}] ∖ {fst(s),lst(s)}"/>
+        <org.eventb.core.prPred name="p34" org.eventb.core.predicate="∀r0⦂ROUTES·⊤⇒(nxt(r0))[(rsrtbl∪(rtbl ▷ {r}))∼[{r0}] ∖ OCC]⊆(rsrtbl∪(rtbl ▷ {r}))∼[{r0}] ∖ OCC"/>
+        <org.eventb.core.prPred name="p10" org.eventb.core.predicate="r∉resrt"/>
+        <org.eventb.core.prPred name="p30" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
+        <org.eventb.core.prPred name="p32" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·⊤∧⊤∧¬r=s⇒¬fst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}"/>
+        <org.eventb.core.prPred name="p12" org.eventb.core.predicate="ran(rtbl)=ROUTES"/>
+        <org.eventb.core.prPred name="p13" org.eventb.core.predicate="OCC⊆resbl"/>
+        <org.eventb.core.prPred name="p24" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(∀S⦂ℙ(BLOCKS)·S⊆ran(nxt(r))∧S⊆(nxt(r))[S]⇒S=(∅ ⦂ ℙ(BLOCKS)))"/>
         <org.eventb.core.prPred name="p44" org.eventb.core.predicate="(nxt(r0))[(rsrtbl∪(rtbl ▷ {r}))∼[{r0}] ∖ OCC]⊆(rsrtbl∪(rtbl ▷ {r}))∼[{r0}] ∖ OCC">
             <org.eventb.core.prIdent name="r0" org.eventb.core.type="ROUTES"/>
         </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p24" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(∀S⦂ℙ(BLOCKS)·S⊆ran(nxt(r))∧S⊆(nxt(r))[S]⇒S=(∅ ⦂ ℙ(BLOCKS)))"/>
-        <org.eventb.core.prPred name="p23" org.eventb.core.predicate="rtbl∈BLOCKS ↔ ROUTES"/>
-        <org.eventb.core.prPred name="p43" org.eventb.core.predicate="∀r0⦂ROUTES·(nxt(r0))[(rsrtbl∪(rtbl ▷ {r}))∼[{r0}] ∖ OCC]⊆(rsrtbl∪(rtbl ▷ {r}))∼[{r0}] ∖ OCC"/>
+        <org.eventb.core.prPred name="p14" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(∀S⦂ℙ(BLOCKS)·S⊆ran(nxt(r))∧S⊆(nxt(r))[S]⇒S=(∅ ⦂ ℙ(BLOCKS)))"/>
         <org.eventb.core.prPred name="p36" org.eventb.core.predicate="∀r⦂ROUTES·nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}"/>
-        <org.eventb.core.prPred name="p27" org.eventb.core.predicate="resbl⊆BLOCKS"/>
-        <org.eventb.core.prPred name="p20" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧¬r=s⇒¬fst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}"/>
-        <org.eventb.core.prPred name="p17" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rsrtbl∼[{r}]]⊆rsrtbl∼[{r}]"/>
+        <org.eventb.core.prPred name="p43" org.eventb.core.predicate="∀r0⦂ROUTES·(nxt(r0))[(rsrtbl∪(rtbl ▷ {r}))∼[{r0}] ∖ OCC]⊆(rsrtbl∪(rtbl ▷ {r}))∼[{r0}] ∖ OCC"/>
+        <org.eventb.core.prPred name="p31" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒¬fst(r)=lst(r)"/>
+        <org.eventb.core.prPred name="p19" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒¬fst(r)=lst(r)"/>
         <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.allI"/>
         <org.eventb.core.prReas name="r4" org.eventb.core.prRID="com.clearsy.atelierb.provers.core.externalPP:1"/>
-        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL3:1"/>
-        <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
+        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL3:2"/>
         <org.eventb.core.prReas name="r3" org.eventb.core.prRID="org.eventb.core.seqprover.mngHyp"/>
+        <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
     </org.eventb.core.prProof>
     <org.eventb.core.prProof name="route_freeing/inv3/INV" org.eventb.core.confidence="1000" org.eventb.core.prFresh="" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16,p17,p18,p19" org.eventb.core.prSets="BLOCKS,ROUTES">
         <org.eventb.core.lang name="L"/>
@@ -1670,9 +1648,9 @@
         <org.eventb.core.prPred name="p36" org.eventb.core.predicate="∀r⦂ROUTES·nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}"/>
         <org.eventb.core.prPred name="p31" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒¬fst(r)=lst(r)"/>
         <org.eventb.core.prPred name="p20" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒¬fst(r)=lst(r)"/>
+        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL5:0"/>
         <org.eventb.core.prReas name="r2" org.eventb.core.prRID="com.clearsy.atelierb.provers.core.externalML:1"/>
         <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
-        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL5:0"/>
     </org.eventb.core.prProof>
     <org.eventb.core.prProof name="FRONT_MOVE_1/grd2/WD" org.eventb.core.confidence="1000" org.eventb.core.prFresh="" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p1" org.eventb.core.prSets="BLOCKS,ROUTES">
         <org.eventb.core.lang name="L"/>
@@ -1866,12 +1844,12 @@
             <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
         </org.eventb.core.prPred>
         <org.eventb.core.prExpr name="e0" org.eventb.core.expression="ROUTES"/>
-        <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.conj:0"/>
-        <org.eventb.core.prReas name="r3" org.eventb.core.prRID="org.eventb.core.seqprover.totalDom:2"/>
-        <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
         <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL5:0"/>
-        <org.eventb.core.prReas name="r4" org.eventb.core.prRID="org.eventb.core.seqprover.trueGoal"/>
         <org.eventb.core.prReas name="r5" org.eventb.core.prRID="org.eventb.core.seqprover.isFunGoal"/>
+        <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.conj:0"/>
+        <org.eventb.core.prReas name="r4" org.eventb.core.prRID="org.eventb.core.seqprover.trueGoal"/>
+        <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
+        <org.eventb.core.prReas name="r3" org.eventb.core.prRID="org.eventb.core.seqprover.totalDom:2"/>
     </org.eventb.core.prProof>
     <org.eventb.core.prProof name="FRONT_MOVE_1/grd3/WD" org.eventb.core.confidence="1000" org.eventb.core.prFresh="" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16,p17,p18,p19,p20,p21,p22" org.eventb.core.prSets="BLOCKS,ROUTES">
         <org.eventb.core.lang name="L"/>
@@ -1983,12 +1961,12 @@
         <org.eventb.core.prPred name="p48" org.eventb.core.predicate="fst(r)∈dom(rsrtbl)"/>
         <org.eventb.core.prPred name="p35" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
         <org.eventb.core.prPred name="p41" org.eventb.core.predicate="∀r⦂ROUTES·nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}"/>
-        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.genMPL4"/>
-        <org.eventb.core.prReas name="r4" org.eventb.core.prRID="com.clearsy.atelierb.provers.core.externalML:1"/>
-        <org.eventb.core.prReas name="r3" org.eventb.core.prRID="org.eventb.core.seqprover.conj:0"/>
-        <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
         <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL5:0"/>
         <org.eventb.core.prReas name="r5" org.eventb.core.prRID="org.eventb.core.seqprover.isFunGoal"/>
+        <org.eventb.core.prReas name="r4" org.eventb.core.prRID="com.clearsy.atelierb.provers.core.externalML:1"/>
+        <org.eventb.core.prReas name="r3" org.eventb.core.prRID="org.eventb.core.seqprover.conj:0"/>
+        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.genMPL4"/>
+        <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
     </org.eventb.core.prProof>
     <org.eventb.core.prProof name="FRONT_MOVE_1/inv4/INV" org.eventb.core.confidence="1000" org.eventb.core.prFresh="" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16,p17,p18,p19,p20,p21,p22,p23,p24,p25" org.eventb.core.prSets="BLOCKS,ROUTES">
         <org.eventb.core.lang name="L"/>
@@ -2099,10 +2077,10 @@
         <org.eventb.core.prPred name="p29" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩rsrtbl∼[{r}]⊆OCC"/>
         <org.eventb.core.prPred name="p39" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
         <org.eventb.core.prPred name="p45" org.eventb.core.predicate="∀r⦂ROUTES·nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}"/>
-        <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.genMPL4"/>
-        <org.eventb.core.prReas name="r3" org.eventb.core.prRID="com.clearsy.atelierb.provers.core.externalML:1"/>
-        <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
         <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL5:0"/>
+        <org.eventb.core.prReas name="r3" org.eventb.core.prRID="com.clearsy.atelierb.provers.core.externalML:1"/>
+        <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.genMPL4"/>
+        <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
     </org.eventb.core.prProof>
     <org.eventb.core.prProof name="FRONT_MOVE_1/inv6/INV" org.eventb.core.confidence="1000" org.eventb.core.prFresh="r0" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16,p17,p18,p19,p20,p21,p22,p23,p24,p25" org.eventb.core.prSets="BLOCKS,ROUTES">
         <org.eventb.core.lang name="L"/>
@@ -2213,20 +2191,18 @@
         <org.eventb.core.prPred name="p29" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩rsrtbl∼[{r}]⊆OCC"/>
         <org.eventb.core.prPred name="p37" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
         <org.eventb.core.prPred name="p44" org.eventb.core.predicate="∀r⦂ROUTES·nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}"/>
-        <org.eventb.core.prReas name="r3" org.eventb.core.prRID="com.clearsy.atelierb.provers.core.externalML:1"/>
-        <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
         <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL5:0"/>
         <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.allI"/>
+        <org.eventb.core.prReas name="r3" org.eventb.core.prRID="com.clearsy.atelierb.provers.core.externalML:1"/>
+        <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
     </org.eventb.core.prProof>
-    <org.eventb.core.prProof name="FRONT_MOVE_1/inv8/INV" org.eventb.core.confidence="0" org.eventb.core.prFresh="r0" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="" org.eventb.core.prSets="ROUTES" org.eventb.core.psManual="true">
+    <org.eventb.core.prProof name="FRONT_MOVE_1/inv8/INV" org.eventb.core.confidence="0" org.eventb.core.prFresh="r0" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="" org.eventb.core.prSets="BLOCKS,ROUTES" org.eventb.core.psManual="true">
+        <org.eventb.core.lang name="L"/>
         <org.eventb.core.prRule name="r0" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="simplification rewrites" org.eventb.core.prHyps="">
             <org.eventb.core.prAnte name="'">
-                <org.eventb.core.prHypAction name="FORWARD_INF0" org.eventb.core.prHyps="p1" org.eventb.core.prInfHyps="p2"/>
-                <org.eventb.core.prHypAction name="HIDE1" org.eventb.core.prHyps="p1"/>
-                <org.eventb.core.prHypAction name="FORWARD_INF2" org.eventb.core.prHyps="p3" org.eventb.core.prInfHyps="p4"/>
-                <org.eventb.core.prHypAction name="HIDE3" org.eventb.core.prHyps="p3"/>
-                <org.eventb.core.prHypAction name="FORWARD_INF4" org.eventb.core.prHyps="p5" org.eventb.core.prInfHyps="p6"/>
-                <org.eventb.core.prHypAction name="HIDE5" org.eventb.core.prHyps="p5"/>
+                <org.eventb.core.prHypAction name="REWRITE0" org.eventb.core.prHidden="p1" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p2"/>
+                <org.eventb.core.prHypAction name="REWRITE1" org.eventb.core.prHidden="p3" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p4"/>
+                <org.eventb.core.prHypAction name="REWRITE2" org.eventb.core.prHidden="p5" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p6"/>
                 <org.eventb.core.prRule name="r1" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="type rewrites" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="">
                     <org.eventb.core.prAnte name="'" org.eventb.core.prGoal="p23">
                         <org.eventb.core.prHypAction name="HIDE0" org.eventb.core.prHyps="p7"/>
@@ -2250,25 +2226,22 @@
                         <org.eventb.core.prHypAction name="HIDE18" org.eventb.core.prHyps="p6"/>
                         <org.eventb.core.prRule name="r0" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="simplification rewrites" org.eventb.core.prGoal="p23" org.eventb.core.prHyps="">
                             <org.eventb.core.prAnte name="'" org.eventb.core.prGoal="p32">
-                                <org.eventb.core.prHypAction name="FORWARD_INF0" org.eventb.core.prHyps="p9" org.eventb.core.prInfHyps="p24"/>
-                                <org.eventb.core.prHypAction name="HIDE1" org.eventb.core.prHyps="p9"/>
-                                <org.eventb.core.prHypAction name="FORWARD_INF2" org.eventb.core.prHyps="p11" org.eventb.core.prInfHyps="p25"/>
-                                <org.eventb.core.prHypAction name="HIDE3" org.eventb.core.prHyps="p11"/>
-                                <org.eventb.core.prHypAction name="FORWARD_INF4" org.eventb.core.prHyps="p15" org.eventb.core.prInfHyps="p26"/>
-                                <org.eventb.core.prHypAction name="HIDE5" org.eventb.core.prHyps="p15"/>
-                                <org.eventb.core.prHypAction name="FORWARD_INF6" org.eventb.core.prHyps="p17" org.eventb.core.prInfHyps="p27"/>
-                                <org.eventb.core.prHypAction name="HIDE7" org.eventb.core.prHyps="p17"/>
-                                <org.eventb.core.prHypAction name="FORWARD_INF8" org.eventb.core.prHyps="p19" org.eventb.core.prInfHyps="p28"/>
-                                <org.eventb.core.prHypAction name="HIDE9" org.eventb.core.prHyps="p19"/>
-                                <org.eventb.core.prHypAction name="FORWARD_INF10" org.eventb.core.prHyps="p20" org.eventb.core.prInfHyps="p29"/>
-                                <org.eventb.core.prHypAction name="HIDE11" org.eventb.core.prHyps="p20"/>
-                                <org.eventb.core.prHypAction name="FORWARD_INF12" org.eventb.core.prHyps="p21" org.eventb.core.prInfHyps="p30"/>
-                                <org.eventb.core.prHypAction name="HIDE13" org.eventb.core.prHyps="p21"/>
-                                <org.eventb.core.prHypAction name="FORWARD_INF14" org.eventb.core.prHyps="p22" org.eventb.core.prInfHyps="p31"/>
-                                <org.eventb.core.prHypAction name="HIDE15" org.eventb.core.prHyps="p22"/>
+                                <org.eventb.core.prHypAction name="REWRITE0" org.eventb.core.prHidden="p9" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p24"/>
+                                <org.eventb.core.prHypAction name="REWRITE1" org.eventb.core.prHidden="p11" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p25"/>
+                                <org.eventb.core.prHypAction name="REWRITE2" org.eventb.core.prHidden="p15" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p26"/>
+                                <org.eventb.core.prHypAction name="REWRITE3" org.eventb.core.prHidden="p17" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p27"/>
+                                <org.eventb.core.prHypAction name="REWRITE4" org.eventb.core.prHidden="p19" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p28"/>
+                                <org.eventb.core.prHypAction name="REWRITE5" org.eventb.core.prHidden="p20" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p29"/>
+                                <org.eventb.core.prHypAction name="REWRITE6" org.eventb.core.prHidden="p21" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p30"/>
+                                <org.eventb.core.prHypAction name="REWRITE7" org.eventb.core.prHidden="p22" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p31"/>
                                 <org.eventb.core.prRule name="r2" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="∀ goal (frees r0)" org.eventb.core.prGoal="p32" org.eventb.core.prHyps="">
                                     <org.eventb.core.prAnte name="'" org.eventb.core.prGoal="p33">
                                         <org.eventb.core.prIdent name="r0" org.eventb.core.type="ROUTES"/>
+                                        <org.eventb.core.prRule name="r3" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="simplification rewrites" org.eventb.core.prHyps="">
+                                            <org.eventb.core.prAnte name="'">
+                                                <org.eventb.core.prHypAction name="REWRITE0" org.eventb.core.prHidden="p26" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p34"/>
+                                            </org.eventb.core.prAnte>
+                                        </org.eventb.core.prRule>
                                     </org.eventb.core.prAnte>
                                 </org.eventb.core.prRule>
                             </org.eventb.core.prAnte>
@@ -2282,26 +2255,68 @@
         <org.eventb.core.prIdent name="nxt" org.eventb.core.type="ℙ(ROUTES×ℙ(BLOCKS×BLOCKS))"/>
         <org.eventb.core.prIdent name="r" org.eventb.core.type="ROUTES"/>
         <org.eventb.core.prIdent name="rsrtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
-        <org.eventb.core.prPred name="p30" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·¬r=s⇒¬fst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
+        <org.eventb.core.prPred name="p18" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
+        <org.eventb.core.prPred name="p3" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧r≠s⇒fst(r)∉rtbl∼[{s}] ∖ {fst(s),lst(s)}">
             <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
             <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
         </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p32" org.eventb.core.predicate="∀r0⦂ROUTES·(nxt(r0))[rsrtbl∼[{r0}] ∖ (OCC∪{fst(r)})]⊆rsrtbl∼[{r0}] ∖ (OCC∪{fst(r)})"/>
-        <org.eventb.core.prPred name="p8" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(∀S⦂ℙ(BLOCKS)·S⊆ran(nxt(r))∧S⊆(nxt(r))[S]⇒S=(∅ ⦂ ℙ(BLOCKS)))"/>
-        <org.eventb.core.prPred name="p28" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
-        <org.eventb.core.prPred name="p0" org.eventb.core.predicate="∀r0⦂ROUTES·r0∈ROUTES⇒(nxt(r0))[rsrtbl∼[{r0}] ∖ (OCC∪{fst(r)})]⊆rsrtbl∼[{r0}] ∖ (OCC∪{fst(r)})"/>
-        <org.eventb.core.prPred name="p20" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒¬fst(r)=lst(r)">
+        <org.eventb.core.prPred name="p27" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rsrtbl∼[{r}]]⊆rsrtbl∼[{r}]"/>
+        <org.eventb.core.prPred name="p26" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=(∅ ⦂ ℙ(BLOCKS))">
+            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p1" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒fst(r)≠lst(r)">
+            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p24" org.eventb.core.predicate="∀r⦂ROUTES,S⦂ℙ(BLOCKS)·S⊆ran(nxt(r))∧S⊆(nxt(r))[S]⇒S=(∅ ⦂ ℙ(BLOCKS))"/>
+        <org.eventb.core.prPred name="p6" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧¬r=s⇒¬lst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
+            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p29" org.eventb.core.predicate="∀r⦂ROUTES·¬fst(r)=lst(r)">
             <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
         </org.eventb.core.prPred>
         <org.eventb.core.prPred name="p12" org.eventb.core.predicate="resrt⊆ROUTES">
             <org.eventb.core.prIdent name="resrt" org.eventb.core.type="ℙ(ROUTES)"/>
         </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p19" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
+        <org.eventb.core.prPred name="p28" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
+        <org.eventb.core.prPred name="p34" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩rsrtbl∼[{r}]⊆OCC">
+            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p10" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}">
+            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
+        </org.eventb.core.prPred>
         <org.eventb.core.prPred name="p11" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}">
             <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
             <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
         </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p6" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧¬r=s⇒¬lst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
+        <org.eventb.core.prPred name="p13" org.eventb.core.predicate="resbl⊆BLOCKS">
+            <org.eventb.core.prIdent name="resbl" org.eventb.core.type="ℙ(BLOCKS)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p14" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=(∅ ⦂ ℙ(BLOCKS))">
+            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p22" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·⊤∧⊤∧¬r=s⇒¬lst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
+            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p4" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧¬r=s⇒¬fst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
+            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p31" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·¬r=s⇒¬lst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
+            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p16" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rsrtbl∼[{r}]]⊆rsrtbl∼[{r}]"/>
+        <org.eventb.core.prPred name="p7" org.eventb.core.predicate="rtbl∈BLOCKS ↔ ROUTES">
+            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p17" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rsrtbl∼[{r}]]⊆rsrtbl∼[{r}]"/>
+        <org.eventb.core.prPred name="p15" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=(∅ ⦂ ℙ(BLOCKS))">
+            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p30" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·¬r=s⇒¬fst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
             <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
             <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
         </org.eventb.core.prPred>
@@ -2309,72 +2324,32 @@
             <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
             <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
         </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p2" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒¬fst(r)=lst(r)">
-            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p10" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}">
-            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p22" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·⊤∧⊤∧¬r=s⇒¬lst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
-            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
-        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p19" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
         <org.eventb.core.prPred name="p21" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·⊤∧⊤∧¬r=s⇒¬fst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
             <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
             <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
         </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p15" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=(∅ ⦂ ℙ(BLOCKS))">
-            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p14" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=(∅ ⦂ ℙ(BLOCKS))">
-            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p3" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧r≠s⇒fst(r)∉rtbl∼[{s}] ∖ {fst(s),lst(s)}">
-            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p1" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒fst(r)≠lst(r)">
-            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p27" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rsrtbl∼[{r}]]⊆rsrtbl∼[{r}]"/>
-        <org.eventb.core.prPred name="p18" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
-        <org.eventb.core.prPred name="p31" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·¬r=s⇒¬lst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
-            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p26" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=(∅ ⦂ ℙ(BLOCKS))">
-            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p24" org.eventb.core.predicate="∀r⦂ROUTES,S⦂ℙ(BLOCKS)·S⊆ran(nxt(r))∧S⊆(nxt(r))[S]⇒S=(∅ ⦂ ℙ(BLOCKS))"/>
-        <org.eventb.core.prPred name="p33" org.eventb.core.predicate="(nxt(r0))[rsrtbl∼[{r0}] ∖ (OCC∪{fst(r)})]⊆rsrtbl∼[{r0}] ∖ (OCC∪{fst(r)})">
-            <org.eventb.core.prIdent name="r0" org.eventb.core.type="ROUTES"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p29" org.eventb.core.predicate="∀r⦂ROUTES·¬fst(r)=lst(r)">
-            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p17" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rsrtbl∼[{r}]]⊆rsrtbl∼[{r}]"/>
         <org.eventb.core.prPred name="p9" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(∀S⦂ℙ(BLOCKS)·S⊆ran(nxt(r))∧S⊆(nxt(r))[S]⇒S=(∅ ⦂ ℙ(BLOCKS)))"/>
+        <org.eventb.core.prPred name="p8" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(∀S⦂ℙ(BLOCKS)·S⊆ran(nxt(r))∧S⊆(nxt(r))[S]⇒S=(∅ ⦂ ℙ(BLOCKS)))"/>
         <org.eventb.core.prPred name="p23" org.eventb.core.predicate="∀r0⦂ROUTES·⊤⇒(nxt(r0))[rsrtbl∼[{r0}] ∖ (OCC∪{fst(r)})]⊆rsrtbl∼[{r0}] ∖ (OCC∪{fst(r)})"/>
-        <org.eventb.core.prPred name="p7" org.eventb.core.predicate="rtbl∈BLOCKS ↔ ROUTES">
-            <org.eventb.core.prIdent name="BLOCKS" org.eventb.core.type="ℙ(BLOCKS)"/>
-            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
-        </org.eventb.core.prPred>
         <org.eventb.core.prPred name="p25" org.eventb.core.predicate="∀r⦂ROUTES·nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}">
             <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
             <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
         </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p13" org.eventb.core.predicate="resbl⊆BLOCKS">
-            <org.eventb.core.prIdent name="BLOCKS" org.eventb.core.type="ℙ(BLOCKS)"/>
-            <org.eventb.core.prIdent name="resbl" org.eventb.core.type="ℙ(BLOCKS)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p4" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧¬r=s⇒¬fst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
+        <org.eventb.core.prPred name="p32" org.eventb.core.predicate="∀r0⦂ROUTES·(nxt(r0))[rsrtbl∼[{r0}] ∖ (OCC∪{fst(r)})]⊆rsrtbl∼[{r0}] ∖ (OCC∪{fst(r)})"/>
+        <org.eventb.core.prPred name="p0" org.eventb.core.predicate="∀r0⦂ROUTES·r0∈ROUTES⇒(nxt(r0))[rsrtbl∼[{r0}] ∖ (OCC∪{fst(r)})]⊆rsrtbl∼[{r0}] ∖ (OCC∪{fst(r)})"/>
+        <org.eventb.core.prPred name="p20" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒¬fst(r)=lst(r)">
             <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
         </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p16" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rsrtbl∼[{r}]]⊆rsrtbl∼[{r}]"/>
+        <org.eventb.core.prPred name="p33" org.eventb.core.predicate="(nxt(r0))[rsrtbl∼[{r0}] ∖ (OCC∪{fst(r)})]⊆rsrtbl∼[{r0}] ∖ (OCC∪{fst(r)})">
+            <org.eventb.core.prIdent name="r0" org.eventb.core.type="ROUTES"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p2" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒¬fst(r)=lst(r)">
+            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prReas name="r3" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL5:0"/>
         <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.allI"/>
-        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL3:1"/>
+        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL3:2"/>
         <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
     </org.eventb.core.prProof>
     <org.eventb.core.prProof name="FRONT_MOVE_1/act1/WD" org.eventb.core.confidence="1000" org.eventb.core.prFresh="" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p1,p2" org.eventb.core.prSets="BLOCKS,ROUTES">
@@ -2433,9 +2408,9 @@
             <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
         </org.eventb.core.prPred>
         <org.eventb.core.prPred name="p0" org.eventb.core.predicate="r∈dom(fst)∧fst∈ROUTES ⇸ BLOCKS"/>
-        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.genMPL4"/>
         <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL5:0"/>
         <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.trueGoal"/>
+        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.genMPL4"/>
     </org.eventb.core.prProof>
     <org.eventb.core.prProof name="FRONT_MOVE_2/grd3/WD" org.eventb.core.confidence="1000" org.eventb.core.prFresh="" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16,p17,p18,p19,p20" org.eventb.core.prSets="BLOCKS,ROUTES">
         <org.eventb.core.lang name="L"/>
@@ -2569,14 +2544,14 @@
         <org.eventb.core.prPred name="p32" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
         <org.eventb.core.prPred name="p38" org.eventb.core.predicate="∀r⦂ROUTES·nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}"/>
         <org.eventb.core.prExpr name="e0" org.eventb.core.expression="ROUTES"/>
-        <org.eventb.core.prReas name="r3" org.eventb.core.prRID="com.clearsy.atelierb.provers.core.externalML:1"/>
-        <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.conj:0"/>
-        <org.eventb.core.prReas name="r6" org.eventb.core.prRID="org.eventb.core.seqprover.totalDom:2"/>
-        <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
         <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL5:0"/>
-        <org.eventb.core.prReas name="r7" org.eventb.core.prRID="org.eventb.core.seqprover.trueGoal"/>
         <org.eventb.core.prReas name="r4" org.eventb.core.prRID="org.eventb.core.seqprover.isFunGoal"/>
+        <org.eventb.core.prReas name="r3" org.eventb.core.prRID="com.clearsy.atelierb.provers.core.externalML:1"/>
         <org.eventb.core.prReas name="r5" org.eventb.core.prRID="org.eventb.core.seqprover.funImgGoal"/>
+        <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.conj:0"/>
+        <org.eventb.core.prReas name="r7" org.eventb.core.prRID="org.eventb.core.seqprover.trueGoal"/>
+        <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
+        <org.eventb.core.prReas name="r6" org.eventb.core.prRID="org.eventb.core.seqprover.totalDom:2"/>
     </org.eventb.core.prProof>
     <org.eventb.core.prProof name="FRONT_MOVE_2/inv4/INV" org.eventb.core.confidence="0" org.eventb.core.prFresh="" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p1" org.eventb.core.prSets="BLOCKS">
         <org.eventb.core.lang name="L"/>
@@ -2798,9 +2773,9 @@
             <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
         </org.eventb.core.prPred>
         <org.eventb.core.prPred name="p10" org.eventb.core.predicate="c∉OCC"/>
+        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL5:0"/>
         <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.genMPL4"/>
         <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
-        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL5:0"/>
     </org.eventb.core.prProof>
     <org.eventb.core.prProof name="FRONT_MOVE_2/inv6/INV" org.eventb.core.confidence="1000" org.eventb.core.prFresh="r" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16,p17,p18,p19,p20,p21,p22,p23,p24,p25" org.eventb.core.prSets="BLOCKS,ROUTES">
         <org.eventb.core.lang name="L"/>
@@ -2914,22 +2889,19 @@
         <org.eventb.core.prPred name="p38" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
         <org.eventb.core.prPred name="p45" org.eventb.core.predicate="∀r⦂ROUTES·nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}"/>
         <org.eventb.core.prPred name="p24" org.eventb.core.predicate="b ↦ c∈nxt(rsrtbl(b))"/>
-        <org.eventb.core.prReas name="r3" org.eventb.core.prRID="com.clearsy.atelierb.provers.core.externalML:1"/>
-        <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
         <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL5:0"/>
         <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.allI"/>
+        <org.eventb.core.prReas name="r3" org.eventb.core.prRID="com.clearsy.atelierb.provers.core.externalML:1"/>
+        <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
     </org.eventb.core.prProof>
-    <org.eventb.core.prProof name="FRONT_MOVE_2/inv8/INV" org.eventb.core.confidence="0" org.eventb.core.prFresh="r" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="" org.eventb.core.prSets="ROUTES" org.eventb.core.psManual="true">
+    <org.eventb.core.prProof name="FRONT_MOVE_2/inv8/INV" org.eventb.core.confidence="0" org.eventb.core.prFresh="r" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="" org.eventb.core.prSets="BLOCKS,ROUTES" org.eventb.core.psManual="true">
+        <org.eventb.core.lang name="L"/>
         <org.eventb.core.prRule name="r0" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="simplification rewrites" org.eventb.core.prHyps="">
             <org.eventb.core.prAnte name="'">
-                <org.eventb.core.prHypAction name="FORWARD_INF0" org.eventb.core.prHyps="p1" org.eventb.core.prInfHyps="p2"/>
-                <org.eventb.core.prHypAction name="HIDE1" org.eventb.core.prHyps="p1"/>
-                <org.eventb.core.prHypAction name="FORWARD_INF2" org.eventb.core.prHyps="p3" org.eventb.core.prInfHyps="p4"/>
-                <org.eventb.core.prHypAction name="HIDE3" org.eventb.core.prHyps="p3"/>
-                <org.eventb.core.prHypAction name="FORWARD_INF4" org.eventb.core.prHyps="p5" org.eventb.core.prInfHyps="p6"/>
-                <org.eventb.core.prHypAction name="HIDE5" org.eventb.core.prHyps="p5"/>
-                <org.eventb.core.prHypAction name="FORWARD_INF6" org.eventb.core.prHyps="p7" org.eventb.core.prInfHyps="p8"/>
-                <org.eventb.core.prHypAction name="HIDE7" org.eventb.core.prHyps="p7"/>
+                <org.eventb.core.prHypAction name="REWRITE0" org.eventb.core.prHidden="p1" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p2"/>
+                <org.eventb.core.prHypAction name="REWRITE1" org.eventb.core.prHidden="p3" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p4"/>
+                <org.eventb.core.prHypAction name="REWRITE2" org.eventb.core.prHidden="p5" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p6"/>
+                <org.eventb.core.prHypAction name="REWRITE3" org.eventb.core.prHidden="p7" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p8"/>
                 <org.eventb.core.prRule name="r1" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="type rewrites" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="">
                     <org.eventb.core.prAnte name="'" org.eventb.core.prGoal="p25">
                         <org.eventb.core.prHypAction name="HIDE0" org.eventb.core.prHyps="p9"/>
@@ -2953,25 +2925,22 @@
                         <org.eventb.core.prHypAction name="HIDE18" org.eventb.core.prHyps="p6"/>
                         <org.eventb.core.prRule name="r0" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="simplification rewrites" org.eventb.core.prGoal="p25" org.eventb.core.prHyps="">
                             <org.eventb.core.prAnte name="'" org.eventb.core.prGoal="p34">
-                                <org.eventb.core.prHypAction name="FORWARD_INF0" org.eventb.core.prHyps="p11" org.eventb.core.prInfHyps="p26"/>
-                                <org.eventb.core.prHypAction name="HIDE1" org.eventb.core.prHyps="p11"/>
-                                <org.eventb.core.prHypAction name="FORWARD_INF2" org.eventb.core.prHyps="p13" org.eventb.core.prInfHyps="p27"/>
-                                <org.eventb.core.prHypAction name="HIDE3" org.eventb.core.prHyps="p13"/>
-                                <org.eventb.core.prHypAction name="FORWARD_INF4" org.eventb.core.prHyps="p17" org.eventb.core.prInfHyps="p28"/>
-                                <org.eventb.core.prHypAction name="HIDE5" org.eventb.core.prHyps="p17"/>
-                                <org.eventb.core.prHypAction name="FORWARD_INF6" org.eventb.core.prHyps="p19" org.eventb.core.prInfHyps="p29"/>
-                                <org.eventb.core.prHypAction name="HIDE7" org.eventb.core.prHyps="p19"/>
-                                <org.eventb.core.prHypAction name="FORWARD_INF8" org.eventb.core.prHyps="p21" org.eventb.core.prInfHyps="p30"/>
-                                <org.eventb.core.prHypAction name="HIDE9" org.eventb.core.prHyps="p21"/>
-                                <org.eventb.core.prHypAction name="FORWARD_INF10" org.eventb.core.prHyps="p22" org.eventb.core.prInfHyps="p31"/>
-                                <org.eventb.core.prHypAction name="HIDE11" org.eventb.core.prHyps="p22"/>
-                                <org.eventb.core.prHypAction name="FORWARD_INF12" org.eventb.core.prHyps="p23" org.eventb.core.prInfHyps="p32"/>
-                                <org.eventb.core.prHypAction name="HIDE13" org.eventb.core.prHyps="p23"/>
-                                <org.eventb.core.prHypAction name="FORWARD_INF14" org.eventb.core.prHyps="p24" org.eventb.core.prInfHyps="p33"/>
-                                <org.eventb.core.prHypAction name="HIDE15" org.eventb.core.prHyps="p24"/>
+                                <org.eventb.core.prHypAction name="REWRITE0" org.eventb.core.prHidden="p11" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p26"/>
+                                <org.eventb.core.prHypAction name="REWRITE1" org.eventb.core.prHidden="p13" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p27"/>
+                                <org.eventb.core.prHypAction name="REWRITE2" org.eventb.core.prHidden="p17" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p28"/>
+                                <org.eventb.core.prHypAction name="REWRITE3" org.eventb.core.prHidden="p19" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p29"/>
+                                <org.eventb.core.prHypAction name="REWRITE4" org.eventb.core.prHidden="p21" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p30"/>
+                                <org.eventb.core.prHypAction name="REWRITE5" org.eventb.core.prHidden="p22" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p31"/>
+                                <org.eventb.core.prHypAction name="REWRITE6" org.eventb.core.prHidden="p23" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p32"/>
+                                <org.eventb.core.prHypAction name="REWRITE7" org.eventb.core.prHidden="p24" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p33"/>
                                 <org.eventb.core.prRule name="r2" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="∀ goal (frees r)" org.eventb.core.prGoal="p34" org.eventb.core.prHyps="">
                                     <org.eventb.core.prAnte name="'" org.eventb.core.prGoal="p35">
                                         <org.eventb.core.prIdent name="r" org.eventb.core.type="ROUTES"/>
+                                        <org.eventb.core.prRule name="r3" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="simplification rewrites" org.eventb.core.prHyps="">
+                                            <org.eventb.core.prAnte name="'">
+                                                <org.eventb.core.prHypAction name="REWRITE0" org.eventb.core.prHidden="p28" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p36"/>
+                                            </org.eventb.core.prAnte>
+                                        </org.eventb.core.prRule>
                                     </org.eventb.core.prAnte>
                                 </org.eventb.core.prRule>
                             </org.eventb.core.prAnte>
@@ -2984,25 +2953,39 @@
         <org.eventb.core.prIdent name="c" org.eventb.core.type="BLOCKS"/>
         <org.eventb.core.prIdent name="nxt" org.eventb.core.type="ℙ(ROUTES×ℙ(BLOCKS×BLOCKS))"/>
         <org.eventb.core.prIdent name="rsrtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
-        <org.eventb.core.prPred name="p32" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·¬r=s⇒¬fst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
+        <org.eventb.core.prPred name="p20" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
+        <org.eventb.core.prPred name="p3" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧r≠s⇒fst(r)∉rtbl∼[{s}] ∖ {fst(s),lst(s)}">
             <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
             <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
             <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
         </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p10" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(∀S⦂ℙ(BLOCKS)·S⊆ran(nxt(r))∧S⊆(nxt(r))[S]⇒S=(∅ ⦂ ℙ(BLOCKS)))"/>
-        <org.eventb.core.prPred name="p30" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
-        <org.eventb.core.prPred name="p22" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒¬fst(r)=lst(r)">
+        <org.eventb.core.prPred name="p29" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rsrtbl∼[{r}]]⊆rsrtbl∼[{r}]"/>
+        <org.eventb.core.prPred name="p28" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=(∅ ⦂ ℙ(BLOCKS))">
+            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p1" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒fst(r)≠lst(r)">
             <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
             <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
         </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p0" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rsrtbl∼[{r}] ∖ (OCC∪{c})]⊆rsrtbl∼[{r}] ∖ (OCC∪{c})"/>
+        <org.eventb.core.prPred name="p26" org.eventb.core.predicate="∀r⦂ROUTES,S⦂ℙ(BLOCKS)·S⊆ran(nxt(r))∧S⊆(nxt(r))[S]⇒S=(∅ ⦂ ℙ(BLOCKS))"/>
+        <org.eventb.core.prPred name="p6" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧¬r=s⇒¬lst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
+            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p8" org.eventb.core.predicate="¬c∈OCC"/>
+        <org.eventb.core.prPred name="p31" org.eventb.core.predicate="∀r⦂ROUTES·¬fst(r)=lst(r)">
+            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+        </org.eventb.core.prPred>
         <org.eventb.core.prPred name="p14" org.eventb.core.predicate="resrt⊆ROUTES">
             <org.eventb.core.prIdent name="resrt" org.eventb.core.type="ℙ(ROUTES)"/>
         </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p34" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rsrtbl∼[{r}] ∖ (OCC∪{c})]⊆rsrtbl∼[{r}] ∖ (OCC∪{c})"/>
-        <org.eventb.core.prPred name="p25" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rsrtbl∼[{r}] ∖ (OCC∪{c})]⊆rsrtbl∼[{r}] ∖ (OCC∪{c})"/>
-        <org.eventb.core.prPred name="p21" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
-        <org.eventb.core.prPred name="p6" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧¬r=s⇒¬lst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
+        <org.eventb.core.prPred name="p30" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
+        <org.eventb.core.prPred name="p36" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩rsrtbl∼[{r}]⊆OCC">
+            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p12" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}">
             <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
             <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
             <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
@@ -3012,88 +2995,76 @@
             <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
             <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
         </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p5" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧r≠s⇒lst(r)∉rtbl∼[{s}] ∖ {fst(s),lst(s)}">
-            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+        <org.eventb.core.prPred name="p15" org.eventb.core.predicate="resbl⊆BLOCKS">
+            <org.eventb.core.prIdent name="resbl" org.eventb.core.type="ℙ(BLOCKS)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p16" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=(∅ ⦂ ℙ(BLOCKS))">
             <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
         </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p2" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒¬fst(r)=lst(r)">
-            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p12" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}">
-            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
-        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p0" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rsrtbl∼[{r}] ∖ (OCC∪{c})]⊆rsrtbl∼[{r}] ∖ (OCC∪{c})"/>
+        <org.eventb.core.prPred name="p34" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rsrtbl∼[{r}] ∖ (OCC∪{c})]⊆rsrtbl∼[{r}] ∖ (OCC∪{c})"/>
         <org.eventb.core.prPred name="p24" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·⊤∧⊤∧¬r=s⇒¬lst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
             <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
             <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
             <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p23" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·⊤∧⊤∧¬r=s⇒¬fst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
-            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p17" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=(∅ ⦂ ℙ(BLOCKS))">
-            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p35" org.eventb.core.predicate="(nxt(r))[rsrtbl∼[{r}] ∖ (OCC∪{c})]⊆rsrtbl∼[{r}] ∖ (OCC∪{c})">
-            <org.eventb.core.prIdent name="r" org.eventb.core.type="ROUTES"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p7" org.eventb.core.predicate="c∉OCC"/>
-        <org.eventb.core.prPred name="p16" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=(∅ ⦂ ℙ(BLOCKS))">
-            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p3" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧r≠s⇒fst(r)∉rtbl∼[{s}] ∖ {fst(s),lst(s)}">
-            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p1" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒fst(r)≠lst(r)">
-            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p29" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rsrtbl∼[{r}]]⊆rsrtbl∼[{r}]"/>
-        <org.eventb.core.prPred name="p20" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
-        <org.eventb.core.prPred name="p33" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·¬r=s⇒¬lst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
-            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p28" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=(∅ ⦂ ℙ(BLOCKS))">
-            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p26" org.eventb.core.predicate="∀r⦂ROUTES,S⦂ℙ(BLOCKS)·S⊆ran(nxt(r))∧S⊆(nxt(r))[S]⇒S=(∅ ⦂ ℙ(BLOCKS))"/>
-        <org.eventb.core.prPred name="p31" org.eventb.core.predicate="∀r⦂ROUTES·¬fst(r)=lst(r)">
-            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p19" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rsrtbl∼[{r}]]⊆rsrtbl∼[{r}]"/>
-        <org.eventb.core.prPred name="p11" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(∀S⦂ℙ(BLOCKS)·S⊆ran(nxt(r))∧S⊆(nxt(r))[S]⇒S=(∅ ⦂ ℙ(BLOCKS)))"/>
-        <org.eventb.core.prPred name="p8" org.eventb.core.predicate="¬c∈OCC"/>
-        <org.eventb.core.prPred name="p9" org.eventb.core.predicate="rtbl∈BLOCKS ↔ ROUTES">
-            <org.eventb.core.prIdent name="BLOCKS" org.eventb.core.type="ℙ(BLOCKS)"/>
-            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p27" org.eventb.core.predicate="∀r⦂ROUTES·nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}">
-            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p15" org.eventb.core.predicate="resbl⊆BLOCKS">
-            <org.eventb.core.prIdent name="BLOCKS" org.eventb.core.type="ℙ(BLOCKS)"/>
-            <org.eventb.core.prIdent name="resbl" org.eventb.core.type="ℙ(BLOCKS)"/>
         </org.eventb.core.prPred>
         <org.eventb.core.prPred name="p4" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧¬r=s⇒¬fst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
             <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
             <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
             <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
         </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p33" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·¬r=s⇒¬lst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
+            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p35" org.eventb.core.predicate="(nxt(r))[rsrtbl∼[{r}] ∖ (OCC∪{c})]⊆rsrtbl∼[{r}] ∖ (OCC∪{c})">
+            <org.eventb.core.prIdent name="r" org.eventb.core.type="ROUTES"/>
+        </org.eventb.core.prPred>
         <org.eventb.core.prPred name="p18" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rsrtbl∼[{r}]]⊆rsrtbl∼[{r}]"/>
+        <org.eventb.core.prPred name="p9" org.eventb.core.predicate="rtbl∈BLOCKS ↔ ROUTES">
+            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p19" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rsrtbl∼[{r}]]⊆rsrtbl∼[{r}]"/>
+        <org.eventb.core.prPred name="p17" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=(∅ ⦂ ℙ(BLOCKS))">
+            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p32" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·¬r=s⇒¬fst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
+            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p5" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧r≠s⇒lst(r)∉rtbl∼[{s}] ∖ {fst(s),lst(s)}">
+            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p25" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rsrtbl∼[{r}] ∖ (OCC∪{c})]⊆rsrtbl∼[{r}] ∖ (OCC∪{c})"/>
+        <org.eventb.core.prPred name="p21" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
+        <org.eventb.core.prPred name="p23" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·⊤∧⊤∧¬r=s⇒¬fst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
+            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p11" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(∀S⦂ℙ(BLOCKS)·S⊆ran(nxt(r))∧S⊆(nxt(r))[S]⇒S=(∅ ⦂ ℙ(BLOCKS)))"/>
+        <org.eventb.core.prPred name="p10" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(∀S⦂ℙ(BLOCKS)·S⊆ran(nxt(r))∧S⊆(nxt(r))[S]⇒S=(∅ ⦂ ℙ(BLOCKS)))"/>
+        <org.eventb.core.prPred name="p27" org.eventb.core.predicate="∀r⦂ROUTES·nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}">
+            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p22" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒¬fst(r)=lst(r)">
+            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p2" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒¬fst(r)=lst(r)">
+            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p7" org.eventb.core.predicate="c∉OCC"/>
+        <org.eventb.core.prReas name="r3" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL5:0"/>
         <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.allI"/>
-        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL3:1"/>
+        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL3:2"/>
         <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
     </org.eventb.core.prProof>
     <org.eventb.core.prProof name="BACK_MOVE/grd2/WD" org.eventb.core.confidence="1000" org.eventb.core.prFresh="" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16,p17,p18,p19" org.eventb.core.prSets="BLOCKS,ROUTES">
@@ -3224,14 +3195,14 @@
         <org.eventb.core.prPred name="p30" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
         <org.eventb.core.prPred name="p36" org.eventb.core.predicate="∀r⦂ROUTES·nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}"/>
         <org.eventb.core.prExpr name="e0" org.eventb.core.expression="ROUTES"/>
-        <org.eventb.core.prReas name="r3" org.eventb.core.prRID="com.clearsy.atelierb.provers.core.externalML:1"/>
-        <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.conj:0"/>
-        <org.eventb.core.prReas name="r6" org.eventb.core.prRID="org.eventb.core.seqprover.totalDom:2"/>
-        <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
         <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL5:0"/>
-        <org.eventb.core.prReas name="r7" org.eventb.core.prRID="org.eventb.core.seqprover.trueGoal"/>
         <org.eventb.core.prReas name="r4" org.eventb.core.prRID="org.eventb.core.seqprover.isFunGoal"/>
+        <org.eventb.core.prReas name="r3" org.eventb.core.prRID="com.clearsy.atelierb.provers.core.externalML:1"/>
         <org.eventb.core.prReas name="r5" org.eventb.core.prRID="org.eventb.core.seqprover.funImgGoal"/>
+        <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.conj:0"/>
+        <org.eventb.core.prReas name="r7" org.eventb.core.prRID="org.eventb.core.seqprover.trueGoal"/>
+        <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
+        <org.eventb.core.prReas name="r6" org.eventb.core.prRID="org.eventb.core.seqprover.totalDom:2"/>
     </org.eventb.core.prProof>
     <org.eventb.core.prProof name="BACK_MOVE/grd3/WD" org.eventb.core.confidence="1000" org.eventb.core.prFresh="" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p1,p2,p3,p4,p5" org.eventb.core.prSets="BLOCKS,ROUTES">
         <org.eventb.core.lang name="L"/>
@@ -3429,12 +3400,12 @@
             <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
         </org.eventb.core.prPred>
         <org.eventb.core.prPred name="p37" org.eventb.core.predicate="b∈dom(n)"/>
-        <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.impI"/>
-        <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
         <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL5:0"/>
-        <org.eventb.core.prReas name="r3" org.eventb.core.prRID="org.eventb.core.seqprover.eqL2:1"/>
-        <org.eventb.core.prReas name="r4" org.eventb.core.prRID="org.eventb.core.seqprover.funImgGoal"/>
         <org.eventb.core.prReas name="r5" org.eventb.core.prRID="org.eventb.core.seqprover.isFunGoal"/>
+        <org.eventb.core.prReas name="r4" org.eventb.core.prRID="org.eventb.core.seqprover.funImgGoal"/>
+        <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.impI"/>
+        <org.eventb.core.prReas name="r3" org.eventb.core.prRID="org.eventb.core.seqprover.eqL2:1"/>
+        <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
     </org.eventb.core.prProof>
     <org.eventb.core.prProof name="BACK_MOVE/grd4/WD" org.eventb.core.confidence="1000" org.eventb.core.prFresh="" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16,p17,p18,p19,p20,p21,p22,p23,p24,p25,p26" org.eventb.core.prSets="BLOCKS,ROUTES">
         <org.eventb.core.lang name="L"/>
@@ -3567,14 +3538,14 @@
         <org.eventb.core.prPred name="p39" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
         <org.eventb.core.prPred name="p54" org.eventb.core.predicate="n∼∈BLOCKS ⇸ BLOCKS"/>
         <org.eventb.core.prPred name="p45" org.eventb.core.predicate="∀r⦂ROUTES·nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}"/>
-        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.genMPL4"/>
-        <org.eventb.core.prReas name="r7" org.eventb.core.prRID="com.clearsy.atelierb.provers.core.externalML:1"/>
-        <org.eventb.core.prReas name="r3" org.eventb.core.prRID="org.eventb.core.seqprover.impI"/>
-        <org.eventb.core.prReas name="r4" org.eventb.core.prRID="org.eventb.core.seqprover.conj:0"/>
-        <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
         <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL5:0"/>
-        <org.eventb.core.prReas name="r6" org.eventb.core.prRID="org.eventb.core.seqprover.eqL2:1"/>
         <org.eventb.core.prReas name="r5" org.eventb.core.prRID="org.eventb.core.seqprover.hyp"/>
+        <org.eventb.core.prReas name="r7" org.eventb.core.prRID="com.clearsy.atelierb.provers.core.externalML:1"/>
+        <org.eventb.core.prReas name="r4" org.eventb.core.prRID="org.eventb.core.seqprover.conj:0"/>
+        <org.eventb.core.prReas name="r3" org.eventb.core.prRID="org.eventb.core.seqprover.impI"/>
+        <org.eventb.core.prReas name="r6" org.eventb.core.prRID="org.eventb.core.seqprover.eqL2:1"/>
+        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.genMPL4"/>
+        <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
     </org.eventb.core.prProof>
     <org.eventb.core.prProof name="BACK_MOVE/inv3/INV" org.eventb.core.confidence="1000" org.eventb.core.prFresh="" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16,p17,p18,p19,p20,p21,p22,p23,p24,p25,p26,p27,p28" org.eventb.core.prSets="BLOCKS,ROUTES">
         <org.eventb.core.lang name="L"/>
@@ -3700,11 +3671,11 @@
         <org.eventb.core.prPred name="p34" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩rsrtbl∼[{r}]⊆OCC"/>
         <org.eventb.core.prPred name="p43" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
         <org.eventb.core.prPred name="p49" org.eventb.core.predicate="∀r⦂ROUTES·nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}"/>
-        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.genMPL4"/>
-        <org.eventb.core.prReas name="r4" org.eventb.core.prRID="com.clearsy.atelierb.provers.core.externalML:1"/>
-        <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
         <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL5:0"/>
+        <org.eventb.core.prReas name="r4" org.eventb.core.prRID="com.clearsy.atelierb.provers.core.externalML:1"/>
         <org.eventb.core.prReas name="r3" org.eventb.core.prRID="org.eventb.core.seqprover.eqL2:1"/>
+        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.genMPL4"/>
+        <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
     </org.eventb.core.prProof>
     <org.eventb.core.prProof name="BACK_MOVE/inv5/INV" org.eventb.core.confidence="1000" org.eventb.core.prFresh="" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p1,p2,p3,p4,p5" org.eventb.core.prSets="BLOCKS,ROUTES">
         <org.eventb.core.lang name="L"/>
@@ -3863,11 +3834,11 @@
             <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
             <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
         </org.eventb.core.prPred>
-        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.genMPL4"/>
-        <org.eventb.core.prReas name="r4" org.eventb.core.prRID="com.clearsy.atelierb.provers.core.externalPP:1"/>
-        <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
         <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL5:0"/>
         <org.eventb.core.prReas name="r3" org.eventb.core.prRID="org.eventb.core.seqprover.eqL2:1"/>
+        <org.eventb.core.prReas name="r4" org.eventb.core.prRID="com.clearsy.atelierb.provers.core.externalPP:1"/>
+        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.genMPL4"/>
+        <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
     </org.eventb.core.prProof>
     <org.eventb.core.prProof name="BACK_MOVE/inv4/INV" org.eventb.core.confidence="1000" org.eventb.core.prFresh="" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16,p17,p18,p19,p20,p21,p22,p23,p24,p25,p26,p27,p28" org.eventb.core.prSets="BLOCKS,ROUTES">
         <org.eventb.core.lang name="L"/>
@@ -3993,30 +3964,26 @@
         <org.eventb.core.prPred name="p34" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩rsrtbl∼[{r}]⊆OCC"/>
         <org.eventb.core.prPred name="p43" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
         <org.eventb.core.prPred name="p49" org.eventb.core.predicate="∀r⦂ROUTES·nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}"/>
-        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.genMPL4"/>
-        <org.eventb.core.prReas name="r4" org.eventb.core.prRID="com.clearsy.atelierb.provers.core.externalML:1"/>
-        <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
         <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL5:0"/>
+        <org.eventb.core.prReas name="r4" org.eventb.core.prRID="com.clearsy.atelierb.provers.core.externalML:1"/>
         <org.eventb.core.prReas name="r3" org.eventb.core.prRID="org.eventb.core.seqprover.eqL2:1"/>
+        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.genMPL4"/>
+        <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
     </org.eventb.core.prProof>
-    <org.eventb.core.prProof name="BACK_MOVE/inv6/INV" org.eventb.core.confidence="0" org.eventb.core.prFresh="r" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p1" org.eventb.core.prSets="ROUTES" org.eventb.core.psManual="true">
+    <org.eventb.core.prProof name="BACK_MOVE/inv6/INV" org.eventb.core.confidence="0" org.eventb.core.prFresh="r" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p1" org.eventb.core.prSets="BLOCKS,ROUTES" org.eventb.core.psManual="true">
+        <org.eventb.core.lang name="L"/>
         <org.eventb.core.prRule name="r0" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="generalized MP" org.eventb.core.prHyps="">
             <org.eventb.core.prAnte name="'">
                 <org.eventb.core.prHypAction name="FORWARD_INF0" org.eventb.core.prHyps="p2,p3,p4" org.eventb.core.prInfHyps="p5"/>
                 <org.eventb.core.prHypAction name="HIDE1" org.eventb.core.prHyps="p4"/>
                 <org.eventb.core.prRule name="r1" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="simplification rewrites" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="">
                     <org.eventb.core.prAnte name="'" org.eventb.core.prGoal="p16">
-                        <org.eventb.core.prHypAction name="FORWARD_INF0" org.eventb.core.prHyps="p6" org.eventb.core.prInfHyps="p7"/>
-                        <org.eventb.core.prHypAction name="HIDE1" org.eventb.core.prHyps="p6"/>
-                        <org.eventb.core.prHypAction name="FORWARD_INF2" org.eventb.core.prHyps="p8" org.eventb.core.prInfHyps="p9"/>
-                        <org.eventb.core.prHypAction name="HIDE3" org.eventb.core.prHyps="p8"/>
-                        <org.eventb.core.prHypAction name="FORWARD_INF4" org.eventb.core.prHyps="p10" org.eventb.core.prInfHyps="p11"/>
-                        <org.eventb.core.prHypAction name="HIDE5" org.eventb.core.prHyps="p10"/>
-                        <org.eventb.core.prHypAction name="FORWARD_INF6" org.eventb.core.prHyps="p12" org.eventb.core.prInfHyps="p13"/>
-                        <org.eventb.core.prHypAction name="HIDE7" org.eventb.core.prHyps="p12"/>
-                        <org.eventb.core.prHypAction name="FORWARD_INF8" org.eventb.core.prHyps="p14" org.eventb.core.prInfHyps="p15"/>
-                        <org.eventb.core.prHypAction name="HIDE9" org.eventb.core.prHyps="p14"/>
-                        <org.eventb.core.prHypAction name="HIDE10" org.eventb.core.prHyps="p5"/>
+                        <org.eventb.core.prHypAction name="REWRITE0" org.eventb.core.prHidden="p6" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p7"/>
+                        <org.eventb.core.prHypAction name="REWRITE1" org.eventb.core.prHidden="p8" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p9"/>
+                        <org.eventb.core.prHypAction name="REWRITE2" org.eventb.core.prHidden="p10" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p11"/>
+                        <org.eventb.core.prHypAction name="REWRITE3" org.eventb.core.prHidden="p12" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p13"/>
+                        <org.eventb.core.prHypAction name="REWRITE4" org.eventb.core.prHidden="p14" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p15"/>
+                        <org.eventb.core.prHypAction name="HIDE5" org.eventb.core.prHyps="p5"/>
                         <org.eventb.core.prRule name="r2" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="type rewrites" org.eventb.core.prGoal="p16" org.eventb.core.prHyps="">
                             <org.eventb.core.prAnte name="'" org.eventb.core.prGoal="p33">
                                 <org.eventb.core.prHypAction name="HIDE0" org.eventb.core.prHyps="p17"/>
@@ -4040,22 +4007,14 @@
                                 <org.eventb.core.prHypAction name="HIDE18" org.eventb.core.prHyps="p11"/>
                                 <org.eventb.core.prRule name="r1" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="simplification rewrites" org.eventb.core.prGoal="p33" org.eventb.core.prHyps="">
                                     <org.eventb.core.prAnte name="'" org.eventb.core.prGoal="p42">
-                                        <org.eventb.core.prHypAction name="FORWARD_INF0" org.eventb.core.prHyps="p19" org.eventb.core.prInfHyps="p34"/>
-                                        <org.eventb.core.prHypAction name="HIDE1" org.eventb.core.prHyps="p19"/>
-                                        <org.eventb.core.prHypAction name="FORWARD_INF2" org.eventb.core.prHyps="p21" org.eventb.core.prInfHyps="p35"/>
-                                        <org.eventb.core.prHypAction name="HIDE3" org.eventb.core.prHyps="p21"/>
-                                        <org.eventb.core.prHypAction name="FORWARD_INF4" org.eventb.core.prHyps="p25" org.eventb.core.prInfHyps="p36"/>
-                                        <org.eventb.core.prHypAction name="HIDE5" org.eventb.core.prHyps="p25"/>
-                                        <org.eventb.core.prHypAction name="FORWARD_INF6" org.eventb.core.prHyps="p27" org.eventb.core.prInfHyps="p37"/>
-                                        <org.eventb.core.prHypAction name="HIDE7" org.eventb.core.prHyps="p27"/>
-                                        <org.eventb.core.prHypAction name="FORWARD_INF8" org.eventb.core.prHyps="p29" org.eventb.core.prInfHyps="p38"/>
-                                        <org.eventb.core.prHypAction name="HIDE9" org.eventb.core.prHyps="p29"/>
-                                        <org.eventb.core.prHypAction name="FORWARD_INF10" org.eventb.core.prHyps="p30" org.eventb.core.prInfHyps="p39"/>
-                                        <org.eventb.core.prHypAction name="HIDE11" org.eventb.core.prHyps="p30"/>
-                                        <org.eventb.core.prHypAction name="FORWARD_INF12" org.eventb.core.prHyps="p31" org.eventb.core.prInfHyps="p40"/>
-                                        <org.eventb.core.prHypAction name="HIDE13" org.eventb.core.prHyps="p31"/>
-                                        <org.eventb.core.prHypAction name="FORWARD_INF14" org.eventb.core.prHyps="p32" org.eventb.core.prInfHyps="p41"/>
-                                        <org.eventb.core.prHypAction name="HIDE15" org.eventb.core.prHyps="p32"/>
+                                        <org.eventb.core.prHypAction name="REWRITE0" org.eventb.core.prHidden="p19" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p34"/>
+                                        <org.eventb.core.prHypAction name="REWRITE1" org.eventb.core.prHidden="p21" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p35"/>
+                                        <org.eventb.core.prHypAction name="REWRITE2" org.eventb.core.prHidden="p25" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p36"/>
+                                        <org.eventb.core.prHypAction name="REWRITE3" org.eventb.core.prHidden="p27" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p37"/>
+                                        <org.eventb.core.prHypAction name="REWRITE4" org.eventb.core.prHidden="p29" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p38"/>
+                                        <org.eventb.core.prHypAction name="REWRITE5" org.eventb.core.prHidden="p30" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p39"/>
+                                        <org.eventb.core.prHypAction name="REWRITE6" org.eventb.core.prHidden="p31" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p40"/>
+                                        <org.eventb.core.prHypAction name="REWRITE7" org.eventb.core.prHidden="p32" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p41"/>
                                         <org.eventb.core.prRule name="r3" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="∀ goal (frees r)" org.eventb.core.prGoal="p42" org.eventb.core.prHyps="">
                                             <org.eventb.core.prAnte name="'" org.eventb.core.prGoal="p43">
                                                 <org.eventb.core.prIdent name="r" org.eventb.core.type="ROUTES"/>
@@ -4064,6 +4023,16 @@
                                                         <org.eventb.core.prHypAction name="FORWARD_INF0" org.eventb.core.prHyps="p44" org.eventb.core.prInfHyps="p45"/>
                                                         <org.eventb.core.prHypAction name="FORWARD_INF1" org.eventb.core.prHyps="p13" org.eventb.core.prInfHyps="p46"/>
                                                         <org.eventb.core.prHypAction name="DESELECT2" org.eventb.core.prHyps="p13,p44"/>
+                                                        <org.eventb.core.prRule name="r5" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="simplification rewrites" org.eventb.core.prGoal="p43" org.eventb.core.prHyps="">
+                                                            <org.eventb.core.prAnte name="'" org.eventb.core.prGoal="p48">
+                                                                <org.eventb.core.prHypAction name="REWRITE0" org.eventb.core.prHidden="p36" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p47"/>
+                                                                <org.eventb.core.prRule name="r6" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="eh with n=nxt(rsrtbl(b))" org.eventb.core.prHyps="p1">
+                                                                    <org.eventb.core.prAnte name="'">
+                                                                        <org.eventb.core.prHypAction name="DESELECT0" org.eventb.core.prHyps="p1"/>
+                                                                    </org.eventb.core.prAnte>
+                                                                </org.eventb.core.prRule>
+                                                            </org.eventb.core.prAnte>
+                                                        </org.eventb.core.prRule>
                                                     </org.eventb.core.prAnte>
                                                 </org.eventb.core.prRule>
                                             </org.eventb.core.prAnte>
@@ -4082,44 +4051,70 @@
         <org.eventb.core.prIdent name="nxt" org.eventb.core.type="ℙ(ROUTES×ℙ(BLOCKS×BLOCKS))"/>
         <org.eventb.core.prIdent name="rsrtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
         <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
-        <org.eventb.core.prPred name="p40" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·¬r=s⇒¬fst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
-            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p44" org.eventb.core.predicate="b∈dom(n)⇒n(b)∈OCC"/>
-        <org.eventb.core.prPred name="p1" org.eventb.core.predicate="n=nxt(rsrtbl(b))"/>
-        <org.eventb.core.prPred name="p15" org.eventb.core.predicate="b∈ran(n)⇒b∈ran(n)∧n∼∈BLOCKS ⇸ BLOCKS">
-            <org.eventb.core.prIdent name="BLOCKS" org.eventb.core.type="ℙ(BLOCKS)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p42" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rtbl∼[{r}] ∖ (rsrtbl∼[{r}] ∖ {b})]∩((rsrtbl∼[{r}] ∖ {b}) ∖ (OCC ∖ {b}))=(∅ ⦂ ℙ(BLOCKS))"/>
-        <org.eventb.core.prPred name="p18" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(∀S⦂ℙ(BLOCKS)·S⊆ran(nxt(r))∧S⊆(nxt(r))[S]⇒S=(∅ ⦂ ℙ(BLOCKS)))"/>
-        <org.eventb.core.prPred name="p38" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
-        <org.eventb.core.prPred name="p12" org.eventb.core.predicate="b∈ran(n)∧n∼(b)∈dom(rsrtbl)⇒rsrtbl(n∼(b))≠rsrtbl(b)"/>
-        <org.eventb.core.prPred name="p30" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒¬fst(r)=lst(r)">
-            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-        </org.eventb.core.prPred>
         <org.eventb.core.prPred name="p16" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rtbl∼[{r}] ∖ (rsrtbl∼[{r}] ∖ {b})]∩((rsrtbl∼[{r}] ∖ {b}) ∖ (OCC ∖ {b}))=(∅ ⦂ ℙ(BLOCKS))"/>
-        <org.eventb.core.prPred name="p22" org.eventb.core.predicate="resrt⊆ROUTES">
-            <org.eventb.core.prIdent name="resrt" org.eventb.core.type="ℙ(ROUTES)"/>
+        <org.eventb.core.prPred name="p28" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
+        <org.eventb.core.prPred name="p14" org.eventb.core.predicate="b∈ran(n)⇒b∈dom(n∼)∧n∼∈BLOCKS ⇸ BLOCKS"/>
+        <org.eventb.core.prPred name="p8" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧r≠s⇒fst(r)∉rtbl∼[{s}] ∖ {fst(s),lst(s)}">
+            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
         </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p29" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
-        <org.eventb.core.prPred name="p2" org.eventb.core.predicate="rsrtbl∈BLOCKS ⇸ ROUTES">
-            <org.eventb.core.prIdent name="BLOCKS" org.eventb.core.type="ℙ(BLOCKS)"/>
+        <org.eventb.core.prPred name="p37" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rsrtbl∼[{r}]]⊆rsrtbl∼[{r}]"/>
+        <org.eventb.core.prPred name="p36" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=(∅ ⦂ ℙ(BLOCKS))"/>
+        <org.eventb.core.prPred name="p6" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒fst(r)≠lst(r)">
+            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
         </org.eventb.core.prPred>
         <org.eventb.core.prPred name="p11" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧¬r=s⇒¬lst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
             <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
             <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
         </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p21" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}">
+        <org.eventb.core.prPred name="p39" org.eventb.core.predicate="∀r⦂ROUTES·¬fst(r)=lst(r)">
+            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p38" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
+        <org.eventb.core.prPred name="p47" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩rsrtbl∼[{r}]⊆OCC"/>
+        <org.eventb.core.prPred name="p20" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}">
+            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p24" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=(∅ ⦂ ℙ(BLOCKS))"/>
+        <org.eventb.core.prPred name="p32" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·⊤∧⊤∧¬r=s⇒¬lst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
+            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p12" org.eventb.core.predicate="b∈ran(n)∧n∼(b)∈dom(rsrtbl)⇒rsrtbl(n∼(b))≠rsrtbl(b)"/>
+        <org.eventb.core.prPred name="p9" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧¬r=s⇒¬fst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
+            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p41" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·¬r=s⇒¬lst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
+            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p13" org.eventb.core.predicate="b∈ran(n)∧n∼(b)∈dom(rsrtbl)⇒¬rsrtbl(n∼(b))=rsrtbl(b)"/>
+        <org.eventb.core.prPred name="p44" org.eventb.core.predicate="b∈dom(n)⇒n(b)∈OCC"/>
+        <org.eventb.core.prPred name="p26" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rsrtbl∼[{r}]]⊆rsrtbl∼[{r}]"/>
+        <org.eventb.core.prPred name="p17" org.eventb.core.predicate="rtbl∈BLOCKS ↔ ROUTES"/>
+        <org.eventb.core.prPred name="p27" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rsrtbl∼[{r}]]⊆rsrtbl∼[{r}]"/>
+        <org.eventb.core.prPred name="p15" org.eventb.core.predicate="b∈ran(n)⇒b∈ran(n)∧n∼∈BLOCKS ⇸ BLOCKS"/>
+        <org.eventb.core.prPred name="p25" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=(∅ ⦂ ℙ(BLOCKS))"/>
+        <org.eventb.core.prPred name="p40" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·¬r=s⇒¬fst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
             <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
             <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
         </org.eventb.core.prPred>
         <org.eventb.core.prPred name="p33" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rtbl∼[{r}] ∖ (rsrtbl∼[{r}] ∖ {b})]∩((rsrtbl∼[{r}] ∖ {b}) ∖ (OCC ∖ {b}))=(∅ ⦂ ℙ(BLOCKS))"/>
-        <org.eventb.core.prPred name="p43" org.eventb.core.predicate="(nxt(r))[rtbl∼[{r}] ∖ (rsrtbl∼[{r}] ∖ {b})]∩((rsrtbl∼[{r}] ∖ {b}) ∖ (OCC ∖ {b}))=(∅ ⦂ ℙ(BLOCKS))">
-            <org.eventb.core.prIdent name="r" org.eventb.core.type="ROUTES"/>
+        <org.eventb.core.prPred name="p31" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·⊤∧⊤∧¬r=s⇒¬fst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
+            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
         </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p10" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧r≠s⇒lst(r)∉rtbl∼[{s}] ∖ {fst(s),lst(s)}">
+        <org.eventb.core.prPred name="p4" org.eventb.core.predicate="b∈ran(n)∧n∼(b)∈dom(rsrtbl)⇒rsrtbl∈BLOCKS ⇸ ROUTES∧b∈dom(rsrtbl)"/>
+        <org.eventb.core.prPred name="p45" org.eventb.core.predicate="b∈dom(nxt(rsrtbl(b)))⇒nxt(rsrtbl(b))(b)∈OCC"/>
+        <org.eventb.core.prPred name="p5" org.eventb.core.predicate="b∈ran(n)∧n∼(b)∈dom(rsrtbl)⇒⊤∧⊤"/>
+        <org.eventb.core.prPred name="p19" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(∀S⦂ℙ(BLOCKS)·S⊆ran(nxt(r))∧S⊆(nxt(r))[S]⇒S=(∅ ⦂ ℙ(BLOCKS)))"/>
+        <org.eventb.core.prPred name="p18" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(∀S⦂ℙ(BLOCKS)·S⊆ran(nxt(r))∧S⊆(nxt(r))[S]⇒S=(∅ ⦂ ℙ(BLOCKS)))"/>
+        <org.eventb.core.prPred name="p3" org.eventb.core.predicate="b∈dom(rsrtbl)"/>
+        <org.eventb.core.prPred name="p30" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒¬fst(r)=lst(r)">
             <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
             <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
         </org.eventb.core.prPred>
@@ -4127,94 +4122,59 @@
             <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
             <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
         </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p32" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·⊤∧⊤∧¬r=s⇒¬lst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
-            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p20" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}">
-            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p46" org.eventb.core.predicate="b∈ran(nxt(rsrtbl(b)))∧(nxt(rsrtbl(b)))∼(b)∈dom(rsrtbl)⇒¬rsrtbl((nxt(rsrtbl(b)))∼(b))=rsrtbl(b)"/>
-        <org.eventb.core.prPred name="p31" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·⊤∧⊤∧¬r=s⇒¬fst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
-            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p25" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=(∅ ⦂ ℙ(BLOCKS))"/>
-        <org.eventb.core.prPred name="p45" org.eventb.core.predicate="b∈dom(nxt(rsrtbl(b)))⇒nxt(rsrtbl(b))(b)∈OCC"/>
-        <org.eventb.core.prPred name="p24" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=(∅ ⦂ ℙ(BLOCKS))"/>
-        <org.eventb.core.prPred name="p14" org.eventb.core.predicate="b∈ran(n)⇒b∈dom(n∼)∧n∼∈BLOCKS ⇸ BLOCKS">
-            <org.eventb.core.prIdent name="BLOCKS" org.eventb.core.type="ℙ(BLOCKS)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p8" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧r≠s⇒fst(r)∉rtbl∼[{s}] ∖ {fst(s),lst(s)}">
-            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p6" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒fst(r)≠lst(r)">
-            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p37" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rsrtbl∼[{r}]]⊆rsrtbl∼[{r}]"/>
-        <org.eventb.core.prPred name="p28" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
-        <org.eventb.core.prPred name="p41" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·¬r=s⇒¬lst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
-            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p36" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=(∅ ⦂ ℙ(BLOCKS))"/>
-        <org.eventb.core.prPred name="p5" org.eventb.core.predicate="b∈ran(n)∧n∼(b)∈dom(rsrtbl)⇒⊤∧⊤"/>
         <org.eventb.core.prPred name="p34" org.eventb.core.predicate="∀r⦂ROUTES,S⦂ℙ(BLOCKS)·S⊆ran(nxt(r))∧S⊆(nxt(r))[S]⇒S=(∅ ⦂ ℙ(BLOCKS))"/>
-        <org.eventb.core.prPred name="p39" org.eventb.core.predicate="∀r⦂ROUTES·¬fst(r)=lst(r)">
-            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+        <org.eventb.core.prPred name="p48" org.eventb.core.predicate="(nxt(r))[rtbl∼[{r}] ∖ (rsrtbl∼[{r}] ∖ {b})]∩(rsrtbl∼[{r}] ∖ {b})⊆OCC ∖ {b}">
+            <org.eventb.core.prIdent name="r" org.eventb.core.type="ROUTES"/>
         </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p27" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rsrtbl∼[{r}]]⊆rsrtbl∼[{r}]"/>
-        <org.eventb.core.prPred name="p19" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(∀S⦂ℙ(BLOCKS)·S⊆ran(nxt(r))∧S⊆(nxt(r))[S]⇒S=(∅ ⦂ ℙ(BLOCKS)))"/>
-        <org.eventb.core.prPred name="p13" org.eventb.core.predicate="b∈ran(n)∧n∼(b)∈dom(rsrtbl)⇒¬rsrtbl(n∼(b))=rsrtbl(b)"/>
-        <org.eventb.core.prPred name="p4" org.eventb.core.predicate="b∈ran(n)∧n∼(b)∈dom(rsrtbl)⇒rsrtbl∈BLOCKS ⇸ ROUTES∧b∈dom(rsrtbl)">
-            <org.eventb.core.prIdent name="BLOCKS" org.eventb.core.type="ℙ(BLOCKS)"/>
+        <org.eventb.core.prPred name="p43" org.eventb.core.predicate="(nxt(r))[rtbl∼[{r}] ∖ (rsrtbl∼[{r}] ∖ {b})]∩((rsrtbl∼[{r}] ∖ {b}) ∖ (OCC ∖ {b}))=(∅ ⦂ ℙ(BLOCKS))">
+            <org.eventb.core.prIdent name="r" org.eventb.core.type="ROUTES"/>
         </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p17" org.eventb.core.predicate="rtbl∈BLOCKS ↔ ROUTES">
-            <org.eventb.core.prIdent name="BLOCKS" org.eventb.core.type="ℙ(BLOCKS)"/>
+        <org.eventb.core.prPred name="p22" org.eventb.core.predicate="resrt⊆ROUTES">
+            <org.eventb.core.prIdent name="resrt" org.eventb.core.type="ℙ(ROUTES)"/>
         </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p35" org.eventb.core.predicate="∀r⦂ROUTES·nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}">
+        <org.eventb.core.prPred name="p2" org.eventb.core.predicate="rsrtbl∈BLOCKS ⇸ ROUTES"/>
+        <org.eventb.core.prPred name="p21" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}">
             <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
             <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
         </org.eventb.core.prPred>
         <org.eventb.core.prPred name="p23" org.eventb.core.predicate="resbl⊆BLOCKS">
-            <org.eventb.core.prIdent name="BLOCKS" org.eventb.core.type="ℙ(BLOCKS)"/>
             <org.eventb.core.prIdent name="resbl" org.eventb.core.type="ℙ(BLOCKS)"/>
         </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p3" org.eventb.core.predicate="b∈dom(rsrtbl)"/>
-        <org.eventb.core.prPred name="p9" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧¬r=s⇒¬fst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
+        <org.eventb.core.prPred name="p46" org.eventb.core.predicate="b∈ran(nxt(rsrtbl(b)))∧(nxt(rsrtbl(b)))∼(b)∈dom(rsrtbl)⇒¬rsrtbl((nxt(rsrtbl(b)))∼(b))=rsrtbl(b)"/>
+        <org.eventb.core.prPred name="p1" org.eventb.core.predicate="n=nxt(rsrtbl(b))"/>
+        <org.eventb.core.prPred name="p0" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rtbl∼[{r}] ∖ ({b} ⩤ rsrtbl)∼[{r}]]∩(({b} ⩤ rsrtbl)∼[{r}] ∖ (OCC ∖ {b}))=(∅ ⦂ ℙ(BLOCKS))"/>
+        <org.eventb.core.prPred name="p10" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧r≠s⇒lst(r)∉rtbl∼[{s}] ∖ {fst(s),lst(s)}">
             <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
             <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
         </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p26" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rsrtbl∼[{r}]]⊆rsrtbl∼[{r}]"/>
-        <org.eventb.core.prPred name="p0" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rtbl∼[{r}] ∖ ({b} ⩤ rsrtbl)∼[{r}]]∩(({b} ⩤ rsrtbl)∼[{r}] ∖ (OCC ∖ {b}))=(∅ ⦂ ℙ(BLOCKS))"/>
+        <org.eventb.core.prPred name="p29" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
+        <org.eventb.core.prPred name="p42" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rtbl∼[{r}] ∖ (rsrtbl∼[{r}] ∖ {b})]∩((rsrtbl∼[{r}] ∖ {b}) ∖ (OCC ∖ {b}))=(∅ ⦂ ℙ(BLOCKS))"/>
+        <org.eventb.core.prPred name="p35" org.eventb.core.predicate="∀r⦂ROUTES·nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}">
+            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prReas name="r5" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL5:0"/>
         <org.eventb.core.prReas name="r3" org.eventb.core.prRID="org.eventb.core.seqprover.allI"/>
         <org.eventb.core.prReas name="r4" org.eventb.core.prRID="org.eventb.core.seqprover.eq:1"/>
-        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.genMPL1"/>
-        <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL3:1"/>
+        <org.eventb.core.prReas name="r6" org.eventb.core.prRID="org.eventb.core.seqprover.eqL2:1"/>
+        <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL3:2"/>
         <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
+        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.genMPL1"/>
     </org.eventb.core.prProof>
-    <org.eventb.core.prProof name="BACK_MOVE/inv7/INV" org.eventb.core.confidence="1000" org.eventb.core.prFresh="r" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p1,p2,p3,p4,p5" org.eventb.core.prSets="ROUTES" org.eventb.core.psManual="true">
+    <org.eventb.core.prProof name="BACK_MOVE/inv7/INV" org.eventb.core.confidence="1000" org.eventb.core.prFresh="r" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p1,p2,p3,p4,p5" org.eventb.core.prSets="BLOCKS,ROUTES" org.eventb.core.psManual="true">
+        <org.eventb.core.lang name="L"/>
         <org.eventb.core.prRule name="r0" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="generalized MP" org.eventb.core.prHyps="">
             <org.eventb.core.prAnte name="'">
                 <org.eventb.core.prHypAction name="FORWARD_INF0" org.eventb.core.prHyps="p6,p7,p8" org.eventb.core.prInfHyps="p9"/>
                 <org.eventb.core.prHypAction name="HIDE1" org.eventb.core.prHyps="p8"/>
                 <org.eventb.core.prRule name="r1" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="simplification rewrites" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="">
                     <org.eventb.core.prAnte name="'" org.eventb.core.prGoal="p19">
-                        <org.eventb.core.prHypAction name="FORWARD_INF0" org.eventb.core.prHyps="p10" org.eventb.core.prInfHyps="p11"/>
-                        <org.eventb.core.prHypAction name="HIDE1" org.eventb.core.prHyps="p10"/>
-                        <org.eventb.core.prHypAction name="FORWARD_INF2" org.eventb.core.prHyps="p12" org.eventb.core.prInfHyps="p13"/>
-                        <org.eventb.core.prHypAction name="HIDE3" org.eventb.core.prHyps="p12"/>
-                        <org.eventb.core.prHypAction name="FORWARD_INF4" org.eventb.core.prHyps="p14" org.eventb.core.prInfHyps="p15"/>
-                        <org.eventb.core.prHypAction name="HIDE5" org.eventb.core.prHyps="p14"/>
-                        <org.eventb.core.prHypAction name="FORWARD_INF6" org.eventb.core.prHyps="p4" org.eventb.core.prInfHyps="p16"/>
-                        <org.eventb.core.prHypAction name="HIDE7" org.eventb.core.prHyps="p4"/>
-                        <org.eventb.core.prHypAction name="FORWARD_INF8" org.eventb.core.prHyps="p17" org.eventb.core.prInfHyps="p18"/>
-                        <org.eventb.core.prHypAction name="HIDE9" org.eventb.core.prHyps="p17"/>
-                        <org.eventb.core.prHypAction name="HIDE10" org.eventb.core.prHyps="p9"/>
+                        <org.eventb.core.prHypAction name="REWRITE0" org.eventb.core.prHidden="p10" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p11"/>
+                        <org.eventb.core.prHypAction name="REWRITE1" org.eventb.core.prHidden="p12" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p13"/>
+                        <org.eventb.core.prHypAction name="REWRITE2" org.eventb.core.prHidden="p14" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p15"/>
+                        <org.eventb.core.prHypAction name="REWRITE3" org.eventb.core.prHidden="p2" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p16"/>
+                        <org.eventb.core.prHypAction name="REWRITE4" org.eventb.core.prHidden="p17" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p18"/>
+                        <org.eventb.core.prHypAction name="HIDE5" org.eventb.core.prHyps="p9"/>
                         <org.eventb.core.prRule name="r2" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="type rewrites" org.eventb.core.prGoal="p19" org.eventb.core.prHyps="">
                             <org.eventb.core.prAnte name="'" org.eventb.core.prGoal="p35">
                                 <org.eventb.core.prHypAction name="HIDE0" org.eventb.core.prHyps="p20"/>
@@ -4238,31 +4198,23 @@
                                 <org.eventb.core.prHypAction name="HIDE18" org.eventb.core.prHyps="p15"/>
                                 <org.eventb.core.prRule name="r1" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="simplification rewrites" org.eventb.core.prGoal="p35" org.eventb.core.prHyps="">
                                     <org.eventb.core.prAnte name="'" org.eventb.core.prGoal="p44">
-                                        <org.eventb.core.prHypAction name="FORWARD_INF0" org.eventb.core.prHyps="p22" org.eventb.core.prInfHyps="p36"/>
-                                        <org.eventb.core.prHypAction name="HIDE1" org.eventb.core.prHyps="p22"/>
-                                        <org.eventb.core.prHypAction name="FORWARD_INF2" org.eventb.core.prHyps="p24" org.eventb.core.prInfHyps="p37"/>
-                                        <org.eventb.core.prHypAction name="HIDE3" org.eventb.core.prHyps="p24"/>
-                                        <org.eventb.core.prHypAction name="FORWARD_INF4" org.eventb.core.prHyps="p28" org.eventb.core.prInfHyps="p38"/>
-                                        <org.eventb.core.prHypAction name="HIDE5" org.eventb.core.prHyps="p28"/>
-                                        <org.eventb.core.prHypAction name="FORWARD_INF6" org.eventb.core.prHyps="p29" org.eventb.core.prInfHyps="p39"/>
-                                        <org.eventb.core.prHypAction name="HIDE7" org.eventb.core.prHyps="p29"/>
-                                        <org.eventb.core.prHypAction name="FORWARD_INF8" org.eventb.core.prHyps="p31" org.eventb.core.prInfHyps="p40"/>
-                                        <org.eventb.core.prHypAction name="HIDE9" org.eventb.core.prHyps="p31"/>
-                                        <org.eventb.core.prHypAction name="FORWARD_INF10" org.eventb.core.prHyps="p32" org.eventb.core.prInfHyps="p41"/>
-                                        <org.eventb.core.prHypAction name="HIDE11" org.eventb.core.prHyps="p32"/>
-                                        <org.eventb.core.prHypAction name="FORWARD_INF12" org.eventb.core.prHyps="p33" org.eventb.core.prInfHyps="p42"/>
-                                        <org.eventb.core.prHypAction name="HIDE13" org.eventb.core.prHyps="p33"/>
-                                        <org.eventb.core.prHypAction name="FORWARD_INF14" org.eventb.core.prHyps="p34" org.eventb.core.prInfHyps="p43"/>
-                                        <org.eventb.core.prHypAction name="HIDE15" org.eventb.core.prHyps="p34"/>
+                                        <org.eventb.core.prHypAction name="REWRITE0" org.eventb.core.prHidden="p22" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p36"/>
+                                        <org.eventb.core.prHypAction name="REWRITE1" org.eventb.core.prHidden="p24" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p37"/>
+                                        <org.eventb.core.prHypAction name="REWRITE2" org.eventb.core.prHidden="p28" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p38"/>
+                                        <org.eventb.core.prHypAction name="REWRITE3" org.eventb.core.prHidden="p29" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p39"/>
+                                        <org.eventb.core.prHypAction name="REWRITE4" org.eventb.core.prHidden="p31" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p40"/>
+                                        <org.eventb.core.prHypAction name="REWRITE5" org.eventb.core.prHidden="p32" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p41"/>
+                                        <org.eventb.core.prHypAction name="REWRITE6" org.eventb.core.prHidden="p33" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p42"/>
+                                        <org.eventb.core.prHypAction name="REWRITE7" org.eventb.core.prHidden="p34" org.eventb.core.prHyps="" org.eventb.core.prInfHyps="p43"/>
                                         <org.eventb.core.prRule name="r3" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="∀ goal (frees r)" org.eventb.core.prGoal="p44" org.eventb.core.prHyps="">
                                             <org.eventb.core.prAnte name="'" org.eventb.core.prGoal="p45">
                                                 <org.eventb.core.prIdent name="r" org.eventb.core.type="ROUTES"/>
-                                                <org.eventb.core.prRule name="r4" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="eh with n=nxt(rsrtbl(b))" org.eventb.core.prHyps="p2">
+                                                <org.eventb.core.prRule name="r4" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="eh with n=nxt(rsrtbl(b))" org.eventb.core.prHyps="p3">
                                                     <org.eventb.core.prAnte name="'">
-                                                        <org.eventb.core.prHypAction name="FORWARD_INF0" org.eventb.core.prHyps="p1" org.eventb.core.prInfHyps="p46"/>
+                                                        <org.eventb.core.prHypAction name="FORWARD_INF0" org.eventb.core.prHyps="p4" org.eventb.core.prInfHyps="p46"/>
                                                         <org.eventb.core.prHypAction name="FORWARD_INF1" org.eventb.core.prHyps="p16" org.eventb.core.prInfHyps="p47"/>
-                                                        <org.eventb.core.prHypAction name="DESELECT2" org.eventb.core.prHyps="p16,p1"/>
-                                                        <org.eventb.core.prRule name="r5" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="CVC3 SMT2" org.eventb.core.prGoal="p45" org.eventb.core.prHyps="p3,p2,p39,p46,p47">
+                                                        <org.eventb.core.prHypAction name="DESELECT2" org.eventb.core.prHyps="p16,p4"/>
+                                                        <org.eventb.core.prRule name="r5" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="CVC3 SMT2" org.eventb.core.prGoal="p45" org.eventb.core.prHyps="p47,p1,p3,p39,p46">
                                                             <org.eventb.core.prString name=".arg" org.eventb.core.prSValue="R1000"/>
                                                             <org.eventb.core.prString name=".config_id" org.eventb.core.prSValue="CVC3 SMT2"/>
                                                         </org.eventb.core.prRule>
@@ -4283,140 +4235,130 @@
         <org.eventb.core.prIdent name="n" org.eventb.core.type="ℙ(BLOCKS×BLOCKS)"/>
         <org.eventb.core.prIdent name="nxt" org.eventb.core.type="ℙ(ROUTES×ℙ(BLOCKS×BLOCKS))"/>
         <org.eventb.core.prIdent name="rsrtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
-        <org.eventb.core.prPred name="p42" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·¬r=s⇒¬fst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
+        <org.eventb.core.prPred name="p30" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
+        <org.eventb.core.prPred name="p17" org.eventb.core.predicate="b∈ran(n)⇒b∈dom(n∼)∧n∼∈BLOCKS ⇸ BLOCKS"/>
+        <org.eventb.core.prPred name="p12" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧r≠s⇒fst(r)∉rtbl∼[{s}] ∖ {fst(s),lst(s)}">
             <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
             <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
             <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
         </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p1" org.eventb.core.predicate="b∈dom(n)⇒n(b)∈OCC"/>
-        <org.eventb.core.prPred name="p0" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[({b} ⩤ rsrtbl)∼[{r}]]⊆({b} ⩤ rsrtbl)∼[{r}]"/>
-        <org.eventb.core.prPred name="p2" org.eventb.core.predicate="n=nxt(rsrtbl(b))"/>
-        <org.eventb.core.prPred name="p3" org.eventb.core.predicate="b∈OCC"/>
-        <org.eventb.core.prPred name="p18" org.eventb.core.predicate="b∈ran(n)⇒b∈ran(n)∧n∼∈BLOCKS ⇸ BLOCKS">
-            <org.eventb.core.prIdent name="BLOCKS" org.eventb.core.type="ℙ(BLOCKS)"/>
+        <org.eventb.core.prPred name="p39" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rsrtbl∼[{r}]]⊆rsrtbl∼[{r}]"/>
+        <org.eventb.core.prPred name="p38" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=(∅ ⦂ ℙ(BLOCKS))">
+            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
         </org.eventb.core.prPred>
         <org.eventb.core.prPred name="p44" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rsrtbl∼[{r}] ∖ {b}]⊆rsrtbl∼[{r}] ∖ {b}"/>
-        <org.eventb.core.prPred name="p21" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(∀S⦂ℙ(BLOCKS)·S⊆ran(nxt(r))∧S⊆(nxt(r))[S]⇒S=(∅ ⦂ ℙ(BLOCKS)))"/>
-        <org.eventb.core.prPred name="p40" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
-        <org.eventb.core.prPred name="p4" org.eventb.core.predicate="b∈ran(n)∧n∼(b)∈dom(rsrtbl)⇒rsrtbl(n∼(b))≠rsrtbl(b)"/>
-        <org.eventb.core.prPred name="p32" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒¬fst(r)=lst(r)">
+        <org.eventb.core.prPred name="p10" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒fst(r)≠lst(r)">
+            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p45" org.eventb.core.predicate="(nxt(r))[rsrtbl∼[{r}] ∖ {b}]⊆rsrtbl∼[{r}] ∖ {b}">
+            <org.eventb.core.prIdent name="r" org.eventb.core.type="ROUTES"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p36" org.eventb.core.predicate="∀r⦂ROUTES,S⦂ℙ(BLOCKS)·S⊆ran(nxt(r))∧S⊆(nxt(r))[S]⇒S=(∅ ⦂ ℙ(BLOCKS))"/>
+        <org.eventb.core.prPred name="p15" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧¬r=s⇒¬lst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
+            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p41" org.eventb.core.predicate="∀r⦂ROUTES·¬fst(r)=lst(r)">
             <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
             <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
         </org.eventb.core.prPred>
         <org.eventb.core.prPred name="p25" org.eventb.core.predicate="resrt⊆ROUTES">
             <org.eventb.core.prIdent name="resrt" org.eventb.core.type="ℙ(ROUTES)"/>
         </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p31" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
-        <org.eventb.core.prPred name="p6" org.eventb.core.predicate="rsrtbl∈BLOCKS ⇸ ROUTES">
-            <org.eventb.core.prIdent name="BLOCKS" org.eventb.core.type="ℙ(BLOCKS)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p15" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧¬r=s⇒¬lst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
-            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p24" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}">
-            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p14" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧r≠s⇒lst(r)∉rtbl∼[{s}] ∖ {fst(s),lst(s)}">
-            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p11" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒¬fst(r)=lst(r)">
-            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p34" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·⊤∧⊤∧¬r=s⇒¬lst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
-            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p19" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rsrtbl∼[{r}] ∖ {b}]⊆rsrtbl∼[{r}] ∖ {b}"/>
+        <org.eventb.core.prPred name="p40" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
         <org.eventb.core.prPred name="p23" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}">
             <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
             <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
             <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
         </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p47" org.eventb.core.predicate="b∈ran(nxt(rsrtbl(b)))∧(nxt(rsrtbl(b)))∼(b)∈dom(rsrtbl)⇒¬rsrtbl((nxt(rsrtbl(b)))∼(b))=rsrtbl(b)"/>
-        <org.eventb.core.prPred name="p33" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·⊤∧⊤∧¬r=s⇒¬fst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
-            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p28" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=(∅ ⦂ ℙ(BLOCKS))">
-            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p46" org.eventb.core.predicate="b∈dom(nxt(rsrtbl(b)))⇒nxt(rsrtbl(b))(b)∈OCC"/>
-        <org.eventb.core.prPred name="p27" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=(∅ ⦂ ℙ(BLOCKS))">
-            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p17" org.eventb.core.predicate="b∈ran(n)⇒b∈dom(n∼)∧n∼∈BLOCKS ⇸ BLOCKS">
-            <org.eventb.core.prIdent name="BLOCKS" org.eventb.core.type="ℙ(BLOCKS)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p12" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧r≠s⇒fst(r)∉rtbl∼[{s}] ∖ {fst(s),lst(s)}">
-            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p10" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒fst(r)≠lst(r)">
-            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p39" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rsrtbl∼[{r}]]⊆rsrtbl∼[{r}]"/>
-        <org.eventb.core.prPred name="p30" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
-        <org.eventb.core.prPred name="p43" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·¬r=s⇒¬lst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
-            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p38" org.eventb.core.predicate="∀r⦂ROUTES·(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=(∅ ⦂ ℙ(BLOCKS))">
-            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p9" org.eventb.core.predicate="b∈ran(n)∧n∼(b)∈dom(rsrtbl)⇒⊤∧⊤"/>
-        <org.eventb.core.prPred name="p36" org.eventb.core.predicate="∀r⦂ROUTES,S⦂ℙ(BLOCKS)·S⊆ran(nxt(r))∧S⊆(nxt(r))[S]⇒S=(∅ ⦂ ℙ(BLOCKS))"/>
-        <org.eventb.core.prPred name="p35" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rsrtbl∼[{r}] ∖ {b}]⊆rsrtbl∼[{r}] ∖ {b}"/>
-        <org.eventb.core.prPred name="p41" org.eventb.core.predicate="∀r⦂ROUTES·¬fst(r)=lst(r)">
-            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p29" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rsrtbl∼[{r}]]⊆rsrtbl∼[{r}]"/>
-        <org.eventb.core.prPred name="p22" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(∀S⦂ℙ(BLOCKS)·S⊆ran(nxt(r))∧S⊆(nxt(r))[S]⇒S=(∅ ⦂ ℙ(BLOCKS)))"/>
-        <org.eventb.core.prPred name="p16" org.eventb.core.predicate="b∈ran(n)∧n∼(b)∈dom(rsrtbl)⇒¬rsrtbl(n∼(b))=rsrtbl(b)"/>
-        <org.eventb.core.prPred name="p8" org.eventb.core.predicate="b∈ran(n)∧n∼(b)∈dom(rsrtbl)⇒rsrtbl∈BLOCKS ⇸ ROUTES∧b∈dom(rsrtbl)">
-            <org.eventb.core.prIdent name="BLOCKS" org.eventb.core.type="ℙ(BLOCKS)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p20" org.eventb.core.predicate="rtbl∈BLOCKS ↔ ROUTES">
-            <org.eventb.core.prIdent name="BLOCKS" org.eventb.core.type="ℙ(BLOCKS)"/>
-            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
-        </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p37" org.eventb.core.predicate="∀r⦂ROUTES·nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}">
+        <org.eventb.core.prPred name="p6" org.eventb.core.predicate="rsrtbl∈BLOCKS ⇸ ROUTES"/>
+        <org.eventb.core.prPred name="p24" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}">
             <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
             <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
             <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
         </org.eventb.core.prPred>
         <org.eventb.core.prPred name="p26" org.eventb.core.predicate="resbl⊆BLOCKS">
-            <org.eventb.core.prIdent name="BLOCKS" org.eventb.core.type="ℙ(BLOCKS)"/>
             <org.eventb.core.prIdent name="resbl" org.eventb.core.type="ℙ(BLOCKS)"/>
         </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p45" org.eventb.core.predicate="(nxt(r))[rsrtbl∼[{r}] ∖ {b}]⊆rsrtbl∼[{r}] ∖ {b}">
-            <org.eventb.core.prIdent name="r" org.eventb.core.type="ROUTES"/>
+        <org.eventb.core.prPred name="p47" org.eventb.core.predicate="b∈ran(nxt(rsrtbl(b)))∧(nxt(rsrtbl(b)))∼(b)∈dom(rsrtbl)⇒¬rsrtbl((nxt(rsrtbl(b)))∼(b))=rsrtbl(b)"/>
+        <org.eventb.core.prPred name="p27" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=(∅ ⦂ ℙ(BLOCKS))">
+            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
         </org.eventb.core.prPred>
-        <org.eventb.core.prPred name="p7" org.eventb.core.predicate="b∈dom(rsrtbl)"/>
+        <org.eventb.core.prPred name="p19" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rsrtbl∼[{r}] ∖ {b}]⊆rsrtbl∼[{r}] ∖ {b}"/>
+        <org.eventb.core.prPred name="p34" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·⊤∧⊤∧¬r=s⇒¬lst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
+            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p2" org.eventb.core.predicate="b∈ran(n)∧n∼(b)∈dom(rsrtbl)⇒rsrtbl(n∼(b))≠rsrtbl(b)"/>
+        <org.eventb.core.prPred name="p3" org.eventb.core.predicate="n=nxt(rsrtbl(b))"/>
         <org.eventb.core.prPred name="p13" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧¬r=s⇒¬fst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
             <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
             <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
             <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
         </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p43" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·¬r=s⇒¬lst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
+            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p16" org.eventb.core.predicate="b∈ran(n)∧n∼(b)∈dom(rsrtbl)⇒¬rsrtbl(n∼(b))=rsrtbl(b)"/>
+        <org.eventb.core.prPred name="p0" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[({b} ⩤ rsrtbl)∼[{r}]]⊆({b} ⩤ rsrtbl)∼[{r}]"/>
+        <org.eventb.core.prPred name="p4" org.eventb.core.predicate="b∈dom(n)⇒n(b)∈OCC"/>
         <org.eventb.core.prPred name="p5" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(nxt(r))[rsrtbl∼[{r}]]⊆rsrtbl∼[{r}]"/>
+        <org.eventb.core.prPred name="p20" org.eventb.core.predicate="rtbl∈BLOCKS ↔ ROUTES">
+            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p29" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rsrtbl∼[{r}]]⊆rsrtbl∼[{r}]"/>
+        <org.eventb.core.prPred name="p18" org.eventb.core.predicate="b∈ran(n)⇒b∈ran(n)∧n∼∈BLOCKS ⇸ BLOCKS"/>
+        <org.eventb.core.prPred name="p28" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=(∅ ⦂ ℙ(BLOCKS))">
+            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p42" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·¬r=s⇒¬fst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
+            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p1" org.eventb.core.predicate="b∈OCC"/>
+        <org.eventb.core.prPred name="p14" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·r∈ROUTES∧s∈ROUTES∧r≠s⇒lst(r)∉rtbl∼[{s}] ∖ {fst(s),lst(s)}">
+            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p31" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rsrtbl∼[{r}] ∖ OCC]⊆rsrtbl∼[{r}] ∖ OCC"/>
+        <org.eventb.core.prPred name="p33" org.eventb.core.predicate="∀r⦂ROUTES,s⦂ROUTES·⊤∧⊤∧¬r=s⇒¬fst(r)∈rtbl∼[{s}] ∖ {fst(s),lst(s)}">
+            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p8" org.eventb.core.predicate="b∈ran(n)∧n∼(b)∈dom(rsrtbl)⇒rsrtbl∈BLOCKS ⇸ ROUTES∧b∈dom(rsrtbl)"/>
+        <org.eventb.core.prPred name="p46" org.eventb.core.predicate="b∈dom(nxt(rsrtbl(b)))⇒nxt(rsrtbl(b))(b)∈OCC"/>
+        <org.eventb.core.prPred name="p9" org.eventb.core.predicate="b∈ran(n)∧n∼(b)∈dom(rsrtbl)⇒⊤∧⊤"/>
+        <org.eventb.core.prPred name="p22" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(∀S⦂ℙ(BLOCKS)·S⊆ran(nxt(r))∧S⊆(nxt(r))[S]⇒S=(∅ ⦂ ℙ(BLOCKS)))"/>
+        <org.eventb.core.prPred name="p21" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒(∀S⦂ℙ(BLOCKS)·S⊆ran(nxt(r))∧S⊆(nxt(r))[S]⇒S=(∅ ⦂ ℙ(BLOCKS)))"/>
+        <org.eventb.core.prPred name="p7" org.eventb.core.predicate="b∈dom(rsrtbl)"/>
+        <org.eventb.core.prPred name="p37" org.eventb.core.predicate="∀r⦂ROUTES·nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}">
+            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="rtbl" org.eventb.core.type="ℙ(BLOCKS×ROUTES)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p32" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒¬fst(r)=lst(r)">
+            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p11" org.eventb.core.predicate="∀r⦂ROUTES·r∈ROUTES⇒¬fst(r)=lst(r)">
+            <org.eventb.core.prIdent name="fst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+            <org.eventb.core.prIdent name="lst" org.eventb.core.type="ℙ(ROUTES×BLOCKS)"/>
+        </org.eventb.core.prPred>
+        <org.eventb.core.prPred name="p35" org.eventb.core.predicate="∀r⦂ROUTES·⊤⇒(nxt(r))[rsrtbl∼[{r}] ∖ {b}]⊆rsrtbl∼[{r}] ∖ {b}"/>
         <org.eventb.core.prReas name="r3" org.eventb.core.prRID="org.eventb.core.seqprover.allI"/>
         <org.eventb.core.prReas name="r4" org.eventb.core.prRID="org.eventb.core.seqprover.eq:1"/>
-        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.genMPL1"/>
-        <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL3:1"/>
         <org.eventb.core.prReas name="r5" org.eventb.core.prRID="org.eventb.smt.core.externalSMT"/>
+        <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL3:2"/>
         <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
+        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.genMPL1"/>
     </org.eventb.core.prProof>
     <org.eventb.core.prProof name="BACK_MOVE/inv8/INV" org.eventb.core.confidence="1000" org.eventb.core.prFresh="r" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p1,p2,p3,p4,p5" org.eventb.core.prSets="BLOCKS,ROUTES">
         <org.eventb.core.lang name="L"/>
@@ -4464,7 +4406,7 @@
                                                         <org.eventb.core.prHypAction name="FORWARD_INF1" org.eventb.core.prHyps="p18" org.eventb.core.prInfHyps="p48"/>
                                                         <org.eventb.core.prHypAction name="DESELECT2" org.eventb.core.prHyps="p5,p18"/>
                                                         <org.eventb.core.prHypAction name="DESELECT3" org.eventb.core.prHyps="p4"/>
-                                                        <org.eventb.core.prRule name="r5" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="PP" org.eventb.core.prGoal="p46" org.eventb.core.prHyps="p1,p40,p47,p48">
+                                                        <org.eventb.core.prRule name="r5" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="PP" org.eventb.core.prGoal="p46" org.eventb.core.prHyps="p48,p1,p40,p47">
                                                             <org.eventb.core.prString name=".arg" org.eventb.core.prSValue="R500"/>
                                                         </org.eventb.core.prRule>
                                                     </org.eventb.core.prAnte>
@@ -4605,11 +4547,11 @@
         <org.eventb.core.prPred name="p46" org.eventb.core.predicate="(nxt(r))[(rsrtbl∼[{r}] ∖ {b}) ∖ (OCC ∖ {b})]⊆(rsrtbl∼[{r}] ∖ {b}) ∖ (OCC ∖ {b})">
             <org.eventb.core.prIdent name="r" org.eventb.core.type="ROUTES"/>
         </org.eventb.core.prPred>
-        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.genMPL4"/>
-        <org.eventb.core.prReas name="r5" org.eventb.core.prRID="com.clearsy.atelierb.provers.core.externalPP:1"/>
-        <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
         <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL5:0"/>
-        <org.eventb.core.prReas name="r4" org.eventb.core.prRID="org.eventb.core.seqprover.eqL2:1"/>
         <org.eventb.core.prReas name="r3" org.eventb.core.prRID="org.eventb.core.seqprover.allI"/>
+        <org.eventb.core.prReas name="r4" org.eventb.core.prRID="org.eventb.core.seqprover.eqL2:1"/>
+        <org.eventb.core.prReas name="r5" org.eventb.core.prRID="com.clearsy.atelierb.provers.core.externalPP:1"/>
+        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.genMPL4"/>
+        <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.typeRewrites:1"/>
     </org.eventb.core.prProof>
 </org.eventb.core.prFile>
