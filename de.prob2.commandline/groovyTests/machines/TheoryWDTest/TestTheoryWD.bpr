@@ -19,6 +19,7 @@
                     <org.eventb.core.prAnte name="'" org.eventb.core.prGoal="p7">
                         <org.eventb.core.prHypAction name="FORWARD_INF0" org.eventb.core.prHyps="p5" org.eventb.core.prInfHyps="p6"/>
                         <org.eventb.core.prHypAction name="DESELECT1" org.eventb.core.prHyps="p5"/>
+                        <org.eventb.core.prHypAction name="HIDE2" org.eventb.core.prHyps="p1"/>
                     </org.eventb.core.prAnte>
                 </org.eventb.core.prRule>
             </org.eventb.core.prAnte>
@@ -32,8 +33,8 @@
         <org.eventb.core.prPred name="p0" org.eventb.core.predicate="x=1"/>
         <org.eventb.core.prPred name="p7" org.eventb.core.predicate="mu({1})=1"/>
         <org.eventb.core.prPred name="p5" org.eventb.core.predicate="x∈ℕ"/>
-        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL4:0"/>
-        <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.eq:1"/>
+        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL5:0"/>
+        <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.eqL2:1"/>
     </org.eventb.core.prProof>
     <org.eventb.core.prProof name="axm2/WD" org.eventb.core.confidence="1000" org.eventb.core.prFresh="" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="">
         <org.eventb.core.lang name="L">
@@ -61,8 +62,8 @@
         <org.eventb.core.prPred name="p2" org.eventb.core.predicate="⊤"/>
         <org.eventb.core.prPred name="p1" org.eventb.core.predicate="∃v⦂ℤ·1=v"/>
         <org.eventb.core.prPred name="p0" org.eventb.core.predicate="{1}≠(∅ ⦂ ℙ(ℤ))∧(∃v⦂ℤ·{1}={v})"/>
+        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL5:0"/>
         <org.eventb.core.prReas name="r2" org.eventb.core.prRID="org.eventb.core.seqprover.trueGoal"/>
-        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL4:0"/>
         <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.onePointRule:2"/>
     </org.eventb.core.prProof>
     <org.eventb.core.prProof name="thm2/WD" org.eventb.core.confidence="1000" org.eventb.core.prFresh="" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="">
@@ -88,8 +89,8 @@
         <org.eventb.core.prPred name="p1" org.eventb.core.predicate="{1}≠(∅ ⦂ ℙ(ℤ))"/>
         <org.eventb.core.prPred name="p2" org.eventb.core.predicate="∃v⦂ℤ·{1}={v}"/>
         <org.eventb.core.prPred name="p0" org.eventb.core.predicate="{1,2,3}≠(∅ ⦂ ℙ(ℤ))"/>
+        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL5:0"/>
         <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.trueGoal"/>
-        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL4:0"/>
     </org.eventb.core.prProof>
     <org.eventb.core.prProof name="thm2/THM" org.eventb.core.confidence="0" org.eventb.core.prFresh="" org.eventb.core.prHyps="p0">
         <org.eventb.core.lang name="L">
@@ -112,6 +113,7 @@
                         <org.eventb.core.prHypAction name="FORWARD_INF0" org.eventb.core.prHyps="p5" org.eventb.core.prInfHyps="p6"/>
                         <org.eventb.core.prHypAction name="FORWARD_INF1" org.eventb.core.prHyps="p7" org.eventb.core.prInfHyps="p8"/>
                         <org.eventb.core.prHypAction name="DESELECT2" org.eventb.core.prHyps="p5,p7"/>
+                        <org.eventb.core.prHypAction name="HIDE3" org.eventb.core.prHyps="p0"/>
                     </org.eventb.core.prAnte>
                 </org.eventb.core.prRule>
             </org.eventb.core.prAnte>
@@ -126,7 +128,7 @@
         <org.eventb.core.prPred name="p8" org.eventb.core.predicate="mu({1})=1"/>
         <org.eventb.core.prPred name="p4" org.eventb.core.predicate="{1,2,3}≠(∅ ⦂ ℙ(ℤ))"/>
         <org.eventb.core.prPred name="p5" org.eventb.core.predicate="x∈ℕ"/>
-        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL4:0"/>
-        <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.eq:1"/>
+        <org.eventb.core.prReas name="r0" org.eventb.core.prRID="org.eventb.core.seqprover.autoRewritesL5:0"/>
+        <org.eventb.core.prReas name="r1" org.eventb.core.prRID="org.eventb.core.seqprover.eqL2:1"/>
     </org.eventb.core.prProof>
 </org.eventb.core.prFile>

@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<org.eventb.core.poFile org.eventb.core.poStamp="1">
-<org.eventb.core.poPredicateSet name="ABSHYP" org.eventb.core.poStamp="1">
-<org.eventb.core.poIdentifier name="ProcID" org.eventb.core.type="ℙ(ProcID)"/>
-</org.eventb.core.poPredicateSet>
-<org.eventb.core.poPredicateSet name="ALLHYP" org.eventb.core.parentSet="/Scheduler/Processes.bpo|org.eventb.core.poFile#Processes|org.eventb.core.poPredicateSet#ABSHYP" org.eventb.core.poStamp="1"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<org.eventb.core.poFile org.eventb.core.poStamp="0">
+    <org.eventb.core.poPredicateSet name="ABSHYP" org.eventb.core.poStamp="0">
+        <org.eventb.core.poIdentifier name="ProcID" org.eventb.core.type="ℙ(ProcID)"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poPredicateSet name="ALLHYP" org.eventb.core.parentSet="/Scheduler/Processes.bpo|org.eventb.core.poFile#Processes|org.eventb.core.poPredicateSet#ABSHYP" org.eventb.core.poStamp="0"/>
 </org.eventb.core.poFile>
