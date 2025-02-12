@@ -14,7 +14,6 @@ import de.tlc4b.TLC4BOption;
 import de.tlc4b.TLCRunner;
 import de.tlc4b.tlc.TLCResults;
 
-// TODO: add tests
 public class TLCModelChecker extends CheckerBase {
 
 	private TLCModelCheckingOptions options;
