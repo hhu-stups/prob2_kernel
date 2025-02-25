@@ -25,7 +25,6 @@ public class RulesChecker {
 	}
 
 	private Trace trace;
-	private final boolean init = false;
 	private final RulesModel rulesModel;
 	private final RulesProject rulesProject;
 
@@ -67,15 +66,7 @@ public class RulesChecker {
 
 	public void init() {
 		stopwatch.reset();
-		if (!init) {
-			// initialize machine
-			while (!trace.getCurrentState().isInitialised()) {
-				trace = trace.anyOperation(null);
-			}
-
-			// extract current state of all operations
-			this.operationStatuses = evalOperations(trace.getCurrentState(), rulesProject.getOperationsMap().values());
-		}
+		setTrace(trace);
 	}
 
 	/**
@@ -98,7 +89,7 @@ public class RulesChecker {
 			String transitionName = executeModelCommand.getSingleTransitionName();
 			listener.progress(nrExecutedOperations+=nrSteps, transitionName == null ? "" : transitionName);
 		}
-		evalOperations(trace.getCurrentState(), rulesProject.getOperationsMap().values());
+		this.operationStatuses = evalOperations(trace.getCurrentState(), rulesProject.getOperationsMap().values());
 		stopwatch.stop();
 	}
 
@@ -214,6 +205,16 @@ public class RulesChecker {
 
 	public Trace getCurrentTrace() {
 		return this.trace;
+	}
+
+	public void setTrace(Trace trace) {
+		// initialize machine
+		while (!trace.getCurrentState().isInitialised()) {
+			trace = trace.anyOperation(null);
+		}
+		this.trace = trace;
+		// extract current state of all operations
+		this.operationStatuses = evalOperations(trace.getCurrentState(), rulesProject.getOperationsMap().values());
 	}
 
 	public Map<AbstractOperation, OperationStatus> getOperationStates() {
