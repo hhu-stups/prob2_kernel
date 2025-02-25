@@ -213,6 +213,7 @@ public class RulesChecker {
 			trace = trace.anyOperation(null);
 		}
 		this.trace = trace;
+		this.trace.setExploreStateByDefault(false);
 		// extract current state of all operations
 		this.operationStatuses = evalOperations(trace.getCurrentState(), rulesProject.getOperationsMap().values());
 	}
