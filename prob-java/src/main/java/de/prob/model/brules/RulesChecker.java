@@ -10,7 +10,6 @@ import de.prob.model.brules.output.RuleValidationReport;
 import de.prob.model.brules.output.RulesDependencyGraph;
 import de.prob.statespace.State;
 import de.prob.statespace.Trace;
-import de.prob.statespace.Transition;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -145,17 +144,12 @@ public class RulesChecker {
 		init();
 		List<AbstractOperation> executionOrder = goalOperation.getSortedListOfTransitiveDependencies();
 		executionOrder.add(goalOperation);
-		executionOrder = executionOrder.stream().filter(op -> !(op instanceof FunctionOperation))
-				.collect(Collectors.toList());
+		executionOrder.removeIf(op -> op instanceof FunctionOperation);
 
 		List<AbstractOperation> operationsToBeExecuted = new ArrayList<>();
 		for (AbstractOperation dep : executionOrder) {
 			OperationStatus operationStatus = operationStatuses.get(dep);
-
-			if (operationStatus.isDisabled()) {
-				return false;
-			}
-			if (dep != goalOperation && operationStatus == RuleStatus.FAIL) {
+			if (operationStatus.isDisabled() || (dep != goalOperation && operationStatus == RuleStatus.FAIL)) {
 				return false;
 			}
 
