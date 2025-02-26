@@ -5,6 +5,7 @@ import java.util.Map;
 
 import de.be4.classicalb.core.parser.rules.RulesTransformation;
 import de.prob.animator.domainobjects.AbstractEvalResult;
+import de.prob.animator.domainobjects.IdentifierNotInitialised;
 
 public enum ComputationStatus implements OperationStatus {
 
@@ -26,6 +27,9 @@ public enum ComputationStatus implements OperationStatus {
 	}
 
 	public static ComputationStatus valueOf(AbstractEvalResult evalResult) {
+		if (evalResult instanceof IdentifierNotInitialised) {
+			return ComputationStatus.NOT_EXECUTED;
+		}
 		String key = evalResult.toString();
 		key = key.substring(1, key.length() - 1);
 		if (mapping.containsKey(key)) {
@@ -34,7 +38,6 @@ public enum ComputationStatus implements OperationStatus {
 			throw new IllegalArgumentException(String.format(
 					"The result value '%s' is not valid result of a computation operation.", evalResult));
 		}
-
 	}
 
 	@Override

@@ -157,6 +157,9 @@ public class RulesChecker {
 				operationsToBeExecuted.add(dep);
 			}
 		}
+		while (!trace.getCurrentState().isInitialised()) {
+			trace = trace.anyOperation(null);
+		}
 		for (AbstractOperation op : operationsToBeExecuted) {
 			OperationStatus opState = executeOperation(op);
 			if (op != goalOperation && opState == RuleStatus.FAIL) {
@@ -203,9 +206,6 @@ public class RulesChecker {
 
 	public void setTrace(Trace trace) {
 		// initialize machine
-		while (!trace.getCurrentState().isInitialised()) {
-			trace = trace.anyOperation(null);
-		}
 		this.trace = trace;
 		this.trace.setExploreStateByDefault(false);
 		// extract current state of all operations
