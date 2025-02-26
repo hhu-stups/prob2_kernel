@@ -36,8 +36,6 @@ public class RulesChecker {
 
 	public RulesChecker(Trace trace) {
 		this.stopwatch = Stopwatch.createUnstarted();
-		this.trace = trace;
-		this.trace.setExploreStateByDefault(false);
 		if (trace.getModel() instanceof RulesModel) {
 			rulesModel = (RulesModel) trace.getModel();
 			rulesProject = rulesModel.getRulesProject();
@@ -45,6 +43,7 @@ public class RulesChecker {
 		} else {
 			throw new IllegalArgumentException("Expected Rules Model.");
 		}
+		setTrace(trace);
 	}
 
 	private void determineDependencies() {
@@ -63,9 +62,14 @@ public class RulesChecker {
 		}
 	}
 
+	/**
+	 * use if machine should be initialised before check
+	 */
 	public void init() {
 		stopwatch.reset();
-		setTrace(trace);
+		while (!trace.getCurrentState().isInitialised()) {
+			trace = trace.anyOperation(null);
+		}
 	}
 
 	/**
@@ -73,7 +77,7 @@ public class RulesChecker {
 	 */
 	public void executeAllOperationsDirect(RulesCheckListener listener, int stepSize) {
 		// TODO: consider using RulesMachineRun
-		init();
+		stopwatch.reset();
 		int nrExecutedOperations = 0;
 		stopwatch.start();
 		while (true) {
@@ -157,9 +161,6 @@ public class RulesChecker {
 				operationsToBeExecuted.add(dep);
 			}
 		}
-		while (!trace.getCurrentState().isInitialised()) {
-			trace = trace.anyOperation(null);
-		}
 		for (AbstractOperation op : operationsToBeExecuted) {
 			OperationStatus opState = executeOperation(op);
 			if (op != goalOperation && opState == RuleStatus.FAIL) {
@@ -219,7 +220,6 @@ public class RulesChecker {
 	public OperationStatus getOperationState(String opName) {
 		checkThatOperationExists(opName);
 		checkThatOperationIsNotAFunctionOperation(opName);
-		init();
 		AbstractOperation abstractOperation = rulesProject.getOperationsMap().get(opName);
 		return this.operationStatuses.get(abstractOperation);
 	}

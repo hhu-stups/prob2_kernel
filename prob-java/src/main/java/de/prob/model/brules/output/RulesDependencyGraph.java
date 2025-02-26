@@ -31,7 +31,6 @@ public class RulesDependencyGraph {
 		}
 		allOperations.removeIf(operation -> operation instanceof FunctionOperation);
 		RulesChecker rulesChecker = new RulesChecker(currentTrace);
-		rulesChecker.init();
 		Map<AbstractOperation, OperationStatus> operationStates = rulesChecker.getOperationStates();
 		List<String> nodes = new ArrayList<>();
 		List<String> edges = new ArrayList<>();

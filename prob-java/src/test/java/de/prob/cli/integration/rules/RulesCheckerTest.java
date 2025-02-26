@@ -34,8 +34,22 @@ public class RulesCheckerTest {
 		StateSpace s = api.brules_load(DIR.resolve("RulesMachineExample.rmch").toString());
 		Trace trace = new Trace(s);
 		RulesChecker rulesChecker = new RulesChecker(trace);
-		rulesChecker.init();
 		rulesChecker.executeAllOperations();
+		rulesChecker.getOperationStates().forEach((key, state) -> {
+			if ("RULE_BasedOnRuleWithViolations".equals(key.getName())) {
+				assertEquals(RuleStatus.NOT_CHECKED, state);
+			} else {
+				assertTrue(state.isExecuted());
+			}
+		});
+	}
+
+	@Test
+	public void testExecuteAllOperationsDirect() throws IOException {
+		StateSpace s = api.brules_load(DIR.resolve("RulesMachineExample.rmch").toString());
+		Trace trace = new Trace(s);
+		RulesChecker rulesChecker = new RulesChecker(trace);
+		rulesChecker.executeAllOperationsDirect((nrExecutedOperations, opName) -> {}, 1);
 		rulesChecker.getOperationStates().forEach((key, state) -> {
 			if ("RULE_BasedOnRuleWithViolations".equals(key.getName())) {
 				assertEquals(RuleStatus.NOT_CHECKED, state);
