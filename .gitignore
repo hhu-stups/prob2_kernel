@@ -35,6 +35,7 @@ prob_log.txt
 *.dot
 *.fuzz
 *.prob
+/prob-java/states
 
 # Temp/swap files
 *.swp
