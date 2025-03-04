@@ -16,6 +16,10 @@ import de.prob.animator.domainobjects.EvalResult;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.statespace.State;
 
+/**
+ * @deprecated Use {@link OperationStatuses} instead.
+ */
+@Deprecated
 public class ComputationStatuses {
 
 	private final HashMap<String, ComputationStatus> statuses = new HashMap<>();

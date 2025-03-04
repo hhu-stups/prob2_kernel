@@ -9,15 +9,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.be4.classicalb.core.parser.rules.AbstractOperation;
 import de.be4.classicalb.core.parser.rules.RuleOperation;
 import de.prob.model.brules.ComputationStatus;
-import de.prob.model.brules.ComputationStatuses;
+import de.prob.model.brules.OperationStatuses;
 import de.prob.model.brules.RuleResult;
 import de.prob.model.brules.RuleResult.CounterExample;
 import de.prob.model.brules.RuleResults;
 import de.prob.model.brules.RuleResults.ResultSummary;
 import de.prob.model.brules.RuleStatus;
 import de.prob.model.brules.RulesMachineRun;
+import de.prob.model.brules.RulesModel;
 import de.prob.statespace.State;
 
 import org.junit.jupiter.api.Test;
@@ -65,8 +67,9 @@ public class RulesMachineTest {
 		RulesMachineRun rulesMachineRun = startRulesMachineRun(DIR.resolve("RulesMachineExample.rmch").toFile());
 		assertFalse(rulesMachineRun.hasError());
 		State finalState = rulesMachineRun.getExecuteRun().getExecuteModelCommand().getFinalState();
-		ComputationStatuses compResult = new ComputationStatuses(rulesMachineRun.getRulesProject(), finalState);
-		assertEquals(ComputationStatus.EXECUTED, compResult.getResult("COMP_comp1"));
+		RulesModel model = (RulesModel) rulesMachineRun.getAnimator().getCurrentStateSpace().getModel();
+		AbstractOperation operation = rulesMachineRun.getRulesProject().getOperationsMap().get("COMP_comp1");
+		assertEquals(ComputationStatus.EXECUTED, OperationStatuses.getStatus(model, operation, finalState));
 	}
 
 	@Test
