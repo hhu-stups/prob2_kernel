@@ -5,7 +5,9 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
@@ -156,6 +158,16 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 		}
 	}
 
+	private static List<String> buildInterruptCommand(Path home, OsSpecificInfo osInfo, long userInterruptReference) {
+		if (userInterruptReference == -1L) {
+			// ProB has user interrupt support disabled.
+			return null;
+		}
+
+		Path interruptExecutable = home.resolve(osInfo.getUserInterruptCmd());
+		return Collections.unmodifiableList(Arrays.asList(interruptExecutable.toString(), Long.toString(userInterruptReference)));
+	}
+
 	private ProBInstance startProlog() {
 		Process process = makeProcess();
 		final BufferedReader stream = new BufferedReader(new InputStreamReader(
@@ -183,8 +195,8 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 			throw new CliError("Error while opening socket connection to CLI", e);
 		}
 
-		ProBInstance cli = ProBInstance.create(process, stream,
-			cliInformation.getUserInterruptReference(), connection, this.home, this.osInfo, this);
+		List<String> interruptCommand = buildInterruptCommand(this.home, this.osInfo, cliInformation.getUserInterruptReference());
+		ProBInstance cli = ProBInstance.create(process, stream, connection, interruptCommand, this);
 		this.runningInstances.add(cli);
 		return cli;
 	}

@@ -3,8 +3,6 @@ package de.prob.cli;
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -39,20 +37,14 @@ public final class ProBInstance implements Closeable {
 	private volatile boolean shuttingDown = false;
 
 	private ProBInstance(
-		final Process probProcess, final BufferedReader stream, final long userInterruptReference,
-		final ProBConnection connection, final Path home, final OsSpecificInfo osInfo,
+		final Process probProcess, final BufferedReader stream,
+		final ProBConnection connection, final List<String> interruptCommand,
 		final ProBInstanceProvider provider
 	) {
 		this.probProcess = probProcess;
 		this.outputLoggerThread = new Thread(new ConsoleListener(stream, this::logConsoleLine), "ProB Output Logger for " + this.probProcess);
 		this.connection = connection;
-		Path interruptExecutable = home.resolve(osInfo.getUserInterruptCmd());
-		if (userInterruptReference == -1) {
-			// ProB has user interrupt support disabled.
-			this.interruptCommand = null;
-		} else {
-			this.interruptCommand = Arrays.asList(interruptExecutable.toString(), Long.toString(userInterruptReference));
-		}
+		this.interruptCommand = interruptCommand;
 		this.provider = provider;
 		// Because the console output logger is its own thread,
 		// we have to worry about thread safety when listeners are added/removed.
@@ -62,11 +54,11 @@ public final class ProBInstance implements Closeable {
 	}
 
 	static ProBInstance create(
-		final Process process, final BufferedReader stream, final long userInterruptReference,
-		final ProBConnection connection, final Path home, final OsSpecificInfo osInfo,
+		final Process process, final BufferedReader stream,
+		final ProBConnection connection, final List<String> interruptCommand,
 		final ProBInstanceProvider provider
 	) {
-		final ProBInstance instance = new ProBInstance(process, stream, userInterruptReference, connection, home, osInfo, provider);
+		final ProBInstance instance = new ProBInstance(process, stream, connection, interruptCommand, provider);
 		// The output logger thread must be started after the constructor,
 		// to prevent the thread from possibly seeing final instance fields before they are initialized
 		// (in particular, logger and consoleOutputListeners).
