@@ -1,21 +1,28 @@
 package de.prob.cli;
 
-import com.google.inject.Inject;
-import com.google.inject.Provider;
-import com.google.inject.Singleton;
-import de.prob.annotations.Home;
-import de.prob.exception.CliError;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.google.inject.Singleton;
+
+import de.prob.annotations.Home;
+import de.prob.exception.CliError;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is more or less an implementation detail -
@@ -53,13 +60,13 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 	static final Pattern CLI_PORT_PATTERN = Pattern.compile("^.*Port: (\\d+)$");
 	static final Pattern CLI_USER_INTERRUPT_REFERENCE_PATTERN = Pattern.compile("^.*user interrupt reference id: *(\\d+|off) *$");
 
-	private final String home;
+	private final Path home;
 	private final OsSpecificInfo osInfo;
 	private final Collection<Process> runningProcesses = new CopyOnWriteArrayList<>();
 	private final Collection<ProBInstance> runningInstances = new CopyOnWriteArrayList<>();
 
 	@Inject
-	public ProBInstanceProvider(@Home final String home, final OsSpecificInfo osInfo, final Installer installer) {
+	public ProBInstanceProvider(@Home final Path home, final OsSpecificInfo osInfo, final Installer installer) {
 		this.home = home;
 		this.osInfo = osInfo;
 
@@ -114,12 +121,12 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 	}
 
 	Process makeProcess() {
-		final String executable = this.home + this.osInfo.getCliName();
+		Path executable = this.home.resolve(this.osInfo.getCliName());
 		final List<String> command = new ArrayList<>();
-		command.add(executable);
+		command.add(executable.toString());
 		command.add("-sf");
 		final ProcessBuilder pb = new ProcessBuilder(command);
-		pb.environment().put("PROB_HOME", this.home);
+		pb.environment().put("PROB_HOME", this.home.toString());
 		pb.redirectErrorStream(true);
 
 		final Process prologProcess;

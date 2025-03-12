@@ -2,6 +2,7 @@ package de.prob.scripting;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
 import com.google.inject.Inject;
@@ -40,14 +41,14 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 	private final Provider<ClassicalBModel> modelCreator;
 
 	@Inject
-	ClassicalBFactory(Provider<StateSpace> stateSpaceProvider, Provider<ClassicalBModel> modelCreator, @Home String probdir) {
+	ClassicalBFactory(Provider<StateSpace> stateSpaceProvider, Provider<ClassicalBModel> modelCreator, @Home Path proBDirectory) {
 		this.stateSpaceProvider = stateSpaceProvider;
 		this.modelCreator = modelCreator;
 
 		// Provide location of ProB stdlib directory to the parser,
 		// if it hasn't been set already.
 		if (System.getProperty("prob.stdlib") == null) {
-			System.setProperty("prob.stdlib", probdir + File.separator + "stdlib");
+			System.setProperty("prob.stdlib", proBDirectory.resolve("stdlib").toString());
 		}
 	}
 
