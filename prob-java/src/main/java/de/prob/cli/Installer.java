@@ -97,8 +97,7 @@ public final class Installer {
 			// Create ProB home directory if necessary.
 			Files.createDirectories(DEFAULT_HOME);
 		} catch (IOException e) {
-			LOGGER.error("Failed to create ProB home directory", e);
-			return;
+			throw new UncheckedIOException("Failed to create ProB home directory", e);
 		}
 
 		// Ensure that the CLI isn't installed multiple times in parallel.
