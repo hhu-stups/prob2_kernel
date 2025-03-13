@@ -91,9 +91,10 @@ def readCurrentGitCommit() {
 
 processResources {
 	inputs.property("version", project.version)
+    inputs.property("currentGitCommit", readCurrentGitCommit())
 
 	filesMatching("de/prob/build.properties") {
-		expand(version: inputs.properties["version"], git: readCurrentGitCommit())
+		expand(version: inputs.properties["version"], git: inputs.properties["currentGitCommit"])
 	}
 }
 
