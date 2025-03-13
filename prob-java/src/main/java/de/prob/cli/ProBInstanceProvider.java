@@ -68,13 +68,13 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 	private final Collection<ProBInstance> runningInstances = new CopyOnWriteArrayList<>();
 
 	@Inject
-	public ProBInstanceProvider(@Home final Path home, final OsSpecificInfo osInfo, final Installer installer) {
+	ProBInstanceProvider(@Home Path home, OsSpecificInfo osInfo) {
 		this.home = home;
 		this.osInfo = osInfo;
 
 		Runtime.getRuntime().addShutdownHook(new Thread(this::shutdownAll, "Prolog Process Destroyer"));
 
-		installer.ensureCLIsInstalled();
+		Installer.installGloballyIfNecessary(osInfo);
 	}
 
 	@Override

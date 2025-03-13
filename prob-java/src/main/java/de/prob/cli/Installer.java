@@ -1,12 +1,5 @@
 package de.prob.cli;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import de.prob.Main;
-import de.prob.scripting.FileHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
@@ -21,18 +14,30 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.util.HashSet;
 import java.util.Set;
 
-@Singleton
-public final class Installer {
+import de.prob.Main;
+import de.prob.annotations.Home;
+import de.prob.scripting.FileHandler;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * For internal use only.
+ * External code should not use this class directly.
+ */
+public final class Installer {
+	/**
+	 * For internal use only.
+	 * External code should not use this constant directly.
+	 * Use dependency injection instead - inject a {@link Path} annotated with {@link Home}.
+	 */
 	public static final Path DEFAULT_HOME = Paths.get(System.getProperty("user.home"), ".prob", "prob2-" + Main.getVersion());
+
 	private static final Path LOCK_FILE_PATH = DEFAULT_HOME.resolve("installer.lock");
 	private static final Logger LOGGER = LoggerFactory.getLogger(Installer.class);
 
-	private final OsSpecificInfo osInfo;
-
-	@Inject
-	private Installer(final OsSpecificInfo osInfo) {
-		this.osInfo = osInfo;
+	private Installer() {
+		throw new AssertionError("Utility class");
 	}
 
 	/**
@@ -83,10 +88,13 @@ public final class Installer {
 	}
 
 	/**
-	 * Install all CLI binaries, if necessary.
+	 * Install all CLI binaries to the global ProB home ({@link #DEFAULT_HOME}),
+	 * if necessary (i. e. if the {@code prob.home} system property is not set).
+	 * 
+	 * @param osInfo determines which OS the installed ProB should be for
 	 */
 	@SuppressWarnings("try") // javac warns about unused resource (lockFileChannel.lock()) in try-with-resources
-	public void ensureCLIsInstalled() {
+	static void installGloballyIfNecessary(OsSpecificInfo osInfo) {
 		if (System.getProperty("prob.home") != null) {
 			LOGGER.info("prob.home is set. Not installing ProB CLI binaries from ProB Java API resources.");
 			return;
@@ -112,7 +120,7 @@ public final class Installer {
 				final FileLock ignored = lockFileChannel.lock()
 			) {
 				LOGGER.trace("Acquired lock file for installing CLI binaries");
-				extractBundledProbcli(DEFAULT_HOME, this.osInfo);
+				extractBundledProbcli(DEFAULT_HOME, osInfo);
 				LOGGER.info("CLI binaries successfully installed");
 			} catch (IOException e) {
 				throw new UncheckedIOException("Failed to install ProB CLI binaries", e);
