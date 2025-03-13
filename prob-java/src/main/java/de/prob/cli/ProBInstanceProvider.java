@@ -74,7 +74,10 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 
 		Runtime.getRuntime().addShutdownHook(new Thread(this::shutdownAll, "Prolog Process Destroyer"));
 
-		Installer.installGloballyIfNecessary(osInfo);
+		if (System.getProperty("prob.home") == null) {
+			assert Installer.DEFAULT_HOME.equals(home);
+			Installer.installGlobally(osInfo);
+		}
 	}
 
 	@Override

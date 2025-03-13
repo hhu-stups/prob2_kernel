@@ -88,18 +88,12 @@ public final class Installer {
 	}
 
 	/**
-	 * Install all CLI binaries to the global ProB home ({@link #DEFAULT_HOME}),
-	 * if necessary (i. e. if the {@code prob.home} system property is not set).
+	 * Install all CLI binaries to the global ProB home ({@link #DEFAULT_HOME}).
 	 * 
 	 * @param osInfo determines which OS the installed ProB should be for
 	 */
 	@SuppressWarnings("try") // javac warns about unused resource (lockFileChannel.lock()) in try-with-resources
-	static void installGloballyIfNecessary(OsSpecificInfo osInfo) {
-		if (System.getProperty("prob.home") != null) {
-			LOGGER.info("prob.home is set. Not installing ProB CLI binaries from ProB Java API resources.");
-			return;
-		}
-
+	static void installGlobally(OsSpecificInfo osInfo) {
 		LOGGER.info("Attempting to install CLI binaries");
 		try {
 			// Create ProB home directory if necessary.
