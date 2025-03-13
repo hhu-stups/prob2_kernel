@@ -16,4 +16,10 @@ public final class ModuleCli extends AbstractModule {
 	private static OsSpecificInfo getOsSpecificInfo() {
 		return OsSpecificInfo.detect();
 	}
+
+	@Provides
+	@Singleton
+	private static ProBInstanceProvider getProBInstanceProvider(OsSpecificInfo osInfo) {
+		return ProBInstanceProvider.defaultProvider(osInfo);
+	}
 }

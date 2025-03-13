@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -16,11 +17,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.google.inject.Singleton;
 
-import de.prob.annotations.Home;
 import de.prob.exception.CliError;
 
 import org.slf4j.Logger;
@@ -35,7 +33,6 @@ import org.slf4j.LoggerFactory;
  * so please avoid changing the class name and public methods,
  * unless there's a good reason for it.
  */
-@Singleton
 public final class ProBInstanceProvider implements Provider<ProBInstance> {
 
 	static final class CliInformation {
@@ -67,16 +64,20 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 	private final Collection<Process> runningProcesses = new CopyOnWriteArrayList<>();
 	private final Collection<ProBInstance> runningInstances = new CopyOnWriteArrayList<>();
 
-	@Inject
-	ProBInstanceProvider(@Home Path home, OsSpecificInfo osInfo) {
+	ProBInstanceProvider(Path home, OsSpecificInfo osInfo) {
 		this.home = home;
 		this.osInfo = osInfo;
 
 		Runtime.getRuntime().addShutdownHook(new Thread(this::shutdownAll, "Prolog Process Destroyer"));
+	}
 
-		if (System.getProperty("prob.home") == null) {
-			assert Installer.DEFAULT_HOME.equals(home);
+	static ProBInstanceProvider defaultProvider(OsSpecificInfo osInfo) {
+		String proBHomeOverride = System.getProperty("prob.home");
+		if (proBHomeOverride == null) {
 			Installer.installGlobally(osInfo);
+			return new ProBInstanceProvider(Installer.DEFAULT_HOME, osInfo);
+		} else {
+			return new ProBInstanceProvider(Paths.get(proBHomeOverride), osInfo);
 		}
 	}
 
