@@ -59,31 +59,35 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 	static final Pattern CLI_PORT_PATTERN = Pattern.compile("^.*Port: (\\d+)$");
 	static final Pattern CLI_USER_INTERRUPT_REFERENCE_PATTERN = Pattern.compile("^.*user interrupt reference id: *(\\d+|off) *$");
 
-	private final Path home;
+	private final Path proBDirectory;
 	private final OsSpecificInfo osInfo;
 	private final Collection<Process> runningProcesses = new CopyOnWriteArrayList<>();
 	private final Collection<ProBInstance> runningInstances = new CopyOnWriteArrayList<>();
 
-	ProBInstanceProvider(Path home, OsSpecificInfo osInfo) {
-		this.home = home;
+	ProBInstanceProvider(Path proBDirectory, OsSpecificInfo osInfo) {
+		this.proBDirectory = proBDirectory;
 		this.osInfo = osInfo;
 
 		Runtime.getRuntime().addShutdownHook(new Thread(this::shutdownAll, "Prolog Process Destroyer"));
 	}
 
 	static ProBInstanceProvider defaultProvider(OsSpecificInfo osInfo) {
-		String proBHomeOverride = System.getProperty("prob.home");
-		if (proBHomeOverride == null) {
+		String proBDirectoryOverride = System.getProperty("prob.home");
+		if (proBDirectoryOverride == null) {
 			Installer.installGlobally(osInfo);
 			return new ProBInstanceProvider(Installer.DEFAULT_HOME, osInfo);
 		} else {
-			return new ProBInstanceProvider(Paths.get(proBHomeOverride), osInfo);
+			return new ProBInstanceProvider(Paths.get(proBDirectoryOverride), osInfo);
 		}
 	}
 
 	@Override
 	public ProBInstance get() {
 		return this.startProlog();
+	}
+
+	Path getProBDirectory() {
+		return this.proBDirectory;
 	}
 
 	void instanceWasShutDown(ProBInstance instance, Process process) {
@@ -127,12 +131,12 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 	}
 
 	Process makeProcess() {
-		Path executable = this.home.resolve(this.osInfo.getCliName());
+		Path executable = this.getProBDirectory().resolve(this.osInfo.getCliName());
 		final List<String> command = new ArrayList<>();
 		command.add(executable.toString());
 		command.add("-sf");
 		final ProcessBuilder pb = new ProcessBuilder(command);
-		pb.environment().put("PROB_HOME", this.home.toString());
+		pb.environment().put("PROB_HOME", this.getProBDirectory().toString());
 		pb.redirectErrorStream(true);
 
 		final Process prologProcess;
@@ -199,7 +203,7 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 			throw new CliError("Error while opening socket connection to CLI", e);
 		}
 
-		List<String> interruptCommand = buildInterruptCommand(this.home, this.osInfo, cliInformation.getUserInterruptReference());
+		List<String> interruptCommand = buildInterruptCommand(this.getProBDirectory(), this.osInfo, cliInformation.getUserInterruptReference());
 		ProBInstance cli = ProBInstance.create(process, stream, connection, interruptCommand, this);
 		this.runningInstances.add(cli);
 		return cli;
