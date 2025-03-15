@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
-import de.prob.parser.ResultParserException;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
@@ -25,6 +24,7 @@ public final class CompleteIdentifierCommand extends AbstractCommand {
 	// the category is set directly in this class
 	private static final String SVG_ONLY_ATOM = "svg_only";
 	private static final String SVG_COLORS_ONLY_ATOM = "svg_colors_only";
+	private static final String STRINGS_ONLY_ATOM = "strings_only";
 	private static final String KEYWORDS_ATOM = "keywords";
 
 	private static final String COMPLETIONS_VAR = "Completions";
@@ -37,16 +37,22 @@ public final class CompleteIdentifierCommand extends AbstractCommand {
 	private boolean latexOnly;
 	private boolean svgOnly;
 	private boolean svgColorsOnly;
+	private boolean stringsOnly;
 	private final List<KeywordContext> keywords;
 	private List<Completion> completions;
 
-	public CompleteIdentifierCommand(final String identifier) {
+	public CompleteIdentifierCommand(String identifier) {
 		super();
-
 		this.identifier = identifier;
 		this.ignoreCase = false;
 		this.keywords = new ArrayList<>();
 		this.completions = null;
+	}
+
+	private void checkMutuallyExclusiveOptions() {
+		if (!this.keywords.isEmpty() && (this.isDotOnly() || this.isLatexOnly() || this.isSvgOnly() || this.isSvgColorsOnly() || this.isStringsOnly())) {
+			throw new IllegalStateException("'only'-arguments and keyword contexts are mutually exclusive");
+		}
 	}
 
 	public String getIdentifier() {
@@ -78,52 +84,60 @@ public final class CompleteIdentifierCommand extends AbstractCommand {
 	}
 
 	public boolean isDotOnly() {
-		return dotOnly;
+		return this.dotOnly;
 	}
 
-	public void setDotOnly(final boolean dotOnly) {
+	public void setDotOnly(boolean dotOnly) {
 		this.dotOnly = dotOnly;
+		this.checkMutuallyExclusiveOptions();
 	}
 
 	public boolean isLatexOnly() {
-		return latexOnly;
+		return this.latexOnly;
 	}
 
 	public void setLatexOnly(boolean latexOnly) {
-		if (latexOnly && !this.keywords.isEmpty()) {
-			throw new IllegalStateException("latex only and keyword contexts are exclusive");
-		}
 		this.latexOnly = latexOnly;
+		this.checkMutuallyExclusiveOptions();
 	}
 
 	public boolean isSvgOnly() {
-		return svgOnly;
+		return this.svgOnly;
 	}
 
-	public void setSvgOnly(final boolean svgOnly) {
+	public void setSvgOnly(boolean svgOnly) {
 		this.svgOnly = svgOnly;
+		this.checkMutuallyExclusiveOptions();
 	}
 
 	public boolean isSvgColorsOnly() {
-		return svgColorsOnly;
+		return this.svgColorsOnly;
 	}
 
-	public void setSvgColorsOnly(final boolean svgColorsOnly) {
+	public void setSvgColorsOnly(boolean svgColorsOnly) {
 		this.svgColorsOnly = svgColorsOnly;
+		this.checkMutuallyExclusiveOptions();
+	}
+
+	public boolean isStringsOnly() {
+		return this.stringsOnly;
+	}
+
+	public void setStringsOnly(boolean stringsOnly) {
+		this.stringsOnly = stringsOnly;
+		this.checkMutuallyExclusiveOptions();
 	}
 
 	public List<KeywordContext> getKeywordContexts() {
 		return Collections.unmodifiableList(this.keywords);
 	}
 
-	public void addKeywordContext(final KeywordContext keyword) {
-		if (this.dotOnly || this.latexOnly || this.svgOnly || this.svgColorsOnly) {
-			throw new IllegalStateException("only keywords and keyword contexts are exclusive");
-		}
+	public void addKeywordContext(KeywordContext keyword) {
 		this.keywords.add(keyword);
+		this.checkMutuallyExclusiveOptions();
 	}
 
-	public void removeKeywordContext(final KeywordContext keyword) {
+	public void removeKeywordContext(KeywordContext keyword) {
 		this.keywords.remove(keyword);
 	}
 
@@ -161,6 +175,10 @@ public final class CompleteIdentifierCommand extends AbstractCommand {
 			pto.openTerm(KEYWORDS_ATOM);
 			pto.printAtom(SVG_COLORS_ONLY_ATOM);
 			pto.closeTerm();
+		} else if (this.isStringsOnly()) {
+			pto.openTerm(KEYWORDS_ATOM);
+			pto.printAtom(STRINGS_ONLY_ATOM);
+			pto.closeTerm();
 		} else {
 			for (KeywordContext keyword : this.keywords) {
 				pto.openTerm(KEYWORDS_ATOM);
@@ -186,7 +204,8 @@ public final class CompleteIdentifierCommand extends AbstractCommand {
 		LATEX("latex"),
 		EXPR("expr"),
 		ALL("all"),
-		SVG("svg");
+		SVG("svg"),
+		STRING("string");
 
 		private final String atom;
 
