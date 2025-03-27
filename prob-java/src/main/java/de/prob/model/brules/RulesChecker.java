@@ -27,8 +27,8 @@ public final class RulesChecker {
 	private final Stopwatch stopwatch;
 	private int nrExecutedOperations = 0;
 
-	private final HashMap<AbstractOperation, Set<AbstractOperation>> predecessors = new HashMap<>();
-	private final HashMap<AbstractOperation, Set<AbstractOperation>> successors = new HashMap<>();
+	private final Map<AbstractOperation, Set<AbstractOperation>> predecessors = new HashMap<>();
+	private final Map<AbstractOperation, Set<AbstractOperation>> successors = new HashMap<>();
 
 	public RulesChecker(Trace trace) {
 		this.stopwatch = Stopwatch.createUnstarted();
