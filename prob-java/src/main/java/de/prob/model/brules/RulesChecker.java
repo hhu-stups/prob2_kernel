@@ -243,14 +243,14 @@ public class RulesChecker {
 	}
 
 	/**
-		Saves complete dependency graph for all operations.
+	 * Saves complete dependency graph for all operations.
 	 */
 	public void saveDependencyGraph(final Path path, final String dotOutputFormat) throws IOException, InterruptedException {
 		saveDependencyGraph(path, rulesProject.getOperationsMap().values(), dotOutputFormat);
 	}
 
 	/**
-		Saves partial dependency graph for provided operations.
+	 * Saves partial dependency graph for provided operations.
 	 */
 	public void saveDependencyGraph(final Path path, final Collection<AbstractOperation> operations, final String dotOutputFormat)
 			throws IOException, InterruptedException {
