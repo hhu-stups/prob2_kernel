@@ -15,8 +15,7 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class RulesChecker {
-
+public final class RulesChecker {
 	public interface RulesCheckListener {
 		void progress(int nrExecutedOperations, String opName);
 	}
