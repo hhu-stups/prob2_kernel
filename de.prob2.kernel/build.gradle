@@ -20,8 +20,10 @@ tasks.withType(GroovyCompile) {
 // FIXME This needs to be set in the gradle.properties, but the file is encrypted.
 
 processResources {
+	inputs.property("version", project.version)
+
 	filesMatching("META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule") {
-		expand(version: project.version)
+		expand(version: inputs.properties["version"])
 	}
 }
 
