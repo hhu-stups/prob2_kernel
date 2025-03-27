@@ -35,7 +35,6 @@ import de.prob.parser.SimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.output.PrologTermStringOutput;
 import de.prob.prolog.term.PrologTerm;
-import de.prob.statespace.AnimationSelector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,15 +48,14 @@ class AnimatorImpl implements IAnimator {
 
 	private final ProBInstance cli;
 	private final GetErrorItemsCommand getErrorItems;
-	private final AnimationSelector animations;
 	private boolean busy = false;
+	private final Collection<IAnimatorBusyListener> busyListeners = new CopyOnWriteArrayList<>();
 	private final Collection<IWarningListener> warningListeners = new CopyOnWriteArrayList<>();
 
 	@Inject
-	AnimatorImpl(ProBInstance cli, AnimationSelector animations) {
+	AnimatorImpl(ProBInstance cli) {
 		this.cli = cli;
 		this.getErrorItems = new GetErrorItemsCommand();
-		this.animations = animations;
 	}
 
 	private static String shorten(final String s) {
@@ -228,13 +226,13 @@ class AnimatorImpl implements IAnimator {
 	@Override
 	public void startTransaction() {
 		busy = true;
-		animations.notifyAnimatorStatus(id, busy);
+		busyListeners.forEach(listener -> listener.animatorStatus(busy));
 	}
 
 	@Override
 	public void endTransaction() {
 		busy = false;
-		animations.notifyAnimatorStatus(id, busy);
+		busyListeners.forEach(listener -> listener.animatorStatus(busy));
 	}
 
 	@Override
@@ -257,6 +255,16 @@ class AnimatorImpl implements IAnimator {
 		GetTotalNumberOfErrorsCommand command = new GetTotalNumberOfErrorsCommand();
 		execute(command);
 		return command.getTotalNumberOfErrors().longValueExact();
+	}
+
+	@Override
+	public void addBusyListener(IAnimatorBusyListener listener) {
+		this.busyListeners.add(listener);
+	}
+
+	@Override
+	public void removeBusyListener(IAnimatorBusyListener listener) {
+		this.busyListeners.remove(listener);
 	}
 
 	@Override

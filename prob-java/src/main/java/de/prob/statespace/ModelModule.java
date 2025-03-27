@@ -21,7 +21,6 @@ public class ModelModule extends AbstractModule {
 		bind(ClassicalBModel.class);
 		bind(EventBModel.class);
 		bind(CSPModel.class);
-		bind(AnimationSelector.class);
 	}
 
 	@Provides

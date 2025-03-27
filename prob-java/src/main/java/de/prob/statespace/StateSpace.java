@@ -22,6 +22,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import de.prob.animator.IAnimator;
+import de.prob.animator.IAnimatorBusyListener;
 import de.prob.animator.IConsoleOutputListener;
 import de.prob.animator.IWarningListener;
 import de.prob.animator.command.AbstractCommand;
@@ -1015,6 +1016,16 @@ public class StateSpace implements IAnimator {
 	@Override
 	public long getTotalNumberOfErrors() {
 		return animator.getTotalNumberOfErrors();
+	}
+
+	@Override
+	public void addBusyListener(IAnimatorBusyListener listener) {
+		animator.addBusyListener(listener);
+	}
+
+	@Override
+	public void removeBusyListener(IAnimatorBusyListener listener) {
+		animator.removeBusyListener(listener);
 	}
 
 	@Override

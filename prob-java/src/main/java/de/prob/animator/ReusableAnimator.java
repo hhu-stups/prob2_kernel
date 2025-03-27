@@ -37,6 +37,7 @@ import de.prob.statespace.StateSpace;
 public final class ReusableAnimator implements IAnimator {
 	private final class InternalAnimator implements IAnimator {
 		private final AtomicBoolean isKilled;
+		private final Collection<IAnimatorBusyListener> busyListeners;
 		private final Collection<IWarningListener> warningListeners;
 		private final Collection<IConsoleOutputListener> consoleOutputListeners;
 		
@@ -44,6 +45,7 @@ public final class ReusableAnimator implements IAnimator {
 			super();
 			
 			this.isKilled = new AtomicBoolean(false);
+			this.busyListeners = new CopyOnWriteArrayList<>();
 			this.warningListeners = new CopyOnWriteArrayList<>();
 			this.consoleOutputListeners = new CopyOnWriteArrayList<>();
 		}
@@ -75,6 +77,7 @@ public final class ReusableAnimator implements IAnimator {
 			if (ReusableAnimator.this.isBusy()) {
 				ReusableAnimator.this.endTransaction();
 			}
+			this.busyListeners.forEach(ReusableAnimator.this::removeBusyListener);
 			this.warningListeners.forEach(ReusableAnimator.this::removeWarningListener);
 			this.consoleOutputListeners.forEach(ReusableAnimator.this::removeConsoleOutputListener);
 			synchronized (ReusableAnimator.this.currentStateSpaceLock) {
@@ -112,6 +115,18 @@ public final class ReusableAnimator implements IAnimator {
 		public long getTotalNumberOfErrors() {
 			this.checkAlive();
 			return ReusableAnimator.this.getTotalNumberOfErrors();
+		}
+		
+		@Override
+		public void addBusyListener(IAnimatorBusyListener listener) {
+			this.busyListeners.add(listener);
+			ReusableAnimator.this.addBusyListener(listener);
+		}
+		
+		@Override
+		public void removeBusyListener(IAnimatorBusyListener listener) {
+			ReusableAnimator.this.removeBusyListener(listener);
+			this.busyListeners.remove(listener);
 		}
 		
 		@Override
@@ -233,6 +248,16 @@ public final class ReusableAnimator implements IAnimator {
 	@Override
 	public long getTotalNumberOfErrors() {
 		return this.animator.getTotalNumberOfErrors();
+	}
+	
+	@Override
+	public void addBusyListener(IAnimatorBusyListener listener) {
+		this.animator.addBusyListener(listener);
+	}
+	
+	@Override
+	public void removeBusyListener(IAnimatorBusyListener listener) {
+		this.animator.removeBusyListener(listener);
 	}
 	
 	@Override

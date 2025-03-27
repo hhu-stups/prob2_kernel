@@ -1,5 +1,7 @@
 package de.prob.statespace;
 
+import de.prob.animator.IAnimatorBusyListener;
+
 /**
  * A Class that implements this interface and registers itself in the
  * {@link AnimationSelector} will receive updates via the
@@ -9,7 +11,7 @@ package de.prob.statespace;
  * @author joy
  * 
  */
-public interface IAnimationChangeListener {
+public interface IAnimationChangeListener extends IAnimatorBusyListener {
 	/**
 	 * Lets the {@link IAnimationChangeListener} know that a trace change has
 	 * taken place. The current trace is given as a parameter, and a flag
@@ -28,6 +30,4 @@ public interface IAnimationChangeListener {
 	 *            whether or not the current animation has changed.
 	 */
 	void traceChange(Trace currentTrace, boolean currentAnimationChanged);
-
-	void animatorStatus(boolean busy);
 }

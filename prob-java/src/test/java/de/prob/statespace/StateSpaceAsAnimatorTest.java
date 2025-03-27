@@ -73,8 +73,8 @@ final class StateSpaceAsAnimatorTest {
 		AnimationSelector animations = CliTestCommon.getInjector().getInstance(AnimationSelector.class);
 		animations.addNewAnimation(new Trace(s));
 
-		boolean[] becameBusy = {false};
-		boolean[] becameNotBusyAgain = {false};
+		boolean[] becameBusy = {false, false};
+		boolean[] becameNotBusyAgain = {false, false};
 		animations.registerAnimationChangeListener(new IAnimationChangeListener() {
 			@Override
 			public void traceChange(Trace currentTrace, boolean currentAnimationChanged) {}
@@ -89,10 +89,20 @@ final class StateSpaceAsAnimatorTest {
 			}
 		});
 
+		s.addBusyListener(busy -> {
+			if (busy) {
+				becameBusy[1] = true;
+			} else {
+				becameNotBusyAgain[1] = true;
+			}
+		});
+
 		s.startTransaction();
 		s.endTransaction();
 
 		Assertions.assertTrue(becameBusy[0]);
 		Assertions.assertTrue(becameNotBusyAgain[0]);
+		Assertions.assertTrue(becameBusy[1]);
+		Assertions.assertTrue(becameNotBusyAgain[1]);
 	}
 }

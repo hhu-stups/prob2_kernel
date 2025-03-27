@@ -125,6 +125,9 @@ public interface IAnimator {
 
 	long getTotalNumberOfErrors();
 
+	void addBusyListener(IAnimatorBusyListener listener);
+	void removeBusyListener(IAnimatorBusyListener listener);
+
 	void addWarningListener(final IWarningListener listener);
 	void removeWarningListener(final IWarningListener listener);
 
