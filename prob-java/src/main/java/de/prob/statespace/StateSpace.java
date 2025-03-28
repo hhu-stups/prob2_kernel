@@ -81,7 +81,7 @@ import org.slf4j.LoggerFactory;
  * @author joy
  *
  */
-public class StateSpace implements IAnimator {
+public final class StateSpace implements IAnimator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(StateSpace.class);
 
 	private final IAnimator animator;
