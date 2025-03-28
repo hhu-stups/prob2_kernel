@@ -194,7 +194,7 @@ public final class ReusableAnimator implements IAnimator {
 				throw new IllegalStateException("The animator is already in use");
 			}
 			
-			this.currentStateSpace = new StateSpace(InternalAnimator::new, this.maxCacheSize);
+			this.currentStateSpace = new StateSpace(new InternalAnimator(), this.maxCacheSize);
 			return this.currentStateSpace;
 		}
 	}

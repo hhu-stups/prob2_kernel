@@ -105,8 +105,8 @@ public final class StateSpace implements IAnimator {
 	private final Collection<IStatesCalculatedListener> statesCalculatedListeners = new CopyOnWriteArrayList<>();
 
 	@Inject
-	public StateSpace(final Provider<IAnimator> panimator, @MaxCacheSize final int maxSize) {
-		animator = panimator.get();
+	public StateSpace(IAnimator animator, @MaxCacheSize int maxSize) {
+		this.animator = animator;
 		states = CacheBuilder.newBuilder().maximumSize(maxSize).build(new CacheLoader<String, State>() {
 			@Override
 			public State load(final String key) {
@@ -118,6 +118,14 @@ public final class StateSpace implements IAnimator {
 				throw new IllegalArgumentException(key + " does not represent a valid state in the StateSpace");
 			}
 		});
+	}
+
+	/**
+	 * @deprecated Use {@link #StateSpace(IAnimator, int)} instead.
+	 */
+	@Deprecated
+	public StateSpace(Provider<IAnimator> panimator, int maxSize) {
+		this(panimator.get(), maxSize);
 	}
 
 	/**
