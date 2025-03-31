@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -101,7 +102,7 @@ public final class StateSpace implements IAnimator {
 	private final LoadingCache<String, State> states;
 
 	private AbstractModel model;
-	private volatile boolean killed;
+	private final AtomicBoolean killed;
 	private final Collection<IStatesCalculatedListener> statesCalculatedListeners = new CopyOnWriteArrayList<>();
 
 	@Inject
@@ -118,6 +119,7 @@ public final class StateSpace implements IAnimator {
 				throw new IllegalArgumentException(key + " does not represent a valid state in the StateSpace");
 			}
 		});
+		this.killed = new AtomicBoolean(false);
 	}
 
 	/**
@@ -1001,12 +1003,12 @@ public final class StateSpace implements IAnimator {
 
 	@Override
 	public void kill() {
-		killed = true;
+		killed.set(true);
 		animator.kill();
 	}
 
 	public boolean isKilled() {
-		return killed;
+		return killed.get();
 	}
 
 	/**
