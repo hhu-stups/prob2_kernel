@@ -681,10 +681,12 @@ public final class StateSpace implements IAnimator {
 	}
 
 	public void addStatesCalculatedListener(final IStatesCalculatedListener listener) {
+		this.checkAlive();
 		this.statesCalculatedListeners.add(listener);
 	}
 
 	public void removeStatesCalculatedListener(final IStatesCalculatedListener listener) {
+		this.checkAlive();
 		this.statesCalculatedListeners.remove(listener);
 	}
 
@@ -703,11 +705,13 @@ public final class StateSpace implements IAnimator {
 
 	@Override
 	public void startTransaction() {
+		this.checkAlive();
 		animator.startTransaction();
 	}
 
 	@Override
 	public void endTransaction() {
+		this.checkAlive();
 		animator.endTransaction();
 	}
 
@@ -972,12 +976,15 @@ public final class StateSpace implements IAnimator {
 			return;
 		}
 		if (this.isBusy()) {
-			this.endTransaction();
+			this.animator.endTransaction();
 		}
-		this.busyListeners.forEach(this::removeBusyListener);
-		this.warningListeners.forEach(this::removeWarningListener);
-		this.consoleOutputListeners.forEach(this::removeConsoleOutputListener);
-		this.statesCalculatedListeners.forEach(this::removeStatesCalculatedListener);
+		this.busyListeners.forEach(this.animator::removeBusyListener);
+		this.busyListeners.clear();
+		this.warningListeners.forEach(this.animator::removeWarningListener);
+		this.warningListeners.clear();
+		this.consoleOutputListeners.forEach(this.animator::removeConsoleOutputListener);
+		this.consoleOutputListeners.clear();
+		this.statesCalculatedListeners.clear();
 		if (this.ownsAnimator) {
 			this.animator.kill();
 		}
@@ -1007,36 +1014,42 @@ public final class StateSpace implements IAnimator {
 
 	@Override
 	public void addBusyListener(IAnimatorBusyListener listener) {
+		this.checkAlive();
 		this.busyListeners.add(listener);
 		animator.addBusyListener(listener);
 	}
 
 	@Override
 	public void removeBusyListener(IAnimatorBusyListener listener) {
+		this.checkAlive();
 		animator.removeBusyListener(listener);
 		this.busyListeners.remove(listener);
 	}
 
 	@Override
 	public void addWarningListener(final IWarningListener listener) {
+		this.checkAlive();
 		this.warningListeners.add(listener);
 		animator.addWarningListener(listener);
 	}
 
 	@Override
 	public void removeWarningListener(final IWarningListener listener) {
+		this.checkAlive();
 		animator.removeWarningListener(listener);
 		this.warningListeners.remove(listener);
 	}
 
 	@Override
 	public void addConsoleOutputListener(final IConsoleOutputListener listener) {
+		this.checkAlive();
 		this.consoleOutputListeners.add(listener);
 		animator.addConsoleOutputListener(listener);
 	}
 
 	@Override
 	public void removeConsoleOutputListener(final IConsoleOutputListener listener) {
+		this.checkAlive();
 		animator.removeConsoleOutputListener(listener);
 		this.consoleOutputListeners.remove(listener);
 	}
