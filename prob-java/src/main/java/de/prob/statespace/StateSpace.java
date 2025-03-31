@@ -55,6 +55,7 @@ import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.animator.domainobjects.ProBPreference;
 import de.prob.animator.domainobjects.TypeCheckResult;
 import de.prob.annotations.MaxCacheSize;
+import de.prob.exception.CliError;
 import de.prob.formula.PredicateBuilder;
 import de.prob.model.representation.AbstractElement;
 import de.prob.model.representation.AbstractModel;
@@ -86,6 +87,7 @@ public final class StateSpace implements IAnimator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(StateSpace.class);
 
 	private final IAnimator animator;
+	private final boolean ownsAnimator;
 
 	private final Set<IEvalElement> registeredFormulas = new HashSet<>();
 	private final Map<IEvalElement, Set<Object>> formulaSubscribers = new HashMap<>();
@@ -103,11 +105,22 @@ public final class StateSpace implements IAnimator {
 
 	private AbstractModel model;
 	private final AtomicBoolean killed;
-	private final Collection<IStatesCalculatedListener> statesCalculatedListeners = new CopyOnWriteArrayList<>();
+	private final Collection<IAnimatorBusyListener> busyListeners;
+	private final Collection<IWarningListener> warningListeners;
+	private final Collection<IConsoleOutputListener> consoleOutputListeners;
+	private final Collection<IStatesCalculatedListener> statesCalculatedListeners;
 
-	@Inject
-	public StateSpace(IAnimator animator, @MaxCacheSize int maxSize) {
+	/**
+	 * Create a new {@link StateSpace} based on an existing ProB animator instance.
+	 * 
+	 * @param animator the ProB animator instance to use
+	 * @param ownsAnimator whether the animator should be killed when this {@link StateSpace} is killed
+	 * @param maxSize maximum size for the Java-side {@link State} object cache
+	 */
+	public StateSpace(IAnimator animator, boolean ownsAnimator, int maxSize) {
 		this.animator = animator;
+		this.ownsAnimator = ownsAnimator;
+
 		states = CacheBuilder.newBuilder().maximumSize(maxSize).build(new CacheLoader<String, State>() {
 			@Override
 			public State load(final String key) {
@@ -119,7 +132,17 @@ public final class StateSpace implements IAnimator {
 				throw new IllegalArgumentException(key + " does not represent a valid state in the StateSpace");
 			}
 		});
+
 		this.killed = new AtomicBoolean(false);
+		this.busyListeners = new CopyOnWriteArrayList<>();
+		this.warningListeners = new CopyOnWriteArrayList<>();
+		this.consoleOutputListeners = new CopyOnWriteArrayList<>();
+		this.statesCalculatedListeners = new CopyOnWriteArrayList<>();
+	}
+
+	@Inject
+	public StateSpace(IAnimator animator, @MaxCacheSize int maxSize) {
+		this(animator, true, maxSize);
 	}
 
 	/**
@@ -128,6 +151,12 @@ public final class StateSpace implements IAnimator {
 	@Deprecated
 	public StateSpace(Provider<IAnimator> panimator, int maxSize) {
 		this(panimator.get(), maxSize);
+	}
+
+	private void checkAlive() {
+		if (this.killed.get()) {
+			throw new CliError("This StateSpace has been killed and can no longer be used");
+		}
 	}
 
 	/**
@@ -694,7 +723,9 @@ public final class StateSpace implements IAnimator {
 	// ANIMATOR
 	@Override
 	public void sendInterrupt() {
-		animator.sendInterrupt();
+		if (!this.killed.get()) {
+			animator.sendInterrupt();
+		}
 	}
 
 	public void addStatesCalculatedListener(final IStatesCalculatedListener listener) {
@@ -711,6 +742,7 @@ public final class StateSpace implements IAnimator {
 
 	@Override
 	public void execute(final AbstractCommand command) {
+		this.checkAlive();
 		animator.execute(command);
 		if (command instanceof IStateSpaceModifier) {
 			this.statesCalculated(((IStateSpaceModifier)command).getNewTransitions());
@@ -1003,8 +1035,19 @@ public final class StateSpace implements IAnimator {
 
 	@Override
 	public void kill() {
-		killed.set(true);
-		animator.kill();
+		if (this.killed.getAndSet(true)) {
+			return;
+		}
+		if (this.isBusy()) {
+			this.endTransaction();
+		}
+		this.busyListeners.forEach(this::removeBusyListener);
+		this.warningListeners.forEach(this::removeWarningListener);
+		this.consoleOutputListeners.forEach(this::removeConsoleOutputListener);
+		this.statesCalculatedListeners.forEach(this::removeStatesCalculatedListener);
+		if (this.ownsAnimator) {
+			this.animator.kill();
+		}
 	}
 
 	public boolean isKilled() {
@@ -1025,36 +1068,43 @@ public final class StateSpace implements IAnimator {
 
 	@Override
 	public long getTotalNumberOfErrors() {
+		this.checkAlive();
 		return animator.getTotalNumberOfErrors();
 	}
 
 	@Override
 	public void addBusyListener(IAnimatorBusyListener listener) {
+		this.busyListeners.add(listener);
 		animator.addBusyListener(listener);
 	}
 
 	@Override
 	public void removeBusyListener(IAnimatorBusyListener listener) {
 		animator.removeBusyListener(listener);
+		this.busyListeners.remove(listener);
 	}
 
 	@Override
 	public void addWarningListener(final IWarningListener listener) {
+		this.warningListeners.add(listener);
 		animator.addWarningListener(listener);
 	}
 
 	@Override
 	public void removeWarningListener(final IWarningListener listener) {
 		animator.removeWarningListener(listener);
+		this.warningListeners.remove(listener);
 	}
 
 	@Override
 	public void addConsoleOutputListener(final IConsoleOutputListener listener) {
+		this.consoleOutputListeners.add(listener);
 		animator.addConsoleOutputListener(listener);
 	}
 
 	@Override
 	public void removeConsoleOutputListener(final IConsoleOutputListener listener) {
 		animator.removeConsoleOutputListener(listener);
+		this.consoleOutputListeners.remove(listener);
 	}
 }
