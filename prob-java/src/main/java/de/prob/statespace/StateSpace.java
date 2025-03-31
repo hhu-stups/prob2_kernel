@@ -380,54 +380,6 @@ public final class StateSpace implements IAnimator {
 	}
 
 	/**
-	 * Evaluates a list of formulas in a given state. Uses the implementation in
-	 * {@link State#eval(List)}
-	 *
-	 * @param state
-	 *            for which the list of formulas should be evaluated
-	 * @param formulas
-	 *            to be evaluated
-	 * @return a list of {@link AbstractEvalResult}s
-	 * @deprecated Use {@link State#eval(List)} directly instead.
-	 */
-	@Deprecated
-	public List<AbstractEvalResult> eval(final State state, final List<? extends IEvalElement> formulas) {
-		return state.eval(formulas);
-	}
-
-	/**
-	 * Calculates the registered formulas at the given state and returns the
-	 * cached values. Calls the {@link State#explore()} method, and uses the
-	 * {@link State#getValues()} method.
-	 *
-	 * @param state
-	 *            for which the values are to be retrieved
-	 * @return map from {@link IEvalElement} object to
-	 *         {@link AbstractEvalResult} objects
-	 * @deprecated Use {@link State#getValues()} directly instead,
-	 *     possibly together with {@link State#explore()} or {@link State#exploreIfNeeded()}.
-	 */
-	@Deprecated
-	public Map<IEvalElement, AbstractEvalResult> valuesAt(final State state) {
-		state.explore();
-		return state.getValues();
-	}
-
-	/**
-	 * This checks if the {@link State#isInitialised()} property is set. If so,
-	 * it is safe to evaluate formulas for the given state.
-	 *
-	 * @param state
-	 *            which is to be tested
-	 * @return whether or not formulas should be evaluated in this state
-	 * @deprecated Use {@link State#isInitialised()} directly instead.
-	 */
-	@Deprecated
-	public boolean canBeEvaluated(final State state) {
-		return state.isInitialised();
-	}
-
-	/**
 	 * Get all formulas currently registered for efficient evaluation.
 	 * All {@linkplain #getSubscribedFormulas() subscribed formulas} are also automatically registered,
 	 * but not vice versa.
@@ -874,25 +826,6 @@ public final class StateSpace implements IAnimator {
 			t = t.add(id);
 		}
 		return t;
-	}
-
-	/**
-	 * <p>
-	 * This allows developers to programmatically describe a Trace that should
-	 * be created. {@link ITraceDescription#getTrace(StateSpace)} will then be
-	 * called in order to generate the correct Trace.
-	 * </p>
-	 *
-	 * @param description
-	 *            of the trace to be created
-	 * @return Trace that is generated from the Trace Description
-	 * @deprecated This overload is meant for use from Groovy.
-	 *     Java code should call {@link ITraceDescription#getTrace(StateSpace)} directly instead.
-	 */
-	// TODO Move this to ProBGroovyMethods at some point (or just remove it entirely - I don't think anything really needs this overload...)
-	@Deprecated
-	public Trace getTrace(final ITraceDescription description) {
-		return description.getTrace(this);
 	}
 
 	/**
