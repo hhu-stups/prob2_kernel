@@ -110,7 +110,7 @@ public class FindStateCommand extends AbstractCommand implements IStateSpaceModi
 						Transition.createTransitionFromCompoundPrologTerm(s, transitionTerm)
 				));
 			}
-			stateId = term.getArgument(2).toString();
+			stateId = Transition.getIdFromPrologTerm(term.getArgument(2));
 		} else {
 			throw new ProBError("unexpected result when trying to find a valid state: " + resultTerm);
 		}
