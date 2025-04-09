@@ -5,7 +5,6 @@ import java.util.List;
 
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
-import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.ITraceDescription;
@@ -45,7 +44,7 @@ public class FindTraceBetweenNodesCommand extends AbstractCommand implements
 		if (trace instanceof ListPrologTerm) {
 			for (PrologTerm term : (ListPrologTerm) trace) {
 				newTransitions.add(Transition.createTransitionFromCompoundPrologTerm(
-						stateSpace, (CompoundPrologTerm) term));
+						stateSpace, term));
 			}
 		} else {
 			throw new NoTraceFoundException("Trace was not found. Error was: " + trace.getFunctor());

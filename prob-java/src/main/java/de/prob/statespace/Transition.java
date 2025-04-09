@@ -491,7 +491,11 @@ public class Transition {
 	 * @return {@link Transition} object representing the information about the
 	 *         operation
 	 */
-	public static Transition createTransitionFromCompoundPrologTerm(final StateSpace s, final CompoundPrologTerm cpt) {
+	public static Transition createTransitionFromCompoundPrologTerm(final StateSpace s, final PrologTerm t) {
+		if (!(t instanceof CompoundPrologTerm) || t.getArity() < 4) {
+			throw new IllegalArgumentException("Expected CompoundPrologTerm with arity >= 4, but got " + t);
+		}
+		CompoundPrologTerm cpt = (CompoundPrologTerm) t;
 		String opId = Transition.getIdFromPrologTerm(cpt.getArgument(1));
 		String name = BindingGenerator.getCompoundTerm(cpt.getArgument(2), 0).getFunctor().intern();
 		String srcId = Transition.getIdFromPrologTerm(cpt.getArgument(3));

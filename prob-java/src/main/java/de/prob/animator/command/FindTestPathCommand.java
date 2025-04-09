@@ -10,7 +10,6 @@ import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.exception.ProBError;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
-import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.StateSpace;
@@ -91,7 +90,7 @@ public class FindTestPathCommand extends AbstractCommand implements IStateSpaceM
 			this.result = ResultType.STATE_FOUND;
 			List<Transition> transitions = new ArrayList<>();
 			for(PrologTerm prologTerm : list) {
-				transitions.add(Transition.createTransitionFromCompoundPrologTerm(stateSpace, (CompoundPrologTerm) prologTerm));
+				transitions.add(Transition.createTransitionFromCompoundPrologTerm(stateSpace, prologTerm));
 			}
 			this.transitions = transitions;
 		} else if (resultTerm.hasFunctor("errors", 1)) {
