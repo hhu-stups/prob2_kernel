@@ -42,6 +42,7 @@ import de.prob.animator.command.GetPreferenceCommand;
 import de.prob.animator.command.GetShortestTraceCommand;
 import de.prob.animator.command.GetStatesFromPredicate;
 import de.prob.animator.command.IStateSpaceModifier;
+import de.prob.animator.command.NoStateFoundException;
 import de.prob.animator.command.RegisterFormulasCommand;
 import de.prob.animator.command.SetPreferenceCommand;
 import de.prob.animator.command.UnregisterFormulasCommand;
@@ -834,12 +835,13 @@ public final class StateSpace implements IAnimator {
 
 	/**
 	 * Takes an {@link IEvalElement} containing a predicate and returns a
-	 * {@link Trace} containing only a magic operation that leads to valid state
+	 * {@link Trace} containing a trace that leads to a valid state
 	 * where the predicate holds.
 	 *
 	 * @param predicate
 	 *            predicate that should hold in the valid state
-	 * @return {@link Trace} containing a magic operation leading to the state.
+	 * @return {@link Trace} leading to the state.
+	 * @throws NoStateFoundException when there is no trace to a valid state satisfying the given predicate
 	 */
 	public Trace getTraceToState(final IEvalElement predicate) {
 		FindStateCommand cmd = new FindStateCommand(this, predicate, true);
