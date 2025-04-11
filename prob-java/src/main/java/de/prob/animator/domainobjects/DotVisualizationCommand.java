@@ -27,6 +27,7 @@ public final class DotVisualizationCommand extends DynamicCommandItem {
 	public static final String CUSTOM_GRAPH_NAME = "custom_graph";
 	public static final String EXPRESSION_AS_GRAPH_NAME = "expr_as_graph";
 	public static final String FORMULA_TREE_NAME = "formula_tree";
+	public static final String RULE_DEPENDENCY_GRAPH_NAME = "rule_dependency_graph";
 	public static final String STATE_AS_GRAPH_NAME = "state_as_graph";
 	public static final String STATE_SPACE_NAME = "state_space";
 	public static final String STATE_SPACE_FAST_NAME = "state_space_sfdp";
