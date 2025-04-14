@@ -1,16 +1,19 @@
 package de.prob.model.brules;
 
 import com.google.common.base.Stopwatch;
-import com.google.common.io.MoreFiles;
 import de.be4.classicalb.core.parser.rules.*;
 import de.prob.animator.command.ExecuteModelCommand;
-import de.prob.model.brules.output.RuleValidationReport;
+import de.prob.animator.command.ExportRuleValidationReportCommand;
+import de.prob.animator.domainobjects.DotCall;
+import de.prob.animator.domainobjects.DotVisualizationCommand;
 import de.prob.model.brules.output.RulesDependencyGraph;
 import de.prob.statespace.State;
+import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
 import de.prob.statespace.Transition;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -245,7 +248,15 @@ public final class RulesChecker {
 	 * Saves complete dependency graph for all operations.
 	 */
 	public void saveDependencyGraph(final Path path, final String dotOutputFormat) throws IOException, InterruptedException {
-		saveDependencyGraph(path, rulesProject.getOperationsMap().values(), dotOutputFormat);
+		byte[] dotContent = DotVisualizationCommand.getByName(DotVisualizationCommand.RULE_DEPENDENCY_GRAPH_NAME, trace)
+				.visualizeToBytes(dotOutputFormat, new ArrayList<>());
+		StateSpace stateSpace = trace.getStateSpace();
+
+		Files.write(path, new DotCall(stateSpace.getCurrentPreference("DOT"))
+				.layoutEngine(stateSpace.getCurrentPreference("DOT_ENGINE"))
+				.outputFormat(dotOutputFormat)
+				.input(dotContent)
+				.call());
 	}
 
 	/**
@@ -261,12 +272,16 @@ public final class RulesChecker {
 	 *
 	 * @param path if the file extension is .xml, report is saved as machine-readable XML, otherwise as interactive HTML
 	 */
-	public void saveValidationReport(final Path path, final Locale locale) throws IOException {
-		String exportType = MoreFiles.getFileExtension(path);
-		if (exportType.equals("xml")) {
-			RuleValidationReport.exportAsXML(trace, path, stopwatch.elapsed());
-		} else {
-			RuleValidationReport.exportAsHTML(trace, path, locale, stopwatch.elapsed());
-		}
+	public void saveValidationReport(final Path path) {
+		trace.getStateSpace().execute(new ExportRuleValidationReportCommand(
+				trace.getCurrentState().getId(), path.toFile(), stopwatch.elapsed().toMillis()));
+	}
+
+	/**
+	 * Use {@link #saveValidationReport(Path)} instead.
+	 */
+	@Deprecated
+	public void saveValidationReport(final Path path, final Locale locale) {
+		saveValidationReport(path);
 	}
 }

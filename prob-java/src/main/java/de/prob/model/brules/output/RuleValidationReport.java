@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Deprecated
 public class RuleValidationReport {
 
 	public static void exportAsHTML(final Trace trace, final Path path, final Locale locale,
