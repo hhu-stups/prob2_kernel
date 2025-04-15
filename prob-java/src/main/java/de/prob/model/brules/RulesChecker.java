@@ -249,7 +249,7 @@ public final class RulesChecker {
 	 */
 	public void saveDependencyGraph(final Path path, final String dotOutputFormat) throws IOException, InterruptedException {
 		byte[] dotContent = DotVisualizationCommand.getByName(DotVisualizationCommand.RULE_DEPENDENCY_GRAPH_NAME, trace)
-				.visualizeToBytes(dotOutputFormat, new ArrayList<>());
+				.visualizeAsDotToBytes(new ArrayList<>());
 		StateSpace stateSpace = trace.getStateSpace();
 
 		Files.write(path, new DotCall(stateSpace.getCurrentPreference("DOT"))
