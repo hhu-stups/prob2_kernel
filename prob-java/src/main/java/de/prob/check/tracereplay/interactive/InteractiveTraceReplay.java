@@ -52,6 +52,14 @@ public class InteractiveTraceReplay {
 		updateStatus();
 	}
 
+	public void restart() {
+		checkInitialised(false);
+		currentStep = 0;
+		currentTransitions.clear();
+		replaySteps.forEach(InteractiveReplayStep::undo);
+		updateStatus();
+	}
+
 	public void replayCurrentStep() {
 		checkInitialised(true);
 		if (nextTransition != null) { // add nextTransition from status command (saves one Prolog call)
@@ -122,7 +130,9 @@ public class InteractiveTraceReplay {
 	}
 
 	private void checkInitialised(boolean failOnFinish) {
-		if (!isInitialised()) {
+		if (stateSpace.isKilled()) {
+			throw new IllegalStateException("StateSpace for interactive trace replay has been killed.");
+		} else if (!isInitialised()) {
 			throw new IllegalStateException("Interactive Trace Replay is not initialised for " + traceFile.getAbsolutePath());
 		} else if (failOnFinish && isFinished()) {
 			throw new IllegalStateException("Interactive Trace Replay is already finished for " + traceFile.getAbsolutePath());
@@ -131,6 +141,10 @@ public class InteractiveTraceReplay {
 
 	public File getTraceFile() {
 		return traceFile;
+	}
+
+	public StateSpace getStateSpace() {
+		return stateSpace;
 	}
 
 	public boolean isInitialised() {
@@ -161,8 +175,8 @@ public class InteractiveTraceReplay {
 		return Collections.unmodifiableList(nextTransitionsErrors);
 	}
 
-	public Trace getCurrentTrace(StateSpace stateSpace) {
-		return new Trace(stateSpace).addTransitions(currentTransitions);
+	public Trace getCurrentTrace() {
+		return new Trace(this.stateSpace).addTransitions(currentTransitions);
 	}
 
 	public List<InteractiveReplayStep> getReplaySteps() {
