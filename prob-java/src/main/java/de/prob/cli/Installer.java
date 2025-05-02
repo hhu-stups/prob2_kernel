@@ -36,6 +36,8 @@ public final class Installer {
 	private static final Path LOCK_FILE_PATH = DEFAULT_HOME.resolve("installer.lock");
 	private static final Logger LOGGER = LoggerFactory.getLogger(Installer.class);
 
+	private static boolean installed = false;
+
 	private Installer() {
 		throw new AssertionError("Utility class");
 	}
@@ -93,7 +95,7 @@ public final class Installer {
 	 * @param osInfo determines which OS the installed ProB should be for
 	 */
 	@SuppressWarnings("try") // javac warns about unused resource (lockFileChannel.lock()) in try-with-resources
-	static void installGlobally(OsSpecificInfo osInfo) {
+	private static void installGlobally(OsSpecificInfo osInfo) {
 		LOGGER.info("Attempting to install CLI binaries");
 		try {
 			// Create ProB home directory if necessary.
@@ -104,29 +106,38 @@ public final class Installer {
 
 		// Ensure that the CLI isn't installed multiple times in parallel.
 		// The FileChannel/FileLock guards against multiple different processes installing at once.
-		// The installLock guards against multiple threads inside the same process installing at once.
+		// The lock in ensureInstalledGlobally guards against multiple threads inside the same process installing at once.
 		// (FileChannel.lock works "on behalf of the entire Java virtual machine" according to the docs
 		// and can throw a OverlappingFileLockException when locking a file from two threads in the same process.)
+		try (
+			final FileChannel lockFileChannel = FileChannel.open(LOCK_FILE_PATH, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
+			final FileLock ignored = lockFileChannel.lock()
+		) {
+			LOGGER.trace("Acquired lock file for installing CLI binaries");
+			extractBundledProbcli(DEFAULT_HOME, osInfo);
+			LOGGER.info("CLI binaries successfully installed");
+		} catch (IOException e) {
+			throw new UncheckedIOException("Failed to install ProB CLI binaries", e);
+		} finally {
+			try {
+				// try to delete the lock file when this VM exits
+				LOCK_FILE_PATH.toFile().deleteOnExit();
+			} catch (Exception ignored) {
+				// silently ignore errors
+				// it is not a problem if the file persists
+			}
+		}
+	}
+
+	static void ensureInstalledGlobally(OsSpecificInfo osInfo) {
 		synchronized (Installer.class) {
 			LOGGER.trace("Acquired process-local lock for installing CLI binaries");
-			try (
-				final FileChannel lockFileChannel = FileChannel.open(LOCK_FILE_PATH, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
-				final FileLock ignored = lockFileChannel.lock()
-			) {
-				LOGGER.trace("Acquired lock file for installing CLI binaries");
-				extractBundledProbcli(DEFAULT_HOME, osInfo);
-				LOGGER.info("CLI binaries successfully installed");
-			} catch (IOException e) {
-				throw new UncheckedIOException("Failed to install ProB CLI binaries", e);
-			} finally {
-				try {
-					// try to delete the lock file when this VM exits
-					LOCK_FILE_PATH.toFile().deleteOnExit();
-				} catch (Exception ignored) {
-					// silently ignore errors
-					// it is not a problem if the file persists
-				}
+			if (installed) {
+				return;
 			}
+
+			installGlobally(osInfo);
+			installed = true;
 		}
 	}
 }

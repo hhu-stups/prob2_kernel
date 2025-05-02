@@ -74,7 +74,7 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 	static ProBInstanceProvider defaultProvider(OsSpecificInfo osInfo) {
 		String proBDirectoryOverride = System.getProperty("prob.home");
 		if (proBDirectoryOverride == null) {
-			Installer.installGlobally(osInfo);
+			Installer.ensureInstalledGlobally(osInfo);
 			return new ProBInstanceProvider(Installer.DEFAULT_HOME, osInfo);
 		} else {
 			return new ProBInstanceProvider(Paths.get(proBDirectoryOverride), osInfo);
