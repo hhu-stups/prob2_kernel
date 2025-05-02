@@ -119,12 +119,19 @@ public final class Installer {
 		} catch (IOException e) {
 			throw new UncheckedIOException("Failed to install ProB CLI binaries", e);
 		} finally {
+			// Delete the installer lock file once we're done with it.
+			// This is only for cleanliness and is *not* required for releasing the lock -
+			// that is already done by the try-with-resources block closing/releasing the FileLock.
 			try {
-				// try to delete the lock file when this VM exits
-				LOCK_FILE_PATH.toFile().deleteOnExit();
-			} catch (Exception ignored) {
-				// silently ignore errors
-				// it is not a problem if the file persists
+				Files.delete(LOCK_FILE_PATH);
+			} catch (IOException | RuntimeException e) {
+				// It's safe to ignore exceptions here -
+				// the lock is already released (see above)
+				// and the locking code also works fine if the lock file already exists.
+				// If we fail to delete it here,
+				// a future run of the ProB Java API will reuse the already existing lock file
+				// (and then try to delete it again).
+				LOGGER.warn("Failed to delete installer lock file - ignoring", e);
 			}
 		}
 	}
