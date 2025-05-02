@@ -140,6 +140,7 @@ public final class Installer {
 		synchronized (Installer.class) {
 			LOGGER.trace("Acquired process-local lock for installing CLI binaries");
 			if (installed) {
+				LOGGER.trace("CLI binaries have already been installed for this process");
 				return;
 			}
 
