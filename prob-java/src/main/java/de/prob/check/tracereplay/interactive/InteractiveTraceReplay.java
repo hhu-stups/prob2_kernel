@@ -91,14 +91,14 @@ public class InteractiveTraceReplay {
 
 	public void undoLastStep() {
 		checkInitialised(false);
-		if (currentStep >= 1) {
-			currentStep--;
-			int index = getCurrentStep().getTransitionIndex();
-			// we want to undo stepNr currentStep-1 and all manual animation steps after it
-			if (index >= 0 && index < currentTransitions.size()) {
-				currentTransitions.subList(index, currentTransitions.size()).clear();
+		int possiblePreviousStep = currentStep-1;
+		if (possiblePreviousStep >= 0) {
+			int index = getStep(possiblePreviousStep).getTransitionIndex();
+			if (index == currentTransitions.size()-1) {
+				currentStep--;
+				getCurrentStep().undo();
 			}
-			getCurrentStep().undo();
+			currentTransitions.remove(currentTransitions.size()-1);
 		}
 		updateStatus();
 	}
