@@ -84,7 +84,9 @@ public class InteractiveTraceReplay {
 	public void skipCurrentStep() {
 		checkInitialised(true);
 		getCurrentStep().withTransitionIndex(currentTransitions.size());
-		// skip is not in currentTransitions: use the latest transition (can be the same for other skips if there are multiple skips)
+		String id = getCurrentStateId();
+		currentTransitions.add(Transition.generateArtificialTransition(stateSpace, "skip", "skip", id, id));
+		// add artificial skip transition: this is removed in getCurrentTrace()
 		currentStep++;
 		updateStatus();
 	}
@@ -104,7 +106,7 @@ public class InteractiveTraceReplay {
 	}
 
 	private void performReplayStep(Transition transition, TransitionReplayPrecision precision, List<String> errors) {
-		InteractiveReplayStep step = getStep(currentStep);
+		InteractiveReplayStep step = getCurrentStep();
 		step.withTransitionIndex(currentTransitions.size());
 		step.withPrecision(precision);
 		step.withErrors(errors);
@@ -176,7 +178,17 @@ public class InteractiveTraceReplay {
 	}
 
 	public Trace getCurrentTrace() {
-		return new Trace(this.stateSpace).addTransitions(currentTransitions);
+		List<Transition> filteredTransitions = new ArrayList<>(currentTransitions);
+		filteredTransitions.removeIf(t -> t.getId().equals("skip")); // remove skips
+		return new Trace(this.stateSpace).addTransitions(filteredTransitions);
+	}
+
+	public Transition getStepTransition(int stepNr) {
+		int index = getStep(stepNr).getTransitionIndex();
+		if (index < 0 || index >= currentTransitions.size()) {
+			throw new IllegalArgumentException("step " + stepNr + " not replayed yet");
+		}
+		return currentTransitions.get(index);
 	}
 
 	public List<InteractiveReplayStep> getReplaySteps() {
