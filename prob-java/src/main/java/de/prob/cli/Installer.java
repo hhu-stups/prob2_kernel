@@ -36,7 +36,7 @@ public final class Installer {
 	private static final Path LOCK_FILE_PATH = DEFAULT_HOME.resolve("installer.lock");
 	private static final Logger LOGGER = LoggerFactory.getLogger(Installer.class);
 
-	private static boolean installed = false;
+	private static Path proBDirectory = null;
 
 	private Installer() {
 		throw new AssertionError("Utility class");
@@ -90,23 +90,23 @@ public final class Installer {
 	}
 
 	/**
-	 * Install all CLI binaries to the global ProB home ({@link #DEFAULT_HOME}).
+	 * Install all CLI binaries to the static ProB directory ({@link #DEFAULT_HOME}).
 	 * 
 	 * @param osInfo determines which OS the installed ProB should be for
 	 */
 	@SuppressWarnings("try") // javac warns about unused resource (lockFileChannel.lock()) in try-with-resources
-	private static void installGlobally(OsSpecificInfo osInfo) {
-		LOGGER.info("Attempting to install CLI binaries");
+	private static void installToStaticDirectory(OsSpecificInfo osInfo) {
+		LOGGER.info("Installing CLI binaries to static directory");
 		try {
-			// Create ProB home directory if necessary.
+			// Create the static ProB home directory if necessary.
 			Files.createDirectories(DEFAULT_HOME);
 		} catch (IOException e) {
-			throw new UncheckedIOException("Failed to create ProB home directory", e);
+			throw new UncheckedIOException("Failed to create static ProB home directory", e);
 		}
 
 		// Ensure that the CLI isn't installed multiple times in parallel.
 		// The FileChannel/FileLock guards against multiple different processes installing at once.
-		// The lock in ensureInstalledGlobally guards against multiple threads inside the same process installing at once.
+		// The lock in ensureInstalled guards against multiple threads inside the same process installing at once.
 		// (FileChannel.lock works "on behalf of the entire Java virtual machine" according to the docs
 		// and can throw a OverlappingFileLockException when locking a file from two threads in the same process.)
 		try (
@@ -136,16 +136,17 @@ public final class Installer {
 		}
 	}
 
-	static void ensureInstalledGlobally(OsSpecificInfo osInfo) {
+	static Path ensureInstalled(OsSpecificInfo osInfo) {
 		synchronized (Installer.class) {
 			LOGGER.trace("Acquired process-local lock for installing CLI binaries");
-			if (installed) {
+			if (proBDirectory == null) {
+				installToStaticDirectory(osInfo);
+				proBDirectory = DEFAULT_HOME;
+			} else {
 				LOGGER.trace("CLI binaries have already been installed for this process");
-				return;
 			}
 
-			installGlobally(osInfo);
-			installed = true;
+			return proBDirectory;
 		}
 	}
 }
