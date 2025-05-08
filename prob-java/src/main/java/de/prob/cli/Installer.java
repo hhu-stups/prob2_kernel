@@ -29,12 +29,7 @@ import org.slf4j.LoggerFactory;
  * External code should not use this class directly.
  */
 public final class Installer {
-	/**
-	 * For internal use only.
-	 * External code should not use this constant directly.
-	 * Use dependency injection instead - inject a {@link Path} annotated with {@link Home}.
-	 */
-	public static final Path DEFAULT_HOME = Paths.get(System.getProperty("user.home"), ".prob", "prob2-" + Main.getVersion());
+	private static final Path DEFAULT_HOME = Paths.get(System.getProperty("user.home"), ".prob", "prob2-" + Main.getVersion());
 
 	private static final Path LOCK_FILE_PATH = DEFAULT_HOME.resolve("installer.lock");
 	private static final Logger LOGGER = LoggerFactory.getLogger(Installer.class);
@@ -197,7 +192,15 @@ public final class Installer {
 		}
 	}
 
-	static Path ensureInstalled(OsSpecificInfo osInfo) {
+	/**
+	 * For internal use only! No touching!
+	 * This method will soon become non-public again without warning!
+	 * You do not need to call this method as a user of the ProB Java API!
+	 * 
+	 * @param osInfo determines which OS the installed ProB should be for
+	 * @return path of the (possibly temporary) ProB installation directory
+	 */
+	public static Path ensureInstalled(OsSpecificInfo osInfo) {
 		synchronized (Installer.class) {
 			LOGGER.trace("Acquired process-local lock for installing CLI binaries");
 			if (proBDirectory == null) {
