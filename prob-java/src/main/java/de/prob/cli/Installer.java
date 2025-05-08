@@ -14,6 +14,9 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.google.common.io.MoreFiles;
+import com.google.common.io.RecursiveDeleteOption;
+
 import de.prob.Main;
 import de.prob.annotations.Home;
 import de.prob.scripting.FileHandler;
@@ -90,7 +93,28 @@ public final class Installer {
 	}
 
 	/**
+	 * <p>
 	 * Install all CLI binaries to the static ProB directory ({@link #DEFAULT_HOME}).
+	 * </p>
+	 * <p>
+	 * This installation method has known issues when multiple parallel processes use the ProB Java API,
+	 * which can be avoided by using {@link #installToTempDirectory(OsSpecificInfo)} instead.
+	 * Known issues include:
+	 * </p>
+	 * <ul>
+	 * <li>
+	 * On Windows, if one instance of the ProB Java API has a running probcli process,
+	 * it's impossible to start another instance of the same version of the ProB Java API
+	 * (because the second instance will try to overwrite the currently running probcli.exe file,
+	 * which is not allowed on Windows).
+	 * </li>
+	 * <li>
+	 * Running different SNAPSHOT versions of the ProB Java API
+	 * (same version number string, but different builds)
+	 * in parallel can fail unpredictably,
+	 * because they will overwrite each other's files with potentially incompatible versions.
+	 * </li>
+	 * </ul>
 	 * 
 	 * @param osInfo determines which OS the installed ProB should be for
 	 */
@@ -135,13 +159,55 @@ public final class Installer {
 			}
 		}
 	}
+	
+	/**
+	 * <p>
+	 * Install all CLI binaries into a new temporary directory,
+	 * which will be deleted automatically when the JVM shuts down.
+	 * </p>
+	 * <p>
+	 * Compared to installing into a static directory ({@link #installToStaticDirectory(OsSpecificInfo)}),
+	 * this avoids certain conflicts when multiple parallel processes use the ProB Java API.
+	 * </p>
+	 * 
+	 * @param osInfo determines which OS the installed ProB should be for
+	 * @return path of the new temporary installation directory
+	 */
+	private static Path installToTempDirectory(OsSpecificInfo osInfo) {
+		try {
+			LOGGER.info("Installing CLI binaries to a new temporary directory");
+			Path installDirectory = Files.createTempDirectory("prob-java");
+			LOGGER.trace("Created temporary directory for CLI binaries: {}", installDirectory);
+
+			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+				LOGGER.debug("Deleting temporary ProB installation directory: {}", installDirectory);
+				try {
+					MoreFiles.deleteRecursively(installDirectory, RecursiveDeleteOption.ALLOW_INSECURE);
+				} catch (IOException | RuntimeException exc) {
+					LOGGER.error("Failed to delete temporary ProB installation directory", exc);
+				}
+			}, "ProB temp install dir deleter"));
+
+			// No lock file needed here - a fresh temp directory cannot conflict with other processes.
+			extractBundledProbcli(installDirectory, osInfo);
+
+			return installDirectory;
+		} catch (IOException exc) {
+			throw new UncheckedIOException("Failed to install ProB CLI binaries to temporary directory", exc);
+		}
+	}
 
 	static Path ensureInstalled(OsSpecificInfo osInfo) {
 		synchronized (Installer.class) {
 			LOGGER.trace("Acquired process-local lock for installing CLI binaries");
 			if (proBDirectory == null) {
-				installToStaticDirectory(osInfo);
-				proBDirectory = DEFAULT_HOME;
+				String probHomeTempString = System.getProperty("prob.home.temp");
+				if (Boolean.parseBoolean(probHomeTempString)) {
+					proBDirectory = installToTempDirectory(osInfo);
+				} else {
+					installToStaticDirectory(osInfo);
+					proBDirectory = DEFAULT_HOME;
+				}
 			} else {
 				LOGGER.trace("CLI binaries have already been installed for this process");
 			}
