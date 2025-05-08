@@ -204,7 +204,11 @@ public final class Installer {
 			LOGGER.trace("Acquired process-local lock for installing CLI binaries");
 			if (proBDirectory == null) {
 				String probHomeTempString = System.getProperty("prob.home.temp");
-				if (Boolean.parseBoolean(probHomeTempString)) {
+				// Use the temp directory installation method by default
+				// and only install to the static directory if explicitly requested with -Dprob.home.temp=false.
+				// The static directory installation has known issues -
+				// see the installToStaticDirectory Javadoc.
+				if (!"false".equalsIgnoreCase(probHomeTempString)) {
 					proBDirectory = installToTempDirectory(osInfo);
 				} else {
 					installToStaticDirectory(osInfo);
