@@ -18,7 +18,6 @@ import com.google.common.io.MoreFiles;
 import com.google.common.io.RecursiveDeleteOption;
 
 import de.prob.Main;
-import de.prob.annotations.Home;
 import de.prob.scripting.FileHandler;
 
 import org.slf4j.Logger;
