@@ -39,10 +39,14 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 
 		private final int port;
 		private final long userInterruptReference;
+		private final String prolog;
+		private final boolean fastrw;
 
-		CliInformation(final int port, final long userInterruptReference) {
+		CliInformation(int port, long userInterruptReference, String prolog, boolean fastrw) {
 			this.port = port;
 			this.userInterruptReference = userInterruptReference;
+			this.prolog = prolog;
+			this.fastrw = fastrw;
 		}
 
 		int getPort() {
@@ -52,12 +56,24 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 		long getUserInterruptReference() {
 			return userInterruptReference;
 		}
+
+		String getProlog() {
+			return prolog;
+		}
+
+		boolean isFastRw() {
+			return fastrw;
+		}
 	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProBInstanceProvider.class);
 
+	private static final boolean SOCKET_FASTRW = "true".equalsIgnoreCase(System.getProperty("prob.cli.fastrw"));
+
 	static final Pattern CLI_PORT_PATTERN = Pattern.compile("^.*Port: (\\d+)$");
 	static final Pattern CLI_USER_INTERRUPT_REFERENCE_PATTERN = Pattern.compile("^.*user interrupt reference id: *(\\d+|off) *$");
+	static final Pattern CLI_PROLOG = Pattern.compile("^.*prolog:\\s*(.*?)\\s*$");
+	static final Pattern CLI_FASTRW_ENABLED = Pattern.compile("^.*cli fastrw enabled:\\s*(.*?)\\s*$");
 
 	private final Path proBDirectory;
 	private final OsSpecificInfo osInfo;
@@ -135,6 +151,9 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 		final List<String> command = new ArrayList<>();
 		command.add(executable.toString());
 		command.add("-sf");
+		/* TODO: if (SOCKET_FASTRW) {
+			command.addAll(Arrays.asList("-p", "cli_socket_fastrw", "true"));
+		}*/
 		final ProcessBuilder pb = new ProcessBuilder(command);
 		pb.environment().put("PROB_HOME", this.getProBDirectory().toString());
 		pb.redirectErrorStream(true);
@@ -143,7 +162,7 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 		try {
 			LOGGER.info("Starting ProB's Prolog Core. Path is {}", executable);
 			prologProcess = pb.start();
-			LOGGER.debug("probcli -sf started");
+			LOGGER.debug("{} started", command);
 		} catch (Exception e) {
 			throw new CliError("Problem while starting up ProB CLI: " + e.getMessage(), e);
 		}
@@ -198,7 +217,7 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 
 		final ProBConnection connection;
 		try {
-			connection = new ProBConnection(cliInformation.getPort());
+			connection = new ProBConnection(cliInformation);
 		} catch (Exception e) {
 			throw new CliError("Error while opening socket connection to CLI", e);
 		}
@@ -218,6 +237,8 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 	static CliInformation extractCliInformation(final BufferedReader input) {
 		Integer port = null;
 		Long userInterruptReference = null;
+		String prolog = null;
+		Boolean fastrw = null;
 		try {
 			for (String line; (line = input.readLine()) != null; ) {
 				LOGGER.info("CLI startup output: {}", line);
@@ -240,7 +261,19 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 					}
 				}
 
-				if ((port != null && userInterruptReference != null)
+				final Matcher prologMatcher = CLI_PROLOG.matcher(line);
+				if (prologMatcher.matches()) {
+					prolog = prologMatcher.group(1);
+					LOGGER.info("Received prolog info from CLI: {}", prolog);
+				}
+
+				final Matcher fastrwMatcher = CLI_FASTRW_ENABLED.matcher(line);
+				if (fastrwMatcher.matches()) {
+					fastrw = "true".equals(fastrwMatcher.group(1));
+					LOGGER.info("Received fastrw status from CLI: {}", fastrw);
+				}
+
+				if ((port != null && userInterruptReference != null && fastrw != null)
 					|| line.contains("starting command loop")) {
 					break;
 				}
@@ -254,6 +287,13 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 		} else if (userInterruptReference == null) {
 			throw new CliError("Did not receive user interrupt reference from CLI");
 		}
-		return new CliInformation(port, userInterruptReference);
+
+		if (prolog == null) {
+			prolog = "sicstus";
+		}
+		if (fastrw == null) {
+			fastrw = false;
+		}
+		return new CliInformation(port, userInterruptReference, prolog, fastrw);
 	}
 }

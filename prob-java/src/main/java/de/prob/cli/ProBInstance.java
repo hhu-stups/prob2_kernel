@@ -146,6 +146,10 @@ public final class ProBInstance implements Closeable {
 		return this.shuttingDown;
 	}
 
+	public boolean isFastRw() {
+		return this.connection.isFastRw();
+	}
+
 	@Override
 	public String toString() {
 		return MoreObjects.toStringHelper(this)

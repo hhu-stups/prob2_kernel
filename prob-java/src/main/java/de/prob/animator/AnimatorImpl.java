@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 
 class AnimatorImpl implements IAnimator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AnimatorImpl.class);
-	private static final boolean DIRECT_SOCKET_WRITE = "true".equals(System.getProperty("prob.directwrite"));
+	private static final boolean DIRECT_SOCKET_WRITE = "true".equalsIgnoreCase(System.getProperty("prob.directwrite"));
 
 	private static int counter = 0;
 	private final String id = "animator" + counter++;
@@ -93,18 +93,33 @@ class AnimatorImpl implements IAnimator {
 		String result;
 		if (command instanceof IRawCommand) {
 			String query = ((IRawCommand) command).getCommand();
-			if (!query.endsWith(".")) {
-				query += ".";
+			if (this.cli.isFastRw()) {
+				final String realQuery;
+				if (query.endsWith(".")) {
+					realQuery = query.substring(0, query.length() - 2);
+				} else {
+					realQuery = query;
+				}
+				LOGGER.trace("Built raw command term after {}", sw);
+				result = cli.send(pto -> pto
+						.openTerm("INTERNAL_raw_command")
+						.printAtom(realQuery)
+						.closeTerm()
+						.fullstop()
+				);
+			} else {
+				if (!query.endsWith(".")) {
+					query += ".";
+				}
+				LOGGER.trace("Built raw command term after {}", sw);
+				result = cli.send(query);
 			}
-			LOGGER.trace("Built raw command term after {}", sw);
-			result = cli.send(query);
 		} else {
 			final Consumer<IPrologTermOutput> termGenerator = pto -> {
 				command.writeCommand(pto);
-				pto.printAtom("true");
 				pto.fullstop();
 			};
-			if (DIRECT_SOCKET_WRITE) {
+			if (DIRECT_SOCKET_WRITE || this.cli.isFastRw()) {
 				result = cli.send(termGenerator);
 			} else {
 				PrologTermStringOutput pto = new PrologTermStringOutput();
@@ -119,14 +134,22 @@ class AnimatorImpl implements IAnimator {
 		PResult topnode = ProBResultParser.parse(result).getPResult();
 		while (topnode instanceof AProgressResult || topnode instanceof ACallBackResult) {
 			LOGGER.trace("Processing sub-result of type {}", topnode.getClass().getSimpleName());
+			PrologTerm term = PrologTermGenerator.toPrologTerm(topnode);
 			if (topnode instanceof AProgressResult) {
 				// enable the command to respond to the progress information (e.g., by updating progress bar)
-				command.processProgressResult(PrologTermGenerator.toPrologTerm(topnode));
+				command.processProgressResult(term);
 				result = cli.receive(); // receive next term by Prolog
 			} else {
-				final PrologTermStringOutput pout = new PrologTermStringOutput();
-				command.processCallBack(PrologTermGenerator.toPrologTerm(topnode), pout);
-				result = cli.send(pout.fullstop().toString());
+				if (DIRECT_SOCKET_WRITE || this.cli.isFastRw()) {
+					result = cli.send(pto -> {
+						command.processCallBack(term, pto);
+						pto.fullstop();
+					});
+				} else {
+					final PrologTermStringOutput pout = new PrologTermStringOutput();
+					command.processCallBack(term, pout);
+					result = cli.send(pout.fullstop().toString());
+				}
 			}
 			topnode = ProBResultParser.parse(result).getPResult();
 			LOGGER.trace("Processed sub-result after {}", sw);

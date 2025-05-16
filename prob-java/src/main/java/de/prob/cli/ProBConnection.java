@@ -1,5 +1,6 @@
 package de.prob.cli;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.Closeable;
 import java.io.IOException;
@@ -16,6 +17,8 @@ import java.util.function.Consumer;
 
 import com.google.common.base.MoreObjects;
 
+import de.prob.prolog.output.FastSicstusTermOutput;
+import de.prob.prolog.output.FastSwiTermOutput;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.output.PrologTermOutput;
 
@@ -26,29 +29,49 @@ public final class ProBConnection implements Closeable {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProBConnection.class);
 
-	private final int port;
+	private final ProBInstanceProvider.CliInformation info;
 	private final Socket socket;
 	private final Scanner inputScanner;
 	private final Writer outputWriter;
+	private final IPrologTermOutput termOutput;
 	private volatile boolean shuttingDown = false;
 
-	public ProBConnection(final int port) throws IOException {
-		this.port = port;
+	ProBConnection(final ProBInstanceProvider.CliInformation info) throws IOException {
+		this.info = info;
 
-		LOGGER.debug("Connecting to port {}", this.port);
+		LOGGER.debug("Connecting to port {}", this.info.getPort());
 		InetAddress loopbackAddress = InetAddress.getByName(null);
-		this.socket = new Socket(loopbackAddress, this.port);
+		this.socket = new Socket(loopbackAddress, this.info.getPort());
 		this.inputScanner = new Scanner(socket.getInputStream(), StandardCharsets.UTF_8.name())
 			.useDelimiter("\u0001") // Prolog sends character 1 to terminate its outputs
 			.useLocale(Locale.ROOT);
 		this.outputWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8));
+		if (this.info.isFastRw()) {
+			if ("swi".equals(this.info.getProlog())) {
+				this.termOutput = new GroundReprTermOutput(new FastSwiTermOutput(new BufferedOutputStream(socket.getOutputStream())));
+			} else if ("sicstus".equals(this.info.getProlog())) {
+				this.termOutput = new GroundReprTermOutput(new FastSicstusTermOutput(new BufferedOutputStream(socket.getOutputStream())));
+			} else {
+				LOGGER.warn("Unknown prolog system {}, unable to configure socket for fastrw communication. Falling back to textual term.", this.info.getProlog());
+				this.termOutput = new PrologTermOutput(this.outputWriter, false);
+			}
+		} else {
+			this.termOutput = new PrologTermOutput(this.outputWriter, false);
+		}
 		LOGGER.debug("Connected");
+	}
+
+	@Deprecated
+	public ProBConnection(final int port) throws IOException {
+		this(new ProBInstanceProvider.CliInformation(port, -1, "sicstus", false));
 	}
 
 	@Override
 	public String toString() {
 		return MoreObjects.toStringHelper(this)
-			.add("port", port)
+			.add("port", info.getPort())
+			.add("prolog", info.getProlog())
+			.add("fastrw", info.isFastRw())
 			.add("shuttingDown", shuttingDown)
 			.toString();
 	}
@@ -68,6 +91,10 @@ public final class ProBConnection implements Closeable {
 	}
 
 	public String send(final String term) throws IOException {
+		if (this.isFastRw()) {
+			throw new IllegalStateException("Cannot set string via fastrw connection");
+		}
+
 		if (this.shuttingDown) {
 			LOGGER.error("Cannot send terms while probcli is shutting down: {}", term);
 			throw new IOException("ProB has been shut down. It does not accept messages.");
@@ -95,9 +122,8 @@ public final class ProBConnection implements Closeable {
 		}
 
 		LOGGER.debug("Sending command term directly");
-		IPrologTermOutput pto = new PrologTermOutput(this.outputWriter, false);
-		termOutput.accept(pto);
-		// the command should end with a fullstop and that automatically adds a newline and flushes
+		termOutput.accept(this.termOutput); // the command should end with a fullstop
+		this.outputWriter.flush();
 		LOGGER.trace("Sent");
 
 		return this.getAnswer();
@@ -118,6 +144,10 @@ public final class ProBConnection implements Closeable {
 
 		LOGGER.trace("Answer: {}", input);
 		return input;
+	}
+
+	boolean isFastRw() {
+		return this.info.isFastRw();
 	}
 
 	public void disconnect() {
