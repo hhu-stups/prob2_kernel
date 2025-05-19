@@ -15,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+import de.prob.animator.command.SerializeStateCommand;
 import de.prob.animator.domainobjects.AbstractEvalResult;
 import de.prob.animator.domainobjects.EvalExpandMode;
 import de.prob.animator.domainobjects.EvalOptions;
@@ -22,11 +23,13 @@ import de.prob.animator.domainobjects.EvalResult;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.FormulaTranslationMode;
 import de.prob.animator.domainobjects.IEvalElement;
+import de.prob.model.representation.XTLModel;
 import de.prob.statespace.EvaluatedTransitionInfo;
 import de.prob.statespace.Language;
 import de.prob.statespace.LoadedMachine;
 import de.prob.statespace.OperationInfo;
 import de.prob.statespace.State;
+import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
 
 import static java.util.Collections.emptyList;
@@ -63,7 +66,8 @@ public class PersistentTransition {
 	// FIXME Why is the following constructor duplicated? What's the difference between the two variants?
 	public PersistentTransition(Transition transition, boolean storeDestinationState, PersistentTransition transitionAfter) {
 		this.name = Objects.requireNonNull(transition.getName(), "name");
-		final LoadedMachine loadedMachine = transition.getStateSpace().getLoadedMachine();
+		StateSpace stateSpace = transition.getStateSpace();
+		final LoadedMachine loadedMachine = stateSpace.getLoadedMachine();
 		final State destinationState = transition.getDestination();
 		if (Transition.SETUP_CONSTANTS_NAME.equals(name)) {
 			if (storeDestinationState) {
@@ -71,21 +75,29 @@ public class PersistentTransition {
 			}
 		} else {
 			if (storeDestinationState) {
-				addValuesToDestState(destinationState.getVariableValues(TRACE_SAVE_EVAL_OPTIONS), transitionAfter);
+				if (stateSpace.getModel() instanceof XTLModel) {
+					SerializeStateCommand cmd = new SerializeStateCommand(destinationState.getId());
+					stateSpace.execute(cmd);
+					destState.put("xtl_state", cmd.getState());
+				} else {
+					addValuesToDestState(destinationState.getVariableValues(TRACE_SAVE_EVAL_OPTIONS), transitionAfter);
+				}
 			}
 
 			if (!Transition.INITIALISE_MACHINE_NAME.equals(name)) {
 				// for each operation
 				OperationInfo machineOperationInfo = loadedMachine.getMachineOperationInfo(name);
-				final EvaluatedTransitionInfo evaluated = transition.evaluate(TRACE_SAVE_EVAL_OPTIONS);
+				if (machineOperationInfo != null) {
+					final EvaluatedTransitionInfo evaluated = transition.evaluate(TRACE_SAVE_EVAL_OPTIONS);
 
-				for (int i = 0; i < machineOperationInfo.getParameterNames().size(); i++) {
-					params.put(machineOperationInfo.getParameterNames().get(i), evaluated.getParameterValues().get(i));
-				}
+					for (int i = 0; i < machineOperationInfo.getParameterNames().size(); i++) {
+						params.put(machineOperationInfo.getParameterNames().get(i), evaluated.getParameterValues().get(i));
+					}
 
-				for (int i = 0; i < machineOperationInfo.getOutputParameterNames().size(); i++) {
-					results.put(machineOperationInfo.getOutputParameterNames().get(i),
-						evaluated.getReturnValues().get(i));
+					for (int i = 0; i < machineOperationInfo.getOutputParameterNames().size(); i++) {
+						results.put(machineOperationInfo.getOutputParameterNames().get(i),
+								evaluated.getReturnValues().get(i));
+					}
 				}
 			}
 		}
@@ -94,25 +106,34 @@ public class PersistentTransition {
 	// FIXME While for 2 arguments, the default value of storeDestinationState is true
 	public PersistentTransition(Transition transition, PersistentTransition transitionBefore) {
 		this.name = Objects.requireNonNull(transition.getName(), "name");
-		final LoadedMachine loadedMachine = transition.getStateSpace().getLoadedMachine();
+		StateSpace stateSpace = transition.getStateSpace();
+		final LoadedMachine loadedMachine = stateSpace.getLoadedMachine();
 		final State destinationState = transition.getDestination();
 		if (Transition.SETUP_CONSTANTS_NAME.equals(name)) {
 			addValuesToDestState2(destinationState.getConstantValues(TRACE_SAVE_EVAL_OPTIONS), null);
 		} else {
-			addValuesToDestState2(destinationState.getVariableValues(TRACE_SAVE_EVAL_OPTIONS), transitionBefore);
+			if (stateSpace.getModel() instanceof XTLModel) {
+				SerializeStateCommand cmd = new SerializeStateCommand(destinationState.getId());
+				stateSpace.execute(cmd);
+				destState.put("xtl_state", cmd.getState());
+			} else {
+				addValuesToDestState2(destinationState.getVariableValues(TRACE_SAVE_EVAL_OPTIONS), transitionBefore);
+			}
 
 			if (!Transition.INITIALISE_MACHINE_NAME.equals(name)) {
 				// for each operation
 				OperationInfo machineOperationInfo = loadedMachine.getMachineOperationInfo(name);
-				final EvaluatedTransitionInfo evaluated = transition.evaluate(TRACE_SAVE_EVAL_OPTIONS);
+				if (machineOperationInfo != null) {
+					final EvaluatedTransitionInfo evaluated = transition.evaluate(TRACE_SAVE_EVAL_OPTIONS);
 
-				for (int i = 0; i < machineOperationInfo.getParameterNames().size(); i++) {
-					params.put(machineOperationInfo.getParameterNames().get(i), evaluated.getParameterValues().get(i));
-				}
+					for (int i = 0; i < machineOperationInfo.getParameterNames().size(); i++) {
+						params.put(machineOperationInfo.getParameterNames().get(i), evaluated.getParameterValues().get(i));
+					}
 
-				for (int i = 0; i < machineOperationInfo.getOutputParameterNames().size(); i++) {
-					results.put(machineOperationInfo.getOutputParameterNames().get(i),
-						evaluated.getReturnValues().get(i));
+					for (int i = 0; i < machineOperationInfo.getOutputParameterNames().size(); i++) {
+						results.put(machineOperationInfo.getOutputParameterNames().get(i),
+								evaluated.getReturnValues().get(i));
+					}
 				}
 			}
 		}
