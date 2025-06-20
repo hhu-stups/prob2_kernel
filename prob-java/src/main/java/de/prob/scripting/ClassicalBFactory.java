@@ -135,6 +135,7 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 		BParser bparser = new BParser(modelFile.getPath());
 		new DefinitionCollector(bparser.getDefinitions()).collectDefinitions(model);
 		// otherwise definitions are unknown, maybe this part can be moved to the RML?
+		// TODO: make this work with file definitions, see https://github.com/hhu-stups/prob-issues/issues/387
 
 		final RecursiveMachineLoader rml;
 		try {
