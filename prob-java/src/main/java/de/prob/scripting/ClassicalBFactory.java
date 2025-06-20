@@ -103,10 +103,31 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 		return new ExtractedModel<>(stateSpaceProvider, classicalBModel);
 	}
 
+	/**
+	 * Create a classical B model from the given AST.
+	 * <p>
+	 * ATTENTION: file definitions do not work and some other syntax constructs are unsupported.
+	 * <p>
+	 * If you have any problems, try to pretty-print the AST and use {@link ClassicalBFactory#create(String)} or {@link ClassicalBFactory#extract(String)} instead.
+	 *
+	 * @param model machine ast
+	 * @return extracted model
+	 */
 	public ExtractedModel<ClassicalBModel> create(final Start model) {
 		return create("from_string", model);
 	}
-	
+
+	/**
+	 * Create a classical B model from the given AST.
+	 * <p>
+	 * ATTENTION: file definitions do not work and some other syntax constructs are unsupported.
+	 * <p>
+	 * If you have any problems, try to pretty-print the AST and use {@link ClassicalBFactory#create(String, String)} or {@link ClassicalBFactory#extract(String)} instead.
+	 *
+	 * @param name machine name
+	 * @param model machine ast
+	 * @return extracted model
+	 */
 	public ExtractedModel<ClassicalBModel> create(final String name, final Start model) {
 		ClassicalBModel classicalBModel = modelCreator.get();
 		BParser bparser = new BParser(name + "." + CLASSICAL_B_MACHINE_EXTENSION);
