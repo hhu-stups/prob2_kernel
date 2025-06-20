@@ -62,14 +62,14 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 	public ExtractedModel<ClassicalBModel> extract(final String modelPath) throws IOException {
 		ClassicalBModel classicalBModel = modelCreator.get();
 
-		File f = new File(modelPath);
+		File modelFile = new File(modelPath);
 		BParser bparser = new BParser(modelPath);
 
-		LOGGER.trace("Parsing main file '{}'", f.getAbsolutePath());
+		LOGGER.trace("Parsing main file '{}'", modelFile.getAbsolutePath());
 		Start ast;
 		final RecursiveMachineLoader rml;
 		try {
-			ast = bparser.parseFile(f);
+			ast = bparser.parseFile(modelFile);
 			rml = RecursiveMachineLoader.loadFromAst(bparser, ast, getDefaultParsingBehaviour(), bparser.getContentProvider());
 		} catch (BCompoundException e) {
 			List<BException> exceptions = e.getBExceptions();
@@ -79,7 +79,7 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 				throw new ProBError(e);
 			}
 		}
-		classicalBModel = classicalBModel.create(ast, rml, f, bparser);
+		classicalBModel = classicalBModel.create(ast, rml, modelFile, bparser);
 		return new ExtractedModel<>(stateSpaceProvider, classicalBModel);
 	}
 
@@ -89,7 +89,8 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 
 	public ExtractedModel<ClassicalBModel> create(final String name, final String model) {
 		ClassicalBModel classicalBModel = modelCreator.get();
-		BParser bparser = new BParser(name + "." + CLASSICAL_B_MACHINE_EXTENSION);
+		File modelFile = new File(name + "." + CLASSICAL_B_MACHINE_EXTENSION);
+		BParser bparser = new BParser(modelFile.getPath());
 
 		Start ast;
 		final RecursiveMachineLoader rml;
@@ -99,7 +100,7 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 		} catch (BCompoundException e) {
 			throw new ProBError(e);
 		}
-		classicalBModel = classicalBModel.create(ast, rml, new File(name + "." + CLASSICAL_B_MACHINE_EXTENSION), bparser);
+		classicalBModel = classicalBModel.create(ast, rml, modelFile, bparser);
 		return new ExtractedModel<>(stateSpaceProvider, classicalBModel);
 	}
 
@@ -130,7 +131,8 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 	 */
 	public ExtractedModel<ClassicalBModel> create(final String name, final Start model) {
 		ClassicalBModel classicalBModel = modelCreator.get();
-		BParser bparser = new BParser(name + "." + CLASSICAL_B_MACHINE_EXTENSION);
+		File modelFile = new File(name + "." + CLASSICAL_B_MACHINE_EXTENSION);
+		BParser bparser = new BParser(modelFile.getPath());
 		new DefinitionCollector(bparser.getDefinitions()).collectDefinitions(model);
 		// otherwise definitions are unknown, maybe this part can be moved to the RML?
 
@@ -140,7 +142,7 @@ public class ClassicalBFactory implements ModelFactory<ClassicalBModel> {
 		} catch (BCompoundException e) {
 			throw new ProBError(e);
 		}
-		classicalBModel = classicalBModel.create(model, rml, new File(name + "." + CLASSICAL_B_MACHINE_EXTENSION), bparser);
+		classicalBModel = classicalBModel.create(model, rml, modelFile, bparser);
 		return new ExtractedModel<>(stateSpaceProvider, classicalBModel);
 	}
 }
