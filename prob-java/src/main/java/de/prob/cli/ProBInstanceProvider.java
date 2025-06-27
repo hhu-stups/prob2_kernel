@@ -64,20 +64,36 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 	private final Collection<Process> runningProcesses = new CopyOnWriteArrayList<>();
 	private final Collection<ProBInstance> runningInstances = new CopyOnWriteArrayList<>();
 
-	ProBInstanceProvider(Path proBDirectory, OsSpecificInfo osInfo) {
+	private ProBInstanceProvider(Path proBDirectory, boolean usesSharedProBDirectory, OsSpecificInfo osInfo) {
 		this.proBDirectory = proBDirectory;
 		this.osInfo = osInfo;
 
-		Runtime.getRuntime().addShutdownHook(new Thread(this::shutdownAll, "Prolog Process Destroyer"));
+		if (usesSharedProBDirectory) {
+			Installer.DEFAULT_PROB_DIR_USERS_COUNTER.register();
+		}
+
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			try {
+				this.shutdownAll();
+			} catch (RuntimeException exc) {
+				LOGGER.error("ProBInstanceProvider.shutdownAll() failed while shutting down JVM - ignoring", exc);
+			}
+
+			if (usesSharedProBDirectory) {
+				// Tell Installer that we're done using the default ProB directory
+				// so that its shutdown hook may delete it (if it's a temporary directory).
+				Installer.DEFAULT_PROB_DIR_USERS_COUNTER.arriveAndDeregister();
+			}
+		}, "ProB instance shutdown hook"));
 	}
 
 	static ProBInstanceProvider defaultProvider(OsSpecificInfo osInfo) {
 		String proBDirectoryOverride = System.getProperty("prob.home");
 		if (proBDirectoryOverride == null) {
 			Path proBDirectory = Installer.ensureInstalled(osInfo);
-			return new ProBInstanceProvider(proBDirectory, osInfo);
+			return new ProBInstanceProvider(proBDirectory, true, osInfo);
 		} else {
-			return new ProBInstanceProvider(Paths.get(proBDirectoryOverride), osInfo);
+			return new ProBInstanceProvider(Paths.get(proBDirectoryOverride), false, osInfo);
 		}
 	}
 

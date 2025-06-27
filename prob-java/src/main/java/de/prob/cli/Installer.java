@@ -13,6 +13,9 @@ import java.nio.file.attribute.PosixFileAttributeView;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.Phaser;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import com.google.common.io.MoreFiles;
 import com.google.common.io.RecursiveDeleteOption;
@@ -32,6 +35,23 @@ public final class Installer {
 
 	private static final Path LOCK_FILE_PATH = DEFAULT_HOME.resolve("installer.lock");
 	private static final Logger LOGGER = LoggerFactory.getLogger(Installer.class);
+
+	/**
+	 * <p>
+	 * For internal use only by {@link ProBInstanceProvider}.
+	 * Counts how many {@link ProBInstanceProvider} objects are using the default ProB directory
+	 * (as returned by {@link #ensureInstalled(OsSpecificInfo)}).
+	 * When the JVM shuts down,
+	 * each {@link ProBInstanceProvider} shuts down all of its {@link ProBInstance}s
+	 * and then removes itself from this counter.
+	 * </p>
+	 * <p>
+	 * If the default ProB directory is a temporary directory (the default behavior),
+	 * {@link Installer}'s shutdown hook uses this counter to wait for all {@link ProBInstance}s to shut down
+	 * before deleting their ProB directory.
+	 * </p>
+	 */
+	static final Phaser DEFAULT_PROB_DIR_USERS_COUNTER = new Phaser();
 
 	private static Path proBDirectory = null;
 
@@ -157,7 +177,8 @@ public final class Installer {
 	/**
 	 * <p>
 	 * Install all CLI binaries into a new temporary directory,
-	 * which will be deleted automatically when the JVM shuts down.
+	 * which will be deleted automatically when the JVM shuts down
+	 * and all ProB instances that use it have been shut down.
 	 * </p>
 	 * <p>
 	 * Compared to installing into a static directory ({@link #installToStaticDirectory(OsSpecificInfo)}),
@@ -168,12 +189,28 @@ public final class Installer {
 	 * @return path of the new temporary installation directory
 	 */
 	private static Path installToTempDirectory(OsSpecificInfo osInfo) {
+		if (!DEFAULT_PROB_DIR_USERS_COUNTER.isTerminated() && DEFAULT_PROB_DIR_USERS_COUNTER.getUnarrivedParties() > 0) {
+			throw new IllegalStateException("Cannot create more than one shared temporary ProB directory for the same instance of the ProB Java API");
+		}
+
 		try {
 			LOGGER.info("Installing CLI binaries to a new temporary directory");
 			Path installDirectory = Files.createTempDirectory("prob-java");
 			LOGGER.trace("Created temporary directory for CLI binaries: {}", installDirectory);
 
 			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+				// Wait for all ProB instances which are using the temporary directory to exit.
+				// Otherwise, deleting the directory will fail on Windows
+				// (because Windows doesn't allow deleting executables/libraries belonging to a running process)
+				// and the final send_user_interrupt call will fail regardless of OS
+				// (because ProBInstance.shutdown might run after send_user_interrupt has been deleted).
+				LOGGER.debug("Will delete temporary ProB installation directory once {} ProBInstanceProvider objects have shut down", DEFAULT_PROB_DIR_USERS_COUNTER.getUnarrivedParties());
+				try {
+					DEFAULT_PROB_DIR_USERS_COUNTER.awaitAdvanceInterruptibly(DEFAULT_PROB_DIR_USERS_COUNTER.getPhase(), 15, TimeUnit.SECONDS);
+				} catch (InterruptedException | TimeoutException exc) {
+					LOGGER.error("Timed out (or interrupted) while waiting for all ProB instances to terminate ({} ProBInstanceProvider objects haven't shut down yet) - will try to delete the temporary ProB installation directory regardless", DEFAULT_PROB_DIR_USERS_COUNTER.getUnarrivedParties(), exc);
+				}
+
 				LOGGER.debug("Deleting temporary ProB installation directory: {}", installDirectory);
 				try {
 					MoreFiles.deleteRecursively(installDirectory, RecursiveDeleteOption.ALLOW_INSECURE);
@@ -195,6 +232,8 @@ public final class Installer {
 	 * For internal use only! No touching!
 	 * This method will soon become non-public again without warning!
 	 * You do not need to call this method as a user of the ProB Java API!
+	 * If you call this method externally,
+	 * your code will fail mysteriously and a giant bee will haunt your dreams!
 	 * 
 	 * @param osInfo determines which OS the installed ProB should be for
 	 * @return path of the (possibly temporary) ProB installation directory
