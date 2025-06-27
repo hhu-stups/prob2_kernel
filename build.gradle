@@ -7,7 +7,7 @@ subprojects {
 	project.group = 'de.hhu.stups'
 	// IMPORTANT: Before releasing the ProB Java API, remember to set probcli and all dependencies to release versions, not nightly/SNAPSHOT!
 	// IMPORTANT: Check the variables parserVersion and cliDownloadURL and the dependencies {...} block.
-	project.version = "4.13.2-SNAPSHOT"
+	project.version = "4.15.0-SNAPSHOT"
 	project.ext.isSnapshot = project.version.endsWith("-SNAPSHOT")
 	project.ext.SOURCE_ENCODING = "UTF-8"
 	
