@@ -3,7 +3,9 @@
 		#set($ruleName = $ruleResult.getRuleName())
 		#set($ruleStatus = $ruleResult.getRuleState())
 		#set($tags = $ruleResult.getTags())
-		#if($ruleStatus == $status_SUCCESS)
+		#if($ruleStatus == $status_SUCCESS && ($ruleResult.getNumberOfSuccesses() > 0 || $ruleResult.getNumberOfSuccesses() == -1))
+		<div class="rule-header pointer green" onclick="openDetails('rule_$ruleName')">
+		#elseif($ruleStatus == $status_SUCCESS)
 		<div class="rule-header green">
 		#elseif($ruleStatus == $status_FAIL)
 		<div class="rule-header pointer red" onclick="openDetails('rule_$ruleName')">
@@ -27,7 +29,9 @@
 		&emsp;<b>$ruleStatus</b>
 	</div>
 
-		#if($ruleResult.getNumberOfViolations() > 0 || !$ruleResult.getFailedDependencies().isEmpty() || !$ruleResult.getNotCheckedDependencies().isEmpty())
+		#if($ruleResult.getNumberOfViolations() > 0 || $ruleResult.getNumberOfViolations() == -1 ||
+				$ruleResult.getNumberOfSuccesses() > 0 || $ruleResult.getNumberOfSuccesses() == -1 ||
+				!$ruleResult.getFailedDependencies().isEmpty() || !$ruleResult.getNotCheckedDependencies().isEmpty())
 			<div class="rule-content" id="rule_$ruleName">
 				#if($ruleResult.getNumberOfViolations() > 0)
 					<b>$ruleResult.getNumberOfViolations()</b> blessures trouvées:
@@ -36,6 +40,18 @@
 							<li>($counterExample.getErrorType()) $counterExample.getMessage()</li>
 						#end
 					</ul>
+				#elseif($ruleResult.getNumberOfViolations() == -1)
+					Les violations ne peuvent pas être énumérées (nombre infini).
+				#end
+				#if($ruleResult.getNumberOfSuccesses() > 0)
+					<b>$ruleResult.getNumberOfSuccesses()</b> vérifications réussies:
+					<ul>
+						#foreach($successMessage in $ruleResult.getSuccessMessages())
+							<li>($successMessage.getRuleBodyCount()) $successMessage.getMessage()</li>
+						#end
+					</ul>
+				#elseif($ruleResult.getNumberOfSuccesses() == -1)
+					Les vérifications réussies ne peuvent pas être énumérées (nombre infini).
 				#end
 				#if(!$ruleResult.getFailedDependencies().isEmpty())
 					La règle n'a pas pu être vérifiée en raison de l'échec des dépendances:

@@ -6,6 +6,11 @@
 .project
 .settings/
 bin/
+# We do want Rodin projects for the test machines to be included in the repo.
+!/*/src/test/resources/**/.project
+!/*/src/test/resources/**/.settings
+!/de.prob2.commandline/groovyTests/machines/**/.project
+!/de.prob2.commandline/groovyTests/machines/**/.settings
 
 # IntelliJ
 .idea/
@@ -30,6 +35,7 @@ prob_log.txt
 *.dot
 *.fuzz
 *.prob
+/prob-java/states
 
 # Temp/swap files
 *.swp

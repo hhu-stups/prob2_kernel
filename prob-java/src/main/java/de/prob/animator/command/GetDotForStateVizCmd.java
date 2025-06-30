@@ -16,7 +16,7 @@ import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.State;
 
 /**
- * @deprecated Use {@link DotVisualizationCommand#getByName(String, State)}, {@link DotVisualizationCommand#STATE_AS_GRAPH_NAME}, and {@link DotVisualizationCommand#visualizeAsDotToFile(Path, List)} instead.
+ * @deprecated Use {@link DotVisualizationCommand#getByName(String, de.prob.statespace.Trace)}, {@link DotVisualizationCommand#STATE_AS_GRAPH_NAME}, and {@link DotVisualizationCommand#visualizeAsDotToFile(Path, List)} instead.
  */
 @Deprecated
 public class GetDotForStateVizCmd extends AbstractCommand {

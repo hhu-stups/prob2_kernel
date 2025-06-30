@@ -38,7 +38,7 @@ public final class ReplayedTrace implements ITraceDescription {
 			
 			final List<String> errorMessages = new ArrayList<>();
 			for (final PrologTerm errorTerm : BindingGenerator.getList(term.getArgument(2))) {
-				if ("rerror".equals(errorTerm.getFunctor()) && errorTerm.getArity() == 1) {
+				if (errorTerm.hasFunctor("rerror", 1)) {
 					errorMessages.add(errorTerm.getArgument(1).atomToString());
 				} else {
 					errorMessages.add(errorTerm.toString());
@@ -69,11 +69,25 @@ public final class ReplayedTrace implements ITraceDescription {
 	
 	@Override
 	public Trace getTrace(final StateSpace s) {
-		final List<Transition> transitions = this.transitionTerms.stream()
-			.map(t -> BindingGenerator.getCompoundTerm(t, "op", 4))
-			.map(t -> Transition.createTransitionFromCompoundPrologTerm(s, t))
-			.collect(Collectors.toList());
+		final List<Transition> transitions = getTransitions(s);
+		transitions.removeIf(t -> t.getId().equals("skip"));
+		// remove internal skips that are only added in trace replay to skip operations that are no longer available
 		return new Trace(s).addTransitions(transitions);
+	}
+
+	/**
+	 * Use {@link #getTrace(StateSpace)} to get the actual (filtered) trace.
+	 * @return complete trace, including possible internal skips to skip operations that are no longer available.
+	 */
+	public Trace getTraceWithSkips(final StateSpace s) {
+		return new Trace(s).addTransitions(getTransitions(s));
+	}
+
+	private List<Transition> getTransitions(final StateSpace s) {
+		return this.transitionTerms.stream()
+				.map(t -> BindingGenerator.getCompoundTerm(t, "op", 4))
+				.map(t -> Transition.createTransitionFromCompoundPrologTerm(s, t))
+				.collect(Collectors.toList());
 	}
 	
 	public List<TransitionReplayPrecision> getTransitionReplayPrecisions() {

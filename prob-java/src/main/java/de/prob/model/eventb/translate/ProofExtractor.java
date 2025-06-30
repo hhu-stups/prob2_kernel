@@ -3,6 +3,7 @@ package de.prob.model.eventb.translate;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -32,6 +33,9 @@ import org.xml.sax.helpers.DefaultHandler;
 public class ProofExtractor {
 	private static final Logger logger = LoggerFactory.getLogger(ProofExtractor.class);
 
+	private Path proofObligationsFile;
+	private Path proofStatusFile;
+
 	private Map<String, String> descriptions;
 	private Map<String, Integer> proofConfidences;
 
@@ -49,6 +53,14 @@ public class ProofExtractor {
 		addProofs(m);
 	}
 
+	public Path getProofObligationsFile() {
+		return proofObligationsFile;
+	}
+
+	public Path getProofStatusFile() {
+		return proofStatusFile;
+	}
+
 	private void extractProofs(final String baseFileName) throws SAXException {
 		try {
 			SAXParserFactory parserFactory = SAXParserFactory.newInstance();
@@ -60,6 +72,7 @@ public class ProofExtractor {
 			// Use LinkedHashMap to preserve the order of proof descriptions from the Rodin project.
 			descriptions = new LinkedHashMap<>();
 			if (bpoFile.exists()) {
+				proofObligationsFile = bpoFile.toPath();
 				saxParser.parse(bpoFile, new DefaultHandler() {
 					@Override
 					public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) {
@@ -72,12 +85,14 @@ public class ProofExtractor {
 				});
 			} else {
 				logger.info("Could not find file {}. Assuming that no proofs have been generated for model element.", bpoFileName);
+				proofObligationsFile = null;
 			}
 
 			String bpsFileName = baseFileName + ".bps";
 			File bpsFile = new File(bpsFileName);
 			proofConfidences = new HashMap<>();
 			if (bpsFile.exists()) {
+				proofStatusFile = bpsFile.toPath();
 				saxParser.parse(bpsFile, new DefaultHandler() {
 					@Override
 					public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) {
@@ -89,6 +104,7 @@ public class ProofExtractor {
 				});
 			} else {
 				logger.info("Could not find file {}. Assuming that no proofs are discharged for model element.", bpsFileName);
+				proofStatusFile = null;
 			}
 		} catch (ParserConfigurationException e) {
 			throw new SAXException(e);

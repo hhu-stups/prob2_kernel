@@ -1,12 +1,12 @@
 package de.prob.check.tracereplay;
 
+import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-import java.util.Objects;
-
-@JsonPropertyOrder({"predicate"})
+@JsonPropertyOrder({ "predicate" })
 public class PostconditionPredicate extends Postcondition {
 
 	private String predicate;
@@ -19,7 +19,7 @@ public class PostconditionPredicate extends Postcondition {
 	@JsonCreator
 	public PostconditionPredicate(@JsonProperty("predicate") final String predicate) {
 		super(PostconditionKind.PREDICATE);
-		this.predicate = predicate;
+		this.predicate = predicate != null ? predicate : "";
 	}
 
 	@JsonProperty("predicate")
@@ -28,7 +28,7 @@ public class PostconditionPredicate extends Postcondition {
 	}
 
 	public void setPredicate(String predicate) {
-		this.predicate = predicate;
+		this.predicate = predicate != null ? predicate : "";
 	}
 
 	@Override
@@ -38,14 +38,14 @@ public class PostconditionPredicate extends Postcondition {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+		if (this == o) {return true;}
+		if (o == null || getClass() != o.getClass()) {return false;}
 		PostconditionPredicate that = (PostconditionPredicate) o;
 		return Objects.equals(predicate, that.predicate);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(predicate);
+		return predicate.hashCode();
 	}
 }

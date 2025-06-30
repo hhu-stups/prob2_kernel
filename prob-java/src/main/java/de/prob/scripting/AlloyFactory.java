@@ -14,12 +14,15 @@ import de.hhu.stups.alloy2b.translation.ParserResult;
 import de.prob.animator.domainobjects.ErrorItem;
 import de.prob.exception.ProBError;
 import de.prob.model.representation.AlloyModel;
+import de.prob.statespace.StateSpace;
 
 public class AlloyFactory implements ModelFactory<AlloyModel> {
+	private final Provider<StateSpace> stateSpaceProvider;
 	private final Provider<AlloyModel> modelCreator;
 	
 	@Inject
-	public AlloyFactory(final Provider<AlloyModel> modelCreator) {
+	AlloyFactory(Provider<StateSpace> stateSpaceProvider, Provider<AlloyModel> modelCreator) {
+		this.stateSpaceProvider = stateSpaceProvider;
 		this.modelCreator = modelCreator;
 	}
 
@@ -39,7 +42,7 @@ public class AlloyFactory implements ModelFactory<AlloyModel> {
 		try {
 			final ParserResult parserResult = new Alloy2BParser().parseFromFile(f.getAbsolutePath());
 			alloyModel = modelCreator.get().create(f, parserResult.getPrologTerm());
-			return new ExtractedModel<>(alloyModel, null);
+			return new ExtractedModel<>(stateSpaceProvider, alloyModel);
 		} catch (final Alloy2BParserErr e) {
 			throw new ProBError(null, convertAlloyExceptionToErrorItems(e), e);
 		}

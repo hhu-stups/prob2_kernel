@@ -1,25 +1,33 @@
 package de.prob.model.representation;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import de.prob.animator.command.AbstractCommand;
+import de.prob.animator.command.StartAnimationCommand;
+import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.EvaluationException;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
+import de.prob.model.eventb.EventBModel;
 import de.prob.model.representation.DependencyGraph.ERefType;
+import de.prob.scripting.ExtractedModel;
 import de.prob.scripting.StateSpaceProvider;
 import de.prob.statespace.FormalismType;
 import de.prob.statespace.Language;
 import de.prob.statespace.StateSpace;
 
 public abstract class AbstractModel extends AbstractElement {
-
+	// The stateSpaceProvider field will be removed in the future,
+	// but isn't deprecated yet,
+	// because the subclasses still need it to support the old API.
 	protected final StateSpaceProvider stateSpaceProvider;
-	protected final File modelFile;
 	protected final DependencyGraph graph;
+	protected final File modelFile;
 
 	public AbstractModel(
 			StateSpaceProvider stateSpaceProvider,
@@ -32,6 +40,8 @@ public abstract class AbstractModel extends AbstractElement {
 	}
 
 	public abstract AbstractElement getComponent(final String name);
+
+	public abstract AbstractElement getMainComponent();
 
 	public DependencyGraph getGraph() {
 		return graph;
@@ -55,6 +65,21 @@ public abstract class AbstractModel extends AbstractElement {
 	}
 
 	/**
+	 * Get a list of all files from which this model was loaded.
+	 * This always includes the main model file ({@link #getModelFile()}),
+	 * and possibly other files referenced from the main file (directly or indirectly).
+	 * 
+	 * @return list of all files that make up this model
+	 */
+	public List<Path> getAllFiles() {
+		if (this.getModelFile() == null) {
+			return Collections.emptyList();
+		} else {
+			return Collections.singletonList(this.getModelFile().toPath());
+		}
+	}
+
+	/**
 	 * Will parse a formula including information specific to the model at hand.
 	 *
 	 * @param formula to be parsed
@@ -63,6 +88,20 @@ public abstract class AbstractModel extends AbstractElement {
 	 * @throws RuntimeException if parsing is not successful
 	 */
 	public abstract IEvalElement parseFormula(String formula, FormulaExpand expand);
+
+	/**
+	 * Will parse a classical B formula without respecting the model's language.
+	 * <br>
+	 * This API is still in beta, do not depend on it!
+	 *
+	 * @param formula to be parsed, must be parsable as classical B
+	 * @param expand  the expansion behavior to use
+	 * @return a valid formula
+	 * @throws RuntimeException if parsing is not successful
+	 */
+	public ClassicalB parseFormulaAsClassicalB(String formula, FormulaExpand expand) {
+		return new ClassicalB(formula, expand);
+	}
 	
 	/**
 	 * Will parse a formula including information specific to the model at hand.
@@ -131,20 +170,61 @@ public abstract class AbstractModel extends AbstractElement {
 		return modelFile;
 	}
 
+	@Deprecated
 	public StateSpaceProvider getStateSpaceProvider() {
 		return stateSpaceProvider;
 	}
 
-	public abstract AbstractCommand getLoadCommand(final AbstractElement mainComponent);
+	public abstract AbstractCommand getLoadCommand();
 
-	public void loadIntoStateSpace(final StateSpace stateSpace, final AbstractElement mainComponent) {
-		StateSpaceProvider.loadFromCommandIntoStateSpace(stateSpace, this, mainComponent, this.getLoadCommand(mainComponent));
+	/**
+	 * @deprecated Use {@link #getLoadCommand()} instead.
+	 * @param mainComponent this model's main component, as returned by {@link ExtractedModel#getMainComponent()}
+	 * @return the command for loading this model into the animator
+	 */
+	@Deprecated
+	public AbstractCommand getLoadCommand(AbstractElement mainComponent) {
+		return this.getLoadCommand();
 	}
 
+	public void loadIntoStateSpace(final StateSpace stateSpace) {
+		stateSpace.initModel(this);
+		stateSpace.execute(this.getLoadCommand());
+		stateSpace.execute(new StartAnimationCommand());
+	}
+
+	/**
+	 * @deprecated Use {@link #loadIntoStateSpace(StateSpace)} instead.
+	 *     To control which component to load from a Rodin project,
+	 *     pass the correct file name when loading the model,
+	 *     or use {@link EventBModel#withMainComponent(AbstractElement)} to change the main component after loading.
+	 * @param stateSpace the {@link StateSpace} into which to load the model
+	 * @param mainComponent this model's main component, as returned by {@link ExtractedModel#getMainComponent()}
+	 */
+	@Deprecated
+	public void loadIntoStateSpace(final StateSpace stateSpace, final AbstractElement mainComponent) {
+		this.loadIntoStateSpace(stateSpace);
+	}
+
+	/**
+	 * @deprecated Use {@link ExtractedModel#load(Map)} instead.
+	 *     In the future, {@link AbstractModel}s will not include a {@link StateSpaceProvider}.
+	 * @param mainComponent this model's main component, as returned by {@link ExtractedModel#getMainComponent()}
+	 * @return the {@link StateSpace} for the loaded model
+	 */
+	@Deprecated
 	public StateSpace load(AbstractElement mainComponent) {
 		return load(mainComponent, new HashMap<>());
 	}
 
+	/**
+	 * @deprecated Use {@link ExtractedModel#load(Map)} instead.
+	 *     In the future, {@link AbstractModel}s will not include a {@link StateSpaceProvider}.
+	 * @param mainComponent this model's main component, as returned by {@link ExtractedModel#getMainComponent()}
+	 * @param preferences custom ProB preferences to use
+	 * @return the {@link StateSpace} for the loaded model
+	 */
+	@Deprecated
 	public StateSpace load(final AbstractElement mainComponent, final Map<String, String> preferences) {
 		final StateSpace stateSpace = getStateSpaceProvider().getStateSpace();
 		try {

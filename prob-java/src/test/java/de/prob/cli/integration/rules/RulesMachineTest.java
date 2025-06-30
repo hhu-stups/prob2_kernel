@@ -9,15 +9,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.be4.classicalb.core.parser.rules.AbstractOperation;
 import de.be4.classicalb.core.parser.rules.RuleOperation;
 import de.prob.model.brules.ComputationStatus;
-import de.prob.model.brules.ComputationStatuses;
+import de.prob.model.brules.OperationStatuses;
 import de.prob.model.brules.RuleResult;
 import de.prob.model.brules.RuleResult.CounterExample;
 import de.prob.model.brules.RuleResults;
 import de.prob.model.brules.RuleResults.ResultSummary;
 import de.prob.model.brules.RuleStatus;
 import de.prob.model.brules.RulesMachineRun;
+import de.prob.model.brules.RulesModel;
 import de.prob.statespace.State;
 
 import org.junit.jupiter.api.Test;
@@ -65,8 +67,9 @@ public class RulesMachineTest {
 		RulesMachineRun rulesMachineRun = startRulesMachineRun(DIR.resolve("RulesMachineExample.rmch").toFile());
 		assertFalse(rulesMachineRun.hasError());
 		State finalState = rulesMachineRun.getExecuteRun().getExecuteModelCommand().getFinalState();
-		ComputationStatuses compResult = new ComputationStatuses(rulesMachineRun.getRulesProject(), finalState);
-		assertEquals(ComputationStatus.EXECUTED, compResult.getResult("COMP_comp1"));
+		RulesModel model = (RulesModel) rulesMachineRun.getAnimator().getCurrentStateSpace().getModel();
+		AbstractOperation operation = rulesMachineRun.getRulesProject().getOperationsMap().get("COMP_comp1");
+		assertEquals(ComputationStatus.EXECUTED, OperationStatuses.getStatus(model, operation, finalState));
 	}
 
 	@Test
@@ -105,6 +108,13 @@ public class RulesMachineTest {
 	}
 
 	@Test
+	public void testNumberOfReportedSuccessMessages() {
+		RulesMachineRun rulesMachineRun = startRulesMachineRunWithOperations(
+			"RULE Rule1 BODY RULE_FORALL x WHERE x : 1..1000 EXPECT x : 1..200 ON_SUCCESS ```${x}``` COUNTEREXAMPLE STRING_FORMAT(\"~w\", x) END END");
+		assertEquals(50, rulesMachineRun.getRuleResults().getRuleResult("Rule1").getSuccessMessages().size());
+	}
+
+	@Test
 	public void testChangeNumberOfReportedCounterExamples() {
 		File file = createRulesMachineFile(
 				"OPERATIONS RULE Rule1 BODY RULE_FAIL x WHEN x : 1..1000 COUNTEREXAMPLE STRING_FORMAT(\"~w\", x) END END");
@@ -115,13 +125,35 @@ public class RulesMachineTest {
 	}
 
 	@Test
+	public void testChangeNumberOfReportedSuccessMessages() {
+		File file = createRulesMachineFile(
+			"OPERATIONS RULE Rule1 BODY RULE_FORALL x WHERE x : 1..1000 EXPECT x : 1..200 ON_SUCCESS ```${x}``` COUNTEREXAMPLE STRING_FORMAT(\"~w\", x) END END");
+		RulesMachineRun rulesMachineRun = new RulesMachineRun(RulesTestUtil.getRulesMachineRunner(), file);
+		rulesMachineRun.setMaxNumberOfReportedSuccessMessages(20);
+		rulesMachineRun.start();
+		assertEquals(20, rulesMachineRun.getRuleResults().getRuleResult("Rule1").getSuccessMessages().size());
+	}
+
+	@Test
 	public void testExtractingAllCounterExample() {
 		File file = createRulesMachineFile(
 				"OPERATIONS RULE Rule1 BODY RULE_FAIL x WHEN x : 1..1000 COUNTEREXAMPLE STRING_FORMAT(\"This is a long counter example message including a unique number to test that the extracted B value will not be truncated: ~w\", x) END END");
 		RulesMachineRun rulesMachineRun = new RulesMachineRun(RulesTestUtil.getRulesMachineRunner(), file);
-		rulesMachineRun.setMaxNumberOfReportedCounterExamples(1000);
+		rulesMachineRun.setMaxNumberOfReportedCounterExamples(-1);
 		rulesMachineRun.start();
 		assertEquals(1000, rulesMachineRun.getRuleResults().getRuleResult("Rule1").getCounterExamples().size());
+	}
+
+	@Test
+	public void testExtractingAllCounterExamplesAndSuccessMessages() {
+		File file = createRulesMachineFile(
+			"OPERATIONS RULE Rule1 BODY RULE_FORALL x WHERE x : 1..1000 EXPECT x : 1..200 ON_SUCCESS ```${x}``` COUNTEREXAMPLE STRING_FORMAT(\"This is a long counter example message including a unique number to test that the extracted B value will not be truncated: ~w\", x) END END");
+		RulesMachineRun rulesMachineRun = new RulesMachineRun(RulesTestUtil.getRulesMachineRunner(), file);
+		rulesMachineRun.setMaxNumberOfReportedCounterExamples(-1);
+		rulesMachineRun.setMaxNumberOfReportedSuccessMessages(-1);
+		rulesMachineRun.start();
+		assertEquals(800, rulesMachineRun.getRuleResults().getRuleResult("Rule1").getCounterExamples().size());
+		assertEquals(200, rulesMachineRun.getRuleResults().getRuleResult("Rule1").getSuccessMessages().size());
 	}
 
 	@Test

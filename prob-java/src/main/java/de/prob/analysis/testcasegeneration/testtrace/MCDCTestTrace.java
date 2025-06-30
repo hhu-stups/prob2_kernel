@@ -41,12 +41,14 @@ public class MCDCTestTrace extends TestTrace {
 		return new MCDCTestTrace(priorTransitions, t, newTestCaseList, isComplete);
 	}
 
+	@Override
 	public MCDCTestTrace createNewTrace(List<String> priorTransitions, Target t, boolean isComplete, Trace trace) {
 		List<ConcreteMCDCTestCase> newTestCaseList = new ArrayList<>(getMcdcTargets());
 		newTestCaseList.add(new ConcreteMCDCTestCase(t.getGuard(), t.getFeasible()));
 		return new MCDCTestTrace(priorTransitions, t, newTestCaseList, isComplete, trace);
 	}
 
+	@Override
 	public String toString() {
 		PrettyPrinter prettyPrinter;
 		StringJoiner stringJoiner = new StringJoiner(", ", "{", "}");

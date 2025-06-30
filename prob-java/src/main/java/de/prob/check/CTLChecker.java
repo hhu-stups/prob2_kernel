@@ -4,12 +4,14 @@ import de.be4.ltl.core.parser.LtlParseException;
 import de.prob.animator.command.CtlCheckingCommand;
 import de.prob.animator.domainobjects.CTL;
 import de.prob.model.eventb.EventBModel;
+import de.prob.statespace.State;
 import de.prob.statespace.StateSpace;
 
 public class CTLChecker extends CheckerBase {
 
 	private final CTL formula;
 	private final int stateLimit;
+	private final State startState;
 
 	public CTLChecker(final StateSpace s, final String formula) throws LtlParseException {
 		this(s, s.getModel() instanceof EventBModel ? CTL.parseEventB(formula) : new CTL(formula));
@@ -25,6 +27,10 @@ public class CTLChecker extends CheckerBase {
 	}
 
 	public CTLChecker(final StateSpace s, final CTL formula, final IModelCheckListener ui, final int stateLimit) {
+		this(s, formula, ui, stateLimit, null);
+	}
+
+	public CTLChecker(StateSpace s, CTL formula, IModelCheckListener ui, int stateLimit, State startState) {
 		super(s, ui);
 
 		if (formula == null) {
@@ -39,12 +45,14 @@ public class CTLChecker extends CheckerBase {
 		} else {
 			throw new IllegalArgumentException("Cannot perform CTL checking with a stateLimit of 0");
 		}
+
+		this.startState = startState;
 	}
 
 	@Override
 	protected void execute() {
 		// TODO Allow CtlCheckingCommand to return some sort of progress information during checking
-		final CtlCheckingCommand cmd = new CtlCheckingCommand(this.getStateSpace(), formula, stateLimit);
+		final CtlCheckingCommand cmd = new CtlCheckingCommand(this.getStateSpace(), formula, stateLimit, startState);
 		this.getStateSpace().withTransaction(() -> this.getStateSpace().execute(cmd));
 		this.isFinished(cmd.getResult(), null);
 	}

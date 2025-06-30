@@ -29,7 +29,7 @@ public class EventBParserBase implements ProBParserBase {
 	public void parseTransitionPredicate(IPrologTermOutput pto, String transPredicate, boolean wrap) throws ProBParseException {
 		Start ast;
 		try {
-			ast = BParser.parse(BParser.OPERATION_PATTERN_PREFIX + transPredicate);
+			ast = new BParser().parseTransition(transPredicate);
 		} catch (BCompoundException e) {
 			throw new ProBParseException(e.getLocalizedMessage(), e);
 		}

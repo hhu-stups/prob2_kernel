@@ -1,19 +1,22 @@
 package de.prob.cli;
 
-import com.google.common.base.MoreObjects;
-import de.prob.animator.IConsoleOutputListener;
-import de.prob.exception.CliError;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+
+import com.google.common.base.MoreObjects;
+
+import de.prob.animator.IConsoleOutputListener;
+import de.prob.exception.CliError;
+import de.prob.prolog.output.IPrologTermOutput;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class ProBInstance implements Closeable {
 
@@ -34,15 +37,14 @@ public final class ProBInstance implements Closeable {
 	private volatile boolean shuttingDown = false;
 
 	private ProBInstance(
-		final Process probProcess, final BufferedReader stream, final long userInterruptReference,
-		final ProBConnection connection, final String home, final OsSpecificInfo osInfo,
+		final Process probProcess, final BufferedReader stream,
+		final ProBConnection connection, final List<String> interruptCommand,
 		final ProBInstanceProvider provider
 	) {
 		this.probProcess = probProcess;
 		this.outputLoggerThread = new Thread(new ConsoleListener(stream, this::logConsoleLine), "ProB Output Logger for " + this.probProcess);
 		this.connection = connection;
-		final String command = home + osInfo.getUserInterruptCmd();
-		this.interruptCommand = Arrays.asList(command, Long.toString(userInterruptReference));
+		this.interruptCommand = interruptCommand;
 		this.provider = provider;
 		// Because the console output logger is its own thread,
 		// we have to worry about thread safety when listeners are added/removed.
@@ -52,11 +54,11 @@ public final class ProBInstance implements Closeable {
 	}
 
 	static ProBInstance create(
-		final Process process, final BufferedReader stream, final long userInterruptReference,
-		final ProBConnection connection, final String home, final OsSpecificInfo osInfo,
+		final Process process, final BufferedReader stream,
+		final ProBConnection connection, final List<String> interruptCommand,
 		final ProBInstanceProvider provider
 	) {
-		final ProBInstance instance = new ProBInstance(process, stream, userInterruptReference, connection, home, osInfo, provider);
+		final ProBInstance instance = new ProBInstance(process, stream, connection, interruptCommand, provider);
 		// The output logger thread must be started after the constructor,
 		// to prevent the thread from possibly seeing final instance fields before they are initialized
 		// (in particular, logger and consoleOutputListeners).
@@ -89,6 +91,11 @@ public final class ProBInstance implements Closeable {
 	}
 
 	public void sendInterrupt() {
+		if (this.interruptCommand == null) {
+			LOGGER.info("This ProB build has user interrupt support disabled - not calling send_user_interrupt");
+			return;
+		}
+
 		try {
 			LOGGER.info("sending interrupt signal");
 			// calls send_user_interrupt or send_user_interrupt.exe on Windows
@@ -111,6 +118,14 @@ public final class ProBInstance implements Closeable {
 	public String send(final String term) {
 		try {
 			return connection.send(term);
+		} catch (IOException e) {
+			throw new CliError("Error during communication with Prolog core.", e);
+		}
+	}
+
+	public String send(final Consumer<IPrologTermOutput> termOutput) {
+		try {
+			return connection.send(termOutput);
 		} catch (IOException e) {
 			throw new CliError("Error during communication with Prolog core.", e);
 		}

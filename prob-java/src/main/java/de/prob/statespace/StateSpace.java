@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -22,6 +23,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import de.prob.animator.IAnimator;
+import de.prob.animator.IAnimatorBusyListener;
 import de.prob.animator.IConsoleOutputListener;
 import de.prob.animator.IWarningListener;
 import de.prob.animator.command.AbstractCommand;
@@ -34,12 +36,13 @@ import de.prob.animator.command.FindTraceBetweenNodesCommand;
 import de.prob.animator.command.FormulaTypecheckCommand;
 import de.prob.animator.command.GetCurrentPreferencesCommand;
 import de.prob.animator.command.GetDefaultPreferencesCommand;
+import de.prob.animator.command.GetEnabledOperationsCommand;
 import de.prob.animator.command.GetOperationByPredicateCommand;
-import de.prob.animator.command.GetOpsFromIds;
 import de.prob.animator.command.GetPreferenceCommand;
 import de.prob.animator.command.GetShortestTraceCommand;
 import de.prob.animator.command.GetStatesFromPredicate;
 import de.prob.animator.command.IStateSpaceModifier;
+import de.prob.animator.command.NoStateFoundException;
 import de.prob.animator.command.RegisterFormulasCommand;
 import de.prob.animator.command.SetPreferenceCommand;
 import de.prob.animator.command.UnregisterFormulasCommand;
@@ -53,12 +56,10 @@ import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.animator.domainobjects.ProBPreference;
 import de.prob.animator.domainobjects.TypeCheckResult;
 import de.prob.annotations.MaxCacheSize;
+import de.prob.exception.CliError;
 import de.prob.formula.PredicateBuilder;
-import de.prob.model.classicalb.ClassicalBModel;
-import de.prob.model.eventb.EventBModel;
 import de.prob.model.representation.AbstractElement;
 import de.prob.model.representation.AbstractModel;
-import de.prob.model.representation.CSPModel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,10 +84,11 @@ import org.slf4j.LoggerFactory;
  * @author joy
  *
  */
-public class StateSpace implements IAnimator {
+public final class StateSpace implements IAnimator {
+	private static final Logger LOGGER = LoggerFactory.getLogger(StateSpace.class);
 
-	final Logger logger = LoggerFactory.getLogger(StateSpace.class);
 	private final IAnimator animator;
+	private final boolean ownsAnimator;
 
 	private final Set<IEvalElement> registeredFormulas = new HashSet<>();
 	private final Map<IEvalElement, Set<Object>> formulaSubscribers = new HashMap<>();
@@ -103,13 +105,23 @@ public class StateSpace implements IAnimator {
 	private final LoadingCache<String, State> states;
 
 	private AbstractModel model;
-	private AbstractElement mainComponent;
-	private volatile boolean killed;
-	private final Collection<IStatesCalculatedListener> statesCalculatedListeners = new CopyOnWriteArrayList<>();
+	private final AtomicBoolean killed;
+	private final Collection<IAnimatorBusyListener> busyListeners;
+	private final Collection<IWarningListener> warningListeners;
+	private final Collection<IConsoleOutputListener> consoleOutputListeners;
+	private final Collection<IStatesCalculatedListener> statesCalculatedListeners;
 
-	@Inject
-	public StateSpace(final Provider<IAnimator> panimator, @MaxCacheSize final int maxSize) {
-		animator = panimator.get();
+	/**
+	 * Create a new {@link StateSpace} based on an existing ProB animator instance.
+	 * 
+	 * @param animator the ProB animator instance to use
+	 * @param ownsAnimator whether the animator should be killed when this {@link StateSpace} is killed
+	 * @param maxSize maximum size for the Java-side {@link State} object cache
+	 */
+	public StateSpace(IAnimator animator, boolean ownsAnimator, int maxSize) {
+		this.animator = animator;
+		this.ownsAnimator = ownsAnimator;
+
 		states = CacheBuilder.newBuilder().maximumSize(maxSize).build(new CacheLoader<String, State>() {
 			@Override
 			public State load(final String key) {
@@ -121,6 +133,31 @@ public class StateSpace implements IAnimator {
 				throw new IllegalArgumentException(key + " does not represent a valid state in the StateSpace");
 			}
 		});
+
+		this.killed = new AtomicBoolean(false);
+		this.busyListeners = new CopyOnWriteArrayList<>();
+		this.warningListeners = new CopyOnWriteArrayList<>();
+		this.consoleOutputListeners = new CopyOnWriteArrayList<>();
+		this.statesCalculatedListeners = new CopyOnWriteArrayList<>();
+	}
+
+	@Inject
+	public StateSpace(IAnimator animator, @MaxCacheSize int maxSize) {
+		this(animator, true, maxSize);
+	}
+
+	/**
+	 * @deprecated Use {@link #StateSpace(IAnimator, int)} instead.
+	 */
+	@Deprecated
+	public StateSpace(Provider<IAnimator> panimator, int maxSize) {
+		this(panimator.get(), maxSize);
+	}
+
+	private void checkAlive() {
+		if (this.killed.get()) {
+			throw new CliError("This StateSpace has been killed and can no longer be used");
+		}
 	}
 
 	/**
@@ -252,7 +289,10 @@ public class StateSpace implements IAnimator {
 			final int nrOfSolutions) {
 		final GetOperationByPredicateCommand command = new GetOperationByPredicateCommand(this, state.getId(), opName,
 				predicate, nrOfSolutions);
-		execute(command);
+		GetEnabledOperationsCommand getTransitionsCommand = new GetEnabledOperationsCommand(this, state.getId());
+		execute(command, getTransitionsCommand);
+		// Update the state's transitions list to include any newly found transitions.
+		state.setOutTransitions(getTransitionsCommand.getEnabledOperations());
 		if (command.hasErrors()) {
 			if(command.getErrors().stream().allMatch(err -> err.getType() == GetOperationByPredicateCommand.GetOperationErrorType.CANNOT_EXECUTE)) {
 				throw new ExecuteOperationException("Executing operation " + opName + " with additional predicate produced errors: " + String.join(", ", command.getErrorMessages()), command.getErrors());
@@ -293,7 +333,7 @@ public class StateSpace implements IAnimator {
 		if (!parameterNames.isEmpty()) {
 			if (parameterNames.size() != parameterValues.size()) {
 				throw new IllegalArgumentException("Cannot execute operation " + opName
-						+ " because the number of parameters does not match the number of provied values: "
+						+ " because the number of parameters does not match the number of provided values: "
 						+ parameterNames.size() + " vs " + parameterValues.size());
 			}
 			for (int i = 0; i < parameterNames.size(); i++) {
@@ -338,54 +378,6 @@ public class StateSpace implements IAnimator {
 		FormulaTypecheckCommand cmd = new FormulaTypecheckCommand(formula);
 		execute(cmd);
 		return cmd.getResult();
-	}
-
-	/**
-	 * Evaluates a list of formulas in a given state. Uses the implementation in
-	 * {@link State#eval(List)}
-	 *
-	 * @param state
-	 *            for which the list of formulas should be evaluated
-	 * @param formulas
-	 *            to be evaluated
-	 * @return a list of {@link AbstractEvalResult}s
-	 * @deprecated Use {@link State#eval(List)} directly instead.
-	 */
-	@Deprecated
-	public List<AbstractEvalResult> eval(final State state, final List<? extends IEvalElement> formulas) {
-		return state.eval(formulas);
-	}
-
-	/**
-	 * Calculates the registered formulas at the given state and returns the
-	 * cached values. Calls the {@link State#explore()} method, and uses the
-	 * {@link State#getValues()} method.
-	 *
-	 * @param state
-	 *            for which the values are to be retrieved
-	 * @return map from {@link IEvalElement} object to
-	 *         {@link AbstractEvalResult} objects
-	 * @deprecated Use {@link State#getValues()} directly instead,
-	 *     possibly together with {@link State#explore()} or {@link State#exploreIfNeeded()}.
-	 */
-	@Deprecated
-	public Map<IEvalElement, AbstractEvalResult> valuesAt(final State state) {
-		state.explore();
-		return state.getValues();
-	}
-
-	/**
-	 * This checks if the {@link State#isInitialised()} property is set. If so,
-	 * it is safe to evaluate formulas for the given state.
-	 *
-	 * @param state
-	 *            which is to be tested
-	 * @return whether or not formulas should be evaluated in this state
-	 * @deprecated Use {@link State#isInitialised()} directly instead.
-	 */
-	@Deprecated
-	public boolean canBeEvaluated(final State state) {
-		return state.isInitialised();
 	}
 
 	/**
@@ -470,7 +462,7 @@ public class StateSpace implements IAnimator {
 		List<IEvalElement> toSubscribe = new ArrayList<>();
 		for (IEvalElement formulaOfInterest : formulas) {
 			if (formulaOfInterest instanceof CSP) {
-				logger.info(
+				LOGGER.info(
 						"CSP formula {} not subscribed because CSP evaluation is not state based. Use eval method instead",
 						formulaOfInterest.getCode());
 			} else {
@@ -684,14 +676,18 @@ public class StateSpace implements IAnimator {
 	// ANIMATOR
 	@Override
 	public void sendInterrupt() {
-		animator.sendInterrupt();
+		if (!this.killed.get()) {
+			animator.sendInterrupt();
+		}
 	}
 
 	public void addStatesCalculatedListener(final IStatesCalculatedListener listener) {
+		this.checkAlive();
 		this.statesCalculatedListeners.add(listener);
 	}
 
 	public void removeStatesCalculatedListener(final IStatesCalculatedListener listener) {
+		this.checkAlive();
 		this.statesCalculatedListeners.remove(listener);
 	}
 
@@ -701,6 +697,7 @@ public class StateSpace implements IAnimator {
 
 	@Override
 	public void execute(final AbstractCommand command) {
+		this.checkAlive();
 		animator.execute(command);
 		if (command instanceof IStateSpaceModifier) {
 			this.statesCalculated(((IStateSpaceModifier)command).getNewTransitions());
@@ -709,11 +706,13 @@ public class StateSpace implements IAnimator {
 
 	@Override
 	public void startTransaction() {
+		this.checkAlive();
 		animator.startTransaction();
 	}
 
 	@Override
 	public void endTransaction() {
+		this.checkAlive();
 		animator.endTransaction();
 	}
 
@@ -742,8 +741,12 @@ public class StateSpace implements IAnimator {
 	 *         output.
 	 */
 	public String printOps(final State state) {
+		if (!state.isExplored()) {
+			return "State not explored yet - outgoing transitions not known.";
+		}
+
 		final StringBuilder sb = new StringBuilder();
-		final Collection<Transition> opIds = state.getTransitions();
+		final Collection<Transition> opIds = state.getOutTransitions();
 
 		sb.append("Operations: \n");
 		for (final Transition opId : opIds) {
@@ -751,9 +754,6 @@ public class StateSpace implements IAnimator {
 			sb.append("\n");
 		}
 
-		if (!state.isExplored()) {
-			sb.append("\n Possibly not all transitions shown. ProB does not explore states by default");
-		}
 		return sb.toString();
 	}
 
@@ -834,32 +834,14 @@ public class StateSpace implements IAnimator {
 	}
 
 	/**
-	 * <p>
-	 * This allows developers to programmatically describe a Trace that should
-	 * be created. {@link ITraceDescription#getTrace(StateSpace)} will then be
-	 * called in order to generate the correct Trace.
-	 * </p>
-	 *
-	 * @param description
-	 *            of the trace to be created
-	 * @return Trace that is generated from the Trace Description
-	 * @deprecated This overload is meant for use from Groovy.
-	 *     Java code should call {@link ITraceDescription#getTrace(StateSpace)} directly instead.
-	 */
-	// TODO Move this to ProBGroovyMethods at some point (or just remove it entirely - I don't think anything really needs this overload...)
-	@Deprecated
-	public Trace getTrace(final ITraceDescription description) {
-		return description.getTrace(this);
-	}
-
-	/**
 	 * Takes an {@link IEvalElement} containing a predicate and returns a
-	 * {@link Trace} containing only a magic operation that leads to valid state
+	 * {@link Trace} containing a trace that leads to a valid state
 	 * where the predicate holds.
 	 *
 	 * @param predicate
 	 *            predicate that should hold in the valid state
-	 * @return {@link Trace} containing a magic operation leading to the state.
+	 * @return {@link Trace} leading to the state.
+	 * @throws NoStateFoundException when there is no trace to a valid state satisfying the given predicate
 	 */
 	public Trace getTraceToState(final IEvalElement predicate) {
 		FindStateCommand cmd = new FindStateCommand(this, predicate, true);
@@ -868,40 +850,18 @@ public class StateSpace implements IAnimator {
 	}
 
 	/**
-	 * Set the model that is being animated. This should only be set at the
-	 * beginning of an animation. The currently supported model types are
-	 * {@link ClassicalBModel}, {@link EventBModel}, or {@link CSPModel}. A
-	 * StateSpace object always corresponds with exactly one model.
-	 *
-	 * @param model
-	 *            the new model
-	 * @param mainComponent
-	 *            the new main component
-	 * @deprecated Use {@link #initModel(AbstractModel, AbstractElement)} instead
-	 */
-	@Deprecated
-	public void setModel(final AbstractModel model, final AbstractElement mainComponent) {
-		this.model = model;
-		this.mainComponent = mainComponent;
-	}
-
-	/**
 	 * Set the model that is being animated. This should be set at the
 	 * beginning of an animation and can only be set once per StateSpace.
 	 * A StateSpace object always corresponds to exactly one model.
 	 *
 	 * @param model the new model
-	 * @param mainComponent the new main component
 	 * @throws IllegalStateException if the model or main component has already been set
 	 */
-	public void initModel(final AbstractModel model, final AbstractElement mainComponent) {
+	public void initModel(AbstractModel model) {
 		if (this.getModel() != null) {
 			throw new IllegalStateException("model has already been set");
 		}
-		if (this.getMainComponent() != null) {
-			throw new IllegalStateException("mainComponent has already been set");
-		}
-		this.setModel(model, mainComponent);
+		this.model = model;
 	}
 
 	/**
@@ -915,7 +875,7 @@ public class StateSpace implements IAnimator {
 	}
 
 	public AbstractElement getMainComponent() {
-		return mainComponent;
+		return this.getModel().getMainComponent();
 	}
 
 	/**
@@ -929,8 +889,13 @@ public class StateSpace implements IAnimator {
 	 * @return map of all transitions and the corresponding evaluated infos
 	 */
 	public Map<Transition, EvaluatedTransitionInfo> evaluateTransitions(final Collection<Transition> transitions, final EvalOptions options) {
-		GetOpsFromIds cmd = new GetOpsFromIds(transitions, options);
-		execute(cmd);
+		List<GetOpFromId> opInfoCmds = new ArrayList<>();
+		for (Transition transition : transitions) {
+			if (!transition.isEvaluated(options)) {
+				opInfoCmds.add(new GetOpFromId(transition, options));
+			}
+		}
+		execute(opInfoCmds);
 		final Map<Transition, EvaluatedTransitionInfo> result = new LinkedHashMap<>(transitions.size());
 		for (final Transition transition : transitions) {
 			result.put(transition, transition.evaluate(options));
@@ -1009,12 +974,26 @@ public class StateSpace implements IAnimator {
 
 	@Override
 	public void kill() {
-		killed = true;
-		animator.kill();
+		if (this.killed.getAndSet(true)) {
+			return;
+		}
+		if (this.isBusy()) {
+			this.animator.endTransaction();
+		}
+		this.busyListeners.forEach(this.animator::removeBusyListener);
+		this.busyListeners.clear();
+		this.warningListeners.forEach(this.animator::removeWarningListener);
+		this.warningListeners.clear();
+		this.consoleOutputListeners.forEach(this.animator::removeConsoleOutputListener);
+		this.consoleOutputListeners.clear();
+		this.statesCalculatedListeners.clear();
+		if (this.ownsAnimator) {
+			this.animator.kill();
+		}
 	}
 
 	public boolean isKilled() {
-		return killed;
+		return killed.get();
 	}
 
 	/**
@@ -1031,26 +1010,49 @@ public class StateSpace implements IAnimator {
 
 	@Override
 	public long getTotalNumberOfErrors() {
+		this.checkAlive();
 		return animator.getTotalNumberOfErrors();
 	}
 
 	@Override
+	public void addBusyListener(IAnimatorBusyListener listener) {
+		this.checkAlive();
+		this.busyListeners.add(listener);
+		animator.addBusyListener(listener);
+	}
+
+	@Override
+	public void removeBusyListener(IAnimatorBusyListener listener) {
+		this.checkAlive();
+		animator.removeBusyListener(listener);
+		this.busyListeners.remove(listener);
+	}
+
+	@Override
 	public void addWarningListener(final IWarningListener listener) {
+		this.checkAlive();
+		this.warningListeners.add(listener);
 		animator.addWarningListener(listener);
 	}
 
 	@Override
 	public void removeWarningListener(final IWarningListener listener) {
+		this.checkAlive();
 		animator.removeWarningListener(listener);
+		this.warningListeners.remove(listener);
 	}
 
 	@Override
 	public void addConsoleOutputListener(final IConsoleOutputListener listener) {
+		this.checkAlive();
+		this.consoleOutputListeners.add(listener);
 		animator.addConsoleOutputListener(listener);
 	}
 
 	@Override
 	public void removeConsoleOutputListener(final IConsoleOutputListener listener) {
+		this.checkAlive();
 		animator.removeConsoleOutputListener(listener);
+		this.consoleOutputListeners.remove(listener);
 	}
 }

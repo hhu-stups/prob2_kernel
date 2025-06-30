@@ -22,9 +22,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class GroovySE implements ScriptEngine {
+	private static final Logger LOGGER = LoggerFactory.getLogger(GroovySE.class);
 
 	private final ScriptEngine groovy;
-	private final Logger logger = LoggerFactory.getLogger(GroovySE.class);
 
 	private static final String IMPORTS =
 		"import de.prob.animator.command.*;"
@@ -70,7 +70,7 @@ public class GroovySE implements ScriptEngine {
 			return "null";
 		}
 		if (buff.length() > 0) {
-			logger.error("Automatically captured prints from groovy. "
+			LOGGER.error("Automatically captured prints from groovy. "
 					+ "Users of a groovy engine should provide a console. "
 					+ "Output was: {}", buff);
 		}

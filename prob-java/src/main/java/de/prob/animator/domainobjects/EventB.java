@@ -3,6 +3,7 @@ package de.prob.animator.domainobjects;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import de.be4.classicalb.core.parser.analysis.prolog.ASTProlog;
@@ -25,20 +26,17 @@ import org.eventb.core.ast.extension.IFormulaExtension;
  * Representation of an Event-B formula
  *
  * @author joy
- *
  */
-public class EventB extends AbstractEvalElement implements IBEvalElement {
+public final class EventB extends AbstractEvalElement implements IBEvalElement {
+
 	private final FormulaUUID uuid = new FormulaUUID();
-
 	private EvalElementType kind;
-	private Node ast = null;
-
+	private Node ast;
 	private final Set<IFormulaExtension> types;
 
 	/**
-	 * @param code
-	 *            - The String which is a representation of the desired Event-B
-	 *            formula
+	 * @param code - The String which is a representation of the desired Event-B
+	 *             formula
 	 */
 	public EventB(final String code) {
 		this(code, Collections.emptySet());
@@ -53,9 +51,8 @@ public class EventB extends AbstractEvalElement implements IBEvalElement {
 	}
 
 	public EventB(final String code, final Set<IFormulaExtension> types, final FormulaExpand expansion) {
-		super(UnicodeTranslator.toAscii(code), expansion);
-
-		this.types = types;
+		super(UnicodeTranslator.toAscii(Objects.requireNonNull(code, "code")), expansion);
+		this.types = Collections.unmodifiableSet(Objects.requireNonNull(types, "types"));
 	}
 
 	/**
@@ -67,7 +64,7 @@ public class EventB extends AbstractEvalElement implements IBEvalElement {
 	 * </p>
 	 *
 	 * @param identifier list of string parts that make up a dotted identifier
-	 * @param expansion expansion mode to use when evaluating the formula
+	 * @param expansion  expansion mode to use when evaluating the formula
 	 * @return an Event-B formula representing the given identifier
 	 */
 	public static EventB fromIdentifier(final List<String> identifier, final FormulaExpand expansion) {
@@ -77,7 +74,7 @@ public class EventB extends AbstractEvalElement implements IBEvalElement {
 		eventBFormula.kind = EvalElementType.EXPRESSION;
 		return eventBFormula;
 	}
-	
+
 	/**
 	 * <p>Create an Event-B formula representing the given identifier.</p>
 	 * <p>
@@ -92,61 +89,60 @@ public class EventB extends AbstractEvalElement implements IBEvalElement {
 	public static EventB fromIdentifier(final List<String> identifier) {
 		return fromIdentifier(identifier, FormulaExpand.TRUNCATE);
 	}
-	
+
 	public IParseResult ensurePredicateParsed() {
 		final String unicode = this.toUnicode();
 		kind = EvalElementType.PREDICATE;
 		IParseResult parseResult = FormulaFactory.getInstance(types)
-				.parsePredicate(unicode, null);
-		if(!parseResult.hasProblem()) {
+				                           .parsePredicate(unicode, null);
+		if (!parseResult.hasProblem()) {
 			ast = preparePredicateAst(parseResult);
 		}
 		return parseResult;
 	}
-	
+
 	public IParseResult ensureExpressionParsed() {
 		final String unicode = this.toUnicode();
 		kind = EvalElementType.EXPRESSION;
 		IParseResult parseResult = FormulaFactory.getInstance(types)
-				.parseExpression(unicode, null);
-		if(!parseResult.hasProblem()) {
+				                           .parseExpression(unicode, null);
+		if (!parseResult.hasProblem()) {
 			ast = prepareExpressionAst(parseResult);
 		}
 		return parseResult;
 	}
-	
+
 	public IParseResult ensureAssignmentParsed() {
 		final String unicode = this.toUnicode();
 		kind = EvalElementType.ASSIGNMENT;
 		IParseResult parseResult = FormulaFactory.getInstance(types)
-				.parseAssignment(unicode, null);
-		if(!parseResult.hasProblem()) {
+				                           .parseAssignment(unicode, null);
+		if (!parseResult.hasProblem()) {
 			ast = prepareAssignmentAst(parseResult);
 		}
 		return parseResult;
 	}
 
 	public void ensureParsed() {
-		// TO DO: provide constructor/method for choosing the kind beforehand, or at least disabling substitution parsing (which is rarely necessary)
+		// TODO: provide constructor/method for choosing the kind beforehand, or at least disabling substitution parsing (which is rarely necessary)
 		IParseResult parseResult = ensurePredicateParsed();
 		List<String> errors = new ArrayList<>();
-		if(parseResult.hasProblem()) {
+		if (parseResult.hasProblem()) {
 			errors.add("Parsing predicate failed because: " + parseResult);
 			addProblems(parseResult, errors);
 			parseResult = ensureExpressionParsed();
-			if(parseResult.hasProblem()) {
+			if (parseResult.hasProblem()) {
 				errors.add("Parsing expression failed because: " + parseResult);
 				addProblems(parseResult, errors);
 				parseResult = ensureAssignmentParsed();
 				if (parseResult.hasProblem()) {
 					errors.add("Parsing substitution failed because: " + parseResult);
 					addProblems(parseResult, errors);
-					kind = EvalElementType.NONE;
 				}
 			}
 		}
-		
-		if(parseResult.hasProblem()) {
+
+		if (parseResult.hasProblem()) {
 			errors.add("Formula: \"" + this.getCode() + "\"");
 			if (!this.toUnicode().equals(this.getCode())) {
 				errors.add("Unicode translation: " + this.toUnicode());
@@ -154,7 +150,7 @@ public class EventB extends AbstractEvalElement implements IBEvalElement {
 			throw new EvaluationException("Could not parse formula:\n" + String.join("\n", errors));
 		}
 	}
-	
+
 	private void addProblems(final IParseResult parseResult, List<String> errors) {
 		for (final ASTProblem problem : parseResult.getProblems()) {
 			errors.add(problem.toString());
@@ -196,59 +192,37 @@ public class EventB extends AbstractEvalElement implements IBEvalElement {
 
 	@Override
 	public void printProlog(final IPrologTermOutput pout) {
-		if (ast == null) {
-			ensureParsed();
-		}
-		if (EvalElementType.ASSIGNMENT.equals(getKind())) {
+		Node ast = this.getAst();
+		if (EvalElementType.ASSIGNMENT.equals(this.getKind())) {
 			throw new EvaluationException(
 					"Assignments are currently unsupported for evaluation");
 		}
 
-		assert ast != null;
 		final ASTProlog prolog = new ASTProlog(pout, null);
 		ast.apply(prolog);
 	}
 
 	@Override
-	public void printEvalTerm(final IPrologTermOutput pout) {
-		if (ast == null) {
-			ensureParsed();
-		}
-		super.printEvalTerm(pout);
-	}
-
-	@Override
 	public EvalElementType getKind() {
-		if (kind == null) {
-			try {
-				ensureParsed();
-			} catch (EvaluationException exc) {
-				// ensureParsed should always set the kind, even if it throws an EvaluationException.
-				if (kind == null) {
-					throw new AssertionError("ensureParsed didn't initialize the formula kind", exc);
-				}
-			}
-			if (kind == null) {
-				throw new AssertionError("ensureParsed didn't initialize the formula kind");
-			}
+		if (this.kind == null) {
+			this.ensureParsed();
 		}
-		return kind;
+		return this.kind;
 	}
 
 	@Override
 	public Node getAst() {
-		if (ast == null) {
-			ensureParsed();
+		if (this.ast == null) {
+			this.ensureParsed();
 		}
 
 		assert ast != null;
-
 		return ast;
 	}
 
 	@Override
 	public IFormulaUUID getFormulaId() {
-		return uuid;
+		return this.uuid;
 	}
 
 	public String toUnicode() {
@@ -256,25 +230,20 @@ public class EventB extends AbstractEvalElement implements IBEvalElement {
 	}
 
 	public IParseResult getRodinParsedResult() {
-		if (kind == null) {
-			ensureParsed();
-		}
+		EvalElementType kind = this.getKind();
 		switch (kind) {
 			case PREDICATE:
 				return FormulaFactory.getInstance(types).parsePredicate(toUnicode(), null);
-			
 			case EXPRESSION:
 				return FormulaFactory.getInstance(types).parseExpression(toUnicode(), null);
-			
 			case ASSIGNMENT:
 				return FormulaFactory.getInstance(types).parseAssignment(toUnicode(), null);
-			
 			default:
 				throw new IllegalStateException("Unhandled kind: " + kind);
 		}
 	}
 
 	public Set<IFormulaExtension> getTypes() {
-		return types;
+		return this.types;
 	}
 }

@@ -14,7 +14,6 @@ import de.be4.classicalb.core.parser.BParser;
 import de.be4.classicalb.core.parser.IDefinitions;
 import de.be4.classicalb.core.parser.analysis.prolog.RecursiveMachineLoader;
 import de.be4.classicalb.core.parser.exceptions.BCompoundException;
-import de.be4.classicalb.core.parser.exceptions.BParseException;
 import de.be4.classicalb.core.parser.node.Start;
 import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.command.LoadBProjectCommand;
@@ -63,7 +62,7 @@ public class ClassicalBModel extends AbstractModel {
 		final DependencyWalker walker = new DependencyWalker(rml, classicalBMachine);
 		walker.findDependencies();
 
-		return new ClassicalBModel(getStateSpaceProvider(), assoc(Machine.class, new ModelElementList<>(walker.getMachines())), walker.getGraph(), modelFile, bparser, rml, classicalBMachine);
+		return new ClassicalBModel(stateSpaceProvider, assoc(Machine.class, new ModelElementList<>(walker.getMachines())), walker.getGraph(), modelFile, bparser, rml, classicalBMachine);
 	}
 
 	public ClassicalBMachine getMainMachine() {
@@ -74,6 +73,11 @@ public class ClassicalBModel extends AbstractModel {
 		return this.rml.getMachineFilesLoaded().stream()
 			.map(File::toPath)
 			.collect(Collectors.toList());
+	}
+
+	@Override
+	public List<Path> getAllFiles() {
+		return this.getLoadedMachineFiles();
 	}
 
 	public Map<String, Path> getMachineFilesByName() {
@@ -87,13 +91,13 @@ public class ClassicalBModel extends AbstractModel {
 		try {
 			return new ClassicalB(bparser.parseFormula(formula), expand, formula);
 		} catch (BCompoundException e) {
-			final Throwable cause = e.getCause();
-			if (cause != null && cause.getCause() instanceof BParseException) {
-				throw new EvaluationException(((BParseException)e.getCause().getCause()).getRealMsg(), e);
-			} else {
-				throw new EvaluationException(e.getFirstException().getLocalizedMessage(), e);
-			}
+			throw new EvaluationException(e.getMessage(), e);
 		}
+	}
+
+	@Override
+	public ClassicalB parseFormulaAsClassicalB(String formula, FormulaExpand expand) {
+		return (ClassicalB) this.parseFormula(formula, expand);
 	}
 
 	@Override
@@ -112,13 +116,18 @@ public class ClassicalBModel extends AbstractModel {
 	}
 
 	@Override
-	public AbstractCommand getLoadCommand(final AbstractElement mainComponent) {
+	public AbstractCommand getLoadCommand() {
 		return new LoadBProjectCommand(rml, getModelFile());
 	}
 
 	@Override
 	public AbstractElement getComponent(final String name) {
 		return getChildrenOfType(Machine.class).getElement(name);
+	}
+
+	@Override
+	public AbstractElement getMainComponent() {
+		return this.getMainMachine();
 	}
 
 	public IDefinitions getDefinitions() {

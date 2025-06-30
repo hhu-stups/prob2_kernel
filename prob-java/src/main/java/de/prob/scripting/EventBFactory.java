@@ -1,30 +1,38 @@
 package de.prob.scripting;
 
-import com.google.common.io.MoreFiles;
-import com.google.common.io.RecursiveDeleteOption;
-import com.google.inject.Inject;
-import com.google.inject.Provider;
-import de.prob.model.eventb.EventBModel;
-import de.prob.model.eventb.translate.EventBDatabaseTranslator;
-import de.prob.model.eventb.translate.EventBFileNotFoundException;
-
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.*;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EventBFactory implements ModelFactory<EventBModel> {
+import com.google.common.io.MoreFiles;
+import com.google.common.io.RecursiveDeleteOption;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 
-	private final Provider<EventBModel> modelCreator;
+import de.prob.model.eventb.EventBModel;
+import de.prob.model.eventb.translate.EventBDatabaseTranslator;
+import de.prob.model.eventb.translate.EventBFileNotFoundException;
+import de.prob.statespace.StateSpace;
+
+public class EventBFactory implements ModelFactory<EventBModel> {
 	public static final String RODIN_MACHINE_EXTENSION = "bum";
 	public static final String RODIN_CONTEXT_EXTENSION = "buc";
 	public static final String CHECKED_RODIN_MACHINE_EXTENSION = "bcm";
 	public static final String CHECKED_RODIN_CONTEXT_EXTENSION = "bcc";
 
+	private final Provider<StateSpace> stateSpaceProvider;
+	private final Provider<EventBModel> modelCreator;
+
 	@Inject
-	public EventBFactory(final Provider<EventBModel> modelCreator) {
+	EventBFactory(Provider<StateSpace> stateSpaceProvider, Provider<EventBModel> modelCreator) {
+		this.stateSpaceProvider = stateSpaceProvider;
 		this.modelCreator = modelCreator;
 	}
 
@@ -40,7 +48,7 @@ public class EventBFactory implements ModelFactory<EventBModel> {
 		final EventBModel model = modelCreator.get();
 		final String validFileName = getValidFileName(modelPath);
 		final EventBDatabaseTranslator translator = new EventBDatabaseTranslator(model, validFileName);
-		return new ExtractedModel<>(translator.getModel(), translator.getMainComponent());
+		return new ExtractedModel<>(stateSpaceProvider, translator.getModel());
 	}
 
 	private String getValidFileName(String fileName) {

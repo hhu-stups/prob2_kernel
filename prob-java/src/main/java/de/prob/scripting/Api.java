@@ -4,18 +4,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.google.common.io.MoreFiles;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 
 import de.be4.classicalb.core.parser.node.Start;
-import de.prob.animator.IAnimator;
-import de.prob.animator.command.GetVersionCommand;
-import de.prob.cli.CliVersionNumber;
-import de.prob.cli.ProBInstance;
 import de.prob.exception.CliError;
 import de.prob.exception.ProBError;
 import de.prob.model.brules.RulesModelFactory;
@@ -27,62 +21,18 @@ import de.prob.statespace.StateSpace;
 
 public class Api {
 	private final FactoryProvider modelFactoryProvider;
-	private final Provider<IAnimator> animatorProvider;
-	@Deprecated
-	private LinkedHashMap<Object, Object> globals = new LinkedHashMap<>();
 
 	/**
 	 * Create an {@link Api} object. Normally this constructor should not be used directly, {@link Api} objects should be obtained using injection instead.
 	 */
 	@Inject
-	public Api(final FactoryProvider modelFactoryProvider, final Provider<IAnimator> animatorProvider) {
-		this.animatorProvider = animatorProvider;
+	Api(FactoryProvider modelFactoryProvider) {
 		this.modelFactoryProvider = modelFactoryProvider;
-	}
-
-	/**
-	 * @deprecated Please store your global state in your own classes.
-	 *     In a Groovy scripting environment, you can also use the Groovy script's global namespace.
-	 */
-	@Deprecated
-	public LinkedHashMap<Object, Object> getGlobals() {
-		return globals;
-	}
-
-	/**
-	 * @deprecated Please store your global state in your own classes.
-	 *     In a Groovy scripting environment, you can also use the Groovy script's global namespace.
-	 */
-	@Deprecated
-	public void setGlobals(LinkedHashMap<Object, Object> globals) {
-		this.globals = globals;
 	}
 
 	@Override
 	public String toString() {
 		return "ProB Connector";
-	}
-	
-	/**
-	 * Get the version of the ProB CLI.
-	 * 
-	 * @return the version of the ProB CLI, or {@code null} if the version could not be determined
-	 * 
-	 * @deprecated Use {@link GetVersionCommand} with an existing animator instead.
-	 */
-	@Deprecated
-	public CliVersionNumber getVersion() {
-		IAnimator animator = null;
-		try {
-			animator = animatorProvider.get();
-			GetVersionCommand versionCommand = new GetVersionCommand();
-			animator.execute(versionCommand);
-			return versionCommand.getVersion();
-		} finally {
-			if (animator != null) {
-				animator.kill();
-			}
-		}
 	}
 
 	/**
@@ -93,7 +43,6 @@ public class Api {
 	public String help() {
 		return "Api Commands:\n\n"
 			+ " String help(): print out available commands\n"
-			+ " void shutdown(ProBInstance instance): shutdown ProBInstance\n"
 			+ " StateSpace b_load(String filePath, [Map<String, String> prefs]): load a classical B machine from a .mch file\n"
 			+ " StateSpace b_load(Start ast, [Map<String, String> prefs]): load aclassical B machine from an AST\n"
 			+ " StateSpace eventb_load(String filePath, [Map<String, String> prefs]): load an EventB machine from a file\n"
@@ -102,17 +51,6 @@ public class Api {
 			+ " StateSpace brules_load(String filePath, [Map<String, String> prefs]): load a B rules machine from a .rmch file\n"
 			+ " StateSpace csp_load(String filePath, [Map<String, String> prefs]): load a .csp file\n"
 		;
-	}
-
-	/**
-	 * Shutdown the specified {@link ProBInstance} object.
-	 *
-	 * @param instance the instance to shut down
-	 * @deprecated Use {@link ProBInstance#shutdown()} instead.
-	 */
-	@Deprecated
-	public void shutdown(final ProBInstance instance) {
-		instance.shutdown();
 	}
 
 	/**
@@ -193,7 +131,7 @@ public class Api {
 	 * @param pto where to output the saved Prolog term
 	 */
 	public void eventb_save(final StateSpace s, final IPrologTermOutput pto) {
-		final EventBModelTranslator translator = new EventBModelTranslator((EventBModel) s.getModel(), s.getMainComponent());
+		final EventBModelTranslator translator = new EventBModelTranslator((EventBModel)s.getModel());
 		translator.printPrologFact(pto);
 	}
 

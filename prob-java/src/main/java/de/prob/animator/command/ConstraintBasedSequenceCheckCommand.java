@@ -11,7 +11,6 @@ import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.exception.ProBError;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
-import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.StateSpace;
@@ -95,7 +94,7 @@ public class ConstraintBasedSequenceCheckCommand extends AbstractCommand impleme
 			this.result = ResultType.PATH_FOUND;
 			List<Transition> transitions = new ArrayList<>();
 			for(PrologTerm prologTerm : list) {
-				transitions.add(Transition.createTransitionFromCompoundPrologTerm(s, (CompoundPrologTerm) prologTerm));
+				transitions.add(Transition.createTransitionFromCompoundPrologTerm(s, prologTerm));
 			}
 			this.transitions = transitions;
 		} else {

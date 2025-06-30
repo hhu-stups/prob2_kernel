@@ -2,15 +2,21 @@ package de.prob.model.eventb;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import de.prob.cli.CliTestCommon;
+import de.prob.model.representation.AbstractModel;
+import de.prob.model.representation.ModelElementList;
+import de.prob.model.representation.Named;
 import de.prob.scripting.Api;
 import de.prob.statespace.StateSpace;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class EventTest {
@@ -59,4 +65,13 @@ public class EventTest {
 		stateSpace.kill();
 	}
 
+	@Test
+	@Disabled("bcm files lose the param order given in the bum")
+	public void testParamOrder() throws IOException {
+		StateSpace stateSpace = CliTestCommon.getInjector().getInstance(Api.class).eventb_load(Paths.get("src", "test", "resources", "de", "prob", "testmachines", "eventB", "paramOrder",  "M.bum").toString());
+		EventBModel m = (EventBModel) stateSpace.getModel();
+		Event event = m.getEventList().getElement("E");
+		Assertions.assertEquals(Arrays.asList("dist_x", "dist_y", "dist_z"), event.getParameters().stream().map(Named::getName).collect(Collectors.toList()));
+		stateSpace.kill();
+	}
 }

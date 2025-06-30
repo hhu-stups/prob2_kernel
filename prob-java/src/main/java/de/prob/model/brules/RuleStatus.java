@@ -5,10 +5,14 @@ import java.util.Map;
 
 import de.be4.classicalb.core.parser.rules.RulesTransformation;
 import de.prob.animator.domainobjects.AbstractEvalResult;
+import de.prob.animator.domainobjects.IdentifierNotInitialised;
 
 public enum RuleStatus implements OperationStatus {
-	FAIL(RulesTransformation.RULE_FAIL), SUCCESS(RulesTransformation.RULE_SUCCESS), NOT_CHECKED(
-			RulesTransformation.RULE_NOT_CHECKED), DISABLED(RulesTransformation.RULE_DISABLED);
+
+	FAIL(RulesTransformation.RULE_FAIL),
+	SUCCESS(RulesTransformation.RULE_SUCCESS),
+	NOT_CHECKED(RulesTransformation.RULE_NOT_CHECKED),
+	DISABLED(RulesTransformation.RULE_DISABLED);
 
 	private final String bValue;
 
@@ -24,6 +28,9 @@ public enum RuleStatus implements OperationStatus {
 	}
 
 	public static RuleStatus valueOf(AbstractEvalResult evalResult) {
+		if (evalResult instanceof IdentifierNotInitialised) {
+			return RuleStatus.NOT_CHECKED;
+		}
 		String res = evalResult.toString();
 		res = res.substring(1, res.length() - 1);
 		if (mapping.containsKey(res)) {

@@ -13,8 +13,8 @@ assert trans.evaluate(FormulaExpand.EXPAND).rep == "4,{(5|->{2,4,6,8})},6 <-- Cr
 assert trans.evaluate(FormulaExpand.TRUNCATE).rep == "4,{(5|->{2,4,6,8})},6 <-- Crazy2(5,{2,4,6,8})"
 
 final truncated = new ClassicalB("{2,4,6,8,10}", FormulaExpand.TRUNCATE)
-assert t.evalCurrent(truncated).value == "#5:{2,...,10}"
+assert t.evalCurrent(truncated).value == "{2,...}"
 final expanded = new ClassicalB("{2,4,6,8,10}", FormulaExpand.EXPAND)
 assert t.evalCurrent(expanded).value == "{2,4,6,8,10}"
 
-"Expanding and truncating a formila works correctly"
+"Expanding and truncating a formula works correctly"

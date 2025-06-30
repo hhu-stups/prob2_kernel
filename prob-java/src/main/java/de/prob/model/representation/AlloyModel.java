@@ -30,7 +30,7 @@ public class AlloyModel extends AbstractModel {
 	}
 
 	public AlloyModel create(final File modelFile, final String term) {
-		return new AlloyModel(getStateSpaceProvider(), modelFile, term);
+		return new AlloyModel(stateSpaceProvider, modelFile, term);
 	}
 	
 	@Override
@@ -54,12 +54,17 @@ public class AlloyModel extends AbstractModel {
 	}
 
 	@Override
-	public AbstractCommand getLoadCommand(final AbstractElement mainComponent) {
+	public AbstractCommand getLoadCommand() {
 		return new LoadAlloyTermCommand(this.term, this.getModelFile().toString());
 	}
 
 	@Override
 	public AbstractElement getComponent(String name) {
+		return null;
+	}
+
+	@Override
+	public AbstractElement getMainComponent() {
 		return null;
 	}
 }

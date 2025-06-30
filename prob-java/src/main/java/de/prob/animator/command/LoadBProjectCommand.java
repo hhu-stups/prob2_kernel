@@ -5,7 +5,6 @@ import java.io.File;
 import de.be4.classicalb.core.parser.analysis.prolog.RecursiveMachineLoader;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
-import de.prob.prolog.output.StructuredPrologOutput;
 import de.prob.prolog.term.PrologTerm;
 
 /**
@@ -29,9 +28,9 @@ public class LoadBProjectCommand extends AbstractCommand {
 	@Override
 	public void writeCommand(final IPrologTermOutput pto) {
 		pto.openTerm(PROLOG_COMMAND_NAME);
-		pto.printAtom(mainMachine.getAbsolutePath());
+		pto.printAtom(this.mainMachine.getAbsolutePath());
 		pto.openList();
-		printLoadTerm(pto);
+		this.rml.printAsPrologDirect(pto);
 		pto.closeList();
 		pto.closeTerm();
 	}
@@ -39,13 +38,5 @@ public class LoadBProjectCommand extends AbstractCommand {
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
 		// There are no output variables.
-	}
-
-	private void printLoadTerm(IPrologTermOutput pto) {
-		StructuredPrologOutput parserOutput = new StructuredPrologOutput();
-		this.rml.printAsProlog(parserOutput);
-		for (PrologTerm term : parserOutput.getSentences()) {
-			pto.printTerm(term);
-		}
 	}
 }

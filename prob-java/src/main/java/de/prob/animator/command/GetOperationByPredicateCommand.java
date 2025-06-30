@@ -73,19 +73,12 @@ public final class GetOperationByPredicateCommand extends AbstractCommand
 		this.name = name;
 		this.nrOfSolutions = nrOfSolutions;
 		evalElement = predicate;
-		if (!EvalElementType.PREDICATE.equals(evalElement.getKind()) && !EvalElementType.NONE.equals(evalElement.getKind())) {
+		if (!EvalElementType.PREDICATE.equals(evalElement.getKind())) {
 			String message = "Formula must be a predicate, not " + predicate.getKind() + ": " + predicate;
 			throw new ExecuteOperationException(message, Collections.singletonList(new GetOperationError(GetOperationErrorType.PARSE_ERROR, message)));
 		}
 	}
 
-	/**
-	 * This method is called when the command is prepared for sending. The
-	 * method is called by the Animator class, most likely it is not interesting
-	 * for other classes.
-	 *
-	 * @see de.prob.animator.command.AbstractCommand#writeCommand(de.prob.prolog.output.IPrologTermOutput)
-	 */
 	@Override
 	public void writeCommand(final IPrologTermOutput pto) {
 		pto.openTerm(PROLOG_COMMAND_NAME)
@@ -96,15 +89,6 @@ public final class GetOperationByPredicateCommand extends AbstractCommand
 		pto.printVariable(ERRORS_VARIABLE).closeTerm();
 	}
 
-	/**
-	 * This method is called to extract relevant information from ProB's answer.
-	 * The method is called by the Animator class, most likely it is not
-	 * interesting for other classes.
-	 *
-	 *
-	 *
-	 * @see de.prob.animator.command.AbstractCommand#writeCommand(de.prob.prolog.output.IPrologTermOutput)
-	 */
 	@Override
 	public void processResult(
 			final ISimplifiedROMap<String, PrologTerm> bindings) {
@@ -119,8 +103,7 @@ public final class GetOperationByPredicateCommand extends AbstractCommand
 
 		for (PrologTerm prologTerm : BindingGenerator.getList(bindings.get(ERRORS_VARIABLE))) {
 			if(prologTerm.getArity() > 0) {
-				ListPrologTerm errorList = (ListPrologTerm) prologTerm.getArgument(1);
-				for(PrologTerm errorTerm : errorList) {
+				for(PrologTerm errorTerm : BindingGenerator.getList(prologTerm.getArgument(1))) {
 					this.errors.add(new GetOperationError(GetOperationErrorType.PARSE_ERROR, errorTerm.getArgument(1).getFunctor()));
 				}
 			} else {

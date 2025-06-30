@@ -20,11 +20,11 @@ public class ZFuzzModel extends ZModel {
 
 	@Override
 	public ZFuzzModel create(final File modelFile) {
-		return new ZFuzzModel(getStateSpaceProvider(), modelFile);
+		return new ZFuzzModel(stateSpaceProvider, modelFile);
 	}
 	
 	@Override
-	public AbstractCommand getLoadCommand(final AbstractElement mainComponent) {
+	public AbstractCommand getLoadCommand() {
 		return new LoadZFuzzCommand(this.getModelFile().getAbsolutePath());
 	}
 }

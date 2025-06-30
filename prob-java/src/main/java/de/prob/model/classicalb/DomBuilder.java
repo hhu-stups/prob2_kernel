@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 
 public class DomBuilder extends MachineClauseAdapter {
 
-	private final EOF EOF = new EOF();
 	private final List<Parameter> parameters = new ArrayList<>();
 	private final List<Constraint> constraints = new ArrayList<>();
 	private final List<ClassicalBConstant> constants = new ArrayList<>();
@@ -276,22 +275,23 @@ public class DomBuilder extends MachineClauseAdapter {
 	}
 
 	private Start createExpressionAST(final PExpression expression) {
-		Start start = new Start();
-		AExpressionParseUnit node = new AExpressionParseUnit();
-		start.setPParseUnit(node);
-		start.setEOF(EOF);
-		node.setExpression(expression.clone());
+		AExpressionParseUnit node = new AExpressionParseUnit(expression.clone());
+		Start start = new Start(node, new EOF());
 		node.getExpression().apply(new RenameIdentifiers());
 		return start;
 	}
 
-	private Start createPredicateAST(final PPredicate pPredicate) {
-		Start start = new Start();
-		APredicateParseUnit node2 = new APredicateParseUnit();
-		start.setPParseUnit(node2);
-		start.setEOF(EOF);
-		node2.setPredicate(pPredicate.clone());
-		node2.getPredicate().apply(new RenameIdentifiers());
+	private Start createPredicateAST(final PPredicate predicate) {
+		APredicateParseUnit node = new APredicateParseUnit(predicate.clone());
+		Start start = new Start(node, new EOF());
+		node.getPredicate().apply(new RenameIdentifiers());
+		return start;
+	}
+
+	private Start createSubstitutionAST(final PSubstitution substitution) {
+		ASubstitutionParseUnit node = new ASubstitutionParseUnit(substitution.clone());
+		Start start = new Start(node, new EOF());
+		node.getSubstitution().apply(new RenameIdentifiers());
 		return start;
 	}
 
@@ -302,16 +302,6 @@ public class DomBuilder extends MachineClauseAdapter {
 		}
 
 		return null;
-	}
-
-	private Start createSubstitutionAST(final PSubstitution pSub) {
-		Start start = new Start();
-		ASubstitutionParseUnit node2 = new ASubstitutionParseUnit();
-		start.setPParseUnit(node2);
-		start.setEOF(EOF);
-		node2.setSubstitution(pSub.clone());
-		node2.getSubstitution().apply(new RenameIdentifiers());
-		return start;
 	}
 
 	private class RenameIdentifiers extends DepthFirstAdapter {

@@ -193,27 +193,52 @@ public final class BVisual2Formula {
 	
 	/**
 	 * <p>Evaluate multiple formulas in the given state. All formulas must belong to the same state space as the state.</p>
-	 * 
+	 * <p>Results may be truncated.</p>
+	 *
 	 * @param formulas the formulas to evaluate
 	 * @param state the state in which to evaluate the formulas
 	 * @return the evaluated formula values
 	 */
 	public static List<BVisual2Value> evaluateMultiple(final List<BVisual2Formula> formulas, final State state) {
+		return evaluateMultiple(formulas, state, false);
+	}
+
+	/**
+	 * <p>Evaluate multiple formulas in the given state. All formulas must belong to the same state space as the state.</p>
+	 * <p>Results are never truncated.</p>
+	 *
+	 * @param formulas the formulas to evaluate
+	 * @param state the state in which to evaluate the formulas
+	 * @return the evaluated formula values
+	 */
+	public static List<BVisual2Value> evaluateMultipleUnlimited(final List<BVisual2Formula> formulas, final State state) {
+		return evaluateMultiple(formulas, state, true);
+	}
+
+	/**
+	 * <p>Evaluate multiple formulas in the given state. All formulas must belong to the same state space as the state.</p>
+	 *
+	 * @param formulas the formulas to evaluate
+	 * @param state the state in which to evaluate the formulas
+	 * @param unlimited whether the results may be truncated
+	 * @return the evaluated formula values
+	 */
+	public static List<BVisual2Value> evaluateMultiple(final List<BVisual2Formula> formulas, final State state, final boolean unlimited) {
 		Objects.requireNonNull(formulas, "formulas");
 		Objects.requireNonNull(state, "state");
-		
+
 		if (formulas.isEmpty()) {
 			return Collections.emptyList();
 		}
-		
+
 		for (final BVisual2Formula formula : formulas) {
 			Objects.requireNonNull(formula);
 			if (!formula.getStateSpace().equals(state.getStateSpace())) {
 				throw new IllegalArgumentException(String.format("Formula %s does not belong to the state space of the given state: %s", formula, state.getStateSpace()));
 			}
 		}
-		
-		final EvaluateBVisual2FormulasCommand evaluateCommand = new EvaluateBVisual2FormulasCommand(formulas, state);
+
+		final EvaluateBVisual2FormulasCommand evaluateCommand = new EvaluateBVisual2FormulasCommand(formulas, state, unlimited);
 		state.getStateSpace().execute(evaluateCommand);
 		return evaluateCommand.getResults();
 	}
@@ -221,12 +246,25 @@ public final class BVisual2Formula {
 	/**
 	 * <p>Evaluate this formula in the given state. This formula must belong to the same state space as the state.</p>
 	 * <p>To evaluate many formulas in the same state, {@link #evaluateMultiple(List, State)} (List)} should be used for better performance.</p>
+	 * <p>Results may be truncated.</p>
 	 *
 	 * @param state the state in which to evaluate the formula
 	 * @return the evaluated formula value
 	 */
 	public BVisual2Value evaluate(final State state) {
 		return evaluateMultiple(Collections.singletonList(this), state).get(0);
+	}
+
+	/**
+	 * <p>Evaluate this formula in the given state. This formula must belong to the same state space as the state.</p>
+	 * <p>To evaluate many formulas in the same state, {@link #evaluateMultiple(List, State)} (List)} should be used for better performance.</p>
+	 * <p>Results are never truncated.</p>
+	 *
+	 * @param state the state in which to evaluate the formula
+	 * @return the evaluated formula value
+	 */
+	public BVisual2Value evaluateUnlimited(final State state) {
+		return evaluateMultipleUnlimited(Collections.singletonList(this), state).get(0);
 	}
 	
 	/**

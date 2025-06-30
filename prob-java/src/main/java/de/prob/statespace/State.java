@@ -5,19 +5,29 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import de.prob.animator.command.CheckConstantsSetUpStatusCommand;
+import de.prob.animator.command.CheckInitialisationStatusCommand;
+import de.prob.animator.command.CheckInvariantStatusCommand;
+import de.prob.animator.command.CheckMaxOperationReachedStatusCommand;
+import de.prob.animator.command.CheckTimeoutStatusCommand;
 import de.prob.animator.command.EvaluateFormulasCommand;
 import de.prob.animator.command.ExecuteOperationException;
-import de.prob.animator.command.ExploreStateCommand;
 import de.prob.animator.command.GetBStateCommand;
+import de.prob.animator.command.GetCandidateOperationsCommand;
+import de.prob.animator.command.GetEnabledOperationsCommand;
+import de.prob.animator.command.GetOperationsWithTimeout;
+import de.prob.animator.command.GetStateBasedErrorsCommand;
 import de.prob.animator.domainobjects.AbstractEvalResult;
 import de.prob.animator.domainobjects.EvalOptions;
 import de.prob.animator.domainobjects.FormulaExpand;
@@ -39,6 +49,7 @@ public class State {
 	private final StateSpace stateSpace;
 	private volatile boolean explored;
 	private List<Transition> transitions;
+	private List<GetCandidateOperationsCommand.Candidate> candidates;
 	private boolean constantsSetUp;
 	private boolean initialised;
 	private boolean invariantOk;
@@ -59,7 +70,7 @@ public class State {
 		this.id = id;
 		this.stateSpace = space;
 		this.explored = false;
-		this.transitions = new ArrayList<>();
+		this.transitions = Collections.emptyList();
 		this.evalCache = new HashMap<>();
 	}
 
@@ -108,10 +119,12 @@ public class State {
 	 * @return the calculated transition, or null if no transition was found.
 	 */
 	public Transition findTransition(final String name, List<String> predicates) {
-		if (predicates.isEmpty() && !transitions.isEmpty()) {
-			final Optional<Transition> op = transitions.stream().filter(t -> t.getName().equals(name)).findAny();
-			if (op.isPresent()) {
-				return op.get();
+		if (predicates.isEmpty()) {
+			synchronized (this) {
+				final Optional<Transition> op = transitions.stream().filter(t -> t.getName().equals(name)).findAny();
+				if (op.isPresent()) {
+					return op.get();
+				}
 			}
 		}
 		final List<Transition> transitions = findTransitions(name, predicates, 1);
@@ -130,18 +143,14 @@ public class State {
 	 */
 	public List<Transition> findTransitions(String name, List<String> predicates, int nrOfSolutions) {
 		final String predicate = predicates.isEmpty() ? "TRUE = TRUE" : '(' + String.join(") & (", predicates) + ')';
-		List<Transition> newOps;
 		try {
-			newOps = stateSpace.transitionFromPredicate(this, name, predicate, nrOfSolutions);
-			transitions.addAll(newOps);
+			return stateSpace.transitionFromPredicate(this, name, predicate, nrOfSolutions);
 		} catch (ExecuteOperationException e) {
-			return new ArrayList<>();
+			return Collections.emptyList();
 		}
-		return newOps;
 	}
 
-	// TODO This duplicates Trace.anyOperation (almost, but not exactly)
-	public State anyOperation(final Object filter) {
+	Optional<Transition> chooseRandomOutTransition(Object filter) {
 		List<Transition> ops = getOutTransitions();
 		if (filter instanceof String) {
 			final Pattern filterPattern = Pattern.compile((String)filter);
@@ -150,14 +159,21 @@ public class State {
 		if (filter instanceof ArrayList) {
 			ops = ops.stream().filter(t -> ((List<?>)filter).contains(t.getName())).collect(Collectors.toList());
 		}
-		if (!ops.isEmpty()) {
-			Collections.shuffle(ops);
-			final Transition op = ops.get(0);
-			final State newState = op.getDestination();
-			newState.exploreIfNeeded();
-			return newState;
+		if (ops.isEmpty()) {
+			return Optional.empty();
+		} else {
+			int opIndex = new Random().nextInt(ops.size());
+			return Optional.of(ops.get(opIndex));
 		}
-		return this;
+	}
+
+	public State anyOperation(Object filter) {
+		Optional<Transition> transition = this.chooseRandomOutTransition(filter);
+		if (transition.isPresent()) {
+			return transition.get().getDestination();
+		} else {
+			return this;
+		}
 	}
 
 	public State anyEvent(Object filter) {
@@ -339,8 +355,23 @@ public class State {
 		return explored;
 	}
 
+	/**
+	 * @return list of outgoing transitions from this state that have been found so far
+	 * @deprecated This method doesn't ensure that the state has been explored. Use {@link #getOutTransitions()} instead.
+	 */
+	@Deprecated
 	public List<Transition> getTransitions() {
 		return transitions;
+	}
+
+	/**
+	 * An operations might be potentially enabled if it has MAX_OPERATIONS == 0.
+	 *
+	 * @return list of potentially enabled operations
+	 */
+	public List<GetCandidateOperationsCommand.Candidate> getCandidateOperations() {
+		this.exploreIfNeeded();
+		return candidates;
 	}
 
 	public boolean isConstantsSetUp() {
@@ -429,18 +460,46 @@ public class State {
 		return transitions;
 	}
 
+	/**
+	 * For internal use only by {@link StateSpace}.
+	 * 
+	 * @param transitions the updated list of outgoing transitions from this state
+	 */
+	synchronized void setOutTransitions(List<Transition> transitions) {
+		this.transitions = Collections.unmodifiableList(transitions);
+	}
+
 	public synchronized State explore() {
-		final ExploreStateCommand cmd = new ExploreStateCommand(stateSpace, id, Collections.emptyList());
-		stateSpace.execute(cmd);
-		transitions = cmd.getNewTransitions();
-		constantsSetUp = cmd.isConstantsSetUp();
-		initialised = cmd.isInitialised();
-		invariantOk = cmd.isInvariantOk();
-		timeoutOccurred = cmd.isTimeoutOccured();
-		maxTransitionsCalculated = cmd.isMaxOperationsReached();
-		stateErrors = cmd.getStateErrors();
-		transitionsWithTimeout = cmd.getOperationsWithTimeout();
-		// TODO Combine the subscribed formula evaluation commands into ExploreStateCommand again
+		GetEnabledOperationsCommand getEnabledOpsCmd = new GetEnabledOperationsCommand(stateSpace, id);
+		GetCandidateOperationsCommand getCandidateOperationsCommand = new GetCandidateOperationsCommand(id);
+		CheckConstantsSetUpStatusCommand checkConstantsSetUpCmd = new CheckConstantsSetUpStatusCommand(id);
+		CheckInitialisationStatusCommand checkInitialisedCmd = new CheckInitialisationStatusCommand(id);
+		CheckInvariantStatusCommand checkInvariantCmd = new CheckInvariantStatusCommand(id);
+		CheckTimeoutStatusCommand checkTimeoutCmd = new CheckTimeoutStatusCommand(id);
+		GetOperationsWithTimeout getOpsWithTimeoutCmd = new GetOperationsWithTimeout(id);
+		CheckMaxOperationReachedStatusCommand checkMaxOpsReachedCmd = new CheckMaxOperationReachedStatusCommand(id);
+		GetStateBasedErrorsCommand getStateErrorsCmd = new GetStateBasedErrorsCommand(id);
+		stateSpace.execute(
+			getEnabledOpsCmd,
+			getCandidateOperationsCommand,
+			checkConstantsSetUpCmd,
+			checkInitialisedCmd,
+			checkInvariantCmd,
+			checkTimeoutCmd,
+			getOpsWithTimeoutCmd,
+			checkMaxOpsReachedCmd,
+			getStateErrorsCmd
+		);
+		transitions = Collections.unmodifiableList(getEnabledOpsCmd.getEnabledOperations());
+		candidates = Collections.unmodifiableList(getCandidateOperationsCommand.getCandidates());
+		constantsSetUp = checkConstantsSetUpCmd.isConstantsSetUp();
+		initialised = checkInitialisedCmd.isInitialized();
+		invariantOk = !checkInvariantCmd.isInvariantViolated();
+		timeoutOccurred = checkTimeoutCmd.isTimeout();
+		transitionsWithTimeout = new HashSet<>(getOpsWithTimeoutCmd.getTimeouts());
+		maxTransitionsCalculated = checkMaxOpsReachedCmd.maxOperationReached();
+		stateErrors = getStateErrorsCmd.getResult();
+		// TODO Combine the subscribed formula evaluation commands into the execute call above so that there is only one Prolog call per exploration
 		this.getValues();
 		explored = true;
 		return this;

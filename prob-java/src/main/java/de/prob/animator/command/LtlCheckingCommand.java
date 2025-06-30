@@ -10,11 +10,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import de.prob.animator.IPrologResult;
-import de.prob.animator.InterruptedResult;
 import de.prob.animator.domainobjects.ErrorItem;
 import de.prob.animator.domainobjects.LTL;
-import de.prob.check.CheckInterrupted;
 import de.prob.check.IModelCheckingResult;
 import de.prob.check.LTLCounterExample;
 import de.prob.check.LTLError;
@@ -25,30 +22,36 @@ import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.AIntegerPrologTerm;
 import de.prob.prolog.term.CompoundPrologTerm;
-import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
+import de.prob.statespace.State;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
 
 public final class LtlCheckingCommand extends AbstractCommand implements
 		IStateSpaceModifier {
-	private static final String PROLOG_COMMAND_NAME = "prob2_do_ltl_modelcheck";
-	private static final String VARIABLE_NAME_RESULT = "R";
-	private static final String VARIABLE_NAME_ERRORS = "Errors";
-
 	public enum PathType {
 		INFINITE, FINITE, REDUCED
 	}
 
-	private final int max;
-	private IModelCheckingResult result;
-	private final LTL ltlFormula;
-	private final StateSpace s;
+	private static final String PROLOG_COMMAND_NAME = "prob2_do_ltl_modelcheck";
+	private static final String VARIABLE_NAME_RESULT = "R";
 
-	public LtlCheckingCommand(final StateSpace s, final LTL ltlFormula, final int max) {
+	private final StateSpace s;
+	private final LTL ltlFormula;
+	private final int max;
+	private final State startState;
+
+	private IModelCheckingResult result;
+
+	public LtlCheckingCommand(StateSpace s, LTL ltlFormula, int max, State startState) {
 		this.s = s;
 		this.ltlFormula = ltlFormula;
 		this.max = max;
+		this.startState = startState;
+	}
+
+	public LtlCheckingCommand(StateSpace s, LTL ltlFormula, int max) {
+		this(s, ltlFormula, max, null);
 	}
 
 	public IModelCheckingResult getResult() {
@@ -59,23 +62,16 @@ public final class LtlCheckingCommand extends AbstractCommand implements
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
 		PrologTerm term = bindings.get(VARIABLE_NAME_RESULT);
 
-		if (term.hasFunctor("ok", 0)) {
+		if (term.hasFunctor("type_error", 1)) {
+			final List<ErrorItem> errors = BindingGenerator.getList(term.getArgument(1)).stream()
+				.map(ErrorItem::fromProlog)
+				.collect(Collectors.toList());
+			result = new LTLError(ltlFormula, errors);
+		} else if (term.hasFunctor("ok", 0)) {
 			result = new LTLOk(ltlFormula);
 		} else if (term.hasFunctor("nostart", 0)) {
 			result = new LTLError(ltlFormula,
 					"Could not find initialisation. Try to animating the model.");
-		} else if (term.hasFunctor("typeerror", 0)) {
-			ListPrologTerm errorTerm = (ListPrologTerm) bindings.get(VARIABLE_NAME_ERRORS);
-			final List<ErrorItem> errors = errorTerm.stream()
-				.map(error -> {
-					if (error.isAtom()) {
-						return ErrorItem.fromErrorMessage(error.atomToString());
-					} else {
-						return ErrorItem.fromProlog(error);
-					}
-				})
-				.collect(Collectors.toList());
-			result = new LTLError(ltlFormula, errors);
 		} else if (term.hasFunctor("incomplete", 0)) {
 			result = new LTLNotYetFinished(ltlFormula);
 		} else if (term.hasFunctor("counterexample", 3)) {
@@ -114,21 +110,26 @@ public final class LtlCheckingCommand extends AbstractCommand implements
 	}
 
 	@Override
-	public void processErrorResult(final IPrologResult result, final List<ErrorItem> errors) {
-		if (result instanceof InterruptedResult) {
-			this.result = new CheckInterrupted();
-		} else {
-			super.processErrorResult(result, errors);
-		}
-	}
-
-	@Override
 	public void writeCommand(final IPrologTermOutput pto) {
 		pto.openTerm(PROLOG_COMMAND_NAME);
 		this.ltlFormula.printProlog(pto);
+
+		pto.openList();
+		pto.openTerm("max_new_states");
 		pto.printNumber(max);
+		pto.closeTerm();
+		pto.openTerm("mode");
+		if (startState == null) {
+			pto.printAtom("init");
+		} else {
+			pto.openTerm("specific_node");
+			pto.printAtomOrNumber(startState.getId());
+			pto.closeTerm();
+		}
+		pto.closeTerm();
+		pto.closeList();
+
 		pto.printVariable(VARIABLE_NAME_RESULT);
-		pto.printVariable(VARIABLE_NAME_ERRORS);
 		pto.closeTerm();
 	}
 

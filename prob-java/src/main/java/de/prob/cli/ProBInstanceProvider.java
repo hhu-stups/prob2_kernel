@@ -1,23 +1,38 @@
 package de.prob.cli;
 
-import com.google.inject.Inject;
-import com.google.inject.Provider;
-import com.google.inject.Singleton;
-import de.prob.annotations.Home;
-import de.prob.exception.CliError;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Singleton
+import com.google.inject.Provider;
+
+import de.prob.exception.CliError;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * This class is more or less an implementation detail -
+ * please avoid using it externally if possible.
+ * Some external code does use it though,
+ * in particular the {@link #shutdownAll()} method to explicitly shut down any leftover ProB instances
+ * (even though this is usually not necessary),
+ * so please avoid changing the class name and public methods,
+ * unless there's a good reason for it.
+ */
 public final class ProBInstanceProvider implements Provider<ProBInstance> {
 
 	static final class CliInformation {
@@ -44,19 +59,42 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 	static final Pattern CLI_PORT_PATTERN = Pattern.compile("^.*Port: (\\d+)$");
 	static final Pattern CLI_USER_INTERRUPT_REFERENCE_PATTERN = Pattern.compile("^.*user interrupt reference id: *(\\d+|off) *$");
 
-	private final String home;
+	private final Path proBDirectory;
 	private final OsSpecificInfo osInfo;
 	private final Collection<Process> runningProcesses = new CopyOnWriteArrayList<>();
 	private final Collection<ProBInstance> runningInstances = new CopyOnWriteArrayList<>();
 
-	@Inject
-	public ProBInstanceProvider(@Home final String home, final OsSpecificInfo osInfo, final Installer installer) {
-		this.home = home;
+	private ProBInstanceProvider(Path proBDirectory, boolean usesSharedProBDirectory, OsSpecificInfo osInfo) {
+		this.proBDirectory = proBDirectory;
 		this.osInfo = osInfo;
 
-		Runtime.getRuntime().addShutdownHook(new Thread(this::shutdownAll, "Prolog Process Destroyer"));
+		if (usesSharedProBDirectory) {
+			Installer.DEFAULT_PROB_DIR_USERS_COUNTER.register();
+		}
 
-		installer.ensureCLIsInstalled();
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			try {
+				this.shutdownAll();
+			} catch (RuntimeException exc) {
+				LOGGER.error("ProBInstanceProvider.shutdownAll() failed while shutting down JVM - ignoring", exc);
+			}
+
+			if (usesSharedProBDirectory) {
+				// Tell Installer that we're done using the default ProB directory
+				// so that its shutdown hook may delete it (if it's a temporary directory).
+				Installer.DEFAULT_PROB_DIR_USERS_COUNTER.arriveAndDeregister();
+			}
+		}, "ProB instance shutdown hook"));
+	}
+
+	static ProBInstanceProvider defaultProvider(OsSpecificInfo osInfo) {
+		String proBDirectoryOverride = System.getProperty("prob.home");
+		if (proBDirectoryOverride == null) {
+			Path proBDirectory = Installer.ensureInstalled(osInfo);
+			return new ProBInstanceProvider(proBDirectory, true, osInfo);
+		} else {
+			return new ProBInstanceProvider(Paths.get(proBDirectoryOverride), false, osInfo);
+		}
 	}
 
 	@Override
@@ -64,11 +102,20 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 		return this.startProlog();
 	}
 
+	Path getProBDirectory() {
+		return this.proBDirectory;
+	}
+
 	void instanceWasShutDown(ProBInstance instance, Process process) {
 		this.runningInstances.remove(instance);
 		this.runningProcesses.remove(process);
 	}
 
+	/**
+	 * Shut down all running {@link ProBInstance}s that were created by this provider.
+	 * This method is called automatically when the JVM shuts down,
+	 * so you usually don't need to call it directly.
+	 */
 	public void shutdownAll() {
 		for (ProBInstance instance : this.runningInstances) {
 			// This also removes the instance and its process from the respective lists.
@@ -100,12 +147,12 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 	}
 
 	Process makeProcess() {
-		final String executable = this.home + this.osInfo.getCliName();
+		Path executable = this.getProBDirectory().resolve(this.osInfo.getCliName());
 		final List<String> command = new ArrayList<>();
-		command.add(executable);
+		command.add(executable.toString());
 		command.add("-sf");
 		final ProcessBuilder pb = new ProcessBuilder(command);
-		pb.environment().put("PROB_HOME", this.home);
+		pb.environment().put("PROB_HOME", this.getProBDirectory().toString());
 		pb.redirectErrorStream(true);
 
 		final Process prologProcess;
@@ -135,6 +182,16 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 		}
 	}
 
+	private static List<String> buildInterruptCommand(Path home, OsSpecificInfo osInfo, long userInterruptReference) {
+		if (userInterruptReference == -1L) {
+			// ProB has user interrupt support disabled.
+			return null;
+		}
+
+		Path interruptExecutable = home.resolve(osInfo.getUserInterruptCmd());
+		return Collections.unmodifiableList(Arrays.asList(interruptExecutable.toString(), Long.toString(userInterruptReference)));
+	}
+
 	private ProBInstance startProlog() {
 		Process process = makeProcess();
 		final BufferedReader stream = new BufferedReader(new InputStreamReader(
@@ -162,8 +219,8 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 			throw new CliError("Error while opening socket connection to CLI", e);
 		}
 
-		ProBInstance cli = ProBInstance.create(process, stream,
-			cliInformation.getUserInterruptReference(), connection, this.home, this.osInfo, this);
+		List<String> interruptCommand = buildInterruptCommand(this.getProBDirectory(), this.osInfo, cliInformation.getUserInterruptReference());
+		ProBInstance cli = ProBInstance.create(process, stream, connection, interruptCommand, this);
 		this.runningInstances.add(cli);
 		return cli;
 	}
@@ -192,7 +249,7 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 					final String userInterruptReferenceString = userInterruptReferenceMatcher.group(1);
 					if ("off".equals(userInterruptReferenceString)) {
 						userInterruptReference = -1L;
-						LOGGER.info("This ProB build has user interrupt support disabled. Interrupting ProB may not work as expected.");
+						LOGGER.info("This ProB build has user interrupt support disabled. The sendInterrupt method will not work.");
 					} else {
 						userInterruptReference = Long.parseLong(userInterruptReferenceString);
 						LOGGER.info("Received user interrupt reference from CLI: {}", userInterruptReference);

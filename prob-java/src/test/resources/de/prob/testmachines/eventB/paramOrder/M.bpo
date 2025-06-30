@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<org.eventb.core.poFile org.eventb.core.poStamp="0">
+    <org.eventb.core.poPredicateSet name="CTXHYP" org.eventb.core.poStamp="0"/>
+    <org.eventb.core.poPredicateSet name="ABSHYP" org.eventb.core.parentSet="/ParamOrder/M.bpo|org.eventb.core.poFile#M|org.eventb.core.poPredicateSet#CTXHYP" org.eventb.core.poStamp="0"/>
+    <org.eventb.core.poPredicateSet name="EVTALLHYP'" org.eventb.core.parentSet="/ParamOrder/M.bpo|org.eventb.core.poFile#M|org.eventb.core.poPredicateSet#CTXHYP" org.eventb.core.poStamp="0"/>
+    <org.eventb.core.poPredicateSet name="EVTIDENT(" org.eventb.core.parentSet="/ParamOrder/M.bpo|org.eventb.core.poFile#M|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poStamp="0">
+        <org.eventb.core.poIdentifier name="dist_x" org.eventb.core.type="ℤ"/>
+        <org.eventb.core.poIdentifier name="dist_y" org.eventb.core.type="ℤ"/>
+        <org.eventb.core.poIdentifier name="dist_z" org.eventb.core.type="ℤ"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poPredicateSet name="EVTALLHYP(" org.eventb.core.parentSet="/ParamOrder/M.bpo|org.eventb.core.poFile#M|org.eventb.core.poPredicateSet#EVTIDENT(" org.eventb.core.poStamp="0">
+        <org.eventb.core.poPredicate name="PRD0" org.eventb.core.predicate="dist_x∈ℤ∧dist_y∈ℤ∧dist_z∈ℤ" org.eventb.core.source="/ParamOrder/M.bum|org.eventb.core.machineFile#M|org.eventb.core.event#_Js7dEOSmEe-g849Gr6BNAw|org.eventb.core.guard#_PGhX8OSmEe-g849Gr6BNAw"/>
+    </org.eventb.core.poPredicateSet>
+    <org.eventb.core.poPredicateSet name="ALLHYP" org.eventb.core.parentSet="/ParamOrder/M.bpo|org.eventb.core.poFile#M|org.eventb.core.poPredicateSet#ABSHYP" org.eventb.core.poStamp="0"/>
+</org.eventb.core.poFile>

@@ -9,10 +9,6 @@ package de.prob.animator.command;
 import java.util.Collections;
 import java.util.List;
 
-import de.prob.animator.IPrologResult;
-import de.prob.animator.InterruptedResult;
-import de.prob.animator.domainobjects.ErrorItem;
-import de.prob.check.CheckInterrupted;
 import de.prob.check.IModelCheckingResult;
 import de.prob.check.ModelCheckErrorUncovered;
 import de.prob.check.ModelCheckGoalFound;
@@ -89,15 +85,6 @@ public class ModelCheckingStepCommand extends AbstractCommand implements IStateS
 		result = extractResult(bindings.get(RESULT_VARIABLE));
 	}
 
-	@Override
-	public void processErrorResult(final IPrologResult result, final List<ErrorItem> errors) {
-		if (result instanceof InterruptedResult) {
-			this.result = new CheckInterrupted();
-		} else {
-			super.processErrorResult(result, errors);
-		}
-	}
-
 	private IModelCheckingResult extractResult(final PrologTerm prologTerm) {
 		CompoundPrologTerm cpt = BindingGenerator.getCompoundTerm(prologTerm,
 				prologTerm.getArity());
@@ -112,13 +99,13 @@ public class ModelCheckingStepCommand extends AbstractCommand implements IStateS
 					maxNodesLeft);
 		case "ok":
 			return new ModelCheckOk(
-					"Model Checking complete. No error nodes found.");
+					"Model Checking complete. No more error nodes found.");
 		case "full_coverage":
 			return new ModelCheckOk(
 					"Model Checking complete. All operations were covered.");
 		case "ok_not_all_nodes_considered":
 			return new ModelCheckOk(
-					"Model Checking complete. No error nodes found. Not all nodes were considered.");
+					"Model Checking complete. No more error nodes found. Not all nodes were considered.");
 		case "deadlock":
 			return new ModelCheckErrorUncovered("Deadlock found.", cpt
 					.getArgument(1).getFunctor());

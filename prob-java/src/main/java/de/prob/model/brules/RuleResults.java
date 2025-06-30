@@ -20,6 +20,11 @@ public class RuleResults {
 		this(getRuleOperations(project), state, maxNumberOfReportedCounterExamples);
 	}
 
+	public RuleResults(RulesProject project, State state, int maxNumberOfReportedCounterExamples,
+	                   int maxNumberOfSuccessMessages) {
+		this(getRuleOperations(project), state, maxNumberOfReportedCounterExamples, maxNumberOfSuccessMessages);
+	}
+
 	private static Set<RuleOperation> getRuleOperations(RulesProject project) {
 		final Set<RuleOperation> result = new HashSet<>();
 		for (AbstractOperation operation : project.getOperationsMap().values()) {
@@ -31,33 +36,54 @@ public class RuleResults {
 	}
 
 	public RuleResults(Set<RuleOperation> ruleOperations, State state, int maxNumberOfReportedCounterExamples) {
+		this(ruleOperations, state, maxNumberOfReportedCounterExamples, -1);
+	}
+
+	public RuleResults(Set<RuleOperation> ruleOperations, State state, int maxNumberOfReportedCounterExamples,
+	                   int maxNumberOfSuccessMessages) {
 		final ArrayList<RuleOperation> ruleList = new ArrayList<>();
 		final List<IEvalElement> evalElements = new ArrayList<>();
 		for (RuleOperation operation : ruleOperations) {
 			ruleList.add(operation);
-			ClassicalB ruleObject = new ClassicalB(operation.getName());
-			evalElements.add(ruleObject);
+			evalElements.add(new ClassicalB(operation.getName()));
+
 			// get number of counter examples
+			// don't use FORCE here - enumeration warnings are handled by RuleResult
 			String numberOfCtsFormula = String.format("card(%s)", operation.getCounterExampleVariableName());
-			ClassicalB numberOfCtsFormulaObject = new ClassicalB(numberOfCtsFormula);
-			evalElements.add(numberOfCtsFormulaObject);
+			evalElements.add(new ClassicalB(numberOfCtsFormula));
+
 			// get the (restricted) set of counter examples
+			// FORCE should not be a problem here - we only use the result if card(%s) above was finite
 			String ctFormula;
 			if (maxNumberOfReportedCounterExamples == -1) {
-				ctFormula = String.format("ran(SORT(%s))", operation.getCounterExampleVariableName());
+				ctFormula = String.format("FORCE(ran(SORT(%s)))", operation.getCounterExampleVariableName());
 			} else {
-				ctFormula = String.format("SORT(%s)[1..%s]", operation.getCounterExampleVariableName(),
+				ctFormula = String.format("FORCE(SORT(%s)[1..%s])", operation.getCounterExampleVariableName(),
 					maxNumberOfReportedCounterExamples);
 			}
-			ClassicalB counterExampleObject = new ClassicalB(ctFormula);
-			evalElements.add(counterExampleObject);
+			evalElements.add(new ClassicalB(ctFormula));
+
+			// get number of success messages
+			String numberOfSfFormula = String.format("card(%s)", operation.getSuccessfulVariableName());
+			evalElements.add(new ClassicalB(numberOfSfFormula));
+
+			// get the (restricted) set of success messages
+			// FORCE should not be a problem here - we only use the result if card(%s) above was finite
+			String sfFormula;
+			if (maxNumberOfSuccessMessages == -1) {
+				sfFormula = String.format("FORCE(ran(SORT(%s)))", operation.getSuccessfulVariableName());
+			} else {
+				sfFormula = String.format("FORCE(SORT(%s)[1..%s])", operation.getSuccessfulVariableName(),
+					maxNumberOfSuccessMessages);
+			}
+			evalElements.add(new ClassicalB(sfFormula));
 		}
 		List<AbstractEvalResult> evalResults = state.eval(evalElements);
 		for (int i = 0; i < ruleList.size(); i++) {
-			int index = i * 3;
+			int index = i * 5;
 			RuleOperation ruleOperation = ruleList.get(i);
 			RuleResult ruleResult = new RuleResult(ruleOperation, evalResults.get(index), evalResults.get(index + 1),
-					evalResults.get(index + 2));
+					evalResults.get(index + 2), evalResults.get(index + 3), evalResults.get(index + 4));
 			ruleResultsMap.put(ruleOperation.getName(), ruleResult);
 
 			if (ruleResult.hasRuleId()) {

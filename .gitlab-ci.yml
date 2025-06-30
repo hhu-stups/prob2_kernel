@@ -6,42 +6,37 @@ stages:
 
 cache:
   paths:
-    - .gradle/wrapper
     - .gradle/caches
+    - .gradle/notifications
+    - .gradle/wrapper
 
 variables:
   GRADLE_OPTIONS: --no-daemon --info --stacktrace --warning-mode=all
+  GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
 
 .tests:
   stage: test
-  script: ./gradlew ${GRADLE_OPTIONS} clean check jacocoTestReport
-  before_script:
-    - export GRADLE_USER_HOME=`pwd`/.gradle
+  script: ./gradlew ${GRADLE_OPTIONS} check jacocoTestReport
   artifacts:
     paths:
-      - "build/jacoco"
-      - "build/jacocoHtml"
-      - "build/reports"
-      - "build/test-results"
+      - "*/build/jacoco"
+      - "*/build/jacocoHtml"
+      - "*/build/reports"
+      - "*/build/test-results"
       - "**/prob_log.txt"
       - "**/ProB.log.*.log"
     reports:
       junit:
-        - "build/test-results/**/TEST-*.xml"
+        - "*/build/test-results/**/TEST-*.xml"
     when: always
 
 .docker-tests:
   extends: .tests
   variables:
     DEBIAN_FRONTEND: noninteractive
-    LANG: en_US.UTF-8
   before_script:
     - export GRADLE_USER_HOME=`pwd`/.gradle
-    - apt-get update &&  apt-get install -y git locales
-    - sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen 
-    - dpkg-reconfigure --frontend=noninteractive locales
-    - update-locale LANG=en_US.UTF-8
-
+    - apt-get update && apt-get install -y git
 
 tests:jdk-8:
   extends: .docker-tests
@@ -66,20 +61,18 @@ tests:macos:
 tests:windows64:
   extends: .tests
   before_script: []
-  script: .\gradlew.bat %GRADLE_OPTIONS% clean check jacocoTestReport
+  script: cmd /c ".\gradlew.bat %GRADLE_OPTIONS% check jacocoTestReport"
   tags:
     - windows
 
 publish:
   stage: deploy
   before_script:
-    - export GRADLE_USER_HOME=`pwd`/.gradle
     - apt-get update && apt-get install -y git 
-
-    - openssl aes-256-cbc -pass "env:ENCRYPTION_PASSWORD" -d -a -md md5 -in secring.gpg.enc       -out secring.gpg 
-    - openssl aes-256-cbc -pass "env:ENCRYPTION_PASSWORD" -d -a -md md5 -in pubring.gpg.enc       -out pubring.gpg
-    - openssl aes-256-cbc -pass "env:ENCRYPTION_PASSWORD" -d -a -md md5 -in gradle.properties.enc -out gradle.properties
   script:
+    - openssl aes-256-cbc -d -base64 -pbkdf2 -pass "env:ENCRYPTION_PASSWORD" -in gradle.properties.enc -out gradle.properties
+    - openssl aes-256-cbc -d -base64 -pbkdf2 -pass "env:ENCRYPTION_PASSWORD" -in pubring.gpg.enc -out pubring.gpg
+    - openssl aes-256-cbc -d -base64 -pbkdf2 -pass "env:ENCRYPTION_PASSWORD" -in secring.gpg.enc -out secring.gpg
     - ./gradlew ${GRADLE_OPTIONS} publish
   only: 
     - master@stups/prob/prob2_kernel

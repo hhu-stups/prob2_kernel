@@ -1,10 +1,8 @@
 package de.prob.scripting;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.stream.Collectors;
@@ -14,12 +12,15 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import de.prob.model.representation.CSPModel;
+import de.prob.statespace.StateSpace;
 
 public class CSPFactory implements ModelFactory<CSPModel> {
+	private final Provider<StateSpace> stateSpaceProvider;
 	private final Provider<CSPModel> modelCreator;
 	
 	@Inject
-	public CSPFactory(final Provider<CSPModel> modelCreator) {
+	CSPFactory(Provider<StateSpace> stateSpaceProvider, Provider<CSPModel> modelCreator) {
+		this.stateSpaceProvider = stateSpaceProvider;
 		this.modelCreator = modelCreator;
 	}
 
@@ -37,6 +38,6 @@ public class CSPFactory implements ModelFactory<CSPModel> {
 		}
 
 		cspModel = cspModel.create(text, p.toFile());
-		return new ExtractedModel<>(cspModel, cspModel.getComponent(p.getFileName().toString()));
+		return new ExtractedModel<>(stateSpaceProvider, cspModel);
 	}
 }

@@ -26,7 +26,7 @@ public class XTLModel extends AbstractModel {
 	}
 
 	public XTLModel create(final File modelFile) {
-		return new XTLModel(getStateSpaceProvider(), modelFile);
+		return new XTLModel(stateSpaceProvider, modelFile);
 	}
 	
 	@Override
@@ -50,12 +50,17 @@ public class XTLModel extends AbstractModel {
 	}
 
 	@Override
-	public AbstractCommand getLoadCommand(final AbstractElement mainComponent) {
+	public AbstractCommand getLoadCommand() {
 		return new LoadXTLCommand(this.getModelFile().getAbsolutePath());
 	}
 
 	@Override
 	public AbstractElement getComponent(String name) {
+		return null;
+	}
+
+	@Override
+	public AbstractElement getMainComponent() {
 		return null;
 	}
 }

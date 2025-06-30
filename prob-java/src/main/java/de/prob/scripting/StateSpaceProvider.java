@@ -19,13 +19,14 @@ public class StateSpaceProvider {
 		this.ssProvider = ssProvider;
 	}
 
+	@Deprecated
 	public static void loadFromCommandIntoStateSpace(
 		final StateSpace s,
 		final AbstractModel model,
 		final AbstractElement mainComponent,
 		final AbstractCommand loadCmd
 	) {
-		s.initModel(model, mainComponent);
+		s.initModel(model);
 		s.execute(loadCmd);
 		s.execute(new StartAnimationCommand());
 	}
@@ -34,6 +35,7 @@ public class StateSpaceProvider {
 		return this.ssProvider.get();
 	}
 
+	@Deprecated
 	public StateSpace loadFromCommand(final AbstractModel model,
 			final AbstractElement mainComponent,
 			final Map<String, String> preferences, final AbstractCommand loadCmd) {

@@ -7,7 +7,7 @@ subprojects {
 	project.group = 'de.hhu.stups'
 	// IMPORTANT: Before releasing the ProB Java API, remember to set probcli and all dependencies to release versions, not nightly/SNAPSHOT!
 	// IMPORTANT: Check the variables parserVersion and cliDownloadURL and the dependencies {...} block.
-	project.version = "4.13.1"
+	project.version = "4.15.0"
 	project.ext.isSnapshot = project.version.endsWith("-SNAPSHOT")
 	project.ext.SOURCE_ENCODING = "UTF-8"
 	
@@ -15,8 +15,8 @@ subprojects {
 		mavenCentral()
 		if (isSnapshot) {
 			maven {
-				name "sonatype snapshots"
-				url "https://oss.sonatype.org/content/repositories/snapshots"
+				name = "sonatype snapshots"
+				url = "https://oss.sonatype.org/content/repositories/snapshots"
 			}
 		}
 	}
@@ -105,11 +105,11 @@ subprojects {
 			maven {
 				final releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
 				final snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots"
-				url isSnapshot ? snapshotsRepoUrl : releasesRepoUrl
+				url = isSnapshot ? snapshotsRepoUrl : releasesRepoUrl
 				if (project.hasProperty('ossrhUsername') && project.hasProperty('ossrhPassword')) {
 					credentials {
-						username project.ossrhUsername
-						password project.ossrhPassword
+						username = project.ossrhUsername
+						password = project.ossrhPassword
 					}
 				}
 			}

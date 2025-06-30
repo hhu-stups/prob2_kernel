@@ -31,7 +31,6 @@ public class RulesDependencyGraph {
 		}
 		allOperations.removeIf(operation -> operation instanceof FunctionOperation);
 		RulesChecker rulesChecker = new RulesChecker(currentTrace);
-		rulesChecker.init();
 		Map<AbstractOperation, OperationStatus> operationStates = rulesChecker.getOperationStates();
 		List<String> nodes = new ArrayList<>();
 		List<String> edges = new ArrayList<>();
@@ -117,7 +116,7 @@ public class RulesDependencyGraph {
 	public static void saveGraph(final Trace trace, final Collection<AbstractOperation> operations,
 	                             final Path path, final String dotOutputFormat) throws IOException, InterruptedException {
 
-		byte[] dotContent = DotVisualizationCommand.getByName(DotVisualizationCommand.EXPRESSION_AS_GRAPH_NAME, trace.getCurrentState())
+		byte[] dotContent = DotVisualizationCommand.getByName(DotVisualizationCommand.EXPRESSION_AS_GRAPH_NAME, trace)
 			.visualizeAsDotToBytes(Collections.singletonList(getGraphExpression(trace, operations)));
 		StateSpace stateSpace = trace.getStateSpace();
 

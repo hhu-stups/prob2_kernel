@@ -1,21 +1,28 @@
 package de.prob.exception;
 
+import java.util.Objects;
+
+import de.prob.prolog.term.PrologTerm;
+
 /**
  * Represents an unhandled Prolog exception (from throw/1 in Prolog).
  */
+@SuppressWarnings("serial")
 public final class PrologException extends ProBError {
-	private static final long serialVersionUID = 1L;
+	private final PrologTerm exceptionTerm;
 	
-	private final String exceptionTermString;
-	
-	public PrologException(final String exceptionTermString) {
-		this(exceptionTermString, null);
+	public PrologException(PrologTerm exceptionTerm) {
+		this(exceptionTerm, null);
 	}
 	
-	public PrologException(final String exceptionTermString, final Throwable cause) {
-		super("Unhandled exception thrown from Prolog: " + exceptionTermString, cause);
+	public PrologException(PrologTerm exceptionTerm, Throwable cause) {
+		super("Unhandled exception thrown from Prolog: " + exceptionTerm, cause);
 		
-		this.exceptionTermString = exceptionTermString;
+		this.exceptionTerm = Objects.requireNonNull(exceptionTerm, "exceptionTerm");
+	}
+	
+	public PrologTerm getExceptionTerm() {
+		return this.exceptionTerm;
 	}
 	
 	/**
@@ -24,6 +31,6 @@ public final class PrologException extends ProBError {
 	 * @return the thrown Prolog term as an unparsed string
 	 */
 	public String getExceptionTermString() {
-		return this.exceptionTermString;
+		return this.exceptionTerm.toString();
 	}
 }

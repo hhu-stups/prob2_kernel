@@ -2,38 +2,39 @@ package de.prob.model.brules;
 
 import com.google.common.base.Stopwatch;
 import de.be4.classicalb.core.parser.rules.*;
-import de.prob.animator.domainobjects.AbstractEvalResult;
-import de.prob.animator.domainobjects.IEvalElement;
-import de.prob.model.brules.output.RuleValidationReport;
+import de.prob.animator.command.ExecuteModelCommand;
+import de.prob.animator.command.ExportRuleValidationReportCommand;
+import de.prob.animator.domainobjects.DotCall;
+import de.prob.animator.domainobjects.DotVisualizationCommand;
 import de.prob.model.brules.output.RulesDependencyGraph;
 import de.prob.statespace.State;
+import de.prob.statespace.StateSpace;
 import de.prob.statespace.Trace;
 import de.prob.statespace.Transition;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-public class RulesChecker {
+public final class RulesChecker {
+	public interface RulesCheckListener {
+		void progress(int nrExecutedOperations, String opName);
+	}
 
 	private Trace trace;
-	private final boolean init = false;
 	private final RulesModel rulesModel;
 	private final RulesProject rulesProject;
 
 	private final Stopwatch stopwatch;
+	private int nrExecutedOperations = 0;
 
-	private final HashMap<AbstractOperation, Set<AbstractOperation>> predecessors = new HashMap<>();
-	private final HashMap<AbstractOperation, Set<AbstractOperation>> successors = new HashMap<>();
-
-	private Map<AbstractOperation, OperationStatus> operationStatuses;
+	private final Map<AbstractOperation, Set<AbstractOperation>> predecessors = new HashMap<>();
+	private final Map<AbstractOperation, Set<AbstractOperation>> successors = new HashMap<>();
 
 	public RulesChecker(Trace trace) {
 		this.stopwatch = Stopwatch.createUnstarted();
-		this.trace = trace;
-		this.trace.setExploreStateByDefault(false);
 		if (trace.getModel() instanceof RulesModel) {
 			rulesModel = (RulesModel) trace.getModel();
 			rulesProject = rulesModel.getRulesProject();
@@ -41,6 +42,7 @@ public class RulesChecker {
 		} else {
 			throw new IllegalArgumentException("Expected Rules Model.");
 		}
+		setTrace(trace);
 	}
 
 	private void determineDependencies() {
@@ -59,20 +61,56 @@ public class RulesChecker {
 		}
 	}
 
+	/**
+	 * use if machine should be initialised before check
+	 */
 	public void init() {
-		stopwatch.reset();
-		if (!init) {
-			// initialize machine
-			while (!trace.getCurrentState().isInitialised()) {
-				trace = trace.anyOperation(null);
-			}
-
-			// extract current state of all operations
-			this.operationStatuses = evalOperations(trace.getCurrentState(), rulesProject.getOperationsMap().values());
+		while (!trace.getCurrentState().isInitialised()) {
+			trace = trace.anyOperation(null);
 		}
+		nrExecutedOperations = 0;
+	}
+
+	/**
+	 * use direct 'execute' instead of 'animate' for faster execution of all rules.
+	 */
+	public void executeAllOperationsDirect(RulesCheckListener listener, int stepSize) {
+		// TODO: consider using RulesMachineRun
+		stopwatch.reset();
+		stopwatch.start();
+		while (true) {
+			if (trace.getCurrentState().isExplored()) {
+				// if the state has already been explored and we have a next transition: use this instead of computing a new one with execute_model
+				// (should be faster)
+				if (trace.getNextTransitions().isEmpty()) {
+					break;
+				}
+				trace = trace.addTransitions(new ArrayList<>(trace.getNextTransitions()).subList(0,1));
+				continue;
+			}
+			ExecuteModelCommand executeModelCommand = new ExecuteModelCommand(trace.getStateSpace(),
+					trace.getCurrentState(), stepSize, true, Integer.MAX_VALUE-1);
+			trace.getStateSpace().execute(executeModelCommand);
+			int nrSteps = executeModelCommand.getNumberOfStatesExecuted();
+			if (nrSteps < 1) {
+				break;
+			}
+			trace = trace.addTransitions(executeModelCommand.getNewTransitions());
+			String transitionName = Optional.ofNullable(executeModelCommand.getSingleTransitionName()).orElse("");
+			if (isInitTransition(transitionName)) {
+				nrSteps--;
+			}
+			listener.progress(nrExecutedOperations+=nrSteps, transitionName);
+		}
+		stopwatch.stop();
+	}
+
+	private static boolean isInitTransition(String transition) {
+		return transition.startsWith("$") && (transition.equals(Transition.SETUP_CONSTANTS_NAME) || transition.equals(Transition.INITIALISE_MACHINE_NAME));
 	}
 
 	public void executeAllOperations() {
+		stopwatch.reset();
 		init();
 		// determine all operations that can be executed in this state
 		Set<AbstractOperation> executableOperations = getExecutableOperations();
@@ -86,24 +124,20 @@ public class RulesChecker {
 
 	public OperationStatus executeOperation(AbstractOperation op) {
 		stopwatch.start();
-		List<Transition> transitions = trace.getStateSpace()
-				.getTransitionsBasedOnParameterValues(trace.getCurrentState(), op.getName(), new ArrayList<>(), 1);
-		trace = trace.add(transitions.get(0));
-		OperationStatus opState = evalOperation(trace.getCurrentState(), op);
-		this.operationStatuses.put(op, opState);
+		trace = trace.execute(op.getName());
+		OperationStatus opState = getOperationState(op);
 		stopwatch.stop();
+		nrExecutedOperations++;
 		return opState;
 	}
 
 	public Set<AbstractOperation> getExecutableOperations() {
 		final Set<AbstractOperation> todo = new HashSet<>();
-		for (Entry<AbstractOperation, OperationStatus> eval : operationStatuses.entrySet()) {
-			AbstractOperation op = eval.getKey();
-			OperationStatus value = eval.getValue();
-			if (value.isNotExecuted() && !value.isDisabled()) {
+		Map<AbstractOperation, OperationStatus> operationStatuses = OperationStatuses.getStatuses(rulesModel, trace.getCurrentState());
+		operationStatuses.forEach((op, status) -> {
+			if (status.isNotExecuted() && !status.isDisabled()) {
 				boolean canBeExecuted = true;
-				// check that all dependencies are executed and have not failed
-				// in case of rules
+				// check that all dependencies are executed and have not failed in case of rules
 				for (AbstractOperation pred : predecessors.get(op)) {
 					OperationStatus predState = operationStatuses.get(pred);
 					if (predState.isNotExecuted() || predState == RuleStatus.FAIL) {
@@ -115,37 +149,35 @@ public class RulesChecker {
 					todo.add(op);
 				}
 			}
-		}
+		});
 		return todo;
 	}
 
 	public boolean executeOperationAndDependencies(String opName) {
-		checkThatOperationExists(opName);
-		checkThatOperationIsNotAFunctionOperation(opName);
-		AbstractOperation goalOperation = rulesProject.getOperationsMap().get(opName);
+		return executeOperationAndDependencies(null, opName);
+	}
+
+	public boolean executeOperationAndDependencies(RulesCheckListener listener, String opName) {
 		init();
+		AbstractOperation goalOperation = getOperation(opName);
 		List<AbstractOperation> executionOrder = goalOperation.getSortedListOfTransitiveDependencies();
 		executionOrder.add(goalOperation);
-		executionOrder = executionOrder.stream().filter(op -> !(op instanceof FunctionOperation))
-				.collect(Collectors.toList());
+		executionOrder.removeIf(FunctionOperation.class::isInstance);
 
-		List<AbstractOperation> operationsToBeExecuted = new ArrayList<>();
-		for (AbstractOperation dep : executionOrder) {
-			OperationStatus operationStatus = operationStatuses.get(dep);
-
-			if (operationStatus.isDisabled()) {
+		for (AbstractOperation op : executionOrder) {
+			if (!getExecutableOperations().contains(op)) {
+				if (getOperationState(op).isExecuted()) { // required operation has already been executed
+					if (listener != null) {
+						listener.progress(nrExecutedOperations++, op.getName());
+					}
+					continue;
+				}
 				return false;
 			}
-			if (dep != goalOperation && operationStatus == RuleStatus.FAIL) {
-				return false;
-			}
-
-			if (operationStatus.isNotExecuted()) {
-				operationsToBeExecuted.add(dep);
-			}
-		}
-		for (AbstractOperation op : operationsToBeExecuted) {
 			OperationStatus opState = executeOperation(op);
+			if (listener != null) {
+				listener.progress(nrExecutedOperations, op.getName());
+			}
 			if (op != goalOperation && opState == RuleStatus.FAIL) {
 				return false;
 			}
@@ -153,78 +185,103 @@ public class RulesChecker {
 		return true;
 	}
 
+	/**
+	 * @deprecated Use {@link #getOperationState(AbstractOperation)} instead.
+	 */
+	@Deprecated
 	public OperationStatus evalOperation(State state, AbstractOperation operation) {
-		Set<AbstractOperation> set = new HashSet<>();
-		set.add(operation);
-		Map<AbstractOperation, OperationStatus> evalOperations = evalOperations(state, set);
-		return evalOperations.get(operation);
+		return getOperationState(operation);
 	}
 
-	public Map<AbstractOperation, OperationStatus> evalOperations(State state,
-			Collection<AbstractOperation> operations) {
-		ArrayList<IEvalElement> formulas = new ArrayList<>();
-		for (AbstractOperation abstractOperation : operations) {
-			if (abstractOperation instanceof ComputationOperation || abstractOperation instanceof RuleOperation) {
-				formulas.add(rulesModel.getEvalElement(abstractOperation));
-			}
-		}
-		state.getStateSpace().subscribe(this, formulas);
-		Map<IEvalElement, AbstractEvalResult> values = state.getValues();
-		final Map<AbstractOperation, OperationStatus> states = new HashMap<>();
-		for (AbstractOperation op : operations) {
-			if (op instanceof RuleOperation) {
-				states.put(op, RuleStatus.valueOf(values.get(rulesModel.getEvalElement(op))));
-			} else if (op instanceof ComputationOperation) {
-				states.put(op, ComputationStatus.valueOf(values.get(rulesModel.getEvalElement(op))));
-			}
-		}
-		return states;
-	}
-
-	private void checkThatOperationIsNotAFunctionOperation(String opName) {
-		if (this.rulesProject.getOperationsMap().get(opName) instanceof FunctionOperation) {
-			throw new IllegalArgumentException("Function operations are not supported: " + opName);
-		}
+	/**
+	 * @deprecated Use {@link #getOperationStates()} instead.
+	 */
+	@Deprecated
+	public Map<AbstractOperation, OperationStatus> evalOperations(State state, List<AbstractOperation> operations) {
+		return getOperationStates();
 	}
 
 	public Trace getCurrentTrace() {
 		return this.trace;
 	}
 
+	public void setTrace(Trace trace) {
+		this.trace = trace;
+		this.trace.setExploreStateByDefault(false);
+		this.nrExecutedOperations = (int) trace.getElements().stream()
+				.filter(e -> e.getTransition() != null && !isInitTransition(e.getTransition().getName()))
+				.count();
+	}
+
 	public Map<AbstractOperation, OperationStatus> getOperationStates() {
-		return new HashMap<>(this.operationStatuses);
+		return OperationStatuses.getStatuses(rulesModel, trace.getCurrentState());
+	}
+
+	public OperationStatus getOperationState(AbstractOperation op) {
+		return OperationStatuses.getStatus(rulesModel, op, trace.getCurrentState());
 	}
 
 	public OperationStatus getOperationState(String opName) {
-		checkThatOperationExists(opName);
-		checkThatOperationIsNotAFunctionOperation(opName);
-		init();
-		AbstractOperation abstractOperation = rulesProject.getOperationsMap().get(opName);
-		return this.operationStatuses.get(abstractOperation);
+		return getOperationState(getOperation(opName));
 	}
 
-	private void checkThatOperationExists(String opName) {
+	private AbstractOperation getOperation(String opName) {
+		// checkThatOperationExists
 		if (!rulesProject.getOperationsMap().containsKey(opName)) {
 			throw new IllegalArgumentException("Unknown operation name: " + opName);
+		}
+		AbstractOperation op = rulesProject.getOperationsMap().get(opName);
+		// checkThatOperationIsNotAFunctionOperation
+		if (op instanceof FunctionOperation) {
+			throw new IllegalArgumentException("Function operations are not supported: " + opName);
+		}
+		return op;
+	}
+
+	public void stop() {
+		if (stopwatch.isRunning()) { // can happen after cancelling the execution in ProB2-UI
+			stopwatch.stop();
 		}
 	}
 
 	/**
-		Saves complete dependency graph for all operations.
+	 * Saves complete dependency graph for all operations.
 	 */
 	public void saveDependencyGraph(final Path path, final String dotOutputFormat) throws IOException, InterruptedException {
-		saveDependencyGraph(path, rulesProject.getOperationsMap().values(), dotOutputFormat);
+		byte[] dotContent = DotVisualizationCommand.getByName(DotVisualizationCommand.RULE_DEPENDENCY_GRAPH_NAME, trace)
+				.visualizeAsDotToBytes(new ArrayList<>());
+		StateSpace stateSpace = trace.getStateSpace();
+
+		Files.write(path, new DotCall(stateSpace.getCurrentPreference("DOT"))
+				.layoutEngine(stateSpace.getCurrentPreference("DOT_ENGINE"))
+				.outputFormat(dotOutputFormat)
+				.input(dotContent)
+				.call());
 	}
 
 	/**
-		Saves partial dependency graph for provided operations.
+	 * Saves partial dependency graph for provided operations.
 	 */
 	public void saveDependencyGraph(final Path path, final Collection<AbstractOperation> operations, final String dotOutputFormat)
-		throws IOException, InterruptedException {
+			throws IOException, InterruptedException {
 		RulesDependencyGraph.saveGraph(trace, operations, path, dotOutputFormat);
 	}
 
-	public void saveValidationReport(final Path path, final Locale locale) throws IOException {
-		RuleValidationReport.saveReport(trace, path, locale, stopwatch.elapsed());
+	/**
+	 * Save validation report with all rule results
+	 *
+	 * @param path if the file extension is .xml, report is saved as machine-readable XML, otherwise as interactive HTML
+	 */
+	public void saveValidationReport(final Path path) {
+		trace.getStateSpace().execute(new ExportRuleValidationReportCommand(
+				trace.getCurrentState().getId(), path.toFile(), stopwatch.elapsed().toMillis()));
+	}
+
+	/**
+	 * Use {@link #saveValidationReport(Path)} instead.
+	 */
+	@Deprecated
+	public void saveValidationReport(final Path path, final Locale locale) {
+		saveValidationReport(path);
 	}
 }

@@ -1,15 +1,9 @@
 package de.prob.animator;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import com.google.inject.Inject;
 
 import de.prob.animator.command.AbstractCommand;
 import de.prob.annotations.MaxCacheSize;
-import de.prob.exception.CliError;
 import de.prob.statespace.StateSpace;
 
 /**
@@ -35,110 +29,6 @@ import de.prob.statespace.StateSpace;
  * </p>
  */
 public final class ReusableAnimator implements IAnimator {
-	private final class InternalAnimator implements IAnimator {
-		private final AtomicBoolean isKilled;
-		private final Collection<IWarningListener> warningListeners;
-		private final Collection<IConsoleOutputListener> consoleOutputListeners;
-		
-		private InternalAnimator() {
-			super();
-			
-			this.isKilled = new AtomicBoolean(false);
-			this.warningListeners = new CopyOnWriteArrayList<>();
-			this.consoleOutputListeners = new CopyOnWriteArrayList<>();
-		}
-		
-		private void checkAlive() {
-			if (this.isKilled.get()) {
-				throw new CliError("The animator is killed and can no longer be used.");
-			}
-		}
-		
-		@Override
-		public void execute(final AbstractCommand command) {
-			this.checkAlive();
-			ReusableAnimator.this.execute(command);
-		}
-		
-		@Override
-		public void sendInterrupt() {
-			if (!this.isKilled.get()) {
-				ReusableAnimator.this.sendInterrupt();
-			}
-		}
-		
-		@Override
-		public void kill() {
-			if (this.isKilled.getAndSet(true)) {
-				return;
-			}
-			if (ReusableAnimator.this.isBusy()) {
-				ReusableAnimator.this.endTransaction();
-			}
-			this.warningListeners.forEach(ReusableAnimator.this::removeWarningListener);
-			this.consoleOutputListeners.forEach(ReusableAnimator.this::removeConsoleOutputListener);
-			synchronized (ReusableAnimator.this.currentStateSpaceLock) {
-				assert ReusableAnimator.this.getCurrentStateSpace() != null;
-				ReusableAnimator.this.currentStateSpace = null;
-			}
-		}
-		
-		@Override
-		public void startTransaction() {
-			ReusableAnimator.this.startTransaction();
-		}
-		
-		@Override
-		public void endTransaction() {
-			ReusableAnimator.this.endTransaction();
-		}
-		
-		@Override
-		public boolean isBusy() {
-			return !this.isKilled.get() && ReusableAnimator.this.isBusy();
-		}
-		
-		@Override
-		public String getId() {
-			return ReusableAnimator.this.getId();
-		}
-		
-		@Override
-		public void resetProB() {
-			throw new UnsupportedOperationException("Should never be called on a ReusableAnimator.InternalAnimator");
-		}
-		
-		@Override
-		public long getTotalNumberOfErrors() {
-			this.checkAlive();
-			return ReusableAnimator.this.getTotalNumberOfErrors();
-		}
-		
-		@Override
-		public void addWarningListener(final IWarningListener listener) {
-			this.warningListeners.add(listener);
-			ReusableAnimator.this.addWarningListener(listener);
-		}
-		
-		@Override
-		public void removeWarningListener(final IWarningListener listener) {
-			ReusableAnimator.this.removeWarningListener(listener);
-			this.warningListeners.remove(listener);
-		}
-		
-		@Override
-		public void addConsoleOutputListener(final IConsoleOutputListener listener) {
-			this.consoleOutputListeners.add(listener);
-			ReusableAnimator.this.addConsoleOutputListener(listener);
-		}
-		
-		@Override
-		public void removeConsoleOutputListener(final IConsoleOutputListener listener) {
-			ReusableAnimator.this.removeConsoleOutputListener(listener);
-			this.consoleOutputListeners.remove(listener);
-		}
-	}
-	
 	private final IAnimator animator;
 	private final int maxCacheSize;
 	
@@ -157,9 +47,10 @@ public final class ReusableAnimator implements IAnimator {
 	}
 	
 	/**
-	 * Get the state space that is currently using this animator, or {@code null} if the animator is currently not used.
+	 * Get the state space that is currently using (or last used) this animator, or {@code null} if the animator has not yet been used.
+	 * The returned {@link StateSpace} might already be killed and no longer actually using this animator.
 	 * 
-	 * @return the state space that is currently using this animator, or {@code null} if the animator is currently not used
+	 * @return the state space that is currently using (or last used) this animator, or {@code null} if the animator has not yet been used
 	 */
 	public StateSpace getCurrentStateSpace() {
 		return this.currentStateSpace;
@@ -175,11 +66,11 @@ public final class ReusableAnimator implements IAnimator {
 	 */
 	public StateSpace createStateSpace() {
 		synchronized (this.currentStateSpaceLock) {
-			if (this.getCurrentStateSpace() != null) {
+			if (this.getCurrentStateSpace() != null && !this.getCurrentStateSpace().isKilled()) {
 				throw new IllegalStateException("The animator is already in use");
 			}
 			
-			this.currentStateSpace = new StateSpace(InternalAnimator::new, this.maxCacheSize);
+			this.currentStateSpace = new StateSpace(this, false, this.maxCacheSize);
 			return this.currentStateSpace;
 		}
 	}
@@ -233,6 +124,16 @@ public final class ReusableAnimator implements IAnimator {
 	@Override
 	public long getTotalNumberOfErrors() {
 		return this.animator.getTotalNumberOfErrors();
+	}
+	
+	@Override
+	public void addBusyListener(IAnimatorBusyListener listener) {
+		this.animator.addBusyListener(listener);
+	}
+	
+	@Override
+	public void removeBusyListener(IAnimatorBusyListener listener) {
+		this.animator.removeBusyListener(listener);
 	}
 	
 	@Override

@@ -12,7 +12,6 @@ import de.prob.model.eventb.EventBMachine;
 import de.prob.model.eventb.EventBModel;
 import de.prob.model.eventb.EventBVariable;
 import de.prob.model.eventb.ProofObligation;
-import de.prob.model.representation.AbstractElement;
 import de.prob.prolog.output.IPrologTermOutput;
 
 public final class EventBModelTranslator {
@@ -22,16 +21,19 @@ public final class EventBModelTranslator {
 	private final TheoryTranslator theoryTranslator;
 	private final EventBModel model;
 
-	public EventBModelTranslator(final EventBModel model,
-			final AbstractElement mainComponent) {
+	public EventBModelTranslator(EventBModel model) {
 		this.model = model;
 
-		for (EventBMachine machine : extractMachineHierarchy(mainComponent, model)) {
+		if (model.getMainComponent() == null) {
+			throw new IllegalArgumentException("Cannot translate model without a main component");
+		}
+
+		for (EventBMachine machine : extractMachineHierarchy(model)) {
 			machineTranslators.add(new EventBMachineTranslator(machine));
 			proofObligations.addAll(machine.getProofs());
 		}
 
-		for (Context context : extractContextHierarchy(mainComponent, model)) {
+		for (Context context : extractContextHierarchy(model)) {
 			contextTranslators.add(new ContextTranslator(context));
 			proofObligations.addAll(context.getProofs());
 		}
@@ -39,18 +41,18 @@ public final class EventBModelTranslator {
 		theoryTranslator = new TheoryTranslator(model.getTheories());
 	}
 
-	public List<EventBMachine> extractMachineHierarchy(
-			final AbstractElement mainComponent, EventBModel model) {
-		if (mainComponent instanceof Context) {
+	private List<EventBMachine> extractMachineHierarchy(EventBModel model) {
+		if (model.getMainComponent() instanceof Context) {
 			return Collections.emptyList();
-		}
-		List<EventBMachine> machines = new ArrayList<>();
-		if (mainComponent instanceof EventBMachine) {
-			EventBMachine machine = (EventBMachine) mainComponent;
+		} else if (model.getMainComponent() instanceof EventBMachine) {
+			List<EventBMachine> machines = new ArrayList<>();
+			EventBMachine machine = (EventBMachine)model.getMainComponent();
 			machines.add(machine);
 			machines.addAll(extractMachines(machine, model));
+			return machines;
+		} else {
+			throw new IllegalArgumentException("Unhandled main component type: " + model.getMainComponent().getClass());
 		}
-		return machines;
 	}
 
 	private List<EventBMachine> extractMachines(final EventBMachine machine, EventBModel model) {
@@ -65,15 +67,14 @@ public final class EventBModelTranslator {
 		return machines;
 	}
 
-	public List<Context> extractContextHierarchy(
-			final AbstractElement mainComponent, EventBModel model) {
-		if (mainComponent instanceof Context) {
-			return extractContextHierarchy((Context) mainComponent, model);
+	private List<Context> extractContextHierarchy(EventBModel model) {
+		if (model.getMainComponent() instanceof Context) {
+			return extractContextHierarchy((Context)model.getMainComponent(), model);
+		} else if (model.getMainComponent() instanceof EventBMachine) {
+			return extractContextHierarchy((EventBMachine)model.getMainComponent(), model);
+		} else {
+			throw new IllegalArgumentException("Unhandled main component type: " + model.getMainComponent().getClass());
 		}
-		if (mainComponent instanceof EventBMachine) {
-			return extractContextHierarchy((EventBMachine) mainComponent, model);
-		}
-		return Collections.emptyList();
 	}
 
 	private List<Context> extractContextHierarchy(final EventBMachine machine, EventBModel model) {

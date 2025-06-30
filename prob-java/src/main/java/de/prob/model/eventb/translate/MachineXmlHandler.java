@@ -432,6 +432,12 @@ public class MachineXmlHandler extends DefaultHandler {
 		if (seesNames.contains(internalContext.getName())) {
 			sees.add(internalContext);
 		}
+		if (extractor.getProofObligationsFile() != null) {
+			model = model.addFile(extractor.getProofObligationsFile());
+		}
+		if (extractor.getProofStatusFile() != null) {
+			model = model.addFile(extractor.getProofStatusFile());
+		}
 		extractingContext = false;
 
 	}
@@ -448,8 +454,13 @@ public class MachineXmlHandler extends DefaultHandler {
 		ProofExtractor proofExtractor = new ProofExtractor(machine,
 				directoryPath + File.separatorChar + machine.getName());
 		machine = machine.withProofs(proofExtractor.getProofs());
-		model = model.addMachine(machine);
-
+		model = model.addMachine(machine).withMainComponent(machine);
+		if (proofExtractor.getProofObligationsFile() != null) {
+			model = model.addFile(proofExtractor.getProofObligationsFile());
+		}
+		if (proofExtractor.getProofStatusFile() != null) {
+			model = model.addFile(proofExtractor.getProofStatusFile());
+		}
 	}
 
 	public Map<String, Map<String, EventBAxiom>> getAxiomCache() {

@@ -65,20 +65,6 @@ final class StateAnimationTest {
 	}
 
 	@Test
-	void findTransitionUsesCachedTransition() {
-		// This isn't a very nice test - it temporarily modifies the state's internal list of transitions...
-		// If this breaks at some point in the future, feel free to just remove the entire test.
-		Transition t = Transition.generateArtificialTransition(s, "blah", "blah", "blah", "blah");
-		root.getTransitions().add(t);
-
-		try {
-			Assertions.assertEquals(t, root.findTransition("blah"));
-		} finally {
-			root.getTransitions().remove(t);
-		}
-	}
-
-	@Test
 	void findTransitionsWithOrWithoutPredicate() {
 		List<Transition> transitions1 = firstState.findTransitions("new", Collections.emptyList(), 3);
 		Assertions.assertEquals(3, transitions1.size());

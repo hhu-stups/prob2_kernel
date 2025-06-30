@@ -1,25 +1,35 @@
 package de.prob.model.eventb;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import com.github.krukow.clj_lang.PersistentVector;
 import com.google.inject.Inject;
+
 import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.command.LoadEventBProjectCommand;
+import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.EvaluationException;
 import de.prob.animator.domainobjects.EventB;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.model.eventb.theory.Theory;
 import de.prob.model.eventb.translate.EventBModelTranslator;
-import de.prob.model.representation.*;
+import de.prob.model.representation.AbstractElement;
+import de.prob.model.representation.AbstractModel;
+import de.prob.model.representation.BEvent;
+import de.prob.model.representation.DependencyGraph;
+import de.prob.model.representation.Machine;
+import de.prob.model.representation.ModelElementList;
 import de.prob.scripting.StateSpaceProvider;
 import de.prob.statespace.FormalismType;
 import de.prob.statespace.Language;
-
-import java.io.File;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import de.prob.statespace.StateSpace;
 
 import org.eventb.core.ast.extension.IFormulaExtension;
 
@@ -27,15 +37,27 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 public class EventBModel extends AbstractModel {
+	private final AbstractElement mainComponent;
+	private final PersistentVector<Path> allFiles;
 	private final Set<IFormulaExtension> extensions;
 
 	@Inject
 	public EventBModel(final StateSpaceProvider stateSpaceProvider) {
-		this(stateSpaceProvider, Collections.emptyMap(), new DependencyGraph(), null, Collections.emptySet());
+		this(stateSpaceProvider, Collections.emptyMap(), new DependencyGraph(), null, null, Collections.emptyList(), Collections.emptySet());
 	}
 
-	private EventBModel(StateSpaceProvider stateSpaceProvider, Map<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children, DependencyGraph graph, File modelFile, Set<IFormulaExtension> extensions) {
+	EventBModel(
+		StateSpaceProvider stateSpaceProvider,
+		Map<Class<? extends AbstractElement>, ModelElementList<? extends AbstractElement>> children,
+		DependencyGraph graph,
+		File modelFile,
+		AbstractElement mainComponent,
+		List<Path> allFiles,
+		Set<IFormulaExtension> extensions
+	) {
 		super(stateSpaceProvider, children, graph, modelFile);
+		this.mainComponent = mainComponent;
+		this.allFiles = allFiles instanceof PersistentVector<?> ? (PersistentVector<Path>)allFiles : PersistentVector.create(allFiles);
 		this.extensions = extensions;
 	}
 
@@ -56,7 +78,24 @@ public class EventBModel extends AbstractModel {
 	}
 
 	public EventBModel setModelFile(final File modelFile) {
-		return new EventBModel(getStateSpaceProvider(), getChildren(), getGraph(), modelFile, getExtensions());
+		return new EventBModel(stateSpaceProvider, getChildren(), getGraph(), modelFile, getMainComponent(), getAllFiles(), getExtensions());
+	}
+
+	public EventBModel withMainComponent(AbstractElement mainComponent) {
+		return new EventBModel(stateSpaceProvider, getChildren(), getGraph(), getModelFile(), mainComponent, getAllFiles(), getExtensions());
+	}
+
+	@Override
+	public List<Path> getAllFiles() {
+		return this.allFiles;
+	}
+
+	private EventBModel withAllFiles(List<Path> allFiles) {
+		return new EventBModel(stateSpaceProvider, getChildren(), getGraph(), getModelFile(), getMainComponent(), allFiles, getExtensions());
+	}
+
+	public EventBModel addFile(Path file) {
+		return this.withAllFiles(allFiles.assocN(allFiles.size(), file));
 	}
 
 	public Set<IFormulaExtension> getExtensions() {
@@ -64,7 +103,7 @@ public class EventBModel extends AbstractModel {
 	}
 
 	public EventBModel withExtensions(Set<IFormulaExtension> extensions) {
-		return new EventBModel(getStateSpaceProvider(), getChildren(), getGraph(), getModelFile(), Collections.unmodifiableSet(new HashSet<>(extensions)));
+		return new EventBModel(stateSpaceProvider, getChildren(), getGraph(), getModelFile(), getMainComponent(), getAllFiles(), Collections.unmodifiableSet(new HashSet<>(extensions)));
 	}
 
 	public ModelElementList<Theory> getTheories() {
@@ -86,38 +125,44 @@ public class EventBModel extends AbstractModel {
 	}
 
 	public EventBModel set(Class<? extends AbstractElement> clazz, ModelElementList<? extends AbstractElement> elements) {
-		return new EventBModel(getStateSpaceProvider(), assoc(clazz, elements), getGraph(), getModelFile(), getExtensions());
+		return new EventBModel(stateSpaceProvider, assoc(clazz, elements), getGraph(), getModelFile(), getMainComponent(), getAllFiles(), getExtensions());
 	}
 
 	public <T extends AbstractElement> EventBModel addTo(Class<T> clazz, T element) {
 		ModelElementList<T> list = getChildrenOfType(clazz);
-		return new EventBModel(getStateSpaceProvider(), assoc(clazz, list.addElement(element)), getGraph(), getModelFile(), getExtensions());
+		return this.set(clazz, list.addElement(element));
 	}
 
 	public <T extends AbstractElement> EventBModel removeFrom(Class<T> clazz, T element) {
 		ModelElementList<T> list = getChildrenOfType(clazz);
-		return new EventBModel(getStateSpaceProvider(), assoc(clazz, list.removeElement(element)), getGraph(), getModelFile(), getExtensions());
+		return this.set(clazz, list.removeElement(element));
 	}
 
 	public <T extends AbstractElement> EventBModel replaceIn(Class<T> clazz, T oldElement, T newElement) {
 		ModelElementList<T> list = getChildrenOfType(clazz);
-		return new EventBModel(getStateSpaceProvider(), assoc(clazz, list.replaceElement(oldElement, newElement)), getGraph(), getModelFile(), getExtensions());
+		return this.set(clazz, list.replaceElement(oldElement, newElement));
+	}
+
+	private EventBModel withGraph(DependencyGraph graph) {
+		return new EventBModel(stateSpaceProvider, getChildren(), graph, getModelFile(), getMainComponent(), getAllFiles(), getExtensions());
 	}
 
 	public EventBModel addMachine(final EventBMachine machine) {
-		return new EventBModel(getStateSpaceProvider(), assoc(Machine.class, getMachines().addElement(machine)), getGraph().addVertex(machine.getName()), getModelFile(), getExtensions());
+		return this.set(Machine.class, getMachines().addElement(machine))
+			.withGraph(this.getGraph().addVertex(machine.getName()));
 	}
 
 	public EventBModel addContext(final Context context) {
-		return new EventBModel(getStateSpaceProvider(), assoc(Context.class, getContexts().addElement(context)), getGraph().addVertex(context.getName()), getModelFile(), getExtensions());
+		return this.set(Context.class, getContexts().addElement(context))
+			.withGraph(this.getGraph().addVertex(context.getName()));
 	}
 
 	public EventBModel addRelationship(final String element1, final String element2, final DependencyGraph.ERefType relationship) {
-		return new EventBModel(getStateSpaceProvider(), getChildren(), getGraph().addEdge(element1, element2, relationship), getModelFile(), getExtensions());
+		return this.withGraph(this.getGraph().addEdge(element1, element2, relationship));
 	}
 
 	public EventBModel removeRelationship(final String element1, final String element2, final DependencyGraph.ERefType relationship) {
-		return new EventBModel(getStateSpaceProvider(), getChildren(), getGraph().removeEdge(element1, element2, relationship), getModelFile(), getExtensions());
+		return this.withGraph(this.getGraph().removeEdge(element1, element2, relationship));
 	}
 
 	public EventBModel calculateDependencies() {
@@ -137,7 +182,7 @@ public class EventBModel extends AbstractModel {
 				graph = graph.addEdge(c.getName(), c2.getName(), DependencyGraph.ERefType.EXTENDS);
 			}
 		}
-		return new EventBModel(getStateSpaceProvider(), getChildren(), graph, getModelFile(), getExtensions());
+		return this.withGraph(graph);
 	}
 
 	@Override
@@ -162,8 +207,20 @@ public class EventBModel extends AbstractModel {
 	}
 
 	@Override
-	public AbstractCommand getLoadCommand(final AbstractElement mainComponent) {
-		return new LoadEventBProjectCommand(new EventBModelTranslator(this, mainComponent));
+	public AbstractCommand getLoadCommand() {
+		return new LoadEventBProjectCommand(new EventBModelTranslator(this));
+	}
+
+	// For backward compatibility with old code that manually passes a different main component
+	// to load a different context/machine from an already loaded project.
+	@Deprecated
+	@Override
+	public void loadIntoStateSpace(StateSpace stateSpace, AbstractElement mainComponent) {
+		EventBModel model = this;
+		if (model.getMainComponent() != mainComponent) {
+			model = model.withMainComponent(mainComponent);
+		}
+		model.loadIntoStateSpace(stateSpace);
 	}
 
 	@Override
@@ -184,9 +241,17 @@ public class EventBModel extends AbstractModel {
 		return getContexts().getElement(name);
 	}
 
+	@Override
+	public AbstractElement getMainComponent() {
+		return this.mainComponent;
+	}
+
 	/**
+	 * @deprecated Use {@link #getMainComponent()} instead.
+	 *     The main component might be a {@link Context} and not an {@link EventBMachine}.
 	 * @return the most concrete machine
 	 */
+	@Deprecated
 	public EventBMachine getTopLevelMachine(){
 		return getMachines().getElement(getGraph().getStart());
 	}
@@ -195,7 +260,7 @@ public class EventBModel extends AbstractModel {
 	 * @return all Events of the machine
 	 */
 	public ModelElementList<Event> getEventList(){
-		return getTopLevelMachine().getChildrenOfType(Event.class);
+		return this.getMainComponent().getChildrenOfType(Event.class);
 	}
 
 	/**
@@ -235,7 +300,7 @@ public class EventBModel extends AbstractModel {
 	 * @return the events that refine others
 	 */
 	public List<Event> refinedEvents(){
-		return getTopLevelMachine().getChildrenOfType(Event.class)
+		return this.getMainComponent().getChildrenOfType(Event.class)
 				.stream()
 				.filter(entry -> entry.getInheritance() != Event.Inheritance.EXTENDS)
 				.collect(toList());

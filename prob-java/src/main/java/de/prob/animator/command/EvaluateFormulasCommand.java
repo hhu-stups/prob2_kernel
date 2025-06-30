@@ -1,6 +1,7 @@
 package de.prob.animator.command;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -17,6 +18,7 @@ import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.State;
+import de.prob.statespace.StateSpace;
 
 /**
  * Calculates the values of Classical-B Predicates and Expressions.
@@ -43,6 +45,11 @@ public class EvaluateFormulasCommand extends AbstractCommand {
 		this.options = options;
 	}
 
+	/**
+	 * @deprecated If this constructor is used, the evaluation will not benefit from registered formulas (see {@link StateSpace#registerFormulas(Collection)}.
+	 *     Use {@link #EvaluateFormulasCommand(List, State, EvalOptions)} instead.
+	 */
+	@Deprecated
 	public EvaluateFormulasCommand(final List<? extends IEvalElement> evalElements, final String stateId) {
 		this.evalElements = evalElements;
 		this.stateId = stateId;

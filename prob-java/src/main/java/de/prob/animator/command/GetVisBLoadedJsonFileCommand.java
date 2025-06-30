@@ -24,7 +24,7 @@ public class GetVisBLoadedJsonFileCommand extends AbstractCommand {
 		PrologTerm result = bindings.get(RESULT_VARIABLE);
 		if (result.hasFunctor("json_file", 1)) {
 			this.path = result.getArgument(1).atomToString();
-		} else if (result.isAtom() && "none".equals(result.atomToString())) {
+		} else if (result.hasFunctor("none", 0)) {
 			this.path = null;
 		} else {
 			throw new IllegalArgumentException("Expected result json_file/1 or none/0, but got " + result.getFunctor() + "/" + result.getArity());

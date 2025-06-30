@@ -17,13 +17,13 @@ import com.google.common.io.MoreFiles;
 import de.prob.exception.ProBError;
 import de.prob.model.eventb.EventBModel;
 import de.prob.model.representation.AbstractElement;
+import de.prob.model.representation.AbstractModel;
 import de.prob.scripting.EventBFactory;
 
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.xml.sax.SAXException;
 
 public class EventBDatabaseTranslator {
-	private AbstractElement mainComponent;
 	private EventBModel model;
 
 	public EventBDatabaseTranslator(EventBModel m, final String fileName) throws IOException {
@@ -34,7 +34,7 @@ public class EventBDatabaseTranslator {
 			parserFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 			SAXParser saxParser = parserFactory.newSAXParser();
 
-			this.model = m.setModelFile(modelFile);
+			this.model = m.setModelFile(modelFile).addFile(modelFile.toPath());
 
 			String directory = fullFileName.substring(0, fullFileName.lastIndexOf(File.separatorChar));
 			String workspacePath = directory.substring(0, directory.lastIndexOf(File.separatorChar));
@@ -44,22 +44,20 @@ public class EventBDatabaseTranslator {
 			if (!theoryFile.exists()) {
 				typeEnv = new HashSet<>();
 			} else {
+				this.model = this.model.addFile(theoryFile.toPath());
 				TheoryXmlHandler theoryHandler = new TheoryXmlHandler(this.model, workspacePath);
 				saxParser.parse(theoryFile, theoryHandler);
 				typeEnv = theoryHandler.getTypeEnv();
 				this.model = theoryHandler.getModel();
 			}
 
-			mainComponent = null;
 			if (EventBFactory.CHECKED_RODIN_CONTEXT_EXTENSION.equals(MoreFiles.getFileExtension(modelFile.toPath()))) {
 				final ContextXmlHandler xmlHandler = new ContextXmlHandler(this.model, fullFileName, typeEnv);
 				saxParser.parse(modelFile, xmlHandler);
-				mainComponent = xmlHandler.getContext();
 				this.model = xmlHandler.getModel();
 			} else {
 				final MachineXmlHandler xmlHandler = new MachineXmlHandler(this.model, fullFileName, typeEnv);
 				saxParser.parse(modelFile, xmlHandler);
-				mainComponent = xmlHandler.getMachine();
 				this.model = xmlHandler.getModel();
 			}
 		} catch (FileNotFoundException | NoSuchFileException e) {
@@ -69,8 +67,13 @@ public class EventBDatabaseTranslator {
 		}
 	}
 
+	/**
+	 * @deprecated Use {@link AbstractModel#getMainComponent()} instead.
+	 * @return the model's main component
+	 */
+	@Deprecated
 	public AbstractElement getMainComponent() {
-		return mainComponent;
+		return this.getModel().getMainComponent();
 	}
 
 	public EventBModel getModel() {

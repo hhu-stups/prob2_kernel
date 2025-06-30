@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<org.eventb.core.machineFile org.eventb.core.configuration="org.eventb.core.fwd" org.eventb.core.generated="false" org.eventb.texttools.text_lastmodified="1738859020036" org.eventb.texttools.text_representation="machine M&#10;&#10;events&#10;  event INITIALISATION&#10;  end&#10;&#10;  event E&#10;  any dist_x dist_y dist_z&#10;  where @types dist_x ∈ ℤ ∧ dist_y ∈ ℤ ∧ dist_z ∈ ℤ&#10;  end&#10;end&#10;" version="5">
+    <org.eventb.core.event name="'" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.generated="false" org.eventb.core.label="INITIALISATION"/>
+    <org.eventb.core.event name="_Js7dEOSmEe-g849Gr6BNAw" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.generated="false" org.eventb.core.label="E">
+        <org.eventb.core.parameter name="_s0WSwOSmEe-g849Gr6BNAw" org.eventb.core.generated="false" org.eventb.core.identifier="dist_x"/>
+        <org.eventb.core.parameter name="_s0W50OSmEe-g849Gr6BNAw" org.eventb.core.generated="false" org.eventb.core.identifier="dist_y"/>
+        <org.eventb.core.parameter name="_s0W50eSmEe-g849Gr6BNAw" org.eventb.core.generated="false" org.eventb.core.identifier="dist_z"/>
+        <org.eventb.core.guard name="_PGhX8OSmEe-g849Gr6BNAw" org.eventb.core.generated="false" org.eventb.core.label="types" org.eventb.core.predicate="dist_x ∈ ℤ ∧ dist_y ∈ ℤ ∧ dist_z ∈ ℤ"/>
+    </org.eventb.core.event>
+</org.eventb.core.machineFile>

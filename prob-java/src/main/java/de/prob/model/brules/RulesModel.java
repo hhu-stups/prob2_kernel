@@ -1,6 +1,10 @@
 package de.prob.model.brules;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +15,7 @@ import com.google.inject.Inject;
 import de.be4.classicalb.core.parser.BParser;
 import de.be4.classicalb.core.parser.exceptions.BCompoundException;
 import de.be4.classicalb.core.parser.rules.AbstractOperation;
+import de.be4.classicalb.core.parser.rules.IModel;
 import de.be4.classicalb.core.parser.rules.RulesProject;
 import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.command.LoadRulesProjectCommand;
@@ -18,6 +23,7 @@ import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.EvaluationException;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
+import de.prob.model.classicalb.ClassicalBMachine;
 import de.prob.model.representation.AbstractElement;
 import de.prob.model.representation.AbstractModel;
 import de.prob.model.representation.DependencyGraph;
@@ -44,6 +50,26 @@ public class RulesModel extends AbstractModel {
 	@Override
 	public AbstractElement getComponent(String name) {
 		throw new AssertionError();
+	}
+
+	@Override
+	public AbstractElement getMainComponent() {
+		// FIXME The ClassicalBMachine returned here is very incomplete - does this implementation make any sense? Should we fix it, or can we just return null instead?
+		return new ClassicalBMachine(project.getBModels().get(0).getMachineName());
+	}
+
+	@Override
+	public List<Path> getAllFiles() {
+		List<Path> allFiles = new ArrayList<>();
+		allFiles.add(this.getModelFile().toPath());
+		// references of main machine are not enough; referenced can reference other rmch again
+		this.getRulesProject().getBModels().stream()
+			.map(IModel::getMachineReferences)
+			.flatMap(Collection::stream)
+			.map(ref -> Paths.get(ref.getPath()))
+			.distinct()
+			.forEach(allFiles::add);
+		return allFiles;
 	}
 
 	public RulesModel create(File file, RulesProject project) {
@@ -80,7 +106,7 @@ public class RulesModel extends AbstractModel {
 	}
 
 	@Override
-	public AbstractCommand getLoadCommand(final AbstractElement mainComponent) {
+	public AbstractCommand getLoadCommand() {
 		return new LoadRulesProjectCommand(project, modelFile);
 	}
 

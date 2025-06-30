@@ -1,8 +1,9 @@
 package de.prob.model.eventb.translate;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -54,9 +55,14 @@ public class TheoryXmlHandler extends DefaultHandler {
 					String name = path.substring(path.lastIndexOf('/') + 1,
 							path.lastIndexOf('.'));
 
+					Path theoryFile = Paths.get(workspacePath + path);
+					model = model.addFile(theoryFile);
 					TheoryExtractor extractor = new TheoryExtractor(
 							workspacePath, dir, name, theoryMap);
-					saxParser.parse(new File(workspacePath + path), extractor);
+					saxParser.parse(theoryFile.toFile(), extractor);
+					if (extractor.getMappingFile() != null) {
+						model = model.addFile(extractor.getMappingFile());
+					}
 					theories = theories.addMultiple(extractor.getTheories());
 					typeEnv.addAll(extractor.getTypeEnv());
 				} catch (IOException e) {

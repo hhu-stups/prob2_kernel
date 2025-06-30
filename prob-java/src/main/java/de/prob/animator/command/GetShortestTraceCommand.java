@@ -5,7 +5,6 @@ import java.util.List;
 
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
-import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.ITraceDescription;
@@ -44,7 +43,7 @@ public class GetShortestTraceCommand extends AbstractCommand implements
 			tracefound = true;
 			for (PrologTerm term : (ListPrologTerm) trace) {
 				transitions.add(Transition.createTransitionFromCompoundPrologTerm(
-					s, (CompoundPrologTerm) term));
+					s, term));
 			}
 		} else {
 			tracefound = false;

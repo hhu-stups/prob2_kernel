@@ -1,6 +1,5 @@
 package de.prob.statespace;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -10,9 +9,10 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.github.krukow.clj_lang.PersistentVector;
@@ -78,20 +78,36 @@ public class Trace {
 		return uuid;
 	}
 
+	private static List<TraceElement> getElementsStartingFrom(TraceElement element) {
+		final LinkedList<TraceElement> elements = new LinkedList<>();
+		for (; element != null; element = element.getPrevious()) {
+			elements.addFirst(element);
+		}
+		return elements;
+	}
+
 	/**
 	 * Get a list of all {@link TraceElement}s that make up this trace.
 	 * Currently, this list is newly constructed on every call to this method and is <i>not</i> cached.
 	 * To iterate over the trace more efficiently,
-	 * traverse the {@link TraceElement}s manually starting at {@link #getHead()} or {@link #getCurrent()}.
+	 * traverse the {@link TraceElement}s manually starting at {@link #getCurrent()}.
 	 * 
 	 * @return list of all elements of this trace
 	 */
 	public List<TraceElement> getElements() {
-		final LinkedList<TraceElement> elements = new LinkedList<>();
-		for (TraceElement element = this.getHead(); element != null; element = element.getPrevious()) {
-			elements.addFirst(element);
-		}
-		return elements;
+		return getElementsStartingFrom(this.getHead());
+	}
+
+	/**
+	 * Get a list of all {@link TraceElement}s up to the current element (ignoring forward history).
+	 * Currently, this list is newly constructed on every call to this method and is <i>not</i> cached.
+	 * To iterate over the trace more efficiently,
+	 * traverse the {@link TraceElement}s manually starting at {@link #getCurrent()}.
+	 *
+	 * @return list of all elements of this trace up to the current element
+	 */
+	public List<TraceElement> getCurrentElements() {
+		return getElementsStartingFrom(this.getCurrent());
 	}
 
 	public AbstractEvalResult evalCurrent(String formula, EvalOptions options) {
@@ -290,6 +306,7 @@ public class Trace {
 			return this;
 		}
 
+		Random random = new Random();
 		State currentState = this.current.getCurrentState();
 		TraceElement current = this.current;
 		PersistentVector<Transition> transitionList = this.transitionList;
@@ -300,8 +317,45 @@ public class Trace {
 				if (ops.isEmpty()) {
 					break;
 				}
-				Collections.shuffle(ops);
-				final Transition op = ops.get(0);
+				Transition op = ops.get(random.nextInt(ops.size()));
+				current = new TraceElement(op, current);
+				if (i == 0) {
+					transitionList = branchTransitionListIfNecessary(op);
+				} else {
+					transitionList = transitionList.assocN(transitionList.size(), op);
+				}
+				currentState = op.getDestination();
+				if(Thread.currentThread().isInterrupted()) {
+					return this;
+				}
+			}
+		} finally {
+			this.stateSpace.endTransaction();
+		}
+
+		return new Trace(stateSpace, current, transitionList, this.uuid);
+	}
+
+	/**
+	 * execute at most {@code maxNumOfSteps} operations until deterministic animation is no longer possible,
+	 * i.e. there is more than one or no outgoing transition
+	 */
+	public Trace deterministicAnimation(final int maxNumOfSteps) {
+		if (maxNumOfSteps <= 0) {
+			return this;
+		}
+
+		State currentState = this.current.getCurrentState();
+		TraceElement current = this.current;
+		PersistentVector<Transition> transitionList = this.transitionList;
+		try {
+			this.stateSpace.startTransaction();
+			for (int i = 0; i < maxNumOfSteps; i++) {
+				final List<Transition> ops = currentState.getOutTransitions();
+				if (ops.size() != 1) {
+					break;
+				}
+				Transition op = ops.get(0);
 				current = new TraceElement(op, current);
 				if (i == 0) {
 					transitionList = branchTransitionListIfNecessary(op);
@@ -370,22 +424,13 @@ public class Trace {
 		}
 	}
 
-	// TODO This duplicates State.anyOperation (almost, but not exactly)
-	public Trace anyOperation(final Object filter) {
-		List<Transition> ops = current.getCurrentState().getOutTransitions();
-		if (filter instanceof String) {
-			final Pattern filterPattern = Pattern.compile((String)filter);
-			ops = ops.stream().filter(t -> filterPattern.matcher(t.getName()).matches()).collect(Collectors.toList());
+	public Trace anyOperation(Object filter) {
+		Optional<Transition> transition = this.getCurrentState().chooseRandomOutTransition(filter);
+		if (transition.isPresent()) {
+			return this.add(transition.get());
+		} else {
+			return this;
 		}
-		if (filter instanceof ArrayList) {
-			ops = ops.stream().filter(t -> ((List<?>)filter).contains(t.getName())).collect(Collectors.toList());
-		}
-		Collections.shuffle(ops);
-		if (!ops.isEmpty()) {
-			Transition op = ops.get(0);
-			return add(op.getId());
-		}
-		return this;
 	}
 
 	public Trace anyEvent(Object filter) {

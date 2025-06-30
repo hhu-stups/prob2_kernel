@@ -18,6 +18,7 @@ import com.google.inject.Stage;
 import de.prob.animator.IAnimator;
 import de.prob.annotations.Home;
 import de.prob.cli.Installer;
+import de.prob.cli.OsSpecificInfo;
 
 /**
  * Provides static information about the version of the ProB Java API, the location of the ProB home directory, etc.
@@ -100,7 +101,7 @@ public class Main {
 		if (homePathOverride != null) {
 			return Paths.get(homePathOverride);
 		} else {
-			return Installer.DEFAULT_HOME;
+			return Installer.ensureInstalled(OsSpecificInfo.detect());
 		}
 	}
 

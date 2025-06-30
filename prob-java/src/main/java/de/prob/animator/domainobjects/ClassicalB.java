@@ -7,6 +7,7 @@
 package de.prob.animator.domainobjects;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import de.be4.classicalb.core.parser.BParser;
@@ -15,7 +16,9 @@ import de.be4.classicalb.core.parser.exceptions.BCompoundException;
 import de.be4.classicalb.core.parser.node.AExpressionParseUnit;
 import de.be4.classicalb.core.parser.node.AIdentifierExpression;
 import de.be4.classicalb.core.parser.node.APredicateParseUnit;
+import de.be4.classicalb.core.parser.node.ASubstitutionParseUnit;
 import de.be4.classicalb.core.parser.node.EOF;
+import de.be4.classicalb.core.parser.node.PParseUnit;
 import de.be4.classicalb.core.parser.node.Start;
 import de.be4.classicalb.core.parser.node.TIdentifierLiteral;
 import de.be4.classicalb.core.parser.util.PrettyPrinter;
@@ -25,37 +28,46 @@ import de.prob.prolog.output.IPrologTermOutput;
 
 /**
  * Representation of a ClassicalB formula.
- * 
+ *
  * @author joy
  */
-public class ClassicalB extends AbstractEvalElement implements IBEvalElement {
+public final class ClassicalB extends AbstractEvalElement implements IBEvalElement {
 
 	private final FormulaUUID uuid = new FormulaUUID();
-
 	private final Start ast;
-	private String code;
+	private String cachedCode;
 
 	public ClassicalB(final Start ast, final FormulaExpand expansion, final String code) {
 		super(null, expansion);
 
-		this.ast = ast;
-		this.code = code;
+		this.cachedCode = code;
+
+		if (ast == null) {
+			// If ast is null, parse it from code, which must not be null.
+			if (code == null) {
+				throw new IllegalArgumentException("both ast and code are null");
+			}
+			// The code is parsed eagerly so that any parse errors are thrown from the constructor,
+			// not from later code that tries to write the formula to Prolog or otherwise uses the AST.
+			this.ast = parse(code, false);
+		} else {
+			// If ast is non-null, then code may or may not be null.
+			// If code is null, it will be initialized lazily by pretty-printing the AST.
+			// If code is non-null, it's assumed to be the original source code or an existing pretty-print of the AST.
+			this.ast = ast;
+		}
 	}
 
 	public ClassicalB(final Start ast, final String code) {
-		super(null, FormulaExpand.TRUNCATE);
-
-		this.ast = ast;
-		this.code = code;
+		this(ast, FormulaExpand.TRUNCATE, code);
 	}
 
 	public ClassicalB(final Start ast, final FormulaExpand expansion) {
-		this(ast, expansion, null);
+		this(Objects.requireNonNull(ast, "ast"), expansion, null);
 	}
 
 	/**
-	 * @param ast
-	 *            is saved and the string representation determined from the ast
+	 * @param ast is saved and the string representation determined from the ast
 	 *            and saved
 	 */
 	public ClassicalB(final Start ast) {
@@ -63,39 +75,37 @@ public class ClassicalB extends AbstractEvalElement implements IBEvalElement {
 	}
 
 	public ClassicalB(final String formula, final FormulaExpand expansion) {
-		this(parse(formula,false), expansion, formula); // false: does not allow substitutions
+		this(null, expansion, Objects.requireNonNull(formula, "formula"));
 	}
 
 	/**
 	 * @deprecated Parsing substitutions into an {@link IEvalElement} is not useful at the moment,
-	 *     because they cannot be evaluated.
-	 *     If you only need to work with expressions and predicates,
-	 *     use {@link #ClassicalB(String)} instead.
-	 *     To parse a substitution,
-	 *     use {@link BParser#parseSubstitution(String)} instead
-	 *     (you can then pass the parsed AST into {@link #ClassicalB(Start, String)} if you really need to for some reason).
+	 * because they cannot be evaluated.
+	 * If you only need to work with expressions and predicates,
+	 * use {@link #ClassicalB(String)} instead.
+	 * To parse a substitution,
+	 * use {@link BParser#parseSubstitution(String)} instead
+	 * (you can then pass the parsed AST into {@link #ClassicalB(Start, String)} if you really need to for some reason).
 	 */
 	@Deprecated
-	public ClassicalB(final String formula, final FormulaExpand expansion, final Boolean AllowSubst) {
-		this(parse(formula,AllowSubst), expansion, formula);
+	public ClassicalB(final String formula, final FormulaExpand expansion, final boolean allowSubstitution) {
+		this(parse(Objects.requireNonNull(formula, "formula"), allowSubstitution), expansion, formula);
 	}
 
 	/**
-	 * @param code
-	 *            will be parsed and the resulting {@link Start} ast saved
-	 * @throws EvaluationException
-	 *             if the code could not be parsed
+	 * @param code will be parsed and the resulting {@link Start} ast saved
+	 * @throws EvaluationException if the code could not be parsed
 	 */
 	public ClassicalB(final String code) {
 		this(code, FormulaExpand.EXPAND);
 	}
 
-	private static Start parse(final String formula, Boolean AllowSubst) {
+	private static Start parse(String formula, boolean allowSubstitution) {
 		final BParser bParser = new BParser();
 		try {
 			return bParser.parseFormula(formula);
 		} catch (BCompoundException e) {
-			if (AllowSubst) {
+			if (allowSubstitution) {
 				// also try parsing as substitution
 				try {
 					return bParser.parseSubstitution(formula);
@@ -108,16 +118,6 @@ public class ClassicalB extends AbstractEvalElement implements IBEvalElement {
 		}
 	}
 
-	@Override
-	public String getCode() {
-		if (this.code == null) {
-			final PrettyPrinter prettyPrinter = new PrettyPrinter();
-			this.ast.apply(prettyPrinter);
-			this.code = prettyPrinter.getPrettyPrint();
-		}
-		return this.code;
-	}
-
 	/**
 	 * <p>Create a classical B formula representing the given identifier.</p>
 	 * <p>
@@ -126,9 +126,9 @@ public class ClassicalB extends AbstractEvalElement implements IBEvalElement {
 	 * even ones that are not syntactically valid B identifiers
 	 * and would otherwise need to be quoted.
 	 * </p>
-	 * 
+	 *
 	 * @param identifier list of string parts that make up a dotted identifier
-	 * @param expansion expansion mode to use when evaluating the formula
+	 * @param expansion  expansion mode to use when evaluating the formula
 	 * @return a classical B formula representing the given identifier
 	 */
 	public static ClassicalB fromIdentifier(final List<String> identifier, final FormulaExpand expansion) {
@@ -145,7 +145,7 @@ public class ClassicalB extends AbstractEvalElement implements IBEvalElement {
 	 * even ones that are not syntactically valid B identifiers
 	 * and would otherwise need to be quoted.
 	 * </p>
-	 * 
+	 *
 	 * @param identifier list of string parts that make up a dotted identifier
 	 * @return a classical B formula representing the given identifier
 	 */
@@ -154,13 +154,27 @@ public class ClassicalB extends AbstractEvalElement implements IBEvalElement {
 	}
 
 	@Override
+	public String getCode() {
+		if (this.cachedCode == null) {
+			final PrettyPrinter prettyPrinter = new PrettyPrinter();
+			this.ast.apply(prettyPrinter);
+			this.cachedCode = prettyPrinter.getPrettyPrint();
+		}
+
+		return this.cachedCode;
+	}
+
+	@Override
 	public EvalElementType getKind() {
-		if (ast.getPParseUnit() instanceof AExpressionParseUnit) {
+		PParseUnit parseUnit = this.getAst().getPParseUnit();
+		if (parseUnit instanceof AExpressionParseUnit) {
 			return EvalElementType.EXPRESSION;
-		} else if (ast.getPParseUnit() instanceof APredicateParseUnit) {
+		} else if (parseUnit instanceof APredicateParseUnit) {
 			return EvalElementType.PREDICATE;
-		} else {
+		} else if (parseUnit instanceof ASubstitutionParseUnit) {
 			return EvalElementType.ASSIGNMENT;
+		} else {
+			throw new IllegalStateException("unknown kind for ClassicalB: " + parseUnit.getClass().getSimpleName() + " " + parseUnit);
 		}
 	}
 
@@ -169,22 +183,20 @@ public class ClassicalB extends AbstractEvalElement implements IBEvalElement {
 	 */
 	@Override
 	public Start getAst() {
-		return ast;
+		return this.ast;
 	}
 
 	@Override
 	public void printProlog(final IPrologTermOutput pout) {
-		if (EvalElementType.ASSIGNMENT.equals(getKind())) {
+		if (EvalElementType.ASSIGNMENT.equals(this.getKind())) {
 			throw new EvaluationException("Substitutions are currently unsupported for evaluation");
 		}
-		if (ast.getEOF() == null) {
-			ast.setEOF(new EOF());
-		}
-		ASTProlog.printFormula(ast, pout);
+
+		ASTProlog.printFormula(this.getAst(), pout);
 	}
 
 	@Override
 	public IFormulaUUID getFormulaId() {
-		return uuid;
+		return this.uuid;
 	}
 }

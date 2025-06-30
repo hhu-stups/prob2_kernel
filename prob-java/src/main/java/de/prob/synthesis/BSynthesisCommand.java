@@ -19,7 +19,7 @@ class BSynthesisCommand extends AbstractCommand {
 	private static final String DISTINGUISHING_EXAMPLE = "Distinguishing";
 	private static final String SYNTHESIZED_CODE = "SynthesizedCode";
 
-	private final Logger logger = LoggerFactory.getLogger(getClass());
+	private static final Logger LOGGER = LoggerFactory.getLogger(BSynthesisCommand.class);
 
 	private SynthesisMode synthesisMode = SynthesisMode.FIRST_SOLUTION;
 	private final SynthesisType synthesisType;
@@ -72,7 +72,7 @@ class BSynthesisCommand extends AbstractCommand {
 		printListToPrologTerm(pto, negativeExamples);
 		pto.printVariable(SYNTHESIZED_CODE)
 			.printVariable(DISTINGUISHING_EXAMPLE).closeTerm();
-		logger.info("Start synthesis prolog backend by calling prob2_interface:{}", pto);
+		LOGGER.info("Start synthesis prolog backend by calling prob2_interface:{}", pto);
 	}
 
 	@Override
@@ -85,7 +85,7 @@ class BSynthesisCommand extends AbstractCommand {
 			return;
 		}
 		if (newMachineCode.equals("none")) {
-			logger.info("Synthesized two non equivalent programs. Distinguishing example: {}",
+			LOGGER.info("Synthesized two non equivalent programs. Distinguishing example: {}",
 				bindings.get(DISTINGUISHING_EXAMPLE));
 			distinguishingExample = null;
 			distinguishingIOExample = null;

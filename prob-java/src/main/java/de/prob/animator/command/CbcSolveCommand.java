@@ -109,13 +109,13 @@ public class CbcSolveCommand extends AbstractCommand {
 			Map<String, String> solutions = new HashMap<>();
 
 			for (PrologTerm b : solutionBindings) {
-				CompoundPrologTerm t = (CompoundPrologTerm) b;
-				if (t.getArity() == 2) {
+				if (b.hasFunctor("binding", 2)) {
 					// New format: binding(VarName,PrettyPrint)
-					solutions.put(t.getArgument(0).atomToString(), t.getArgument(1).atomToString());
+					solutions.put(b.getArgument(0).atomToString(), b.getArgument(1).atomToString());
 				} else {
 					// Old format: binding(VarName,PrologRep,PrettyPrint)
 					// The PrologRep is ignored, because it's not usable by the Java side.
+					CompoundPrologTerm t = BindingGenerator.getCompoundTerm(b, "binding", 3);
 					solutions.put(t.getArgument(VAR_NAME).getFunctor(), t.getArgument(PRETTY_PRINT).getFunctor());
 				}
 			}

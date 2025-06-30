@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -51,8 +53,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class TheoryExtractor extends DefaultHandler {
-
-	private final Logger logger = LoggerFactory.getLogger(TheoryExtractor.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(TheoryExtractor.class);
 
 	private Theory theory;
 	private ModelElementList<Theory> imported = new ModelElementList<>();
@@ -112,6 +113,9 @@ public class TheoryExtractor extends DefaultHandler {
 	private final String name;
 
 	private final String workspacePath;
+
+	private Path mappingFile;
+
 	private ModelElementList<Theory> theories = new ModelElementList<>();
 
 	public TheoryExtractor(final String workspacePath, String project,
@@ -121,13 +125,12 @@ public class TheoryExtractor extends DefaultHandler {
 		this.name = name;
 		this.theoryMap = theoryMap;
 		Collection<OperatorMapping> mappings = new ArrayList<>();
+		this.mappingFile = Paths.get(workspacePath, project, name + ".ptm");
 		try {
-			String mappingFileName = workspacePath + File.separator + project
-					+ File.separator + name + ".ptm";
-			mappings = TheoryMappingParser.parseTheoryMapping(name,
-					mappingFileName);
+			mappings = TheoryMappingParser.parseTheoryMapping(name, mappingFile);
 		} catch (FileNotFoundException | NoSuchFileException e) {
-			logger.warn("No .ptm file found for Theory {}. This means that ProB has no information on how to interpret this theory.", name, e);
+			LOGGER.warn("No .ptm file found for Theory {}. This means that ProB has no information on how to interpret this theory.", name, e);
+			this.mappingFile = null;
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		} catch (TheoryMappingException e) {
@@ -140,6 +143,10 @@ public class TheoryExtractor extends DefaultHandler {
 
 	public Theory getTheory() {
 		return theory;
+	}
+
+	public Path getMappingFile() {
+		return mappingFile;
 	}
 
 	@Override

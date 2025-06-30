@@ -1,0 +1,49 @@
+#macro(ruleContent $ruleResults)
+	#foreach($ruleResult in $ruleResults)
+		<rule name="$ruleResult.getRuleName()" status="$ruleResult.getRuleState().toString().toLowerCase()" #if($ruleResult.getRuleId()) id="$ruleResult.getRuleId()" #end>
+		#foreach($tag in $ruleResult.getTags())
+			<tag>$tag</tag>
+		#end
+		#foreach($counterExample in $ruleResult.getCounterExamples())
+			<counterExample errorType="$counterExample.getErrorType()">$counterExample.getMessage()</counterExample>
+		#end
+		#if($ruleResult.getNumberOfViolations() == -1)
+			<counterExample errorType="-1">Violations cannot be enumerated (infinitely many)</counterExample>
+		#end
+		#foreach($successMessage in $ruleResult.getSuccessMessages())
+			<successMessage ruleBody="$successMessage.getRuleBodyCount()">$successMessage.getMessage()</successMessage>
+		#end
+		#if($ruleResult.getNumberOfSuccesses() == -1)
+			<successMessage ruleBody="-1">Successful checks cannot be enumerated (infinitely many)</successMessage>
+		#end
+		#foreach($failed in $ruleResult.getFailedDependencies())
+			<failedDependency>$failed</failedDependency>
+		#end
+		#foreach($notChecked in $ruleResult.getNotCheckedDependencies())
+			<notCheckedDependency>$notChecked</notCheckedDependency>
+		#end
+		</rule>
+	#end
+#end
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ruleValidationReport>
+	<statistics>
+		<totalNumber>$numberOfRules</totalNumber>
+		<checked>$rulesChecked</checked>
+		<succeeded>$rulesSucceeded</succeeded>
+		<failed>$rulesFailed</failed>
+		<disabled>$rulesDisabled</disabled>
+		<checkTime>$duration</checkTime>
+		<ProBVersion>$probCliVersion</ProBVersion>
+		<date>$localDateTime</date>
+	</statistics>
+	#foreach($classification in $classificationMap.keySet().stream().toList().stream().sorted().collect($Collectors.toList()))
+		#set($ruleResults = $classificationMap.get($classification))
+	<classification name="$classification" nrRules="$ruleResults.size()">
+		#ruleContent($ruleResults)
+	</classification>
+	#end
+	#if(!$noClassification.isEmpty())
+		#ruleContent($noClassification)
+	#end
+</ruleValidationReport>

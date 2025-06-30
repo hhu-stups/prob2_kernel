@@ -1,5 +1,14 @@
 package de.prob.json;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.Objects;
+
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -11,12 +20,9 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.google.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Objects;
 
 /**
  * <p>
@@ -71,6 +77,19 @@ public final class JacksonManager<T extends HasMetadata> {
 		}
 
 		/**
+		 * Check whether the given metadata has a file type that this context can handle.
+		 * <p>
+		 * This method exists to support loading identical formats that just differ in the file type
+		 * (simulation items in ProB2-UI do this).
+		 *
+		 * @param metadata metadata
+		 * @return true iff the given metadata can be handled by this context
+		 */
+		public boolean isFileTypeAccepted(JsonMetadata metadata) {
+			return this.fileType.equals(metadata.getFileType());
+		}
+
+		/**
 		 * <p>Convert data from an older format version to the current version.</p>
 		 * <p>This method must be overridden to support loading data that uses an older format version. The default implementation of this method always throws a {@link JsonConversionException}.</p>
 		 * <p>The converted object is returned from this method. The returned {@link JsonNode} may be a completely new object, or it may be {@code oldObject} after being modified in place.</p>
@@ -83,11 +102,21 @@ public final class JacksonManager<T extends HasMetadata> {
 		public ObjectNode convertOldData(final ObjectNode oldObject, final int oldVersion) {
 			throw new JsonConversionException("JSON data uses old format version " + oldVersion + ", which cannot be converted to the current version " + this.currentFormatVersion);
 		}
+
+		/**
+		 * Pre-save callback. Allows to update metadata right before saving.
+		 *
+		 * @param metadata the metadata
+		 * @return possibly mutated metadata
+		 */
+		public JsonMetadata updateMetadataOnSave(JsonMetadata metadata) {
+			return new JsonMetadataBuilder(metadata)
+					.withFormatVersion(this.currentFormatVersion)
+					.build();
+		}
 	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(JacksonManager.class);
-
-	private static final JsonMetadata MISSING_METADATA = new JsonMetadata(null, 0, null, null, null, null, null);
 
 	// Only used for parsing
 	private static final ObjectMapper METADATA_OBJECT_MAPPER = new ObjectMapper();
@@ -169,7 +198,7 @@ public final class JacksonManager<T extends HasMetadata> {
 			LOGGER.debug("JSON data in file has type {} and version {}", newMetadata.getFileType(), newMetadata.getFormatVersion());
 
 			// Check that the file has the expected type.
-			if (!newMetadata.getFileType().equals(this.getContext().fileType)) {
+			if (!this.getContext().isFileTypeAccepted(newMetadata)) {
 				throw new InvalidJsonFormatException("Expected JSON data of type " + this.getContext().fileType + " but got " + newMetadata.getFileType());
 			}
 
@@ -189,13 +218,13 @@ public final class JacksonManager<T extends HasMetadata> {
 			final ProB2UI1Dot0Metadata oldMetadata = extractOldMetadataIfPresent(parser);
 			if (oldMetadata != null) {
 				// Found old metadata - convert it to the new format.
-				return oldMetadata.toNewMetadata();
+				return oldMetadata.toNewMetadata(this.getContext().fileType);
 			} else {
 				// Didn't find old metadata either.
 				// This only happens for JSON data from pre-1.0 snapshot versions of ProB 2 UI
 				// where metadata wasn't introduced yet.
 				// Substitute a blank metadata object instead.
-				return MISSING_METADATA;
+				return new JsonMetadata(this.getContext().fileType, 0, null, null, null, null, null);
 			}
 		}
 	}
@@ -237,12 +266,19 @@ public final class JacksonManager<T extends HasMetadata> {
 			}
 		}
 
-		// If the file didn't contain metadata in the new format,
-		// the parsed object's metadata will still be null.
-		// In that case we need to manually add the previously converted metadata to the object.
-		if (parsed.getMetadata() == null) {
-			assert metadata.getFormatVersion() == 0;
-			parsed = this.getContext().clazz.cast(parsed.withMetadata(metadata));
+		// we have rewritten the ObjectNode to the new format version, so we can...
+		if (parsed.getMetadata() == null || metadata.getFileType() == null || metadata.getFormatVersion() != this.getContext().currentFormatVersion) {
+			// ...update metadata version...
+			JsonMetadataBuilder b = new JsonMetadataBuilder(metadata)
+					.withFormatVersion(this.getContext().currentFormatVersion);
+			// ...and file type if required...
+			if (metadata.getFileType() == null) {
+				b.withFileType(this.getContext().fileType);
+			}
+			JsonMetadata newMetadata = b.build();
+
+			// ...and override it in the parsed object
+			parsed = this.getContext().clazz.cast(parsed.withMetadata(newMetadata));
 		}
 
 		return parsed;
@@ -255,12 +291,13 @@ public final class JacksonManager<T extends HasMetadata> {
 	 * @param path   the path of the JSON file to write
 	 * @param object the object to write
 	 */
-	public void writeToFile(final Path path, final T object) throws IOException {
+	public void writeToFile(final Path path, T object) throws IOException {
+		LOGGER.debug("Writing json file of type {} to {}", this.getContext().fileType, path);
 		final JsonMetadata metadata = object.getMetadata();
 		if (metadata == null) {
 			throw new IllegalArgumentException("Object must have metadata set");
 		}
-		if (!this.getContext().fileType.equals(metadata.getFileType())) {
+		if (!this.getContext().isFileTypeAccepted(metadata)) {
 			throw new IllegalArgumentException(String.format(
 				"File type in object metadata (%s) doesn't match file type set in context (%s)",
 				metadata.getFileType(),
@@ -274,6 +311,34 @@ public final class JacksonManager<T extends HasMetadata> {
 				this.getContext().currentFormatVersion
 			));
 		}
-		this.getContext().objectMapper.writeValue(path.toFile(), object);
+
+		JsonMetadata updatedMetadata = this.getContext().updateMetadataOnSave(metadata);
+		if (updatedMetadata != null && !updatedMetadata.equals(metadata)) {
+			object = this.getContext().clazz.cast(object.withMetadata(updatedMetadata));
+		}
+
+		// To avoid corrupting the previously saved files if saving fails/is interrupted for some reason,
+		// save it under a temporary file name first,
+		// and only once the json has been fully saved rename it to the real file name
+		// (overwriting any existing file with that name).
+		Path parentDir = path.getParent();
+		if (parentDir == null) {
+			parentDir = Paths.get(".");
+		}
+		Path tempFile = Files.createTempFile(parentDir, path.getFileName().toString(), ".probsavetmp");
+		LOGGER.debug("Using temp file {} to save {}", tempFile, path);
+		try {
+			try (BufferedWriter w = Files.newBufferedWriter(tempFile, StandardCharsets.UTF_8)) {
+				this.getContext().objectMapper.writeValue(w, object);
+			}
+			Files.move(tempFile, path, StandardCopyOption.REPLACE_EXISTING);
+		} catch (Exception e) {
+			try {
+				Files.deleteIfExists(tempFile);
+			} catch (Exception e2) {
+				e.addSuppressed(e2);
+			}
+			throw e;
+		}
 	}
 }

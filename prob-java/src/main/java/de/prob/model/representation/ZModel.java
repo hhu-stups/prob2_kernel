@@ -26,7 +26,7 @@ public class ZModel extends AbstractModel {
 	}
 
 	public ZModel create(final File modelFile) {
-		return new ZModel(getStateSpaceProvider(), modelFile);
+		return new ZModel(stateSpaceProvider, modelFile);
 	}
 	
 	@Override
@@ -50,12 +50,17 @@ public class ZModel extends AbstractModel {
 	}
 
 	@Override
-	public AbstractCommand getLoadCommand(final AbstractElement mainComponent) {
+	public AbstractCommand getLoadCommand() {
 		return new LoadZCommand(this.getModelFile().getAbsolutePath());
 	}
 
 	@Override
 	public AbstractElement getComponent(String name) {
+		return null;
+	}
+
+	@Override
+	public AbstractElement getMainComponent() {
 		return null;
 	}
 }

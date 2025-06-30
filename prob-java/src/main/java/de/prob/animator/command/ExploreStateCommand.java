@@ -18,6 +18,7 @@ import de.prob.animator.domainobjects.StateError;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;
+import de.prob.statespace.State;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
 
@@ -26,9 +27,14 @@ import de.prob.statespace.Transition;
  * invariant, the timeout, the operations with timeout, and the errors for a
  * given state.
  * 
+ * @deprecated This command is no longer used by the ProB Java API.
+ *     If you used this command directly, call {@link State#explore()} instead.
+ *     Alternatively, you can manually create and execute the specific subcommands that you need.
+ * 
  * @author joy
  * 
  */
+@Deprecated
 public final class ExploreStateCommand extends AbstractCommand implements
 		IStateSpaceModifier {
 	private final String stateId;

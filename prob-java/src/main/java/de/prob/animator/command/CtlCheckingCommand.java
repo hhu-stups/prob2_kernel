@@ -10,8 +10,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import de.prob.animator.IPrologResult;
-import de.prob.animator.InterruptedResult;
 import de.prob.animator.domainobjects.CTL;
 import de.prob.animator.domainobjects.ErrorItem;
 import de.prob.check.CTLCouldNotDecide;
@@ -19,13 +17,12 @@ import de.prob.check.CTLCounterExample;
 import de.prob.check.CTLError;
 import de.prob.check.CTLNotYetFinished;
 import de.prob.check.CTLOk;
-import de.prob.check.CheckInterrupted;
 import de.prob.check.IModelCheckingResult;
 import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
-import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
+import de.prob.statespace.State;
 import de.prob.statespace.StateSpace;
 import de.prob.statespace.Transition;
 
@@ -34,17 +31,23 @@ public final class CtlCheckingCommand extends AbstractCommand implements
 	private static final String PROLOG_COMMAND_NAME = "prob2_do_ctl_modelcheck";
 	private static final String VARIABLE_NAME_RESULT = "R";
 	private static final String VARIABLE_NAME_COUNTER_EXAMPLE = "CE";
-	private static final String VARIABLE_NAME_ERRORS = "Errors";
 
-	private final int max;
-	private IModelCheckingResult result;
-	private final CTL ctlFormula;
 	private final StateSpace s;
+	private final CTL ctlFormula;
+	private final int max;
+	private final State startState;
 
-	public CtlCheckingCommand(final StateSpace s, final CTL ctlFormula, final int max) {
+	private IModelCheckingResult result;
+
+	public CtlCheckingCommand(StateSpace s, CTL ctlFormula, int max, State startState) {
 		this.s = s;
 		this.ctlFormula = ctlFormula;
 		this.max = max;
+		this.startState = startState;
+	}
+	
+	public CtlCheckingCommand(StateSpace s, CTL ctlFormula, int max) {
+		this(s, ctlFormula, max, null);
 	}
 
 	public IModelCheckingResult getResult() {
@@ -56,7 +59,12 @@ public final class CtlCheckingCommand extends AbstractCommand implements
 		PrologTerm res = bindings.get(VARIABLE_NAME_RESULT);
 		PrologTerm counterExample = bindings.get(VARIABLE_NAME_COUNTER_EXAMPLE);
 
-		if (res.hasFunctor("true", 0)) {
+		if (res.hasFunctor("type_error", 1)) {
+			final List<ErrorItem> errors = BindingGenerator.getList(res.getArgument(1)).stream()
+				.map(ErrorItem::fromProlog)
+				.collect(Collectors.toList());
+			this.result = new CTLError(ctlFormula, errors);
+		} else if (res.hasFunctor("true", 0)) {
 			this.result = new CTLOk(ctlFormula);
 		} else if(res.hasFunctor("false", 0)) {
 			final List<Transition> transitions = BindingGenerator.getList(counterExample.getArgument(1)).stream()
@@ -67,27 +75,8 @@ public final class CtlCheckingCommand extends AbstractCommand implements
 			this.result = new CTLNotYetFinished(ctlFormula);
 		} else if(counterExample.hasFunctor("unexpected_result", 0)) {
 			this.result = new CTLCouldNotDecide(ctlFormula);
-		} else if(res.hasFunctor("typeerror", 0)) {
-			ListPrologTerm errorTerm = (ListPrologTerm) bindings.get(VARIABLE_NAME_ERRORS);
-			final List<ErrorItem> errors = errorTerm.stream()
-					.map(error -> {
-						if (error.isAtom()) {
-							return ErrorItem.fromErrorMessage(error.atomToString());
-						} else {
-							return ErrorItem.fromProlog(error);
-						}
-					})
-					.collect(Collectors.toList());
-			result = new CTLError(ctlFormula, errors);
-		}
-	}
-
-	@Override
-	public void processErrorResult(final IPrologResult result, final List<ErrorItem> errors) {
-		if (result instanceof InterruptedResult) {
-			this.result = new CheckInterrupted();
 		} else {
-			super.processErrorResult(result, errors);
+			throw new AssertionError("Unknown result from CTL checking: " + res);
 		}
 	}
 
@@ -95,11 +84,24 @@ public final class CtlCheckingCommand extends AbstractCommand implements
 	public void writeCommand(final IPrologTermOutput pto) {
 		pto.openTerm(PROLOG_COMMAND_NAME);
 		ctlFormula.printProlog(pto);
+
+		pto.openList();
+		pto.openTerm("max_new_states");
 		pto.printNumber(max);
-		pto.printAtom("init");
+		pto.closeTerm();
+		pto.openTerm("mode");
+		if (startState == null) {
+			pto.printAtom("init");
+		} else {
+			pto.openTerm("specific_node");
+			pto.printAtomOrNumber(startState.getId());
+			pto.closeTerm();
+		}
+		pto.closeTerm();
+		pto.closeList();
+
 		pto.printVariable(VARIABLE_NAME_RESULT);
 		pto.printVariable(VARIABLE_NAME_COUNTER_EXAMPLE);
-		pto.printVariable(VARIABLE_NAME_ERRORS);
 		pto.closeTerm();
 	}
 

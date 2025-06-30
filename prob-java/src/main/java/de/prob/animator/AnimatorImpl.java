@@ -1,13 +1,14 @@
 package de.prob.animator;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Stopwatch;
 import com.google.inject.Inject;
 
 import de.prob.animator.command.AbstractCommand;
@@ -31,35 +32,44 @@ import de.prob.parser.BindingGenerator;
 import de.prob.parser.ProBResultParser;
 import de.prob.parser.PrologTermGenerator;
 import de.prob.parser.SimplifiedROMap;
+import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.output.PrologTermStringOutput;
 import de.prob.prolog.term.PrologTerm;
-import de.prob.statespace.AnimationSelector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class AnimatorImpl implements IAnimator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AnimatorImpl.class);
+	private static final boolean DIRECT_SOCKET_WRITE = "true".equals(System.getProperty("prob.directwrite"));
 
 	private static int counter = 0;
 	private final String id = "animator" + counter++;
 
 	private final ProBInstance cli;
 	private final GetErrorItemsCommand getErrorItems;
-	private final AnimationSelector animations;
 	private boolean busy = false;
+	private final Collection<IAnimatorBusyListener> busyListeners = new CopyOnWriteArrayList<>();
 	private final Collection<IWarningListener> warningListeners = new CopyOnWriteArrayList<>();
 
 	@Inject
-	AnimatorImpl(ProBInstance cli, AnimationSelector animations) {
+	AnimatorImpl(ProBInstance cli) {
 		this.cli = cli;
 		this.getErrorItems = new GetErrorItemsCommand();
-		this.animations = animations;
 	}
 
 	private static String shorten(final String s) {
-		final String shortened = s.length() <= 200 ? s : (s.substring(0, 200) + "...");
-		return shortened.endsWith("\n") ? shortened.substring(0, shortened.length()-1) : shortened;
+		final int maxLength = 200;
+		if (s.length() <= maxLength) {
+			if (s.endsWith("\n")) {
+				return s.substring(0, s.length() - 1);
+			} else {
+				return s;
+			}
+		} else {
+			String trimmed = s.substring(0, maxLength - 3);
+			return trimmed + "...";
+		}
 	}
 
 	private static IPrologResult extractResult(PResult topnode) {
@@ -72,31 +82,44 @@ class AnimatorImpl implements IAnimator {
 			return new YesResult(new SimplifiedROMap<>(binding));
 		} else if (topnode instanceof AExceptionResult) {
 			AExceptionResult r = (AExceptionResult) topnode;
-			String message = r.getString().getText();
-			throw new PrologException(message);
+			throw new PrologException(PrologTermGenerator.toPrologTerm(r.getTerm()));
 		} else {
 			throw new ProBError("Unhandled Prolog result: " + topnode.getClass());
 		}
 	}
 
 	private IPrologResult sendCommand(final AbstractCommand command) {
-		String query;
+		Stopwatch sw = Stopwatch.createStarted();
+		String result;
 		if (command instanceof IRawCommand) {
-			query = ((IRawCommand) command).getCommand();
+			String query = ((IRawCommand) command).getCommand();
 			if (!query.endsWith(".")) {
 				query += ".";
 			}
+			LOGGER.trace("Built raw command term after {}", sw);
+			result = cli.send(query);
 		} else {
-			PrologTermStringOutput pto = new PrologTermStringOutput();
-			command.writeCommand(pto);
-			pto.printAtom("true");
-			query = pto.fullstop().toString();
+			final Consumer<IPrologTermOutput> termGenerator = pto -> {
+				command.writeCommand(pto);
+				pto.printAtom("true");
+				pto.fullstop();
+			};
+			if (DIRECT_SOCKET_WRITE) {
+				result = cli.send(termGenerator);
+			} else {
+				PrologTermStringOutput pto = new PrologTermStringOutput();
+				termGenerator.accept(pto);
+				String query = pto.toString();
+				LOGGER.trace("Built command term after {}", sw);
+				result = cli.send(query);
+			}
 		}
-		String result = cli.send(query); // send the query and get Prolog's response
+		LOGGER.trace("Received answer after {}", sw);
 
 		PResult topnode = ProBResultParser.parse(result).getPResult();
 		while (topnode instanceof AProgressResult || topnode instanceof ACallBackResult) {
-			if (topnode instanceof AProgressResult ) {
+			LOGGER.trace("Processing sub-result of type {}", topnode.getClass().getSimpleName());
+			if (topnode instanceof AProgressResult) {
 				// enable the command to respond to the progress information (e.g., by updating progress bar)
 				command.processProgressResult(PrologTermGenerator.toPrologTerm(topnode));
 				result = cli.receive(); // receive next term by Prolog
@@ -106,13 +129,16 @@ class AnimatorImpl implements IAnimator {
 				result = cli.send(pout.fullstop().toString());
 			}
 			topnode = ProBResultParser.parse(result).getPResult();
+			LOGGER.trace("Processed sub-result after {}", sw);
 		}
+
 		// command is finished, we can extract the result:
 		IPrologResult extractResult = extractResult(topnode);
+		sw.stop();
 		if (LOGGER.isDebugEnabled() || LOGGER.isTraceEnabled()) {
 			String resultString = extractResult.toString();
-			LOGGER.debug("Result: {}", shorten(resultString));
-			LOGGER.trace("Full result: {}", resultString);
+			LOGGER.debug("Result (after {}): {}", sw, shorten(resultString));
+			LOGGER.trace("Full result (after {}): {}", sw, resultString);
 		}
 		return extractResult;
 	}
@@ -132,6 +158,7 @@ class AnimatorImpl implements IAnimator {
 		synchronized (this) {
 			LOGGER.trace("Starting execution of {}", command);
 			result = sendCommand(command);
+			LOGGER.trace("Getting errors of previous command {}", command);
 			errors = getErrorItems();
 		}
 
@@ -199,13 +226,13 @@ class AnimatorImpl implements IAnimator {
 	@Override
 	public void startTransaction() {
 		busy = true;
-		animations.notifyAnimatorStatus(id, busy);
+		busyListeners.forEach(listener -> listener.animatorStatus(busy));
 	}
 
 	@Override
 	public void endTransaction() {
 		busy = false;
-		animations.notifyAnimatorStatus(id, busy);
+		busyListeners.forEach(listener -> listener.animatorStatus(busy));
 	}
 
 	@Override
@@ -228,6 +255,16 @@ class AnimatorImpl implements IAnimator {
 		GetTotalNumberOfErrorsCommand command = new GetTotalNumberOfErrorsCommand();
 		execute(command);
 		return command.getTotalNumberOfErrors().longValueExact();
+	}
+
+	@Override
+	public void addBusyListener(IAnimatorBusyListener listener) {
+		this.busyListeners.add(listener);
+	}
+
+	@Override
+	public void removeBusyListener(IAnimatorBusyListener listener) {
+		this.busyListeners.remove(listener);
 	}
 
 	@Override

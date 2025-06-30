@@ -48,7 +48,7 @@ final class ProB2UI1Dot0Metadata {
 		this.model = model;
 	}
 	
-	JsonMetadata toNewMetadata() {
+	JsonMetadata toNewMetadata(String fileType) {
 		Instant creationDateTime;
 		if (this.creationDate != null) {
 			try {
@@ -62,7 +62,7 @@ final class ProB2UI1Dot0Metadata {
 		}
 		
 		return new JsonMetadata(
-			null,
+			fileType,
 			0,
 			creationDateTime,
 			this.createdBy,

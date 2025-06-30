@@ -1,6 +1,5 @@
 package de.prob.animator.command;
 
-import de.prob.animator.command.AbstractCommand;
 import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
@@ -31,6 +30,7 @@ public class GetImagesForMachineCommand extends AbstractCommand {
 	public void processResult(ISimplifiedROMap<String, PrologTerm> bindings) {
 		ListPrologTerm entries = BindingGenerator.getList(bindings.get(VARIABLE_NAME));
 		for (PrologTerm t : entries) {
+			BindingGenerator.getCompoundTerm(t, "image_file", 2);
 			int id = BindingGenerator.getAInteger(t.getArgument(1)).intValueExact();
 			String name = t.getArgument(2).getFunctor();
 			images.put(id, name);

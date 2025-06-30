@@ -484,28 +484,32 @@ public class Transition {
 	/**
 	 * @param s
 	 *            StateSpace object to which this operation belongs
-	 * @param cpt
-	 *            {@link CompoundPrologTerm} representation of the operation
-	 *            which contains the transition id, source id, and destination
-	 *            id
+	 * @param t
+	 *            {@link PrologTerm} representation of the operation
+	 *            which contains the transition id, name, source id and
+	 *            destination id
 	 * @return {@link Transition} object representing the information about the
 	 *         operation
 	 */
-	public static Transition createTransitionFromCompoundPrologTerm(final StateSpace s, final CompoundPrologTerm cpt) {
+	public static Transition createTransitionFromCompoundPrologTerm(final StateSpace s, final PrologTerm t) {
+		if (!(t instanceof CompoundPrologTerm) || t.getArity() < 4) {
+			throw new IllegalArgumentException("Expected CompoundPrologTerm with arity >= 4, but got " + t);
+		}
+		CompoundPrologTerm cpt = (CompoundPrologTerm) t;
 		String opId = Transition.getIdFromPrologTerm(cpt.getArgument(1));
-		String name = BindingGenerator.getCompoundTerm(cpt.getArgument(2), 0).getFunctor().intern();
+		String name = cpt.getArgument(2).atomToString().intern();
 		String srcId = Transition.getIdFromPrologTerm(cpt.getArgument(3));
 		String destId = Transition.getIdFromPrologTerm(cpt.getArgument(4));
 		return new Transition(s, opId, name, s.addState(srcId), s.addState(destId));
 	}
 
 	/**
-	 * Takes a {@link PrologTerm} representation of a transition id and
+	 * Takes a {@link PrologTerm} representation of a transition or state id and
 	 * translates it to a string value.
 	 * 
 	 * @param destTerm
-	 *            {@link PrologTerm} representing the Transition Id
-	 * @return String representation of the Transition Id
+	 *            {@link PrologTerm} representing the Transition/State Id
+	 * @return String representation of the Transition/State Id
 	 */
 	public static String getIdFromPrologTerm(final PrologTerm destTerm) {
 		// integer terms have their string representation as functor

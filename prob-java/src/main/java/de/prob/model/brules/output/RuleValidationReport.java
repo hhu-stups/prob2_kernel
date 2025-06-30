@@ -19,16 +19,32 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Deprecated
 public class RuleValidationReport {
 
-	public static void saveReport(final Trace trace, final Path path, final Locale locale,
-	                              final Duration duration) throws IOException {
+	public static void exportAsHTML(final Trace trace, final Path path, final Locale locale,
+	                                final Duration duration) throws IOException {
 		String templatePath = String.format("de/prob/model/brules/output/validation_report_%s.html.vm", locale.getLanguage());
 		initVelocityEngine();
 		VelocityContext context = getVelocityContext(trace, duration);
 		try (final Writer writer = Files.newBufferedWriter(path)) {
 			Velocity.mergeTemplate(templatePath, String.valueOf(StandardCharsets.UTF_8), context, writer);
 		}
+	}
+
+	public static void exportAsXML(final Trace trace, final Path path, final Duration duration) throws IOException {
+		String templatePath = "de/prob/model/brules/output/validation_report.xml.vm";
+		initVelocityEngine();
+		VelocityContext context = getVelocityContext(trace, duration);
+		try (final Writer writer = Files.newBufferedWriter(path)) {
+			Velocity.mergeTemplate(templatePath, String.valueOf(StandardCharsets.UTF_8), context, writer);
+		}
+	}
+
+	@Deprecated
+	public static void saveReport(final Trace trace, final Path path, final Locale locale,
+	                              final Duration duration) throws IOException {
+		exportAsHTML(trace, path, locale, duration);
 	}
 
 	private static void initVelocityEngine() {

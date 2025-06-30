@@ -70,39 +70,51 @@ public class ExecuteModelCommand extends AbstractCommand implements IStateSpaceM
 
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
+		String resultTermFunctor = bindings.get(RESULT_VARIABLE).getFunctor();
+		switch (resultTermFunctor) {
+			case "maximum_nr_of_steps_reached":
+				this.result = ExecuteModelResult.MAXIMUM_NR_OF_STEPS_REACHED;
+				break;
+			case "deadlock":
+				this.result = ExecuteModelResult.DEADLOCK;
+				break;
+			case "error":
+				this.result = ExecuteModelResult.ERROR;
+				break;
+			case "internal_error":
+				this.result = ExecuteModelResult.INTERNAL_ERROR;
+				break;
+			case "time_out":
+				this.result = ExecuteModelResult.TIME_OUT;
+				break;
+			default:
+				throw new AssertionError("Unexpected result of execute command: " + resultTermFunctor);
+		}
+
 		PrologTerm prologTerm = bindings.get(TRANSITION_VARIABLE);
+		if (prologTerm.getFunctor().equals("none")) {
+			this.stepsExecuted = 0;
+			return;
+		}
 		CompoundPrologTerm cpt = BindingGenerator.getCompoundTerm(prologTerm, 4);
 		Transition operation = Transition.createTransitionFromCompoundPrologTerm(statespace, cpt);
 		resultTrace.add(operation);
 
 		AIntegerPrologTerm intPrologTerm = BindingGenerator.getAInteger(bindings.get(EXECUTED_STEPS_VARIABLE));
 		stepsExecuted = intPrologTerm.intValueExact();
-
-		switch (bindings.get(RESULT_VARIABLE).getFunctor()) {
-		case "maximum_nr_of_steps_reached":
-			this.result = ExecuteModelResult.MAXIMUM_NR_OF_STEPS_REACHED;
-			break;
-		case "deadlock":
-			this.result = ExecuteModelResult.DEADLOCK;
-			break;
-		case "error":
-			this.result = ExecuteModelResult.ERROR;
-			break;
-		case "internal_error":
-			this.result = ExecuteModelResult.INTERNAL_ERROR;
-			break;
-		case "time_out":
-			this.result = ExecuteModelResult.TIME_OUT;
-			break;
-		default:
-			throw new AssertionError("Unexpected result of execute command.");
-		}
-
 	}
 
 	@Override
 	public List<Transition> getNewTransitions() {
 		return resultTrace;
+	}
+
+	public String getSingleTransitionName() {
+		if (resultTrace.size() == 1) {
+			return resultTrace.get(0).getName();
+		} else {
+			return null;
+		}
 	}
 
 	public State getFinalState() {
@@ -119,7 +131,7 @@ public class ExecuteModelCommand extends AbstractCommand implements IStateSpaceM
 		return t.addTransitions(resultTrace);
 	}
 
-	public int getNumberofStatesExecuted() {
+	public int getNumberOfStatesExecuted() {
 		return this.stepsExecuted;
 	}
 
@@ -132,7 +144,7 @@ public class ExecuteModelCommand extends AbstractCommand implements IStateSpaceM
 	}
 
 	/**
-	 * @return the result of of the executeModelCommand. The result is Result is
+	 * @return the result of the executeModelCommand. The result is
 	 *         either {@link ExecuteModelResult#MAXIMUM_NR_OF_STEPS_REACHED} or
 	 *         {@link ExecuteModelResult#DEADLOCK}.
 	 */
