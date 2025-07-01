@@ -103,8 +103,8 @@ subprojects {
 		
 		repositories {
 			maven {
-				final releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
-				final snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots"
+				final releasesRepoUrl = "https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/"
+				final snapshotsRepoUrl = "https://central.sonatype.com/repository/maven-snapshots/"
 				url = isSnapshot ? snapshotsRepoUrl : releasesRepoUrl
 				if (project.hasProperty('ossrhUsername') && project.hasProperty('ossrhPassword')) {
 					credentials {
