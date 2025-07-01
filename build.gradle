@@ -11,12 +11,14 @@ subprojects {
 	project.ext.isSnapshot = project.version.endsWith("-SNAPSHOT")
 	project.ext.SOURCE_ENCODING = "UTF-8"
 	
+	final snapshotsRepoUrl = "https://central.sonatype.com/repository/maven-snapshots/"
+	final releasesStagingRepoUrl = "https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/"
 	repositories {
 		mavenCentral()
 		if (isSnapshot) {
 			maven {
 				name = "sonatype snapshots"
-				url = "https://central.sonatype.com/repository/maven-snapshots/"
+				url = snapshotsRepoUrl
 			}
 		}
 	}
@@ -103,9 +105,7 @@ subprojects {
 		
 		repositories {
 			maven {
-				final releasesRepoUrl = "https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/"
-				final snapshotsRepoUrl = "https://central.sonatype.com/repository/maven-snapshots/"
-				url = isSnapshot ? snapshotsRepoUrl : releasesRepoUrl
+				url = isSnapshot ? snapshotsRepoUrl : releasesStagingRepoUrl
 				if (project.hasProperty('ossrhUsername') && project.hasProperty('ossrhPassword')) {
 					credentials {
 						username = project.ossrhUsername
