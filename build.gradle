@@ -106,10 +106,10 @@ subprojects {
 		repositories {
 			maven {
 				url = isSnapshot ? snapshotsRepoUrl : releasesStagingRepoUrl
-				if (project.hasProperty('ossrhUsername') && project.hasProperty('ossrhPassword')) {
+				if (project.hasProperty("mavenCentralUsername") && project.hasProperty("mavenCentralPassword")) {
 					credentials {
-						username = project.ossrhUsername
-						password = project.ossrhPassword
+						username = project.mavenCentralUsername
+						password = project.mavenCentralPassword
 					}
 				}
 			}
