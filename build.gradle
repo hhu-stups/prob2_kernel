@@ -2,6 +2,14 @@ plugins {
 	id("io.github.gradle-nexus.publish-plugin").version("2.0.0")
 }
 
+allprojects {
+	project.group = "de.hhu.stups"
+	// IMPORTANT: Before releasing the ProB Java API, remember to set probcli and all dependencies to release versions, not nightly/SNAPSHOT!
+	// IMPORTANT: Check the variables parserVersion and cliDownloadURL and the dependencies {...} block.
+	project.version = "4.15.1-SNAPSHOT"
+	project.ext.isSnapshot = project.version.endsWith("-SNAPSHOT")
+}
+
 final bomProject = project(":prob-java-bom")
 
 final snapshotsRepoUrl = "https://central.sonatype.com/repository/maven-snapshots/"
@@ -19,11 +27,6 @@ subprojects {
 	apply(plugin: "maven-publish")
 	apply(plugin: "signing")
 	
-	project.group = 'de.hhu.stups'
-	// IMPORTANT: Before releasing the ProB Java API, remember to set probcli and all dependencies to release versions, not nightly/SNAPSHOT!
-	// IMPORTANT: Check the variables parserVersion and cliDownloadURL and the dependencies {...} block.
-	project.version = "4.15.1-SNAPSHOT"
-	project.ext.isSnapshot = project.version.endsWith("-SNAPSHOT")
 	project.ext.SOURCE_ENCODING = "UTF-8"
 	
 	repositories {
