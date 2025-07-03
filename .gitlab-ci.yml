@@ -35,7 +35,6 @@ variables:
   variables:
     DEBIAN_FRONTEND: noninteractive
   before_script:
-    - export GRADLE_USER_HOME=`pwd`/.gradle
     - apt-get update && apt-get install -y git
 
 tests:jdk-8:
