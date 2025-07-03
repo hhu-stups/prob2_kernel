@@ -27,7 +27,7 @@ dependencies {
 	api group: "de.hhu.stups", name: "prologlib", version: parserVersion
 	api group: "de.hhu.stups", name: "unicode", version: parserVersion
 	api group: "de.hhu.stups", name: "theorymapping", version: parserVersion
-	api group: "de.hhu.stups", name: "value-translator", version: "0.2.1-SNAPSHOT"
+	api group: "de.hhu.stups", name: "value-translator", version: "0.2.1"
 
 	// Other STUPS dependencies
 	implementation group: "de.hhu.stups", name: "alloy2b", version: "1.4" // Eclipse Public License 1.0
