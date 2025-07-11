@@ -76,9 +76,6 @@ public class PersistentTransition {
 		} else {
 			if (storeDestinationState) {
 				if (stateSpace.getModel() instanceof XTLModel) {
-					for (int i = 0; i < transition.getParameterValues().size(); i++) {
-						params.put("para"+(i+1), transition.getParameterValues().get(i));
-					}
 					SerializeStateCommand cmd = new SerializeStateCommand(destinationState.getId());
 					stateSpace.execute(cmd);
 					destState.put("xtl_state", cmd.getState());
@@ -101,6 +98,10 @@ public class PersistentTransition {
 						results.put(machineOperationInfo.getOutputParameterNames().get(i),
 								evaluated.getReturnValues().get(i));
 					}
+				} else if (stateSpace.getModel() instanceof XTLModel) {
+					for (int i = 0; i < transition.getParameterValues().size(); i++) {
+						params.put("para" + (i+1), transition.getParameterValues().get(i));
+					}
 				}
 			}
 		}
@@ -116,9 +117,6 @@ public class PersistentTransition {
 			addValuesToDestState2(destinationState.getConstantValues(TRACE_SAVE_EVAL_OPTIONS), null);
 		} else {
 			if (stateSpace.getModel() instanceof XTLModel) {
-				for (int i = 0; i < transition.getParameterValues().size(); i++) {
-					params.put("para"+(i+1), transition.getParameterValues().get(i));
-				}
 				SerializeStateCommand cmd = new SerializeStateCommand(destinationState.getId());
 				stateSpace.execute(cmd);
 				destState.put("xtl_state", cmd.getState());
@@ -139,6 +137,10 @@ public class PersistentTransition {
 					for (int i = 0; i < machineOperationInfo.getOutputParameterNames().size(); i++) {
 						results.put(machineOperationInfo.getOutputParameterNames().get(i),
 								evaluated.getReturnValues().get(i));
+					}
+				} else if (stateSpace.getModel() instanceof XTLModel) {
+					for (int i = 0; i < transition.getParameterValues().size(); i++) {
+						params.put("para" + (i+1), transition.getParameterValues().get(i));
 					}
 				}
 			}
