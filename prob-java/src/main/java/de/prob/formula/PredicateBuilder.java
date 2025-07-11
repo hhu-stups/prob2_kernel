@@ -34,7 +34,7 @@ public class PredicateBuilder {
 	}
 
 	public PredicateBuilder add(final String name, final String value) {
-		this.add(name + "=" + value);
+		this.add("`" + name + "` =" + value);
 		return this;
 	}
 
