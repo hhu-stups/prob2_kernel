@@ -5,7 +5,7 @@ plugins {
 allprojects {
 	project.group = "de.hhu.stups"
 	// IMPORTANT: Before releasing the ProB Java API, remember to set probcli and all dependencies to release versions, not nightly/SNAPSHOT!
-	// IMPORTANT: Check the variables parserVersion and cliDownloadURL and the dependencies {...} block.
+	// IMPORTANT: Check the variables parserVersion and cliDownloadURL inside prob-java/build.gradle, and the dependencies {...} blocks in all build.gradle files.
 	project.version = "4.15.1-SNAPSHOT"
 	project.ext.isSnapshot = project.version.endsWith("-SNAPSHOT")
 }
