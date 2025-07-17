@@ -11,7 +11,7 @@ INITIALISATION y := 0
 
 OPERATIONS
 
-mega = y := y + 1 || Inc
+mega = BEGIN y := y + 1 || Inc END
 
 
 END//MACHINE
