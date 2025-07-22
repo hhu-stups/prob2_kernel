@@ -2,12 +2,12 @@ package de.prob.animator.command;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.AIntegerPrologTerm;
-import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.ITraceDescription;
 import de.prob.statespace.State;
@@ -22,6 +22,7 @@ public class ExecuteModelCommand extends AbstractCommand implements IStateSpaceM
 	private static final String RESULT_VARIABLE = "Result";
 	private static final String EXECUTED_STEPS_VARIABLE = "Steps";
 	private static final String CONTINUE_AFTER_ERRORS = "continue_after_errors";
+	private static final String RETURN_TRACE = "return_trace";
 	private static final String TIMEOUT = "timeout";
 
 	private final List<Transition> resultTrace = new ArrayList<>();
@@ -31,6 +32,7 @@ public class ExecuteModelCommand extends AbstractCommand implements IStateSpaceM
 	private final int maxNrSteps;
 	private ExecuteModelResult result;
 	private final boolean continueAfterErrors;
+	private final boolean returnTrace;
 	private final Integer timeoutInMS;
 
 	public enum ExecuteModelResult {
@@ -38,11 +40,17 @@ public class ExecuteModelCommand extends AbstractCommand implements IStateSpaceM
 	}
 
 	public ExecuteModelCommand(final StateSpace statespace, final State startState, final int maxNrSteps,
-			final boolean continueAfterErrors, final Integer timeoutInMS) {
+	                           final boolean continueAfterErrors, final Integer timeoutInMS) {
+		this(statespace, startState, maxNrSteps, continueAfterErrors, false, timeoutInMS);
+	}
+
+	public ExecuteModelCommand(final StateSpace statespace, final State startState, final int maxNrSteps,
+			final boolean continueAfterErrors, final boolean returnTrace, final Integer timeoutInMS) {
 		this.statespace = statespace;
 		this.startstate = startState;
 		this.maxNrSteps = maxNrSteps;
 		this.continueAfterErrors = continueAfterErrors;
+		this.returnTrace = returnTrace;
 		this.timeoutInMS = timeoutInMS;
 	}
 
@@ -55,6 +63,9 @@ public class ExecuteModelCommand extends AbstractCommand implements IStateSpaceM
 		pout.openList();
 		if (continueAfterErrors) {
 			pout.printAtom(CONTINUE_AFTER_ERRORS);
+		}
+		if (returnTrace) {
+			pout.printAtom(RETURN_TRACE);
 		}
 		if (timeoutInMS != null) {
 			pout.openTerm(TIMEOUT);
@@ -96,9 +107,12 @@ public class ExecuteModelCommand extends AbstractCommand implements IStateSpaceM
 			this.stepsExecuted = 0;
 			return;
 		}
-		CompoundPrologTerm cpt = BindingGenerator.getCompoundTerm(prologTerm, 4);
-		Transition operation = Transition.createTransitionFromCompoundPrologTerm(statespace, cpt);
-		resultTrace.add(operation);
+
+		List<PrologTerm> terms = BindingGenerator.getList(prologTerm);
+		resultTrace.addAll(terms.stream()
+				.map(t -> BindingGenerator.getCompoundTerm(t, "op", 4))
+				.map(t -> Transition.createTransitionFromCompoundPrologTerm(statespace, t))
+				.collect(Collectors.toList()));
 
 		AIntegerPrologTerm intPrologTerm = BindingGenerator.getAInteger(bindings.get(EXECUTED_STEPS_VARIABLE));
 		stepsExecuted = intPrologTerm.intValueExact();
