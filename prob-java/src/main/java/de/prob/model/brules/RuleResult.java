@@ -20,16 +20,19 @@ import de.prob.animator.domainobjects.TranslatedEvalResult;
 public class RuleResult {
 	private final RuleOperation ruleOperation;
 	private final RuleStatus ruleStatus;
-	private final int numberOfViolations, numberOfSuccesses;
+	private final int numberOfViolations, numberOfSuccesses, numberOfUnchecked;
 	private final List<CounterExample> counterExamples = new ArrayList<>();
 	private final List<SuccessMessage> successMessages = new ArrayList<>();
+	private final List<SuccessMessage> uncheckedMessages = new ArrayList<>();
 
 	// causes leading to NOT_CHECKED result
 	private final ArrayList<String> allFailedDependencies = new ArrayList<>();
 	private final ArrayList<String> allNotCheckedDependencies = new ArrayList<>();
 
-	public RuleResult(RuleOperation rule, AbstractEvalResult result, AbstractEvalResult numberOfCounterExamples,
-			AbstractEvalResult counterExampleResult, AbstractEvalResult numberOfSuccessMessages, AbstractEvalResult successMessageResult) {
+	public RuleResult(RuleOperation rule, AbstractEvalResult result,
+	                  AbstractEvalResult numberOfCounterExamples, AbstractEvalResult counterExampleResult,
+	                  AbstractEvalResult numberOfSuccessMessages, AbstractEvalResult successMessageResult,
+	                  AbstractEvalResult numberOfUncheckedMessages, AbstractEvalResult uncheckedMessageResult) {
 		this.ruleOperation = rule;
 		this.ruleStatus = RuleStatus.valueOf(result);
 		if (numberOfCounterExamples instanceof EvalResult) {
@@ -41,6 +44,7 @@ public class RuleResult {
 			throw new IllegalStateException("expected instance of EvalResult for enumerable counter examples" +
 				" or EnumerationWarning for an infinite number of counter examples, but was " + numberOfCounterExamples.getClass());
 		}
+
 		if (numberOfSuccessMessages instanceof EvalResult) {
 			this.numberOfSuccesses = Integer.parseInt(((EvalResult) numberOfSuccessMessages).getValue());
 			transformSuccessMessages(successMessageResult);
@@ -49,6 +53,16 @@ public class RuleResult {
 		} else {
 			throw new IllegalStateException("expected instance of EvalResult for enumerable success messages" +
 				" or EnumerationWarning for an infinite number of success messages, but was " + numberOfSuccessMessages.getClass());
+		}
+
+		if (numberOfUncheckedMessages instanceof EvalResult) {
+			this.numberOfUnchecked = Integer.parseInt(((EvalResult) numberOfUncheckedMessages).getValue());
+			transformUncheckedMessages(uncheckedMessageResult);
+		} else if (numberOfUncheckedMessages instanceof EnumerationWarning) {
+			this.numberOfUnchecked = -1;
+		} else {
+			throw new IllegalStateException("expected instance of EvalResult for enumerable unchecked messages" +
+					" or EnumerationWarning for an infinite number of unchecked messages, but was " + numberOfUncheckedMessages.getClass());
 		}
 	}
 
@@ -64,6 +78,10 @@ public class RuleResult {
 		return this.numberOfSuccesses;
 	}
 
+	public int getNumberOfUnchecked() {
+		return this.numberOfUnchecked;
+	}
+
 	private void transformCounterExamples(AbstractEvalResult abstractEvalResult) {
 		transformMessages(abstractEvalResult, counterExamples, CounterExample::new);
 		counterExamples.sort(Comparator.comparingInt(RuleResult.CounterExample::getErrorType)
@@ -72,8 +90,14 @@ public class RuleResult {
 
 	private void transformSuccessMessages(AbstractEvalResult abstractEvalResult) {
 		transformMessages(abstractEvalResult, successMessages, SuccessMessage::new);
-		successMessages.sort(Comparator.comparingInt(RuleResult.SuccessMessage::getRuleBodyCount)
-			.thenComparing(RuleResult.SuccessMessage::getMessage));
+		successMessages.sort(Comparator.comparingInt(SuccessMessage::getRuleBodyCount)
+			.thenComparing(SuccessMessage::getMessage));
+	}
+
+	private void transformUncheckedMessages(AbstractEvalResult abstractEvalResult) {
+		transformMessages(abstractEvalResult, uncheckedMessages, SuccessMessage::new);
+		uncheckedMessages.sort(Comparator.comparingInt(SuccessMessage::getRuleBodyCount)
+			.thenComparing(SuccessMessage::getMessage));
 	}
 
 	private static <T> void transformMessages(AbstractEvalResult abstractEvalResult, List<T> messages, BiFunction<Integer, String, T> messageConstructor) {
@@ -129,6 +153,10 @@ public class RuleResult {
 		return this.successMessages;
 	}
 
+	public List<SuccessMessage> getUncheckedMessages() {
+		return this.uncheckedMessages;
+	}
+
 	public String getRuleName() {
 		return this.ruleOperation.getName();
 	}
@@ -172,6 +200,10 @@ public class RuleResult {
 		if (this.numberOfSuccesses > 0) {
 			sb.append(", NumberOfSuccesses: ").append(this.numberOfSuccesses);
 			sb.append(", SuccessMessages: ").append(this.successMessages);
+		}
+		if (this.numberOfUnchecked > 0) {
+			sb.append(", NumberOfUnchecked: ").append(this.numberOfUnchecked);
+			sb.append(", UncheckedMessages: ").append(this.uncheckedMessages);
 		}
 		if (!this.allFailedDependencies.isEmpty()) {
 			sb.append(", FailedDependencies: ").append(this.allFailedDependencies);

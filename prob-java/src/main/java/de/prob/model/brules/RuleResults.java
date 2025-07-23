@@ -25,6 +25,11 @@ public class RuleResults {
 		this(getRuleOperations(project), state, maxNumberOfReportedCounterExamples, maxNumberOfSuccessMessages);
 	}
 
+	public RuleResults(RulesProject project, State state, int maxNumberOfReportedCounterExamples,
+	                   int maxNumberOfSuccessMessages, int maxNumberOfUncheckedMessages) {
+		this(getRuleOperations(project), state, maxNumberOfReportedCounterExamples, maxNumberOfSuccessMessages, maxNumberOfUncheckedMessages);
+	}
+
 	private static Set<RuleOperation> getRuleOperations(RulesProject project) {
 		final Set<RuleOperation> result = new HashSet<>();
 		for (AbstractOperation operation : project.getOperationsMap().values()) {
@@ -36,11 +41,15 @@ public class RuleResults {
 	}
 
 	public RuleResults(Set<RuleOperation> ruleOperations, State state, int maxNumberOfReportedCounterExamples) {
-		this(ruleOperations, state, maxNumberOfReportedCounterExamples, -1);
+		this(ruleOperations, state, maxNumberOfReportedCounterExamples, -1, -1);
+	}
+
+	public RuleResults(Set<RuleOperation> ruleOperations, State state, int maxNumberOfReportedCounterExamples, int  maxNumberOfSuccessMessages) {
+		this(ruleOperations, state, maxNumberOfReportedCounterExamples, maxNumberOfSuccessMessages, -1);
 	}
 
 	public RuleResults(Set<RuleOperation> ruleOperations, State state, int maxNumberOfReportedCounterExamples,
-	                   int maxNumberOfSuccessMessages) {
+	                   int maxNumberOfSuccessMessages, int maxNumberOfUncheckedMessages) {
 		final ArrayList<RuleOperation> ruleList = new ArrayList<>();
 		final List<IEvalElement> evalElements = new ArrayList<>();
 		for (RuleOperation operation : ruleOperations) {
@@ -77,13 +86,31 @@ public class RuleResults {
 					maxNumberOfSuccessMessages);
 			}
 			evalElements.add(new ClassicalB(sfFormula));
+
+			// get number of unchecked messages
+			String numberOfUcFormula = String.format("card(%s)", operation.getUncheckedVariableName());
+			evalElements.add(new ClassicalB(numberOfUcFormula));
+
+			// get the (restricted) set of unchecked messages
+			// FORCE should not be a problem here - we only use the result if card(%s) above was finite
+			String ucFormula;
+			if (maxNumberOfUncheckedMessages == -1) {
+				ucFormula = String.format("FORCE(ran(SORT(%s)))", operation.getUncheckedVariableName());
+			} else {
+				ucFormula = String.format("FORCE(SORT(%s)[1..%s])", operation.getUncheckedVariableName(),
+						maxNumberOfUncheckedMessages);
+			}
+			evalElements.add(new ClassicalB(ucFormula));
 		}
+
 		List<AbstractEvalResult> evalResults = state.eval(evalElements);
 		for (int i = 0; i < ruleList.size(); i++) {
-			int index = i * 5;
+			int index = i * 7;
 			RuleOperation ruleOperation = ruleList.get(i);
-			RuleResult ruleResult = new RuleResult(ruleOperation, evalResults.get(index), evalResults.get(index + 1),
-					evalResults.get(index + 2), evalResults.get(index + 3), evalResults.get(index + 4));
+			RuleResult ruleResult = new RuleResult(ruleOperation, evalResults.get(index),
+					evalResults.get(index + 1), evalResults.get(index + 2),
+					evalResults.get(index + 3), evalResults.get(index + 4),
+					evalResults.get(index + 5), evalResults.get(index + 6));
 			ruleResultsMap.put(ruleOperation.getName(), ruleResult);
 
 			if (ruleResult.hasRuleId()) {

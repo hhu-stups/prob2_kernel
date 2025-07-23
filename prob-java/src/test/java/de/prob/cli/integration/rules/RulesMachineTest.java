@@ -157,6 +157,20 @@ public class RulesMachineTest {
 	}
 
 	@Test
+	public void testExtractingAllCounterExamplesAndSuccessMessagesAndUncheckedMessages() {
+		File file = createRulesMachineFile(
+				"OPERATIONS RULE Rule1 BODY FOR x IN 1..1000 DO RULE_FORALL y WHERE x > 500 & x=y EXPECT x : 1..600 ON_SUCCESS ```${x|->y}``` UNCHECKED ```${x}``` COUNTEREXAMPLE ```${x} ce $ {y}``` END END END");
+		RulesMachineRun rulesMachineRun = new RulesMachineRun(RulesTestUtil.getRulesMachineRunner(), file);
+		rulesMachineRun.setMaxNumberOfReportedCounterExamples(-1);
+		rulesMachineRun.setMaxNumberOfReportedSuccessMessages(-1);
+		rulesMachineRun.setMaxNumberOfReportedUncheckedMessages(-1);
+		rulesMachineRun.start();
+		assertEquals(400, rulesMachineRun.getRuleResults().getRuleResult("Rule1").getCounterExamples().size());
+		assertEquals(100, rulesMachineRun.getRuleResults().getRuleResult("Rule1").getSuccessMessages().size());
+		assertEquals(500, rulesMachineRun.getRuleResults().getRuleResult("Rule1").getUncheckedMessages().size());
+	}
+
+	@Test
 	public void testInjectConstants() {
 		File file = createRulesMachineFile(
 				"CONSTANTS k PROPERTIES k : STRING OPERATIONS RULE Rule1 BODY IF k = \"abc\" THEN RULE_FAIL COUNTEREXAMPLE \"fail\" END END END");
