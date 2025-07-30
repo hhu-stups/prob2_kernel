@@ -96,8 +96,8 @@ abstract class CheckerBase implements IModelCheckJob {
 	@Override
 	public IModelCheckingResult call() {
 		this.stopwatch.start();
-		this.updateStats(new NotYetFinished("Check started", 0), null);
 		try {
+			this.updateStats(new NotYetFinished("Check started", 0), null);
 			this.execute();
 		} catch (CommandInterruptedException exc) {
 			// Provide sensible default handling for interrupts.
@@ -105,8 +105,14 @@ abstract class CheckerBase implements IModelCheckJob {
 			// to return stats or a different result.
 			LOGGER.info("{} received a Prolog interrupt", this.getClass().getSimpleName(), exc);
 			this.isFinished(new CheckInterrupted(), null);
+		} catch (Exception e) {
+			// Make sure the task is correctly marked as errored.
+			// Subclasses should override this with more sensible error handling if possible.
+			this.isFinished(new CheckError(e.getMessage()), null);
+			throw e;
+		} finally {
+			this.stopwatch.stop();
 		}
-		this.stopwatch.stop();
 		if (this.getResult() == UNSET_RESULT) {
 			throw new IllegalStateException(CheckerBase.class.getSimpleName() + ".execute implementations must call isFinished before returning");
 		}

@@ -34,7 +34,7 @@ public class TLCModelChecker extends CheckerBase {
 	}
 
 	@Override
-	public void execute() {
+	protected void execute() {
 		TLCStatsListener listener = new TLCStatsListener(this);
 		TLCRunner.addTLCMessageListener(listener);
 		try {

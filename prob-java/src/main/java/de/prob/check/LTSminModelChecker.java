@@ -24,7 +24,7 @@ public class LTSminModelChecker extends CheckerBase {
 	}
 
 	@Override
-	public void execute() {
+	protected void execute() {
 		try {
 			this.getStateSpace().startTransaction();
 
