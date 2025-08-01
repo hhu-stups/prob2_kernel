@@ -1,7 +1,11 @@
 package de.prob.formula;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
+import de.be4.classicalb.core.parser.util.IIdentifierRenaming;
 import de.prob.animator.domainobjects.Join;
 
 // TODO The purpose of this class is similar to Join - should they be merged?
@@ -32,7 +36,7 @@ public class PredicateBuilder {
 	}
 
 	public PredicateBuilder add(final String name, final String value) {
-		this.add("`" + name + "` =" + value);
+		this.add(IIdentifierRenaming.QUOTE_INVALID.renameIdentifier(name) + "=" + value);
 		return this;
 	}
 
