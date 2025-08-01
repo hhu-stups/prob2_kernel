@@ -15,9 +15,7 @@ public class PredicateBuilder {
 
 	private final List<String> predicates = new ArrayList<>();
 
-	public PredicateBuilder() {
-		//
-	}
+	public PredicateBuilder() {}
 
 	public List<String> getPredicates() {
 		return Collections.unmodifiableList(this.predicates);
