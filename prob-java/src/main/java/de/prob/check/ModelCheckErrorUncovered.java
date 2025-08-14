@@ -27,7 +27,12 @@ public class ModelCheckErrorUncovered implements IModelCheckingResult,
 
 	@Override
 	public Trace getTrace(final StateSpace s) {
-		return s.getTrace(errorStateId);
+		return errorStateId != null ? s.getTrace(errorStateId) : null;
+	}
+
+	@Override
+	public boolean hasTrace() {
+		return errorStateId != null;
 	}
 
 	@Override

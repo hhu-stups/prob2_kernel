@@ -10,7 +10,7 @@ import com.google.common.base.MoreObjects;
 import de.prob.statespace.StateSpace;
 import de.tlc4b.TLC4BOption;
 
-public class TLCModelCheckingOptions {
+public final class TLCModelCheckingOptions {
 
 	private static final String TLC_USE_PROB_CONSTANTS = "TLC_USE_PROB_CONSTANTS";
 	private static final String TLC_WORKERS = "TLC_WORKERS";
@@ -43,6 +43,10 @@ public class TLCModelCheckingOptions {
 	// -workers and -constantssetup are also controlled via preferences
 	// use the preference values by default, options can be overwritten here
 	// TODO: add remaining TLC4BOptions if required.
+
+	public TLCModelCheckingOptions noTranslation(final boolean value) {
+		return changeOption(value, TLC4BOption.NOTRANSLATION);
+	}
 
 	public TLCModelCheckingOptions checkDeadlocks(final boolean value) {
 		return changeOption(!value, TLC4BOption.NODEAD);

@@ -26,4 +26,11 @@ public interface ITraceDescription {
 	 *             {@link Trace}
 	 */
 	Trace getTrace(StateSpace s);
+
+	/**
+	 * @return true if a trace can be generated
+	 */
+	default boolean hasTrace() {
+		return true;
+	}
 }

@@ -33,7 +33,7 @@ dependencies {
 	api group: "de.hhu.stups", name: "ltl-dsl", version: "0.2.2" // Eclipse Public License 1.0
 	api group: "de.hhu.stups", name: "rodin-eventb-ast", version: "3.8.0" // Eclipse Public License 1.0
 	implementation group: "de.hhu.stups", name: "tla2bAST", version: "1.4.2" // Eclipse Public License 1.0
-	api group: "de.hhu.stups", name: "tlc4b", version: "1.2.2" // MIT License
+	api group: "de.hhu.stups", name: "tlc4b", version: "1.2.3-SNAPSHOT" // MIT License
 	api group: "de.hhu.stups", name: "value-translator", version: "0.2.1" // MIT License
 
 	// Logging
