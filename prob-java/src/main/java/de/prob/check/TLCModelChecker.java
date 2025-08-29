@@ -35,11 +35,11 @@ public class TLCModelChecker extends CheckerBase {
 
 	@Override
 	protected void execute() {
-		TLCStatsListener listener = new TLCStatsListener(this);
-		TLCRunner.addTLCMessageListener(listener);
+		TLCStatsListener handler = new TLCStatsListener(this);
+		TLCRunner.setTLCMessageHandler(handler);
 		try {
-			this.results = TLC4B.run(getCurrentOptions());
-			listener.handleResults(results);
+			this.results = TLC4B.runTLCInANewJVM(getCurrentOptions());
+			handler.handleResults(results);
 		} catch (IOException exc) {
 			throw new UncheckedIOException(exc);
 		} catch (BCompoundException exc) {

@@ -2,7 +2,7 @@ package de.prob.check;
 
 import de.prob.animator.command.ReplayStateTraceFileCommand;
 import de.prob.statespace.StateSpace;
-import de.tlc4b.tlc.TLCMessageListener;
+import de.tlc4b.TLCMessageHandler;
 import de.tlc4b.tlc.TLCResults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +15,7 @@ import java.util.Locale;
 
 import static tlc2.output.MP.*;
 
-class TLCStatsListener extends TLCMessageListener {
+final class TLCStatsListener implements TLCMessageHandler {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TLCStatsListener.class);
 
 	private final TLCModelChecker tlcModelChecker;
