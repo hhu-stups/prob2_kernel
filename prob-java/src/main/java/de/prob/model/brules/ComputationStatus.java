@@ -47,7 +47,7 @@ public enum ComputationStatus implements OperationStatus {
 
 	@Override
 	public boolean isNotExecuted() {
-		return this != EXECUTED;
+		return this == NOT_EXECUTED;
 	}
 
 	@Override
