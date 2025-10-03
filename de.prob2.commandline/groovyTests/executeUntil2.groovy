@@ -15,7 +15,8 @@ s1.execute(cmd1)
 assert cmd1.success
 t = t.addTransitions(cmd1.newTransitions)
 s1.evaluateTransitions(t.transitionList, FormulaExpand.EXPAND)
-assert t.transitionList.collect {it.rep} == ["\$initialise_machine()", "1 <-- read(1)", "nothing()", "end()"]
+assert t.transitionList.collect {it.rep} == ["\$initialise_machine()", "1 <-- read(1)", "nothing()", "end()", "1 <-- read(1)"] // the trace returned by probcli now contains one additional step, which is strictly speaking not necessary
+// see comments in ltl_verification.pl in prob_prolog; previously the animate until always removed the last step (which is no longer done)
 
 /*
 TODO: The command is too slow to do this.
