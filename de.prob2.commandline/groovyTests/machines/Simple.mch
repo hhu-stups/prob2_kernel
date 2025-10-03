@@ -4,7 +4,7 @@ INVARIANT loop : BOOL & loop2 : BOOL
 INITIALISATION loop := FALSE || loop2 := FALSE
 OPERATIONS
 o <-- read(xx) = PRE
-				loop = FALSE & loop2 = FALSE & xx : NATURAL
+				loop = FALSE & loop2 = FALSE & xx : NATURAL1 & xx<2
 			 THEN
 			 	o := xx ||
 			 	loop := TRUE
