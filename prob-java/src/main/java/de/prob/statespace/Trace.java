@@ -302,9 +302,9 @@ public class Trace {
 	}
 
 	public Trace randomAnimation(final int numOfSteps) {
-		return randomAnimation(numOfSteps,false);
+		return randomAnimation(numOfSteps, false);
 	}
-	
+
 	// a variation where one can specify to stop if the state is non-deterministic
 	public Trace randomAnimation(final int numOfSteps, final boolean stopIfNonDet) {
 		if (numOfSteps <= 0) {
