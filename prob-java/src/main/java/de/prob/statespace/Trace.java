@@ -302,11 +302,10 @@ public class Trace {
 	}
 
 	public Trace randomAnimation(final int numOfSteps) {
-		return randomAnimation(numOfSteps, false);
+		return randomOrDeterministicAnimation(numOfSteps, false);
 	}
 
-	// a variation where one can specify to stop if the state is non-deterministic
-	public Trace randomAnimation(final int numOfSteps, final boolean stopIfNonDet) {
+	private Trace randomOrDeterministicAnimation(final int numOfSteps, final boolean deterministic) {
 		if (numOfSteps <= 0) {
 			return this;
 		}
@@ -322,7 +321,7 @@ public class Trace {
 				if (ops.isEmpty()) {
 					break;
 				}
-				if (stopIfNonDet && ops.size() > 1) {
+				if (deterministic && ops.size() > 1) {
 					break;
 				}
 				Transition op = ops.get(random.nextInt(ops.size()));
@@ -349,7 +348,7 @@ public class Trace {
 	 * i.e. there is more than one or no outgoing transition
 	 */
 	public Trace deterministicAnimation(final int maxNumOfSteps) {
-		return randomAnimation(maxNumOfSteps, true);
+		return randomOrDeterministicAnimation(maxNumOfSteps, true);
 	}
 
 	/**
