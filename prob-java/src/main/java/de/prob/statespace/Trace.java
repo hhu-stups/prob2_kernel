@@ -302,7 +302,7 @@ public class Trace {
 	}
 
 	public Trace randomAnimation(final int numOfSteps) {
-	    return randomAnimation(numOfSteps,false);
+		return randomAnimation(numOfSteps,false);
 	}
 	
 	// a variation where one can specify to stop if the state is non-deterministic
@@ -322,8 +322,8 @@ public class Trace {
 				if (ops.isEmpty()) {
 					break;
 				}
-				if (stopIfNonDet==true && ops.size() > 1) {
-				    break;
+				if (stopIfNonDet && ops.size() > 1) {
+					break;
 				}
 				Transition op = ops.get(random.nextInt(ops.size()));
 				current = new TraceElement(op, current);
@@ -349,37 +349,7 @@ public class Trace {
 	 * i.e. there is more than one or no outgoing transition
 	 */
 	public Trace deterministicAnimation(final int maxNumOfSteps) {
-		if (maxNumOfSteps <= 0) {
-			return this;
-		}
-
-		State currentState = this.current.getCurrentState();
-		TraceElement current = this.current;
-		PersistentVector<Transition> transitionList = this.transitionList;
-		try {
-			this.stateSpace.startTransaction();
-			for (int i = 0; i < maxNumOfSteps; i++) {
-				final List<Transition> ops = currentState.getOutTransitions();
-				if (ops.size() != 1) {
-					break;
-				}
-				Transition op = ops.get(0);
-				current = new TraceElement(op, current);
-				if (i == 0) {
-					transitionList = branchTransitionListIfNecessary(op);
-				} else {
-					transitionList = transitionList.assocN(transitionList.size(), op);
-				}
-				currentState = op.getDestination();
-				if(Thread.currentThread().isInterrupted()) {
-					return this;
-				}
-			}
-		} finally {
-			this.stateSpace.endTransaction();
-		}
-
-		return new Trace(stateSpace, current, transitionList, this.uuid);
+		return randomAnimation(maxNumOfSteps, true);
 	}
 
 	/**
