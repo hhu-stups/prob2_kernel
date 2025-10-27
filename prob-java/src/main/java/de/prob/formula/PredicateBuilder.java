@@ -18,8 +18,15 @@ import de.prob.animator.domainobjects.Join;
 public class PredicateBuilder {
 
 	private final List<String> predicates = new ArrayList<>();
+	private final boolean quoteInvalid;
 
-	public PredicateBuilder() {}
+	public PredicateBuilder() {
+		this(false);
+	}
+
+	public PredicateBuilder(boolean quoteInvalid) {
+		this.quoteInvalid = quoteInvalid;
+	}
 
 	public List<String> getPredicates() {
 		return Collections.unmodifiableList(this.predicates);
@@ -36,7 +43,8 @@ public class PredicateBuilder {
 	}
 
 	public PredicateBuilder add(final String name, final String value) {
-		this.add(IIdentifierRenaming.QUOTE_INVALID.renameIdentifier(name) + "=" + value);
+		String quotedName = quoteInvalid ? IIdentifierRenaming.QUOTE_INVALID.renameIdentifier(name) : name;
+		this.add(quotedName + "=" + value);
 		return this;
 	}
 
