@@ -272,7 +272,7 @@ public class Transition {
 		List<String> paramValues = getParameterValues();
 		if (paramNames.size() == paramValues.size()) {
 			for (int i = 0; i < paramNames.size(); i++) {
-				predicates.add(paramNames.get(i) + " = " + paramValues.get(i));
+				predicates.add(paramNames.get(i) + " = " + stateSpace.getModel().adjustValueForPredicate(paramValues.get(i)));
 			}
 		}
 		return predicates;

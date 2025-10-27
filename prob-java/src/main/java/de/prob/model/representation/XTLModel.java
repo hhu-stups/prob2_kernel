@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.google.inject.Inject;
 
+import de.be4.classicalb.core.parser.util.Utils;
 import de.prob.animator.command.AbstractCommand;
 import de.prob.animator.command.LoadXTLCommand;
 import de.prob.animator.domainobjects.ClassicalB;
@@ -37,6 +38,11 @@ public class XTLModel extends AbstractModel {
 	@Override
 	public IEvalElement formulaFromIdentifier(final List<String> identifier, final FormulaExpand expansion) {
 		return ClassicalB.fromIdentifier(identifier, expansion);
+	}
+
+	@Override
+	public String adjustValueForPredicate(final String value) {
+		return "STRING_TO_TERM(\"" + Utils.escapeStringContents(value) + "\")";
 	}
 
 	@Override
