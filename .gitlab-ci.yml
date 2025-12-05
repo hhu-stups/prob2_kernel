@@ -36,6 +36,8 @@ variables:
     DEBIAN_FRONTEND: noninteractive
   before_script:
     - apt-get update && apt-get install -y git
+  tags:
+    - ht
 
 tests:jdk-8:
   extends: .docker-tests
