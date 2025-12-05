@@ -21,6 +21,7 @@ public class RulesMachineErrorsTest {
 		RulesMachineRun rulesMachineRun = startRulesMachineRunWithOperations("RULE foo BODY ;; END");
 		assertEquals(ERROR_TYPES.PARSE_ERROR, rulesMachineRun.getFirstError().getType());
 		assertTrue(rulesMachineRun.getFirstError().getException() instanceof BException);
+		assertNull(rulesMachineRun.getAnimator());
 	}
 
 	@Test
@@ -28,6 +29,7 @@ public class RulesMachineErrorsTest {
 		RulesMachineRun rulesMachineRun = startRulesMachineRunWithOperations(
 				"RULE foo BODY VAR xx IN xx := 1; xx := TRUE END;RULE_FAIL COUNTEREXAMPLE \"fail\" END END");
 		assertEquals(ERROR_TYPES.PROB_ERROR, rulesMachineRun.getFirstError().getType());
+		assertNull(rulesMachineRun.getAnimator());
 	}
 
 	@Test
@@ -39,6 +41,7 @@ public class RulesMachineErrorsTest {
 		rulesMachineRun.start();
 		assertTrue(rulesMachineRun.getTotalNumberOfProBCliErrors().intValue() >= 2);
 		assertEquals(RuleStatus.SUCCESS, rulesMachineRun.getRuleResults().getRuleResult("Rule3").getRuleState());
+		rulesMachineRun.getAnimator().kill();
 	}
 
 	@Test
@@ -49,6 +52,7 @@ public class RulesMachineErrorsTest {
 		assertEquals(ERROR_TYPES.PROB_ERROR, rulesMachineRun.getFirstError().getType());
 		assertTrue(rulesMachineRun.getTotalNumberOfProBCliErrors().intValue() > 0);
 		assertFalse(rulesMachineRun.getErrorList().isEmpty());
+		rulesMachineRun.getAnimator().kill();
 	}
 
 	@Test
@@ -71,12 +75,15 @@ public class RulesMachineErrorsTest {
 
 		// Rule2 is not checked because of the dependency to Rule1
 		assertEquals(RuleStatus.NOT_CHECKED, rulesMachineRun.getRuleResults().getRuleResult("Rule2").getRuleState());
+
+		rulesMachineRun.getAnimator().kill();
 	}
 
 	@Test
 	public void testRulesMachineFileNotFound() {
 		RulesMachineRun rulesMachineRun = startRulesMachineRun("RulesMachineFileDoesNotExist123.rmch");
 		assertEquals(ERROR_TYPES.PARSE_ERROR, rulesMachineRun.getFirstError().getType());
+		assertNull(rulesMachineRun.getAnimator());
 	}
 
 }

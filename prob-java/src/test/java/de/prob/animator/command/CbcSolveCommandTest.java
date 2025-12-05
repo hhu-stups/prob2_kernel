@@ -14,6 +14,7 @@ import de.prob.scripting.Api;
 import de.prob.statespace.State;
 import de.prob.statespace.StateSpace;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,6 +39,11 @@ class CbcSolveCommandTest {
 				.getResource("/de/prob/testmachines/b/VariablesOnly.mch")
 				.toURI()).toString();
 		stateSpace = api.b_load(example_mch);
+	}
+
+	@AfterEach
+	void afterEach() {
+		stateSpace.kill();
 	}
 
 	@Test

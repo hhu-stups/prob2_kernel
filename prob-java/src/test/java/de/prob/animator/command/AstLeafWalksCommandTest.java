@@ -15,6 +15,7 @@ import de.prob.prolog.term.PrologTerm;
 import de.prob.scripting.Api;
 import de.prob.statespace.StateSpace;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,6 +37,11 @@ class AstLeafWalksCommandTest {
 				.getResource("/de/prob/testmachines/b/VariablesOnly.mch")
 				.toURI()).toString();
 		stateSpace = api.b_load(example_mch);
+	}
+
+	@AfterEach
+	void afterEach() {
+		stateSpace.kill();
 	}
 
 	@Test
