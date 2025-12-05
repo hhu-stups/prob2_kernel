@@ -104,6 +104,7 @@ public class RulesMachineRun {
 		}
 		this.executeRun = rulesMachineRunner.createRulesMachineExecuteRun(this.rulesProject, runnerFile,
 				this.proBCorePreferences, continueAfterErrors, this.getAnimator());
+		this.animator = this.executeRun.getUsedAnimator();
 		try {
 			LOGGER.info("Start execute ...");
 			final Stopwatch executeStopwatch = Stopwatch.createStarted();
@@ -143,7 +144,6 @@ public class RulesMachineRun {
 			totalNumberOfProBCliErrors = totalNumberOfErrorsCommand.getTotalNumberOfErrors();
 		}
 
-		this.animator = this.executeRun.getUsedAnimator();
 		final Stopwatch extractResultsStopwatch = Stopwatch.createStarted();
 		this.ruleResults = new RuleResults(this.rulesProject, executeRun.getExecuteModelCommand().getFinalState(),
 				maxNumberOfReportedCounterExamples, maxNumberOfReportedSuccessMessages,

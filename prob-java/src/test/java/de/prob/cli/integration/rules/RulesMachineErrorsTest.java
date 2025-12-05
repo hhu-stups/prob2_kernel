@@ -29,7 +29,7 @@ public class RulesMachineErrorsTest {
 		RulesMachineRun rulesMachineRun = startRulesMachineRunWithOperations(
 				"RULE foo BODY VAR xx IN xx := 1; xx := TRUE END;RULE_FAIL COUNTEREXAMPLE \"fail\" END END");
 		assertEquals(ERROR_TYPES.PROB_ERROR, rulesMachineRun.getFirstError().getType());
-		assertNull(rulesMachineRun.getAnimator());
+		rulesMachineRun.getAnimator().kill();
 	}
 
 	@Test
