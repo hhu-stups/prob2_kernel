@@ -1,8 +1,12 @@
 package de.prob.animator.command;
 
+import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ExecuteRightClickCommand extends AbstractCommand {
 
@@ -14,7 +18,7 @@ public class ExecuteRightClickCommand extends AbstractCommand {
 	private final int row;
 	private final int column;
 	private final String option;
-	private String transitionID;
+	private List<String> transitionIDs;
 
 	public ExecuteRightClickCommand(String stateId, int row, int column, String option) {
 		this.stateId = stateId;
@@ -37,11 +41,27 @@ public class ExecuteRightClickCommand extends AbstractCommand {
 
 	@Override
 	public void processResult(ISimplifiedROMap<String, PrologTerm> bindings) {
-		transitionID = bindings.get(TRANSITION).getFunctor();
+		PrologTerm transition = bindings.get(TRANSITION);
+		transitionIDs = new ArrayList<>();
+		if (transition.isList()) {
+			for (PrologTerm transID : BindingGenerator.getList(transition)) {
+				transitionIDs.add(transID.getFunctor());
+			}
+			return;
+		}
+		transitionIDs.add(transition.getFunctor());
 	}
 
+	/**
+	 * @deprecated Use {@link #getTransitionIDs()} instead.
+	 */
+	@Deprecated
 	public String getTransitionID() {
-		return transitionID;
+		return transitionIDs.get(0);
+	}
+
+	public List<String> getTransitionIDs() {
+		return transitionIDs;
 	}
 
 }
