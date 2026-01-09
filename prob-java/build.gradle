@@ -32,7 +32,7 @@ dependencies {
 	implementation("de.hhu.stups:alloy2b:1.4") // Eclipse Public License 1.0
 	api("de.hhu.stups:ltl-dsl:0.2.2") // Eclipse Public License 1.0
 	api("de.hhu.stups:rodin-eventb-ast:3.8.0") // Eclipse Public License 1.0
-	implementation("de.hhu.stups:tla2bAST:1.4.2") // Eclipse Public License 1.0
+	implementation("de.hhu.stups:tla2bAST:1.4.3-SNAPSHOT") // Eclipse Public License 1.0
 	api("de.hhu.stups:tlc4b:1.2.3-SNAPSHOT") // MIT License
 	api("de.hhu.stups:value-translator:0.2.2") // MIT License
 
