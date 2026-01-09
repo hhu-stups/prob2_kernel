@@ -16,9 +16,9 @@ import de.prob.MainModule;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.help.HelpFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,14 +35,16 @@ public final class CommandLineMain {
 		logger.debug("Java version: {}", System.getProperty("java.version"));
 	}
 	
-	private void run(final String[] args) {
+	private void run(final String[] args) throws IOException {
 		final CommandLine line;
 		try {
 			line = parser.parse(options, args);
 		} catch (ParseException e) {
 			logger.debug("Failed to parse CLI", e);
-			HelpFormatter formatter = new HelpFormatter();
-			formatter.printHelp("java -jar probcli.jar", options);
+			HelpFormatter.builder()
+				.setShowSince(false)
+				.get()
+				.printHelp("java -jar probcli.jar", "", options, "", true);
 			System.exit(-1);
 			throw new AssertionError("System.exit shouldn't return", e);
 		}
@@ -76,7 +78,7 @@ public final class CommandLineMain {
 	 *
 	 * @param args command-line arguments
 	 */
-	public static void main(final String[] args) {
+	public static void main(final String[] args) throws IOException {
 		if (!System.getProperties().containsKey(ClassicConstants.CONFIG_FILE_PROPERTY)) {
 			System.setProperty(ClassicConstants.CONFIG_FILE_PROPERTY, "de/prob/logging/production.xml");
 		}
