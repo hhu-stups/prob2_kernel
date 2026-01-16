@@ -10,7 +10,7 @@ import com.google.common.base.MoreObjects;
 import de.prob.statespace.StateSpace;
 import de.tlc4b.TLC4BOption;
 
-public class TLCModelCheckingOptions {
+public final class TLCModelCheckingOptions {
 
 	private static final String TLC_USE_PROB_CONSTANTS = "TLC_USE_PROB_CONSTANTS";
 	private static final String TLC_WORKERS = "TLC_WORKERS";
@@ -43,6 +43,10 @@ public class TLCModelCheckingOptions {
 	// -workers and -constantssetup are also controlled via preferences
 	// use the preference values by default, options can be overwritten here
 	// TODO: add remaining TLC4BOptions if required.
+
+	public TLCModelCheckingOptions noTranslation(final boolean value) {
+		return changeOption(value, TLC4BOption.NOTRANSLATION);
+	}
 
 	public TLCModelCheckingOptions checkDeadlocks(final boolean value) {
 		return changeOption(!value, TLC4BOption.NODEAD);
@@ -102,11 +106,33 @@ public class TLCModelCheckingOptions {
 	}
 
 	public TLCModelCheckingOptions setNumberOfWorkers(final String number) {
+		if (number != null) {
+			int n;
+			try {
+				n = Integer.parseInt(number);
+			} catch (NumberFormatException e) {
+				throw new IllegalArgumentException("Worker number must be a positive integer but was " + number, e);
+			}
+			if (n <= 0) {
+				throw new IllegalArgumentException("Worker number must be a positive integer but was " + n);
+			}
+		}
 		return changeOption(number, TLC4BOption.WORKERS);
 	}
 
-	public TLCModelCheckingOptions useDepthFirstSearch(final String initialDepth) {
-		return changeOption(initialDepth, TLC4BOption.DFID);
+	public TLCModelCheckingOptions useDepthFirstSearch(final String maxDepth) {
+		if (maxDepth != null) {
+			int n;
+			try {
+				n = Integer.parseInt(maxDepth);
+			} catch (NumberFormatException e) {
+				throw new IllegalArgumentException("Depth-First Iterative Deepening Max Depth must be a non-negative integer but was " + maxDepth, e);
+			}
+			if (n < 0) {
+				throw new IllegalArgumentException("Depth-First Iterative Deepening Max Depth must be a non-negative integer but was " + n);
+			}
+		}
+		return changeOption(maxDepth, TLC4BOption.DFID);
 	}
 
 	public TLCModelCheckingOptions setupConstantsUsingProB(final boolean value) {
@@ -170,7 +196,7 @@ public class TLCModelCheckingOptions {
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.options);
+		return this.options.hashCode();
 	}
 
 	@Override

@@ -162,6 +162,10 @@ public abstract class AbstractModel extends AbstractElement {
 		}
 	}
 
+	public String adjustValueForPredicate(final String value) {
+		return value;
+	}
+
 	public abstract FormalismType getFormalismType();
 
 	public abstract Language getLanguage();

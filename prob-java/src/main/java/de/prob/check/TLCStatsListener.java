@@ -158,8 +158,8 @@ class TLCStatsListener extends TLCMessageListener {
 			stateSpace.execute(command);
 			destId = command.getDestStateId();
 		} else {
-			destId = root;
-			LOGGER.info("No trace file provided in TLC results.");
+			LOGGER.debug("No trace file provided in TLC results.");
+			destId = null;
 		}
 		return destId;
 	}

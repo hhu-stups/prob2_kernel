@@ -20,7 +20,7 @@ import com.google.common.base.MoreObjects;
 public class OperationInfo {
 
 	public enum Type {
-		CLASSICAL_B, EVENTB, CSP;
+		CLASSICAL_B, EVENTB, CSP, XTL;
 
 		public static OperationInfo.Type fromProlog(final String prologName) {
 			switch (prologName) {
@@ -32,6 +32,9 @@ public class OperationInfo {
 
 				case "csp":
 					return CSP;
+
+				case "xtl":
+					return XTL;
 
 				default:
 					throw new IllegalArgumentException("Unknown Prolog operation type: " + prologName);

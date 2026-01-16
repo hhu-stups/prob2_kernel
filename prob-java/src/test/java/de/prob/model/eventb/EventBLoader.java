@@ -1,15 +1,17 @@
 package de.prob.model.eventb;
 
-import com.google.inject.Injector;
-import de.prob.cli.CliTestCommon;
-import de.prob.scripting.EventBFactory;
-import de.prob.scripting.ExtractedModel;
-
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
+
+import com.google.inject.Injector;
+
+import de.prob.cli.CliTestCommon;
+import de.prob.scripting.EventBFactory;
+import de.prob.scripting.ExtractedModel;
+import de.prob.statespace.StateSpace;
 
 public final class EventBLoader {
 
@@ -29,7 +31,8 @@ public final class EventBLoader {
 		Injector injector = CliTestCommon.getInjector();
 		EventBFactory eventBFactory = injector.getInstance(EventBFactory.class);
 		ExtractedModel<EventBModel> extractedModel = eventBFactory.extract(file.toString());
-		extractedModel.load();
+		StateSpace stateSpace = extractedModel.load();
+		stateSpace.kill();
 		return extractedModel.getModel();
 	}
 }

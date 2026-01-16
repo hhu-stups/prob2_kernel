@@ -89,7 +89,7 @@ public final class RulesChecker {
 				continue;
 			}
 			ExecuteModelCommand executeModelCommand = new ExecuteModelCommand(trace.getStateSpace(),
-					trace.getCurrentState(), stepSize, true, Integer.MAX_VALUE-1);
+					trace.getCurrentState(), stepSize, true, true, null);
 			trace.getStateSpace().execute(executeModelCommand);
 			int nrSteps = executeModelCommand.getNumberOfStatesExecuted();
 			if (nrSteps < 1) {

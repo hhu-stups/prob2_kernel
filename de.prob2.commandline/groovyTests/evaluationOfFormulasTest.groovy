@@ -32,6 +32,6 @@ assert t.value.value == true
 assert t.solutions.containsKey("x")
 assert t.solutions.containsKey("y")
 assert t.x == new BAtom("PID2")
-assert t.y == new BNumber(1)
+assert t.y == BNumber.of(1)
 
 "Evaluation of formulas works (scheduler.mch)"

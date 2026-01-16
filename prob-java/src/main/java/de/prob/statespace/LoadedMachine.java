@@ -67,7 +67,7 @@ public class LoadedMachine {
 			2. Get rid of GetMachineOperationInfos
 			3. Assume in GetMachineOperationInfosWithTypes that there are always 9 arguments
 			 */
-			if(stateSpace.getModel().getFormalismType() == FormalismType.CSP) {
+			if (stateSpace.getModel().getFormalismType() == FormalismType.CSP || stateSpace.getModel().getFormalismType() == FormalismType.XTL) {
 				GetMachineOperationInfos command = new GetMachineOperationInfos();
 				this.stateSpace.execute(command);
 				this.machineOperationInfos = command.getOperationInfos().stream()

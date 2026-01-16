@@ -1,25 +1,28 @@
 package de.prob.statespace;
 
 public enum Language {
-	CLASSICAL_B(FormalismType.B, null, "b"),
+	CLASSICAL_B(FormalismType.B, null, "b", "B"),
 	// B_RULES uses the same prologName as CLASSICAL_B - the Prolog side doesn't know anything about rules, all translation happens on the Java side.
-	B_RULES(FormalismType.B, CLASSICAL_B, "b"),
-	EVENT_B(FormalismType.B, null, "eventb"),
-	TLA(FormalismType.B, CLASSICAL_B, "tla"),
-	ALLOY(FormalismType.B, CLASSICAL_B, "alloy"),
-	Z(FormalismType.Z, CLASSICAL_B, "z"),
-	CSP(FormalismType.CSP, null, "cspm"),
-	XTL(FormalismType.XTL, null, "xtl"),
+	B_RULES(FormalismType.B, CLASSICAL_B, "b", "B Rules"),
+	EVENT_B(FormalismType.B, null, "eventb", "Event-B"),
+	TLA(FormalismType.B, CLASSICAL_B, "tla", "TLA+"),
+	ALLOY(FormalismType.B, CLASSICAL_B, "alloy", "Alloy"),
+	Z(FormalismType.Z, CLASSICAL_B, "z", "Z"),
+	CSP(FormalismType.CSP, null, "cspm", "CSP"),
+	XTL(FormalismType.XTL, null, "xtl", "XTL"),
 	;
 	
 	private final FormalismType formalismType;
 	private final Language translatedTo;
 	private final String prologName;
+	private final String prettyName;
 	
-	Language(final FormalismType formalismType, final Language translatedTo, final String prologName) {
+	Language(final FormalismType formalismType, final Language translatedTo, final String prologName,
+	         final String prettyName) {
 		this.formalismType = formalismType;
 		this.translatedTo = translatedTo;
 		this.prologName = prologName;
+		this.prettyName = prettyName;
 	}
 	
 	public FormalismType getFormalismType() {
@@ -39,5 +42,9 @@ public enum Language {
 	
 	public String getPrologName() {
 		return this.prologName;
+	}
+
+	public String getPrettyName() {
+		return this.prettyName;
 	}
 }

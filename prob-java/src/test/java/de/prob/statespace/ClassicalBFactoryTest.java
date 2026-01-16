@@ -84,6 +84,8 @@ public class ClassicalBFactoryTest {
 
 		assertEquals(result, result2);
 		assertThrows(ProBError.class, result::explore);
+
+		ss.kill();
 	}
 
 	@Test
@@ -94,7 +96,7 @@ public class ClassicalBFactoryTest {
 		PMachineClause props = new APropertiesMachineClause(new AEqualPredicate(ASTBuilder.createIdentifier("C"), ASTBuilder.createIdentifier("def")));
 		Start ast = new Start(new AAbstractMachineParseUnit(new AMachineMachineVariant(), new AMachineHeader(ASTBuilder.createTIdentifierList("M"), Collections.emptyList()), Arrays.asList(defs, consts, props)), new EOF());
 		StateSpace ss = factory.create(ast).load();
-		assertNotNull(ss);
+		ss.kill();
 	}
 
 	@Test

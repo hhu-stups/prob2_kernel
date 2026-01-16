@@ -24,7 +24,7 @@ import de.prob.animator.domainobjects.EvalOptions;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.FormulaTranslationMode;
 import de.prob.formula.PredicateBuilder;
-import de.prob.parser.BindingGenerator;
+import de.prob.model.eventb.EventBModel;
 import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 
@@ -254,7 +254,7 @@ public class Transition {
 		if (predicateString != null) {
 			return predicateString;
 		}
-		predicateString = new PredicateBuilder().addList(getParameterPredicates()).toString();
+		predicateString = getParameterPredicateBuilder().toString();
 		return predicateString;
 	}
 
@@ -263,19 +263,24 @@ public class Transition {
 	 *         parameters for this transition
 	 */
 	public List<String> getParameterPredicates() {
+		return getParameterPredicateBuilder().getPredicates();
+	}
+
+	private PredicateBuilder getParameterPredicateBuilder() {
+		boolean addQuotes = !(stateSpace.getModel() instanceof EventBModel); // do not add quotes in Event-B mode
+		PredicateBuilder builder = new PredicateBuilder(addQuotes);
 		if (isArtificialTransition()) {
-			return Collections.emptyList();
+			return builder;
 		}
 		evaluate(FormulaExpand.EXPAND);
-		List<String> predicates = new ArrayList<>();
 		List<String> paramNames = getParameterNames();
 		List<String> paramValues = getParameterValues();
 		if (paramNames.size() == paramValues.size()) {
 			for (int i = 0; i < paramNames.size(); i++) {
-				predicates.add(paramNames.get(i) + " = " + paramValues.get(i));
+				builder.add(paramNames.get(i), stateSpace.getModel().adjustValueForPredicate(paramValues.get(i)));
 			}
 		}
-		return predicates;
+		return builder;
 	}
 
 	public List<String> getParameterNames() {

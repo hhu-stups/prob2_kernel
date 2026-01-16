@@ -46,6 +46,7 @@ public class RulesMachineRun {
 	private RuleResults ruleResults;
 	private int maxNumberOfReportedCounterExamples = 50;
 	private int maxNumberOfReportedSuccessMessages = 50;
+	private int maxNumberOfReportedUncheckedMessages = 50;
 
 	private BigInteger totalNumberOfProBCliErrors;
 
@@ -83,6 +84,10 @@ public class RulesMachineRun {
 		this.maxNumberOfReportedSuccessMessages = i;
 	}
 
+	public void setMaxNumberOfReportedUncheckedMessages(int i) {
+		this.maxNumberOfReportedUncheckedMessages = i;
+	}
+
 	public void setContinueAfterErrors(boolean continueAfterErrors) {
 		this.continueAfterErrors = continueAfterErrors;
 	}
@@ -99,6 +104,7 @@ public class RulesMachineRun {
 		}
 		this.executeRun = rulesMachineRunner.createRulesMachineExecuteRun(this.rulesProject, runnerFile,
 				this.proBCorePreferences, continueAfterErrors, this.getAnimator());
+		this.animator = this.executeRun.getUsedAnimator();
 		try {
 			LOGGER.info("Start execute ...");
 			final Stopwatch executeStopwatch = Stopwatch.createStarted();
@@ -138,10 +144,10 @@ public class RulesMachineRun {
 			totalNumberOfProBCliErrors = totalNumberOfErrorsCommand.getTotalNumberOfErrors();
 		}
 
-		this.animator = this.executeRun.getUsedAnimator();
 		final Stopwatch extractResultsStopwatch = Stopwatch.createStarted();
 		this.ruleResults = new RuleResults(this.rulesProject, executeRun.getExecuteModelCommand().getFinalState(),
-				maxNumberOfReportedCounterExamples, maxNumberOfReportedSuccessMessages);
+				maxNumberOfReportedCounterExamples, maxNumberOfReportedSuccessMessages,
+				maxNumberOfReportedUncheckedMessages);
 		extractResultsStopwatch.stop();
 		LOGGER.info("Time to extract results from final state: {}", extractResultsStopwatch.elapsed(TimeUnit.MILLISECONDS));
 

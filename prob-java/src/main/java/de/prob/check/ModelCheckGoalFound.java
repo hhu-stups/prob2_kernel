@@ -26,7 +26,12 @@ public class ModelCheckGoalFound implements IModelCheckingResult,
 
 	@Override
 	public Trace getTrace(final StateSpace s) {
-		return s.getTrace(stateID);
+		return stateID != null ? s.getTrace(stateID) : null;
+	}
+
+	@Override
+	public boolean hasTrace() {
+		return stateID != null;
 	}
 
 	@Override

@@ -27,7 +27,6 @@ public class TraceConnectorTest {
 
 		EventBFactory eventBFactory = injector.getInstance(EventBFactory.class);
 		ExtractedModel<EventBModel> extractedModel = eventBFactory.extract(new File("src/test/resources/de/prob/testmachines/eventB/trafficLight/mac1.bum").toPath().toString());
-		extractedModel.load();
 		EventBModel eventBModel = extractedModel.getModel();
 
 		TraceConnector traceConnector = new TraceConnector(traceOld, traceNew, eventBModel.introducedBySkip());
@@ -47,7 +46,6 @@ public class TraceConnectorTest {
 
 		EventBFactory eventBFactory = injector.getInstance(EventBFactory.class);
 		ExtractedModel<EventBModel> extractedModel = eventBFactory.extract(new File("src/test/resources/de/prob/testmachines/eventB/trafficLight/mac1.bum").toPath().toString());
-		extractedModel.load();
 		EventBModel eventBModel = extractedModel.getModel();
 
 		TraceConnector traceConnector = new TraceConnector(traceOld, traceNew, eventBModel.introducedBySkip());

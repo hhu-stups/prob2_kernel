@@ -7,9 +7,9 @@ dependencies {
 	api(project(":prob-java"))
 
 	// Groovy (Apache License 2.0)
-	api(platform(group: "org.apache.groovy", name: "groovy-bom", version: "4.0.25"))
-	api group: "org.apache.groovy", name: "groovy"
-	api group: "org.apache.groovy", name: "groovy-jsr223"
+	api(platform("org.apache.groovy:groovy-bom:4.0.29"))
+	api("org.apache.groovy:groovy")
+	api("org.apache.groovy:groovy-jsr223")
 }
 
 tasks.withType(GroovyCompile) {

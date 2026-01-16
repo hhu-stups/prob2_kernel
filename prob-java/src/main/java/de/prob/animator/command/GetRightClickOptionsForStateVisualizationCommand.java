@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
+import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 
@@ -19,7 +20,7 @@ public class GetRightClickOptionsForStateVisualizationCommand extends AbstractCo
 	private final int row;
 	private final int column;
 
-	private final List<String> options = new ArrayList<>();
+	private List<Option> options = new ArrayList<>();
 
 	public GetRightClickOptionsForStateVisualizationCommand(String stateId, int row, int column) {
 		this.stateId = stateId;
@@ -39,12 +40,40 @@ public class GetRightClickOptionsForStateVisualizationCommand extends AbstractCo
 
 	@Override
 	public void processResult(ISimplifiedROMap<String, PrologTerm> bindings) {
-		ListPrologTerm optionTerms = BindingGenerator.getList(bindings.get(OPTIONS));
-		options.addAll(optionTerms.stream().map(PrologTerm::getFunctor).collect(Collectors.toList()));
+		ListPrologTerm optionsWithDesc = BindingGenerator.getList(bindings, OPTIONS);
+		this.options = optionsWithDesc.stream()
+				.map(Option::fromPrologTerm)
+				.collect(Collectors.toList());
 	}
 
 	public List<String> getOptions() {
+		return Collections.unmodifiableList(options.stream().map(Option::getTransitionTerm).collect(Collectors.toList()));
+	}
+
+	public List<Option> getOptionsWithDescription() {
 		return Collections.unmodifiableList(options);
+	}
+
+	public static class Option {
+		private final String transitionTerm, description;
+
+		public Option(final String transitionTerm, final String description) {
+			this.transitionTerm = transitionTerm;
+			this.description = description;
+		}
+
+		public static Option fromPrologTerm(PrologTerm term) {
+			CompoundPrologTerm compound = BindingGenerator.getCompoundTerm(term, "option", 2);
+			return new Option(compound.getArgument(1).atomToString(), compound.getArgument(2).atomToString());
+		}
+
+		public String getTransitionTerm() {
+			return this.transitionTerm;
+		}
+
+		public String getDescription() {
+			return this.description;
+		}
 	}
 
 }

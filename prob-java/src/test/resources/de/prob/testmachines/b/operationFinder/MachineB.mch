@@ -11,5 +11,5 @@ INVARIANT y : NAT
 INITIALISATION y := 10
 
 OPERATIONS 
- Foo = Inc2 || y := 10 
+ Foo = BEGIN Inc2 || y := 10 END 
 END//MACHINE

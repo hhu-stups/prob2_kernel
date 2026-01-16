@@ -42,6 +42,7 @@ public class RulesCheckerTest {
 				assertTrue(state.isExecuted());
 			}
 		});
+		s.kill();
 	}
 
 	@Test
@@ -57,6 +58,7 @@ public class RulesCheckerTest {
 				assertTrue(state.isExecuted());
 			}
 		});
+		s.kill();
 	}
 
 	@Test
@@ -72,5 +74,6 @@ public class RulesCheckerTest {
 		boolean possible2 = checker.executeOperationAndDependencies("RULE_BasedOnRuleWithViolations");
 		assertFalse(possible2);
 		assertEquals(RuleStatus.NOT_CHECKED, checker.getOperationState("RULE_BasedOnRuleWithViolations"));
+		s.kill();
 	}
 }

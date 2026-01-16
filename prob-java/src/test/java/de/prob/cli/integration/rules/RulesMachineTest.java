@@ -60,6 +60,8 @@ public class RulesMachineTest {
 
 		assertEquals(RuleStatus.NOT_CHECKED, ruleResults.getRuleResult("Rule3").getRuleState());
 		assertEquals("Rule2", ruleResults.getRuleResult("Rule3").getFailedDependencies().get(0));
+
+		rulesMachineRun.getAnimator().kill();
 	}
 
 	@Test
@@ -70,6 +72,7 @@ public class RulesMachineTest {
 		RulesModel model = (RulesModel) rulesMachineRun.getAnimator().getCurrentStateSpace().getModel();
 		AbstractOperation operation = rulesMachineRun.getRulesProject().getOperationsMap().get("COMP_comp1");
 		assertEquals(ComputationStatus.EXECUTED, OperationStatuses.getStatus(model, operation, finalState));
+		rulesMachineRun.getAnimator().kill();
 	}
 
 	@Test
@@ -82,6 +85,7 @@ public class RulesMachineTest {
 		assertEquals(1, counterExamples.size());
 		CounterExample counterExample = counterExamples.get(0);
 		assertEquals(1, counterExample.getErrorType());
+		rulesMachineRun.getAnimator().kill();
 	}
 
 	@Test
@@ -97,6 +101,10 @@ public class RulesMachineTest {
 		BigInteger numberAfterSecondRun = rulesMachineRun2.getTotalNumberOfProBCliErrors();
 
 		assertTrue(numberAfterSecondRun.intValue() > numberAfterFirstRun.intValue());
+
+		assertSame(rulesMachineRun.getAnimator(), rulesMachineRun2.getAnimator());
+		rulesMachineRun.getAnimator().kill();
+		rulesMachineRun2.getAnimator().kill();
 	}
 
 	@Test
@@ -105,6 +113,7 @@ public class RulesMachineTest {
 				"RULE Rule1 BODY RULE_FAIL x WHEN x : 1..1000 COUNTEREXAMPLE STRING_FORMAT(\"~w\", x) END END");
 		// default value is 50
 		assertEquals(50, rulesMachineRun.getRuleResults().getRuleResult("Rule1").getCounterExamples().size());
+		rulesMachineRun.getAnimator().kill();
 	}
 
 	@Test
@@ -112,6 +121,7 @@ public class RulesMachineTest {
 		RulesMachineRun rulesMachineRun = startRulesMachineRunWithOperations(
 			"RULE Rule1 BODY RULE_FORALL x WHERE x : 1..1000 EXPECT x : 1..200 ON_SUCCESS ```${x}``` COUNTEREXAMPLE STRING_FORMAT(\"~w\", x) END END");
 		assertEquals(50, rulesMachineRun.getRuleResults().getRuleResult("Rule1").getSuccessMessages().size());
+		rulesMachineRun.getAnimator().kill();
 	}
 
 	@Test
@@ -122,6 +132,7 @@ public class RulesMachineTest {
 		rulesMachineRun.setMaxNumberOfReportedCounterExamples(20);
 		rulesMachineRun.start();
 		assertEquals(20, rulesMachineRun.getRuleResults().getRuleResult("Rule1").getCounterExamples().size());
+		rulesMachineRun.getAnimator().kill();
 	}
 
 	@Test
@@ -132,6 +143,7 @@ public class RulesMachineTest {
 		rulesMachineRun.setMaxNumberOfReportedSuccessMessages(20);
 		rulesMachineRun.start();
 		assertEquals(20, rulesMachineRun.getRuleResults().getRuleResult("Rule1").getSuccessMessages().size());
+		rulesMachineRun.getAnimator().kill();
 	}
 
 	@Test
@@ -142,6 +154,7 @@ public class RulesMachineTest {
 		rulesMachineRun.setMaxNumberOfReportedCounterExamples(-1);
 		rulesMachineRun.start();
 		assertEquals(1000, rulesMachineRun.getRuleResults().getRuleResult("Rule1").getCounterExamples().size());
+		rulesMachineRun.getAnimator().kill();
 	}
 
 	@Test
@@ -154,6 +167,22 @@ public class RulesMachineTest {
 		rulesMachineRun.start();
 		assertEquals(800, rulesMachineRun.getRuleResults().getRuleResult("Rule1").getCounterExamples().size());
 		assertEquals(200, rulesMachineRun.getRuleResults().getRuleResult("Rule1").getSuccessMessages().size());
+		rulesMachineRun.getAnimator().kill();
+	}
+
+	@Test
+	public void testExtractingAllCounterExamplesAndSuccessMessagesAndUncheckedMessages() {
+		File file = createRulesMachineFile(
+				"OPERATIONS RULE Rule1 BODY FOR x IN 1..1000 DO RULE_FORALL y WHERE x > 500 & x=y EXPECT x : 1..600 ON_SUCCESS ```${x|->y}``` UNCHECKED ```${x}``` COUNTEREXAMPLE ```${x} ce $ {y}``` END END END");
+		RulesMachineRun rulesMachineRun = new RulesMachineRun(RulesTestUtil.getRulesMachineRunner(), file);
+		rulesMachineRun.setMaxNumberOfReportedCounterExamples(-1);
+		rulesMachineRun.setMaxNumberOfReportedSuccessMessages(-1);
+		rulesMachineRun.setMaxNumberOfReportedUncheckedMessages(-1);
+		rulesMachineRun.start();
+		assertEquals(400, rulesMachineRun.getRuleResults().getRuleResult("Rule1").getCounterExamples().size());
+		assertEquals(100, rulesMachineRun.getRuleResults().getRuleResult("Rule1").getSuccessMessages().size());
+		assertEquals(500, rulesMachineRun.getRuleResults().getRuleResult("Rule1").getUncheckedMessages().size());
+		rulesMachineRun.getAnimator().kill();
 	}
 
 	@Test
@@ -165,6 +194,7 @@ public class RulesMachineTest {
 		RulesMachineRun rulesMachineRun = new RulesMachineRun(RulesTestUtil.getRulesMachineRunner(), file, null, constantValuesToBeInjected);
 		rulesMachineRun.start();
 		assertTrue(rulesMachineRun.getRuleResults().getRuleResult("Rule1").hasFailed());
+		rulesMachineRun.getAnimator().kill();
 	}
 
 	@Test
@@ -176,6 +206,7 @@ public class RulesMachineTest {
 		RulesMachineRun rulesMachineRun = new RulesMachineRun(RulesTestUtil.getRulesMachineRunner(), file, prefs, Collections.emptyMap());
 		rulesMachineRun.start();
 		assertEquals(12, rulesMachineRun.getRuleResults().getRuleResult("Rule1").getCounterExamples().size());
+		rulesMachineRun.getAnimator().kill();
 	}
 
 	@Test
@@ -190,6 +221,7 @@ public class RulesMachineTest {
 		assertEquals(RuleStatus.FAIL, rulesMachineRun.getRuleResults().getRuleResult("Rule1").getRuleState());
 		assertEquals(RuleStatus.NOT_CHECKED, rulesMachineRun.getRuleResults().getRuleResult("Rule2").getRuleState());
 		assertEquals("Rule1", rulesMachineRun.getRuleResults().getRuleResult("Rule2").getFailedDependencies().get(0));
+		rulesMachineRun.getAnimator().kill();
 	}
 
 	@Test
@@ -201,6 +233,7 @@ public class RulesMachineTest {
 		// @formatter:on
 		assertTrue(rulesMachineRun.getRuleResults().getRuleResult("Rule1").hasFailed());
 		assertEquals(3, rulesMachineRun.getRuleResults().getRuleResult("Rule1").getCounterExamples().size());
+		rulesMachineRun.getAnimator().kill();
 	}
 
 	@Test
@@ -218,6 +251,8 @@ public class RulesMachineTest {
 
 		RuleResult rule1Result = ruleResults.getRuleResult("RULE_Rule1");
 		assertEquals(RuleStatus.FAIL, rule1Result.getRuleState());
+
+		rulesMachineRun.getAnimator().kill();
 	}
 
 	@Test
@@ -228,6 +263,7 @@ public class RulesMachineTest {
 				" COMPUTATION COMP_NewComp1 REPLACES COMP_comp1 BODY DEFINE V_Value1 TYPE INTEGER DUMMY_VALUE 0 VALUE 12 END END");
 		RuleResult ruleResult = rulesMachineRun.getRuleResults().getRuleResult("RULE_BasedOnValue1");
 		assertTrue(ruleResult.hasFailed());
+		rulesMachineRun.getAnimator().kill();
 	}
 
 }
