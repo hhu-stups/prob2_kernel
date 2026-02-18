@@ -2,6 +2,7 @@ package de.prob.model.eventb;
 
 import java.util.List;
 
+import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.model.representation.AbstractElement;
 import de.prob.model.representation.Named;
 import de.prob.prolog.output.IPrologTermOutput;
@@ -14,13 +15,26 @@ public class ProofObligation extends AbstractElement implements Named {
 	private final String description;
 	private final String sourceName;
 	private final List<? extends PrologTerm> sources;
+	private final List<IEvalElement> hypotheses;
+	private final List<IEvalElement> selectedHypotheses;
+	private final IEvalElement goal;
 
+	@Deprecated
 	public ProofObligation(final String sourceName, final String name, final int confidence, final String description, final List<? extends PrologTerm> sources) {
+		this(sourceName, name, confidence, description, sources, null, null, null);
+	}
+
+	public ProofObligation(final String sourceName, final String name, final int confidence, final String description,
+	                       final List<? extends PrologTerm> sources, final List<IEvalElement> hypotheses,
+	                       final List<IEvalElement> selectedHypotheses, final IEvalElement goal) {
 		this.sourceName = sourceName;
 		this.name = name;
 		this.confidence = confidence;
 		this.description = description;
 		this.sources = sources;
+		this.hypotheses = hypotheses;
+		this.selectedHypotheses = selectedHypotheses;
+		this.goal = goal;
 	}
 
 	@Override
@@ -34,6 +48,18 @@ public class ProofObligation extends AbstractElement implements Named {
 
 	public String getDescription() {
 		return description;
+	}
+
+	public List<IEvalElement> getHypotheses() {
+		return hypotheses;
+	}
+
+	public List<IEvalElement> getSelectedHypotheses() {
+		return selectedHypotheses;
+	}
+
+	public IEvalElement getGoal() {
+		return goal;
 	}
 
 	/**
