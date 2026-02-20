@@ -7,6 +7,7 @@ import de.prob.model.representation.AbstractElement;
 import de.prob.model.representation.Named;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;
+import de.prob.unicode.UnicodeTranslator;
 
 public class ProofObligation extends AbstractElement implements Named {
 
@@ -110,4 +111,24 @@ public class ProofObligation extends AbstractElement implements Named {
 		
 		pto.closeTerm();
 	}
+
+	public String getSequentPrettyPrint(boolean useUnicode) {
+		StringBuilder prettyPrint = new StringBuilder();
+		for (IEvalElement hyp : this.hypotheses) {
+			prettyPrint.append(this.selectedHypotheses.contains(hyp) ? " ✔ " : "   ");
+			String code = hyp.getCode();
+			if (useUnicode) {
+				code = UnicodeTranslator.toUnicode(code);
+			}
+			prettyPrint.append(code).append("\n");
+		}
+		prettyPrint.append("  ────────────────\n");
+		String goalCode = this.goal.getCode();
+		if (useUnicode) {
+			goalCode = UnicodeTranslator.toUnicode(goalCode);
+		}
+		prettyPrint.append("   ").append(goalCode);
+		return prettyPrint.toString();
+	}
+
 }
