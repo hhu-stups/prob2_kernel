@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,6 +25,11 @@ public class ProofXmlExtractionTest {
 				assertEquals(Arrays.asList("cars_go=FALSE","¬(cars_go=TRUE∧peds_go=TRUE)"),
 						translateToRodinUnicode(po.getSelectedHypotheses()));
 				assertEquals("¬(cars_go=TRUE∧TRUE=TRUE)", translateToRodinUnicode(po.getGoal()));
+				Map<String,IEvalElement> ids = po.getIdentifiers();
+				assertEquals("BOOL", ids.get("cars_go").getCode());
+				assertEquals("BOOL", ids.get("peds_go").getCode());
+				assertEquals("BOOL", ids.get("peds_go'").getCode());
+				assertEquals(3, ids.size());
 			}
 		}
 	}
