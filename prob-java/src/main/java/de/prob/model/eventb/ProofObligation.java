@@ -1,6 +1,8 @@
 package de.prob.model.eventb;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.model.representation.AbstractElement;
@@ -19,15 +21,17 @@ public class ProofObligation extends AbstractElement implements Named {
 	private final List<IEvalElement> hypotheses;
 	private final List<IEvalElement> selectedHypotheses;
 	private final IEvalElement goal;
+	private final Map<String, IEvalElement> identifiers;
 
 	@Deprecated
 	public ProofObligation(final String sourceName, final String name, final int confidence, final String description, final List<? extends PrologTerm> sources) {
-		this(sourceName, name, confidence, description, sources, null, null, null);
+		this(sourceName, name, confidence, description, sources, null, null, null, new HashMap<>());
 	}
 
 	public ProofObligation(final String sourceName, final String name, final int confidence, final String description,
 	                       final List<? extends PrologTerm> sources, final List<IEvalElement> hypotheses,
-	                       final List<IEvalElement> selectedHypotheses, final IEvalElement goal) {
+	                       final List<IEvalElement> selectedHypotheses, final IEvalElement goal,
+	                       final Map<String, IEvalElement> identifiers) {
 		this.sourceName = sourceName;
 		this.name = name;
 		this.confidence = confidence;
@@ -36,6 +40,7 @@ public class ProofObligation extends AbstractElement implements Named {
 		this.hypotheses = hypotheses;
 		this.selectedHypotheses = selectedHypotheses;
 		this.goal = goal;
+		this.identifiers = identifiers;
 	}
 
 	@Override
@@ -61,6 +66,10 @@ public class ProofObligation extends AbstractElement implements Named {
 
 	public IEvalElement getGoal() {
 		return goal;
+	}
+
+	public Map<String, IEvalElement> getIdentifiers() {
+		return identifiers;
 	}
 
 	/**

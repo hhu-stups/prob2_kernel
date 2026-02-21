@@ -16,16 +16,19 @@ public class ProofXmlHandler extends DefaultHandler {
 		private final List<IEvalElement> hypotheses;
 		private final List<IEvalElement> selectedHypotheses;
 		private final IEvalElement goal;
+		private final Map<String, IEvalElement> identifiers;
 
-		ExtractedSequent(String description, List<IEvalElement> hypotheses, List<IEvalElement> selectedHypotheses, IEvalElement goal) {
+		ExtractedSequent(String description, List<IEvalElement> hypotheses, List<IEvalElement> selectedHypotheses, IEvalElement goal,
+		                 Map<String, IEvalElement> identifiers) {
 			this.description = description;
 			this.hypotheses = hypotheses;
 			this.selectedHypotheses = selectedHypotheses;
 			this.goal = goal;
+			this.identifiers = identifiers;
 		}
 
 		ProofObligation toProofObligation(String source, String name, int confidence, List<PrologTerm> sourceInfos) {
-			return new ProofObligation(source, name, confidence, description, sourceInfos, hypotheses, selectedHypotheses, goal);
+			return new ProofObligation(source, name, confidence, description, sourceInfos, hypotheses, selectedHypotheses, goal, identifiers);
 		}
 	}
 
@@ -38,6 +41,7 @@ public class ProofXmlHandler extends DefaultHandler {
 	private final Map<String, List<IEvalElement>> hypotheses = new HashMap<>();
 	private final Map<String, List<IEvalElement>> selectedHypotheses = new HashMap<>();
 	private final Map<String, IEvalElement> goals = new HashMap<>();
+	private final Map<String, Map<String, IEvalElement>> identifiers = new HashMap<>();
 
 	private final Map<String, String> poPredicateSets = new HashMap<>(); // PO_ID -> predSetName
 	private final Map<String, String> predicateSetParentSets = new HashMap<>(); // predSetName -> parentSetName
@@ -45,6 +49,7 @@ public class ProofXmlHandler extends DefaultHandler {
 	private final Map<String, Map<String,String>> singlePredicateSelectionHints = new HashMap<>(); // PO_ID -> (predSetName -> predName)
 	private final Map<String, Set<Map.Entry<String,String>>> predicateSetSelectionHints = new HashMap<>(); // PO_ID -> {predSetFstName,predSetSndName}
 	private final Map<String, Set<String>> selectedPredicateSets = new HashMap<>(); // PO_ID -> predSetNames
+	private final Map<String, Map<String, IEvalElement>> identifiersPredicateSets = new HashMap<>(); // predSetName -> (ID -> Type)
 
 	private String currSequent = null;
 	private String currHypSet = null;
@@ -66,6 +71,7 @@ public class ProofXmlHandler extends DefaultHandler {
 				if (currSequent == null) {
 					currHypSet = attributes.getValue("name");
 					predicateSetPredicates.put(currHypSet, new HashMap<>());
+					identifiersPredicateSets.put(currHypSet, new HashMap<>());
 					if (parentSetAttr != null) {
 						String parentSetName = extractPredicateSetName(parentSetAttr).getValue();
 						predicateSetParentSets.put(currHypSet, parentSetName);
@@ -103,6 +109,14 @@ public class ProofXmlHandler extends DefaultHandler {
 						String sndSetName = extractPredicateSetName(secondHint).getValue();
 						predicateSetSelectionHints.get(currSequent).add(new AbstractMap.SimpleEntry<>(fstSetName,sndSetName));
 					}
+				}
+			}
+
+			case "org.eventb.core.poIdentifier": {
+				if (currHypSet != null) {
+					String name = attributes.getValue("name");
+					String type = attributes.getValue("org.eventb.core.type");
+					identifiersPredicateSets.get(currHypSet).put(name, new EventB(type));
 				}
 			}
 		}
@@ -149,6 +163,7 @@ public class ProofXmlHandler extends DefaultHandler {
 		}
 
 		poPredicateSets.keySet().forEach(poLabel -> hypotheses.put(poLabel, getHypotheses(poPredicateSets.get(poLabel))));
+		poPredicateSets.keySet().forEach(poLabel -> identifiers.put(poLabel, getIdentifiers(poPredicateSets.get(poLabel))));
 
 		// compute selected predicate sets from selection hints
 		for (String poLabel : predicateSetSelectionHints.keySet()) {
@@ -185,7 +200,7 @@ public class ProofXmlHandler extends DefaultHandler {
 		Map<String, ExtractedSequent> extractedSequents = new LinkedHashMap<>(); // keep order
 		for (String poLabel : descriptions.keySet()) {
 			extractedSequents.put(poLabel, new ExtractedSequent(descriptions.get(poLabel), hypotheses.get(poLabel),
-					selectedHypotheses.get(poLabel), goals.get(poLabel)));
+					selectedHypotheses.get(poLabel), goals.get(poLabel), identifiers.get(poLabel)));
 		}
 		return this.extractedSequents = extractedSequents;
 	}
@@ -198,6 +213,16 @@ public class ProofXmlHandler extends DefaultHandler {
 		hypotheses.addAll(getHypotheses(predicateSetParentSets.get(predicateSetName)));
 		hypotheses.addAll(predicateSetPredicates.get(predicateSetName).values());
 		return hypotheses;
+	}
+
+	private Map<String, IEvalElement> getIdentifiers(String predicateSetName) {
+		Map<String, IEvalElement> ids = new HashMap<>();
+		if (identifiersPredicateSets.get(predicateSetName) == null) {
+			return ids;
+		}
+		ids.putAll(getIdentifiers(predicateSetParentSets.get(predicateSetName)));
+		ids.putAll(identifiersPredicateSets.get(predicateSetName));
+		return ids;
 	}
 
 }
