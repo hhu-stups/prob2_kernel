@@ -29,6 +29,7 @@ public class FactoryProvider {
 		map.put(TLAFactory.class, Collections.singletonList("tla"));
 		map.put(RulesModelFactory.class, Collections.singletonList("rmch"));
 		map.put(XTLFactory.class, Arrays.asList("P", "pl"));
+		map.put(SequentProverFactory.class, Collections.singletonList("probpo"));
 		map.put(ZFactory.class, Arrays.asList("zed", "tex"));
 		map.put(ZFuzzFactory.class, Collections.singletonList("fuzz"));
 		map.put(AlloyFactory.class, Collections.singletonList("als"));
@@ -51,6 +52,7 @@ public class FactoryProvider {
 	private final TLAFactory tlaFactory;
 	private final RulesModelFactory bRulesFactory;
 	private final XTLFactory xtlFactory;
+	private final SequentProverFactory sequentProverFactory;
 	private final ZFactory zFactory;
 	private final ZFuzzFactory zFuzzFactory;
 	private final AlloyFactory alloyFactory;
@@ -64,6 +66,7 @@ public class FactoryProvider {
 		final TLAFactory tlaFactory,
 		final RulesModelFactory bRulesFactory,
 		final XTLFactory xtlFactory,
+		final SequentProverFactory sequentProverFactory,
 		final ZFactory zFactory,
 		final ZFuzzFactory zFuzzFactory,
 		final AlloyFactory alloyFactory
@@ -75,6 +78,7 @@ public class FactoryProvider {
 		this.tlaFactory = tlaFactory;
 		this.bRulesFactory = bRulesFactory;
 		this.xtlFactory = xtlFactory;
+		this.sequentProverFactory = sequentProverFactory;
 		this.zFactory = zFactory;
 		this.zFuzzFactory = zFuzzFactory;
 		this.alloyFactory = alloyFactory;
@@ -120,6 +124,10 @@ public class FactoryProvider {
 		return this.xtlFactory;
 	}
 
+	public SequentProverFactory getSequentProverFactory() {
+		return sequentProverFactory;
+	}
+
 	public ZFactory getZFactory() {
 		return this.zFactory;
 	}
@@ -147,6 +155,8 @@ public class FactoryProvider {
 			return this.getBRulesFactory();
 		} else if (clazz == XTLFactory.class) {
 			return this.getXTLFactory();
+		} else if (clazz == SequentProverFactory.class) {
+			return this.getSequentProverFactory();
 		} else if (clazz == ZFactory.class) {
 			return this.getZFactory();
 		} else if (clazz == ZFuzzFactory.class) {

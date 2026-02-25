@@ -9,6 +9,7 @@ public enum Language {
 	Z(FormalismType.Z, CLASSICAL_B, "z", "Z"),
 	CSP(FormalismType.CSP, null, "cspm", "CSP"),
 	XTL(FormalismType.XTL, null, "xtl", "XTL"),
+	SEQUENT_PROVER(FormalismType.XTL, null, "sequent_prover", "Sequent Prover"),
 	;
 	
 	private final FormalismType formalismType;
