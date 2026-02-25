@@ -2,8 +2,7 @@ package de.prob.statespace;
 
 public enum Language {
 	CLASSICAL_B(FormalismType.B, null, "b", "B"),
-	// B_RULES uses the same prologName as CLASSICAL_B - the Prolog side doesn't know anything about rules, all translation happens on the Java side.
-	B_RULES(FormalismType.B, CLASSICAL_B, "b", "B Rules"),
+	B_RULES(FormalismType.B, CLASSICAL_B, "rules_dsl", "B Rules"),
 	EVENT_B(FormalismType.B, null, "eventb", "Event-B"),
 	TLA(FormalismType.B, CLASSICAL_B, "tla", "TLA+"),
 	ALLOY(FormalismType.B, CLASSICAL_B, "alloy", "Alloy"),
