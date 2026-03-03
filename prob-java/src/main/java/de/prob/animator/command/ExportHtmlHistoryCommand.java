@@ -3,9 +3,12 @@ package de.prob.animator.command;
 import de.prob.parser.ISimplifiedROMap;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;
+import de.prob.statespace.Trace;
+import de.prob.statespace.Transition;
 
 import java.io.File;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ExportHtmlHistoryCommand extends AbstractCommand {
 
@@ -16,6 +19,10 @@ public class ExportHtmlHistoryCommand extends AbstractCommand {
 	public ExportHtmlHistoryCommand(final File file, final List<String> transitionIds) {
 		this.file = file;
 		this.transitionIds = transitionIds;
+	}
+
+	public ExportHtmlHistoryCommand(final File file, final Trace trace) {
+		this(file, trace.getTransitionList().stream().map(Transition::getId).collect(Collectors.toList()));
 	}
 
 	@Override
