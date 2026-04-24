@@ -32,7 +32,7 @@ public final class DotVisualizationCommand extends DynamicCommandItem {
 	public static final String STATE_SPACE_NAME = "state_space";
 	public static final String STATE_SPACE_FAST_NAME = "state_space_sfdp";
 	public static final String STATE_SPACE_PROJECTION_NAME = "transition_diagram";
-	
+
 	private DotVisualizationCommand(
 			final Trace trace,
 			final String command,
@@ -95,7 +95,7 @@ public final class DotVisualizationCommand extends DynamicCommandItem {
 	public static DotVisualizationCommand getByName(final String commandName, final State state) {
 		return getByName(commandName, state.getStateSpace().getTrace(state.getId()));
 	}
-	
+
 	/**
 	 * Get information about a specific dot visualization command by name.
 	 * Some common dot visualization command names are defined as constants in {@link DotVisualizationCommand}.
@@ -110,7 +110,7 @@ public final class DotVisualizationCommand extends DynamicCommandItem {
 			.findAny()
 			.orElseThrow(() -> new IllegalArgumentException("Could not find dot visualization command named " + commandName));
 	}
-	
+
 	public Optional<String> getPreferredDotLayoutEngine() {
 		return this.getAdditionalInfo().stream()
 			.filter(t -> "preferred_dot_type".equals(t.getFunctor()))
@@ -118,7 +118,7 @@ public final class DotVisualizationCommand extends DynamicCommandItem {
 			.map(t -> t.getArgument(1).atomToString())
 			.findAny();
 	}
-	
+
 	/**
 	 * Execute this visualization command and write the generated graph as dot source code into the given file.
 	 * 
@@ -129,7 +129,7 @@ public final class DotVisualizationCommand extends DynamicCommandItem {
 		final GetDotForVisualizationCommand cmd = new GetDotForVisualizationCommand(this.getTrace(), this, dotFilePath.toFile(), formulas);
 		this.getTrace().getStateSpace().execute(cmd);
 	}
-	
+
 	/**
 	 * Execute this visualization command and return the generated graph as dot source code as a byte array.
 	 *
@@ -156,7 +156,7 @@ public final class DotVisualizationCommand extends DynamicCommandItem {
 			}
 		}
 	}
-	
+
 	/**
 	 * Execute this visualization command and return the generated graph as dot source code as a string.
 	 * If you only need to pass the source code to {@link DotCall},
@@ -169,7 +169,7 @@ public final class DotVisualizationCommand extends DynamicCommandItem {
 	public String visualizeAsDotToString(final List<IEvalElement> formulas) {
 		return new String(this.visualizeAsDotToBytes(formulas), StandardCharsets.UTF_8);
 	}
-	
+
 	/**
 	 * <p>
 	 * Execute this visualization command and return the generated graph in the requested output format as a byte array.
@@ -198,7 +198,7 @@ public final class DotVisualizationCommand extends DynamicCommandItem {
 			throw new CommandInterruptedException("dot call interrupted", Collections.emptyList(), e);
 		}
 	}
-	
+
 	/**
 	 * Execute this visualization command and write the generated graph in SVG format into the given file.
 	 *
@@ -213,7 +213,7 @@ public final class DotVisualizationCommand extends DynamicCommandItem {
 			throw new ProBError("Failed to write SVG data to file", e);
 		}
 	}
-	
+
 	/**
 	 * Execute this visualization command and return the generated graph in SVG format as a string.
 	 *
