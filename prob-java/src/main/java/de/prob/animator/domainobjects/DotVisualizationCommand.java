@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import de.prob.animator.CommandInterruptedException;
 import de.prob.animator.command.GetAllDotCommands;
@@ -119,6 +121,16 @@ public final class DotVisualizationCommand extends DynamicCommandItem {
 			.findAny();
 	}
 
+	public List<String> getExtraArguments() {
+		return this.getAdditionalInfo().stream()
+				.filter(t -> "extra_arguments".equals(t.getFunctor()))
+				.map(t -> BindingGenerator.getCompoundTerm(t, 1))
+				.map(t -> BindingGenerator.getList(t.getArgument(1)))
+				.flatMap(Collection::stream)
+				.map(PrologTerm::getFunctor)
+				.collect(Collectors.toList());
+	}
+
 	/**
 	 * Execute this visualization command and write the generated graph as dot source code into the given file.
 	 * 
@@ -191,6 +203,7 @@ public final class DotVisualizationCommand extends DynamicCommandItem {
 					                                                           this.getTrace().getStateSpace().getCurrentPreference("DOT_ENGINE")
 			))
 			.outputFormat(outputFormat)
+			.extraDotArgs(this.getExtraArguments())
 			.input(this.visualizeAsDotToBytes(formulas));
 		try {
 			return dotCall.call();
