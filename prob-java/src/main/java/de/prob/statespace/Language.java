@@ -44,6 +44,15 @@ public enum Language {
 		return this.prologName;
 	}
 
+	public static Language fromPrologName(final String prologName) {
+		for (Language language : values()) {
+			if (language.getPrologName().equals(prologName)) {
+				return language;
+			}
+		}
+		return null;
+	}
+
 	public String getPrettyName() {
 		return this.prettyName;
 	}
