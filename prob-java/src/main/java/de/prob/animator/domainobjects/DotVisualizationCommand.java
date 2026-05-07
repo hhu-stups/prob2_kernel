@@ -15,6 +15,7 @@ import de.prob.animator.command.GetAllDotCommands;
 import de.prob.animator.command.GetDotForVisualizationCommand;
 import de.prob.exception.ProBError;
 import de.prob.parser.BindingGenerator;
+import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.State;
 import de.prob.statespace.Trace;
@@ -126,7 +127,7 @@ public final class DotVisualizationCommand extends DynamicCommandItem {
 				.filter(t -> "extra_arguments".equals(t.getFunctor()))
 				.map(t -> BindingGenerator.getCompoundTerm(t, 1))
 				.map(t -> BindingGenerator.getList(t.getArgument(1)))
-				.flatMap(Collection::stream)
+				.flatMap(Collection<ListPrologTerm>::stream)
 				.map(PrologTerm::getFunctor)
 				.collect(Collectors.toList());
 	}

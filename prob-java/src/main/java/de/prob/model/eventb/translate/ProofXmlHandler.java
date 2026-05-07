@@ -110,6 +110,7 @@ public class ProofXmlHandler extends DefaultHandler {
 						predicateSetSelectionHints.get(currSequent).add(new AbstractMap.SimpleEntry<>(fstSetName,sndSetName));
 					}
 				}
+				break;
 			}
 
 			case "org.eventb.core.poIdentifier": {
@@ -118,6 +119,7 @@ public class ProofXmlHandler extends DefaultHandler {
 					String type = attributes.getValue("org.eventb.core.type");
 					identifiersPredicateSets.get(currHypSet).put(name, new EventB(type));
 				}
+				break;
 			}
 		}
 	}
