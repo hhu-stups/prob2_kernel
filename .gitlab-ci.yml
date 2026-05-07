@@ -25,12 +25,20 @@ variables:
 # to the Java version number of the eclipse-temurin image.
 .linux_old_java:
   variables:
+    DEBIAN_FRONTEND: noninteractive
     # Change JAVA_HOME to the system default Java
     # so that Gradle runs using this newer Java version.
     JAVA_HOME: "/usr/lib/jvm/default-java"
   before_script:
     - apt-get update
-    - apt-get install -y default-jre-headless
+    - apt-get install -y default-jre-headless git
+
+.linux_new_java:
+  variables:
+    DEBIAN_FRONTEND: noninteractive
+  before_script:
+    - apt-get update
+    - apt-get install -y git
 
 .tests:
   stage: test
@@ -48,35 +56,32 @@ variables:
         - "*/build/test-results/**/TEST-*.xml"
     when: always
 
-.docker-tests:
-  extends: .tests
-  variables:
-    DEBIAN_FRONTEND: noninteractive
-  before_script:
-    - apt-get update && apt-get install -y git
-
 tests:jdk-8:
   extends:
-    - .docker-tests
     - .linux_old_java
+    - .tests
   image: eclipse-temurin:8
   variables:
     ORG_GRADLE_PROJECT_javaToolchainVersion: "8"
 
 tests:jdk-11:
   extends:
-    - .docker-tests
     - .linux_old_java
+    - .tests
   image: eclipse-temurin:11
   variables:
     ORG_GRADLE_PROJECT_javaToolchainVersion: "11"
 
 tests:jdk-17:
-  extends: .docker-tests
+  extends:
+    - .linux_new_java
+    - .tests
   image: eclipse-temurin:17
 
 tests:jdk-21:
-  extends: .docker-tests
+  extends:
+    - .linux_new_java
+    - .tests
   image: eclipse-temurin:21
 
 tests:macos:
@@ -97,8 +102,6 @@ publish:
   image: eclipse-temurin:8
   variables:
     ORG_GRADLE_PROJECT_javaToolchainVersion: "8"
-  before_script:
-    - apt-get update && apt-get install -y git 
   script:
     - openssl aes-256-cbc -d -base64 -pbkdf2 -pass "env:ENCRYPTION_PASSWORD" -in gradle.properties.enc -out gradle.properties
     - openssl aes-256-cbc -d -base64 -pbkdf2 -pass "env:ENCRYPTION_PASSWORD" -in pubring.gpg.enc -out pubring.gpg
