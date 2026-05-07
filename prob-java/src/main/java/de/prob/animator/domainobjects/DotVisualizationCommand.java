@@ -127,7 +127,7 @@ public final class DotVisualizationCommand extends DynamicCommandItem {
 				.filter(t -> "extra_arguments".equals(t.getFunctor()))
 				.map(t -> BindingGenerator.getCompoundTerm(t, 1))
 				.map(t -> BindingGenerator.getList(t.getArgument(1)))
-				.flatMap(Collection<ListPrologTerm>::stream)
+				.flatMap(Collection::stream)
 				.map(PrologTerm::getFunctor)
 				.collect(Collectors.toList());
 	}
