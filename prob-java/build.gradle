@@ -116,9 +116,6 @@ test {
 	}
 }
 
-jacoco {
-	toolVersion = "0.8.12"
-}
 jacocoTestReport {
 	reports {
 		xml.required = false
