@@ -84,6 +84,12 @@ tests:jdk-21:
     - .tests
   image: eclipse-temurin:21
 
+tests:jdk-25:
+  extends:
+    - .linux_new_java
+    - .tests
+  image: eclipse-temurin:25
+
 tests:macos:
   extends: .tests
   tags:
