@@ -8,6 +8,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import de.be4.classicalb.core.parser.BParser;
+import de.be4.classicalb.core.parser.CachingDefinitionFileProvider;
 import de.be4.classicalb.core.parser.ParsingBehaviour;
 import de.be4.classicalb.core.parser.analysis.prolog.RecursiveMachineLoader;
 import de.be4.classicalb.core.parser.exceptions.BCompoundException;
@@ -53,6 +54,11 @@ public class TLAFactory implements ModelFactory<TLAModel> {
 		}
 
 		BParser bparser = new BParser(fileName);
+		// TLA2B needs to get the content provider from the BParser,
+		// but BParser only initializes its content provider when it parses a machine file,
+		// which never happens here,
+		// so we need to set it ourselves.
+		bparser.setContentProvider(new CachingDefinitionFileProvider());
 		try {
 			bparser.getDefinitions().addDefinitions(translator.getBDefinitions());
 		} catch (PreParseException e) {
