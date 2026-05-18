@@ -65,7 +65,7 @@ public final class ProBInstance implements Closeable {
 		// to prevent the thread from possibly seeing final instance fields before they are initialized
 		// (in particular, logger and consoleOutputListeners).
 		// This is rare, but possible - see the Java Language Specification, section 17.5. "final Field Semantics".
-		instance.startOutputPublisher();
+		instance.outputLoggerThread.start();
 		return instance;
 	}
 
@@ -74,10 +74,6 @@ public final class ProBInstance implements Closeable {
 		for (final IConsoleOutputListener l : this.consoleOutputListeners) {
 			l.lineReceived(line);
 		}
-	}
-
-	private void startOutputPublisher() {
-		this.outputLoggerThread.start();
 	}
 
 	public void addConsoleOutputListener(final IConsoleOutputListener listener) {
