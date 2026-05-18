@@ -43,6 +43,8 @@ public final class ProBInstance implements Closeable {
 	) {
 		this.probProcess = probProcess;
 		this.outputLoggerThread = new Thread(new ConsoleListener(stream, this::logConsoleLine), "ProB Output Logger for " + this.probProcess);
+		// Make the output logger thread not prevent the JVM from exiting.
+		this.outputLoggerThread.setDaemon(true);
 		this.connection = connection;
 		this.interruptCommand = interruptCommand;
 		this.provider = provider;
