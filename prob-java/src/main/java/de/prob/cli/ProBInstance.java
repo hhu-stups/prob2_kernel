@@ -164,7 +164,9 @@ public final class ProBInstance implements Closeable {
 			final boolean exited = this.probProcess.waitFor(1, TimeUnit.SECONDS);
 			if (exited) {
 				final int exitCode = this.probProcess.exitValue();
-				if (exitCode != 0) {
+				if (exitCode == 0) {
+					LOGGER.debug("{} exited successfully", this);
+				} else {
 					LOGGER.warn("{} exited with non-zero status {}", this, exitCode);
 				}
 			} else {
@@ -181,7 +183,9 @@ public final class ProBInstance implements Closeable {
 			exited = this.probProcess.waitFor(1, TimeUnit.SECONDS);
 			if (exited) {
 				final int exitCode = this.probProcess.exitValue();
-				if (exitCode != 0) {
+				if (exitCode == 0) {
+					LOGGER.debug("{} exited successfully after being destroyed", this);
+				} else {
 					LOGGER.warn("{} exited with non-zero status {} after being destroyed", this, exitCode);
 				}
 			} else {

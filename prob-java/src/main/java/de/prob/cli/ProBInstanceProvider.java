@@ -76,10 +76,11 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 			try {
 				this.shutdownAll();
 			} catch (RuntimeException exc) {
-				LOGGER.error("ProBInstanceProvider.shutdownAll() failed while shutting down JVM - ignoring", exc);
+				LOGGER.error("shutdownAll() failed for {} while shutting down JVM - ignoring", this, exc);
 			}
 
 			if (usesSharedProBDirectory) {
+				LOGGER.debug("{} is now done using the default ProB directory", this);
 				// Tell Installer that we're done using the default ProB directory
 				// so that its shutdown hook may delete it (if it's a temporary directory).
 				Installer.DEFAULT_PROB_DIR_USERS_COUNTER.arriveAndDeregister();
@@ -133,7 +134,9 @@ public final class ProBInstanceProvider implements Provider<ProBInstance> {
 				exited = process.waitFor(1, TimeUnit.SECONDS);
 				if (exited) {
 					final int exitCode = process.exitValue();
-					if (exitCode != 0) {
+					if (exitCode == 0) {
+						LOGGER.debug("Orphaned probcli process {} exited successfully after being destroyed", process);
+					} else {
 						LOGGER.warn("Orphaned probcli process {} exited with non-zero status {} after being destroyed", process, exitCode);
 					}
 				} else {
