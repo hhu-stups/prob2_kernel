@@ -212,10 +212,46 @@ public final class Installer {
 				}
 
 				LOGGER.debug("Deleting temporary ProB installation directory: {}", installDirectory);
-				try {
-					MoreFiles.deleteRecursively(installDirectory, RecursiveDeleteOption.ALLOW_INSECURE);
-				} catch (IOException | RuntimeException exc) {
-					LOGGER.error("Failed to delete temporary ProB installation directory", exc);
+				boolean deleted = false;
+				int attempt = 0;
+				for (int delayMs : new int[] {500, 1500, 3000, 5000, 5000}) {
+					attempt++;
+					try {
+						MoreFiles.deleteRecursively(installDirectory, RecursiveDeleteOption.ALLOW_INSECURE);
+						if (attempt == 1) {
+							LOGGER.debug("Successfully deleted temporary ProB installation directory on first attempt");
+						} else {
+							LOGGER.info("Successfully deleted temporary ProB installation directory after {} attempts", attempt);
+						}
+						deleted = true;
+						break;
+					} catch (IOException | RuntimeException exc) {
+						LOGGER.warn("Failed to delete temporary ProB installation directory (attempt {} - will try again in {} seconds)", attempt, delayMs / 1000.0);
+						LOGGER.info("Error details for deletion attempt {}:", attempt, exc);
+						// If deleting the temporary ProB installation directory fails,
+						// try again repeatedly with increasing delays.
+						// This is a workaround for problems on Windows
+						// where something might keep ProB executables/DLLs open,
+						// preventing them from being deleted.
+						// We hope that whatever it is,
+						// it finishes soon.
+						try {
+							Thread.sleep(delayMs);
+						} catch (InterruptedException interrupt) {
+							LOGGER.warn("Retry loop interrupted - will try to delete the temporary ProB installation directory one last time", interrupt);
+							break;
+						}
+					}
+				}
+
+				if (!deleted) {
+					attempt++;
+					try {
+						MoreFiles.deleteRecursively(installDirectory, RecursiveDeleteOption.ALLOW_INSECURE);
+						LOGGER.info("Successfully deleted temporary ProB installation directory after {} attempts", attempt);
+					} catch (IOException | RuntimeException exc) {
+						LOGGER.error("Failed to delete temporary ProB installation directory (attempt {} - giving up)", attempt, exc);
+					}
 				}
 			}, "ProB temp install dir deleter"));
 
