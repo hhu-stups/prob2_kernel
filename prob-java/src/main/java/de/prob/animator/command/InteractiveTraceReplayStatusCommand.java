@@ -15,6 +15,7 @@ public final class InteractiveTraceReplayStatusCommand extends AbstractCommand {
 	private static final String MATCH_INFO = "MatchInfo";
 	private static final String ERRORS = "Errors";
 
+	private final TransitionReplayPrecision precision;
 	private final int currentStepNr;
 	private final String stateID;
 
@@ -23,6 +24,12 @@ public final class InteractiveTraceReplayStatusCommand extends AbstractCommand {
 	private List<String> errors;
 
 	public InteractiveTraceReplayStatusCommand(final int currentStepNr, final String stateID) {
+		// keep_name is the weakest option (default)
+		this(TransitionReplayPrecision.KEEP_NAME, currentStepNr, stateID);
+	}
+
+	public InteractiveTraceReplayStatusCommand(final TransitionReplayPrecision precision, final int currentStepNr, final String stateID) {
+		this.precision = precision;
 		this.currentStepNr = currentStepNr;
 		this.stateID = stateID;
 	}
@@ -30,6 +37,7 @@ public final class InteractiveTraceReplayStatusCommand extends AbstractCommand {
 	@Override
 	public void writeCommand(final IPrologTermOutput pto) {
 		pto.openTerm(PROLOG_COMMAND_NAME);
+		pto.printAtom(precision.getPrologTerm());
 		pto.printNumber(currentStepNr);
 		pto.printAtomOrNumber(stateID);
 		pto.printVariable(OP_TERM);

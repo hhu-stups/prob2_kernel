@@ -43,6 +43,8 @@ public final class ProBInstance implements Closeable {
 	) {
 		this.probProcess = probProcess;
 		this.outputLoggerThread = new Thread(new ConsoleListener(stream, this::logConsoleLine), "ProB Output Logger for " + this.probProcess);
+		// Make the output logger thread not prevent the JVM from exiting.
+		this.outputLoggerThread.setDaemon(true);
 		this.connection = connection;
 		this.interruptCommand = interruptCommand;
 		this.provider = provider;
@@ -63,7 +65,7 @@ public final class ProBInstance implements Closeable {
 		// to prevent the thread from possibly seeing final instance fields before they are initialized
 		// (in particular, logger and consoleOutputListeners).
 		// This is rare, but possible - see the Java Language Specification, section 17.5. "final Field Semantics".
-		instance.startOutputPublisher();
+		instance.outputLoggerThread.start();
 		return instance;
 	}
 
@@ -72,10 +74,6 @@ public final class ProBInstance implements Closeable {
 		for (final IConsoleOutputListener l : this.consoleOutputListeners) {
 			l.lineReceived(line);
 		}
-	}
-
-	private void startOutputPublisher() {
-		this.outputLoggerThread.start();
 	}
 
 	public void addConsoleOutputListener(final IConsoleOutputListener listener) {
@@ -164,7 +162,9 @@ public final class ProBInstance implements Closeable {
 			final boolean exited = this.probProcess.waitFor(1, TimeUnit.SECONDS);
 			if (exited) {
 				final int exitCode = this.probProcess.exitValue();
-				if (exitCode != 0) {
+				if (exitCode == 0) {
+					LOGGER.debug("{} exited successfully", this);
+				} else {
 					LOGGER.warn("{} exited with non-zero status {}", this, exitCode);
 				}
 			} else {
@@ -181,7 +181,9 @@ public final class ProBInstance implements Closeable {
 			exited = this.probProcess.waitFor(1, TimeUnit.SECONDS);
 			if (exited) {
 				final int exitCode = this.probProcess.exitValue();
-				if (exitCode != 0) {
+				if (exitCode == 0) {
+					LOGGER.debug("{} exited successfully after being destroyed", this);
+				} else {
 					LOGGER.warn("{} exited with non-zero status {} after being destroyed", this, exitCode);
 				}
 			} else {

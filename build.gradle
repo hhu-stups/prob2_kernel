@@ -6,7 +6,7 @@ allprojects {
 	project.group = "de.hhu.stups"
 	// IMPORTANT: Before releasing the ProB Java API, remember to set probcli and all dependencies to release versions, not nightly/SNAPSHOT!
 	// IMPORTANT: Check the variables parserVersion and cliDownloadURL inside prob-java/build.gradle, and the dependencies {...} blocks in all build.gradle files.
-	project.version = "4.15.1"
+	project.version = "4.16.0"
 	project.ext.isSnapshot = project.version.endsWith("-SNAPSHOT")
 }
 
@@ -63,14 +63,25 @@ subprojects {
 		}
 		
 		java {
-			sourceCompatibility = JavaVersion.VERSION_1_8
+			// sourceCompatibility is superseded by options.release on JavaCompile tasks,
+			// but GroovyCompile tasks don't support options.release
+			// and only respect java.sourceCompatibility.
+			// https://github.com/gradle/gradle/issues/15703
+			sourceCompatibility = JavaVersion.VERSION_17
 			
 			withSourcesJar()
 			withJavadocJar()
+			
+			if (project.hasProperty("javaToolchainVersion")) {
+				toolchain {
+					languageVersion = JavaLanguageVersion.of(project.javaToolchainVersion)
+				}
+			}
 		}
 		
 		tasks.withType(JavaCompile) {
 			options.encoding = SOURCE_ENCODING
+			options.release = Integer.parseInt(java.sourceCompatibility.getMajorVersion())
 		}
 		
 		tasks.withType(Javadoc) {

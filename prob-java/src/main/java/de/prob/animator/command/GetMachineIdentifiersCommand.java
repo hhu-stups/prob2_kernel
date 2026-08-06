@@ -13,9 +13,15 @@ public class GetMachineIdentifiersCommand extends AbstractCommand {
 
 	public enum Category {
 		MACHINES("machines"),
+		DEFINITION_FILES("definition_files"),
+		DEFINITIONS("definitions"),
 		SETS("sets"),
+		SET_CONSTANTS("set_constants"),
 		CONSTANTS("constants"),
+		FREETYPES("freetypes"),
+		OPERATORS("operators"),
 		VARIABLES("variables"),
+		OPERATIONS("operations"),
 		;
 
 		final String prologAtom;

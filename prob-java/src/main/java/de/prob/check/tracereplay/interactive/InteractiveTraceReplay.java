@@ -28,6 +28,7 @@ public class InteractiveTraceReplay {
 	private TransitionReplayPrecision nextTransitionPrecision;
 	private List<String> nextTransitionsErrors = new ArrayList<>();
 	private int currentStep = 0;
+	private TransitionReplayPrecision precision = TransitionReplayPrecision.KEEP_NAME; // allow everything per default
 
 	public InteractiveTraceReplay(File traceFile, StateSpace stateSpace) {
 		this.traceFile = traceFile;
@@ -70,7 +71,7 @@ public class InteractiveTraceReplay {
 
 	public void fastForward() {
 		checkInitialised(true);
-		InteractiveTraceReplayFastForwardCommand cmd = new InteractiveTraceReplayFastForwardCommand(currentStep+1, getCurrentStateId());
+		InteractiveTraceReplayFastForwardCommand cmd = new InteractiveTraceReplayFastForwardCommand(precision, currentStep+1, getCurrentStateId());
 		stateSpace.execute(cmd);
 		List<Transition> transitions = cmd.getTransitionTerms().stream()
 				.map(t -> Transition.createTransitionFromCompoundPrologTerm(stateSpace, t))
@@ -121,7 +122,7 @@ public class InteractiveTraceReplay {
 	}
 
 	private void updateStatus() {
-		InteractiveTraceReplayStatusCommand statusCmd = new InteractiveTraceReplayStatusCommand(currentStep+1, getCurrentStateId());
+		InteractiveTraceReplayStatusCommand statusCmd = new InteractiveTraceReplayStatusCommand(precision, currentStep+1, getCurrentStateId());
 		// currentStep on Prolog side is +1!
 		stateSpace.execute(statusCmd);
 		nextTransition = statusCmd.getOpTerm() != null
@@ -129,6 +130,11 @@ public class InteractiveTraceReplay {
 				: null;
 		nextTransitionPrecision = statusCmd.getMatchInfo();
 		nextTransitionsErrors = statusCmd.getErrors();
+	}
+
+	public void setPrecision(TransitionReplayPrecision precision) {
+		this.precision = precision;
+		updateStatus();
 	}
 
 	private void checkInitialised(boolean failOnFinish) {

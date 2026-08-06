@@ -6,8 +6,8 @@ plugins {
 }
 
 // When making a release, please check that parserVersion matches what the specified version of probcli expects, to avoid unpredictable/inconsistent behavior!
-def parserVersion = "2.15.4"
-def probcliVersion = "1.15.1"
+def parserVersion = "2.16.0"
+def probcliVersion = "1.16.0"
 def cliDownloadURL
 if (probcliVersion.endsWith("-nightly")) {
 	if (!isSnapshot) {
@@ -116,9 +116,6 @@ test {
 	}
 }
 
-jacoco {
-	toolVersion = "0.8.12"
-}
 jacocoTestReport {
 	reports {
 		xml.required = false

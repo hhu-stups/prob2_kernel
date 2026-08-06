@@ -6,7 +6,6 @@ import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,19 +35,17 @@ public class ProofExtractor {
 	private Path proofObligationsFile;
 	private Path proofStatusFile;
 
-	private Map<String, String> descriptions;
 	private Map<String, Integer> proofConfidences;
+	private Map<String, ProofXmlHandler.ExtractedSequent> extractedSequents;
 
 	private final List<ProofObligation> proofs = new ArrayList<>();
 
-	public ProofExtractor(final Context c, final String baseFileName)
-			throws SAXException {
+	public ProofExtractor(final Context c, final String baseFileName) throws SAXException {
 		extractProofs(baseFileName);
 		addProofs(c);
 	}
 
-	public ProofExtractor(final EventBMachine m, final String baseFileName)
-			throws SAXException {
+	public ProofExtractor(final EventBMachine m, final String baseFileName) throws SAXException {
 		extractProofs(baseFileName);
 		addProofs(m);
 	}
@@ -70,19 +67,11 @@ public class ProofExtractor {
 			String bpoFileName = baseFileName + ".bpo";
 			File bpoFile = new File(bpoFileName);
 			// Use LinkedHashMap to preserve the order of proof descriptions from the Rodin project.
-			descriptions = new LinkedHashMap<>();
 			if (bpoFile.exists()) {
 				proofObligationsFile = bpoFile.toPath();
-				saxParser.parse(bpoFile, new DefaultHandler() {
-					@Override
-					public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) {
-						if ("org.eventb.core.poSequent".equals(qName)) {
-							String name = attributes.getValue("name");
-							String desc = attributes.getValue("org.eventb.core.poDesc");
-							descriptions.put(name, desc);
-						}
-					}
-				});
+				ProofXmlHandler handler = new ProofXmlHandler();
+				saxParser.parse(bpoFile, handler);
+				extractedSequents = handler.getExtractedSequents();
 			} else {
 				logger.info("Could not find file {}. Assuming that no proofs have been generated for model element.", bpoFileName);
 				proofObligationsFile = null;
@@ -118,9 +107,8 @@ public class ProofExtractor {
 	}
 
 	private void addProofs(final Context c) {
-		for (Map.Entry<String, String> entry : descriptions.entrySet()) {
+		for (Map.Entry<String, ProofXmlHandler.ExtractedSequent> entry : extractedSequents.entrySet()) {
 			String name = entry.getKey();
-			String desc = entry.getValue();
 			final int confidence = proofConfidences.getOrDefault(name, 0);
 
 			String[] split = name.split("/");
@@ -138,14 +126,13 @@ public class ProofExtractor {
 			if ("THM".equals(type) || "WD".equals(type)) {
 				sourceInfos.add(makeSource("axiom", split[0]));
 			}
-			proofs.add(new ProofObligation(source, name, confidence, desc, sourceInfos));
+			proofs.add(entry.getValue().toProofObligation(source, name, confidence, sourceInfos));
 		}
 	}
 
 	private void addProofs(final EventBMachine m) {
-		for (Map.Entry<String, String> entry : descriptions.entrySet()) {
+		for (Map.Entry<String, ProofXmlHandler.ExtractedSequent> entry : extractedSequents.entrySet()) {
 			String name = entry.getKey();
-			String desc = entry.getValue();
 			final int confidence = proofConfidences.getOrDefault(name, 0);
 
 			String[] split = name.split("/");
@@ -192,7 +179,7 @@ public class ProofExtractor {
 					}
 				}
 			}
-			proofs.add(new ProofObligation(source, name, confidence, desc, sourceInfos));
+			proofs.add(entry.getValue().toProofObligation(source, name, confidence, sourceInfos));
 		}
 
 	}

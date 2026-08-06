@@ -2,14 +2,14 @@ package de.prob.statespace;
 
 public enum Language {
 	CLASSICAL_B(FormalismType.B, null, "b", "B"),
-	// B_RULES uses the same prologName as CLASSICAL_B - the Prolog side doesn't know anything about rules, all translation happens on the Java side.
-	B_RULES(FormalismType.B, CLASSICAL_B, "b", "B Rules"),
+	B_RULES(FormalismType.B, CLASSICAL_B, "rules_dsl", "B Rules"),
 	EVENT_B(FormalismType.B, null, "eventb", "Event-B"),
 	TLA(FormalismType.B, CLASSICAL_B, "tla", "TLA+"),
 	ALLOY(FormalismType.B, CLASSICAL_B, "alloy", "Alloy"),
 	Z(FormalismType.Z, CLASSICAL_B, "z", "Z"),
 	CSP(FormalismType.CSP, null, "cspm", "CSP"),
 	XTL(FormalismType.XTL, null, "xtl", "XTL"),
+	SEQUENT_PROVER(FormalismType.XTL, null, "sequent_prover", "Sequent Prover"),
 	;
 	
 	private final FormalismType formalismType;
@@ -42,6 +42,15 @@ public enum Language {
 	
 	public String getPrologName() {
 		return this.prologName;
+	}
+
+	public static Language fromPrologName(final String prologName) {
+		for (Language language : values()) {
+			if (language.getPrologName().equals(prologName)) {
+				return language;
+			}
+		}
+		return null;
 	}
 
 	public String getPrettyName() {

@@ -1,11 +1,15 @@
 package de.prob.model.eventb;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.model.representation.AbstractElement;
 import de.prob.model.representation.Named;
 import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.PrologTerm;
+import de.prob.unicode.UnicodeTranslator;
 
 public class ProofObligation extends AbstractElement implements Named {
 
@@ -14,13 +18,29 @@ public class ProofObligation extends AbstractElement implements Named {
 	private final String description;
 	private final String sourceName;
 	private final List<? extends PrologTerm> sources;
+	private final List<IEvalElement> hypotheses;
+	private final List<IEvalElement> selectedHypotheses;
+	private final IEvalElement goal;
+	private final Map<String, IEvalElement> identifiers;
 
+	@Deprecated
 	public ProofObligation(final String sourceName, final String name, final int confidence, final String description, final List<? extends PrologTerm> sources) {
+		this(sourceName, name, confidence, description, sources, null, null, null, new HashMap<>());
+	}
+
+	public ProofObligation(final String sourceName, final String name, final int confidence, final String description,
+	                       final List<? extends PrologTerm> sources, final List<IEvalElement> hypotheses,
+	                       final List<IEvalElement> selectedHypotheses, final IEvalElement goal,
+	                       final Map<String, IEvalElement> identifiers) {
 		this.sourceName = sourceName;
 		this.name = name;
 		this.confidence = confidence;
 		this.description = description;
 		this.sources = sources;
+		this.hypotheses = hypotheses;
+		this.selectedHypotheses = selectedHypotheses;
+		this.goal = goal;
+		this.identifiers = identifiers;
 	}
 
 	@Override
@@ -34,6 +54,22 @@ public class ProofObligation extends AbstractElement implements Named {
 
 	public String getDescription() {
 		return description;
+	}
+
+	public List<IEvalElement> getHypotheses() {
+		return hypotheses;
+	}
+
+	public List<IEvalElement> getSelectedHypotheses() {
+		return selectedHypotheses;
+	}
+
+	public IEvalElement getGoal() {
+		return goal;
+	}
+
+	public Map<String, IEvalElement> getIdentifiers() {
+		return identifiers;
 	}
 
 	/**
@@ -84,4 +120,24 @@ public class ProofObligation extends AbstractElement implements Named {
 		
 		pto.closeTerm();
 	}
+
+	public String getSequentPrettyPrint(boolean useUnicode) {
+		StringBuilder prettyPrint = new StringBuilder();
+		for (IEvalElement hyp : this.hypotheses) {
+			prettyPrint.append(this.selectedHypotheses.contains(hyp) ? " ✔ " : "   ");
+			String code = hyp.getCode();
+			if (useUnicode) {
+				code = UnicodeTranslator.toUnicode(code);
+			}
+			prettyPrint.append(code).append("\n");
+		}
+		prettyPrint.append("  ────────────────\n");
+		String goalCode = this.goal.getCode();
+		if (useUnicode) {
+			goalCode = UnicodeTranslator.toUnicode(goalCode);
+		}
+		prettyPrint.append("   ").append(goalCode);
+		return prettyPrint.toString();
+	}
+
 }

@@ -36,25 +36,34 @@ public final class GetCandidateOperationsCommand extends AbstractCommand {
 	public static final class Candidate {
 
 		private final String operation;
+		private final List<String> paramValues;
 		private final boolean timeoutOccurred;
 		private final CandidateGuardPrecision guardPrecision;
 
-		public Candidate(String operation, boolean timeoutOccurred, CandidateGuardPrecision guardPrecision) {
+		public Candidate(String operation, List<String> paramValues, boolean timeoutOccurred, CandidateGuardPrecision guardPrecision) {
 			this.operation = operation;
+			this.paramValues = paramValues;
 			this.timeoutOccurred = timeoutOccurred;
 			this.guardPrecision = guardPrecision;
 		}
 
 		public static Candidate fromProlog(PrologTerm t) {
-			CompoundPrologTerm cpt = BindingGenerator.getCompoundTerm(t, "candidate", 3);
+			CompoundPrologTerm cpt = BindingGenerator.getCompoundTerm(t, "candidate", 4);
 			String operation = Transition.getIdFromPrologTerm(cpt.getArgument(1));
-			boolean timeoutOccurred = "true".equals(cpt.getArgument(2).atomToString());
-			CandidateGuardPrecision guardPrecision = CandidateGuardPrecision.fromProlog(cpt.getArgument(3));
-			return new Candidate(operation, timeoutOccurred, guardPrecision);
+			List<String> paramValues = BindingGenerator.getList(cpt.getArgument(2)).stream()
+					.map(value -> (value.getFunctor().equals("none")) ? "" : value.toString())
+					.collect(Collectors.toList());
+			boolean timeoutOccurred = "true".equals(cpt.getArgument(3).atomToString());
+			CandidateGuardPrecision guardPrecision = CandidateGuardPrecision.fromProlog(cpt.getArgument(4));
+			return new Candidate(operation, paramValues, timeoutOccurred, guardPrecision);
 		}
 
 		public String getOperation() {
 			return this.operation;
+		}
+
+		public List<String> getParameterValues() {
+			return this.paramValues;
 		}
 
 		public boolean getTimeoutOccurred() {
@@ -82,7 +91,7 @@ public final class GetCandidateOperationsCommand extends AbstractCommand {
 		}
 	}
 
-	// candidate(OpName,TimeOutOccurred,GuardPrecise)
+	// candidate(OpName,ParamValues,TimeOutOccurred,GuardPrecise)
 	@Override
 	public void processResult(final ISimplifiedROMap<String, PrologTerm> bindings) {
 		List<Candidate> candidates = BindingGenerator.getList(bindings, OPERATIONS_VARIABLE).stream()
