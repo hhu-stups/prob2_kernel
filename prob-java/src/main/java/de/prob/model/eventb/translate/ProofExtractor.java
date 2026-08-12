@@ -6,6 +6,7 @@ import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -75,6 +76,7 @@ public class ProofExtractor {
 			} else {
 				logger.info("Could not find file {}. Assuming that no proofs have been generated for model element.", bpoFileName);
 				proofObligationsFile = null;
+				extractedSequents = new LinkedHashMap<>();
 			}
 
 			String bpsFileName = baseFileName + ".bps";
