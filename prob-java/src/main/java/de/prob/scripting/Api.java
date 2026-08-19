@@ -44,7 +44,7 @@ public class Api {
 		return "Api Commands:\n\n"
 			+ " String help(): print out available commands\n"
 			+ " StateSpace b_load(String filePath, [Map<String, String> prefs]): load a classical B machine from a .mch file\n"
-			+ " StateSpace b_load(Start ast, [Map<String, String> prefs]): load aclassical B machine from an AST\n"
+			+ " StateSpace b_load(Start ast, [Map<String, String> prefs]): load a classical B machine from an AST\n"
 			+ " StateSpace eventb_load(String filePath, [Map<String, String> prefs]): load an EventB machine from a file\n"
 			+ " void eventb_save(StateSpace stateSpace, String filePath): save an EventB state space to a file\n"
 			+ " StateSpace tla_load(String filePath, [Map<String, String> prefs]): load a .tla file\n"
