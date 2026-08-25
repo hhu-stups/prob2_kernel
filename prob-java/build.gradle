@@ -29,7 +29,7 @@ dependencies {
 	api("de.hhu.stups:theorymapping:${parserVersion}")
 
 	// Other STUPS dependencies
-	implementation("de.hhu.stups:alloy2b:1.4") // Eclipse Public License 1.0
+	implementation("de.hhu.stups:alloy2b:2.0.0") // Eclipse Public License 1.0
 	api("de.hhu.stups:ltl-dsl:0.2.2") // Eclipse Public License 1.0
 	api("de.hhu.stups:rodin-eventb-ast:3.8.0") // Eclipse Public License 1.0
 	implementation("de.hhu.stups:tla2bAST:1.4.2") // Eclipse Public License 1.0
