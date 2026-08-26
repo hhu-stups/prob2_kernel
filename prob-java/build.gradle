@@ -41,10 +41,10 @@ dependencies {
 
 	// Misc dependencies
 	implementation("com.github.krukow:clj-ds:0.0.4") // Eclipse Public License 1.0
-	implementation("com.google.guava:guava:33.6.0-jre") // Apache License 2.0
+	implementation("com.google.guava:guava:33.7.1-jre") // Apache License 2.0
 	api("com.google.inject:guice:7.0.0") // Apache License 2.0
 
-	api(platform("com.fasterxml.jackson:jackson-bom:2.22.1"))
+	api(platform("com.fasterxml.jackson:jackson-bom:2.22.2"))
 	api("com.fasterxml.jackson.core:jackson-databind")
 	api("com.fasterxml.jackson.module:jackson-module-parameter-names")
 	api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
@@ -52,7 +52,7 @@ dependencies {
 	implementation("org.apache.velocity:velocity-engine-core:2.4.1")
 
 	// Test dependencies
-	testImplementation("ch.qos.logback:logback-classic:1.6.1") // Eclipse Public License 1.0
+	testImplementation("ch.qos.logback:logback-classic:1.6.3") // Eclipse Public License 1.0
 	testImplementation(platform("org.junit:junit-bom:5.14.4"))
 	testImplementation("org.junit.jupiter:junit-jupiter")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
