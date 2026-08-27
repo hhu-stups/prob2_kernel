@@ -7,7 +7,7 @@ dependencies {
 	api(project(":prob-java"))
 
 	// Groovy (Apache License 2.0)
-	api(platform("org.apache.groovy:groovy-bom:4.0.29"))
+	api(platform("org.apache.groovy:groovy-bom:4.0.33"))
 	api("org.apache.groovy:groovy")
 	api("org.apache.groovy:groovy-jsr223")
 }
