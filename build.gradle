@@ -53,7 +53,7 @@ subprojects {
 		
 		dependencies {
 			// The BOM subproject is pulled in by all other subprojects.
-			implementation(platform(bomProject))
+			implementation(platform(project(bomProject.path)))
 		}
 		
 		if (project.hasProperty("probHome")) {

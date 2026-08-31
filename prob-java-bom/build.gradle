@@ -14,7 +14,7 @@ dependencies {
 		// except for the BOM subproject itself.
 		rootProject.subprojects.each {
 			if (it != project) {
-				api(it)
+				api(project(it.path))
 			}
 		}
 	}
