@@ -89,7 +89,7 @@ def readCurrentGitCommit() {
 	return proc.in.readLines()[0]
 }
 
-tasks.named("processResources") {
+tasks.named("processResources", ProcessResources) {
 	// Automatically download probcli/cspmf, unless a custom PROB_HOME is set
 	if (!rootProject.hasProperty("probHome")) {
 		dependsOn("downloadBinaries")
@@ -103,12 +103,12 @@ tasks.named("processResources") {
 	}
 }
 
-tasks.named("sourcesJar") {
+tasks.named("sourcesJar", Jar) {
 	// The downloaded binaries shouldn't go into the sources jar.
 	exclude("de/prob/cli/binaries")
 }
 
-tasks.named("test") {
+tasks.named("test", Test) {
 	useJUnitPlatform()
 	systemProperty("logback.configurationFile", "de/prob/logging/production.xml")
 	testLogging {
@@ -116,7 +116,7 @@ tasks.named("test") {
 	}
 }
 
-tasks.named("jacocoTestReport") {
+tasks.named("jacocoTestReport", JacocoReport) {
 	reports {
 		xml.required = false
 		csv.required = false

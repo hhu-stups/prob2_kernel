@@ -88,7 +88,7 @@ subprojects {
 			options.encoding = SOURCE_ENCODING
 		}
 
-		tasks.named("javadoc") {
+		tasks.named("javadoc", Javadoc) {
 			options {
 				// silence warnings on missing javadoc
 				addBooleanOption('Xdoclint:all,-missing', true)
