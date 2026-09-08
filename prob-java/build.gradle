@@ -74,7 +74,7 @@ final platforms = [
 	"windows64",
 ]
 
-task downloadBinaries(type: Download) {
+tasks.register("downloadBinaries", Download) {
 	src(platforms.collect {platform -> "${cliDownloadURL}/probcli_${platform}.zip"})
 	dest(new File(generatedResourcesDir, "de/prob/cli/binaries"))
 	onlyIfModified(true)
@@ -89,7 +89,12 @@ def readCurrentGitCommit() {
 	return proc.in.readLines()[0]
 }
 
-processResources {
+tasks.named("processResources") {
+	// Automatically download probcli/cspmf, unless a custom PROB_HOME is set
+	if (!rootProject.hasProperty("probHome")) {
+		dependsOn("downloadBinaries")
+	}
+
 	inputs.property("version", project.version)
 	inputs.property("currentGitCommit", readCurrentGitCommit())
 
@@ -98,17 +103,12 @@ processResources {
 	}
 }
 
-if (!rootProject.hasProperty("probHome")) {
-	// Automatically download probcli/cspmf, unless a custom PROB_HOME is set
-	processResources.dependsOn(downloadBinaries)
-}
-
-sourcesJar {
+tasks.named("sourcesJar") {
 	// The downloaded binaries shouldn't go into the sources jar.
 	exclude("de/prob/cli/binaries")
 }
 
-test {
+tasks.named("test") {
 	useJUnitPlatform()
 	systemProperty("logback.configurationFile", "de/prob/logging/production.xml")
 	testLogging {
@@ -116,7 +116,7 @@ test {
 	}
 }
 
-jacocoTestReport {
+tasks.named("jacocoTestReport") {
 	reports {
 		xml.required = false
 		csv.required = false

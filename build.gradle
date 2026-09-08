@@ -39,7 +39,7 @@ subprojects {
 		}
 	}
 	
-	configurations.all {
+	configurations.configureEach {
 		resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 	}
 	
@@ -57,7 +57,7 @@ subprojects {
 		}
 		
 		if (project.hasProperty("probHome")) {
-			tasks.withType(JavaForkOptions) {
+			tasks.withType(JavaForkOptions).configureEach {
 				systemProperties["prob.home"] = project.probHome
 			}
 		}
@@ -79,16 +79,16 @@ subprojects {
 			}
 		}
 		
-		tasks.withType(JavaCompile) {
+		tasks.withType(JavaCompile).configureEach {
 			options.encoding = SOURCE_ENCODING
 			options.release = Integer.parseInt(java.sourceCompatibility.getMajorVersion())
 		}
 		
-		tasks.withType(Javadoc) {
+		tasks.withType(Javadoc).configureEach {
 			options.encoding = SOURCE_ENCODING
 		}
 
-		javadoc {
+		tasks.named("javadoc") {
 			options {
 				// silence warnings on missing javadoc
 				addBooleanOption('Xdoclint:all,-missing', true)

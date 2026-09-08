@@ -12,14 +12,14 @@ dependencies {
 	api("org.apache.groovy:groovy-jsr223")
 }
 
-tasks.withType(GroovyCompile) {
+tasks.withType(GroovyCompile).configureEach {
 	options.encoding = SOURCE_ENCODING
 }
 
 // The Groovydoc encoding can't be set via the task, it depends on the file.encoding system property of the Gradle JVM.
 // FIXME This needs to be set in the gradle.properties, but the file is encrypted.
 
-processResources {
+tasks.named("processResources") {
 	inputs.property("version", project.version)
 
 	filesMatching("META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule") {
