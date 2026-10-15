@@ -1,5 +1,6 @@
 plugins {
 	id("io.github.gradle-nexus.publish-plugin").version("2.0.0")
+	id 'org.cyclonedx.bom' version '3.2.4'
 }
 
 allprojects {
@@ -136,4 +137,32 @@ subprojects {
 	}
 	
 	ext."signing.secretKeyRingFile" = rootProject.file("secring.gpg").absolutePath
+
+
+tasks.named('cyclonedxDirectBom') {
+    includeConfigs = ['productionRuntimeClasspath']
+    projectType = org.cyclonedx.model.Component.Type.APPLICATION
+    schemaVersion = org.cyclonedx.Version.VERSION_16
+    jsonOutput = layout.buildDirectory.file('reports/cyclonedx-direct/projektor.cdx.json')
+    xmlOutput.unsetConvention()
+    doLast {
+        def datei = jsonOutput.get().asFile
+        def bom = new groovy.json.JsonSlurper().parse(datei)
+        def metadata = bom.metadata ?: (bom.metadata = [:])
+        def properties = metadata.properties ?: (metadata.properties = [])
+        [
+                'gitlab:meta:schema_version'                  : '1',
+                'gitlab:dependency_scanning:input_file:path'  : 'build.gradle',
+                'gitlab:package_manager:name'                 : 'gradle',
+                'gitlab:language:name'                        : 'java'
+        ].each { name, wert ->
+            properties.removeAll { it.name == name }
+            properties << [name: name, value: wert]
+        }
+        datei.text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(bom))
+    }
+}
+
+
+
 }

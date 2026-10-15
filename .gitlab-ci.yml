@@ -1,6 +1,18 @@
 stages:
+  - sbom
   - test
   - deploy
+
+SBOM:
+  stage: sbom
+  image: eclipse-temurin:25-jdk
+  script:
+    - ./gradlew cyclonedxDirectBom
+  artifacts:
+    reports:
+      cyclonedx:
+        - build/reports/cyclonedx-direct/projektor.cdx.json
+
 
 cache:
   paths:
