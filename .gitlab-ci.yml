@@ -11,7 +11,7 @@ SBOM:
   artifacts:
     reports:
       cyclonedx:
-        - build/reports/cyclonedx-direct/projektor.cdx.json
+        - "**/build/reports/cyclonedx-direct/*.cdx.json"
 
 
 cache:

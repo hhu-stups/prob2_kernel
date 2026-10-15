@@ -137,32 +137,30 @@ subprojects {
 	}
 	
 	ext."signing.secretKeyRingFile" = rootProject.file("secring.gpg").absolutePath
-
-
-tasks.named('cyclonedxDirectBom') {
-    includeConfigs = ['productionRuntimeClasspath']
-    projectType = org.cyclonedx.model.Component.Type.APPLICATION
-    schemaVersion = org.cyclonedx.Version.VERSION_16
-    jsonOutput = layout.buildDirectory.file('reports/cyclonedx-direct/projektor.cdx.json')
-    xmlOutput.unsetConvention()
-    doLast {
-        def datei = jsonOutput.get().asFile
-        def bom = new groovy.json.JsonSlurper().parse(datei)
-        def metadata = bom.metadata ?: (bom.metadata = [:])
-        def properties = metadata.properties ?: (metadata.properties = [])
-        [
-                'gitlab:meta:schema_version'                  : '1',
-                'gitlab:dependency_scanning:input_file:path'  : 'build.gradle',
-                'gitlab:package_manager:name'                 : 'gradle',
-                'gitlab:language:name'                        : 'java'
-        ].each { name, wert ->
-            properties.removeAll { it.name == name }
-            properties << [name: name, value: wert]
-        }
-        datei.text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(bom))
-    }
 }
 
-
-
+allprojects {
+	tasks.named('cyclonedxDirectBom') {
+	    includeConfigs = ['runtimeClasspath']
+	    projectType = org.cyclonedx.model.Component.Type.APPLICATION
+	    schemaVersion = org.cyclonedx.Version.VERSION_16
+	    jsonOutput = layout.buildDirectory.file("reports/cyclonedx-direct/${project.name}.cdx.json")
+	    xmlOutput.unsetConvention()
+	    doLast {
+	        def datei = jsonOutput.get().asFile
+	        def bom = new groovy.json.JsonSlurper().parse(datei)
+	        def metadata = bom.metadata ?: (bom.metadata = [:])
+	        def properties = metadata.properties ?: (metadata.properties = [])
+	        [
+	                'gitlab:meta:schema_version'                  : '1',
+	                'gitlab:dependency_scanning:input_file:path'  : 'build.gradle',
+	                'gitlab:package_manager:name'                 : 'gradle',
+	                'gitlab:language:name'                        : 'java'
+	        ].each { name, wert ->
+	            properties.removeAll { it.name == name }
+	            properties << [name: name, value: wert]
+	        }
+	        datei.text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(bom))
+	    }
+	}
 }
