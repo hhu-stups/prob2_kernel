@@ -147,8 +147,8 @@ allprojects {
 		jsonOutput = layout.buildDirectory.file("reports/cyclonedx-direct/${project.name}.cdx.json")
 		xmlOutput.unsetConvention()
 		doLast {
-			def datei = jsonOutput.get().asFile
-			def bom = new groovy.json.JsonSlurper().parse(datei)
+			def jsonOutputFile = jsonOutput.get().asFile
+			def bom = new groovy.json.JsonSlurper().parse(jsonOutputFile)
 			def metadata = bom.metadata ?: (bom.metadata = [:])
 			def properties = metadata.properties ?: (metadata.properties = [])
 			[
@@ -160,7 +160,7 @@ allprojects {
 				properties.removeAll { it.name == name }
 				properties << [name: name, value: wert]
 			}
-			datei.text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(bom))
+			jsonOutputFile.text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(bom))
 		}
 	}
 }
