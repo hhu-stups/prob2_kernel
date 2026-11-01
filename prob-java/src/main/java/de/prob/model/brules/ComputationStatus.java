@@ -1,11 +1,12 @@
 package de.prob.model.brules;
 
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import de.be4.classicalb.core.parser.rules.RulesTransformation;
 import de.prob.animator.domainobjects.AbstractEvalResult;
-import de.prob.animator.domainobjects.IdentifierNotInitialised;
 
 public enum ComputationStatus implements OperationStatus {
 
@@ -15,29 +16,15 @@ public enum ComputationStatus implements OperationStatus {
 
 	private final String bValue;
 
-	private static final Map<String, ComputationStatus> mapping = new HashMap<>();
-	static {
-		for (ComputationStatus compState : ComputationStatus.values()) {
-			mapping.put(compState.bValue, compState);
-		}
-	}
+	private static final Map<String, ComputationStatus> mapping = Arrays.stream(values())
+			.collect(Collectors.toUnmodifiableMap(status -> status.bValue, Function.identity()));
 
 	ComputationStatus(String value) {
 		this.bValue = value;
 	}
 
 	public static ComputationStatus valueOf(AbstractEvalResult evalResult) {
-		if (evalResult instanceof IdentifierNotInitialised) {
-			return ComputationStatus.NOT_EXECUTED;
-		}
-		String key = evalResult.toString();
-		key = key.substring(1, key.length() - 1);
-		if (mapping.containsKey(key)) {
-			return mapping.get(key);
-		} else {
-			throw new IllegalArgumentException(String.format(
-					"The result value '%s' is not valid result of a computation operation.", evalResult));
-		}
+		return OperationStatus.fromEvalResult(evalResult, mapping, NOT_EXECUTED);
 	}
 
 	@Override

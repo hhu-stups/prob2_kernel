@@ -1,11 +1,12 @@
 package de.prob.model.brules;
 
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import de.be4.classicalb.core.parser.rules.RulesTransformation;
 import de.prob.animator.domainobjects.AbstractEvalResult;
-import de.prob.animator.domainobjects.IdentifierNotInitialised;
 
 public enum RuleStatus implements OperationStatus {
 
@@ -20,25 +21,11 @@ public enum RuleStatus implements OperationStatus {
 		this.bValue = bValue;
 	}
 
-	private static final Map<String, RuleStatus> mapping = new HashMap<>();
-	static {
-		for (RuleStatus compState : RuleStatus.values()) {
-			mapping.put(compState.bValue, compState);
-		}
-	}
+	private static final Map<String, RuleStatus> mapping = Arrays.stream(values())
+			.collect(Collectors.toUnmodifiableMap(status -> status.bValue, Function.identity()));
 
 	public static RuleStatus valueOf(AbstractEvalResult evalResult) {
-		if (evalResult instanceof IdentifierNotInitialised) {
-			return RuleStatus.NOT_CHECKED;
-		}
-		String res = evalResult.toString();
-		res = res.substring(1, res.length() - 1);
-		if (mapping.containsKey(res)) {
-			return mapping.get(res);
-		} else {
-			throw new IllegalArgumentException(String
-					.format("The result value '%s' is not valid result of a rule operation.", evalResult));
-		}
+		return OperationStatus.fromEvalResult(evalResult, mapping, NOT_CHECKED);
 	}
 
 	@Override

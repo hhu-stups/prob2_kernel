@@ -12,7 +12,6 @@ import de.be4.classicalb.core.parser.rules.ComputationOperation;
 import de.be4.classicalb.core.parser.rules.RulesProject;
 import de.prob.animator.domainobjects.AbstractEvalResult;
 import de.prob.animator.domainobjects.ClassicalB;
-import de.prob.animator.domainobjects.EvalResult;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.statespace.State;
 
@@ -49,9 +48,7 @@ public class ComputationStatuses {
 		List<AbstractEvalResult> evalResults = state.eval(evalElements);
 		for (int i = 0; i < compList.size(); i++) {
 			ComputationOperation comp = compList.get(i);
-			AbstractEvalResult abstractEvalResult = evalResults.get(i);
-			EvalResult evalResult = (EvalResult) abstractEvalResult;
-			this.statuses.put(comp.getName(), ComputationStatus.valueOf(evalResult));
+			this.statuses.put(comp.getName(), ComputationStatus.valueOf(evalResults.get(i)));
 		}
 	}
 
