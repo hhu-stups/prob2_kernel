@@ -1,11 +1,18 @@
 package de.prob.model.brules;
 
-import de.be4.classicalb.core.parser.rules.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import de.be4.classicalb.core.parser.rules.AbstractOperation;
+import de.be4.classicalb.core.parser.rules.ComputationOperation;
+import de.be4.classicalb.core.parser.rules.FunctionOperation;
+import de.be4.classicalb.core.parser.rules.RuleOperation;
 import de.prob.animator.domainobjects.AbstractEvalResult;
 import de.prob.statespace.State;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 public class OperationStatuses {
 
@@ -18,6 +25,9 @@ public class OperationStatuses {
 	private OperationStatuses(RulesModel model, List<AbstractOperation> operations, State state) {
 		final List<AbstractOperation> filteredOps = new ArrayList<>(operations);
 		filteredOps.removeIf(FunctionOperation.class::isInstance);
+		if (filteredOps.isEmpty()) {
+			return; // nothing to evaluate - avoid a needless call to ProB
+		}
 
 		List<AbstractEvalResult> evalResults = state.eval(
 				filteredOps.stream().map(model::getEvalElement).collect(Collectors.toList()));
@@ -39,6 +49,9 @@ public class OperationStatuses {
 		return new OperationStatuses(model, operations, state).statuses;
 	}
 
+	/**
+	 * @return the status of the operation, or {@code null} for function operations
+	 */
 	public static OperationStatus getStatus(RulesModel model, AbstractOperation comp, State state) {
 		return new OperationStatuses(model, Collections.singletonList(comp), state).statuses.get(comp);
 	}
