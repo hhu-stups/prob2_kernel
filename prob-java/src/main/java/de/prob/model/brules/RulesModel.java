@@ -6,9 +6,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.inject.Inject;
 
@@ -35,7 +35,7 @@ import de.prob.statespace.Language;
 public class RulesModel extends AbstractModel {
 
 	private RulesProject project;
-	private final Map<AbstractOperation, IEvalElement> operationStateFormulaCache = new HashMap<>();
+	private final Map<AbstractOperation, IEvalElement> operationStateFormulaCache = new ConcurrentHashMap<>();
 
 	@Inject
 	public RulesModel(StateSpaceProvider stateSpaceProvider) {
@@ -115,13 +115,6 @@ public class RulesModel extends AbstractModel {
 	}
 
 	public IEvalElement getEvalElement(AbstractOperation abstractOperation) {
-		if (operationStateFormulaCache.containsKey(abstractOperation)) {
-			return operationStateFormulaCache.get(abstractOperation);
-		} else {
-			String name = abstractOperation.getName();
-			IEvalElement evalElement = this.parseFormula(name);
-			operationStateFormulaCache.put(abstractOperation, evalElement);
-			return evalElement;
-		}
+		return operationStateFormulaCache.computeIfAbsent(abstractOperation, op -> this.parseFormula(op.getName()));
 	}
 }
