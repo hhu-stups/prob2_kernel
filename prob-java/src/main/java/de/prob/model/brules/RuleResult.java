@@ -1,20 +1,25 @@
 package de.prob.model.brules;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiFunction;
 
-import de.be4.classicalb.core.parser.rules.*;
+import de.be4.classicalb.core.parser.rules.AbstractOperation;
+import de.be4.classicalb.core.parser.rules.RuleOperation;
 import de.hhu.stups.prob.translator.BNumber;
 import de.hhu.stups.prob.translator.BSet;
 import de.hhu.stups.prob.translator.BString;
 import de.hhu.stups.prob.translator.BTuple;
 import de.hhu.stups.prob.translator.BValue;
+import de.hhu.stups.prob.translator.Translator;
+import de.hhu.stups.prob.translator.exceptions.TranslationException;
 import de.prob.animator.domainobjects.AbstractEvalResult;
 import de.prob.animator.domainobjects.EnumerationWarning;
 import de.prob.animator.domainobjects.EvalResult;
+import de.prob.animator.domainobjects.IdentifierNotInitialised;
 import de.prob.animator.domainobjects.TranslatedEvalResult;
 
 public class RuleResult {
@@ -35,35 +40,45 @@ public class RuleResult {
 	                  AbstractEvalResult numberOfUncheckedMessages, AbstractEvalResult uncheckedMessageResult) {
 		this.ruleOperation = rule;
 		this.ruleStatus = RuleStatus.valueOf(result);
-		if (numberOfCounterExamples instanceof EvalResult) {
-			this.numberOfViolations = Integer.parseInt(((EvalResult) numberOfCounterExamples).getValue());
-			transformCounterExamples(counterExampleResult);
-		} else if (numberOfCounterExamples instanceof EnumerationWarning) {
-			this.numberOfViolations = -1;
-		} else {
-			throw new IllegalStateException("expected instance of EvalResult for enumerable counter examples" +
-				" or EnumerationWarning for an infinite number of counter examples, but was " + numberOfCounterExamples.getClass());
+
+		this.numberOfViolations = parseNumberOfMessages(numberOfCounterExamples, "counter examples");
+		if (this.numberOfViolations > 0 && counterExampleResult != null) {
+			transformMessages(counterExampleResult, counterExamples, CounterExample::new);
+			counterExamples.sort(Comparator.comparingInt(CounterExample::getErrorType)
+				.thenComparing(CounterExample::getMessage));
 		}
 
-		if (numberOfSuccessMessages instanceof EvalResult) {
-			this.numberOfSuccesses = Integer.parseInt(((EvalResult) numberOfSuccessMessages).getValue());
-			transformSuccessMessages(successMessageResult);
-		} else if (numberOfSuccessMessages instanceof EnumerationWarning) {
-			this.numberOfSuccesses = -1;
-		} else {
-			throw new IllegalStateException("expected instance of EvalResult for enumerable success messages" +
-				" or EnumerationWarning for an infinite number of success messages, but was " + numberOfSuccessMessages.getClass());
+		this.numberOfSuccesses = parseNumberOfMessages(numberOfSuccessMessages, "success messages");
+		if (this.numberOfSuccesses > 0 && successMessageResult != null) {
+			transformMessages(successMessageResult, successMessages, SuccessMessage::new);
+			successMessages.sort(Comparator.comparingInt(SuccessMessage::getRuleBodyCount).thenComparing(SuccessMessage::getMessage));
 		}
 
-		if (numberOfUncheckedMessages instanceof EvalResult) {
-			this.numberOfUnchecked = Integer.parseInt(((EvalResult) numberOfUncheckedMessages).getValue());
-			transformUncheckedMessages(uncheckedMessageResult);
-		} else if (numberOfUncheckedMessages instanceof EnumerationWarning) {
-			this.numberOfUnchecked = -1;
-		} else {
-			throw new IllegalStateException("expected instance of EvalResult for enumerable unchecked messages" +
-					" or EnumerationWarning for an infinite number of unchecked messages, but was " + numberOfUncheckedMessages.getClass());
+		this.numberOfUnchecked = parseNumberOfMessages(numberOfUncheckedMessages, "unchecked messages");
+		if (this.numberOfUnchecked > 0 && uncheckedMessageResult != null) {
+			transformMessages(uncheckedMessageResult, uncheckedMessages, SuccessMessage::new);
+			uncheckedMessages.sort(Comparator.comparingInt(SuccessMessage::getRuleBodyCount).thenComparing(SuccessMessage::getMessage));
 		}
+	}
+
+	private static int parseNumberOfMessages(AbstractEvalResult numberOfMessages, String kind) {
+		if (numberOfMessages instanceof EvalResult result) {
+			try {
+				if (Translator.translate(result.getValue()) instanceof BNumber value) {
+					BigInteger number = value.bigIntegerValue();
+					return number.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0 ? Integer.MAX_VALUE : number.intValueExact();
+				}
+			} catch (TranslationException e) {
+				throw new IllegalStateException("expected an integer as number of " + kind + ", but was '" + result + "'", e);
+			}
+		} else if (numberOfMessages instanceof EnumerationWarning) {
+			return -1;
+		} else if (numberOfMessages instanceof IdentifierNotInitialised) {
+			return 0;
+		}
+		throw new IllegalStateException("expected instance of EvalResult for enumerable " + kind +
+			" or EnumerationWarning for an infinite number of " + kind + ", but was " +
+			(numberOfMessages == null ? "null" : numberOfMessages.getClass() + " (" + numberOfMessages + ")"));
 	}
 
 	public RuleOperation getRuleOperation() {
@@ -82,26 +97,12 @@ public class RuleResult {
 		return this.numberOfUnchecked;
 	}
 
-	private void transformCounterExamples(AbstractEvalResult abstractEvalResult) {
-		transformMessages(abstractEvalResult, counterExamples, CounterExample::new);
-		counterExamples.sort(Comparator.comparingInt(RuleResult.CounterExample::getErrorType)
-			.thenComparing(RuleResult.CounterExample::getMessage));
-	}
-
-	private void transformSuccessMessages(AbstractEvalResult abstractEvalResult) {
-		transformMessages(abstractEvalResult, successMessages, SuccessMessage::new);
-		successMessages.sort(Comparator.comparingInt(SuccessMessage::getRuleBodyCount)
-			.thenComparing(SuccessMessage::getMessage));
-	}
-
-	private void transformUncheckedMessages(AbstractEvalResult abstractEvalResult) {
-		transformMessages(abstractEvalResult, uncheckedMessages, SuccessMessage::new);
-		uncheckedMessages.sort(Comparator.comparingInt(SuccessMessage::getRuleBodyCount)
-			.thenComparing(SuccessMessage::getMessage));
-	}
-
 	private static <T> void transformMessages(AbstractEvalResult abstractEvalResult, List<T> messages, BiFunction<Integer, String, T> messageConstructor) {
-		EvalResult evalCurrent = (EvalResult) abstractEvalResult;
+		if (!(abstractEvalResult instanceof EvalResult evalCurrent)) {
+			// e.g. an evaluation error or a time-out while computing the messages
+			messages.add(messageConstructor.apply(1, String.valueOf(abstractEvalResult)));
+			return;
+		}
 		TranslatedEvalResult<BValue> translatedResult;
 		try {
 			translatedResult = evalCurrent.translate();
@@ -110,7 +111,7 @@ public class RuleResult {
 			 * should not happen because MAX_DISPLAY_SET is set to -1
 			 * and hence, no truncated terms are delivered by ProBCore
 			 * */
-			final String message = evalCurrent.getValue().replaceAll("\"", "");
+			final String message = evalCurrent.getValue().replace("\"", "");
 			messages.add(messageConstructor.apply(1, message));
 			return;
 		}
