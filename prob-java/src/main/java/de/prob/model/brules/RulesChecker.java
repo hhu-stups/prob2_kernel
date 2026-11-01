@@ -1,7 +1,9 @@
 package de.prob.model.brules;
 
 import com.google.common.base.Stopwatch;
-import de.be4.classicalb.core.parser.rules.*;
+import de.be4.classicalb.core.parser.rules.AbstractOperation;
+import de.be4.classicalb.core.parser.rules.FunctionOperation;
+import de.be4.classicalb.core.parser.rules.RulesProject;
 import de.prob.animator.command.ExecuteModelCommand;
 import de.prob.animator.command.ExportRuleValidationReportCommand;
 import de.prob.animator.domainobjects.DotCall;
@@ -15,7 +17,15 @@ import de.prob.statespace.Transition;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public final class RulesChecker {
@@ -31,7 +41,6 @@ public final class RulesChecker {
 	private int nrExecutedOperations = 0;
 
 	private final Map<AbstractOperation, Set<AbstractOperation>> predecessors = new HashMap<>();
-	private final Map<AbstractOperation, Set<AbstractOperation>> successors = new HashMap<>();
 
 	public RulesChecker(Trace trace) {
 		this.stopwatch = Stopwatch.createUnstarted();
@@ -51,12 +60,6 @@ public final class RulesChecker {
 				Set<AbstractOperation> set = op.getTransitiveDependencies().stream()
 						.filter(p -> !(p instanceof FunctionOperation)).collect(Collectors.toSet());
 				predecessors.put(op, set);
-				for (AbstractOperation abstractOperation : set) {
-					if (!successors.containsKey(abstractOperation)) {
-						successors.put(abstractOperation, new HashSet<>());
-					}
-					successors.get(abstractOperation).add(op);
-				}
 			}
 		}
 	}
@@ -66,7 +69,13 @@ public final class RulesChecker {
 	 */
 	public void init() {
 		while (!trace.getCurrentState().isInitialised()) {
-			trace = trace.anyOperation(null);
+			Trace next = trace.anyOperation(null);
+			if (next == trace) {
+				// no enabled transition (e.g. no solution for the constants): avoid looping forever
+				throw new IllegalStateException("Cannot initialise the rules machine: no transition is enabled in state "
+						+ trace.getCurrentState().getId());
+			}
+			trace = next;
 		}
 		nrExecutedOperations = 0;
 	}
@@ -78,31 +87,39 @@ public final class RulesChecker {
 		// TODO: consider using RulesMachineRun
 		stopwatch.reset();
 		stopwatch.start();
-		while (true) {
-			if (trace.getCurrentState().isExplored()) {
-				// if the state has already been explored and we have a next transition: use this instead of computing a new one with execute_model
-				// (should be faster)
-				if (trace.getNextTransitions().isEmpty()) {
+		try {
+			while (true) {
+				if (trace.getCurrentState().isExplored()) {
+					// if the state has already been explored, and we have a next transition: use this instead of computing a new one with execute_model
+					// (should be faster)
+					List<Transition> outTransitions = trace.getCurrentState().getOutTransitions();
+					if (outTransitions.isEmpty()) {
+						break;
+					}
+					trace = trace.add(outTransitions.get(0));
+					continue;
+				}
+				ExecuteModelCommand executeModelCommand = new ExecuteModelCommand(trace.getStateSpace(),
+						trace.getCurrentState(), stepSize, true, true, null);
+				trace.getStateSpace().execute(executeModelCommand);
+				int nrSteps = executeModelCommand.getNumberOfStatesExecuted();
+				if (nrSteps < 1) {
 					break;
 				}
-				trace = trace.addTransitions(new ArrayList<>(trace.getNextTransitions()).subList(0,1));
-				continue;
+				trace = trace.addTransitions(executeModelCommand.getNewTransitions());
+				String transitionName = Optional.ofNullable(executeModelCommand.getSingleTransitionName()).orElse("");
+				if (isInitTransition(transitionName)) {
+					nrSteps--;
+				}
+				nrExecutedOperations += nrSteps;
+				if (listener != null) {
+					listener.progress(nrExecutedOperations, transitionName);
+				}
 			}
-			ExecuteModelCommand executeModelCommand = new ExecuteModelCommand(trace.getStateSpace(),
-					trace.getCurrentState(), stepSize, true, true, null);
-			trace.getStateSpace().execute(executeModelCommand);
-			int nrSteps = executeModelCommand.getNumberOfStatesExecuted();
-			if (nrSteps < 1) {
-				break;
-			}
-			trace = trace.addTransitions(executeModelCommand.getNewTransitions());
-			String transitionName = Optional.ofNullable(executeModelCommand.getSingleTransitionName()).orElse("");
-			if (isInitTransition(transitionName)) {
-				nrSteps--;
-			}
-			listener.progress(nrExecutedOperations+=nrSteps, transitionName);
+		} finally {
+			// also stop the stopwatch if the execution was interrupted or failed
+			stop();
 		}
-		stopwatch.stop();
 	}
 
 	private static boolean isInitTransition(String transition) {
@@ -124,9 +141,14 @@ public final class RulesChecker {
 
 	public OperationStatus executeOperation(AbstractOperation op) {
 		stopwatch.start();
-		trace = trace.execute(op.getName());
-		OperationStatus opState = getOperationState(op);
-		stopwatch.stop();
+		final OperationStatus opState;
+		try {
+			trace = trace.execute(op.getName());
+			opState = getOperationState(op);
+		} finally {
+			// otherwise the next call of start() would fail with an IllegalStateException
+			stopwatch.stop();
+		}
 		nrExecutedOperations++;
 		return opState;
 	}
@@ -168,7 +190,7 @@ public final class RulesChecker {
 			if (!getExecutableOperations().contains(op)) {
 				if (getOperationState(op).isExecuted()) { // required operation has already been executed
 					if (listener != null) {
-						listener.progress(nrExecutedOperations++, op.getName());
+						listener.progress(++nrExecutedOperations, op.getName());
 					}
 					continue;
 				}
@@ -186,19 +208,23 @@ public final class RulesChecker {
 	}
 
 	/**
-	 * @deprecated Use {@link #getOperationState(AbstractOperation)} instead.
+	 * @deprecated Use {@link #getOperationState(AbstractOperation)} or
+	 *     {@link OperationStatuses#getStatus(RulesModel, AbstractOperation, State)} instead.
 	 */
 	@Deprecated
 	public OperationStatus evalOperation(State state, AbstractOperation operation) {
-		return getOperationState(operation);
+		// evaluate in the given state (and not in the current state of the trace)
+		return OperationStatuses.getStatus(rulesModel, operation, state);
 	}
 
 	/**
-	 * @deprecated Use {@link #getOperationStates()} instead.
+	 * @deprecated Use {@link #getOperationStates()} or
+	 *     {@link OperationStatuses#getStatuses(RulesModel, List, State)} instead.
 	 */
 	@Deprecated
 	public Map<AbstractOperation, OperationStatus> evalOperations(State state, List<AbstractOperation> operations) {
-		return getOperationStates();
+		// evaluate the given operations in the given state (and not all operations in the current state of the trace)
+		return OperationStatuses.getStatuses(rulesModel, operations, state);
 	}
 
 	public Trace getCurrentTrace() {
@@ -226,11 +252,10 @@ public final class RulesChecker {
 	}
 
 	private AbstractOperation getOperation(String opName) {
-		// checkThatOperationExists
-		if (!rulesProject.getOperationsMap().containsKey(opName)) {
+		AbstractOperation op = rulesProject.getOperationsMap().get(opName);
+		if (op == null) {
 			throw new IllegalArgumentException("Unknown operation name: " + opName);
 		}
-		AbstractOperation op = rulesProject.getOperationsMap().get(opName);
 		// checkThatOperationIsNotAFunctionOperation
 		if (op instanceof FunctionOperation) {
 			throw new IllegalArgumentException("Function operations are not supported: " + opName);
