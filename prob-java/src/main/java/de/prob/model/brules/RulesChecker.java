@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -321,11 +320,4 @@ public final class RulesChecker {
 				trace.getCurrentState().getId(), path.toFile(), stopwatch.elapsed().toMillis()));
 	}
 
-	/**
-	 * Use {@link #saveValidationReport(Path)} instead.
-	 */
-	@Deprecated
-	public void saveValidationReport(final Path path, final Locale locale) {
-		saveValidationReport(path);
-	}
 }
