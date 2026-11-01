@@ -3,16 +3,31 @@ package de.prob.model.brules;
 import de.be4.classicalb.core.parser.rules.AbstractOperation;
 import de.be4.classicalb.core.parser.rules.RuleOperation;
 import de.be4.classicalb.core.parser.rules.RulesProject;
+import de.hhu.stups.prob.translator.BNumber;
+import de.hhu.stups.prob.translator.Translator;
+import de.hhu.stups.prob.translator.exceptions.TranslationException;
 import de.prob.animator.domainobjects.AbstractEvalResult;
 import de.prob.animator.domainobjects.ClassicalB;
+import de.prob.animator.domainobjects.EvalResult;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.statespace.State;
 
-import java.util.*;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class RuleResults {
-	private final LinkedHashMap<String, RuleResult> ruleResultsMap = new LinkedHashMap<>();
-	private final List<String> reqIds = new ArrayList<>();
+
+	private static final int FORMULAS_PER_RULE = 4;
+
+	private final Map<String, RuleResult> ruleResultsMap = new LinkedHashMap<>();
 
 	private ResultSummary summary;
 
@@ -31,7 +46,8 @@ public class RuleResults {
 	}
 
 	private static Set<RuleOperation> getRuleOperations(RulesProject project) {
-		final Set<RuleOperation> result = new HashSet<>();
+		// keep the order of the project to get deterministic results
+		final Set<RuleOperation> result = new LinkedHashSet<>();
 		for (AbstractOperation operation : project.getOperationsMap().values()) {
 			if (operation instanceof RuleOperation) {
 				result.add((RuleOperation) operation);
@@ -48,82 +64,93 @@ public class RuleResults {
 		this(ruleOperations, state, maxNumberOfReportedCounterExamples, maxNumberOfSuccessMessages, -1);
 	}
 
+	/**
+	 * Extracts the results of the given rules from the given state.
+	 * A negative maximum number of messages means that all messages are reported.
+	 */
 	public RuleResults(Set<RuleOperation> ruleOperations, State state, int maxNumberOfReportedCounterExamples,
 	                   int maxNumberOfSuccessMessages, int maxNumberOfUncheckedMessages) {
-		final ArrayList<RuleOperation> ruleList = new ArrayList<>();
-		final List<IEvalElement> evalElements = new ArrayList<>();
-		for (RuleOperation operation : ruleOperations) {
-			ruleList.add(operation);
+		final List<RuleOperation> ruleList = new ArrayList<>(ruleOperations);
+
+		// 1st round: status of each rule and number of messages
+		// don't use FORCE here - enumeration warnings are handled by RuleResult
+		final List<IEvalElement> evalElements = new ArrayList<>(ruleList.size() * FORMULAS_PER_RULE);
+		for (RuleOperation operation : ruleList) {
 			evalElements.add(new ClassicalB(operation.getName()));
-
-			// get number of counter examples
-			// don't use FORCE here - enumeration warnings are handled by RuleResult
-			String numberOfCtsFormula = String.format("card(%s)", operation.getCounterExampleVariableName());
-			evalElements.add(new ClassicalB(numberOfCtsFormula));
-
-			// get the (restricted) set of counter examples
-			// FORCE should not be a problem here - we only use the result if card(%s) above was finite
-			String ctFormula;
-			if (maxNumberOfReportedCounterExamples == -1) {
-				ctFormula = String.format("FORCE(ran(SORT(%s)))", operation.getCounterExampleVariableName());
-			} else {
-				ctFormula = String.format("FORCE(SORT(%s)[1..%s])", operation.getCounterExampleVariableName(),
-					maxNumberOfReportedCounterExamples);
-			}
-			evalElements.add(new ClassicalB(ctFormula));
-
-			// get number of success messages
-			String numberOfSfFormula = String.format("card(%s)", operation.getSuccessfulVariableName());
-			evalElements.add(new ClassicalB(numberOfSfFormula));
-
-			// get the (restricted) set of success messages
-			// FORCE should not be a problem here - we only use the result if card(%s) above was finite
-			String sfFormula;
-			if (maxNumberOfSuccessMessages == -1) {
-				sfFormula = String.format("FORCE(ran(SORT(%s)))", operation.getSuccessfulVariableName());
-			} else {
-				sfFormula = String.format("FORCE(SORT(%s)[1..%s])", operation.getSuccessfulVariableName(),
-					maxNumberOfSuccessMessages);
-			}
-			evalElements.add(new ClassicalB(sfFormula));
-
-			// get number of unchecked messages
-			String numberOfUcFormula = String.format("card(%s)", operation.getUncheckedVariableName());
-			evalElements.add(new ClassicalB(numberOfUcFormula));
-
-			// get the (restricted) set of unchecked messages
-			// FORCE should not be a problem here - we only use the result if card(%s) above was finite
-			String ucFormula;
-			if (maxNumberOfUncheckedMessages == -1) {
-				ucFormula = String.format("FORCE(ran(SORT(%s)))", operation.getUncheckedVariableName());
-			} else {
-				ucFormula = String.format("FORCE(SORT(%s)[1..%s])", operation.getUncheckedVariableName(),
-						maxNumberOfUncheckedMessages);
-			}
-			evalElements.add(new ClassicalB(ucFormula));
+			evalElements.add(new ClassicalB(String.format("card(%s)", operation.getCounterExampleVariableName())));
+			evalElements.add(new ClassicalB(String.format("card(%s)", operation.getSuccessfulVariableName())));
+			evalElements.add(new ClassicalB(String.format("card(%s)", operation.getUncheckedVariableName())));
 		}
+		final List<AbstractEvalResult> evalResults = state.eval(evalElements);
 
-		List<AbstractEvalResult> evalResults = state.eval(evalElements);
+		// 2nd round: only fetch the messages of non-empty, finite message sets.
+		// This avoids FORCE-ing infinite sets and needless evaluation of empty ones.
+		final List<IEvalElement> messageElements = new ArrayList<>();
+		final Map<Integer, Integer> messageIndex = new HashMap<>();
 		for (int i = 0; i < ruleList.size(); i++) {
-			int index = i * 7;
-			RuleOperation ruleOperation = ruleList.get(i);
-			RuleResult ruleResult = new RuleResult(ruleOperation, evalResults.get(index),
-					evalResults.get(index + 1), evalResults.get(index + 2),
-					evalResults.get(index + 3), evalResults.get(index + 4),
-					evalResults.get(index + 5), evalResults.get(index + 6));
-			ruleResultsMap.put(ruleOperation.getName(), ruleResult);
+			RuleOperation operation = ruleList.get(i);
+			int base = i * FORMULAS_PER_RULE;
+			addMessageFormula(messageElements, messageIndex, base + 1, evalResults.get(base + 1),
+				operation.getCounterExampleVariableName(), maxNumberOfReportedCounterExamples);
+			addMessageFormula(messageElements, messageIndex, base + 2, evalResults.get(base + 2),
+				operation.getSuccessfulVariableName(), maxNumberOfSuccessMessages);
+			addMessageFormula(messageElements, messageIndex, base + 3, evalResults.get(base + 3),
+				operation.getUncheckedVariableName(), maxNumberOfUncheckedMessages);
+		}
+		final List<AbstractEvalResult> messageResults = messageElements.isEmpty()
+			? Collections.emptyList()
+			: state.eval(messageElements);
 
-			if (ruleResult.hasRuleId()) {
-				this.reqIds.add(ruleResult.getRuleId());
-			}
+		for (int i = 0; i < ruleList.size(); i++) {
+			int base = i * FORMULAS_PER_RULE;
+			RuleOperation ruleOperation = ruleList.get(i);
+			RuleResult ruleResult = new RuleResult(ruleOperation, evalResults.get(base),
+					evalResults.get(base + 1), getMessageResult(messageResults, messageIndex, base + 1),
+					evalResults.get(base + 2), getMessageResult(messageResults, messageIndex, base + 2),
+					evalResults.get(base + 3), getMessageResult(messageResults, messageIndex, base + 3));
+			ruleResultsMap.put(ruleOperation.getName(), ruleResult);
 		}
 		addNotCheckedCauses();
+	}
+
+	private static void addMessageFormula(List<IEvalElement> messageElements, Map<Integer, Integer> messageIndex,
+	                                      int countIndex, AbstractEvalResult countResult, String variableName, int limit) {
+		if (limit == 0 || !(countResult instanceof EvalResult)) {
+			// no messages requested, not initialised or not enumerable (infinite)
+			return;
+		}
+		BigInteger count = BigInteger.ZERO;
+		try {
+			if (Translator.translate(((EvalResult) countResult).getValue()) instanceof BNumber value) {
+				count = value.bigIntegerValue();
+			}
+		} catch (TranslationException e) {
+			return;
+		}
+		if (count.signum() <= 0) {
+			return;
+		}
+		final String formula;
+		if (limit < 0 || count.compareTo(BigInteger.valueOf(limit)) <= 0) {
+			// all messages are reported - no need to sort them in ProB, they are sorted by RuleResult
+			formula = String.format("FORCE(%s)", variableName);
+		} else {
+			formula = String.format("FORCE(SORT(%s)[1..%s])", variableName, limit);
+		}
+		messageIndex.put(countIndex, messageElements.size());
+		messageElements.add(new ClassicalB(formula));
+	}
+
+	private static AbstractEvalResult getMessageResult(List<AbstractEvalResult> messageResults,
+	                                                   Map<Integer, Integer> messageIndex, int countIndex) {
+		Integer index = messageIndex.get(countIndex);
+		return index == null ? null : messageResults.get(index);
 	}
 
 	private void addNotCheckedCauses() {
 		final Set<String> allFailingRules = new HashSet<>();
 		final Set<String> allNotCheckedRules = new HashSet<>();
-		final Set<RuleResult> allNotCheckedRulesObjects = new HashSet<>();
+		final List<RuleResult> allNotCheckedRulesObjects = new ArrayList<>();
 		for (RuleResult ruleResult : ruleResultsMap.values()) {
 			RuleStatus result = ruleResult.getRuleState();
 			if (result == RuleStatus.FAIL) {
@@ -180,11 +207,7 @@ public class RuleResults {
 		for (RuleResult ruleResult : this.ruleResultsMap.values()) {
 			if (ruleResult.hasClassification()) {
 				String classification = ruleResult.getClassification();
-				if (classificationMap.containsKey(classification)) {
-					classificationMap.get(classification).add(ruleResult);
-				} else {
-					classificationMap.put(classification, new ArrayList<>(Collections.singleton(ruleResult)));
-				}
+				classificationMap.computeIfAbsent(classification, k -> new ArrayList<>()).add(ruleResult);
 			}
 		}
 		return classificationMap;
@@ -219,6 +242,7 @@ public class RuleResults {
 		}
 		return sb.toString();
 	}
+
 	public static class ResultSummary {
 		public final int numberOfRules;
 		public final int numberOfRulesFailed;
