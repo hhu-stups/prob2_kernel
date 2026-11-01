@@ -178,7 +178,7 @@ public class RuleResult {
 	}
 
 	public boolean hasTags() {
-		return ruleOperation.getTags().isEmpty();
+		return !ruleOperation.getTags().isEmpty();
 	}
 
 	public List<String> getTags() {
