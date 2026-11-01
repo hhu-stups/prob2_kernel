@@ -103,28 +103,27 @@ public class RuleResult {
 			messages.add(messageConstructor.apply(1, String.valueOf(abstractEvalResult)));
 			return;
 		}
-		TranslatedEvalResult<BValue> translatedResult;
+		final BValue value;
 		try {
-			translatedResult = evalCurrent.translate();
-		} catch (Exception e) {
-			/*- fall back solution if the result can not be parsed (e.g. {1,...,1000})
-			 * should not happen because MAX_DISPLAY_SET is set to -1
-			 * and hence, no truncated terms are delivered by ProBCore
-			 * */
-			final String message = evalCurrent.getValue().replace("\"", "");
-			messages.add(messageConstructor.apply(1, message));
+			value = Translator.translate(evalCurrent.getValue());
+		} catch (TranslationException e) {
+			// fall back if the value cannot be parsed (e.g. a truncated set {1,...,1000});
+			// should not happen because MAX_DISPLAY_SET is set to -1
+			messages.add(messageConstructor.apply(1, evalCurrent.getValue().replace("\"", "")));
 			return;
 		}
-		if (translatedResult.getValue() instanceof BSet<?>) {
-			@SuppressWarnings("unchecked")
-			BSet<BTuple<BNumber, BString>> set = (BSet<BTuple<BNumber, BString>>) translatedResult.getValue();
-			set.stream()
-					.map(tuple -> messageConstructor.apply(tuple.getFirst().intValue(), tuple.getSecond().stringValue()))
-					.forEach(messages::add);
-		} else {
-			// fall back: should not happen
-			messages.add(messageConstructor.apply(1, evalCurrent.getValue()));
+		if (!(value instanceof BSet<?> set)) {
+			messages.add(messageConstructor.apply(1, evalCurrent.getValue())); // should not happen
+			return;
 		}
+		// check the type of each element instead of an unchecked cast to BSet<BTuple<BNumber, BString>>
+		set.stream()
+				.map(element -> element instanceof BTuple<?, ?> tuple
+						&& tuple.getFirst() instanceof BNumber number
+						&& tuple.getSecond() instanceof BString message
+						? messageConstructor.apply(number.intValue(), message.stringValue())
+						: messageConstructor.apply(1, element.toString()))
+				.forEach(messages::add);
 	}
 
 	public void addAdditionalInformation(Set<String> allFailingRules, Set<String> allNotCheckedRules) {
