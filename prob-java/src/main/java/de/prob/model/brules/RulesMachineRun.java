@@ -128,29 +128,43 @@ public class RulesMachineRun {
 					return;
 				}
 			} else {
-				/*- static errors such as type errors or errors while loading the  state space */
-				this.errors.add(new Error(ERROR_TYPES.PROB_ERROR, e.getMessage(), e));
-				/*- no final state is available and thus we can not create RuleResults */
+				/*- static errors such as type errors or errors while loading the state space (already recorded above);
+				 * no final state is available, and thus we can not create RuleResults */
 				return;
 			}
 		} catch (Exception e) {
 			LOGGER.error("Unexpected error occurred: {}", e.getMessage(), e);
-			// storing all error messages
-			this.errors.add(new Error(ERROR_TYPES.PROB_ERROR, e.getMessage(), e));
+			this.errors.add(new Error(ERROR_TYPES.UNEXPECTED_ERROR, e.getMessage(), e));
 			return;
 		} finally {
+			updateTotalNumberOfProBCliErrors();
+		}
+
+		try {
+			final Stopwatch extractResultsStopwatch = Stopwatch.createStarted();
+			this.ruleResults = new RuleResults(this.rulesProject, executeRun.getExecuteModelCommand().getFinalState(),
+					maxNumberOfReportedCounterExamples, maxNumberOfReportedSuccessMessages,
+					maxNumberOfReportedUncheckedMessages);
+			extractResultsStopwatch.stop();
+			LOGGER.info("Time to extract results from final state: {} ms", extractResultsStopwatch.elapsed(TimeUnit.MILLISECONDS));
+		} catch (ProBError e) {
+			LOGGER.error("ProBError while extracting rule results: {}", e.getMessage());
+			this.errors.add(new Error(ERROR_TYPES.PROB_ERROR, e.getMessage(), e));
+		} catch (Exception e) {
+			LOGGER.error("Unexpected error while extracting rule results: {}", e.getMessage(), e);
+			this.errors.add(new Error(ERROR_TYPES.UNEXPECTED_ERROR, e.getMessage(), e));
+		}
+	}
+
+	private void updateTotalNumberOfProBCliErrors() {
+		try {
 			GetTotalNumberOfErrorsCommand totalNumberOfErrorsCommand = new GetTotalNumberOfErrorsCommand();
 			executeRun.getUsedAnimator().execute(totalNumberOfErrorsCommand);
 			totalNumberOfProBCliErrors = totalNumberOfErrorsCommand.getTotalNumberOfErrors();
+		} catch (RuntimeException e) {
+			// must not hide the original error (e.g. if probcli has crashed)
+			LOGGER.warn("Could not determine the total number of probcli errors", e);
 		}
-
-		final Stopwatch extractResultsStopwatch = Stopwatch.createStarted();
-		this.ruleResults = new RuleResults(this.rulesProject, executeRun.getExecuteModelCommand().getFinalState(),
-				maxNumberOfReportedCounterExamples, maxNumberOfReportedSuccessMessages,
-				maxNumberOfReportedUncheckedMessages);
-		extractResultsStopwatch.stop();
-		LOGGER.info("Time to extract results from final state: {}", extractResultsStopwatch.elapsed(TimeUnit.MILLISECONDS));
-
 	}
 
 	private boolean parseAndTranslateRulesProject() {
