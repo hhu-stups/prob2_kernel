@@ -19,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -107,6 +108,8 @@ public final class RulesChecker {
 					break;
 				}
 				trace = trace.addTransitions(executeModelCommand.getNewTransitions());
+				// addTransitions does not keep this setting; exploring every state again would be very slow
+				trace.setExploreStateByDefault(false);
 				String transitionName = Optional.ofNullable(executeModelCommand.getSingleTransitionName()).orElse("");
 				if (isInitTransition(transitionName)) {
 					nrSteps--;
@@ -157,22 +160,31 @@ public final class RulesChecker {
 		final Set<AbstractOperation> todo = new HashSet<>();
 		Map<AbstractOperation, OperationStatus> operationStatuses = OperationStatuses.getStatuses(rulesModel, trace.getCurrentState());
 		operationStatuses.forEach((op, status) -> {
-			if (status.isNotExecuted() && !status.isDisabled()) {
-				boolean canBeExecuted = true;
-				// check that all dependencies are executed and have not failed in case of rules
-				for (AbstractOperation pred : predecessors.get(op)) {
-					OperationStatus predState = operationStatuses.get(pred);
-					if (predState.isNotExecuted() || predState == RuleStatus.FAIL) {
-						canBeExecuted = false;
-						break;
-					}
-				}
-				if (canBeExecuted) {
-					todo.add(op);
-				}
+			if (canBeExecuted(op, operationStatuses)) {
+				todo.add(op);
 			}
 		});
 		return todo;
+	}
+
+	/**
+	 * An operation can be executed if it has not been executed yet, is not disabled,
+	 * and all its dependencies have been executed (and have not failed in case of rules).
+	 *
+	 * @param statuses must contain the status of the operation and of all its (transitive) dependencies
+	 */
+	private boolean canBeExecuted(AbstractOperation op, Map<AbstractOperation, OperationStatus> statuses) {
+		OperationStatus status = statuses.get(op);
+		if (status == null || !status.isNotExecuted() || status.isDisabled()) {
+			return false;
+		}
+		for (AbstractOperation pred : predecessors.getOrDefault(op, Collections.emptySet())) {
+			OperationStatus predState = statuses.get(pred);
+			if (predState == null || predState.isNotExecuted() || predState == RuleStatus.FAIL) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public boolean executeOperationAndDependencies(String opName) {
@@ -186,9 +198,15 @@ public final class RulesChecker {
 		executionOrder.add(goalOperation);
 		executionOrder.removeIf(FunctionOperation.class::isInstance);
 
+		// Evaluate the status of all relevant operations only once and keep track of the changes locally
+		// instead of re-evaluating the status of all operations of the project before every step.
+		// This is sound because executing an operation only changes its own status
+		// (DISABLED is already determined during the initialisation).
+		final Map<AbstractOperation, OperationStatus> statuses = new HashMap<>(
+				OperationStatuses.getStatuses(rulesModel, executionOrder, trace.getCurrentState()));
 		for (AbstractOperation op : executionOrder) {
-			if (!getExecutableOperations().contains(op)) {
-				if (getOperationState(op).isExecuted()) { // required operation has already been executed
+			if (!canBeExecuted(op, statuses)) {
+				if (statuses.get(op).isExecuted()) { // required operation has already been executed
 					if (listener != null) {
 						listener.progress(++nrExecutedOperations, op.getName());
 					}
@@ -197,6 +215,7 @@ public final class RulesChecker {
 				return false;
 			}
 			OperationStatus opState = executeOperation(op);
+			statuses.put(op, opState);
 			if (listener != null) {
 				listener.progress(nrExecutedOperations, op.getName());
 			}
