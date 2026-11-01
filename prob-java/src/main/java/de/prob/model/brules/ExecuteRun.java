@@ -34,8 +34,8 @@ public class ExecuteRun {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExecuteRun.class);
 
 	private final ReusableAnimator animator;
-	private final int maxNumberOfStatesToBeExecuted = Integer.MAX_VALUE;
-	private final Integer timeout = null;
+	private static final int MAX_NUMBER_OF_STATES_TO_BE_EXECUTED = Integer.MAX_VALUE;
+	private static final Integer TIMEOUT = null;
 	private final boolean continueAfterErrors;
 	private final ExtractedModel<? extends AbstractModel> extractedModel;
 	private final Map<String, String> prefs;
@@ -51,19 +51,23 @@ public class ExecuteRun {
 	}
 
 	public void start() {
-		final Stopwatch loadStopwatch = Stopwatch.createStarted();
-		loadStopwatch.stop();
-		LOGGER.info("Time to load model: {} ms", loadStopwatch.elapsed(TimeUnit.MILLISECONDS));
+		this.executeModelCommand = null;
+		this.rootState = null;
 
-		final Stopwatch executeStopwatch = Stopwatch.createStarted();
 		final StateSpace oldStateSpace = this.animator.getCurrentStateSpace();
 		if (oldStateSpace != null) {
 			oldStateSpace.kill();
 		}
 		this.animator.resetProB();
+
+		final Stopwatch loadStopwatch = Stopwatch.createStarted();
 		final StateSpace stateSpace = this.animator.createStateSpace();
 		stateSpace.changePreferences(this.prefs);
 		this.extractedModel.loadIntoStateSpace(stateSpace);
+		loadStopwatch.stop();
+		LOGGER.info("Time to load model: {} ms", loadStopwatch.elapsed(TimeUnit.MILLISECONDS));
+
+		final Stopwatch executeStopwatch = Stopwatch.createStarted();
 		executeModel(stateSpace);
 		executeStopwatch.stop();
 		LOGGER.info("Time to run execute command: {} ms", executeStopwatch.elapsed(TimeUnit.MILLISECONDS));
@@ -72,8 +76,8 @@ public class ExecuteRun {
 	private void executeModel(final StateSpace stateSpace) {
 		Trace t = new Trace(stateSpace);
 		this.rootState = t.getCurrentState();
-		executeModelCommand = new ExecuteModelCommand(stateSpace, t.getCurrentState(), maxNumberOfStatesToBeExecuted,
-				continueAfterErrors, timeout);
+		executeModelCommand = new ExecuteModelCommand(stateSpace, t.getCurrentState(), MAX_NUMBER_OF_STATES_TO_BE_EXECUTED,
+				continueAfterErrors, TIMEOUT);
 		stateSpace.execute(executeModelCommand);
 	}
 
