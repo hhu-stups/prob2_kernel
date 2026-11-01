@@ -225,26 +225,6 @@ public final class RulesChecker {
 		return true;
 	}
 
-	/**
-	 * @deprecated Use {@link #getOperationState(AbstractOperation)} or
-	 *     {@link OperationStatuses#getStatus(RulesModel, AbstractOperation, State)} instead.
-	 */
-	@Deprecated
-	public OperationStatus evalOperation(State state, AbstractOperation operation) {
-		// evaluate in the given state (and not in the current state of the trace)
-		return OperationStatuses.getStatus(rulesModel, operation, state);
-	}
-
-	/**
-	 * @deprecated Use {@link #getOperationStates()} or
-	 *     {@link OperationStatuses#getStatuses(RulesModel, List, State)} instead.
-	 */
-	@Deprecated
-	public Map<AbstractOperation, OperationStatus> evalOperations(State state, List<AbstractOperation> operations) {
-		// evaluate the given operations in the given state (and not all operations in the current state of the trace)
-		return OperationStatuses.getStatuses(rulesModel, operations, state);
-	}
-
 	public Trace getCurrentTrace() {
 		return this.trace;
 	}
