@@ -1,7 +1,6 @@
 package de.prob.animator.command;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -18,7 +17,6 @@ import de.prob.prolog.output.IPrologTermOutput;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 import de.prob.statespace.State;
-import de.prob.statespace.StateSpace;
 
 /**
  * Calculates the values of Classical-B Predicates and Expressions.
@@ -34,27 +32,13 @@ public class EvaluateFormulasCommand extends AbstractCommand {
 	private final List<? extends IEvalElement> evalElements;
 	private final List<AbstractEvalResult> values = new ArrayList<>();
 
-	private final String stateId;
 	private final State state;
 	private final EvalOptions options;
 
 	public EvaluateFormulasCommand(final List<? extends IEvalElement> evalElements, final State state, final EvalOptions options) {
 		this.evalElements = evalElements;
-		this.stateId = state.getId();
 		this.state = state;
 		this.options = options;
-	}
-
-	/**
-	 * @deprecated If this constructor is used, the evaluation will not benefit from registered formulas (see {@link StateSpace#registerFormulas(Collection)}.
-	 *     Use {@link #EvaluateFormulasCommand(List, State, EvalOptions)} instead.
-	 */
-	@Deprecated
-	public EvaluateFormulasCommand(final List<? extends IEvalElement> evalElements, final String stateId) {
-		this.evalElements = evalElements;
-		this.stateId = stateId;
-		this.state = null;
-		this.options = EvalOptions.DEFAULT.withExpandFromFormulas(evalElements);
 	}
 
 	@Override
@@ -68,16 +52,10 @@ public class EvaluateFormulasCommand extends AbstractCommand {
 
 	@Override
 	public void writeCommand(final IPrologTermOutput pout) {
-		final Set<IEvalElement> registered;
-		if (state == null) {
-			registered = Collections.emptySet();
-		} else {
-			registered = state.getStateSpace().getRegisteredFormulas();
-		}
-
 		pout.openTerm(PROLOG_COMMAND_NAME);
 
 		pout.openList();
+		final Set<IEvalElement> registered = state.getStateSpace().getRegisteredFormulas();
 		for (IEvalElement evalElement : evalElements) {
 			if (registered.contains(evalElement)) {
 				pout.openTerm("registered");
@@ -93,7 +71,7 @@ public class EvaluateFormulasCommand extends AbstractCommand {
 		pout.openList();
 
 		pout.openTerm("state");
-		pout.printAtomOrNumber(this.stateId);
+		pout.printAtomOrNumber(this.state.getId());
 		pout.closeTerm();
 
 		this.options.printProlog(pout);
@@ -104,8 +82,9 @@ public class EvaluateFormulasCommand extends AbstractCommand {
 		pout.closeTerm();
 	}
 
+	@Deprecated
 	public String getStateId() {
-		return this.stateId;
+		return this.state.getId();
 	}
 
 	public List<AbstractEvalResult> getValues() {
