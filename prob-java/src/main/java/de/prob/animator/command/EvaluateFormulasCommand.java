@@ -9,7 +9,6 @@ import java.util.Set;
 
 import de.prob.animator.domainobjects.AbstractEvalResult;
 import de.prob.animator.domainobjects.EvalOptions;
-import de.prob.animator.domainobjects.EvalResult;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.parser.BindingGenerator;
 import de.prob.parser.ISimplifiedROMap;
@@ -46,7 +45,7 @@ public class EvaluateFormulasCommand extends AbstractCommand {
 
 		ListPrologTerm terms = BindingGenerator.getList(bindings, EVALUATE_RESULT_VARIABLE);
 		for (PrologTerm term : terms) {
-			values.add(EvalResult.getEvalResult(term));
+			values.add(this.state.getStateSpace().evalResultFromPrologTerm(term));
 		}
 	}
 

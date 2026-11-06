@@ -14,11 +14,11 @@ import de.prob.parser.BindingGenerator;
 import de.prob.prolog.term.CompoundPrologTerm;
 import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
+import de.prob.statespace.StateSpace;
 
 public class EvalResult extends AbstractEvalResult {
 	public static final EvalResult TRUE = new EvalResult("TRUE", Collections.emptyMap());
 	public static final EvalResult FALSE = new EvalResult("FALSE", Collections.emptyMap());
-	private static final HashMap<String, EvalResult> formulaCache = new HashMap<>();
 
 	private final String value;
 	private final Map<String, String> solutions;
@@ -103,6 +103,8 @@ public class EvalResult extends AbstractEvalResult {
 	 * Translates the results from ProB into an {@link AbstractEvalResult}. This
 	 * is intended mainly for internal use, for developers who are writing
 	 * commands and want to translate them into an {@link AbstractEvalResult}.
+	 * Please use {@link StateSpace#evalResultFromPrologTerm(PrologTerm)} instead where possible
+	 * to benefit from caching of common results.
 	 *
 	 * @param pt
 	 *            PrologTerm
@@ -150,14 +152,11 @@ public class EvalResult extends AbstractEvalResult {
 				errorsList = Collections.emptyList();
 			}
 			assert "TRUE".equals(value) || "FALSE".equals(value) || solutionList.isEmpty();
-			final boolean canCacheResult = solutionList.isEmpty() && errorsList.isEmpty();
-			if (canCacheResult) {
+			if (solutionList.isEmpty() && errorsList.isEmpty()) {
 				if ("TRUE".equals(value)) {
 					return TRUE;
 				} else if ("FALSE".equals(value)) {
 					return FALSE;
-				} else if (formulaCache.containsKey(value)) {
-					return formulaCache.get(value);
 				}
 			}
 
@@ -181,11 +180,7 @@ public class EvalResult extends AbstractEvalResult {
 					.collect(Collectors.toList());
 			}
 
-			EvalResult res = new EvalResult(value, solutions, errors);
-			if (canCacheResult) {
-				formulaCache.put(value, res);
-			}
-			return res;
+			return new EvalResult(value, solutions, errors);
 		} else if ("errors".equals(pt.getFunctor())) {
 			final CompoundPrologTerm errorsTerm = BindingGenerator.getCompoundTerm(pt, 2);
 			final String errorType = errorsTerm.getArgument(1).atomToString();

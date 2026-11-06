@@ -15,6 +15,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -51,6 +52,7 @@ import de.prob.animator.domainobjects.CSP;
 import de.prob.animator.domainobjects.ClassicalB;
 import de.prob.animator.domainobjects.ErrorItem;
 import de.prob.animator.domainobjects.EvalOptions;
+import de.prob.animator.domainobjects.EvalResult;
 import de.prob.animator.domainobjects.FormulaExpand;
 import de.prob.animator.domainobjects.IEvalElement;
 import de.prob.animator.domainobjects.ProBPreference;
@@ -60,6 +62,7 @@ import de.prob.exception.CliError;
 import de.prob.formula.PredicateBuilder;
 import de.prob.model.representation.AbstractElement;
 import de.prob.model.representation.AbstractModel;
+import de.prob.prolog.term.PrologTerm;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,6 +106,7 @@ public final class StateSpace implements IAnimator {
 	private LoadedMachine loadedMachine;
 
 	private final LoadingCache<String, State> states;
+	private final Cache<String, EvalResult> simpleEvalResultCache;
 
 	private AbstractModel model;
 	private final AtomicBoolean killed;
@@ -133,6 +137,9 @@ public final class StateSpace implements IAnimator {
 				throw new IllegalArgumentException(key + " does not represent a valid state in the StateSpace");
 			}
 		});
+
+		// TODO Should this really use the same cache size as the cache of states? EvalResults are likely to be much less memory-intensive than State objects.
+		this.simpleEvalResultCache = CacheBuilder.newBuilder().maximumSize(maxSize).build();
 
 		this.killed = new AtomicBoolean(false);
 		this.busyListeners = new CopyOnWriteArrayList<>();
@@ -876,6 +883,20 @@ public final class StateSpace implements IAnimator {
 
 	public AbstractElement getMainComponent() {
 		return this.getModel().getMainComponent();
+	}
+
+	public AbstractEvalResult evalResultFromPrologTerm(PrologTerm term) {
+		AbstractEvalResult result = EvalResult.getEvalResult(term);
+		if (result instanceof EvalResult res && res.getSolutions().isEmpty() && res.getErrors().isEmpty()) {
+			try {
+				return this.simpleEvalResultCache.get(res.getValue(), () -> res);
+			} catch (ExecutionException exc) {
+				// This loader cannot throw exceptions.
+				throw new AssertionError(exc);
+			}
+		} else {
+			return result;
+		}
 	}
 
 	/**
