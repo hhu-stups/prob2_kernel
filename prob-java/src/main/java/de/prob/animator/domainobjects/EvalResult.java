@@ -16,9 +16,9 @@ import de.prob.prolog.term.ListPrologTerm;
 import de.prob.prolog.term.PrologTerm;
 
 public class EvalResult extends AbstractEvalResult {
-	public static final  EvalResult TRUE = new EvalResult("TRUE", Collections.emptyMap());
-	public static final  EvalResult FALSE = new EvalResult("FALSE", Collections.emptyMap());
-	private static final  HashMap<String, EvalResult> formulaCache = new HashMap<>();
+	public static final EvalResult TRUE = new EvalResult("TRUE", Collections.emptyMap());
+	public static final EvalResult FALSE = new EvalResult("FALSE", Collections.emptyMap());
+	private static final HashMap<String, EvalResult> formulaCache = new HashMap<>();
 
 	private final String value;
 	private final Map<String, String> solutions;
